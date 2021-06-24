@@ -16,6 +16,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Storefront>
 ) {
+  if (req.method === 'GET') {
+    const storefront = await prisma.storefront.findFirst({ where: {
+      subdomain: req.query.subdomain as string,
+      pubkey: req.query.pubkey as string,
+    }})
+    if (storefront) {
+      return res.status(200).json(storefront)
+    }
+ 
+  }
   if (req.method === 'POST') {
     
     const existingSubdomain = await prisma.storefront.findFirst({ where: { subdomain: req.body.subdomain }})
@@ -37,6 +47,27 @@ export default async function handler(
 
     } catch(error) {
       return new ApiError(500, `storefront creation error ${error}`)
+    }
+  }
+
+  if (req.method === 'PATCH') {
+    const storefront = await prisma.storefront.findFirst({ where: {
+      subdomain: req.body.subdomain,
+      pubkey: req.body.pubkey,
+    }})
+
+    try {
+      if (storefront) {
+        const updatedStorefront = await prisma.storefront.update({
+          where: { id: storefront.id },
+          data: { theme: req.body.theme }
+        })
+        if (updatedStorefront) {
+          return res.status(204).json({ ...updatedStorefront })
+        }
+      }
+    } catch(error) {
+      return new ApiError(500, `error updating storefront ${error}`)
     }
   }
 }
