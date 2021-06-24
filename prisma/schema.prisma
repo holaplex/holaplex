@@ -12,7 +12,7 @@ generator client {
 
 model Storefront {
   id            Int     @default(autoincrement()) @id
-  subdomain     String
+  subdomain     String  @unique
   pubkey        String
   theme         Json
 }
