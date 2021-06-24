@@ -32,10 +32,10 @@ export default async function handler(
     const existingPubKey = await prisma.storefront.findFirst({ where: { pubkey: req.body.pubkey }})
 
     if (existingPubKey) {
-      return new ApiError(422, "storefront with this pubkey already exists")
+      throw new ApiError(422, "storefront with this pubkey already exists")
     }
     if (existingSubdomain) {
-      return new ApiError(422, "storefront with this subdomain already exists")
+      throw new ApiError(422, "storefront with this subdomain already exists")
     }
 
     try {
@@ -46,7 +46,7 @@ export default async function handler(
       }
 
     } catch(error) {
-      return new ApiError(500, `storefront creation error ${error}`)
+      throw new ApiError(500, `storefront creation error ${error}`)
     }
   }
 
@@ -67,7 +67,7 @@ export default async function handler(
         }
       }
     } catch(error) {
-      return new ApiError(500, `error updating storefront ${error}`)
+      throw new ApiError(500, `error updating storefront ${error}`)
     }
   }
 }
