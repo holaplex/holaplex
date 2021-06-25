@@ -2,11 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/next-server/server/api-utils'
 import { Storefront } from '../../../lib/types'
 import prisma from  '../../../lib/prisma'
+import { cors } from  '../../../lib/middleware'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Storefront>
 ) {
+  await cors(req, res)
+
   switch (req.method) {
     case 'GET': {
       const storefront = await prisma.storefront.findUnique({

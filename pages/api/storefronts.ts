@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/next-server/server/api-utils'
 import prisma from  '../../lib/prisma'
 import { Storefront } from '../../lib/types'
+import { cors } from  '../../lib/middleware'
 
 
 
@@ -10,6 +11,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Storefront>
 ) {
+  await cors(req, res)
+
   switch (req.method) {
     case 'POST': {
       if (req.method === 'POST') {
