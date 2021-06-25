@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/next-server/server/api-utils'
 import prisma from  '../../lib/prisma'
 import { Storefront } from '../../lib/types'
+import { cors } from  '../../lib/middleware'
 
 
 
@@ -10,37 +11,36 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Storefront>
 ) {
-  if (req.method === 'GET') {
-    const storefront = await prisma.storefront.findFirst({ where: {
-      subdomain: req.query.subdomain as string,
-    }})
-    if (storefront) {
-      return res.status(200).json(storefront)
-    }
- 
-  }
-  if (req.method === 'POST') {
-    
-    const existingSubdomain = await prisma.storefront.findFirst({ where: { subdomain: req.body.subdomain }})
-    const existingPubKey = await prisma.storefront.findFirst({ where: { pubkey: req.body.pubkey }})
+  await cors(req, res)
 
-    if (existingPubKey) {
-      throw new ApiError(422, "storefront with this pubkey already exists")
-    }
-    if (existingSubdomain) {
-      throw new ApiError(422, "storefront with this subdomain already exists")
-    }
+  switch (req.method) {
+    case 'POST': {
+      if (req.method === 'POST') {
+        const existingSubdomain = await prisma.storefront.findFirst({ where: { subdomain: req.body.subdomain }})
+        const existingPubKey = await prisma.storefront.findFirst({ where: { pubkey: req.body.pubkey }})
 
-    try {
-      const storefront = await prisma.storefront.create({ data: { pubkey: req.body.pubkey, subdomain: req.body.subdomain, theme: {} }})
+        if (existingPubKey) {
+          throw new ApiError(422, "storefront with this pubkey already exists")
+        }
+        if (existingSubdomain) {
+          throw new ApiError(422, "storefront with this subdomain already exists")
+        }
 
-      if (storefront) {
-        return res.status(201).json(storefront)
+        try {
+          const storefront = await prisma.storefront.create({ data: { pubkey: req.body.pubkey, subdomain: req.body.subdomain, theme: {} }})
+
+          if (storefront) {
+            res.status(201).json(storefront)
+          }
+
+        } catch(error) {
+          throw new ApiError(500, `storefront creation error ${error}`)
+        }
       }
-
-    } catch(error) {
-      throw new ApiError(500, `storefront creation error ${error}`)
     }
+    default:
+      res.setHeader('Allow', ['POST'])
+      res.status(405).end(`Method ${req.method} Not Allowed`)
   }
 
 
