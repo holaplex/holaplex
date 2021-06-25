@@ -4,10 +4,10 @@ const prisma = new PrismaClient()
 
 async function seed() {
   const demo = await prisma.storefront.upsert({
-    where: { subdomain: "espi" },
+    where: { subdomain: "localhost" },
     update: {},
     create: {
-      subdomain: "espi",
+      subdomain: "localhost",
       pubkey: "2UnsjcXyXTJGLGcUwBYSTxJVwC9KYfaNbmd4wKk4zCoP",
       theme: {},
     }
