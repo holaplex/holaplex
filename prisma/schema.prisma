@@ -14,5 +14,6 @@ model Storefront {
   id            Int     @default(autoincrement()) @id
   subdomain     String  @unique
   pubkey        String
+  themeUrl      String
   theme         Json
 }

@@ -27,7 +27,7 @@ export default async function handler(
         }
 
         try {
-          const storefront = await prisma.storefront.create({ data: { pubkey: req.body.pubkey, subdomain: req.body.subdomain, theme: {} }})
+          const storefront = await prisma.storefront.create({ data: { pubkey: req.body.pubkey, subdomain: req.body.subdomain, theme: {}, themeUrl: '' }})
 
           if (storefront) {
             res.status(201).json(storefront)
