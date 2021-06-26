@@ -1,8 +1,9 @@
 import shadeColor from './shadeColor'
 import saveFile from './saveFile'
+import { StorefrontTheme } from '../../lib/types'
 
 export default async function updateThemeCss(
-    theme: object,
+    theme: StorefrontTheme,
     subdomain: string,
     pubkey: string,
   ) {
