@@ -1,7 +1,5 @@
 import Cors from 'cors'
 
-const cors =  Cors({
-    origin: ["https:\/\/(.*\.)?holaplex\.com", "https://localhost:5000"]
-})
+const cors =  Cors()
 
 export default cors
