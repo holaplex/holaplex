@@ -15,7 +15,7 @@ export default async function saveFile(cssContent, subdomain, pubkey) {
 
 
   const hash = SparkMD5.hash(cssContent)
-  const location = `${subdomain}.holaplex.com/${pubkey}/overrides-${hash}.css`
+  const location = `${pubkey}/overrides-${hash}.css`
   const bucketName = 'opus-logica-holaplex-storefronts'
   const themeUrl = `https://${location}`
 
