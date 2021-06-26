@@ -7,8 +7,9 @@ export type StorefrontTheme = {
 
 export type Storefront = {
   id: number,
-  theme: Prisma.JsonValue | StorefrontTheme,
+  theme: StorefrontTheme,
   subdomain: string,
-  pubkey: string
+  pubkey: string,
+  themeUrl: string
 }
 

@@ -3,7 +3,7 @@ import { ApiError } from 'next/dist/next-server/server/api-utils'
 import { Storefront, StorefrontTheme } from '../../../lib/types'
 import prisma from  '../../../lib/prisma'
 import { cors } from  '../../../lib/middleware'
-import updateThemeCss from '../../../lib/updateThemeCss'
+import { style } from '../../../lib/services/storefront'
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,37 +11,34 @@ export default async function handler(
 ) {
   await cors(req, res)
 
+  const storefront = await prisma.storefront.findUnique({
+    where: {
+      subdomain: req.query.subdomain as string,
+    }
+  }) as Storefront
+
+  if (!storefront) {
+    res.status(404)
+    return
+  }
+
   switch (req.method) {
     case 'GET': {
-      const storefront = await prisma.storefront.findUnique({
-        where: {
-          subdomain: req.query.subdomain as string,
-        }
-      })
-
-      if (storefront) {
-        res.status(200).json(storefront)
-      } else {
-        res.status(404)
-      }
+      return res.status(200).json(storefront)
     }
     case 'PATCH': {
       try {
-        const updatedStorefront = await prisma.storefront.update({
-          where: { subdomain: req.query.subdomain as string },
-          data: { theme: req.body.theme }
-        })
+          const theme = req.body.theme as StorefrontTheme
 
-
-        try {
-          await updateThemeCss(
-            updatedStorefront.theme as StorefrontTheme,
-            updatedStorefront.subdomain,
-            updatedStorefront.pubkey
+          const themeUrl = await style(
+            storefront,
+            theme
           )
-        } catch(error) {
-          throw new ApiError(500, `error updating storefront ${error}`)
-        }
+
+          const updatedStorefront = await prisma.storefront.update({
+            where: { subdomain: storefront.subdomain },
+            data: { theme, themeUrl } as Storefront
+          }) as Storefront
 
         return res.status(204).json(updatedStorefront)
       } catch(error) {
@@ -50,6 +47,6 @@ export default async function handler(
     }
     default:
       res.setHeader('Allow', ['GET', 'PATCH'])
-      res.status(405).end(`Method ${req.method} Not Allowed`)
+      return res.status(405).end(`Method ${req.method} Not Allowed`)
   }
 }
