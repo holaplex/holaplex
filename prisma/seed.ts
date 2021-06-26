@@ -10,6 +10,7 @@ async function seed() {
       subdomain: "localhost",
       pubkey: "2UnsjcXyXTJGLGcUwBYSTxJVwC9KYfaNbmd4wKk4zCoP",
       theme: {},
+      themeUrl: ''
     }
   })
 }

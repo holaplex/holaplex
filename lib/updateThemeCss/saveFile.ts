@@ -6,7 +6,11 @@ const Minio = require('minio')
 import { Readable } from 'stream'
 
 
-export default async function saveFile(cssContent, subdomain, pubkey) {
+export default async function saveFile(
+  cssContent: string,
+  subdomain: string,
+  pubkey: string
+  ) {
   const minioClient = new Minio.Client({
       endPoint: 's3.amazonaws.com',
       accessKey: process.env.AWS_ACCESS_KEY,
@@ -24,7 +28,7 @@ export default async function saveFile(cssContent, subdomain, pubkey) {
   fs.push(cssContent)
   fs.push(null)     
   
-  return minioClient.putObject(bucketName, location, fs, async function(err, objInfo) {
+  return minioClient.putObject(bucketName, location, fs, async function(err: Error) {
     if(err) {
       return console.log(err)
     }

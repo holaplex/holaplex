@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/next-server/server/api-utils'
-import { Storefront } from '../../../lib/types'
+import { Storefront, StorefrontTheme } from '../../../lib/types'
 import prisma from  '../../../lib/prisma'
 import { cors } from  '../../../lib/middleware'
 import updateThemeCss from '../../../lib/updateThemeCss'
@@ -35,7 +35,7 @@ export default async function handler(
 
         try {
           await updateThemeCss(
-            updatedStorefront.theme as object,
+            updatedStorefront.theme as StorefrontTheme,
             updatedStorefront.subdomain,
             updatedStorefront.pubkey
           )
