@@ -1,21 +1,19 @@
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
+import { rgba } from 'polished';
 import HolaWaves from '../../assets/images/HolaWaves';
 import Button from '../../components/core/Button';
+import Link from '../../components/core/Link'
+import { useRouter } from 'next/router'
 import {
   Text,
   PageTitle,
   SubTitle,
-  Link,
-  Container
+  StandardLink,
+  GradientContainer
 } from '../../constants/StyleComponents'
 
 // >>>>> STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-const StyledContainer = styled(Container)`
-  height: 100vh;
-  background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
-`;
 
 const Content = styled.div`
   flex: 1;
@@ -23,6 +21,7 @@ const Content = styled.div`
 `;
 
 const MainPitch = styled.div`
+  color: ${sv.colors.buttonText};
   ${sv.flexCenter};
   flex-direction: column;
   max-width: 500px;
@@ -37,7 +36,7 @@ const NewStoreButton = styled(Button)`
   margin-top: ${sv.grid*3}px;
 `;
 
-const HasStoretext = styled(Text)`
+const HasStoreText = styled(Text)`
   margin-top: ${sv.grid*4}px;
   max-width: 240px;
   text-align: center;
@@ -50,21 +49,24 @@ const Waves = styled(HolaWaves)`
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export default function landing() {
+
+  const router = useRouter()
+
   return (
-    <StyledContainer>
+    <GradientContainer>
       <Content>
         <MainPitch>
           <Logo>👋</Logo>
-          <PageTitle center>Holaplex</PageTitle>
-          <SubTitle center>Design, launch, and host your NFT marketplace. No coding required!</SubTitle>
-          <NewStoreButton label="Create Your Store" />
-          <HasStoretext color={sv.colors.subtleText}>
-            Already have a store? <Link>Connect Wallet</Link> to manage.
-          </HasStoretext>
+          <PageTitle center invert>Holaplex</PageTitle>
+          <SubTitle center invert>Design, launch, and host your NFT marketplace. No coding required!</SubTitle>
+          <NewStoreButton action={() => router.push('/builderForm')} label="Create Your Store" />
+          <HasStoreText color={rgba(sv.colors.buttonText, .6)}>
+            Already have a store? <Link invert href="/builderForm" label="Connect Wallet" /> to manage.
+          </HasStoreText>
         </MainPitch>
       </Content>
       <Waves />
-    </StyledContainer>
+    </GradientContainer>
 
   )
 }

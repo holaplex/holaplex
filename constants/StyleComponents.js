@@ -10,6 +10,10 @@ const Container = styled.div`
   ${sv.flexColumn};
 `;
 
+const GradientContainer = styled(Container)`
+  background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
+`;
+
 const Content = styled.div`
   width: 100%;
   flex: 1;
@@ -26,6 +30,14 @@ const SectionContent = styled.div`
   ${sv.box};
 `;
 
+const RoundedContainer = styled.div`
+  padding: ${sv.appPadding}px;
+  border-radius: ${sv.grid*3}px;
+  background: ${sv.colors.background};
+  width: 100%;
+  max-width: ${props => props.small ? 760 : 1080}px;
+`;
+
 const Actions = styled.div`
   ${sv.flexRow};
   justify-content: flex-end;
@@ -33,6 +45,7 @@ const Actions = styled.div`
 
 const PageTitle = styled.div`
   ${sv.title};
+  color: ${props => props.invert ? sv.colors.background : sv.colors.text};
   text-align: ${props => props.center ? 'center' : 'left'};
   margin-bottom: ${sv.grid*2}px;
 `
@@ -41,7 +54,7 @@ const SubTitle = styled.div`
   ${sv.h3};
   text-align: ${props => props.center ? 'center' : 'left'};
   font-weight: 300;
-  color: ${sv.colors.subtleText};
+  color: ${props => props.invert ? rgba(sv.colors.background, .6) : sv.colors.text};
   margin-bottom: ${sv.grid*2}px;
 `
 
@@ -76,7 +89,7 @@ const H2 = styled.h2`
   margin: 0;
 `;
 
-const Link = styled.a`
+const StandardLink = styled.a`
   text-decoration: underline;
   ${sv.bodyText};
   color: ${sv.colors.text};
@@ -154,6 +167,8 @@ const Card = styled.div`
 
 export {
   Container,
+  GradientContainer,
+  RoundedContainer,
   Content,
   SectionContent,
   SectionTitle,
@@ -161,7 +176,7 @@ export {
   PageTitle,
   SubTitle,
   Label,
-  Link,
+  StandardLink,
   Text,
   AddLink,
   ExternalLink,

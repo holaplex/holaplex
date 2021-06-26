@@ -1,17 +1,17 @@
 import {isBrowser} from "react-device-detect";
 import {lighten, rgba} from 'polished'
 
-const text = '#fdfdfd'
-const subtleText = 'rgba(255,255,255,.6)'
+const text = '#222222'
+const subtleText = '666666'
 const buttonText = '#FFFFFF'
-const background = '#1C2441'
+const background = '#fdfdfd'
 
 const cta = '#3369F4'
 const ctaHover = `${lighten(.05, cta)}`
 const subtleCta = 'rgba(45,156,219,.2)'
 
-const cell = '#273156'
-const cellHover = '#34406D'
+const cell = '#E0E0E0'
+const cellHover = '#E3E3E3'
 const cellSubtle = '#EDEDED'
 const cellDark = '#1C2441'
 const lightCell = '#434B6E'
@@ -30,7 +30,7 @@ const buttonHeight = grid*8
 const appPadding = isBrowser ? grid*5 : grid*3
 const titlePadding = isBrowser ? grid*8 : grid*5
 const sectionPadding = isBrowser ? grid*14 : grid*5
-const headerHeight = isBrowser ? grid*8 : grid*6
+const headerHeight = isBrowser ? grid*12 : grid*6
 
 const StyleVariables = {
 
