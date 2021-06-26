@@ -3,6 +3,7 @@ import { ApiError } from 'next/dist/next-server/server/api-utils'
 import { Storefront } from '../../../lib/types'
 import prisma from  '../../../lib/prisma'
 import { cors } from  '../../../lib/middleware'
+import updateThemeCss from '../../../lib/updateThemeCss'
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,6 +31,17 @@ export default async function handler(
           where: { subdomain: req.query.subdomain as string },
           data: { theme: req.body.theme }
         })
+
+
+        try {
+          await updateThemeCss(
+            updatedStorefront.theme as object,
+            updatedStorefront.subdomain,
+            updatedStorefront.pubkey
+          )
+        } catch(error) {
+          throw new ApiError(500, `error updating storefront ${error}`)
+        }
 
         return res.status(204).json(updatedStorefront)
       } catch(error) {
