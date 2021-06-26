@@ -26,7 +26,7 @@ storefront.
 ```
 docker-compose up -d
 yarn db:schema:push
-yarn db:seed
+AWS_ACCESS_KEY=${AWS_ACCESS_KEY} AWS_SECRET_KEY=${AWS_SECRET_KEY} yarn db:seed
 ```
 
 ## Learn More
