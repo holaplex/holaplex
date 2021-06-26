@@ -1,4 +1,5 @@
-
+// no types for this lib
+// @ts-ignore
 import SparkMD5 from 'spark-md5'
 import prisma from '../prisma';
 const Minio = require('minio')
