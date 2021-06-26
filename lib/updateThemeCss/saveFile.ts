@@ -22,7 +22,7 @@ export default async function saveFile(
   const hash = SparkMD5.hash(cssContent)
   const location = `${pubkey}/overrides-${hash}.css`
   const bucketName = 'opus-logica-holaplex-storefronts'
-  const themeUrl = `https://${location}`
+  const themeUrl = `https://${subdomain}.holaplex.com/${location}`
 
   const fs = new Readable()
   fs.push(cssContent)
