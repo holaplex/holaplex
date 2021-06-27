@@ -6,8 +6,7 @@ export function stylesheet(theme: StorefrontTheme) {
     primaryColor,
   } = theme
 
-  return `
-body {
+  return `body {
   background-color: ${backgroundColor};
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {

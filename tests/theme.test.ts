@@ -6,8 +6,7 @@ describe('stylesheet', () => {
     it('shades dark', () => {
       const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50" })
     
-      expect(sheet).to.be.eql(`
-body {
+      expect(sheet).to.be.eql(`body {
   background-color: #eeeeee;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
@@ -43,8 +42,7 @@ h4,
       it('shades light', () => {
         const sheet = stylesheet({ backgroundColor: "#000", primaryColor: "#4caf50" })
     
-        expect(sheet).to.be.eql(`
-body {
+        expect(sheet).to.be.eql(`body {
   background-color: #000;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
