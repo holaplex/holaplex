@@ -1,12 +1,16 @@
+import React, {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
-import HolaWaves from '../../assets/images/HolaWaves';
 import Button from '../../components/core/Button';
+import TextInput from '../../components/core/TextInput';
 import ConnectActions from '../../components/ConnectActions'
+import StepOne from './StepOne';
+import StepTwo from './StepTwo';
 import { useRouter } from 'next/router'
 import {
   Text,
   H2,
+  Actions,
   GradientContainer,
   RoundedContainer
 } from '../../constants/StyleComponents'
@@ -39,9 +43,25 @@ const Logo = styled.div`
   margin-right: auto;
 `;
 
+
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export default function builderForm() {
+
+  const [step, setStep] = useState(1)
+  const [storeName, setStoreName] = useState('')
+  const [subDomain, setSubDomain] = useState('')
+
+  const renderStep = (step) => {
+    switch (step) {
+      case 1:
+        return <StepOne nextAction={() => setStep(2)} />;
+      case 2:
+        return <StepTwo nextAction={() => setStep(3)} backAction={() => setStep(1)} />;
+      default:
+        return <StepOne nextAction={() => setStep(2)} />;
+    }
+  };
 
   return (
     <GradientContainer>
@@ -54,8 +74,7 @@ export default function builderForm() {
 
       <Content>
         <RoundedContainer small>
-          <H2>Let’s start by naming your store.</H2>
-          <Text>This is the name the people will see inside your store and also on our registry of stores.</Text>
+          {renderStep(step)}
         </RoundedContainer>
       </Content>
     </GradientContainer>

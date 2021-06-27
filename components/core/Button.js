@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {darken} from 'polished'
 import sv from '../../constants/Styles';
 import FeatherIcon from 'feather-icons-react'
 
@@ -7,8 +8,8 @@ import FeatherIcon from 'feather-icons-react'
 
 const Container = styled.div`
   height: ${props => props.small ? sv.buttonHeight/1.5 : sv.buttonHeight}px;
-  background: linear-gradient(165.77deg, #D24089 8.62%, #B92D44 84.54%);
-  color: ${props => props.subtle ? sv.colors.subtleText : sv.colors.buttonText};
+  background: ${props => props.subtle ? sv.colors.cellDark : sv.colors.mainGradient};
+  color: ${sv.colors.buttonText};
   ${sv.flexCenter};
   ${sv.box};
   width: auto;
@@ -26,7 +27,7 @@ const Container = styled.div`
     flex: 0 0 16px;
   }
   &:hover {
-    background: linear-gradient(10.77deg, #D24089 8.62%, #B92D44 84.54%);
+    background: ${props => props.subtle ? darken(0.1, sv.colors.cellDark) : sv.colors.mainGradientHover};
   }
   &:disabled {
     opacity: .5;
