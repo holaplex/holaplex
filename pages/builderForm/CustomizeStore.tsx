@@ -5,6 +5,7 @@ import Button from '../../components/core/Button';
 import Link from '../../components/core/Link';
 import FilePickerWithLabel from '../../components/core/FilePickerWithLabel';
 import ColorPicker from '../../components/core/ColorPicker';
+import FontPicker from '../../components/core/FontPicker';
 import {isDarkColor} from '../../lib/services/utils';
 import {
   Text,
@@ -77,6 +78,8 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
   const [logo, setLogo] = useState(null)
   const [backgroundColor, setBackgroundColor] = useState('#333333')
   const [primaryColor, setPrimaryColor] = useState('#F2C94C')
+  const [titleFont, setTitleFont] = useState('Work Sans')
+  const [textFont, settextFont] = useState('Work Sans')
 
   const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
@@ -108,6 +111,13 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
             onChange={(newColor) => setPrimaryColor(newColor)}
           />
         </Field>
+        <Field>
+          <FontPicker
+            label="Title Font"
+            pickerId="title"
+            font={titleFont}
+          />
+        </Field>
         <Actions>
           <Button
             label="Back"
@@ -122,20 +132,27 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
         </Actions>
       </Form>
       <Preview bgColor={backgroundColor}>
+        <div className="apply-font">Does this work???</div>
         <PreviewItem>
-          <H2 color={textColor}>Big Title</H2>
+          <H2 className="apply-font-title" color={textColor}>Big Title</H2>
         </PreviewItem>
         <PreviewItem>
-          <H4 color={textColor}>Little Title</H4>
+          <H4 className="apply-font-title" color={textColor}>Little Title</H4>
         </PreviewItem>
         <PreviewItem>
-          <Text color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo' adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
+          <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo' adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
         </PreviewItem>
         <PreviewItem>
-          <PreviewLink color={primaryColor}>Link to things</PreviewLink>
+          <PreviewLink
+            className="apply-font-body"
+            color={primaryColor}
+          >
+            Link to things
+          </PreviewLink>
         </PreviewItem>
         <PreviewItem>
           <PreviewButton
+            className="body-font"
             color={primaryColor}
             textColor={buttontextColor}
           >
