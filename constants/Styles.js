@@ -87,7 +87,7 @@ const StyleVariables = {
   h2: {
     color: text,
     fontWeight: '800',
-    fontSize: 32,
+    fontSize: 40,
     lineHeight: '1.25em',
     letterSpacing: .2,
   },
@@ -95,7 +95,7 @@ const StyleVariables = {
   h3: {
     color: text,
     fontWeight: '800',
-    fontSize: 24,
+    fontSize: 32,
     lineHeight: '1.25em',
     letterSpacing: .2,
   },
@@ -103,7 +103,7 @@ const StyleVariables = {
   h4: {
     color: text,
     fontWeight: '700',
-    fontSize: 18,
+    fontSize: 24,
     lineHeight: '1.25em',
     letterSpacing: .2,
   },

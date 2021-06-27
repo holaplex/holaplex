@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import Button from '../../components/core/Button';
 import TextInput from '../../components/core/TextInput';
 import ConnectActions from '../../components/ConnectActions'
-import StepOne from './StepOne';
-import StepTwo from './StepTwo';
+import NameStore from './NameStore';
+import SubDomain from './SubDomain';
+import CustomizeStore from './CustomizeStore';
 import { useRouter } from 'next/router'
 import {
   Text,
@@ -48,18 +49,26 @@ const Logo = styled.div`
 
 export default function builderForm() {
 
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(3)
   const [storeName, setStoreName] = useState('')
   const [subDomain, setSubDomain] = useState('')
 
   const renderStep = (step) => {
     switch (step) {
       case 1:
-        return <StepOne nextAction={() => setStep(2)} />;
+        return <NameStore nextAction={() => setStep(2)} />;
       case 2:
-        return <StepTwo nextAction={() => setStep(3)} backAction={() => setStep(1)} />;
+        return <SubDomain
+          nextAction={() => setStep(3)}
+          backAction={() => setStep(1)}
+               />;
+      case 3:
+        return <CustomizeStore
+          nextAction={() => setStep(4)}
+          backAction={() => setStep(2)}
+               />;
       default:
-        return <StepOne nextAction={() => setStep(2)} />;
+        return <NameStore nextAction={() => setStep(2)} />;
     }
   };
 
@@ -73,9 +82,7 @@ export default function builderForm() {
       </Header>
 
       <Content>
-        <RoundedContainer small>
-          {renderStep(step)}
-        </RoundedContainer>
+        {renderStep(step)}
       </Content>
     </GradientContainer>
 
