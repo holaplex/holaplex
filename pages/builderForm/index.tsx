@@ -48,7 +48,7 @@ const Logo = styled.div`
 
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-export default function builderForm() {
+export default function BuilderForm() {
 
   const [step, setStep] = useState(3)
   const [storeName, setStoreName] = useState('')

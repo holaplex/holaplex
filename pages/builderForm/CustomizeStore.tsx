@@ -143,7 +143,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           <H4 className="apply-font-title" color={textColor}>Little Title</H4>
         </PreviewItem>
         <PreviewItem>
-          <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo' adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
+          <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
         </PreviewItem>
         <PreviewItem>
           <PreviewLink

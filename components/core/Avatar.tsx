@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import sv from '../../constants/Styles';
+import Image from 'next/image'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -56,7 +57,7 @@ export default function Avatar({image, name, avatarSize, className}: Props) {
   return (
     <Container className={className} size={size}>
       {image &&
-        <img src={image} alt="" />
+        <Image src={image} alt="" />
       }
       {!image &&
         <Initials fontSize={fontSize}>

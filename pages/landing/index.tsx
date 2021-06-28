@@ -49,7 +49,7 @@ const Waves = styled(HolaWaves)`
 
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-export default function landing() {
+export default function Landing() {
 
   const router = useRouter()
 
