@@ -1,12 +1,18 @@
+// @ts-nocheck 
+import React, {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
-import HolaWaves from '../../assets/images/HolaWaves';
 import Button from '../../components/core/Button';
+import TextInput from '../../components/core/TextInput';
 import ConnectActions from '../../components/ConnectActions'
+import NameStore from './NameStore';
+import SubDomain from './SubDomain';
+import CustomizeStore from './CustomizeStore';
 import { useRouter } from 'next/router'
 import {
   Text,
   H2,
+  Actions,
   GradientContainer,
   RoundedContainer
 } from '../../constants/StyleComponents'
@@ -39,9 +45,33 @@ const Logo = styled.div`
   margin-right: auto;
 `;
 
+
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export default function builderForm() {
+
+  const [step, setStep] = useState(3)
+  const [storeName, setStoreName] = useState('')
+  const [subDomain, setSubDomain] = useState('')
+
+  const renderStep = (step: number) => {
+    switch (step) {
+      case 1:
+        return <NameStore nextAction={() => setStep(2)} />;
+      case 2:
+        return <SubDomain
+          nextAction={() => setStep(3)}
+          backAction={() => setStep(1)}
+               />;
+      case 3:
+        return <CustomizeStore
+          nextAction={() => setStep(4)}
+          backAction={() => setStep(2)}
+               />;
+      default:
+        return <NameStore nextAction={() => setStep(2)} />;
+    }
+  };
 
   return (
     <GradientContainer>
@@ -53,10 +83,7 @@ export default function builderForm() {
       </Header>
 
       <Content>
-        <RoundedContainer small>
-          <H2>Let’s start by naming your store.</H2>
-          <Text>This is the name the people will see inside your store and also on our registry of stores.</Text>
-        </RoundedContainer>
+        {renderStep(step)}
       </Content>
     </GradientContainer>
 

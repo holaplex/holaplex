@@ -1,5 +1,4 @@
 import React from 'react';
-import sv from '../../constants/Styles'
 import styled from 'styled-components';
 import Button from './core/Button';
 import Avatar from './core/Avatar';

@@ -1,5 +1,6 @@
 import { Storefront, StorefrontTheme } from './../../types'
 import { stylesheet } from './../theme'
+// @ts-ignore
 import SparkMD5 from 'spark-md5'
 import { upload } from './../../services/bucket'
 

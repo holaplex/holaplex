@@ -2,7 +2,7 @@ import {isBrowser} from "react-device-detect";
 import {lighten, rgba} from 'polished'
 
 const text = '#222222'
-const subtleText = '666666'
+const subtleText = '#666666'
 const buttonText = '#FFFFFF'
 const background = '#fdfdfd'
 
@@ -10,10 +10,13 @@ const cta = '#3369F4'
 const ctaHover = `${lighten(.05, cta)}`
 const subtleCta = 'rgba(45,156,219,.2)'
 
+const mainGradient = 'linear-gradient(165.77deg, #D24089 8.62%, #B92D44 84.54%)'
+const mainGradientHover = 'linear-gradient(10.77deg, #D24089 8.62%, #B92D44 84.54%)'
+
 const cell = '#E0E0E0'
 const cellHover = '#E3E3E3'
 const cellSubtle = '#EDEDED'
-const cellDark = '#1C2441'
+const cellDark = '#9A9A9A'
 const lightCell = '#434B6E'
 
 const card = '#273156'
@@ -39,6 +42,8 @@ const StyleVariables = {
     subtleText: subtleText,
     buttonText: buttonText,
     background: background,
+    mainGradient: mainGradient,
+    mainGradientHover: mainGradientHover,
     cta: cta,
     ctaHover: ctaHover,
     subtleCta: subtleCta,
@@ -82,7 +87,7 @@ const StyleVariables = {
   h2: {
     color: text,
     fontWeight: '800',
-    fontSize: 32,
+    fontSize: 40,
     lineHeight: '1.25em',
     letterSpacing: .2,
   },
@@ -90,7 +95,7 @@ const StyleVariables = {
   h3: {
     color: text,
     fontWeight: '800',
-    fontSize: 24,
+    fontSize: 32,
     lineHeight: '1.25em',
     letterSpacing: .2,
   },
@@ -98,7 +103,7 @@ const StyleVariables = {
   h4: {
     color: text,
     fontWeight: '700',
-    fontSize: 18,
+    fontSize: 24,
     lineHeight: '1.25em',
     letterSpacing: .2,
   },
@@ -183,6 +188,18 @@ const StyleVariables = {
     display: 'flex',
     flexDirection: 'column',
     marginLeft: grid*4
+  },
+
+  inputField: {
+    height: buttonHeight,
+    padding: `${grid*2}px ${grid*3}px;`,
+    background: cell,
+    borderRadius: 12,
+    display: 'flex',
+    alignItems: 'center',
+    input: {
+      fontSize: grid*3
+    }
   },
 
   borderStyle: `1px solid rgba(255,255,255,.1)`,

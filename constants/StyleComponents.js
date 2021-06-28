@@ -41,6 +41,7 @@ const RoundedContainer = styled.div`
 const Actions = styled.div`
   ${sv.flexRow};
   justify-content: flex-end;
+  margin-top: ${props => props.noMargin ? 0 : sv.appPadding}px;
 `;
 
 const PageTitle = styled.div`
@@ -77,16 +78,19 @@ const Text = styled.div`
 const H4 = styled.h4`
   ${sv.h4};
   margin: 0;
+  color: ${props => props.color || sv.colors.text};
 `;
 
 const H3 = styled.h3`
   ${sv.h3};
   margin: 0;
+  color: ${props => props.color || sv.colors.text};
 `;
 
 const H2 = styled.h2`
   ${sv.h2};
   margin: 0;
+  color: ${props => props.color || sv.colors.text};
 `;
 
 const StandardLink = styled.a`
