@@ -103,7 +103,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.14.0":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.14.0", "@babel/runtime@^7.7.4":
   version "7.14.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.6.tgz#535203bc0892efc7dec60bdc27b2ecf6e409062d"
   integrity sha512-/PCB2uJ7oM44tz8YhC4Z/6PeOKXp4K588f+5M3clr1M4zbqztlo0XEfJ2LEzj/FgwfgGcIdl8n7YYjTCI0BYwg==
@@ -292,6 +292,13 @@
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.0.6.tgz#023d72a5c4531b4ce204528971700a78a85a0c50"
   integrity sha512-Myxw//kzromB9yWgS8qYGuGVf91oBUUJpNvy5eM50sqvmKLbKjwLxohJnkWGTeeI9v9IBMtPLxz5Gc60FIfvCA==
+
+"@samuelmeuli/font-manager@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@samuelmeuli/font-manager/-/font-manager-1.4.0.tgz#8499a00f5e48850128669e0c0775ae3a081bc0be"
+  integrity sha512-TaPoX4qA6ABrACiSI18lQOOKjvbLNrT+84UWfzwcguWQ4nT+sprOSRyt/RVXnt9fQp/wFQVC2NcHbzd+AkXffg==
+  dependencies:
+    "@babel/runtime" "^7.7.4"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
@@ -1654,6 +1661,13 @@ flatted@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.1.1.tgz#c4b489e80096d9df1dfc97c79871aea7c617c469"
   integrity sha512-zAoAQiudy+r5SvnSw3KJy5os/oRJYHzrzja/tBDqrZtNhUw8bt6y8OBzMWcjWr+8liV8Eb6yOhw8WZ7VFZ5ZzA==
+
+font-picker-react@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/font-picker-react/-/font-picker-react-3.5.2.tgz#6111fb37091d2ed210140c03fcebce0f6469cff3"
+  integrity sha512-0JkWIDf2hi6JwnvjIiacLDhO+Sl38RQ4mUGhCWN+Hvj95XalVZ0Aq5zJs/Ybend4uk2yI9rd1QhRRF9RnfHqIQ==
+  dependencies:
+    "@samuelmeuli/font-manager" "^1.4.0"
 
 foreach@^2.0.5:
   version "2.0.5"
