@@ -1,10 +1,16 @@
+// @ts-nocheck
 import {useState} from 'react';
 import FeatherIcon from 'feather-icons-react'
 import sv from '../../constants/Styles';
-import FontPicker from "font-picker-react";
 import styled from 'styled-components';
 import {Label, Text} from '../../constants/StyleComponents';
 
+// this lib isnt compatible with ssr
+import dynamic from "next/dynamic";
+
+const FontPicker = dynamic(() => import("font-picker-react"), {
+    ssr: false,
+});
 ////// STYLE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const Container = styled.div`
