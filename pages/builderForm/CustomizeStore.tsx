@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
@@ -37,7 +38,7 @@ const PreviewItem = styled.div`
   margin-bottom: ${sv.grid*4}px;
 `;
 
-const Preview = styled.div`
+const Preview = styled.div<{ bgColor: string }>`
   flex: 1;
   align-self: stretch;
   ${sv.flexColumn};
@@ -49,7 +50,7 @@ const Preview = styled.div`
   ${sv.box};
 `;
 
-const PreviewButton = styled.div`
+const PreviewButton = styled.div<{ textColor: string }>`
   height: ${sv.buttonHeight}px;
   background: ${props => props.color};
   color: ${props => props.textColor};
@@ -87,6 +88,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
         <H2>Customize your store.</H2>
         <SubTitle>Choose a logo, colors, and fonts to fit your store’s brand.</SubTitle>
         <Field>
+          {/* @ts-ignore */}
           <FilePickerWithLabel
             label={logo ? 'logo' : 'Upload logo (transparent .png or .svg)'}
             file={logo}
@@ -121,6 +123,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           />
         </Actions>
       </Form>
+      {/* @ts-ignore */}
       <Preview bgColor={backgroundColor}>
         <PreviewItem>
           <H2 color={textColor}>Big Title</H2>

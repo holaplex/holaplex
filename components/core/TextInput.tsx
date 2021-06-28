@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import React from 'react';
 import sv from '../../constants/Styles';
 import styled from 'styled-components';
@@ -7,7 +8,7 @@ const Container = styled.div`
   ${sv.inputField};
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ hasRightText: boolean}>`
   flex: 1;
   width: 100%;
   background: none;
@@ -33,12 +34,12 @@ const SubDomain = styled.div`
 `;
 
 type Props = {
-  label: string,
-  subDomain: string,
-  value: string,
-  className: string,
-  placeholder: string,
-  onChange: () => void,
+  label?: string,
+  subDomain?: string,
+  value?: string,
+  className?: string,
+  placeholder?: string,
+  onChange?: () => void,
 }
 
 const TextInput = ({ subDomain, label, value, onChange, placeholder, className }: Props) => {

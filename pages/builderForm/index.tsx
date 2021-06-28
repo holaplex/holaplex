@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import React, {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
@@ -53,7 +54,7 @@ export default function builderForm() {
   const [storeName, setStoreName] = useState('')
   const [subDomain, setSubDomain] = useState('')
 
-  const renderStep = (step) => {
+  const renderStep = (step: number) => {
     switch (step) {
       case 1:
         return <NameStore nextAction={() => setStep(2)} />;

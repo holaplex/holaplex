@@ -1,6 +1,8 @@
 import {useState} from 'react';
+//@ts-ignore
 import FeatherIcon from 'feather-icons-react'
 import sv from '../../constants/Styles';
+// @ts-ignore
 import { SketchPicker } from 'react-color';
 import styled from 'styled-components';
 import {Label} from '../../constants/StyleComponents';
@@ -45,7 +47,7 @@ const Shade = styled.div`
 ////// COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 type Props = {
-  onChange: () => void,
+  onChange: (hex: string) => void,
   color: string,
   label: string
 }
@@ -54,14 +56,14 @@ const ColorPickerField = ({ onChange, color, label }: Props) => {
 
   const [showPicker, setShowPicker] = useState(false)
 
-  const handleChange = (newColor) => {
-    console.log(newColor)
+  const handleChange = (newColor: { hex: string }) => {
     onChange(newColor.hex)
   }
 
   return (
     <Container>
       <Field onClick={() => setShowPicker(true)}>
+        {/* @ts-ignore */}
         <Label noMargin>{label}</Label>
         <ColorPreview color={color} />
         <DropdownIcon size={20} icon="chevron-down" />

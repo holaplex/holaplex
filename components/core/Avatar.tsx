@@ -1,10 +1,12 @@
+// @ts-nocheck 
 import React from 'react';
 import styled from 'styled-components';
 import sv from '../../constants/Styles';
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-const Container = styled.div`
+
+const Container = styled.div<{ size: number }>`
   width: ${props => props.size}px;
   height: ${props => props.size}px;
   border-radius: ${props => props.size/2}px;
@@ -19,7 +21,7 @@ const Container = styled.div`
   }
 `;
 
-const Initials = styled.div`
+const Initials = styled.div<{ fontSize: number }>`
   width: 100%;
   height: 100%;
   font-size: ${props => props.fontSize}px;
@@ -35,7 +37,7 @@ type Props = {
   image?: string,
   name?: string,
   avatarSize?: number,
-  className: string
+  className?: string
 }
 
 export default function Avatar({image, name, avatarSize, className}: Props) {
@@ -44,6 +46,7 @@ export default function Avatar({image, name, avatarSize, className}: Props) {
   const fontSize = avatarSize ? avatarSize*.5 : 14;
 
   let rgx = new RegExp(/(\p{L}{1})\p{L}+/, 'gu');
+  // @ts-ignore
   let initials = (name && [...name.matchAll(rgx)]) || [];
 
   initials = (

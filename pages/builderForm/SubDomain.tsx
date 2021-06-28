@@ -19,6 +19,7 @@ type Props = {
 }
 
 const StepOne = ({nextAction, backAction}: Props) => (
+  // @ts-ignore
   <RoundedContainer small>
     <H2>Now for your sub-domain.</H2>
     <Text>This is the address that people will use to get to your store.</Text>

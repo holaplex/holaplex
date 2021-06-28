@@ -18,7 +18,8 @@ type Props = {
 }
 
 const StepOne = ({nextAction}: Props) => (
-  <RoundedContainer small>
+  // @ts-ignore
+  <RoundedContainer>
     <H2>Let’s start by naming your store.</H2>
     <Text>This is the name the people will see inside your store and also on our registry of stores.</Text>
     <NameField placeholder="e.g. Cat NFT Warehouse" />
