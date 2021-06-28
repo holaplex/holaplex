@@ -16,6 +16,7 @@ import {
   GradientContainer,
   RoundedContainer
 } from '../../constants/StyleComponents'
+import { StorefrontContextProvider } from '../../lib/services/context';
 
 // >>>>> STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -57,16 +58,13 @@ export default function BuilderForm() {
   const renderStep = (step: number) => {
     switch (step) {
       case 1:
-        return <NameStore nextAction={() => setStep(2)} />;
-      case 2:
         return <SubDomain
+          nextAction={() => setStep(2)}
+               />;
+      case 2:
+        return <CustomizeStore
           nextAction={() => setStep(3)}
           backAction={() => setStep(1)}
-               />;
-      case 3:
-        return <CustomizeStore
-          nextAction={() => setStep(4)}
-          backAction={() => setStep(2)}
                />;
       default:
         return <NameStore nextAction={() => setStep(2)} />;
@@ -74,18 +72,20 @@ export default function BuilderForm() {
   };
 
   return (
-    <GradientContainer>
-      <Header>
-        <HeaderContent>
-          <Logo>👋 Holaplex</Logo>
-          <ConnectActions wallet="2u4y3g2g4h5gh425gh24j5h24j5jhv25" />
-        </HeaderContent>
-      </Header>
+    <StorefrontContextProvider>
+      <GradientContainer>
+        <Header>
+          <HeaderContent>
+            <Logo>👋 Holaplex</Logo>
+            <ConnectActions wallet="2u4y3g2g4h5gh425gh24j5h24j5jhv25" />
+          </HeaderContent>
+        </Header>
 
-      <Content>
-        {renderStep(step)}
-      </Content>
-    </GradientContainer>
+        <Content>
+          {renderStep(step)}
+        </Content>
+      </GradientContainer>
+    </StorefrontContextProvider>
 
   )
 }

@@ -15,7 +15,9 @@
   "dependencies": {
     "@prisma/client": "^2.25.0",
     "cors": "^2.8.5",
+    "debounce": "^1.2.1",
     "feather-icons-react": "^0.4.3",
+    "fetch": "^1.1.0",
     "font-picker-react": "^3.5.2",
     "minio": "^7.0.18",
     "next": "11.0.1",
