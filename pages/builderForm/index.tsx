@@ -50,7 +50,7 @@ const Logo = styled.div`
 
 export default function BuilderForm() {
 
-  const [step, setStep] = useState(3)
+  const [step, setStep] = useState(1)
   const [storeName, setStoreName] = useState('')
   const [subDomain, setSubDomain] = useState('')
 
