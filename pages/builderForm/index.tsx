@@ -1,4 +1,4 @@
-// @ts-nocheck 
+// @ts-nocheck
 import React, {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
@@ -52,7 +52,6 @@ const Logo = styled.div`
 export default function BuilderForm() {
 
   const [step, setStep] = useState(1)
-  const [storeName, setStoreName] = useState('')
   const [subDomain, setSubDomain] = useState('')
 
   const renderStep = (step: number) => {
@@ -67,7 +66,7 @@ export default function BuilderForm() {
           backAction={() => setStep(1)}
                />;
       default:
-        return <NameStore nextAction={() => setStep(2)} />;
+        return <SubDomain nextAction={() => setStep(2)} />;
     }
   };
 

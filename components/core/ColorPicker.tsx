@@ -10,7 +10,7 @@ import {Label} from '../../constants/StyleComponents';
 ////// STYLE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const Container = styled.div`
-
+  cursor: pointer;
 `;
 
 const Field = styled.div`
