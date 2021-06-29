@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ApiError } from 'next/dist/next-server/server/api-utils'
+import { Prisma } from '@prisma/client'
 import { Storefront, StorefrontTheme } from '../../../lib/types'
 import prisma from  '../../../lib/prisma'
 import { cors } from  '../../../lib/middleware'
@@ -18,8 +18,7 @@ export default async function handler(
   }) as Storefront
 
   if (!storefront) {
-    res.status(404)
-    return
+    return res.status(404).end()
   }
 
   switch (req.method) {
@@ -37,12 +36,16 @@ export default async function handler(
 
           const updatedStorefront = await prisma.storefront.update({
             where: { subdomain: storefront.subdomain },
-            data: { theme, themeUrl } as Storefront
+            data: { theme, themeUrl }
           }) as Storefront
 
         return res.status(204).json(updatedStorefront)
       } catch(error) {
-        throw new ApiError(500, `error updating storefront ${error}`)
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          return res.status(409).end(error.message)
+        } else {
+          return res.status(500).end()
+        }
       }
     }
     default:

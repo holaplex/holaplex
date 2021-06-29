@@ -1,30 +1,28 @@
-import { PrismaClient } from '@prisma/client'
-import { Storefront } from './../lib/types'
+import prisma from  './../lib/prisma'
 import { style } from './../lib/services/storefront'
 
-const prisma = new PrismaClient()
-
 async function seed() {
-
   const storefront = {
     subdomain: "localhost",
     pubkey: "2UnsjcXyXTJGLGcUwBYSTxJVwC9KYfaNbmd4wKk4zCoP",
     theme: {
-      backgroundColor: '#bbb',
+      backgroundColor: '#eeeeee',
       primaryColor: '#4caf50'
 
     }
-  } as Storefront
+  }
 
   const themeUrl = await style(
     storefront,
     storefront.theme
   )
 
+  const themedStorefront = { ...storefront, themeUrl }
+
   await prisma.storefront.upsert({
     where: { subdomain: storefront.subdomain },
-    update: { ...storefront, themeUrl } as Storefront ,
-    create: { ...storefront, themeUrl } as Storefront 
+    update: themedStorefront,
+    create: themedStorefront 
   })
 }
 
