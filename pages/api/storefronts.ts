@@ -8,11 +8,26 @@ import { style } from '../../lib/services/storefront'
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Storefront>
+  res: NextApiResponse<Storefront | object>
 ) {
   await cors(req, res)
 
   switch (req.method) {
+    case 'GET': {
+      const storefront = await prisma.storefront.findUnique({
+        where: {
+          subdomain: req.query.subdomain as string,
+        }
+      }) as Storefront
+
+    
+      if (!storefront) {
+        res.status(404).send({})
+        return;
+      }
+      res.status(200).json(storefront)
+      return;
+    }
     case 'POST': {
       const existingSubdomain = await prisma.storefront.findFirst({ where: { subdomain: req.body.subdomain }})
       const existingPubKey = await prisma.storefront.findFirst({ where: { pubkey: req.body.pubkey }})

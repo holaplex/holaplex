@@ -39,7 +39,7 @@ type Props = {
   value?: string,
   className?: string,
   placeholder?: string,
-  onChange?: () => void,
+  onChange?: Function,
 }
 
 const TextInput = ({ subDomain, label, value, onChange, placeholder, className }: Props) => {
