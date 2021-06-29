@@ -52,7 +52,6 @@ const Logo = styled.div`
 export default function BuilderForm() {
 
   const [step, setStep] = useState(1)
-  const [storeName, setStoreName] = useState('')
   const [subDomain, setSubDomain] = useState('')
 
   const renderStep = (step: number) => {
@@ -70,7 +69,7 @@ export default function BuilderForm() {
           publishLater={() => console.log('publish that shit, some other time')}
                 />;
       default:
-      return <SubDomain nextAction={() => setStep(2)} />;
+        return <SubDomain nextAction={() => setStep(2)} />;
     }
   };
 
