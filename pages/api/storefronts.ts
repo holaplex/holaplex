@@ -30,26 +30,33 @@ export default async function handler(
     }
     case 'POST': {
       const existingSubdomain = await prisma.storefront.findFirst({ where: { subdomain: req.body.subdomain }})
-      const existingPubKey = await prisma.storefront.findFirst({ where: { pubkey: req.body.pubkey }})
-
-      if (existingPubKey) {
-        throw new ApiError(422, "storefront with this pubkey already exists")
-      }
       if (existingSubdomain) {
         throw new ApiError(422, "storefront with this subdomain already exists")
       }
-
+     
       try {
         const storefrontParams = req.body as Storefront
 
-        const themeUrl = await style(
-          storefrontParams,
-          storefrontParams.theme
-        )
+        const newStoreFront = storefrontParams
 
-        const storefront = await prisma.storefront.create({ 
-          data: { ...storefrontParams, themeUrl } as Storefront,
-        }) as Storefront
+        if (storefrontParams.theme) {
+          const themeUrl = await style(
+            storefrontParams,
+            storefrontParams.theme
+          )
+          newStoreFront.themeUrl = themeUrl
+
+        }
+
+        let storefront;
+        try {
+          storefront = await prisma.storefront.create({ 
+            data: { ...newStoreFront } as Storefront,
+          }) as Storefront
+
+        } catch(error) {
+          throw new ApiError(500, `storefront creation error ${error}`)
+        }
 
         return res.status(201).json(storefront)
       } catch(error) {

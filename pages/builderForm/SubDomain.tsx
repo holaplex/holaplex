@@ -10,15 +10,12 @@ import {
 } from '../../constants/StyleComponents'
 // @ts-ignore
 import debounce from 'debounce'
-import { checkStorefrontAvailability } from '../../lib/services/context/actions'
+import { checkStorefrontAvailability, createStorefront } from '../../lib/services/context/actions'
 import { useStorefrontContext } from '../../lib/services/context';
-import { BaseSyntheticEvent } from 'react';
 
 const NameField = styled(TextInput)`
   margin: ${sv.appPadding}px 0;
 `;
-
-const debouncedCheck = debounce(checkStorefrontAvailability, 300)
 
 type Props = {
   nextAction: () => void,
@@ -33,7 +30,15 @@ const StepOne = ({nextAction, backAction}: Props) => {
   } = useStorefrontContext();
   
   const debouncedCheck = debounce((subdomain: string) => checkStorefrontAvailability(subdomain, dispatch), 300)
-  console.log({ available }, 'updated availability')
+
+  const handleNext = async () => {
+    if (available) {
+      await createStorefront(desiredStorefrontSubdomain, dispatch)
+
+      nextAction()
+
+    }
+  }
   
   return (
     // @ts-ignore
@@ -44,7 +49,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => debouncedCheck(e.target.value)}
         subDomain=".holaplex.com"
       />
-      { desiredStorefrontSubdomain.length && 
+      { !!desiredStorefrontSubdomain.length && 
         <Text
         color={available ? '#27AE60': 'red'}
         style={{ textAlign: 'right' }}> {available ? 'domain available' : 'domain already taken :-('}</Text>
@@ -59,7 +64,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
         <Button
           subtle={!available}
           label="Next"
-          action={nextAction}
+          action={handleNext}
         />
       </Actions>
     </RoundedContainer>

@@ -16,6 +16,8 @@ import {
   RoundedContainer,
   Actions
 } from '../../constants/StyleComponents';
+import { saveTheme } from '../../lib/services/context/actions'
+import { useStorefrontContext } from '../../lib/services/context/index'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -76,6 +78,7 @@ type Props = {
 
 const CustomizeStore = ({nextAction, backAction}: Props) => {
 
+
   const [logo, setLogo] = useState(null)
   const [backgroundColor, setBackgroundColor] = useState('#333333')
   const [primaryColor, setPrimaryColor] = useState('#F2C94C')
@@ -84,6 +87,21 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
 
   const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
+  
+  const {
+    dispatch,
+    storefront
+  } = useStorefrontContext();
+
+  const handleNext = async () => {
+
+    saveTheme({
+      backgroundColor,
+      primaryColor
+    }, storefront, dispatch)
+
+    nextAction()
+  }
 
   return (
     <Container>
@@ -129,7 +147,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           />
           <Button
             label="Next"
-            action={nextAction}
+            action={handleNext}
           />
         </Actions>
       </Form>
