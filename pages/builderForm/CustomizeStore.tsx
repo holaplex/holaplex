@@ -1,4 +1,4 @@
-// @ts-nocheck 
+// @ts-nocheck
 import {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
@@ -138,6 +138,13 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
             font={titleFont}
           />
         </Field>
+        <Field>
+          <FontPicker
+            label="Main Text Font"
+            pickerId="body"
+            font={textFont}
+          />
+        </Field>
         <Actions>
           <Button
             label="Back"
@@ -153,7 +160,6 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
       </Form>
       {/* @ts-ignore */}
       <Preview bgColor={backgroundColor}>
-        <div className="apply-font">Does this work???</div>
         <PreviewItem>
           <H2 className="apply-font-title" color={textColor}>Big Title</H2>
         </PreviewItem>
@@ -173,7 +179,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
         </PreviewItem>
         <PreviewItem>
           <PreviewButton
-            className="body-font"
+            className="apply-font-body"
             color={primaryColor}
             textColor={buttontextColor}
           >

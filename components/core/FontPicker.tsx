@@ -16,17 +16,23 @@ const FontPicker = dynamic(() => import("font-picker-react"), {
 const Container = styled.div`
   ${sv.inputField};
   position: relative;
-  #font-picker {
+  #font-picker-title, #font-picker-body {
     position: absolute;
     background: none;
     box-shadow: none;
+    width: 100%;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
     .dropdown-button {
+      position: absolute;
       height: 100%;
       opacity: 0;
+    }
+    .font-list {
+      top: 100%;
+      border-radius: 8px;
     }
   }
 `;
@@ -66,7 +72,7 @@ const FontPickerField = ({ onChange, font, label, pickerId }: Props) => {
       <DropdownIcon size={20} icon="chevron-down" />
       <FontPicker
 				apiKey={googleApiKey}
-        // pickerId={pickerId}
+        pickerId={pickerId}
 				activeFontFamily={fontFamily}
 				onChange={handleChange}
 			/>

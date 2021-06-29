@@ -28,7 +28,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
     available,
     desiredStorefrontSubdomain
   } = useStorefrontContext();
-  
+
   const debouncedCheck = debounce((subdomain: string) => checkStorefrontAvailability(subdomain, dispatch), 300)
 
   const handleNext = async () => {
@@ -43,16 +43,17 @@ const StepOne = ({nextAction, backAction}: Props) => {
   return (
     // @ts-ignore
     <RoundedContainer small>
-      <H2>Now for your sub-domain.</H2>
+      <H2>Let&apos;s start with your sub-domain.</H2>
       <Text>This is the address that people will use to get to your store.</Text>
-      <NameField 
+      <NameField
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => debouncedCheck(e.target.value)}
         subDomain=".holaplex.com"
       />
       { !!desiredStorefrontSubdomain.length && 
         <Text
-        color={available ? '#27AE60': 'red'}
-        style={{ textAlign: 'right' }}> {available ? 'domain available' : 'domain already taken :-('}</Text>
+          color={available ? '#27AE60': 'red'}
+          style={{ textAlign: 'right' }}> {available ? 'domain available' : 'domain already taken :-('}
+        </Text>
       }
       <Actions>
         <Button
@@ -62,7 +63,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
           action={backAction}
         />
         <Button
-          subtle={!available}
+          inactive={!available}
           label="Next"
           action={handleNext}
         />

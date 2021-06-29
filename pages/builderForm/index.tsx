@@ -1,11 +1,11 @@
-// @ts-nocheck 
+// @ts-nocheck
 import React, {useState} from 'react';
 import sv from '../../constants/Styles'
 import styled from 'styled-components';
 import Button from '../../components/core/Button';
 import TextInput from '../../components/core/TextInput';
 import ConnectActions from '../../components/ConnectActions'
-import NameStore from './NameStore';
+import PublishStore from './PublishStore';
 import SubDomain from './SubDomain';
 import CustomizeStore from './CustomizeStore';
 import { useRouter } from 'next/router'
@@ -52,22 +52,24 @@ const Logo = styled.div`
 export default function BuilderForm() {
 
   const [step, setStep] = useState(1)
-  const [storeName, setStoreName] = useState('')
   const [subDomain, setSubDomain] = useState('')
 
   const renderStep = (step: number) => {
     switch (step) {
       case 1:
-        return <SubDomain
-          nextAction={() => setStep(2)}
-               />;
+        return <SubDomain nextAction={() => setStep(2)} />;
       case 2:
         return <CustomizeStore
           nextAction={() => setStep(3)}
           backAction={() => setStep(1)}
                />;
+      case 3:
+        return <PublishStore
+          publishNow={() => console.log('publish that shit!')}
+          publishLater={() => console.log('publish that shit, some other time')}
+                />;
       default:
-        return <NameStore nextAction={() => setStep(2)} />;
+        return <SubDomain nextAction={() => setStep(2)} />;
     }
   };
 
