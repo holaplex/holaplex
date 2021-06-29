@@ -18,6 +18,10 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+The application assumes a profile called _opus_ by default. The profile can be changed by editing the AWS_PROFILE environment variable in the [.env](/.env) file. The user should have the following acccess:
+
+- s3://opus-logic-holaplex-storefronts - READ/WRIE objects
+
 A local database can be booted within a docker container using
 docker-compose. Run the
 following commands to start a database, load schema, and seed with demo
@@ -26,7 +30,7 @@ storefront.
 ```
 docker-compose up -d
 yarn db:schema:push
-AWS_ACCESS_KEY=${AWS_ACCESS_KEY} AWS_SECRET_KEY=${AWS_SECRET_KEY} yarn db:seed
+yarn db:seed
 ```
 
 ## Learn More

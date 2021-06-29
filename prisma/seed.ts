@@ -10,7 +10,7 @@ async function seed() {
     subdomain: "localhost",
     pubkey: "2UnsjcXyXTJGLGcUwBYSTxJVwC9KYfaNbmd4wKk4zCoP",
     theme: {
-      backgroundColor: '#eeeeee',
+      backgroundColor: '#bbb',
       primaryColor: '#4caf50'
 
     }
@@ -23,7 +23,7 @@ async function seed() {
 
   await prisma.storefront.upsert({
     where: { subdomain: storefront.subdomain },
-    update: {},
+    update: { ...storefront, themeUrl } as Storefront ,
     create: { ...storefront, themeUrl } as Storefront 
   })
 }
