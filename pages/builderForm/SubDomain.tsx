@@ -38,7 +38,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
   return (
     // @ts-ignore
     <RoundedContainer small>
-      <H2>Let's start with your sub-domain.</H2>
+      <H2>Let&apos;s start with your sub-domain.</H2>
       <Text>This is the address that people will use to get to your store.</Text>
       <NameField
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => debouncedCheck(e.target.value)}
@@ -58,7 +58,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
           action={backAction}
         />
         <Button
-          disabled={!available}
+          inactive={!available}
           label="Next"
           action={nextAction}
         />
