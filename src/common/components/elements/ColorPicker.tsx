@@ -1,11 +1,11 @@
 import {useState} from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react'
-import sv from '../../constants/Styles';
+import sv from '@/constants/Styles';
 // @ts-ignore
 import { SketchPicker } from 'react-color';
 import styled from 'styled-components';
-import {Label} from '../../constants/StyleComponents';
+import {Label} from '@/constants/StyleComponents';
 
 ////// STYLE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

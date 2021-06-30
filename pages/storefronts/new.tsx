@@ -1,22 +1,15 @@
 // @ts-nocheck
 import React, {useState} from 'react';
-import sv from '../../constants/Styles'
+import sv from '@/constants/Styles'
 import styled from 'styled-components';
-import Button from '../../components/core/Button';
-import TextInput from '../../components/core/TextInput';
-import ConnectActions from '../../components/ConnectActions'
-import PublishStore from './PublishStore';
-import SubDomain from './SubDomain';
-import CustomizeStore from './CustomizeStore';
-import { useRouter } from 'next/router'
+import ConnectActions from '@/modules/wallet/components/Avatar'
+import PublishStore from '@/modules/storefront/components/PublishStore';
+import SubDomain from '@/modules/storefront/components/SubDomain';
+import CustomizeStore from '@/modules/storefront/components/CustomizeStore';
 import {
-  Text,
-  H2,
-  Actions,
   GradientContainer,
-  RoundedContainer
-} from '../../constants/StyleComponents'
-import { StorefrontContextProvider } from '../../lib/services/context';
+} from '@/constants/StyleComponents'
+import { StorefrontContextProvider } from '@/modules/storefront/components/Context';
 
 // >>>>> STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -1,4 +1,4 @@
-import { StorefrontTheme } from "../../types";
+import { StorefrontTheme } from "@/modules/storefront/types";
 
 const THEME_DEFAULTS = {
   backgroundColor: "#fff",

@@ -1,13 +1,12 @@
 // @ts-nocheck
 import {useState} from 'react';
-import sv from '../../constants/Styles'
+import sv from '@/constants/Styles'
 import styled from 'styled-components';
-import Button from '../../components/core/Button';
-import Link from '../../components/core/Link';
-import FilePickerWithLabel from '../../components/core/FilePickerWithLabel';
-import ColorPicker from '../../components/core/ColorPicker';
-import FontPicker from '../../components/core/FontPicker';
-import {isDarkColor} from '../../lib/services/utils';
+import Button from '@/components/elements/Button';
+import FilePickerWithLabel from '@/components/elements/FilePickerWithLabel';
+import ColorPicker from '@/components/elements/ColorPicker';
+import FontPicker from '@/components/elements/FontPicker';
+import {isDarkColor} from '@/utils/index';
 import {
   Text,
   H2,
@@ -15,9 +14,9 @@ import {
   Label,
   RoundedContainer,
   Actions
-} from '../../constants/StyleComponents';
-import { saveTheme } from '../../lib/services/context/actions'
-import { useStorefrontContext } from '../../lib/services/context/index'
+} from '@/constants/StyleComponents';
+import { saveTheme } from '../client'
+import { useStorefrontContext } from './Context'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

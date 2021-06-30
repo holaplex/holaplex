@@ -1,7 +1,7 @@
 // @ts-nocheck 
 import React from 'react';
 import styled from 'styled-components';
-import sv from '../../constants/Styles';
+import sv from '@/constants/Styles';
 import Image from 'next/image'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

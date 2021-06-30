@@ -1,5 +1,5 @@
 import React, {ComponentProps, FC} from 'react';
-import { Storefront, StorefrontTheme } from '../../../lib/types'
+import { Storefront, StorefrontTheme } from '../types'
 
 enum ACTIONS {
   UPDATE_SUBDOMAIN_AVAILABILITY = 'UPDATE_SUBDOMAIN_AVAILABILITY',

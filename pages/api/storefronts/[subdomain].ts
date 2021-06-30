@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { pick } from 'ramda'
 import { Prisma } from '@prisma/client'
-import { Storefront } from '../../../lib/types'
-import prisma from  '../../../lib/prisma'
-import { cors } from  '../../../lib/middleware'
-import { style } from '../../../lib/services/storefront'
+import { Storefront } from '@/modules/storefront/types'
+import prisma from  '@/modules/db'
+import { cors } from  '@/modules/middleware'
+import { style } from '@/modules/storefront'
 
 export default async function handler(
   req: NextApiRequest,

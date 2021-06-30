@@ -1,5 +1,5 @@
-import prisma from  './../lib/prisma'
-import { style } from './../lib/services/storefront'
+import prisma from  '@/modules/db'
+import { style } from '@/modules/storefront'
 
 async function seed() {
   const storefront = {
