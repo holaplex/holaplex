@@ -1,10 +1,10 @@
-import sv from '../../constants/Styles'
+import sv from '@/constants/Styles'
 import styled from 'styled-components';
 // @ts-ignore
 import { rgba } from 'polished';
-import HolaWaves from '../../assets/images/HolaWaves';
-import Button from '../../components/core/Button';
-import Link from '../../components/core/Link'
+import HolaWaves from '@/assets/images/HolaWaves';
+import Button from './Button';
+import Link from './Link'
 import { useRouter } from 'next/router'
 import {
   Text,
@@ -62,9 +62,9 @@ export default function Landing() {
           <PageTitle center invert>Holaplex</PageTitle>
           {/* @ts-ignore */}
           <SubTitle center invert>Design, launch, and host your NFT marketplace. No coding required!</SubTitle>
-          <NewStoreButton action={() => router.push('/builderForm')} label="Create Your Store" />
+          <NewStoreButton action={() => router.push('/storefronts/new')} label="Create Your Store" />
           <HasStoreText color={rgba(sv.colors.buttonText, .6)}>
-            Already have a store? <Link invert href="/builderForm" label="Connect Wallet" /> to manage.
+            Already have a store? <Link invert href="/storefronts/new" label="Connect Wallet" /> to manage.
           </HasStoreText>
         </MainPitch>
       </Content>

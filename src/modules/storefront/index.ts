@@ -1,8 +1,8 @@
 import SparkMD5 from 'spark-md5'
 import { curry } from 'ramda';
-import { upload } from './../../services/bucket'
-import { Storefront, StorefrontTheme } from './../../types'
-import { stylesheet } from './../theme'
+import { upload } from '@/modules/bucket'
+import { Storefront, StorefrontTheme } from './types'
+import { stylesheet } from '@/modules/theme'
 
 const uploadStysheet = curry(upload)("opus-logica-holaplex-storefronts", "text/css")
 

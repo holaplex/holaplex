@@ -1,9 +1,9 @@
 // @ts-nocheck
 import {useState} from 'react';
 import FeatherIcon from 'feather-icons-react'
-import sv from '../../constants/Styles';
+import sv from '@/constants/Styles';
 import styled from 'styled-components';
-import {Label, Text} from '../../constants/StyleComponents';
+import { Label } from '@/constants/StyleComponents';
 
 // this lib isnt compatible with ssr
 import dynamic from "next/dynamic";

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import sv from '../../constants/Styles';
+import sv from '../../../../constants/Styles';
 import styled from 'styled-components';
 import HandWaving from './HandWaving';
 import {Label} from '../../constants/StyleComponents';

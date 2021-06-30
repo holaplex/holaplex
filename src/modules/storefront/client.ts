@@ -1,5 +1,5 @@
 import React from "react";
-import { StorefrontTheme, Storefront } from "../../../types";
+import { StorefrontTheme, Storefront } from "@/modules/storefront";
 
  
 export async function checkStorefrontAvailability(subdomain: string, dispatch: React.Dispatch<any>) {
@@ -21,7 +21,7 @@ export async function checkStorefrontAvailability(subdomain: string, dispatch: R
           desiredStorefrontSubdomain: subdomain
         },
       })
-      
+
       return
     }
 
@@ -96,6 +96,4 @@ export async function saveTheme(
    } catch (error) {
      dispatch({ type: 'THEME_SAVE_ERROR', payload: { error }})
    }
-
-
 }

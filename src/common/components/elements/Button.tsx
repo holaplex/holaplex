@@ -2,7 +2,7 @@
 import React from 'react';
 // @ts-ignore
 import {darken} from 'polished'
-import sv from '../../constants/Styles';
+import sv from '@/constants/Styles';
 import styled from 'styled-components';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react'

@@ -1,9 +1,9 @@
 import React, {useState, useRef, useEffect} from 'react'
 import FeatherIcon from 'feather-icons-react'
 import styled from 'styled-components';
-import sv from '../../constants/Styles';
+import sv from '@/constants/Styles';
 import Button from './Button';
-import {Text} from '../../constants/StyleComponents';
+import {Text} from '@/constants/StyleComponents';
 
 // STYLE ##########################################################
 
