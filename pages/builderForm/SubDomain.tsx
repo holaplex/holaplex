@@ -31,12 +31,10 @@ const StepOne = ({nextAction, backAction}: Props) => {
 
   const debouncedCheck = debounce((subdomain: string) => checkStorefrontAvailability(subdomain, dispatch), 300)
 
-  const handleNext = async () => {
+  const handleNext = async (nextAction: Function) => {
     if (available) {
       await createStorefront(desiredStorefrontSubdomain, dispatch)
-
       nextAction()
-
     }
   }
   
@@ -65,7 +63,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
         <Button
           inactive={!available}
           label="Next"
-          action={handleNext}
+          action={() => handleNext(nextAction)}
         />
       </Actions>
     </RoundedContainer>

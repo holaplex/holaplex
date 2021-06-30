@@ -12,21 +12,24 @@ export async function checkStorefrontAvailability(subdomain: string, dispatch: R
 
    try {
     const response = await fetch(`/api/storefronts/${subdomain}`, requestOptions);
+    if (response.status === 404) {
+      dispatch({
+        type: 'UPDATE_SUBDOMAIN_AVAILABILITY',
+        payload: {
+          available: true,
+          desiredStorefrontSubdomain: subdomain
+        },
+      })
+      return;
+    }
     const data = await response.json()
+
 
     if (data.subdomain === subdomain) {
       dispatch({
         type: 'UPDATE_SUBDOMAIN_AVAILABILITY',
         payload: {
           available: false,
-          desiredStorefrontSubdomain: subdomain
-        },
-      })
-    } else {
-      dispatch({
-        type: 'UPDATE_SUBDOMAIN_AVAILABILITY',
-        payload: {
-          available: true,
           desiredStorefrontSubdomain: subdomain
         },
       })
