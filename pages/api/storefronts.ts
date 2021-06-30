@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from  '../../lib/prisma'
+import prisma from  '@/modules/db'
 import { Prisma } from '@prisma/client'
-import { Storefront } from '../../lib/types'
-import { cors } from  '../../lib/middleware'
-import { style } from '../../lib/services/storefront'
+import { Storefront } from '@/modules/storefront/types'
+import { cors } from  '@/modules/middleware'
+import { style } from '@/modules/storefront'
 
 export default async function handler(
   req: NextApiRequest,

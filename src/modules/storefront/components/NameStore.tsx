@@ -1,13 +1,13 @@
-import sv from '../../constants/Styles'
+import sv from '@/constants/Styles'
 import styled from 'styled-components';
-import Button from '../../components/core/Button';
-import TextInput from '../../components/core/TextInput';
+import Button from '@/components/elements/Button';
+import TextInput from '@/components/elements/TextInput';
 import {
   Text,
   H2,
   RoundedContainer,
   Actions
-} from '../../constants/StyleComponents'
+} from '@/constants/StyleComponents'
 
 const NameField = styled(TextInput)`
   margin: ${sv.appPadding}px 0;

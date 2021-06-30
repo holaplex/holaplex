@@ -1,4 +1,4 @@
-import { stylesheet } from './../lib/services/theme'
+import { stylesheet } from '../src/modules/theme'
 //@ts-ignore
 import { expect } from 'chai'
 

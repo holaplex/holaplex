@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Button from './core/Button';
-import Avatar from './core/Avatar';
+import Button from '@/components/elements/Button';
+import Avatar from '@/components/elements/Avatar';
 
 ////// STYLE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -13,7 +13,7 @@ type Props = {
   wallet: string
 }
 
-const ConnectActions = ({ wallet }: Props) => {
+const WalletAvatar = ({ wallet }: Props) => {
   return (
     <Container>
       {wallet ?
@@ -24,4 +24,4 @@ const ConnectActions = ({ wallet }: Props) => {
   )
 }
 
-export default ConnectActions;
+export default WalletAvatar;

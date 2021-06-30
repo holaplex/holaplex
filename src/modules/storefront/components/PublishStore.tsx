@@ -1,12 +1,10 @@
-import sv from '../../constants/Styles'
-import styled from 'styled-components';
-import Button from '../../components/core/Button';
+import Button from '@/components/elements/Button';
 import {
   Text,
   H2,
   RoundedContainer,
   Actions
-} from '../../constants/StyleComponents'
+} from '@/constants/StyleComponents'
 
 type Props = {
   publishNow: () => void,

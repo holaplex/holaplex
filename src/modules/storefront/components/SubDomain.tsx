@@ -1,17 +1,17 @@
-import sv from '../../constants/Styles'
+import sv from '@/constants/Styles'
 import styled from 'styled-components';
-import Button from '../../components/core/Button';
-import TextInput from '../../components/core/TextInput';
+import Button from '@/components/elements/Button';
+import TextInput from '@/components/elements/TextInput';
 import {
   Text,
   H2,
   RoundedContainer,
   Actions
-} from '../../constants/StyleComponents'
+} from '@/constants/StyleComponents'
 // @ts-ignore
 import debounce from 'debounce'
-import { checkStorefrontAvailability, createStorefront } from '../../lib/services/context/actions'
-import { useStorefrontContext } from '../../lib/services/context';
+import { checkStorefrontAvailability, createStorefront } from '@/modules/storefront/client'
+import { useStorefrontContext } from '@/modules/storefront/components/Context';
 
 const NameField = styled(TextInput)`
   margin: ${sv.appPadding}px 0;
