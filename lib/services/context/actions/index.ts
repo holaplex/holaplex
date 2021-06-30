@@ -12,7 +12,8 @@ export async function checkStorefrontAvailability(subdomain: string, dispatch: R
 
    try {
     const response = await fetch(`/api/storefronts/${subdomain}`, requestOptions);
-    if (response.status === 404) {
+
+    if (response.status === 200) {
       dispatch({
         type: 'UPDATE_SUBDOMAIN_AVAILABILITY',
         payload: {
@@ -20,21 +21,17 @@ export async function checkStorefrontAvailability(subdomain: string, dispatch: R
           desiredStorefrontSubdomain: subdomain
         },
       })
-      return;
+      
+      return
     }
-    const data = await response.json()
 
-
-    if (data.subdomain === subdomain) {
-      dispatch({
-        type: 'UPDATE_SUBDOMAIN_AVAILABILITY',
-        payload: {
-          available: false,
-          desiredStorefrontSubdomain: subdomain
-        },
-      })
-    }
-    return;
+    dispatch({
+      type: 'UPDATE_SUBDOMAIN_AVAILABILITY',
+      payload: {
+        available: true,
+        desiredStorefrontSubdomain: subdomain
+      },
+    })
 
    } catch (error) {
      dispatch({ type: 'UPDATE_SUBDOMAIN_AVAILABILITY', payload: { error }})
@@ -50,7 +47,7 @@ export async function createStorefront(subdomain: string, dispatch: React.Dispat
     body: JSON.stringify({ subdomain })
   };
   try {
-    const response = await fetch(`/api/storefronts/`, requestOptions);
+    const response = await fetch(`/api/storefronts`, requestOptions);
     const data = await response.json()
 
     if (data.subdomain) {

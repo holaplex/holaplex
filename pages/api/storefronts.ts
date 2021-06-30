@@ -15,17 +15,16 @@ export default async function handler(
   switch (req.method) {
     case 'POST': {
       try {
-        const storefrontParams = req.body as Storefront
+        const storefrontParams = { ...{ theme: {}, pubkey: '' }, ...req.body } as Storefront
 
         const themeUrl = await style(
           storefrontParams,
           storefrontParams.theme
         )
-       
+
         const storefront = await prisma.storefront.create({ 
           data: { ...storefrontParams, themeUrl },
         }) as Storefront
-
         return res.status(201).json(storefront)
       } catch(error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

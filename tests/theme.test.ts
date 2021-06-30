@@ -73,5 +73,41 @@ h4,
 `
       )
     })
-  }) 
+  })
+
+  describe('no theme', () => {
+    it('applies default theme', () => {
+      const sheet = stylesheet({})
+  
+      expect(sheet).to.be.eql(`body {
+  background-color: #fff;
+}
+.app-bar-box, .ant-card-meta, .ant-card-cover {
+  background-color: #ff15ff;
+  background: #ff15ff;
+}
+.artist-card .ant-card-body{
+  background: #ff12ff;
+  background-color: #ff12ff;
+}
+.ant-card-bordered {
+  border-color: #ff12ff;
+}
+h6,
+h2,
+h4,
+.art-title,
+.cd-number,
+.tab-title,
+.title,
+.app-btn,
+.ant-tabs-tab-active .tab-title,
+.artist-card-name,
+.ant-card-meta-title {
+  color: #000;
+}
+`
+      )
+    })
+  })
 })
