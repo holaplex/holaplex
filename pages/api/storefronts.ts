@@ -27,6 +27,7 @@ export default async function handler(
         }) as Storefront
         return res.status(201).json(storefront)
       } catch(error) {
+        console.log({ error })
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           return res.status(422).end(error.message)
         } else {
