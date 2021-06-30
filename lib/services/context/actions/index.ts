@@ -11,7 +11,7 @@ export async function checkStorefrontAvailability(subdomain: string, dispatch: R
   };
 
    try {
-    const response = await fetch(`/api/storefronts?subdomain=${subdomain}`, requestOptions);
+    const response = await fetch(`/api/storefronts/${subdomain}`, requestOptions);
     const data = await response.json()
 
     if (data.subdomain === subdomain) {

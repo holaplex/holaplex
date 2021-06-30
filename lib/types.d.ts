@@ -6,10 +6,9 @@ export type StorefrontTheme = {
 }
 
 export type Storefront = {
-  id: number,
-  theme: StorefrontTheme,
-  subdomain: string,
-  pubkey: string,
-  themeUrl: string
+  id?: number;
+  theme: StorefrontTheme;
+  subdomain: string;
+  pubkey: string;
+  themeUrl?: string;
 }
-

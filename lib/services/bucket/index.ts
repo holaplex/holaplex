@@ -1,24 +1,24 @@
-import { Client } from 'minio'
+    import { S3Client, PutObjectCommand, PutObjectCommandOutput } from "@aws-sdk/client-s3"
 import { Readable } from 'stream'
 
-export async function upload(bucket: string, location: string, blob: string): Promise<void> {
-    const minioClient = new Client({
-        endPoint: 's3.amazonaws.com',
-        accessKey: process.env.AWS_ACCESS_KEY as string,
-        secretKey: process.env.AWS_SECRET_KEY as string
-    });
+export async function upload(Bucket: string, ContentType: string, Key: string, blob: string):  Promise<PutObjectCommandOutput> {
+    const s3 = new S3Client({ region: process.env.AWS_REGION })
 
-    return new Promise((resolve, reject) => {
-        const fs = new Readable()
-        fs.push(blob)
-        fs.push(null) 
+    const stream = new Readable()
+    stream.push(blob)
+    stream.push(null)
 
-        minioClient.putObject(bucket, location, fs, async function(err: Error) {
-            if(err) {
-                reject(err)
-            }
-
-            resolve()
-        })
-    }) 
+    try {
+        const data =  await s3.send(
+            new PutObjectCommand({
+                Bucket,
+                Key,
+                Body: stream.read(),
+                ContentType       
+            })
+        )
+        return data
+    } catch(err) {
+        throw err
+    }
 }
