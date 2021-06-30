@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { pick } from 'ramda'
 import { Prisma } from '@prisma/client'
-import { Storefront, StorefrontTheme } from '../../../lib/types'
+import { Storefront } from '../../../lib/types'
 import prisma from  '../../../lib/prisma'
 import { cors } from  '../../../lib/middleware'
 import { style } from '../../../lib/services/storefront'
@@ -27,19 +28,22 @@ export default async function handler(
     }
     case 'PATCH': {
       try {
-          const theme = req.body.theme as StorefrontTheme
+          const storefrontParams = { ...{ theme: {} }, ...storefront, ...req.body } as Storefront
 
           const themeUrl = await style(
             storefront,
-            theme
+            storefrontParams.theme
           )
 
           const updatedStorefront = await prisma.storefront.update({
             where: { subdomain: storefront.subdomain },
-            data: { theme, themeUrl }
+            data: {
+              ...storefrontParams,
+              themeUrl
+            }
           }) as Storefront
 
-        return res.status(204).json(updatedStorefront)
+        return res.status(200).json(updatedStorefront)
       } catch(error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           return res.status(409).end(error.message)

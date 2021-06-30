@@ -77,8 +77,6 @@ type Props = {
 }
 
 const CustomizeStore = ({nextAction, backAction}: Props) => {
-
-
   const [logo, setLogo] = useState(null)
   const [backgroundColor, setBackgroundColor] = useState('#333333')
   const [primaryColor, setPrimaryColor] = useState('#F2C94C')
@@ -94,7 +92,6 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
   } = useStorefrontContext();
 
   const handleNext = async () => {
-
     saveTheme({
       backgroundColor,
       primaryColor

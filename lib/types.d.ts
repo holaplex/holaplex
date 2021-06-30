@@ -1,14 +1,14 @@
 import { Prisma } from ".prisma/client";
 
 export type StorefrontTheme = {
-  primaryColor: string;
-  backgroundColor: string;
+  primaryColor?: string;
+  backgroundColor?: string;
 }
 
 export type Storefront = {
   id?: number;
-  theme: StorefrontTheme;
+  theme?: StorefrontTheme;
   subdomain: string;
-  pubkey: string;
+  pubkey?: string;
   themeUrl?: string;
 }

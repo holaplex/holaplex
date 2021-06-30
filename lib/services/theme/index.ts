@@ -1,10 +1,14 @@
 import { StorefrontTheme } from "../../types";
 
+const THEME_DEFAULTS = {
+  backgroundColor: "#fff",
+  primaryColor: "#000"
+}
 export function stylesheet(theme: StorefrontTheme) {
   const {
     backgroundColor,
     primaryColor,
-  } = theme
+  } = {...THEME_DEFAULTS, ...theme}
 
   return `body {
   background-color: ${backgroundColor};
