@@ -14,17 +14,11 @@ type Props = {
 const PublishStore = ({publishNow, publishLater}: Props) => (
   // @ts-ignore
   <RoundedContainer>
-    <H2>That’s it, you’re all done!</H2>
-    <Text>Once you click publish you will be redirected to your store. After that you can click on the menu in the upper right to access the settings for your store.</Text>
+    <H2>Almost done!</H2>
+    <Text>The storefront is themed but there is no pubkey associated to it yet. Reach out to our team to activate the storefront.</Text>
     <Actions>
       <Button
-        label="Publish Later"
-        subtle
-        marginRight
-        action={publishLater}
-      />
-      <Button
-        label="Publish Your Store"
+        label="Back to Home"
         action={publishNow}
       />
     </Actions>

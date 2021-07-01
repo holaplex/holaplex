@@ -3,6 +3,7 @@ import { Storefront, StorefrontTheme } from '../types'
 
 enum ACTIONS {
   UPDATE_SUBDOMAIN_AVAILABILITY = 'UPDATE_SUBDOMAIN_AVAILABILITY',
+  UPDATE_SUBDOMAIN_NAME = 'UPDATE_SUBDOMAIN_NAME',
   THEME_SAVED = 'THEME_SAVED',
   THEME_SAVE_ERROR = 'THEME_SAVE_ERROR',
   STOREFRONT_SAVED = 'STOREFRONT_SAVED',
@@ -21,17 +22,23 @@ export type StorefrontState = {
 
 export type StorefrontActions = 
   | { type: ACTIONS.UPDATE_SUBDOMAIN_AVAILABILITY, payload: { desiredStorefrontSubdomain: string, available: boolean } }
+  | { type: ACTIONS.UPDATE_SUBDOMAIN_NAME, payload: { desiredStorefrontSubdomain: string } }
   | { type: ACTIONS.THEME_SAVE_ERROR, payload: ErrorPayload }
   | { type: ACTIONS.THEME_SAVED, payload: StorefrontTheme }
   | { type: ACTIONS.STOREFRONT_SAVE_ERROR, payload: ErrorPayload }
-  | { type: ACTIONS.STOREFRONT_SAVED, payload: Storefront };
-   
+  | { type: ACTIONS.STOREFRONT_SAVED, payload: Storefront }
+  ;
+ 
 
 
 
 function storefrontReducer(state: StorefrontState, action: StorefrontActions): StorefrontState {
   const {type, payload} = action;
   switch (type) {
+    case ACTIONS.UPDATE_SUBDOMAIN_NAME: return {
+      ...state,
+      ...payload
+    }
     case ACTIONS.UPDATE_SUBDOMAIN_AVAILABILITY: return {
       ...state,
       ...payload
