@@ -113,3 +113,28 @@ export async function saveTheme(
      dispatch({ type: 'THEME_SAVE_ERROR', payload: { error }})
    }
 }
+
+export async function savePubkey(
+    subdomain: string,
+    pubkey: string,
+    dispatch: React.Dispatch<any>
+  ) {
+  const requestOptions = {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ pubkey })
+  };
+  try {
+    const response = await fetch(`/api/storefronts/${subdomain}`, requestOptions);
+    const  data = await response.json()
+
+    dispatch({
+      type: 'PUBKEY_SAVED',
+      payload: data,
+    })
+   } catch (error) {
+     dispatch({ type: 'PUBKEY_SAVE_ERROR', payload: { error }})
+   }
+}
