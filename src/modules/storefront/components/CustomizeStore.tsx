@@ -11,11 +11,10 @@ import {
   Text,
   H2,
   H4,
-  Label,
   RoundedContainer,
   Actions
 } from '@/constants/StyleComponents';
-import { saveTheme } from '../client'
+import { saveTheme } from '../actions'
 import { useStorefrontContext } from './Context'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

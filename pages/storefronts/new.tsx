@@ -9,6 +9,7 @@ import CustomizeStore from '@/modules/storefront/components/CustomizeStore';
 import {
   GradientContainer,
 } from '@/constants/StyleComponents'
+import { useRouter } from 'next/router'
 import { StorefrontContextProvider } from '@/modules/storefront/components/Context';
 
 // >>>>> STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -43,6 +44,7 @@ const Logo = styled.div`
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 export default function BuilderForm() {
+  const router = useRouter()
 
   const [step, setStep] = useState(1)
   const [subDomain, setSubDomain] = useState('')
@@ -57,10 +59,11 @@ export default function BuilderForm() {
           backAction={() => setStep(1)}
                />;
       case 3:
-        return <PublishStore
-          publishNow={() => console.log('publish that shit!')}
-          publishLater={() => console.log('publish that shit, some other time')}
-                />;
+        return (
+          <PublishStore
+            publishNow={() => router.push("/")}
+          />
+        );
       default:
         return <SubDomain nextAction={() => setStep(2)} />;
     }

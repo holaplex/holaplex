@@ -6,11 +6,11 @@ import { stylesheet } from '@/modules/theme'
 
 const uploadStysheet = curry(upload)("opus-logica-holaplex-storefronts", "text/css")
 
-export async function style({ subdomain, pubkey }: Storefront, theme: StorefrontTheme): Promise<string> {
+export async function style({ subdomain }: Storefront, theme: StorefrontTheme): Promise<string> {
     const blob = stylesheet(theme)
 
     const hash = SparkMD5.hash(blob)
-    const location = `${pubkey}/overrides-${hash}.css`
+    const location = `${subdomain}/overrides-${hash}.css`
 
     await uploadStysheet(location, blob)
 
