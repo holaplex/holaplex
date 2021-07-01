@@ -8,10 +8,19 @@ export function stylesheet(theme: StorefrontTheme) {
   const {
     backgroundColor,
     primaryColor,
+    logoUrl,
   } = {...THEME_DEFAULTS, ...theme}
 
   return `body {
   background-color: ${backgroundColor};
+}
+.title {
+  width: 42px;
+  height: 42px;
+  background: url(${logoUrl});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
   background-color: ${shadeColor(backgroundColor, 40)};

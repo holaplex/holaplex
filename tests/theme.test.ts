@@ -5,10 +5,18 @@ import { expect } from 'chai'
 describe('stylesheet', () => {
   describe('light colors', () => {
     it('shades dark', () => {
-      const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50" })
-    
+      const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50", logoUrl: "https://acme.holaplex.com/acme/abc.jpg" })
+
       expect(sheet).to.be.eql(`body {
   background-color: #eeeeee;
+}
+.title {
+  width: 42px;
+  height: 42px;
+  background: url(https://acme.holaplex.com/acme/abc.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
   background-color: #ffffff;
@@ -41,10 +49,18 @@ h4,
 
     describe('dark colors', () => {
       it('shades light', () => {
-        const sheet = stylesheet({ backgroundColor: "#000", primaryColor: "#4caf50" })
+        const sheet = stylesheet({ backgroundColor: "#000", primaryColor: "#4caf50", logoUrl: "https://acme.holaplex.com/acme/abc.jpg" })
     
         expect(sheet).to.be.eql(`body {
   background-color: #000;
+}
+.title {
+  width: 42px;
+  height: 42px;
+  background: url(https://acme.holaplex.com/acme/abc.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
   background-color: #0000ff;
@@ -81,6 +97,14 @@ h4,
   
       expect(sheet).to.be.eql(`body {
   background-color: #fff;
+}
+.title {
+  width: 42px;
+  height: 42px;
+  background: url(undefined);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
   background-color: #ff15ff;
