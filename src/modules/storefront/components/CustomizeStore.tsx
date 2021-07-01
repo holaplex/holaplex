@@ -14,7 +14,7 @@ import {
   RoundedContainer,
   Actions
 } from '@/constants/StyleComponents';
-import { saveTheme } from '../actions'
+import { saveTheme, uploadLogo } from '../actions'
 import { useStorefrontContext } from './Context'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -89,8 +89,10 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
     storefront
   } = useStorefrontContext();
 
+
   const handleNext = async () => {
     saveTheme({
+      ...storefront.theme,
       backgroundColor,
       primaryColor,
       bodyFont,
@@ -98,6 +100,11 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
     }, storefront, dispatch)
 
     nextAction()
+  }
+
+  const handleLogoChange = async (val, storefront) => {
+    setLogo(val)
+    uploadLogo(val, storefront.subdomain, dispatch)
   }
 
   return (
@@ -110,7 +117,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           <FilePickerWithLabel
             label={logo ? 'logo' : 'Upload logo (transparent .png or .svg)'}
             file={logo}
-            onChange={(val) => setLogo(val)}
+            onChange={(val) => handleLogoChange(val, storefront)}
             clearFile={() => setLogo(null)}
           />
         </Field>

@@ -8,6 +8,7 @@ enum ACTIONS {
   THEME_SAVE_ERROR = 'THEME_SAVE_ERROR',
   STOREFRONT_SAVED = 'STOREFRONT_SAVED',
   STOREFRONT_SAVE_ERROR = 'STOREFRONT_SAVE_ERROR',
+  LOGO_UPDATED = 'LOGO_UPDATED',
 }
 
 export type ErrorPayload = { error: string }
@@ -26,9 +27,9 @@ export type StorefrontActions =
   | { type: ACTIONS.THEME_SAVE_ERROR, payload: ErrorPayload }
   | { type: ACTIONS.THEME_SAVED, payload: StorefrontTheme }
   | { type: ACTIONS.STOREFRONT_SAVE_ERROR, payload: ErrorPayload }
-  | { type: ACTIONS.STOREFRONT_SAVED, payload: Storefront }
-  ;
- 
+  | { type: ACTIONS.LOGO_UPDATED, payload: { logoPath: string } }
+  | { type: ACTIONS.STOREFRONT_SAVED, payload: Storefront };
+   
 
 
 
@@ -43,7 +44,7 @@ function storefrontReducer(state: StorefrontState, action: StorefrontActions): S
       ...state,
       ...payload
     }
-    case ACTIONS.THEME_SAVED: return {
+    case ACTIONS.THEME_SAVED, ACTIONS.LOGO_UPDATED: return {
       ...state,
       storefront: {
         ...state.storefront,
