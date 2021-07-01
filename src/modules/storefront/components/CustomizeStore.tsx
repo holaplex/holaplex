@@ -15,7 +15,7 @@ import {
   RoundedContainer,
   Actions
 } from '@/constants/StyleComponents';
-import { saveTheme, uploadLogo } from '../client'
+import { saveTheme, uploadLogo } from '../actions'
 import { useStorefrontContext } from './Context'
 
 ////// STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
