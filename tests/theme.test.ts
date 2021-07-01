@@ -11,15 +11,15 @@ describe('stylesheet', () => {
   background-color: #eeeeee;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
-  background-color: #ffffff;
-  background: #ffffff;
+  background-color: #8F8F8F;
+  background: #8F8F8F;
 }
 .artist-card .ant-card-body{
-  background: #ffffff;
-  background-color: #ffffff;
+  background: #BEBEBE;
+  background-color: #BEBEBE;
 }
 .ant-card-bordered {
-  border-color: #ffffff;
+  border-color: #BEBEBE;
 }
 h6,
 h2,
@@ -41,21 +41,21 @@ h4,
 
     describe('dark colors', () => {
       it('shades light', () => {
-        const sheet = stylesheet({ backgroundColor: "#000", primaryColor: "#4caf50" })
+        const sheet = stylesheet({ backgroundColor: "#080808", primaryColor: "#4caf50" })
     
         expect(sheet).to.be.eql(`body {
-  background-color: #000;
+  background-color: #080808;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
-  background-color: #0000ff;
-  background: #0000ff;
+  background-color: #0B0B0B;
+  background: #0B0B0B;
 }
 .artist-card .ant-card-body{
-  background: #0000ff;
-  background-color: #0000ff;
+  background: #0A0A0A;
+  background-color: #0A0A0A;
 }
 .ant-card-bordered {
-  border-color: #0000ff;
+  border-color: #0A0A0A;
 }
 h6,
 h2,
@@ -80,18 +80,18 @@ h4,
       const sheet = stylesheet({})
   
       expect(sheet).to.be.eql(`body {
-  background-color: #fff;
+  background-color: #ffffff;
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
-  background-color: #ff15ff;
-  background: #ff15ff;
+  background-color: #999999;
+  background: #999999;
 }
 .artist-card .ant-card-body{
-  background: #ff12ff;
-  background-color: #ff12ff;
+  background: #CCCCCC;
+  background-color: #CCCCCC;
 }
 .ant-card-bordered {
-  border-color: #ff12ff;
+  border-color: #CCCCCC;
 }
 h6,
 h2,
@@ -104,10 +104,11 @@ h4,
 .ant-tabs-tab-active .tab-title,
 .artist-card-name,
 .ant-card-meta-title {
-  color: #000;
+  color: #000000;
 }
 `
       )
     })
   })
+
 })

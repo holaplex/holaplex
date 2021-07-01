@@ -1,8 +1,10 @@
 import { StorefrontTheme } from "@/modules/storefront/types";
+// @ts-ignore
+import Color from 'color'
 
 const THEME_DEFAULTS = {
-  backgroundColor: "#fff",
-  primaryColor: "#000"
+  backgroundColor: "#ffffff",
+  primaryColor: "#000000"
 }
 export function stylesheet(theme: StorefrontTheme) {
   const {
@@ -10,19 +12,27 @@ export function stylesheet(theme: StorefrontTheme) {
     primaryColor,
   } = {...THEME_DEFAULTS, ...theme}
 
+  let contrastBackgroundColor = new Color(backgroundColor).darken(.4).hex()
+  let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.2).hex()
+
+  if (new Color(backgroundColor).isDark()) {
+    contrastBackgroundColor = new Color(backgroundColor).lighten(.4).hex()
+    lesserContrastBackgroundColor = new Color(backgroundColor).lighten(.2).hex()
+  }
+
   return `body {
   background-color: ${backgroundColor};
 }
 .app-bar-box, .ant-card-meta, .ant-card-cover {
-  background-color: ${shadeColor(backgroundColor, 40)};
-  background: ${shadeColor(backgroundColor, 40)};
+  background-color: ${contrastBackgroundColor};
+  background: ${contrastBackgroundColor};
 }
 .artist-card .ant-card-body{
-  background: ${shadeColor(backgroundColor, 20)};
-  background-color: ${shadeColor(backgroundColor, 20)};
+  background: ${lesserContrastBackgroundColor};
+  background-color: ${lesserContrastBackgroundColor};
 }
 .ant-card-bordered {
-  border-color: ${shadeColor(backgroundColor, 20)};
+  border-color: ${lesserContrastBackgroundColor};
 }
 h6,
 h2,
@@ -38,26 +48,4 @@ h4,
   color: ${primaryColor};
 }
 ` 
-  }
-
-  function shadeColor(color: string, percent: number) {
-    // https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-  
-    let R = parseInt(color.substring(1,3),16);
-    let G = parseInt(color.substring(3,5),16);
-    let B = parseInt(color.substring(5,7),16);
-  
-    R = R * (100 + percent) / 100;
-    G = G * (100 + percent) / 100;
-    B = B * (100 + percent) / 100;
-  
-    R = (R<255)?R:255;  
-    G = (G<255)?G:255;  
-    B = (B<255)?B:255;  
-  
-    const RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
-    const GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
-    const BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
-  
-    return "#"+RR+GG+BB;
   }
