@@ -65,14 +65,12 @@ export async function createStorefront(subdomain: string, dispatch: React.Dispat
 }
 
 export async function uploadLogo(
-  // don't know the ts-type of file
-  // @ts-ignore
-  logo,
+  logo: any,
   subdomain: string,
   dispatch: React.Dispatch<any>,
 ) {
   const formData = new FormData();
-  
+
   formData.append('file', logo);
   const response = await fetch(`/api/storefronts/${subdomain}/uploads`, {
     method: 'POST',
