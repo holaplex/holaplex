@@ -17,7 +17,8 @@ import {
 // >>>>> STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const Content = styled.div`
-  flex: 1;
+  flex: 3;
+  min-height: 550px;
   ${sv.flexCenter};
 `;
 
@@ -43,8 +44,14 @@ const HasStoreText = styled(Text)`
   text-align: center;
 `;
 
-const Waves = styled(HolaWaves)`
+const Waves = styled.div`
   width: 100%;
+  flex: 0 0 40%;
+  max-height: 600px;
+  ${sv.flexCenter};
+  svg {
+    min-width: 1000px;
+  }
 `;
 
 // >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -68,7 +75,9 @@ export default function Landing() {
           </HasStoreText>
         </MainPitch>
       </Content>
-      <Waves />
+      <Waves>
+        <HolaWaves />
+      </Waves>
     </GradientContainer>
 
   )
