@@ -65,6 +65,26 @@ export async function createStorefront(subdomain: string, dispatch: React.Dispat
 
 
 }
+
+export async function uploadLogo(
+  logo,
+  subdomain: string,
+  dispatch: React.Dispatch<any>,
+) {
+  const formData = new FormData();
+  
+  formData.append('logo', logo);
+  formData.append('subdomain', subdomain);
+  const response = await fetch(`/api/uploadLogo`, {
+    method: 'POST',
+    body: formData
+  })
+
+  if (response.ok) {
+    const data = await response.json()
+    dispatch({ type: 'LOGO_UPDATED', payload: { logoPath: data.logoPath } })
+  }
+}
  
 export async function saveTheme(
     theme: StorefrontTheme,
