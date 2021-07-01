@@ -79,11 +79,11 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
   const [backgroundColor, setBackgroundColor] = useState('#333333')
   const [primaryColor, setPrimaryColor] = useState('#F2C94C')
   const [titleFont, setTitleFont] = useState('Work Sans')
-  const [textFont, settextFont] = useState('Work Sans')
+  const [bodyFont, setTextFont] = useState('Work Sans')
 
   const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
-  
+
   const {
     dispatch,
     storefront
@@ -92,7 +92,9 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
   const handleNext = async () => {
     saveTheme({
       backgroundColor,
-      primaryColor
+      primaryColor,
+      bodyFont,
+      titleFont
     }, storefront, dispatch)
 
     nextAction()
@@ -121,7 +123,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
         </Field>
         <Field>
           <ColorPicker
-            label="Primary color (buttons & links)"
+            label="Primary color (buttons &amp; links)"
             color={primaryColor}
             onChange={(newColor) => setPrimaryColor(newColor)}
           />
@@ -130,6 +132,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           <FontPicker
             label="Title Font"
             pickerId="title"
+            onChange={newFont => setTitleFont(newFont.family)}
             font={titleFont}
           />
         </Field>
@@ -137,7 +140,8 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           <FontPicker
             label="Main Text Font"
             pickerId="body"
-            font={textFont}
+            onChange={newFont => setTextFont(newFont.family)}
+            font={bodyFont}
           />
         </Field>
         <Actions>

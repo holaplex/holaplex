@@ -32,7 +32,7 @@ const DropdownIcon = styled(FeatherIcon)`
 `;
 
 const Picker = styled(SketchPicker)`
-  z-index: 10;
+  z-index: 11;
   position: absolute;
 `;
 
@@ -42,6 +42,7 @@ const Shade = styled.div`
   left: 0;
   top: 0;
   bottom: 0;
+  z-index: 10;
 `;
 
 ////// COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

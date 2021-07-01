@@ -50,6 +50,17 @@ const DropdownIcon = styled(FeatherIcon)`
 
 const googleApiKey = 'AIzaSyC1Bti2pgemOewDX-95SkcgEvyWixFffbA';
 
+const availableFonts = [
+  "Roboto",
+  "Work sans",
+  "Montserrat",
+  "Source Sans Pro",
+  "Merriweather",
+  "Playfair Display",
+  "Noto Serif",
+  "Domine"
+]
+
 type Props = {
   onChange: () => void,
   font: string,
@@ -59,22 +70,18 @@ type Props = {
 
 const FontPickerField = ({ onChange, font, label, pickerId }: Props) => {
 
-  const [fontFamily, setFontFamily] = useState('Work Sans')
-
-  const handleChange = (newFont) => {
-    console.log(newFont)
-  }
-
   return (
     <Container>
       <Label noMargin>{label}</Label>
-      <FontName>{fontFamily}</FontName>
+      <FontName className={`apply-font-${pickerId}`}>{font}</FontName>
       <DropdownIcon size={20} icon="chevron-down" />
       <FontPicker
 				apiKey={googleApiKey}
+        variants={["regular", "700"]}
+        families={availableFonts}
         pickerId={pickerId}
-				activeFontFamily={fontFamily}
-				onChange={handleChange}
+				activeFontFamily={font}
+				onChange={onChange}
 			/>
     </Container>
   )
