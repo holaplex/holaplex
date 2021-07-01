@@ -65,6 +65,8 @@ export async function createStorefront(subdomain: string, dispatch: React.Dispat
 }
 
 export async function uploadLogo(
+  // don't know the ts-type of file
+  // @ts-ignore
   logo,
   subdomain: string,
   dispatch: React.Dispatch<any>,
