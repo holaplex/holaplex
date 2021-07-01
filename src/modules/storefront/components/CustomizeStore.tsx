@@ -153,12 +153,6 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
         </Field>
         <Actions>
           <Button
-            label="Back"
-            subtle
-            marginRight
-            action={backAction}
-          />
-          <Button
             label="Next"
             action={handleNext}
           />
