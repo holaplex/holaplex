@@ -31,14 +31,14 @@ const StepOne = ({nextAction, backAction}: Props) => {
   const {
     dispatch,
     available,
-    desiredStorefrontSubdomain
+    subdomain
   } = useStorefrontContext();
 
   const updateSubdomain = async (subdomain: string) => {
     dispatch({
       type: 'UPDATE_SUBDOMAIN_NAME',
       payload: {
-        desiredStorefrontSubdomain: subdomain
+        subdomain
       },
     })
 
@@ -47,7 +47,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
 
   const handleNext = async (nextAction: Function) => {
     if (available) {
-      await createStorefront(desiredStorefrontSubdomain, dispatch)
+      await createStorefront(subdomain, dispatch)
       nextAction()
     }
   }
@@ -59,10 +59,10 @@ const StepOne = ({nextAction, backAction}: Props) => {
       <Text>This is the address that people will use to get to your store.</Text>
       <NameField
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSubdomain(e.target.value)}
-        value={desiredStorefrontSubdomain}
+        value={subdomain}
         subDomain=".holaplex.com"
       />
-      { !!desiredStorefrontSubdomain.length &&
+      { !!subdomain.length &&
         <AvalabilityMessage color={available ? sv.colors.success : sv.colors.danger}>
           {available ? 'domain available' : 'domain already taken :-('}
         </AvalabilityMessage>

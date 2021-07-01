@@ -6,6 +6,7 @@ import ConnectActions from '@/modules/wallet/components/Avatar'
 import PublishStore from '@/modules/storefront/components/PublishStore';
 import SubDomain from '@/modules/storefront/components/SubDomain';
 import CustomizeStore from '@/modules/storefront/components/CustomizeStore';
+import PubkeyStore from '@/modules/storefront/components/PubkeyStore';
 import {
   GradientContainer,
 } from '@/constants/StyleComponents'
@@ -54,11 +55,12 @@ export default function BuilderForm() {
       case 1:
         return <SubDomain nextAction={() => setStep(2)} />;
       case 2:
-        return <CustomizeStore
-          nextAction={() => setStep(3)}
-          backAction={() => setStep(1)}
-               />;
+        return <PubkeyStore nextAction={() => setStep(3)} />;
       case 3:
+        return <CustomizeStore
+          nextAction={() => setStep(4)}
+               />;
+      case 4:
         return (
           <PublishStore
             publishNow={() => router.push("/")}
