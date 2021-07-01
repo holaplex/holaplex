@@ -63,7 +63,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
         subDomain=".holaplex.com"
       />
       { !!desiredStorefrontSubdomain.length &&
-        <AvalabilityMessage noMargin color={available ? sv.colors.success : sv.colors.danger}>
+        <AvalabilityMessage color={available ? sv.colors.success : sv.colors.danger}>
           {available ? 'domain available' : 'domain already taken :-('}
         </AvalabilityMessage>
       }
