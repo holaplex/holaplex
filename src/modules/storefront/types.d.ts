@@ -1,6 +1,7 @@
 export type StorefrontTheme = {
   primaryColor?: string;
   backgroundColor?: string;
+  logoUrl?: string;
 }
 
 export type Storefront = {

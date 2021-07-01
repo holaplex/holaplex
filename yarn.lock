@@ -1082,6 +1082,13 @@
   resolved "https://registry.yarnpkg.com/@types/cors/-/cors-2.8.10.tgz#61cc8469849e5bcdd0c7044122265c39cec10cf4"
   integrity sha512-C7srjHiVG3Ey1nR6d511dtDkCEjxuN9W1HWAEjGq8kpcwmNM6JJkpC0xvabM7BXTG2wDq8Eu33iH9aQKa7IvLQ==
 
+"@types/formidable@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@types/formidable/-/formidable-1.2.2.tgz#e690d60732ee9d3f0a441bc572c17409785b283c"
+  integrity sha512-8RDAMnMHOh7QrY1xuQ7s6/Xre9pMvJ2zT2VgATiz5cIE71Q/6N3+P8sr3z/dNWNmvX5/aX9x8uJlG0MZiMZXoA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/hoist-non-react-statics@*":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz#1124aafe5118cb591977aeb1ceaaed1070eb039f"

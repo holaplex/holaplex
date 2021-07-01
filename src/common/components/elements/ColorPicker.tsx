@@ -11,6 +11,7 @@ import {Label} from '@/constants/StyleComponents';
 
 const Container = styled.div`
   cursor: pointer;
+  position: relative;
 `;
 
 const Field = styled.div`
@@ -34,6 +35,8 @@ const DropdownIcon = styled(FeatherIcon)`
 const Picker = styled(SketchPicker)`
   z-index: 11;
   position: absolute;
+  right: 0px;
+  top: -80px;
 `;
 
 const Shade = styled.div`
