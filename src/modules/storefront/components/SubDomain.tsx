@@ -14,7 +14,12 @@ import { checkStorefrontAvailability, createStorefront } from '@/modules/storefr
 import { useStorefrontContext } from '@/modules/storefront/components/Context';
 
 const NameField = styled(TextInput)`
-  margin: ${sv.appPadding}px 0;
+  margin-top: ${sv.appPadding}px;
+`;
+
+const AvalabilityMessage = styled(Text)`
+  text-align: right;
+  margin: ${sv.grid}px 0 ${sv.appPadding}px 0;
 `;
 
 type Props = {
@@ -46,7 +51,7 @@ const StepOne = ({nextAction, backAction}: Props) => {
       nextAction()
     }
   }
-  
+
   return (
     // @ts-ignore
     <RoundedContainer small>
@@ -57,11 +62,10 @@ const StepOne = ({nextAction, backAction}: Props) => {
         value={desiredStorefrontSubdomain}
         subDomain=".holaplex.com"
       />
-      { !!desiredStorefrontSubdomain.length && 
-        <Text
-          color={available ? '#27AE60': 'red'}
-          style={{ textAlign: 'right' }}> {available ? 'domain available' : 'domain already taken :-('}
-        </Text>
+      { !!desiredStorefrontSubdomain.length &&
+        <AvalabilityMessage noMargin color={available ? sv.colors.success : sv.colors.danger}>
+          {available ? 'domain available' : 'domain already taken :-('}
+        </AvalabilityMessage>
       }
       <Actions>
         <Button
