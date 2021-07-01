@@ -10,7 +10,7 @@
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
-    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
+    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.19.0",
@@ -50,6 +50,7 @@
     "eslint-config-next": "11.0.1",
     "mocha": "^9.0.1",
     "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"
   }
 }

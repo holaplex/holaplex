@@ -11,7 +11,6 @@ import {
   Text,
   H2,
   H4,
-  Label,
   RoundedContainer,
   Actions
 } from '@/constants/StyleComponents';
