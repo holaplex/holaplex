@@ -5,24 +5,34 @@ import {
   RoundedContainer,
   Actions
 } from '@/constants/StyleComponents'
+import { useStorefrontContext } from '@/modules/storefront/components/Context'
+import { useRouter } from 'next/router'
 
 type Props = {
   publishNow: () => void,
   publishLater: () => void,
 }
 
-const PublishStore = ({publishNow, publishLater}: Props) => (
-  // @ts-ignore
-  <RoundedContainer>
-    <H2>Almost done!</H2>
-    <Text>The storefront is themed but there is no pubkey associated to it yet. Reach out to our team to activate the storefront.</Text>
-    <Actions>
-      <Button
-        label="Back to Home"
-        action={publishNow}
-      />
-    </Actions>
-  </RoundedContainer>
-)
+const PublishStore = ({publishNow, publishLater}: Props) => {
+  const router = useRouter()
+
+  const {
+    subdomain
+  } = useStorefrontContext()
+
+  return (
+    // @ts-ignore
+    <RoundedContainer>
+      <H2>All done!</H2>
+      <Text>The storefront is ready for the artist to connect to the Solana Blockchain.</Text>
+      <Actions>
+        <Button
+          label="Visit Storefront"
+          action={() => { window.open(`https://${subdomain}.holaplex.com`) }}
+        />
+      </Actions>
+    </RoundedContainer>
+  )
+}
 
 export default PublishStore;

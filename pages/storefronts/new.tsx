@@ -10,6 +10,7 @@ import PubkeyStore from '@/modules/storefront/components/PubkeyStore';
 import {
   GradientContainer,
 } from '@/constants/StyleComponents'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { StorefrontContextProvider } from '@/modules/storefront/components/Context';
 
@@ -48,7 +49,6 @@ export default function BuilderForm() {
   const router = useRouter()
 
   const [step, setStep] = useState(1)
-  const [subDomain, setSubDomain] = useState('')
 
   const renderStep = (step: number) => {
     switch (step) {
@@ -76,8 +76,7 @@ export default function BuilderForm() {
       <GradientContainer>
         <Header>
           <HeaderContent>
-            <Logo>👋 Holaplex</Logo>
-            <ConnectActions wallet="2u4y3g2g4h5gh425gh24j5h24j5jhv25" />
+            <Logo><Link href="/">👋 Holaplex</Link></Logo>
           </HeaderContent>
         </Header>
 
