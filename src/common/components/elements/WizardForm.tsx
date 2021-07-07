@@ -65,7 +65,7 @@ const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, c
             {activePage}
             <Actions>
               <ActionGroup>
-                {errors && <ErrorMessage>{Object.entries(errors).map(([_, value]) => value)}</ErrorMessage>}
+                {errors && !pristine && <ErrorMessage>{Object.entries(errors).map(([_, value]) => value)}</ErrorMessage>}
               </ActionGroup>
               <ActionGroup>
                 {page > 0 && (
@@ -79,7 +79,7 @@ const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, c
                 <Button
                   label={isLastPage ? "Submit": "Next"}
                   onClick={handleSubmit}
-                  disabled={!isLastPage && (submitting || pristine || !valid)}
+                  disabled={submitting || !valid}
                 />
               </ActionGroup>
             </Actions>

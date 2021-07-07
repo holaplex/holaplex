@@ -119,6 +119,12 @@ export default function New() {
     return { subdomain: "That domain is already taken. Enter a different name." }
   }
 
+  const validateTheme = ({ theme: { logo } }) => {
+    if (!logo) {
+      return { logo: "A logo is required." }
+    }
+  }
+
   const onSubmit = async ({ subdomain, theme, pubkey }: Storefront) => {
     const data = await stylesheet(theme)
 
@@ -168,7 +174,7 @@ export default function New() {
                     render={({ input, meta }) => <NameField {...input} meta={meta} rootDomain=".holaplex.com" />}
                   />
               </WizardFormStep>
-              <WizardFormStep>
+              <WizardFormStep validate={validateTheme}>
                 <Container>
                   <Fields>
                     <H2>Customize your store.</H2>
