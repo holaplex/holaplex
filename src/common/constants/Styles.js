@@ -12,6 +12,7 @@ const subtleCta = 'rgba(45,156,219,.2)'
 
 const mainGradient = 'linear-gradient(165.77deg, #D24089 8.62%, #B92D44 84.54%)'
 const mainGradientHover = 'linear-gradient(10.77deg, #D24089 8.62%, #B92D44 84.54%)'
+const mainGradientDisabled = `linear-gradient(10.77deg, ${lighten(.1, '#D24089')} 8.62%, ${lighten(0.1, '#B92D44')} 84.54%)`
 
 const cell = '#E0E0E0'
 const cellHover = '#E3E3E3'
@@ -44,6 +45,7 @@ const StyleVariables = {
     background: background,
     mainGradient: mainGradient,
     mainGradientHover: mainGradientHover,
+    mainGradentDisabled: mainGradientDisabled,
     cta: cta,
     ctaHover: ctaHover,
     subtleCta: subtleCta,

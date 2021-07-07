@@ -1,20 +1,17 @@
+import { useEffect } from 'react'
 import sv from '@/constants/Styles'
-import styled from 'styled-components';
+import styled from 'styled-components'
 // @ts-ignore
 import { rgba } from 'polished';
-import HolaWaves from '@/assets/images/HolaWaves';
+import HolaWaves from '@/assets/images/HolaWaves'
 import Button from './Button';
-import Link from './Link'
 import { useRouter } from 'next/router'
 import {
   Text,
   PageTitle,
   SubTitle,
-  StandardLink,
   GradientContainer
-} from '../../constants/StyleComponents'
-
-// >>>>> STYLES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} from '@/constants/StyleComponents'
 
 const Content = styled.div`
   flex: 3;
@@ -54,11 +51,16 @@ const Waves = styled.div`
   }
 `;
 
-// >>>>> COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 export default function Landing() {
 
   const router = useRouter()
+  useEffect(() => {
+    if (process.browser) {
+      window.solana.on("connect", () => {
+        router.push("/storefronts/new")
+      })
+    }
+  })
 
   return (
     <GradientContainer>
@@ -69,9 +71,8 @@ export default function Landing() {
           <PageTitle center invert>Holaplex</PageTitle>
           {/* @ts-ignore */}
           <SubTitle center invert>Design, launch, and host your NFT marketplace. No coding required!</SubTitle>
-          <NewStoreButton action={() => router.push('/storefronts/new')} label="Create Your Store" />
+          <NewStoreButton onClick={() => window.solana.connect() } label="Create Your Store" />
           <HasStoreText color={rgba(sv.colors.buttonText, .6)}>
-            Already have a store? <Link invert href="/storefronts/new" label="Connect Wallet" /> to manage.
           </HasStoreText>
         </MainPitch>
       </Content>

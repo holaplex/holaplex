@@ -34,7 +34,6 @@ const Label = styled.div`
 
 const Input = styled.input`
   display: none;
-  /* background: red; */
 `;
 
 
@@ -46,35 +45,36 @@ export default function FilePickerWithLabel({
   label,
   className,
   disabled,
-  file,
-  clearFile
+  value,
 }) {
 
   const inputField = useRef(null);
 
   const handleInputChange = (e) => {
-    console.log(e.target.files[0])
-    onChange && onChange(e.target.files[0])
+    e.preventDefault()
+    onChange(e.target.files[0])
   }
 
   const handleClick = (e) => {
+    e.preventDefault()
     inputField.current.click()
   }
 
+  const clearFile = () => {
+    onChange(undefined)
+  }
   return (
     <Container
       className={className}
     >
-      <Label>{label || 'ballz'}</Label>
-
-      {!file && <Button small icon="upload" action={handleClick} />}
-      {file &&
+      <Label>{label}</Label>
+      {!value && <Button small icon="upload" onClick={handleClick} />}
+      {value &&
         <FileInfo>
-          <Text noMargin>{file.name}</Text>
+          <Text noMargin>{value.name}</Text>
           <ClearIcon icon="x" onClick={() => clearFile()} />
         </FileInfo>
       }
-
       <Input
         type="file"
         ref={inputField}

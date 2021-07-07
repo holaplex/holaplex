@@ -2,6 +2,7 @@
 import { Readable } from 'stream'
 
 export async function upload(Bucket: string, ContentType: string, Key: string, blob: string):  Promise<PutObjectCommandOutput> {
+    console.log(process.env.AWS_PROFILE)
     const s3 = new S3Client({ region: process.env.AWS_REGION })
 
     const stream = new Readable()
@@ -14,7 +15,7 @@ export async function upload(Bucket: string, ContentType: string, Key: string, b
                 Bucket,
                 Key,
                 Body: stream.read(),
-                ContentType       
+                ContentType
             })
         )
         return data

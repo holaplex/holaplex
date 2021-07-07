@@ -5,9 +5,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-AWS_PROFILE=opus yarn dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -18,10 +16,6 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-The application assumes a profile called _opus_ by default. The profile can be changed by editing the AWS_PROFILE environment variable in the [.env](/.env) file. The user should have the following acccess:
-
-- s3://opus-logic-holaplex-storefronts - READ/WRIE objects
-
 A local database can be booted within a docker container using
 docker-compose. Run the
 following commands to start a database, load schema, and seed with demo
@@ -31,6 +25,12 @@ storefront.
 docker-compose up -d
 yarn db:schema:push
 yarn db:seed
+```
+
+A local instance of arweave can be booted with the following command. It will bind to port 1984. A graphiql explore is available at [http://localhost:1984/graphiql](http://localhost:1984/graphiql).
+
+```
+npx @textury/arlocal
 ```
 
 ## Learn More
