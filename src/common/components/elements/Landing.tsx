@@ -52,12 +52,16 @@ const Waves = styled.div`
 `;
 
 export default function Landing() {
-
   const router = useRouter()
+  
   useEffect(() => {
     if (process.browser) {
       window.solana.on("connect", () => {
-        router.push("/storefronts/new")
+          window.arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY'])
+            .then(() => {
+              router.push("/storefronts/new")
+
+            })          
       })
     }
   })

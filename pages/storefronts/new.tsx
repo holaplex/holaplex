@@ -106,7 +106,6 @@ export default function New() {
 
   if (process.browser && !window.solana.isConnected) {
     router.push("/")
-    return ''
   }
 
   const subdomainUniqueness = async ({ subdomain }) => {
@@ -143,6 +142,14 @@ export default function New() {
 
     router.push("/")
   }
+
+  useEffect(() => {
+    if (process.browser) {
+      window.arweaveWallet.getActivePublicKey().catch(() => {
+          router.push("/")
+      })
+    }
+  })
 
   return (
       <GradientContainer>
