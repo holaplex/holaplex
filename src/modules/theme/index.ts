@@ -50,9 +50,16 @@ export function stylesheet(theme: StorefrontTheme) {
     background-color: ${contrastBackgroundColor};
     background: ${contrastBackgroundColor};
   }
+  .artist-card, .artist-card:hover {
+    box-shadow: none;
+  }
+  .ant-card-hoverable, .ant-card-hoverable:hover {
+    box-shadow: none;
+  }
   .artist-card .ant-card-body{
     background: ${lesserContrastBackgroundColor};
     background-color: ${lesserContrastBackgroundColor};
+    box-shadow: none !important;
   }
   .app-bar-box .ant-btn {
     color: ${textColor};
@@ -75,6 +82,9 @@ export function stylesheet(theme: StorefrontTheme) {
   }
   .ant-card-bordered, .ant-tabs-nav::before {
     border-color: ${lesserContrastBackgroundColor} !important;
+  }
+  .ant-card-bordered:hover {
+    border-color: ${primaryColor} !important;
   }
   .ant-tabs-ink-bar {
     background: ${primaryColor};
@@ -100,7 +110,7 @@ export function stylesheet(theme: StorefrontTheme) {
   }
   `
 
-  console.log(themeCss);
+  // console.log(themeCss);
 
   return themeCss
   }
