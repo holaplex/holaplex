@@ -1,5 +1,6 @@
 import { StorefrontTheme } from "@/modules/storefront/types";
 // @ts-ignore
+import { rgba } from 'polished';
 import Color from 'color'
 
 const THEME_DEFAULTS = {
@@ -15,46 +16,91 @@ export function stylesheet(theme: StorefrontTheme) {
 
   let contrastBackgroundColor = new Color(backgroundColor).darken(.4).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.2).hex()
+  let textColor = '#000000'
+  let subtleTextColor = rgba('#000000', .6)
+  let buttonTextColor = '#000000'
+  let primaryHoverColor = new Color(primaryColor).darken(.2).hex()
+  let boxShadow = '0 0 16px rgba(0,0,0,.3)'
 
   if (new Color(backgroundColor).isDark()) {
     contrastBackgroundColor = new Color(backgroundColor).lighten(.4).hex()
     lesserContrastBackgroundColor = new Color(backgroundColor).lighten(.2).hex()
+    textColor = '#FFFFFF'
+    subtleTextColor = rgba('#FFFFFF', .6)
+    boxShadow = '0 0 16px rgba(0,0,0,.8)'
   }
 
-  return `body {
-  background-color: ${backgroundColor};
-}
-.title {
-  width: 42px;
-  height: 42px;
-  background: url(${logoUrl});
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.app-bar-box, .ant-card-meta, .ant-card-cover {
-  background-color: ${contrastBackgroundColor};
-  background: ${contrastBackgroundColor};
-}
-.artist-card .ant-card-body{
-  background: ${lesserContrastBackgroundColor};
-  background-color: ${lesserContrastBackgroundColor};
-}
-.ant-card-bordered {
-  border-color: ${lesserContrastBackgroundColor};
-}
-h6,
-h2,
-h4,
-.art-title,
-.cd-number,
-.tab-title,
-.title,
-.app-btn,
-.ant-tabs-tab-active .tab-title,
-.artist-card-name,
-.ant-card-meta-title {
-  color: ${primaryColor};
-}
-` 
+  if (new Color(primaryColor).isDark()) {
+    buttonTextColor = '#FFFFFF'
+  }
+
+  const themeCss = `body {
+    background-color: ${backgroundColor};
+  }
+  .title {
+    width: 42px;
+    height: 42px;
+    background: url(${logoUrl});
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .app-bar-box, .ant-card-meta, .ant-card-cover {
+    box-shadow: none;
+    background-color: ${contrastBackgroundColor};
+    background: ${contrastBackgroundColor};
+  }
+  .artist-card .ant-card-body{
+    background: ${lesserContrastBackgroundColor};
+    background-color: ${lesserContrastBackgroundColor};
+  }
+  .app-bar-box .ant-btn {
+    color: ${textColor};
+  }
+  .app-bar-box .ant-btn:hover {
+    color: ${primaryColor};
+  }
+  .ant-btn-primary {
+    background: ${primaryColor} !important;
+    color: ${buttonTextColor} !important;
+    border: 0;
+    box-shadow: none;
+  }
+  .ant-btn-primary:hover {
+    background: ${primaryHoverColor} !important;
+    color: ${buttonTextColor} !important;
+  }
+  .divider {
+    border-color: ${backgroundColor};
+  }
+  .ant-card-bordered, .ant-tabs-nav::before {
+    border-color: ${lesserContrastBackgroundColor} !important;
+  }
+  .ant-tabs-ink-bar {
+    background: ${primaryColor};
+  }
+  p {
+    color: ${subtleTextColor};
+  }
+  .ant-popover-inner {
+    box-shadow: ${boxShadow};
+  }
+  h6,
+  h2,
+  h4,
+  .art-title,
+  .cd-number,
+  .tab-title,
+  .title,
+  .app-btn,
+  .ant-tabs-tab-active .tab-title,
+  .artist-card-name,
+  .ant-card-meta-title {
+    color: ${textColor};
+  }
+  `
+
+  console.log(themeCss);
+
+  return themeCss
   }

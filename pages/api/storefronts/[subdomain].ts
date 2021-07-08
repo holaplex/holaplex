@@ -28,11 +28,13 @@ export default async function handler(
     case 'PATCH': {
       try {
           const storefrontParams = { ...{ theme: {} }, ...storefront, ...req.body } as Storefront
+          console.log(storefrontParams);
 
           const themeUrl = await style(
             storefront,
             storefrontParams.theme
           )
+          console.log(themeUrl);
 
           const updatedStorefront = await prisma.storefront.update({
             where: { subdomain: storefront.subdomain },
@@ -41,6 +43,7 @@ export default async function handler(
               themeUrl
             }
           }) as Storefront
+          console.log(JSON.stringify(updatedStorefront));
 
         return res.status(200).json(updatedStorefront)
       } catch(error) {

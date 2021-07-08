@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import sv from '@/constants/Styles'
 import styled from 'styled-components';
 import Button from '@/components/elements/Button';
@@ -80,14 +80,23 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
   const [primaryColor, setPrimaryColor] = useState('#F2C94C')
   const [titleFont, setTitleFont] = useState('Work Sans')
   const [bodyFont, setTextFont] = useState('Work Sans')
-
-  const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
-  const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
+  // const [textColor, setTextColor] = useState(sv.colors.buttonText)
+  // const [buttonTextColor, setButtonTextColor] = useState(sv.colors.buttonText)
 
   const {
     dispatch,
     storefront
   } = useStorefrontContext();
+
+  // useEffect(() => {
+  //   const computedTextColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
+  //   if (computedTextColor !== textColor) setTextColor(computedTextColor)
+  // }, [backgroundColor])
+  //
+  // useEffect(() => {
+  //   const computedButtonColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
+  //   if (computedButtonColor !== buttonTextColor) setButtonTextColor(computedButtonColor)
+  // }, [primaryColor])
 
 
   const handleNext = async () => {
@@ -95,8 +104,10 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
       ...storefront.theme,
       backgroundColor,
       primaryColor,
-      bodyFont,
-      titleFont
+      // bodyFont,
+      // titleFont,
+      // textColor,
+      // buttonTextColor
     }, storefront, dispatch)
 
     nextAction()
@@ -181,7 +192,7 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
           <PreviewButton
             className="apply-font-body"
             color={primaryColor}
-            textColor={buttontextColor}
+            textColor={buttonTextColor}
           >
             Button
           </PreviewButton>
