@@ -76,13 +76,13 @@ const FontPickerField = ({ onChange, value, label, pickerId }: Props) => {
       <FontName className={`apply-font-${pickerId}`}>{value}</FontName>
       <DropdownIcon size={20} icon="chevron-down" />
       <FontPicker
-				apiKey={googleApiKey}
+	apiKey={googleApiKey}
         variants={["regular", "700"]}
         families={availableFonts}
         pickerId={pickerId}
-				activeFontFamily={value}
-				onChange={(font) => { onChange(font.family) }}
-			/>
+	activeFontFamily={value}
+	onChange={(font) => { onChange(font.family) }}
+      />
     </Container>
   )
 }

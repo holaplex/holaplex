@@ -2,6 +2,7 @@ import { StorefrontTheme } from '@/modules/storefront/types'
 //@ts-ignore
 import { rgba } from 'polished'
 import Color from 'color'
+import { pipe, map, replace, join } from 'ramda'
 
 const encodeFile = async (blob: Blob) => {
   return new Promise((resolve) => {
@@ -13,7 +14,9 @@ const encodeFile = async (blob: Blob) => {
   });
 }
 
-export async function stylesheet({ backgroundColor, primaryColor, logo }: StorefrontTheme) {
+const joinFonts = pipe(map(replace(/s+/g, '+')), join("&family="))
+
+export async function stylesheet({ backgroundColor, primaryColor, logo, titleFont, textFont }: StorefrontTheme) {
   const encodedLogo = await encodeFile(logo)
 
   let contrastBackgroundColor = new Color(backgroundColor).darken(.4).hex()
@@ -36,7 +39,11 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
     buttonTextColor = '#FFFFFF'
   }
 
-  const themeCss = `body {
+  const themeCss = `@import url('https://fonts.googleapis.com/css2?family=${joinFonts([titleFont, textFont])}&display=swap');
+  *, #root {
+    font-family: '${textFont}', sans-serif;
+  }
+  body {
     background-color: ${backgroundColor};
   }
   .title {
@@ -108,6 +115,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
   .ant-tabs-tab-active .tab-title,
   .artist-card-name,
   .ant-card-meta-title {
+    font-family: '${titleFont}', sans-serif;
     color: ${textColor};
   }
   `
