@@ -63,10 +63,11 @@ export default function Landing() {
   useEffect(() => {
     if (process.browser) {
       window.solana.on("connect", () => {
-          window.arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY'])
-            .then(() => {
-              router.push("/storefronts/new")
-            })
+          window.arweaveWallet.getActivePublicKey()
+          .catch(() => window.arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY']))
+          .then(() => {
+            router.push("/storefronts/new")
+          })
       })
     }
   })

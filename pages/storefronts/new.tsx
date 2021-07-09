@@ -104,9 +104,6 @@ export default function New() {
   const router = useRouter()
   const arweave = initArweave()
 
-  if (process.browser && !window.solana.isConnected) {
-    router.push("/")
-  }
 
   const subdomainUniqueness = async ({ subdomain }) => {
     const transactions = await lookupTransactionsBySubdomain(arweave, subdomain)
@@ -144,12 +141,27 @@ export default function New() {
   }
 
   useEffect(() => {
-    if (process.browser) {
+    if (process.browser && window.solana.isConnected) {
       window.arweaveWallet.getActivePublicKey().catch(() => {
           router.push("/")
       })
+    } else {
+      router.push("/")
     }
   })
+
+  const initialValues = {
+    theme: {
+      backgroundColor: '#333333',
+      primaryColor: '#F2C94C',
+      titleFont: 'Work Sans',
+      textFont: 'Work Sans',
+    }
+  }
+
+  if (process.browser) {
+    initialValues.pubkey = window.solana.publicKey?.toString()
+  }
 
   return (
       <GradientContainer>
@@ -162,16 +174,7 @@ export default function New() {
           <RoundedContainer>
             <WizardForm
               onSubmit={onSubmit}
-              initialValues={{ 
-                pubkey: process.browser && window.solana.publicKey.toString(),
-                theme: {
-                  backgroundColor: '#333333',
-                  primaryColor: '#F2C94C',
-                  titleFont: 'Work Sans',
-                  textFont: 'Work Sans',
-                  logo: undefined,
-                }
-              }}
+              initialValues={initialValues}
             >
               <WizardFormStep validate={subdomainUniqueness}>
                   <H2>Let&apos;s start with your sub-domain.</H2>

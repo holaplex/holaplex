@@ -45,7 +45,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
     background: url(${encodedLogo});
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: fit;
   }
   .app-bar-box, .ant-card-meta, .ant-card-cover {
     box-shadow: none;
