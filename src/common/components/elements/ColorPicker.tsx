@@ -52,16 +52,15 @@ const Shade = styled.div`
 
 type Props = {
   onChange: (hex: string) => void,
-  color: string,
+  value: string,
   label: string
 }
 
-const ColorPickerField = ({ onChange, color, label }: Props) => {
-
+const ColorPickerField = ({ onChange, value, label }: Props) => {
   const [showPicker, setShowPicker] = useState(false)
 
-  const handleChange = (newColor: { hex: string }) => {
-    onChange(newColor.hex)
+  const handleChange = ({ hex }: { hex: string }) => {
+    onChange(hex)
   }
 
   return (
@@ -69,7 +68,7 @@ const ColorPickerField = ({ onChange, color, label }: Props) => {
       <Field onClick={() => setShowPicker(true)}>
         {/* @ts-ignore */}
         <Label noMargin>{label}</Label>
-        <ColorPreview color={color} />
+        <ColorPreview color={value} />
         <DropdownIcon size={20} icon="chevron-down" />
       </Field>
       {showPicker && <>
@@ -77,7 +76,7 @@ const ColorPickerField = ({ onChange, color, label }: Props) => {
         <Picker
           disableAlpha
           presetColors={[]}
-          color={color}
+          color={value}
           onChange={handleChange}
         />
       </>}
