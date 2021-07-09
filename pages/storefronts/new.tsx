@@ -148,7 +148,7 @@ export default function New() {
     } else {
       router.push("/")
     }
-  })
+  }, [])
 
   const initialValues = {
     theme: {
