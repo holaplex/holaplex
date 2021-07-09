@@ -15,7 +15,7 @@ const ErrorMessage = styled.div`
 type WizardFormProps = {
   onSubmit: (storefront: Storefront) => any,
   initialValues: Storefront,
-  children: React.ReactNodeArray 
+  children: React.ReactNode[],
 }
 const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, children }) => {
   const [page, changePage] = useState(0)
@@ -29,7 +29,7 @@ const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, c
   }
 
   const previous = () => {
-    changePage(Math.max(page - 1, 0)) 
+    changePage(Math.max(page - 1, 0))
   }
 
   const validate = async (values: Storefront) => {
@@ -37,11 +37,14 @@ const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, c
       page
     ]
 
+    //@ts-ignore
     if(activePage.props.validate) {
+      //@ts-ignore
       const errors = await activePage.props.validate(values)
+
       return errors
     }
-    
+
     return {}
   }
 

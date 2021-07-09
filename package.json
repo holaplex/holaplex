@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.19",
+    "@types/color": "^3.0.2",
     "@types/cors": "^2.8.10",
     "@types/formidable": "^1.2.2",
     "@types/mocha": "^8.2.2",

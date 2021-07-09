@@ -1,9 +1,9 @@
-import { StorefrontTheme } from "@/modules/storefront/types";
-// @ts-ignore
-import { rgba } from 'polished';
+import { StorefrontTheme } from '@/modules/storefront/types'
+//@ts-ignore
+import { rgba } from 'polished'
 import Color from 'color'
 
-const encodeFile = async (blob) => {
+const encodeFile = async (blob: Blob) => {
   return new Promise((resolve) => {
     const reader = new FileReader()
     reader.readAsDataURL(blob);
