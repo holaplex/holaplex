@@ -40,8 +40,12 @@ const RoundedContainer = styled.div`
 
 const Actions = styled.div`
   ${sv.flexRow};
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: ${props => props.noMargin ? 0 : sv.appPadding}px;
+`;
+
+const ActionGroup = styled.div`
+  ${sv.flexRow};
 `;
 
 const PageTitle = styled.div`
@@ -134,10 +138,12 @@ const ExternalLink = styled.a`
 `;
 
 const Input = styled.input`
-  background: ${sv.colors.cellDark};
+  background: ${sv.colors.cell};
   border: none;
   outline: none;
-  padding: ${sv.grid}px;
+  padding: 16px 24px;
+  height: 64px;
+  text-height: 64px;
   margin: 0;
   ${sv.bodyText};
   ${sv.borderRadius};
@@ -177,6 +183,7 @@ export {
   SectionContent,
   SectionTitle,
   Actions,
+  ActionGroup,
   PageTitle,
   SubTitle,
   Label,

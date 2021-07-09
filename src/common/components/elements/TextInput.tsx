@@ -27,7 +27,7 @@ const StyledLabel = styled(Label)`
   color: ${sv.colors.subtleText};
 `;
 
-const SubDomain = styled.div`
+const RootDomain = styled.div`
   margin-right: auto;
   font-size: ${sv.grid*3}px;
   color: ${sv.colors.subtleText};
@@ -35,17 +35,16 @@ const SubDomain = styled.div`
 
 type Props = {
   label?: string,
-  subDomain?: string,
+  rootDomain?: string,
   value?: string,
   className?: string,
   placeholder?: string,
   onChange?: Function,
+  meta?: object,
 }
 
-const TextInput = ({ subDomain, label, value, onChange, placeholder, className }: Props) => {
-
-  const hasRightText = subDomain || label
-
+const TextInput = ({ rootDomain, label, value, onChange, placeholder, className, meta }: Props) => {
+  const hasRightText = rootDomain || label
   return (
     <Container className={className}>
       {label && <StyledLabel noMargin>{label}</StyledLabel>}
@@ -55,7 +54,7 @@ const TextInput = ({ subDomain, label, value, onChange, placeholder, className }
         placeholder={placeholder}
         onChange={onChange}
       />
-      {subDomain && <SubDomain>{subDomain}</SubDomain>}
+      {rootDomain && <RootDomain>{rootDomain}</RootDomain>}
     </Container>
   )
 }

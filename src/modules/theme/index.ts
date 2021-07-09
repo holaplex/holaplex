@@ -1,18 +1,20 @@
-import { StorefrontTheme } from "@/modules/storefront/types";
-// @ts-ignore
-import { rgba } from 'polished';
+import { StorefrontTheme } from '@/modules/storefront/types'
+//@ts-ignore
+import { rgba } from 'polished'
 import Color from 'color'
 
-const THEME_DEFAULTS = {
-  backgroundColor: "#ffffff",
-  primaryColor: "#000000"
+const encodeFile = async (blob: Blob) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      resolve(reader.result)
+    }
+  });
 }
-export function stylesheet(theme: StorefrontTheme) {
-  const {
-    backgroundColor,
-    primaryColor,
-    logoUrl,
-  } = {...THEME_DEFAULTS, ...theme}
+
+export async function stylesheet({ backgroundColor, primaryColor, logo }: StorefrontTheme) {
+  const encodedLogo = await encodeFile(logo)
 
   let contrastBackgroundColor = new Color(backgroundColor).darken(.4).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.2).hex()
@@ -40,10 +42,10 @@ export function stylesheet(theme: StorefrontTheme) {
   .title {
     width: 42px;
     height: 42px;
-    background: url(${logoUrl});
+    background: url(${encodedLogo});
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: fit;
   }
   .app-bar-box, .ant-card-meta, .ant-card-cover {
     box-shadow: none;
@@ -110,7 +112,5 @@ export function stylesheet(theme: StorefrontTheme) {
   }
   `
 
-  // console.log(themeCss);
-
   return themeCss
-  }
+}

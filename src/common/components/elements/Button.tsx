@@ -18,16 +18,17 @@ type containerProps = {
   marginRight: boolean;
 }
 
-const Container = styled.div<containerProps>`
+const Container = styled.button<containerProps>`
+  border: none;
   height: ${(props: containerProps) => props.small ? sv.buttonHeight/1.5 : sv.buttonHeight}px;
   background: ${(props: containerProps) => props.subtle ? sv.colors.cellDark : sv.colors.mainGradient};
   color: ${sv.colors.buttonText};
   ${sv.flexCenter};
   ${sv.box};
   width: auto;
+  font: ${sv.bodyText};
   padding: 0 ${(props: containerProps) => props.small ? sv.grid*2 : sv.grid*4}px;
   margin-right: ${(props: containerProps) => props.marginRight ? sv.grid : 0}px;
-  opacity: ${(props: containerProps) => props.disabled ? .3 : 1};
   border-radius: ${sv.radius}px;
   cursor: pointer;
   font-weight: 700;
@@ -38,11 +39,15 @@ const Container = styled.div<containerProps>`
     margin-right: ${(props: containerProps) => props.hasLabel ? sv.grid : 0}px;
     flex: 0 0 16px;
   }
+  &:focus {
+    border: none;
+    outline: none;
+  }
   &:hover {
     background: ${(props: containerProps) => props.subtle ? darken(0.1, sv.colors.cellDark) : sv.colors.mainGradientHover};
   }
   &:disabled {
-    opacity: .5;
+    background: ${sv.colors.mainGradentDisabled};
   }
 `;
 
@@ -50,20 +55,21 @@ const Container = styled.div<containerProps>`
 
 type buttonProps = {
   label: string;
-  action?: Function; // marking this optional as we build out functionality
+  onClick?: Function; // marking this optional as we build out functionality
   marginRight?: boolean;
   inactive?: boolean;
   icon?: string;
   subtle?: boolean;
   small?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function Button({
   label,
-  action,
+  onClick,
   marginRight,
-  inactive,
+  disabled,
   icon,
   subtle,
   small,
@@ -73,10 +79,6 @@ export default function Button({
   const bgColor = subtle ? sv.colors.card : sv.colors.cta
   const hoverBgColor = subtle ? sv.colors.cardLight : sv.colors.ctaHover
 
-  const handleAction = () => {
-    action && !inactive ? action() : console.log('no action yet...')
-  }
-
   return (
     <Container
       // @ts-ignore
@@ -85,7 +87,8 @@ export default function Button({
       bgColor={bgColor}
       hoverBgColor={hoverBgColor}
       className={className}
-      onClick={handleAction}
+      disabled={disabled}
+      onClick={disabled ? null : onClick}
       hasLabel={label}
       small={small}
     >
