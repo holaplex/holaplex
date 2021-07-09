@@ -80,23 +80,23 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
   const [primaryColor, setPrimaryColor] = useState('#F2C94C')
   const [titleFont, setTitleFont] = useState('Work Sans')
   const [bodyFont, setTextFont] = useState('Work Sans')
-  // const [textColor, setTextColor] = useState(sv.colors.buttonText)
-  // const [buttonTextColor, setButtonTextColor] = useState(sv.colors.buttonText)
+  const [textColor, setTextColor] = useState(sv.colors.buttonText)
+  const [buttonTextColor, setButtonTextColor] = useState(sv.colors.buttonText)
 
   const {
     dispatch,
     storefront
   } = useStorefrontContext();
 
-  // useEffect(() => {
-  //   const computedTextColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
-  //   if (computedTextColor !== textColor) setTextColor(computedTextColor)
-  // }, [backgroundColor])
-  //
-  // useEffect(() => {
-  //   const computedButtonColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
-  //   if (computedButtonColor !== buttonTextColor) setButtonTextColor(computedButtonColor)
-  // }, [primaryColor])
+  useEffect(() => {
+    const computedTextColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
+    if (computedTextColor !== textColor) setTextColor(computedTextColor)
+  }, [backgroundColor])
+
+  useEffect(() => {
+    const computedButtonColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
+    if (computedButtonColor !== buttonTextColor) setButtonTextColor(computedButtonColor)
+  }, [primaryColor])
 
 
   const handleNext = async () => {
@@ -104,10 +104,8 @@ const CustomizeStore = ({nextAction, backAction}: Props) => {
       ...storefront.theme,
       backgroundColor,
       primaryColor,
-      // bodyFont,
-      // titleFont,
-      // textColor,
-      // buttonTextColor
+      bodyFont,
+      titleFont,
     }, storefront, dispatch)
 
     nextAction()

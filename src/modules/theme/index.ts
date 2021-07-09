@@ -1,6 +1,7 @@
 import { StorefrontTheme } from "@/modules/storefront/types";
 // @ts-ignore
 import { rgba } from 'polished';
+// @ts-ignore
 import Color from 'color'
 
 const THEME_DEFAULTS = {
@@ -14,8 +15,8 @@ export function stylesheet(theme: StorefrontTheme) {
     logoUrl,
   } = {...THEME_DEFAULTS, ...theme}
 
-  let contrastBackgroundColor = new Color(backgroundColor).darken(.4).hex()
-  let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.2).hex()
+  let contrastBackgroundColor = new Color(backgroundColor).darken(.2).hex()
+  let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.1).hex()
   let textColor = '#000000'
   let subtleTextColor = rgba('#000000', .6)
   let buttonTextColor = '#000000'
@@ -95,6 +96,10 @@ export function stylesheet(theme: StorefrontTheme) {
   .ant-popover-inner {
     box-shadow: ${boxShadow};
   }
+  .auction-container {
+    background: ${contrastBackgroundColor};
+    color: ${textColor};
+  }
   h6,
   h2,
   h4,
@@ -110,7 +115,7 @@ export function stylesheet(theme: StorefrontTheme) {
   }
   `
 
-  // console.log(themeCss);
+  console.log(themeCss);
 
   return themeCss
   }
