@@ -142,13 +142,17 @@ export default function New() {
 
   useEffect(() => {
     if (process.browser && window.solana.isConnected) {
-      window.arweaveWallet.getActivePublicKey().catch(() => {
+      window.onload = () => {
+        if (window.solana.isConnected) {
+          window.arweaveWallet.getActivePublicKey().catch(() => {
+              router.push("/")
+          })
+        } else {
           router.push("/")
-      })
-    } else {
-      router.push("/")
+        }
+      }
     }
-  }, [])
+  })
 
   const initialValues = {
     theme: {
