@@ -1,6 +1,8 @@
 export type StorefrontTheme = {
-  primaryColor?: string;
-  backgroundColor?: string;
+  primaryColor: string;
+  backgroundColor: string;
+  textFont: string;
+  titleFont: string;
   logo?: any;
 }
 
