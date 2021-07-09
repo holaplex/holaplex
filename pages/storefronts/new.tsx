@@ -121,14 +121,14 @@ export default function New() {
     }
   }
 
-  const onSubmit = async ({ subdomain, theme, pubkey }: Storefront) => {
+  const onSubmit = async ({ subdomain, theme }: Storefront) => {
     const data = await stylesheet(theme)
 
     const transaction = await arweave.createTransaction({ data })
 
     transaction.addTag("Content-Type", "text/css")
     transaction.addTag("holaplex:metadata:subdomain", subdomain)
-    transaction.addTag("solana:pubkey", pubkey)
+    transaction.addTag("solana:pubkey", window.solana.publicKey.toString())
     transaction.addTag("holaplex:theme:color:primary", theme.primaryColor)
     transaction.addTag("holaplex:theme:color:background", theme.backgroundColor)
     transaction.addTag("holaplex:theme:font:title", theme.titleFont)
@@ -141,11 +141,11 @@ export default function New() {
   }
 
   useEffect(() => {
-    if (process.browser && window.solana.isConnected) {
+    if (process.browser) {
       window.onload = () => {
         if (window.solana.isConnected) {
           window.arweaveWallet.getActivePublicKey().catch(() => {
-              router.push("/")
+            router.push("/")
           })
         } else {
           router.push("/")
@@ -161,10 +161,6 @@ export default function New() {
       titleFont: 'Work Sans',
       textFont: 'Work Sans',
     }
-  }
-
-  if (process.browser) {
-    initialValues.pubkey = window.solana.publicKey?.toString()
   }
 
   return (

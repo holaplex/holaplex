@@ -50,9 +50,9 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
     width: 42px;
     height: 42px;
     background: url(${encodedLogo});
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
-    background-position: fit;
+    background-position: center;
   }
   .app-bar-box, .ant-card-meta, .ant-card-cover {
     box-shadow: none;
