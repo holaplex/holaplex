@@ -15,7 +15,8 @@ const encodeFile = async (blob: Blob) => {
 }
 
 export async function stylesheet({ backgroundColor, primaryColor, logo }: StorefrontTheme) {
-  const encodedLogo = await encodeFile(logo)
+  let encodedLogo = ''
+  if (logo) encodedLogo = await encodeFile(logo)
 
   let contrastBackgroundColor = new Color(backgroundColor).darken(.2).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.1).hex()
@@ -39,6 +40,22 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
 
   const themeCss = `body {
     background-color: ${backgroundColor};
+    color: ${textColor};
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: ${textColor};
+  }
+  input::placeholder {
+    color: ${subtleTextColor};
+  }
+  .ant-slider-track, .ant-slider-rail {
+    height: 10px;
+    border-radius: 5px;
+    background: ${lesserContrastBackgroundColor};
+  }
+  .ant-slider-step {
+    background: ${contrastBackgroundColor};
+    border-radius: 5px;
   }
   .title {
     width: 42px;
@@ -47,6 +64,25 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
     background-size: cover;
     background-repeat: no-repeat;
     background-position: fit;
+  }
+  .ant-input, .input, .ant-input-number {
+    border-color: ${contrastBackgroundColor};
+    background: ${lesserContrastBackgroundColor};
+  }
+  .ant-input:focus, .ant-input-focused {
+    border-color: ${primaryColor};
+  }
+  .ant-input::placeholder {
+    color: ${subtleTextColor};
+  }
+  .ant-input-affix-wrapper, .ant-select {
+    border: 1px solid ${contrastBackgroundColor} !important;
+    background: ${lesserContrastBackgroundColor};
+    border-radius: 8px;
+  }
+  .ant-input-affix-wrapper .input {
+    border-color: transparent;
+    background: none;
   }
   .app-bar-box, .ant-card-meta, .ant-card-cover {
     box-shadow: none;
@@ -64,24 +100,43 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
     background-color: ${lesserContrastBackgroundColor};
     box-shadow: none !important;
   }
-  .app-bar-box .ant-btn {
+  .app-bar-box .ant-btn, .action-field .field-title {
     color: ${textColor};
   }
   .app-bar-box .ant-btn:hover {
     color: ${primaryColor};
   }
-  .ant-btn-primary {
+  .ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
+    border-color: ${subtleTextColor};
+  }
+  .ant-btn {
+    border-color: ${contrastBackgroundColor};
+  }
+  .ant-btn-lg {
+    background: ${lesserContrastBackgroundColor} !important;
+    color: ${textColor};
+  }
+  .ant-btn-lg:hover {
+    background: ${contrastBackgroundColor} !important;
+  }
+  .ant-btn-primary, .action-btn {
     background: ${primaryColor} !important;
     color: ${buttonTextColor} !important;
     border: 0;
     box-shadow: none;
   }
-  .ant-btn-primary:hover {
+  .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover {
     background: ${primaryHoverColor} !important;
     color: ${buttonTextColor} !important;
   }
+  .type-btn-description {
+    color: ${subtleTextColor};
+  }
   .divider {
     border-color: ${backgroundColor};
+  }
+  .ant-card {
+    background: none;
   }
   .ant-card-bordered, .ant-tabs-nav::before {
     border-color: ${lesserContrastBackgroundColor} !important;
@@ -92,8 +147,14 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
   .ant-tabs-ink-bar {
     background: ${primaryColor};
   }
+  a {
+    color: ${primaryColor} !important;
+  }
+  a:hover {
+    color: ${primaryHoverColor} !important;
+  }
   p {
-    color: ${subtleTextColor};
+    color: ${subtleTextColor} !important;
   }
   .ant-popover-inner {
     box-shadow: ${boxShadow};
@@ -101,6 +162,51 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
   .auction-container {
     background: ${contrastBackgroundColor};
     color: ${textColor};
+  }
+  .tag, .edition-badge {
+    background: ${lesserContrastBackgroundColor} !important;
+    color: ${textColor};
+  }
+  .ant-modal-content {
+    box-shadow: none !important;
+  }
+  .ant-modal-body {
+    background: ${contrastBackgroundColor} !important;
+    color: ${textColor};
+    box-shadow: ${boxShadow} !important;
+  }
+  .ant-input-number {
+    background: ${lesserContrastBackgroundColor} !important;
+  }
+  .modal-title, .ant-statistic-content {
+    color: ${textColor} !important;
+  }
+  .cd-label, .ant-statistic-title, .info-header {
+    color: ${subtleTextColor} !important;
+  }
+  .call-to-action h2 {
+    color: ${textColor};
+  }
+  .ant-steps-vertical {
+    overflow-x: visible !important;
+  }
+  .ant-steps-item-title {
+    line-height: 24px !important;
+  }
+  .ant-steps-item-wait .ant-steps-item-title {
+    color: ${subtleTextColor} !important;
+  }
+  .ant-steps-item-process .ant-steps-item-title {
+    color: ${textColor} !important;
+  }
+  .ant-steps-item-tail::after {
+    background: ${lesserContrastBackgroundColor} !important;
+  }
+  .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+    background: ${lesserContrastBackgroundColor} !important;
+  }
+  .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot, .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+    background: ${primaryColor};
   }
   h6,
   h2,
@@ -117,7 +223,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo }: Storef
   }
   `
 
-  console.log(themeCss);
+  // console.log(themeCss);
 
   return themeCss
 }

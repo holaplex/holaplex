@@ -1,0 +1,184 @@
+body {
+    background-color: #6EA1E7;
+    color: #000000;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000;
+  }
+  input::placeholder {
+    color: rgba(0,0,0,0.6);
+  }
+  .ant-slider-track, .ant-slider-rail {
+    height: 10px;
+    border-radius: 5px;
+    background: #518EE2;
+  }
+  .ant-slider-step {
+    background: #337BDD;
+    border-radius: 5px;
+  }
+  .title {
+    width: 42px;
+    height: 42px;
+    background: url();
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: fit;
+  }
+  .ant-input, .input, .ant-input-number {
+    border-color: #337BDD;
+    background: #518EE2;
+  }
+  .ant-input:focus, .ant-input-focused {
+    border-color: #68F665;
+  }
+  .ant-input::placeholder {
+    color: rgba(0,0,0,0.6);
+  }
+  .ant-input-affix-wrapper, .ant-select {
+    border: 1px solid #337BDD !important;
+    background: #518EE2;
+    border-radius: 8px;
+  }
+  .ant-input-affix-wrapper .input {
+    border-color: transparent;
+    background: none;
+  }
+  .app-bar-box, .ant-card-meta, .ant-card-cover {
+    box-shadow: none;
+    background-color: #337BDD;
+    background: #337BDD;
+  }
+  .artist-card, .artist-card:hover {
+    box-shadow: none;
+  }
+  .ant-card-hoverable, .ant-card-hoverable:hover {
+    box-shadow: none;
+  }
+  .artist-card .ant-card-body{
+    background: #518EE2;
+    background-color: #518EE2;
+    box-shadow: none !important;
+  }
+  .app-bar-box .ant-btn, .action-field .field-title {
+    color: #000000;
+  }
+  .app-bar-box .ant-btn:hover {
+    color: #68F665;
+  }
+  .ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
+    border-color: rgba(0,0,0,0.6);
+  }
+  .ant-btn {
+    border-color: #337BDD;
+  }
+  .ant-btn-lg {
+    background: #518EE2 !important;
+    color: #000000;
+  }
+  .ant-btn-lg:hover {
+    background: #337BDD !important;
+  }
+  .ant-btn-primary, .action-btn {
+    background: #68F665 !important;
+    color: #000000 !important;
+    border: 0;
+    box-shadow: none;
+  }
+  .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover {
+    background: #28F223 !important;
+    color: #000000 !important;
+  }
+  .type-btn-description {
+    color: rgba(0,0,0,0.6);
+  }
+  .divider {
+    border-color: #6EA1E7;
+  }
+  .ant-card {
+    background: none;
+  }
+  .ant-card-bordered, .ant-tabs-nav::before {
+    border-color: #518EE2 !important;
+  }
+  .ant-card-bordered:hover {
+    border-color: #68F665 !important;
+  }
+  .ant-tabs-ink-bar {
+    background: #68F665;
+  }
+  a {
+    color: #68F665 !important;
+  }
+  a:hover {
+    color: #28F223 !important;
+  }
+  p {
+    color: rgba(0,0,0,0.6) !important;
+  }
+  .ant-popover-inner {
+    box-shadow: 0 0 16px rgba(0,0,0,.3);
+  }
+  .auction-container {
+    background: #337BDD;
+    color: #000000;
+  }
+  .tag, .edition-badge {
+    background: #518EE2 !important;
+    color: #000000;
+  }
+  .ant-modal-content {
+    box-shadow: none !important;
+  }
+  .ant-modal-body {
+    background: #337BDD !important;
+    color: #000000;
+    box-shadow: 0 0 16px rgba(0,0,0,.3) !important;
+  }
+  .ant-input-number {
+    background: #518EE2 !important;
+  }
+  .modal-title, .ant-statistic-content {
+    color: #000000 !important;
+  }
+  .cd-label, .ant-statistic-title, .info-header {
+    color: rgba(0,0,0,0.6) !important;
+  }
+  .call-to-action h2 {
+    color: #000000;
+  }
+  .ant-steps-vertical {
+    overflow-x: visible !important;
+  }
+  .ant-steps-item-title {
+    line-height: 24px !important;
+  }
+  .ant-steps-item-wait .ant-steps-item-title {
+    color: rgba(0,0,0,0.6) !important;
+  }
+  .ant-steps-item-process .ant-steps-item-title {
+    color: #000000 !important;
+  }
+  .ant-steps-item-tail::after {
+    background: #518EE2 !important;
+  }
+  .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+    background: #518EE2 !important;
+  }
+  .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot, .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+    background: #68F665;
+  }
+  h6,
+  h2,
+  h4,
+  .art-title,
+  .cd-number,
+  .tab-title,
+  .title,
+  .app-btn,
+  .ant-tabs-tab-active .tab-title,
+  .artist-card-name,
+  .ant-card-meta-title {
+    color: #000000;
+  }
+  

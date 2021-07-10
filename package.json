@@ -10,7 +10,8 @@
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
-    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register"
+    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
+    "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts"
   },
   "dependencies": {
     "@prisma/client": "^2.25.0",

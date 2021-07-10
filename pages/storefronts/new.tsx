@@ -68,7 +68,7 @@ const PreviewItem = styled.div`
   margin-bottom: ${sv.grid*4}px;
 `;
 
-const Container = styled(RoundedContainer)`
+const Container = styled.div`
   ${sv.flexRow};
 `;
 
@@ -210,7 +210,7 @@ export default function New() {
                     <FieldBlock>
                     <Field
                         name="theme.primaryColor"
-                        render={props => <ColorPicker {...props.input} label="Primary color (buttons &amp; links)" />}
+                        render={props => <ColorPicker {...props.input} label="Buttons &amp; Links" />}
                       />
                     </FieldBlock>
                     <FieldBlock>
