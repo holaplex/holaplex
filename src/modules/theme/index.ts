@@ -15,7 +15,7 @@ const encodeFile = async (blob: Blob) => {
   });
 }
 
-const joinFonts = pipe(map(replace(/s+/g, '+')), join("&family="))
+const joinFonts = pipe(map(replace(/\s+/g, '+')), join("&family="))
 
 export async function stylesheet({ backgroundColor, primaryColor, logo, titleFont, textFont }: StorefrontTheme) {
   let encodedLogo = ''

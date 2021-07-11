@@ -52,7 +52,7 @@ const googleApiKey = 'AIzaSyC1Bti2pgemOewDX-95SkcgEvyWixFffbA';
 
 const availableFonts = [
   "Roboto",
-  "Work sans",
+  "Work Sans",
   "Montserrat",
   "Source Sans Pro",
   "Merriweather",
