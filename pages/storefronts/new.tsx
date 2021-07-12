@@ -19,7 +19,7 @@ import ColorPicker from '@/components/elements/ColorPicker'
 import FontPicker from '@/components/elements/FontPicker'
 import WizardFormStep from '@/components/elements/WizardFormStep'
 import {isDarkColor} from '@/utils/index'
-import { stylesheet } from '@/modules/theme'
+import { stylesheet, base64EncodeFile } from '@/modules/theme'
 import { initArweave, lookupTransactionsBySubdomain } from '@/modules/arweave'
 
 const Content = styled.div`
@@ -122,7 +122,8 @@ export default function New() {
   }
 
   const onSubmit = async ({ subdomain, theme }: Storefront) => {
-    const data = await stylesheet(theme)
+    const logo = await base64EncodeFile(theme.logo)
+    const data = await stylesheet({ ...theme, logo })
 
     const transaction = await arweave.createTransaction({ data })
 
