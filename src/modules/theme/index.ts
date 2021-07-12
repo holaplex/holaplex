@@ -152,9 +152,11 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
     border: 0;
     box-shadow: none;
   }
-  .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover, .metaplex-button:hover, .overlay-btn:hover {
+  .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover, .metaplex-button:hover, .overlay-btn:hover, .ant-btn:focus {
     background: ${primaryHoverColor} !important;
     color: ${buttonTextColor} !important;
+    border-color: ${primaryColor};
+
   }
   .type-btn-description {
     color: ${subtleTextColor};
