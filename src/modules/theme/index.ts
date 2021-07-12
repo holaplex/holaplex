@@ -5,7 +5,7 @@ import { rgba } from 'polished';
 import Color from 'color'
 import { pipe, map, replace, join } from 'ramda'
 
-const encodeFile = async (blob: Blob) => {
+export async function base64EncodeFile(blob: Blob) {
   return new Promise((resolve) => {
     const reader = new FileReader()
     reader.readAsDataURL(blob);
@@ -18,9 +18,6 @@ const encodeFile = async (blob: Blob) => {
 const joinFonts = pipe(map(replace(/\s+/g, '+')), join("&family="))
 
 export async function stylesheet({ backgroundColor, primaryColor, logo, titleFont, textFont }: StorefrontTheme) {
-  let encodedLogo = ''
-  if (logo) encodedLogo = await encodeFile(logo)
-
   let contrastBackgroundColor = new Color(backgroundColor).darken(.2).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.1).hex()
   let textColor = '#000000'
@@ -49,7 +46,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
     background-color: ${backgroundColor};
     color: ${textColor};
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3, h4, h5, h6, .waiting-title, .ant-list-item-meta-description, .ant-popover-inner, .ant-popover-inner-content {
     color: ${textColor};
   }
   input::placeholder {
@@ -67,7 +64,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
   .title {
     width: 42px;
     height: 42px;
-    background: url(${encodedLogo});
+    background: url(${logo});
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -75,15 +72,21 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
   .ant-input, .input, .ant-input-number {
     border-color: ${contrastBackgroundColor};
     background: ${lesserContrastBackgroundColor};
+    color: ${subtleTextColor};
   }
-  .ant-input:focus, .ant-input-focused {
+
+  .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover, .ant-input-affix-wrapper:hover {
+    border-color: none;
+  }
+  .ant-input:focus, .ant-input-focused, .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused  {
     border-color: ${primaryColor};
+    box-shadow: none;
   }
   .ant-input::placeholder {
     color: ${subtleTextColor};
   }
   .ant-input-affix-wrapper, .ant-select {
-    border: 1px solid ${contrastBackgroundColor} !important;
+    border: 1px solid ${contrastBackgroundColor};
     background: ${lesserContrastBackgroundColor};
     border-radius: 8px;
   }
@@ -91,15 +94,31 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
     border-color: transparent;
     background: none;
   }
-  .app-bar-box, .ant-card-meta, .ant-card-cover {
+  .app-bar-box, .ant-card-meta, .ant-card-cover, .metaplex-button, .ant-popover-inner {
     box-shadow: none;
     background-color: ${contrastBackgroundColor};
     background: ${contrastBackgroundColor};
   }
-  .artist-card, .artist-card:hover {
+
+  .ant-select-dropdown {
+    background-color: ${contrastBackgroundColor};
+    color: ${textColor};
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: ${primaryColor};
+    color: ${textColor};
+  }
+
+  .ant-popover-placement-bottom > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-bottomLeft > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-bottomRight > .ant-popover-content > .ant-popover-arrow {
+    border-top-color: ${contrastBackgroundColor};
+    border-left-color: ${contrastBackgroundColor};  
+  }
+
+  .artist-card, .artist-card:hover, .metaplex-button:hover {
     box-shadow: none;
   }
-  .ant-card-hoverable, .ant-card-hoverable:hover {
+  .ant-card-hoverable, .ant-card-hoverable:hover. .metaplex-button:hover {
     box-shadow: none;
   }
   .artist-card .ant-card-body{
@@ -112,6 +131,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
   }
   .app-bar-box .ant-btn:hover {
     color: ${primaryColor};
+    border: none;
   }
   .ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
     border-color: ${subtleTextColor};
@@ -126,13 +146,13 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
   .ant-btn-lg:hover {
     background: ${contrastBackgroundColor} !important;
   }
-  .ant-btn-primary, .action-btn {
+  .ant-btn-primary, .action-btn, .metaplex-button, .overlay-btn {
     background: ${primaryColor} !important;
     color: ${buttonTextColor} !important;
     border: 0;
     box-shadow: none;
   }
-  .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover {
+  .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover, .metaplex-button:hover, .overlay-btn:hover {
     background: ${primaryHoverColor} !important;
     color: ${buttonTextColor} !important;
   }
@@ -164,7 +184,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
     color: ${subtleTextColor} !important;
   }
   .ant-popover-inner {
-    box-shadow: ${boxShadow};
+    box-shadow: none;
   }
   .auction-container {
     background: ${contrastBackgroundColor};
@@ -230,8 +250,6 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
     color: ${textColor};
   }
   `
-
-  // console.log(themeCss);
 
   return themeCss
 }

@@ -5,7 +5,7 @@ import { expect } from 'chai'
 describe('stylesheet', () => {
   describe('light colors', () => {
     it('shades dark', () => {
-      const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50" })
+      const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50", textFont: "Work Sans", titleFont: "Work Sans" })
 
       expect(sheet).to.not.be.null
     })
