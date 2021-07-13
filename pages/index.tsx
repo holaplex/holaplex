@@ -68,14 +68,15 @@ export default function Home() {
           .then(() => walletSDK.find(solanaPubkey))
           .then((wallet) => {
             if (!wallet) {
-              toast("Holaplex is still in a closed beta but we have added your wallet to the waitlist. Reach out to the team for approval.")
+              toast(() => <>Holaplex is in a closed beta but we have added your wallet to the waitlist. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
+
               return walletSDK.create(solanaPubkey)
             }
   
             if (wallet.approved) {
               router.push("/storefronts/new")
             } else {
-              toast("Your wallet has not yet been approved. Holaplex is still in a closed beta. Reach out to the team for approval.")
+              toast(() => <>Holaplex is in a closed beta and your wallet has not yet been approved. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
             }
           })
       })
@@ -87,10 +88,8 @@ export default function Home() {
       <Content>
         <MainPitch>
           <Logo>👋</Logo>
-          {/* @ts-ignore */}
           <PageTitle center invert>Holaplex</PageTitle>
-          {/* @ts-ignore */}
-          <SubTitle center invert>Design, launch, and host your NFT marketplace. No coding required!</SubTitle>
+          <SubTitle center invert>Design, launch, and host your Metaplex NFT marketplace. No coding required!</SubTitle>
           <NewStoreButton onClick={() => window.solana.connect() } label="Create Your Store" />
           <HasStoreText color={rgba(sv.colors.buttonText, .6)}>
           </HasStoreText>

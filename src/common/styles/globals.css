@@ -18,6 +18,10 @@ a {
   box-sizing: border-box;
 }
 
+.Toastify__toast {
+  border-radius: 8px;
+}
+
 .Toastify__progress-bar--default {
   background: #62b0b1;
 }
