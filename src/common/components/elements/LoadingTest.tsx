@@ -1,4 +1,4 @@
-import sv from '@/constants/Styles'
+import sv from '@/constants/styles'
 import styled from 'styled-components';
 import FullPageLoading from './FullPageLoading';
 // @ts-ignore

@@ -3,7 +3,7 @@ import { Form } from 'react-final-form'
 import styled from 'styled-components'
 import { Storefront } from '@/modules/storefront/types'
 import Button from '@/components/elements/Button';
-import { Actions, ActionGroup } from '@/constants/StyleComponents'
+import { Actions, ActionGroup } from '@/components/elements/StyledComponents'
 
 const BackButton = styled(Button)`
   margin: 0 20px 0 0;
@@ -17,7 +17,8 @@ type WizardFormProps = {
   initialValues: Storefront,
   children: React.ReactNode[],
 }
-const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, children }) => {
+
+const Wizard = ({ onSubmit, initialValues, children }: WizardFormProps) => {
   const [page, changePage] = useState(0)
   const [values, updateValues] = useState(initialValues || {})
   const activePage = React.Children.toArray(children)[page]
@@ -62,7 +63,7 @@ const Wizard: FunctionComponent<WizardFormProps> = ({ onSubmit, initialValues, c
       validate={validate}
       onSubmit={handleSubmit}
     >
-      {({ handleSubmit, submitting, pristine, valid, errors }) => {
+      {({ handleSubmit, submitting, pristine, valid, errors, submitSucceeded }) => {
         return (
           <form onSubmit={handleSubmit}>
             {activePage}

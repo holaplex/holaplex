@@ -33,6 +33,13 @@ A local instance of arweave can be booted with the following command. It will bi
 npx @textury/arlocal
 ```
 
+Run the db seed command to populate the database with your Solana wallet
+public key.
+
+```
+SOLANA_PUBKEY=${SOLANA_PUBKEY} yarn run db:seed
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

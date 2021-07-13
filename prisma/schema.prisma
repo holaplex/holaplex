@@ -10,10 +10,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Storefront {
-  id            Int     @default(autoincrement()) @id
-  subdomain     String  @unique
-  pubkey        String?
-  themeUrl      String?
-  theme         Json?
+model Wallets {
+  id       Int     @id @default(autoincrement())
+  approved Boolean @default(false)
+  pubkey   String  @unique @db.VarChar(44)
+
+  @@index([pubkey])
 }
