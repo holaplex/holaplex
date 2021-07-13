@@ -9,6 +9,9 @@
     "lint": "next lint",
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
+    "db:schema:format": "prisma format",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
     "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts"
@@ -33,6 +36,7 @@
     "react-device-detect": "^1.17.0",
     "react-dom": "17.0.2",
     "react-final-form": "^6.5.3",
+    "react-toastify": "^7.0.4",
     "styled-components": "^5.3.0",
     "yarn": "^1.22.10"
   },

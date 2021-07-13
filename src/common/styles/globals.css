@@ -17,3 +17,20 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.Toastify__progress-bar--default {
+  background: #62b0b1;
+}
+
+.Toastify__toast--default {
+  color: #222222;
+  font-family: inherit;
+}
+
+.Toastify__toast--default a {
+  color:#B92D44;
+}
+
+.Toastify__toast--default a:hover {
+  opacity: 0.8;
+}

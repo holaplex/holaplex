@@ -15,7 +15,7 @@ export const lookupTransactionsBySubdomain = async (arweave: Arweave, subdomain:
   const { api } = arweave.getConfig()
 
   try {
-    const response = await fetch(`${api.protocol}://${api.host}:${api.port}/graphql`, 
+    const response = await fetch(`${api.protocol}://${api.host}:${api.port}/graphql`,
     { 
       method: 'POST',
       headers: {

@@ -1,9 +1,10 @@
 import React, {useState, useRef, useEffect} from 'react'
+// @ts-ignore
 import FeatherIcon from 'feather-icons-react'
 import styled from 'styled-components';
-import sv from '@/constants/Styles';
+import sv from '@/constants/styles';
 import Button from './Button';
-import {Text} from '@/constants/StyleComponents';
+import {Text} from '@/components/elements/StyledComponents';
 
 // STYLE ##########################################################
 
@@ -25,7 +26,11 @@ const ClearIcon = styled(FeatherIcon)`
   }
 `;
 
-const Label = styled.div`
+type LabelProps = {
+  highlight?: boolean;
+}
+
+const Label = styled.div<LabelProps>`
   ${sv.label};
   color: ${props => props.highlight ? sv.colors.cta : sv.colors.subtleText};
   flex: 1;
@@ -40,24 +45,37 @@ const Input = styled.input`
 
 // COMPONENT ##########################################################
 
+type FilePickerProps = {
+  onChange: (e: any) => any,
+  label: string,
+  className?: string,
+  disabled?: boolean,
+  value: any,
+}
+
 export default function FilePickerWithLabel({
   onChange,
   label,
   className,
   disabled,
   value,
-}) {
+}: FilePickerProps) {
 
-  const inputField = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     e.preventDefault()
     onChange(e.target.files[0])
   }
 
-  const handleClick = (e) => {
+  const handleClick = (e: any) => {
     e.preventDefault()
-    inputField.current.click()
+
+    if (inputRef.current === null) {
+      return
+    }
+
+    inputRef.current.click()
   }
 
   const clearFile = () => {
@@ -71,13 +89,13 @@ export default function FilePickerWithLabel({
       {!value && <Button small icon="upload" onClick={handleClick} />}
       {value &&
         <FileInfo>
-          <Text noMargin>{value.name}</Text>
+          <Text>{value.name}</Text>
           <ClearIcon icon="x" onClick={() => clearFile()} />
         </FileInfo>
       }
       <Input
         type="file"
-        ref={inputField}
+        ref={inputRef}
         disabled={disabled}
         onChange={handleInputChange}
       />

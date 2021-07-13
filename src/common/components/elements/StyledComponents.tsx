@@ -1,6 +1,6 @@
-import sv from './Styles'
-import styled from 'styled-components';
-import { rgba } from 'polished';
+import sv from '../../constants/styles'
+import styled from 'styled-components'
+import { rgba } from 'polished'
 
 const Container = styled.div`
   ${sv.bodyText};
@@ -14,7 +14,11 @@ const GradientContainer = styled(Container)`
   background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
 `;
 
-const Content = styled.div`
+type ContentProps = {
+  noPadding: boolean;
+}
+
+const Content = styled.div<ContentProps>`
   width: 100%;
   flex: 1;
   overflow-y: hidden;
@@ -30,7 +34,11 @@ const SectionContent = styled.div`
   ${sv.box};
 `;
 
-const RoundedContainer = styled.div`
+type RoundedContainerProps = {
+  small?: boolean;
+}
+
+const RoundedContainer = styled.div<RoundedContainerProps>`
   padding: ${sv.appPadding}px;
   border-radius: ${sv.grid*3}px;
   background: ${sv.colors.background};
@@ -38,7 +46,11 @@ const RoundedContainer = styled.div`
   max-width: ${props => props.small ? 760 : 1080}px;
 `;
 
-const Actions = styled.div`
+type ActionsProps = {
+  noMargin?: boolean;
+}
+
+const Actions = styled.div<ActionsProps>`
   ${sv.flexRow};
   justify-content: space-between;
   margin-top: ${props => props.noMargin ? 0 : sv.appPadding}px;
@@ -48,14 +60,23 @@ const ActionGroup = styled.div`
   ${sv.flexRow};
 `;
 
-const PageTitle = styled.div`
+type PageTitleProps = {
+  invert?: boolean;
+  center?: boolean;
+}
+
+const PageTitle = styled.div<PageTitleProps>`
   ${sv.title};
   color: ${props => props.invert ? sv.colors.background : sv.colors.text};
   text-align: ${props => props.center ? 'center' : 'left'};
   margin-bottom: ${sv.grid*2}px;
 `
+type SubTitleProps = {
+  center?: boolean;
+  invert?: boolean;
+}
 
-const SubTitle = styled.div`
+const SubTitle = styled.div<SubTitleProps>`
   ${sv.h3};
   text-align: ${props => props.center ? 'center' : 'left'};
   font-weight: 300;
@@ -68,12 +89,18 @@ const SectionTitle = styled.div`
   margin-bottom: ${sv.grid}px;
 `;
 
-const Label = styled.div`
+type LabelProps = {
+  noMargin?: boolean;
+}
+const Label = styled.div<LabelProps>`
   ${sv.label};
   margin-bottom: ${props => props.noMargin ? 0 : sv.grid}px;
 `;
 
-const Text = styled.div`
+type TextProps = {
+  color?: string;
+}
+const Text = styled.div<TextProps>`
   ${sv.bodyText};
   line-height: 1.25;
   color: ${props => props.color || sv.colors.text};
@@ -103,7 +130,7 @@ const StandardLink = styled.a`
   color: ${sv.colors.text};
   cursor: pointer;
   &:hover {
-    color: ${sv.colors.hoverCta};
+    color: ${sv.colors.ctaHover};
   }
 `;
 
@@ -133,7 +160,7 @@ const ExternalLink = styled.a`
   color: ${sv.colors.cta};
   cursor: pointer;
   &:hover {
-    color: ${sv.colors.hoverCta};
+    color: ${sv.colors.ctaHover};
   }
 `;
 
@@ -148,8 +175,11 @@ const Input = styled.input`
   ${sv.bodyText};
   ${sv.borderRadius};
 `
+type TagProps = {
+  small?: boolean;
+}
 
-const Tag = styled.div`
+const Tag = styled.div<TagProps>`
   padding: ${props => props.small ? '0 4px' : '4px 8px'};
   border-radius: ${sv.grid*.5}px;
   background: ${props => props.color ? props.color : rgba(sv.colors.subtleText, .1)};
@@ -160,7 +190,11 @@ const Tag = styled.div`
   text-transform: lowercase;
 `;
 
-const Card = styled.div`
+type CardProps = {
+  inEffort?: boolean;
+}
+
+const Card = styled.div<CardProps>`
   transition: background .15s ease-out;
   padding: ${sv.grid*2}px;
   background: ${sv.colors.card};

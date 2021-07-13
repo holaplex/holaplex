@@ -1,9 +1,11 @@
 import React from 'react'
 
 type WizardFormStepProps = {
-  children: React.ReactElement<any, any>,
+  children: JSX.Element,
+  validate?: (val: any) => any,
+  pristine?: boolean,
 }
 
-const WizardFormStep: React.FunctionComponent<WizardFormStepProps> = ({ children }) => children;
+const WizardFormStep = ({ children }: WizardFormStepProps) => children;
 
 export default WizardFormStep

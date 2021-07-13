@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import FeatherIcon from 'feather-icons-react';
-import sv from '../../constants/Styles';
 
-const Hand = styled.div`
+type WavingHandProps = {
+  size?: number;
+}
+const Hand = styled.div<WavingHandProps>`
   animation: wave 2s linear infinite;
   transform-origin: 70% 70%;
   font-size: ${props => props.size}px;
@@ -19,8 +20,8 @@ const Hand = styled.div`
   }
 `
 
-export default function WavingHand({ className, size }) {
+export default function WavingHand({ size }: WavingHandProps) {
   return (
-    <Hand size={size || 48}>👋</Hand>
+    <Hand size={size || 120}>👋</Hand>
   );
 };

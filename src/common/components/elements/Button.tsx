@@ -2,7 +2,7 @@
 import React from 'react';
 // @ts-ignore
 import {darken} from 'polished'
-import sv from '@/constants/Styles';
+import sv from '@/constants/styles';
 import styled from 'styled-components';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react'
@@ -54,7 +54,7 @@ const Container = styled.button<containerProps>`
 ////// COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 type buttonProps = {
-  label: string;
+  label?: string;
   onClick?: Function; // marking this optional as we build out functionality
   marginRight?: boolean;
   inactive?: boolean;

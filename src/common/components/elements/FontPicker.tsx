@@ -1,9 +1,9 @@
 // @ts-nocheck
 import {useState} from 'react';
 import FeatherIcon from 'feather-icons-react'
-import sv from '@/constants/Styles';
+import sv from '@/constants/styles';
 import styled from 'styled-components';
-import { Label } from '@/constants/StyleComponents';
+import { Label } from '@/components/elements/StyledComponents';
 
 // this lib isnt compatible with ssr
 import dynamic from "next/dynamic";
@@ -62,7 +62,7 @@ const availableFonts = [
 ]
 
 type Props = {
-  onChange: () => void,
+  onChange: (event: any) => void,
   value: string,
   label: string,
   pickerId: string
@@ -76,12 +76,12 @@ const FontPickerField = ({ onChange, value, label, pickerId }: Props) => {
       <FontName className={`apply-font-${pickerId}`}>{value}</FontName>
       <DropdownIcon size={20} icon="chevron-down" />
       <FontPicker
-	apiKey={googleApiKey}
+	      apiKey={googleApiKey}
         variants={["regular", "700"]}
         families={availableFonts}
         pickerId={pickerId}
-	activeFontFamily={value}
-	onChange={(font) => { onChange(font.family) }}
+	      activeFontFamily={value}
+	      onChange={(font) => { onChange(font.family) }}
       />
     </Container>
   )

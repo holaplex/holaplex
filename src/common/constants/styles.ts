@@ -1,5 +1,6 @@
 import {isBrowser} from "react-device-detect";
 import {lighten, rgba} from 'polished'
+import { CSSObject } from 'styled-components'
 
 const text = '#222222'
 const subtleText = '#666666'
@@ -72,11 +73,11 @@ const StyleVariables = {
 
   title: {
     color: text,
-    fontWeight: '800',
+    fontWeight: 800,
     fontSize: 60,
     lineHeight: '1.25em',
     letterSpacing: .2,
-  },
+  } as CSSObject,
 
   h1: {
     color: text,
@@ -88,34 +89,34 @@ const StyleVariables = {
 
   h2: {
     color: text,
-    fontWeight: '800',
+    fontWeight: 800,
     fontSize: 40,
     lineHeight: '1.25em',
     letterSpacing: .2,
-  },
+  } as CSSObject,
 
   h3: {
     color: text,
-    fontWeight: '800',
+    fontWeight: 800,
     fontSize: 32,
     lineHeight: '1.25em',
     letterSpacing: .2,
-  },
+  } as CSSObject,
 
   h4: {
     color: text,
-    fontWeight: '700',
+    fontWeight: 700,
     fontSize: 24,
     lineHeight: '1.25em',
     letterSpacing: .2,
-  },
+  } as CSSObject,
 
   bodyText: {
     color: text,
     fontSize: 18,
     lineHeight: '1.25em',
     letterSpacing: .2,
-  },
+  } as CSSObject,
 
   label: {
     color: subtleText,
@@ -123,46 +124,46 @@ const StyleVariables = {
     lineHeight: '1.25em',
     textTransform: 'capitalize',
     letterSpacing: .5,
-  },
+  } as CSSObject,
 
   error: {
     color: warning,
     margin: '10px 0'
-  },
+  } as CSSObject,
 
   success: {
     color: success,
     margin: '10px 0'
-  },
+  } as CSSObject,
 
   flexRow: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
-  },
+  } as CSSObject,
 
   flexColumn: {
     display: 'flex',
     flexDirection: 'column'
-  },
+  } as CSSObject,
 
   flexCenter: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
-  },
+  } as CSSObject,
 
   box: {
     boxSizing: 'border-box'
-  },
+  } as CSSObject,
 
   borderRadius: {
     borderRadius: radius+'px',
-  },
+  } as CSSObject,
 
   transition: {
     transition: 'all .15s ease-out'
-  },
+  } as CSSObject,
 
   buttonBase: {
     height: buttonHeight,
@@ -180,7 +181,7 @@ const StyleVariables = {
     justifyContent: 'center',
     alignItems: 'center',
     boxSizing: 'border-box'
-  },
+  } as CSSObject,
 
   pageLayout: {
     height: '100%',
@@ -190,7 +191,7 @@ const StyleVariables = {
     display: 'flex',
     flexDirection: 'column',
     marginLeft: grid*4
-  },
+  } as CSSObject,
 
   inputField: {
     height: buttonHeight,
@@ -202,12 +203,13 @@ const StyleVariables = {
     input: {
       fontSize: grid*3
     }
-  },
+  } as CSSObject,
 
   borderStyle: `1px solid rgba(255,255,255,.1)`,
 
-  shadow: {boxShadow: `0 0 8px ${rgba(0,0,0,.15)}`}
-
+  shadow: {
+    boxShadow: `0 0 8px ${rgba(0,0,0,.15)}`
+  } as CSSObject,
 }
 
 export default StyleVariables

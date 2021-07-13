@@ -1,8 +1,8 @@
 // @ts-nocheck 
 import React from 'react';
-import sv from '@/constants/Styles';
+import sv from '@/constants/styles';
 import styled from 'styled-components';
-import { Label } from '@/constants/StyleComponents';
+import { Label } from '@/components/elements/StyledComponents';
 
 const Container = styled.div`
   ${sv.inputField};
