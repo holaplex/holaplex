@@ -4,9 +4,9 @@ import fs from 'fs'
 
 fs.readFile('hacks/demo-logo.png', (err, logo) => {
   stylesheet({
-    backgroundColor: "#6EA1E7", 
-    primaryColor: "#68F665",
-    titleFont: "Work Sans",
+    backgroundColor: "#7763FF",
+    primaryColor: "#3A41DB",
+    titleFont: "Merriweather",
     textFont: "Work Sans",
     logo: `data:image/png/;base64,${logo.toString('base64')}`,
   }).then(r => {
@@ -16,4 +16,3 @@ fs.readFile('hacks/demo-logo.png', (err, logo) => {
   })
   .catch(e => console.error(e))
 })
-
