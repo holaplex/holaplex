@@ -75,6 +75,11 @@ const PreviewButton = styled.div<{ textColor: string }>`
   font-weight: 700;
 `;
 
+const UploadedLogo = styled.img`
+  height: 48px;
+  width: 48px;
+`;
+
 const PreviewLink = styled.div`
   color: ${props => props.color};
   text-decoration: underline;
@@ -229,12 +234,17 @@ export default function New() {
                 {/* @ts-ignore */}
                 <FormSpy>
                   {(props) => {
-                    const { values: { theme: { backgroundColor, primaryColor } } } = props
+                    const { values: { theme: { backgroundColor, primaryColor, logo } } } = props
                     const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
                     const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
 
                     return (
                       <Preview bgColor={backgroundColor}>
+                        {logo &&
+                          <PreviewItem>
+                            <UploadedLogo src={logo && URL.createObjectURL(logo)} />
+                          </PreviewItem>
+                        }
                       <PreviewItem>
                         <H2 className="apply-font-title" color={textColor}>Big Title</H2>
                       </PreviewItem>
