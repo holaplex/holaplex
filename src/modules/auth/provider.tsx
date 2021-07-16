@@ -4,14 +4,9 @@ import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { Wallet } from '@/modules/wallet/types'
-import { Storefront } from '@/modules/storefront/types'
 import sv from '@/constants/styles'
-import HandWaving from '@/components/elements/HandWaving'
-import { initArweave } from '@/modules/arweave'
-import arweaveSDK from '@/modules/arweave/client'
 import { Solana } from '@/modules/solana/types'
-import { ArweaveTransaction } from '@/modules/arweave/types'
-import { isEmpty, isNil, reduce } from 'ramda'
+import { isNil } from 'ramda'
 
 const Content = styled.div`
   flex: 3;
@@ -20,23 +15,19 @@ const Content = styled.div`
 `;
 
 type AuthProviderChildProps = {
-  storefront?: Storefront | undefined;
-  solana?: Solana;
-  arweaveWallet?: any; 
+  authenticating: boolean; 
 }
 
 type AuthProviderProps = {
-  onlyOwner?: Boolean;
+  onlyArweaveAddress?: string;
   children: (props: AuthProviderChildProps) => React.ReactElement;
   solana: Solana;
   arweaveWallet: any;
 }
 
-export const AuthProvider = ({ children, onlyOwner, solana, arweaveWallet }: AuthProviderProps) => {
+export const AuthProvider = ({ children, onlyArweaveAddress, solana, arweaveWallet }: AuthProviderProps) => {
   const router = useRouter()
-  const arweave = initArweave()
-  const [storefront, setStorefront] = useState<Storefront>()
-  const [loading, setLoading] = useState(true)
+  const [authenticating, setAuthenticating] = useState(true)
 
   useEffect(() => {
     if (process.browser) {
@@ -44,6 +35,7 @@ export const AuthProvider = ({ children, onlyOwner, solana, arweaveWallet }: Aut
         router.push("/")
         return
       }
+
       solana.connect({ onlyIfTrusted: true })
         .then(() => walletSDK.find(solana.publicKey.toString()))
         .then((response: any) => {
@@ -58,59 +50,18 @@ export const AuthProvider = ({ children, onlyOwner, solana, arweaveWallet }: Aut
           }
         })
         .then((publicKey: string) => {
-          if (!onlyOwner) {
+          if (!onlyArweaveAddress) {
             return
           }
 
-          const subdomain = router.query.subdomain as string
-            
-          return arweaveSDK.query(arweave, arweaveSDK.queries.transactionBySubdomain, { subdomain })
-            .then((response: any) => {
-              if (isEmpty(response.data.transactions.edges)) {
-                toast(() => <>The store does not exist.</>)
+          if (onlyArweaveAddress != publicKey) {
+            toast(() => <>Your Arweave wallet address is not allowed.</>)
 
-                throw new Error("Storefront does not exist")             
-              }
-
-              const transaction = response.data.transactions.edges[0].node as ArweaveTransaction
-
-              if (transaction.owner.address !== publicKey) {
-                toast(() => <>Only the store owner can edit the theme.</>)
-
-                throw new Error("Not the storefront owner")
-              }
-
-              const tags = reduce(
-                (acc: any, {name, value }) => { 
-                  acc[name] = value 
-
-                  return acc
-                },
-                {},
-                transaction.tags,
-              )
-
-              const storefront = {
-                pubkey: tags["solana:pubkey"],
-                subdomain: tags["holaplex:metadata:subdomain"],
-                theme: {
-                  primaryColor: tags["holaplex:theme:color:primary"],
-                  backgroundColor: tags["holaplex:theme:color:background"],
-                  titleFont: tags["holaplex:theme:font:title"],
-                  textFont: tags["holaplex:theme:font:text"],
-                  logo : {
-                    url: tags["holaplex:theme:logo:url"],
-                    name: tags["holaplex:theme:logo:name"],
-                    type: tags["holaplex:theme:logo:type"]
-                  }
-                },
-              } as Storefront
-
-              setStorefront(storefront)
-            })
+            throw new Error("Arweave address not allowed")
+          }
         })
         .then(() => {
-          setLoading(false)
+          setAuthenticating(false)
         })
         .catch(() => {
           router.push("/")
@@ -118,13 +69,5 @@ export const AuthProvider = ({ children, onlyOwner, solana, arweaveWallet }: Aut
     }
   }, [])
 
-  return (
-    loading ? (
-      <Content>
-        <HandWaving />
-      </Content>
-    ) : (
-      children({ storefront, solana, arweaveWallet })
-    )
-  )
+  return children({ authenticating })
 }

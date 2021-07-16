@@ -23,6 +23,7 @@ import { AuthProvider } from '@/modules/auth'
 import { initArweave } from '@/modules/arweave'
 import { Solana } from '@/modules/solana/types'
 import arweaveSDK from '@/modules/arweave/client'
+import Loading from '@/components/elements/Loading'
 
 const Content = styled.div`
   flex: 1;
@@ -152,7 +153,8 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
 
   return (
     <AuthProvider solana={solana} arweaveWallet={arweaveWallet}>
-      {() => (
+      {({ authenticating }) => (
+      <Loading loading={authenticating}>
         <Content>
           <RoundedContainer>
             <WizardForm
@@ -214,7 +216,7 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
                   {/* @ts-ignore */}
                   <FormSpy>
                     {(props) => {
-                      const { values: { theme: { backgroundColor, primaryColor, logo }   } } = props
+                      const { values: { theme: { backgroundColor, primaryColor, logo } } } = props
                       const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
                       const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
 
@@ -266,6 +268,7 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
             </WizardForm>
           </RoundedContainer>
         </Content>
+      </Loading>
       )}
     </AuthProvider>
   )
