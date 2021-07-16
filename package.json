@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "touch /tmp/app-initialized && next start",
+    "dev": "nodemon",
+    "build": "next build && tsc --project tsconfig.server.json",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
     "lint": "next lint",
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
@@ -21,6 +21,7 @@
     "arweave": "^1.10.15",
     "color": "^3.1.3",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "feather-icons-react": "^0.4.3",
     "fetch": "^1.1.0",
@@ -56,6 +57,7 @@
     "eslint": "7.29.0",
     "eslint-config-next": "11.0.1",
     "mocha": "^9.0.1",
+    "nodemon": "^2.0.12",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"
