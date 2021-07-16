@@ -3,11 +3,9 @@ import { stylesheet } from '../src/modules/theme'
 import { expect } from 'chai'
 
 describe('stylesheet', () => {
-  describe('light colors', () => {
-    it('shades dark', () => {
-      const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50", textFont: "Work Sans", titleFont: "Work Sans" })
+  it('generates a css sheet', () => {
+    const sheet = stylesheet({ backgroundColor: "#eeeeee", primaryColor: "#4caf50", textFont: "Work Sans", titleFont: "Work Sans", logo: { url: "/demo-logo.png" } })
 
-      expect(sheet).to.not.be.null
-    })
+    expect(sheet).to.not.be.null
   })
 })

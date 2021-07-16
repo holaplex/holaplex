@@ -1,10 +1,13 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useRef, useState } from 'react'
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react'
-import styled from 'styled-components';
-import sv from '@/constants/styles';
-import Button from './Button';
-import {Text} from '@/components/elements/StyledComponents';
+import styled from 'styled-components'
+import { isNil } from 'ramda'
+import sv from '@/constants/styles'
+import Button from './Button'
+import {Text} from '@/components/elements/StyledComponents'
+import { initArweave } from '@/modules/arweave'
+import { toast } from 'react-toastify'
 
 // STYLE ##########################################################
 
@@ -60,12 +63,42 @@ export default function FilePickerWithLabel({
   disabled,
   value,
 }: FilePickerProps) {
-
+  const [uploading, setUploading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = (e: any) => {
-    e.preventDefault()
-    onChange(e.target.files[0])
+  const handleInputChange = async (e: any) => {
+    toast("Uploading your file to Arweave.", { autoClose: 3000 })
+
+    const arweave = initArweave()
+    const file = e.target.files[0]
+
+    if(isNil(file)) {
+      return
+    }
+
+    setUploading(true)
+
+    const { api } = arweave.getConfig()
+
+    const data = await file.arrayBuffer()
+    const transaction = await arweave.createTransaction({ data })
+
+    transaction.addTag("Content-Type", file.type)
+    transaction.addTag("File-Name", file.name)
+
+    await arweave.transactions.sign(transaction)
+
+    await arweave.transactions.post(transaction)
+
+    const url = `${api.protocol}://${api.host}:${api.port}/${transaction.id}`
+
+    toast("Your file was uploaded to Arweave.")
+
+    onChange({ name: file.name, type: file.type, url })
+
+    setUploading(false)
+
+    e.target.value = null
   }
 
   const handleClick = (e: any) => {
@@ -79,18 +112,19 @@ export default function FilePickerWithLabel({
   }
 
   const clearFile = () => {
-    onChange(undefined)
+    onChange({})
   }
+
   return (
     <Container
       className={className}
     >
       <Label>{label}</Label>
-      {!value && <Button small icon="upload" onClick={handleClick} />}
-      {value &&
+      {!value.url && <Button small disabled={uploading} icon="upload" onClick={handleClick} />}
+      {value.url &&
         <FileInfo>
           <Text>{value.name}</Text>
-          <ClearIcon icon="x" onClick={() => clearFile()} />
+          <ClearIcon icon="x" onClick={clearFile} />
         </FileInfo>
       }
       <Input

@@ -1,20 +1,16 @@
 import React, { useState, FunctionComponent } from 'react'
 import { Form } from 'react-final-form'
 import styled from 'styled-components'
-import { Storefront } from '@/modules/storefront/types'
 import Button from '@/components/elements/Button';
-import { Actions, ActionGroup } from '@/components/elements/StyledComponents'
+import { Actions, ActionGroup, ErrorMessage } from '@/components/elements/StyledComponents'
 
 const BackButton = styled(Button)`
   margin: 0 20px 0 0;
 `;
 
-const ErrorMessage = styled.div`
-  color: red;
-`;
 type WizardFormProps = {
-  onSubmit: (storefront: Storefront) => any,
-  initialValues: Storefront,
+  onSubmit: (values: any) => any,
+  initialValues: any,
   children: React.ReactNode[],
 }
 
@@ -24,7 +20,7 @@ const Wizard = ({ onSubmit, initialValues, children }: WizardFormProps) => {
   const activePage = React.Children.toArray(children)[page]
   const isLastPage = page === React.Children.count(children) - 1
 
-  const next = (values: Storefront) => {
+  const next = (values: any) => {
     changePage(Math.min(page + 1, children.length - 1))
     updateValues(values)
   }
@@ -33,7 +29,7 @@ const Wizard = ({ onSubmit, initialValues, children }: WizardFormProps) => {
     changePage(Math.max(page - 1, 0))
   }
 
-  const validate = async (values: Storefront) => {
+  const validate = async (values: any) => {
     const activePage = React.Children.toArray(children)[
       page
     ]
@@ -49,7 +45,7 @@ const Wizard = ({ onSubmit, initialValues, children }: WizardFormProps) => {
     return {}
   }
 
-  const handleSubmit = (values: Storefront) => {
+  const handleSubmit = (values: any) => {
     if (isLastPage) {
       return onSubmit(values)
     } else {
