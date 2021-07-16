@@ -8,7 +8,7 @@ import fs from 'fs'
     titleFont: "Merriweather",
     textFont: "Work Sans",
     logo: {
-      url: '/demo-logo.png'
+      url: '/demo-logo.png',
     }
   })
 

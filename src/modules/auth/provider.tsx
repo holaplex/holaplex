@@ -9,8 +9,9 @@ import sv from '@/constants/styles'
 import HandWaving from '@/components/elements/HandWaving'
 import { initArweave } from '@/modules/arweave'
 import arweaveSDK from '@/modules/arweave/client'
+import { Solana } from '@/modules/solana/types'
 import { ArweaveTransaction } from '@/modules/arweave/types'
-import { isEmpty, reduce } from 'ramda'
+import { isEmpty, isNil, reduce } from 'ramda'
 
 const Content = styled.div`
   flex: 3;
@@ -20,14 +21,18 @@ const Content = styled.div`
 
 type AuthProviderChildProps = {
   storefront?: Storefront | undefined;
+  solana?: Solana;
+  arweaveWallet?: any; 
 }
 
 type AuthProviderProps = {
   onlyOwner?: Boolean;
   children: (props: AuthProviderChildProps) => React.ReactElement;
+  solana: Solana;
+  arweaveWallet: any;
 }
 
-export const AuthProvider = ({ children, onlyOwner }: AuthProviderProps) => {
+export const AuthProvider = ({ children, onlyOwner, solana, arweaveWallet }: AuthProviderProps) => {
   const router = useRouter()
   const arweave = initArweave()
   const [storefront, setStorefront] = useState<Storefront>()
@@ -35,11 +40,17 @@ export const AuthProvider = ({ children, onlyOwner }: AuthProviderProps) => {
 
   useEffect(() => {
     if (process.browser) {
-      window.solana.connect({ onlyIfTrusted: true })
-        .then(() => walletSDK.find(window.solana.publicKey.toString()))
-        .then((wallet: Wallet) => {
+      if (isNil(solana) || isNil(arweaveWallet)) {
+        router.push("/")
+        return
+      }
+      solana.connect({ onlyIfTrusted: true })
+        .then(() => walletSDK.find(solana.publicKey.toString()))
+        .then((response: any) => {
+          const wallet = response as Wallet
+          
           if (wallet && wallet.approved) {
-            return window.arweaveWallet.getActiveAddress()
+            return arweaveWallet.getActiveAddress()
           } else {
             toast(() => <>Holaplex is in a closed beta and your wallet has not yet been approved. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
 
@@ -113,7 +124,7 @@ export const AuthProvider = ({ children, onlyOwner }: AuthProviderProps) => {
         <HandWaving />
       </Content>
     ) : (
-      children({ storefront })
+      children({ storefront, solana, arweaveWallet })
     )
   )
 }

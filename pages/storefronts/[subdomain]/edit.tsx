@@ -18,6 +18,7 @@ import { isDarkColor } from '@/utils/index'
 import { AuthProvider } from '@/modules/auth'
 import { stylesheet } from '@/modules/theme'
 import Button from '@/components/elements/Button';
+import { Solana } from '@/modules/solana/types'
 import { Actions, ActionGroup, ErrorMessage } from '@/components/elements/StyledComponents'
 import { initArweave } from '@/modules/arweave'
 
@@ -79,7 +80,12 @@ const PreviewLink = styled.div`
   text-decoration: underline;
 `;
 
-export default function New() {
+type EditStorefrontProps = {
+  solana: Solana;
+  arweaveWallet: any;
+}
+
+export default function New({ arweaveWallet, solana }: EditStorefrontProps) {
   const router = useRouter()
   const arweave = initArweave()
 
@@ -117,7 +123,7 @@ export default function New() {
   }
 
   return (
-    <AuthProvider onlyOwner>
+    <AuthProvider onlyOwner solana={solana} arweaveWallet={arweaveWallet}>
       {({ storefront }) => (
         <Content>
           <Form
