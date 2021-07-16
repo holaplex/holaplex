@@ -45,16 +45,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (process.browser) {
-      console.log('waiting for window to load')
-      window.onload = () => {
-        console.log('window loaded')
-        console.log(window.solana)
-        console.log(window.arweaveWallet)
-
+      window.addEventListener("load", () => {
         setSolana(window.solana)
         setArweaveWallet(window.arweaveWallet)
         setReady(true)
-      }
+      })
     }
   }, [])
 
