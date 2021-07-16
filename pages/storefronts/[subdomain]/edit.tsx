@@ -87,7 +87,7 @@ type EditStorefrontProps = {
   arweaveWallet: any;
 }
 
-export default function New({ arweaveWallet, solana }: EditStorefrontProps) {
+export default function EditStorefront({ arweaveWallet, solana }: EditStorefrontProps) {
   const router = useRouter()
   const arweave = initArweave()
 
@@ -127,7 +127,7 @@ export default function New({ arweaveWallet, solana }: EditStorefrontProps) {
   return (
     <StorefrontProvider subdomain={router.query.subdomain as string}>
       {({ storefront, searching, ownerAddress }) => (
-        <AuthProvider onlyArweaveAddress={ownerAddress} solana={solana} arweaveWallet={arweaveWallet}>
+        <AuthProvider onlyOwner ownerAddress={ownerAddress} solana={solana} arweaveWallet={arweaveWallet}>
           {({ authenticating }) => (
             <Loading loading={authenticating || searching}>
               <Content>

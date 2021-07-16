@@ -19,13 +19,14 @@ type AuthProviderChildProps = {
 }
 
 type AuthProviderProps = {
-  onlyArweaveAddress?: string;
+  ownerAddress?: string;
+  onlyOwner?: boolean;
   children: (props: AuthProviderChildProps) => React.ReactElement;
   solana: Solana;
   arweaveWallet: any;
 }
 
-export const AuthProvider = ({ children, onlyArweaveAddress, solana, arweaveWallet }: AuthProviderProps) => {
+export const AuthProvider = ({ children, onlyOwner, ownerAddress, solana, arweaveWallet }: AuthProviderProps) => {
   const router = useRouter()
   const [authenticating, setAuthenticating] = useState(true)
 
@@ -36,11 +37,15 @@ export const AuthProvider = ({ children, onlyArweaveAddress, solana, arweaveWall
         return
       }
 
+      if (onlyOwner && !ownerAddress) {
+        return
+      }
+
       solana.connect({ onlyIfTrusted: true })
         .then(() => walletSDK.find(solana.publicKey.toString()))
         .then((response: any) => {
           const wallet = response as Wallet
-          
+
           if (wallet && wallet.approved) {
             return arweaveWallet.getActiveAddress()
           } else {
@@ -50,11 +55,11 @@ export const AuthProvider = ({ children, onlyArweaveAddress, solana, arweaveWall
           }
         })
         .then((publicKey: string) => {
-          if (!onlyArweaveAddress) {
+          if (!onlyOwner) {
             return
-          }
+          } 
 
-          if (onlyArweaveAddress != publicKey) {
+          if (ownerAddress != publicKey) {
             toast(() => <>Your Arweave wallet address is not allowed.</>)
 
             throw new Error("Arweave address not allowed")
@@ -67,7 +72,7 @@ export const AuthProvider = ({ children, onlyArweaveAddress, solana, arweaveWall
           router.push("/")
         });
     }
-  }, [])
+  }, [ownerAddress])
 
   return children({ authenticating })
 }
