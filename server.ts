@@ -4,7 +4,7 @@ import { parse } from 'url'
 import fs from 'fs'
 import next from 'next'
 
-const port = parseInt(process.env.PORT || '3000', 10)
+const port = 3000
 const production = process.env.NODE_ENV === 'production'
 const dev = !production
 const app = next({ dev })
