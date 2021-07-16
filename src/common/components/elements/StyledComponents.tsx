@@ -43,6 +43,8 @@ const RoundedContainer = styled.div<RoundedContainerProps>`
   border-radius: ${sv.grid*3}px;
   background: ${sv.colors.background};
   width: 100%;
+  max-height: 100%;
+  overflow: auto;
   max-width: ${props => props.small ? 760 : 1080}px;
 `;
 

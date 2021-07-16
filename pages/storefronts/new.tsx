@@ -28,6 +28,8 @@ import Loading from '@/components/elements/Loading'
 const Content = styled.div`
   flex: 1;
   ${sv.flexCenter};
+  overflow: hidden;
+  padding-bottom: 16px;
 `;
 
 const NameField = styled(TextInput)`
