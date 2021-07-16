@@ -17,7 +17,7 @@ app.prepare().then(() => {
   }).listen(port)
 
   if (production) {
-    fs.writeFileSync("/tmp/app-intiliazed", "")
+    fs.writeFileSync("/tmp/app-initialized", "")
   }
 
   // tslint:disable-next-line:no-console

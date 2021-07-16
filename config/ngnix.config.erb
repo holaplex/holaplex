@@ -25,10 +25,6 @@ http {
 
 	client_body_timeout 5;
 
-  upstream app_server {
-		server unix:/tmp/nginx.socket fail_timeout=0;
-	}
-
 	server {
 		listen <%= ENV["PORT"] %>;
 		server_name _;
@@ -43,7 +39,6 @@ http {
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 			proxy_set_header Host $http_host;
 			proxy_redirect off;
-			proxy_pass http://app_server;
       proxy_pass http://localhost:3000;
 		}
 	}
