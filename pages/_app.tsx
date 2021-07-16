@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify'
 import styled from 'styled-components'
 import Link from 'next/link'
 import sv from '@/constants/styles'
+import { Solana } from '@/modules/solana/types'
 import {
   GradientContainer,
 } from '@/components/elements/StyledComponents'
@@ -30,24 +31,27 @@ const Logo = styled.div`
   margin-right: auto;
 `;
 
-
 declare global {
   interface Window {
-      solana: any;
-      arweavewallet: any;
+      solana: Solana;
   }
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [ready, setReady] = useState(false)
+  const [solana, setSolana] = useState<Solana>()
+  const [arweaveWallet, setArweaveWallet] = useState<any>()
+
 
   useEffect(() => {
     if (process.browser) {
       window.onload = () => {
+        setSolana(window.solana)
+        setArweaveWallet(window.arweaveWallet)
         setReady(true)
       }
     }
-  })
+  }, [])
 
   return (
     ready && (
@@ -58,7 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Logo><Link href="/">👋 Holaplex</Link></Logo>
           </HeaderContent>
         </Header>
-        <Component {...pageProps} />
+        <Component {...pageProps} solana={solana} arweaveWallet={arweaveWallet} />
       </GradientContainer>
     )
   )

@@ -209,6 +209,10 @@ const Card = styled.div<CardProps>`
   }
 `;
 
+const ErrorMessage = styled.div`
+  color: red;
+`;
+
 export {
   Container,
   GradientContainer,
@@ -231,4 +235,5 @@ export {
   Input,
   Tag,
   Card,
+  ErrorMessage
 }

@@ -16,6 +16,7 @@ import {
   GradientContainer
 } from '@/components/elements/StyledComponents'
 import walletSDK from '@/modules/wallet/client'
+import { Solana } from '@/modules/solana/types'
 
 const Content = styled.div`
   flex: 3;
@@ -55,18 +56,33 @@ const Waves = styled.div`
   }
 `;
 
-export default function Home() {
+type HomeProps = {
+  solana: Solana;
+  arweaveWallet: any;
+}
+
+export default function Home({ solana, arweaveWallet }: HomeProps) {
   const router = useRouter()
 
   useEffect(() => {
     if (process.browser) {
-      window.solana.on("connect", () => {
-        const solanaPubkey = window.solana.publicKey.toString()
+      if(!solana) {
+        toast(() => <>Phantom wallet is not installed on your browser. Visit <a href="https://phantom.app">phantom.app</a> to setup your wallet.</>)
+        return
+      }
+
+      if (!arweaveWallet) {
+        toast(() => <>ArConnect wallet is not installed on your browser. Visit <a href="https://arconnect.io">arconnect.io</a> to setup your wallet.</>)
+        return
+      }
+
+      solana.on("connect", () => {
+        const solanaPubkey = solana.publicKey.toString()
   
-        window.arweaveWallet.getActivePublicKey()
-          .catch(() => window.arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY', 'SIGN_TRANSACTION', 'SIGNATURE']))
+        arweaveWallet.getActivePublicKey()
+          .catch(() => arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY', 'SIGN_TRANSACTION', 'SIGNATURE']))
           .then(() => walletSDK.find(solanaPubkey))
-          .then((wallet) => {
+          .then((wallet: any) => {
             if (!wallet) {
               toast(() => <>Holaplex is in a closed beta but we have added your wallet to the waitlist. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
 
@@ -90,7 +106,9 @@ export default function Home() {
           <Logo>👋</Logo>
           <PageTitle center invert>Holaplex</PageTitle>
           <SubTitle center invert>Design, launch, and host your Metaplex NFT marketplace. No coding required!</SubTitle>
-          <NewStoreButton onClick={() => window.solana.connect() } label="Create Your Store" />
+          { solana && arweaveWallet && (
+            <NewStoreButton onClick={() => solana.connect() } label="Create Your Store" />
+          )}
           <HasStoreText color={rgba(sv.colors.buttonText, .6)}>
           </HasStoreText>
         </MainPitch>

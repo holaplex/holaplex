@@ -5,20 +5,9 @@ import { rgba } from 'polished';
 import Color from 'color'
 import { pipe, map, replace, join } from 'ramda'
 
-export async function base64EncodeFile(blob: Blob) {
-  return new Promise((resolve) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => {
-      resolve(reader.result)
-    }
-  });
-}
-
 const joinFonts = pipe(map(replace(/\s+/g, '+')), join("&family="))
 
-export async function stylesheet({ backgroundColor, primaryColor, logo, titleFont, textFont }: StorefrontTheme) {
-
+export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont, logo }: StorefrontTheme): string {
   let contrastBackgroundColor = new Color(backgroundColor).darken(.1).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.05).hex()
   let textColor = '#000000'
@@ -76,7 +65,7 @@ export async function stylesheet({ backgroundColor, primaryColor, logo, titleFon
   .title {
     width: 42px;
     height: 42px;
-    background: url(${logo});
+    background: url(${logo.url});
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

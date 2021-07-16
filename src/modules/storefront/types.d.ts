@@ -1,9 +1,10 @@
+import { ArweaveFile } from '@/modules/arweave/types'
 export type StorefrontTheme = {
   primaryColor: string;
   backgroundColor: string;
   textFont: string;
   titleFont: string;
-  logo?: any;
+  logo: ArweaveFile;
 }
 
 export type Storefront = {
