@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "touch /tmp/app-initialized && next start",
     "lint": "next lint",
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
