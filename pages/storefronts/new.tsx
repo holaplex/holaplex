@@ -163,7 +163,7 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
               onSubmit={onSubmit}
               initialValues={initialValues}
             >
-              <WizardFormStep validate={subdomainUniqueness}>e
+              <WizardFormStep validate={subdomainUniqueness}>
                 <>
                   <H2>Let&apos;s start with your sub-domain.</H2>
                   <Text>This is the address that people will use to get to your store.</Text>
