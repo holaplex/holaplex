@@ -70,17 +70,20 @@ const Wizard = ({ onSubmit, initialValues, children }: WizardFormProps) => {
               <ActionGroup>
                 {page > 0 && (
                   <BackButton
-                    subtle
-                    disabled={false}
-                    label="Back"
+                    size="large"
                     onClick={previous}
-                  />
+                  >
+                    Back
+                  </BackButton>
                 )}
                 <Button
-                  label={isLastPage ? "Submit": "Next"}
                   onClick={handleSubmit}
                   disabled={submitting || !valid}
-                />
+                  type="primary"
+                  size="large"
+                >
+                  {isLastPage ? "Submit": "Next"}
+                </Button>
               </ActionGroup>
             </Actions>
           </form>

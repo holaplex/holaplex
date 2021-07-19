@@ -18,10 +18,19 @@ const HeaderTitle = styled.a`
   line-height: 2px;
   font-weight: 900;
   margin-right: auto;
+  color: ${sv.colors.buttonText};
   &:hover {
-    ${text.contrast.primary}
+    color: ${sv.colors.buttonText}
   }
 
+`
+
+const AppContent = styled(Header)`
+  padding: 72px 22px 0;
+`
+
+const AppLayout = styled(Layout)`
+  overflow-y: auto;
 `
 
 declare global {
@@ -48,17 +57,17 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     ready && (
-      <Layout>
+      <AppLayout>
         <ToastContainer autoClose={15000} />
         <Header>
           <Link href="/">
             <HeaderTitle>👋 Holaplex</HeaderTitle>
           </Link>
         </Header>
-        <Content>
+        <AppContent>
           <Component {...pageProps} solana={solana} arweaveWallet={arweaveWallet} />
-        </Content>
-      </Layout>
+        </AppContent>
+      </AppLayout>
     )
   )
 }

@@ -16,6 +16,7 @@ const Input = styled.input<{ hasRightText: boolean}>`
   outline: none;
   padding: 0;
   margin: 0;
+  color: ${sv.colors.text};
   height: 100%;
   text-align: ${props => props.hasRightText ? 'right' : 'left'};
   ::placeholder {
@@ -41,14 +42,16 @@ type Props = {
   placeholder?: string,
   onChange?: Function,
   meta?: object,
+  autoFocus?: boolean,
 }
 
-const TextInput = ({ rootDomain, label, value, onChange, placeholder, className, meta }: Props) => {
+const TextInput = ({ rootDomain, label, value, onChange, placeholder, className, meta, autoFocus }: Props) => {
   const hasRightText = rootDomain || label
   return (
     <Container className={className}>
       {label && <StyledLabel noMargin>{label}</StyledLabel>}
       <Input
+        autoFocus
         hasRightText={hasRightText}
         value={value}
         placeholder={placeholder}

@@ -163,13 +163,14 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
               onSubmit={onSubmit}
               initialValues={initialValues}
             >
-              <WizardFormStep validate={subdomainUniqueness}>
+              <WizardFormStep validate={subdomainUniqueness}>e
                 <>
                   <H2>Let&apos;s start with your sub-domain.</H2>
                   <Text>This is the address that people will use to get to your store.</Text>
                   <Field
                     name="subdomain"
-                    render={({ input, meta }) => <NameField {...input} meta={meta} rootDomain=".holaplex.com" />}
+                    render={({ input, meta}) => <NameField {...input} meta={meta} autoFocus rootDomain=".holaplex.com" />}
+                    autoFocus
                   />
                 </>
               </WizardFormStep>
@@ -182,7 +183,7 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
                       <Field<FileList> name="theme.logo">
                         {({ input: { value, onChange, ...input } }) => (
                           <FileInput
-                            label="Upload Logo (Transparent .Png Or .Svg)"
+                            label="Logo"
                             value={value}
                             onChange={onChange}
                             {...input}

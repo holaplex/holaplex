@@ -14,10 +14,6 @@ const Logo = styled.div`
   line-height: 90px;
 `;
 
-const Hero = styled(Col)`
-  margin: 100px 0 0 0;
-`;
-
 const HeroTitle = styled.h1`
   text-align: center;
   font-weight: 800;
@@ -88,16 +84,16 @@ export default function Home({ solana, arweaveWallet }: HomeProps) {
 
   return (
     <Row justify="center">
-      <Hero sm={16} md={14} lg={12} xl={10}>
-          <Space direction="vertical" align="center">
+      <Col sm={16} md={14} lg={12} xl={10}>
+          <Space direction="vertical" align="center" size="large">
             <Logo>👋</Logo>
             <HeroTitle>Holaplex</HeroTitle>
             <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
             {solana && arweaveWallet && (
-              <Button type="primary" size="large" onClick={() => solana.connect()}>Create Your Store</Button>
+              <Button type="primary" onClick={() => solana.connect()} size="large">Create Your Store</Button>
             )}
           </Space>
-      </Hero>
+      </Col>
       <PageBackdrop />
     </Row>
   )

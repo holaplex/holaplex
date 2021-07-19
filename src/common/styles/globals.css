@@ -26,6 +26,7 @@ a {
 }
 
 * {
+  line-height: initial;
   box-sizing: border-box;
 }
 
