@@ -47,11 +47,16 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (process.browser) {
+      console.log("Adding window load listener")
       window.addEventListener("load", () => {
+        console.log("On load complete")
+        console.log(window.solana)
+        console.log(window.arweaveWallet)
+        
         setSolana(window.solana)
         setArweaveWallet(window.arweaveWallet)
         setReady(true)
-      })
+      }, false)
     }
   }, [])
 

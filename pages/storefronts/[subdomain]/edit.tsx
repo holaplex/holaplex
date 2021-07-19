@@ -102,7 +102,7 @@ export default function EditStorefront({ arweaveWallet, solana }: EditStorefront
 
     const transaction = await arweave.createTransaction({ data: css })
 
-    toast(() => (<>Your storefront theme is ready to be uploaded to Arweave.</>))
+    toast(() => (<>Your updated storefront theme is ready to be uploaded to Arweave.</>))
 
     transaction.addTag("Content-Type", "text/css")
     transaction.addTag("solana:pubkey", window.solana.publicKey.toString())
@@ -119,7 +119,7 @@ export default function EditStorefront({ arweaveWallet, solana }: EditStorefront
 
     await arweave.transactions.post(transaction)
 
-    toast(() => (<>Your storefront theme was uploaded to Arweave. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
+    toast(() => (<>Your updated storefront theme was uploaded to Arweave. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to view the changes.</>), { autoClose: 60000 })
 
     router.push("/")
   }
