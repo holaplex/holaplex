@@ -152,7 +152,7 @@ export default function EditStorefront({ arweaveWallet, solana }: EditStorefront
                                 <Field<FileList> name="theme.logo">
                                   {({ input: { value, onChange, ...input } }) => (
                                     <FileInput
-                                      label="Upload Logo (Transparent .Png Or .Svg)"
+                                      label="Logo"
                                       value={value}
                                       onChange={onChange}
                                       {...input}
@@ -225,10 +225,13 @@ export default function EditStorefront({ arweaveWallet, solana }: EditStorefront
                             </ActionGroup>
                             <ActionGroup>
                               <Button
-                                label={"Update"}
+                                type="primary"
+                                size="large"
                                 onClick={handleSubmit}
                                 disabled={submitting || !valid}
-                              />
+                              >
+                                Update
+                              </Button>
                             </ActionGroup>
                           </Actions>
                         </RoundedContainer>

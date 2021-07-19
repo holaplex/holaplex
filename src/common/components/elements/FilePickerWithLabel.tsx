@@ -3,6 +3,7 @@ import React, {useRef, useState } from 'react'
 import FeatherIcon from 'feather-icons-react'
 import styled from 'styled-components'
 import { isNil } from 'ramda'
+import { UploadOutlined } from '@ant-design/icons'
 import sv from '@/constants/styles'
 import Button from './Button'
 import {Text} from '@/components/elements/StyledComponents'
@@ -120,7 +121,7 @@ export default function FilePickerWithLabel({
       className={className}
     >
       <Label>{label}</Label>
-      {!value.url && <Button small disabled={uploading} icon="upload" onClick={handleClick} />}
+      {!value.url && <Button disabled={uploading} icon={<UploadOutlined />} type="primary" onClick={handleClick} />}
       {value.url &&
         <FileInfo>
           <Text>{value.name}</Text>

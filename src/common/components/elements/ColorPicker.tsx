@@ -37,6 +37,7 @@ const Picker = styled(SketchPicker)`
   position: absolute;
   right: 0px;
   top: -80px;
+  line-height: initial;
 `;
 
 const Shade = styled.div`

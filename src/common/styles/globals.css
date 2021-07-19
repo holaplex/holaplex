@@ -5,8 +5,19 @@ body,
 button {
   padding: 0;
   margin: 0;
-  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+html, body, #__next, .ant-layout {
+  height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.25em;
+}
+
+body {
+  background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
+  background-repeat: no-repeat;
 }
 
 a {
@@ -15,6 +26,7 @@ a {
 }
 
 * {
+  line-height: initial;
   box-sizing: border-box;
 }
 
