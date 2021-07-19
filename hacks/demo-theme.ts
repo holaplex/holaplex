@@ -3,9 +3,9 @@ import {stylesheet} from './../src/modules/theme'
 import fs from 'fs'
 
   const css = stylesheet({
-    backgroundColor: "#7763FF",
-    primaryColor: "#3A41DB",
-    titleFont: "Merriweather",
+    backgroundColor: '#333333',
+    primaryColor: '#F2C94C',
+    titleFont: "Work Sans",
     textFont: "Work Sans",
     logo: {
       url: '/demo-logo.png',
