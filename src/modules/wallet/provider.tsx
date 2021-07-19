@@ -63,13 +63,17 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     if (isNil(solana)) {
       return
     }
+
     setVerifying(true)
     solana.on("connect", () => {
       const solanaPubkey = solana.publicKey.toString()
-
       arweaveWallet.getActivePublicKey()
-        .catch(() => arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY', 'SIGN_TRANSACTION', 'SIGNATURE']))
-        .then(() => walletSDK.find(solanaPubkey))
+        .catch(() => { 
+          return arweaveWallet.connect(['ACCESS_ADDRESS', 'ACCESS_PUBLIC_KEY', 'SIGN_TRANSACTION', 'SIGNATURE']) 
+        })
+        .then(() => {
+          return walletSDK.find(solanaPubkey)
+        })
         .then((wallet: any) => {
           if (!wallet) {
             toast(() => <>Holaplex is in a closed beta but we have added your wallet to the waitlist. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)

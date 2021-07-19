@@ -1,4 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&display=swap');
+
+.font-family-roboto {
+  font-family: 'Roboto', sans;
+}
+
+.font-family-work-sans {
+  font-family: 'Work Sans', sans;
+}
+
+.font-family-montserrat {
+  font-family: 'Montserrat', sans;
+}
+
+.font-family-source-sans-pro {
+  font-family: 'Source Sans Prop', sans;
+}
+
+.font-family-marriweather {
+  font-family: 'Playfair Display', sans;
+}
+
+.font-family-playfair-display {
+  font-family: 'Playfair Display', sans;
+}
+
+.font-family-noto-serif {
+  font-family: 'Noto Serif', sans;
+
+}
+
+.font-family-domine {
+  font-family: 'Domine', sans;
+}
 
 html,
 body, 
@@ -15,6 +48,10 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.25em;
 }
 
+input {
+  text-align: inherit;
+}
+
 body {
   background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
   background-repeat: no-repeat;
@@ -28,6 +65,10 @@ a {
 * {
   line-height: initial;
   box-sizing: border-box;
+}
+
+.ant-layout {
+  overflow-y: auto;
 }
 
 .Toastify__toast {

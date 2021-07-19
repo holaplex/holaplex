@@ -51,7 +51,7 @@ export default function Home() {
           <HeroTitle>Holaplex</HeroTitle>
           <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
           {solana && arweaveWallet && (
-            <Button type="primary" onClick={() => connect(() => router.push("/storefronts/new"))} size="large">Create Your Store</Button>
+            <Button type="primary" size="large" onClick={() => connect(() => router.push("/storefronts/new"))} size="large">Create Your Store</Button>
           )}
         </Space>
       </Col>
