@@ -43,8 +43,14 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
   h1, h2, h3, h4, h5, h6, .waiting-title, .ant-list-item-meta-description, .ant-popover-inner, .ant-popover-inner-content {
     color: ${textColor};
   }
-  .ant-progress-text {
+  .ant-progress-circle .ant-progress-text {
     color: ${textColor};
+  }
+  .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-path {
+    stroke: ${primaryColor};
+  }
+  .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-trail {
+    stroke: ${contrastBackgroundColor};
   }
   .ant-btn {
     color: ${textColor};
@@ -252,7 +258,7 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
     background: ${primaryColor};
   }
   .ant-tabs-top > .ant-tabs-nav::before, .ant-tabs-bottom > .ant-tabs-nav::before, .ant-tabs-top > div > .ant-tabs-nav::before, .ant-tabs-bottom > div > .ant-tabs-nav::before {
-    border-bottom: 1px solid ${primaryColor};
+    border-bottom: 1px solid ${contrastBackgroundColor};
   }
   a {
     color: ${primaryColor};
@@ -307,6 +313,7 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
   }
   .ant-slider-handle {
     border: 2px solid ${primaryColor};
+    background-color: ${contrastBackgroundColor};
   }
   .ant-slider-handle.ant-tooltip-open {
     border-color: ${primaryColor};
@@ -374,23 +381,18 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
   .call-to-action h2 {
     color: ${textColor};
   }
-  
-  .ant-steps-vertical {
-    overflow-x: visible;
-  }
   .ant-steps-item-title {
     line-height: 24px;
     color: ${textColor};
   }
-
-  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after {
-    background-color: ${lesserContrastBackgroundColor};
+  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after, .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-tail::after {
+    background-color: ${contrastBackgroundColor};
+  }
+  .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
+    background-color: ${primaryColor};
   }
   .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title {
     color: ${textColor};
-  }
-  .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
-    background-color: ${lesserContrastBackgroundColor};
   }
   .ant-steps-item-wait .ant-steps-item-title, .call-to-action p {
     color: ${subtleTextColor};
@@ -398,20 +400,11 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
   .ant-steps-item-process .ant-steps-item-title {
     color: ${textColor};
   }
-  .ant-steps-item-tail::after {
-    background: ${lesserContrastBackgroundColor};
-  }
   .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
     background: ${lesserContrastBackgroundColor};
   }
   .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot, .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
     background: ${primaryColor};
-  }
-  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after {
-    background-color: ${textColor};
-  }
-  .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-tail::after {
-    background-color: ${primaryColor};
   }
   .ant-table-wrapper {
     margin-top: 8px;
@@ -454,6 +447,9 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
   }
   .ant-pagination-item-active {
     border-color: ${primaryColor};
+  }
+  .ant-pagination-item-active a {
+    color: ${textColor};
   }
   .ant-pagination-item-active:focus-visible, .ant-pagination-item-active:hover {
     background: ${primaryColor};
