@@ -19,11 +19,10 @@ import FontPicker from '@/components/elements/FontPicker'
 import WizardFormStep from '@/components/elements/WizardFormStep'
 import { isDarkColor } from '@/utils/index'
 import { stylesheet } from '@/modules/theme'
-import { AuthProvider } from '@/modules/auth'
 import { initArweave } from '@/modules/arweave'
 import { Solana } from '@/modules/solana/types'
 import arweaveSDK from '@/modules/arweave/client'
-import Loading from '@/components/elements/Loading'
+import { isEmpty, isNil } from 'ramda';
 
 const Content = styled.div`
   flex: 1;
@@ -99,9 +98,13 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
   const arweave = initArweave()
 
   const subdomainUniqueness = async ({ subdomain }: Storefront) => {
-    const response = await arweaveSDK.query(arweave, arweaveSDK.queries.transactionBySubdomain, { subdomain: (subdomain || "") })
+    if (isNil(subdomain)) {
+      return { subdomain: "A subdomain name is requred." }
+    }
 
-    if (response.data.transactions.edges.length === 0) {
+    const storefront = await arweaveSDK.search(arweave).storefront("holaplex:subdomain", subdomain || "")
+
+    if (isNil(storefront)) {
       return {}
     }
 
@@ -154,125 +157,113 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
   }
 
   return (
-    <AuthProvider solana={solana} arweaveWallet={arweaveWallet}>
-      {({ authenticating }) => (
-      <Loading loading={authenticating}>
-        <Content>
-          <RoundedContainer>
-            <WizardForm
-              onSubmit={onSubmit}
-              initialValues={initialValues}
-            >
-              <WizardFormStep validate={subdomainUniqueness}>
-                <>
-                  <H2>Let&apos;s start with your sub-domain.</H2>
-                  <Text>This is the address that people will use to get to your store.</Text>
+    <Content>
+      <RoundedContainer>
+        <WizardForm
+          onSubmit={onSubmit}
+          initialValues={initialValues}
+        >
+          <WizardFormStep validate={subdomainUniqueness}>
+            <>
+              <H2>Let&apos;s start with your sub-domain.</H2>
+              <Text>This is the address that people will use to get to your store.</Text>
+              <Field
+                name="subdomain"
+                render={({ input, meta }) => <NameField {...input} meta={meta} autoFocus rootDomain=".holaplex.com" />}
+                autoFocus
+              />
+            </>
+          </WizardFormStep>
+          <WizardFormStep validate={validateTheme}>
+            <Container>
+              <Fields>
+                <H2>Customize your store.</H2>
+                <SubTitle>Choose a logo, colors, and fonts to fit your store’s brand.</SubTitle>
+                <FieldBlock>
+                  <Field<FileList> name="theme.logo">
+                    {({ input: { value, onChange, ...input } }) => (
+                      <FileInput
+                        label="Logo"
+                        value={value}
+                        onChange={onChange}
+                        {...input}
+                      />
+                    )}
+                  </Field>
+                </FieldBlock>
+                <FieldBlock>
                   <Field
-                    name="subdomain"
-                    render={({ input, meta}) => <NameField {...input} meta={meta} autoFocus rootDomain=".holaplex.com" />}
-                    autoFocus
+                    name="theme.backgroundColor"
+                    render={props => <ColorPicker {...props.input} label="Background" />}
                   />
-                </>
-              </WizardFormStep>
-              <WizardFormStep validate={validateTheme}>
-                <Container>
-                  <Fields>
-                    <H2>Customize your store.</H2>
-                    <SubTitle>Choose a logo, colors, and fonts to fit your store’s brand.</SubTitle>
-                    <FieldBlock>
-                      <Field<FileList> name="theme.logo">
-                        {({ input: { value, onChange, ...input } }) => (
-                          <FileInput
-                            label="Logo"
-                            value={value}
-                            onChange={onChange}
-                            {...input}
-                          />
-                        )}
-                      </Field>
-                    </FieldBlock>
-                    <FieldBlock>
-                      <Field
-                        name="theme.backgroundColor"
-                        render={props => <ColorPicker {...props.input} label="Background" />}
-                      />
-                    </FieldBlock>
-                    <FieldBlock>
-                      <Field
-                        name="theme.primaryColor"
-                        render={props => <ColorPicker {...props.input} label="Buttons &amp; Links" />}
-                      />
-                    </FieldBlock>
-                    <FieldBlock>
-                      <Field
-                        name="theme.titleFont"
-                        render={props => <FontPicker {...props.input} label="Title Font" pickerId="title" />}
-                      />
-                    </FieldBlock>
-                    <FieldBlock>
-                      <Field
-                        name="theme.textFont"
-                        render={props => <FontPicker {...props.input} label="Main Text Font" pickerId="body" />}
-                      />
-                    </FieldBlock>
-                  </Fields>
-                  {/* @ts-ignore */}
-                  <FormSpy>
-                    {(props) => {
-                      const { values: { theme: { backgroundColor, primaryColor, logo } } } = props
-                      const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
-                      const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
+                </FieldBlock>
+                <FieldBlock>
+                  <Field
+                    name="theme.primaryColor"
+                    render={props => <ColorPicker {...props.input} label="Buttons &amp; Links" />}
+                  />
+                </FieldBlock>
+                <FieldBlock>
+                  <Field
+                    name="theme.titleFont"
+                    render={props => <FontPicker {...props.input} label="Title Font" pickerId="title" />}
+                  />
+                </FieldBlock>
+                <FieldBlock>
+                  <Field
+                    name="theme.textFont"
+                    render={props => <FontPicker {...props.input} label="Main Text Font" pickerId="body" />}
+                  />
+                </FieldBlock>
+              </Fields>
+              {/* @ts-ignore */}
+              <FormSpy>
+                {(props) => {
+                  const { values: { theme: { backgroundColor, primaryColor, logo } } } = props
+                  const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
+                  const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
 
-                      return (
-                        <Preview bgColor={backgroundColor}>
-                          {logo.url && (
-                            <PreviewItem>
-                              <UploadedLogo src={logo.url} />
-                            </PreviewItem>
-                          )}
-                          <PreviewItem>
-                            <H2 className="apply-font-title" color={textColor}>Big Title</H2>
-                          </PreviewItem>
-                          <PreviewItem>
-                            <H4 className="apply-font-title" color={textColor}>Little Title</H4>
-                          </PreviewItem>
-                          <PreviewItem>
-                            <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
-                          </PreviewItem>
-                          <PreviewItem>
-                            <PreviewLink
-                              className="apply-font-body"
-                              color={primaryColor}
-                            >
-                              Link to things
-                            </PreviewLink>
-                          </PreviewItem>
-                          <PreviewItem>
-                            <PreviewButton
-                              className="apply-font-body"
-                              color={primaryColor}
-                              textColor={buttontextColor}
-                            >
-                              Button
-                            </PreviewButton>
-                          </PreviewItem>
-                        </Preview>
-                      )
-                    }}
-                  </FormSpy>
-                </Container>
-              </WizardFormStep>
-              <WizardFormStep pristine={false}>
-                <>
-                  <H2>Almost done!</H2>
-                  <Text>The final step is to save your storefront to arweave.</Text>
-                </>
-              </WizardFormStep>
-            </WizardForm>
-          </RoundedContainer>
-        </Content>
-      </Loading>
-      )}
-    </AuthProvider>
+                  return (
+                    <Preview bgColor={backgroundColor}>
+                      {logo.url && (
+                        <PreviewItem>
+                          <UploadedLogo src={logo.url} />
+                        </PreviewItem>
+                      )}
+                      <PreviewItem>
+                        <H2 className="apply-font-title" color={textColor}>Big Title</H2>
+                      </PreviewItem>
+                      <PreviewItem>
+                        <H4 className="apply-font-title" color={textColor}>Little Title</H4>
+                      </PreviewItem>
+                      <PreviewItem>
+                        <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
+                      </PreviewItem>
+                      <PreviewItem>
+                        <PreviewLink
+                          className="apply-font-body"
+                          color={primaryColor}
+                        >
+                          Link to things
+                        </PreviewLink>
+                      </PreviewItem>
+                      <PreviewItem>
+                        <PreviewButton
+                          className="apply-font-body"
+                          color={primaryColor}
+                          textColor={buttontextColor}
+                        >
+                          Button
+                        </PreviewButton>
+                      </PreviewItem>
+                    </Preview>
+                  )
+                }}
+              </FormSpy>
+            </Container>
+          </WizardFormStep>
+        </WizardForm>
+      </RoundedContainer>
+    </Content>
   )
 }

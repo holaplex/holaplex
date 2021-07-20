@@ -1,3 +1,4 @@
+
 import React, { useState, FunctionComponent } from 'react'
 import { Form } from 'react-final-form'
 import styled from 'styled-components'
@@ -78,9 +79,10 @@ const Wizard = ({ onSubmit, initialValues, children }: WizardFormProps) => {
                 )}
                 <Button
                   onClick={handleSubmit}
-                  disabled={submitting || !valid}
+                  disabled={submitting || !valid || pristine}
                   type="primary"
                   size="large"
+                  htmlType="submit"
                 >
                   {isLastPage ? "Submit": "Next"}
                 </Button>
