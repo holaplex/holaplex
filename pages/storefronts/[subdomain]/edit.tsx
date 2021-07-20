@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import sv from '@/constants/styles'
 import styled from 'styled-components';
 import {
@@ -15,14 +15,15 @@ import FileInput from '@/components/elements/FilePickerWithLabel'
 import ColorPicker from '@/components/elements/ColorPicker'
 import FontPicker from '@/components/elements/FontPicker'
 import { isDarkColor } from '@/utils/index'
-import { AuthProvider } from '@/modules/auth'
 import { stylesheet } from '@/modules/theme'
 import Button from '@/components/elements/Button';
-import { Solana } from '@/modules/solana/types'
-import Loading from '@/components/elements/Loading';
 import { Actions, ActionGroup, ErrorMessage } from '@/components/elements/StyledComponents'
 import { initArweave } from '@/modules/arweave'
-import { StorefrontProvider } from '@/modules/storefront';
+import { AuthProvider } from '@/modules/auth'
+import { WalletContext } from '@/modules/wallet'
+import { StorefrontProvider } from '@/modules/storefront'
+import { StorefrontContext } from '@/modules/storefront'
+import Loading from '@/components/elements/Loading'
 
 const Content = styled.div`
   flex: 1;
@@ -82,14 +83,11 @@ const PreviewLink = styled.div`
   text-decoration: underline;
 `;
 
-type EditStorefrontProps = {
-  solana: Solana;
-  arweaveWallet: any;
-}
-
-export default function EditStorefront({ arweaveWallet, solana }: EditStorefrontProps) {
+export default function EditStorefront() {
   const router = useRouter()
   const arweave = initArweave()
+  const { wallet } = useContext(WalletContext)
+
 
   const validateTheme = ({ theme: { logo } }: Storefront) => {
     if (!logo.url) {
@@ -126,123 +124,121 @@ export default function EditStorefront({ arweaveWallet, solana }: EditStorefront
 
   return (
     <StorefrontProvider subdomain={router.query.subdomain as string}>
-      {({ storefront, searching, ownerAddress }) => (
-        <AuthProvider onlyOwner ownerAddress={ownerAddress} solana={solana} arweaveWallet={arweaveWallet}>
-          {({ authenticating }) => (
-            <Loading loading={authenticating || searching}>
-              <Content>
-                <Form
-                  initialValues={storefront}
-                  onSubmit={onSubmit}
-                  validate={validateTheme}
-                >
-                  {({ handleSubmit, values, submitting, valid, pristine, errors }) => {
-                    const { theme: { backgroundColor, primaryColor, logo } } = values
-                    const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
-                    const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
+      {({ searching, storefront }) => (
+        <Loading loading={searching}>
+          <AuthProvider storefront={storefront} wallet={wallet}>
+            <Content>
+              <Form
+                initialValues={storefront}
+                onSubmit={onSubmit}
+                validate={validateTheme}
+              >
+                {({ handleSubmit, values, submitting, valid, pristine, errors }) => {
+                  const { theme: { backgroundColor, primaryColor, logo } } = values
+                  const textColor = isDarkColor(backgroundColor) ? sv.colors.buttonText : sv.colors.text
+                  const buttontextColor = isDarkColor(primaryColor) ? sv.colors.buttonText : sv.colors.text
 
-                    return (
-                      <form onSubmit={handleSubmit}>
-                        <RoundedContainer>
-                          <Container>
-                            <Fields>
-                              <H2>Edit your store.</H2>
-                              <SubTitle>Choose a different logo, colors, and fonts for your store.</SubTitle>
-                              <FieldBlock>
-                                <Field<FileList> name="theme.logo">
-                                  {({ input: { value, onChange, ...input } }) => (
-                                    <FileInput
-                                      label="Logo"
-                                      value={value}
-                                      onChange={onChange}
-                                      {...input}
-                                    />
-                                  )}
-                                </Field>
-                              </FieldBlock>
-                              <FieldBlock>
-                                <Field
-                                  name="theme.backgroundColor"
-                                  render={props => <ColorPicker {...props.input} label="Background" />}
-                                />
-                              </FieldBlock>
-                              <FieldBlock>
-                                <Field
-                                  name="theme.primaryColor"
-                                  render={props => <ColorPicker {...props.input} label="Buttons &amp; Links" />}
-                                />
-                              </FieldBlock>
-                              <FieldBlock>
-                                <Field
-                                  name="theme.titleFont"
-                                  render={props => <FontPicker {...props.input} label="Title Font" pickerId="title" />}
-                                />
-                              </FieldBlock>
-                              <FieldBlock>
-                                <Field
-                                  name="theme.textFont"
-                                  render={props => <FontPicker {...props.input} label="Main Text Font" pickerId="body" />}
-                                />
-                              </FieldBlock>
-                            </Fields>
-                            <Preview bgColor={backgroundColor}>
-                              {logo.url && (
-                                <PreviewItem>
-                                  <UploadedLogo src={logo.url} />
-                                </PreviewItem>
-                              )}
+                  return (
+                    <form onSubmit={handleSubmit}>
+                      <RoundedContainer>
+                        <Container>
+                          <Fields>
+                            <H2>Edit your store.</H2>
+                            <SubTitle>Choose a different logo, colors, and fonts for your store.</SubTitle>
+                            <FieldBlock>
+                              <Field<FileList> name="theme.logo">
+                                {({ input: { value, onChange, ...input } }) => (
+                                  <FileInput
+                                    label="Logo"
+                                    value={value}
+                                    onChange={onChange}
+                                    {...input}
+                                  />
+                                )}
+                              </Field>
+                            </FieldBlock>
+                            <FieldBlock>
+                              <Field
+                                name="theme.backgroundColor"
+                                render={props => <ColorPicker {...props.input} label="Background" />}
+                              />
+                            </FieldBlock>
+                            <FieldBlock>
+                              <Field
+                                name="theme.primaryColor"
+                                render={props => <ColorPicker {...props.input} label="Buttons &amp; Links" />}
+                              />
+                            </FieldBlock>
+                            <FieldBlock>
+                              <Field
+                                name="theme.titleFont"
+                                render={props => <FontPicker {...props.input} label="Title Font" pickerId="title" />}
+                              />
+                            </FieldBlock>
+                            <FieldBlock>
+                              <Field
+                                name="theme.textFont"
+                                render={props => <FontPicker {...props.input} label="Main Text Font" pickerId="body" />}
+                              />
+                            </FieldBlock>
+                          </Fields>
+                          <Preview bgColor={backgroundColor}>
+                            {logo.url && (
                               <PreviewItem>
-                                <H2 className="apply-font-title" color={textColor}>Big Title</H2>
+                                <UploadedLogo src={logo.url} />
                               </PreviewItem>
-                              <PreviewItem>
-                                <H4 className="apply-font-title" color={textColor}>Little Title</H4>
-                              </PreviewItem>
-                              <PreviewItem>
-                                <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
-                              </PreviewItem>
-                              <PreviewItem>
-                                <PreviewLink
-                                  className="apply-font-body"
-                                  color={primaryColor}
-                                >
-                                  Link to things
-                                </PreviewLink>
-                              </PreviewItem>
-                              <PreviewItem>
-                                <PreviewButton
-                                  className="apply-font-body"
-                                  color={primaryColor}
-                                  textColor={buttontextColor}
-                                >
-                                  Button
-                                </PreviewButton>
-                              </PreviewItem>
-                            </Preview>
-                          </Container>
-                          <Actions>
-                            <ActionGroup>
-                              {errors && !pristine && <ErrorMessage>{Object.entries(errors).map(([_, value]) => value)}</ErrorMessage>}
-                            </ActionGroup>
-                            <ActionGroup>
-                              <Button
-                                type="primary"
-                                size="large"
-                                onClick={handleSubmit}
-                                disabled={submitting || !valid}
+                            )}
+                            <PreviewItem>
+                              <H2 className="apply-font-title" color={textColor}>Big Title</H2>
+                            </PreviewItem>
+                            <PreviewItem>
+                              <H4 className="apply-font-title" color={textColor}>Little Title</H4>
+                            </PreviewItem>
+                            <PreviewItem>
+                              <Text className="apply-font-body" color={textColor}>Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.</Text>
+                            </PreviewItem>
+                            <PreviewItem>
+                              <PreviewLink
+                                className="apply-font-body"
+                                color={primaryColor}
                               >
-                                Update
-                              </Button>
-                            </ActionGroup>
-                          </Actions>
-                        </RoundedContainer>
-                      </form>
-                    )
-                  }}
-                </Form>
-              </Content>
-            </Loading>
-          )}
-        </AuthProvider>
+                                Link to things
+                              </PreviewLink>
+                            </PreviewItem>
+                            <PreviewItem>
+                              <PreviewButton
+                                className="apply-font-body"
+                                color={primaryColor}
+                                textColor={buttontextColor}
+                              >
+                                Button
+                              </PreviewButton>
+                            </PreviewItem>
+                          </Preview>
+                        </Container>
+                        <Actions>
+                          <ActionGroup>
+                            {errors && !pristine && <ErrorMessage>{Object.entries(errors).map(([_, value]) => value)}</ErrorMessage>}
+                          </ActionGroup>
+                          <ActionGroup>
+                            <Button
+                              type="primary"
+                              size="large"
+                              onClick={handleSubmit}
+                              disabled={submitting || !valid}
+                            >
+                              Update
+                            </Button>
+                          </ActionGroup>
+                        </Actions>
+                      </RoundedContainer>
+                    </form>
+                  )
+                }}
+              </Form>
+            </Content>
+          </AuthProvider>
+        </Loading>
       )}
     </StorefrontProvider>
   )

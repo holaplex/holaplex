@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { initArweave } from '@/modules/arweave'
-import { useRouter } from 'next/router'
-import { toast } from 'react-toastify'
 import arweaveSDK from '@/modules/arweave/client'
-import { isEmpty, reduce } from 'ramda'
-import { ArweaveTransaction } from '@/modules/arweave/types'
+import { isNil } from 'ramda'
 import { Storefront } from '@/modules/storefront/types'
+import { Wallet } from '@/modules/wallet/types'
+import { useRouter } from 'next/router'
+import { StorefrontContext } from './context'
 
 type StorefrontProviderChildrenProps = {
   searching: boolean;
   storefront?: Storefront;
-  ownerAddress?: string;
 }
 
 type StorefrontProviderProps = {
@@ -18,61 +17,35 @@ type StorefrontProviderProps = {
   children: (props: StorefrontProviderChildrenProps) => React.ReactElement;
 }
 
-export const StorefrontProvider = ({ children, subdomain }: StorefrontProviderProps) => {
-  const [searching, setSearching] = useState(false)
+export const StorefrontProvider = ({ subdomain, children }: StorefrontProviderProps) => {
+  const [searching, setSearching] = useState(true)
   const [storefront, setStorefront] = useState<Storefront>()
-  const [ownerAddress, setOwnerAddress] = useState<string>()
   const arweave = initArweave()
   const router = useRouter()
 
   useEffect(() => {
-    if (process.browser) {
-      setSearching(true)
-      arweaveSDK.query(arweave, arweaveSDK.queries.transactionBySubdomain, { subdomain })
-        .then((response: any) => {
-          if (isEmpty(response.data.transactions.edges)) {
-            toast(() => <>The store does not exist.</>)
-
-            throw new Error("Storefront does not exist")
-          }
-
-          const transaction = response.data.transactions.edges[0].node as ArweaveTransaction
-
-          const tags = reduce(
-            (acc: any, { name, value }) => {
-              acc[name] = value
-
-              return acc
-            },
-            {},
-            transaction.tags,
-          )
-
-          const storefront = {
-            pubkey: tags["solana:pubkey"],
-            subdomain: tags["holaplex:metadata:subdomain"],
-            theme: {
-              primaryColor: tags["holaplex:theme:color:primary"],
-              backgroundColor: tags["holaplex:theme:color:background"],
-              titleFont: tags["holaplex:theme:font:title"],
-              textFont: tags["holaplex:theme:font:text"],
-              logo: {
-                url: tags["holaplex:theme:logo:url"],
-                name: tags["holaplex:theme:logo:name"],
-                type: tags["holaplex:theme:logo:type"]
-              }
-            },
-          } as Storefront
-
-          setStorefront(storefront)
-          setOwnerAddress(transaction.owner.address)
-          setSearching(false)
-        })
-        .catch(() => {
-          router.push("/")
-        })
+    if (!process.browser) {
+      return
     }
-  }, [])
 
-  return children({ searching, storefront,ownerAddress })
+    const subdomain = router.query.subdomain as string
+
+    arweaveSDK.search(arweave).storefront("holaplex:metada:subdomain", subdomain)
+      .then((storefront) => {
+        if (isNil(storefront)) {
+          setSearching(false)
+
+          return
+        }
+
+        setStorefront(storefront)
+        setSearching(false)
+      })
+  }, [subdomain])
+
+  return (
+    <StorefrontContext.Provider value={{ searching, storefront }}>
+      {children({ searching, storefront })}
+    </StorefrontContext.Provider>
+  )
 }

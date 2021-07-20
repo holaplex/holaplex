@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
@@ -7,11 +7,10 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { Layout, Row, Col } from 'antd'
 import sv from '@/constants/styles'
-import text from '@/constants/text'
+import Loading from '@/components/elements/Loading'
+import { WalletProvider } from '@/modules/wallet'
 
-import { Solana } from '@/modules/solana/types'
-
-const { Header, Content } = Layout
+const { Header } = Layout
 
 const HeaderTitle = styled.a`
   font-size: 24px;
@@ -24,7 +23,6 @@ const HeaderTitle = styled.a`
   }
 
 `
-
 const AppContent = styled(Header)`
   padding: 72px 22px 0;
 `
@@ -33,47 +31,29 @@ const AppLayout = styled(Layout)`
   overflow-y: auto;
 `
 
-declare global {
-  interface Window {
-    solana: Solana;
-  }
-}
-
 function MyApp({ Component, pageProps }: AppProps) {
-  const [ready, setReady] = useState(false)
-  const [solana, setSolana] = useState<Solana>()
-  const [arweaveWallet, setArweaveWallet] = useState<any>()
-
-
-  useEffect(() => {
-    if (process.browser) {
-      console.log("Adding window load listener")
-      window.addEventListener("load", () => {
-        console.log("On load complete")
-        console.log(window.solana)
-        console.log(window.arweaveWallet)
-        
-        setSolana(window.solana)
-        setArweaveWallet(window.arweaveWallet)
-        setReady(true)
-      }, false)
-    }
-  }, [])
-
   return (
-    ready && (
-      <AppLayout>
-        <ToastContainer autoClose={15000} />
-        <Header>
-          <Link href="/">
-            <HeaderTitle>👋 Holaplex</HeaderTitle>
-          </Link>
-        </Header>
-        <AppContent>
-          <Component {...pageProps} solana={solana} arweaveWallet={arweaveWallet} />
-        </AppContent>
-      </AppLayout>
-    )
+    <>
+      <ToastContainer autoClose={15000} />
+      <WalletProvider>
+        {({ verifying, initializing }) => (
+          <AppLayout>
+            <Header>
+              <Link href="/">
+                <HeaderTitle>👋 Holaplex</HeaderTitle>
+              </Link>
+            </Header>
+            <AppContent>
+              <Loading loading={verifying || initializing}>
+                <Component
+                  {...pageProps}
+                />
+              </Loading>
+            </AppContent>
+          </AppLayout>
+        )}
+      </WalletProvider>
+    </>
   )
 }
 export default MyApp
