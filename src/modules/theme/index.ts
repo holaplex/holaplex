@@ -43,6 +43,14 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
   h1, h2, h3, h4, h5, h6, .waiting-title, .ant-list-item-meta-description, .ant-popover-inner, .ant-popover-inner-content {
     color: ${textColor};
   }
+  h1 {
+    font-size: 3rem;
+    line-height: normal;
+  }
+  h2 {
+    font-size: 2.5rem;
+    line-height: normal;
+  }
   .ant-progress-circle .ant-progress-text {
     color: ${textColor};
   }
