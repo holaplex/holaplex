@@ -102,7 +102,7 @@ export default function New({ arweaveWallet, solana }: NewStorefrontProps) {
       return { subdomain: "A subdomain name is requred." }
     }
 
-    const storefront = await arweaveSDK.search(arweave).storefront("holaplex:subdomain", subdomain || "")
+    const storefront = await arweaveSDK.search(arweave).storefront("holaplex:metadata:subdomain", subdomain || "")
 
     if (isNil(storefront)) {
       return {}

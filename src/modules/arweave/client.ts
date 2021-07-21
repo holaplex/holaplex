@@ -86,11 +86,11 @@ const query = async (arweave: Arweave, query: string, variables: object): Promis
 }
 
 const search = (arweave: Arweave): ArweaveQuery => ({
-  storefront: async (tag: string, value: string): Promise<Storefront | null> => {
+  storefront: async (name: string, value: string): Promise<Storefront | null> => {
     const response = await query(
       arweave,
-      `query GetStorefrontBySolanaKey {
-        transactions(tags:[{ name: \"${tag}\", values: [\"${value}\"]}], first: 1) {
+      `query GetStorefrontByTag($name: String!, $value: String!) {
+        transactions(tags:[{ name: $name, values: [$value]}], first: 1) {
           edges {
             node {
               id
@@ -105,7 +105,7 @@ const search = (arweave: Arweave): ArweaveQuery => ({
           }
         }
       }`,
-      {}
+      { name, value }
     )
 
     const storefronts = await response.storefronts()
