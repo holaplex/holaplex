@@ -8,6 +8,10 @@ export function capitalize(str) {
 }
 
 export function isDarkColor(color) {
+  if (!color) {
+    return
+  }
+  
   // Variables for red, green, blue values
   var r, g, b, hsp;
   // Check the format of the color, HEX or RGB?

@@ -13,37 +13,33 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children, storefront, wallet }: AuthProviderProps) => {
   const [authenticating, setAuthenticating] = useState(true)
   const router = useRouter()
-
+  
   useEffect(() => {
     if (!wallet) {
       toast(() => <>Your wallet does not exist or still is not approved. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
-      router.push("/")
+      router.push("/").then(() => {
+        setAuthenticating(false)
+      })
       return
     }
 
     if (!storefront) {
       toast(() => <>Could not find storefront.</>)
-      router.push("/")
+      router.push("/").then(() => {
+        setAuthenticating(false)
+      })
       return
     }
 
     if (storefront.pubkey === wallet.pubkey) {
       setAuthenticating(false)
+      return
     }
+
+    router.push("/").then(() => {
+      setAuthenticating(false)
+    })
   }, [])
-
-  useEffect(() => {
-    const handleRoutChange = () => {
-      if (authenticating) {
-        setAuthenticating(false)
-      }
-    }
-
-    router.events.on('routeChangeComplete', handleRoutChange)
-    return () => {
-      router.events.off('routeChangeComplete', handleRoutChange)
-    }
-  }, [router])
 
   if (authenticating) {
     return <></>

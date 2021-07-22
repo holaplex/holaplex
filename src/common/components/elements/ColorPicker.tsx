@@ -1,87 +1,59 @@
-import {useState} from 'react';
-//@ts-ignore
-import FeatherIcon from 'feather-icons-react'
-import sv from '@/constants/styles';
 // @ts-ignore
 import { SketchPicker } from 'react-color';
+import { Dropdown } from 'antd'
 import styled from 'styled-components';
-import {Label} from '@/components/elements/StyledComponents';
+import { DownOutlined } from '@ant-design/icons'
 
-////// STYLE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+type ColorPreviewProps = {
+  color?: string;
+}
 
-const Container = styled.div`
-  cursor: pointer;
-  position: relative;
-`;
-
-const Field = styled.div`
-  ${sv.inputField};
-`;
-
-const ColorPreview = styled.div`
-  height: ${sv.grid*4}px;
-  width: ${sv.grid*16}px;
-  border-radius: ${sv.grid*.5}px;
+const ColorPreview = styled.div<ColorPreviewProps>`
+  height: 32px;
+  width: 100%;
+  margin: 0 16px 0 0;
+  border-radius: 4px;
   background: ${props => props.color};
-  margin-left: auto;
   border: 3px solid #fff;
 `;
 
-const DropdownIcon = styled(FeatherIcon)`
-  margin-left: ${sv.grid*2}px;
-  color: ${sv.colors.subtleText};
-`;
-
-const Picker = styled(SketchPicker)`
-  z-index: 11;
-  position: absolute;
-  right: 0px;
-  top: -80px;
-  line-height: initial;
-`;
-
-const Shade = styled.div`
-  position: fixed;
-  right: 0;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 10;
-`;
-
-////// COMPONENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const ColorSelect = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 type Props = {
-  onChange: (hex: string) => void,
-  value: string,
-  label: string
+  onChange?: (hex: string) => void,
+  value?: string,
 }
 
-const ColorPickerField = ({ onChange, value, label }: Props) => {
-  const [showPicker, setShowPicker] = useState(false)
-
+const ColorPickerField = ({ onChange, value }: Props) => {
   const handleChange = ({ hex }: { hex: string }) => {
+    if (!onChange) {
+      return
+    }
+
     onChange(hex)
   }
 
   return (
-    <Container>
-      <Field onClick={() => setShowPicker(true)}>
-        {/* @ts-ignore */}
-        <Label noMargin>{label}</Label>
-        <ColorPreview color={value} />
-        <DropdownIcon size={20} icon="chevron-down" />
-      </Field>
-      {showPicker && <>
-        <Shade onClick={() => setShowPicker(false)} />
-        <Picker
+    <Dropdown
+      overlay={
+        <SketchPicker
           disableAlpha
           presetColors={[]}
           color={value}
           onChange={handleChange}
         />
-      </>}
-    </Container>
+      }
+    >
+      <ColorSelect className="ant-input-affix-wrapper ant-input-lg">
+        <ColorPreview color={value} />
+        <span className="ant-select-arrow">
+          <DownOutlined />
+        </span>
+      </ColorSelect>
+    </Dropdown>
   )
 }
 

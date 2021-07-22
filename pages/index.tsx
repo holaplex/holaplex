@@ -1,13 +1,9 @@
-import '@/styles/Home.module.css'
-import React, { useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 import HolaWaves from '@/assets/images/HolaWaves'
 import { Space, Row, Col } from 'antd'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
-import { Solana } from '@/modules/solana/types'
-import { isNil } from 'ramda'
 
 const Logo = styled.div`
   font-size: 90px;
@@ -39,10 +35,8 @@ const PageBackdrop = styled(HolaWaves)`
   height: 350px;
   z-index: -1;
 `
-
 export default function Home() {
   const { solana, arweaveWallet, connect } = useContext(WalletContext)
-  const router = useRouter()
   return (
     <Row justify="center">
       <Col sm={16} md={14} lg={12} xl={10}>
@@ -51,7 +45,9 @@ export default function Home() {
           <HeroTitle>Holaplex</HeroTitle>
           <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
           {solana && arweaveWallet && (
-            <Button type="primary" onClick={() => connect(() => router.push("/storefronts/new"))} size="large">Create Your Store</Button>
+            <Space direction="horizontal" size="large">
+              <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
+            </Space>
           )}
         </Space>
       </Col>
