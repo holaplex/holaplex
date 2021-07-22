@@ -18,6 +18,7 @@ import FillSpace from '@/components/elements/FillSpace'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
+import { ArweaveFile } from '@/modules/arweave/types';
 
 const { Text, Title } = Typography
 
@@ -187,13 +188,12 @@ export default function New() {
     router.push("/")
   }
 
-
   const textColor = isDarkColor(values.theme.backgroundColor) ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = isDarkColor(values.theme.primaryColor) ? sv.colors.buttonText : sv.colors.text
 
   return (
     <Row justify="center" align="middle">
-      <Col xs={21} lg={14}>
+      <Col xs={21} lg={18} xl={14}  xxl={10}>
         <Card>
           <StepForm
             form={form}
@@ -231,7 +231,7 @@ export default function New() {
               </FillSpace>
             </Row>
             <Row justify="space-between">
-              <Col sm={24} lg={12}>
+              <Col sm={24} md={12} lg={12}>
                 <Title level={2}>Customize your store.</Title>
                 <Text>Choose a logo, colors, and fonts to fit your store’s brand.</Text>
                 <InlineFormItem
@@ -283,7 +283,7 @@ export default function New() {
                   <FontSelect />
                 </InlineFormItem>
               </Col>
-              <PrevCol sm={24} lg={10}>
+              <PrevCol sm={24} md={11} lg={10}>
                 <PrevCard bgColor={values.theme.backgroundColor}>
                   <Space direction="vertical">
                     {values.theme.logo[0] && values.theme.logo[0].status === "done" && (

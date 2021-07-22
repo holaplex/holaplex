@@ -13,24 +13,28 @@ type StorefrontProviderChildrenProps = {
 }
 
 type StorefrontProviderProps = {
-  subdomain: string;
+  wallet?: Wallet;
+  verifying: boolean;
   children: (props: StorefrontProviderChildrenProps) => React.ReactElement;
 }
 
-export const StorefrontProvider = ({ subdomain, children }: StorefrontProviderProps) => {
-  const [searching, setSearching] = useState(true)
+export const StorefrontProvider = ({ wallet, verifying, children }: StorefrontProviderProps) => {
+  const [searching, setSearching] = useState(false)
   const [storefront, setStorefront] = useState<Storefront>()
   const arweave = initArweave()
   const router = useRouter()
 
   useEffect(() => {
-    if (!process.browser) {
+    console.log(searching)
+    console.log(verifying)
+    console.log(wallet)
+    if (!process.browser || !wallet)  {
       return
     }
 
-    const subdomain = router.query.subdomain as string
+    setSearching(true)
 
-    arweaveSDK.search(arweave).storefront("holaplex:metada:subdomain", subdomain)
+    arweaveSDK.search(arweave).storefront("solana:pubkey", wallet.pubkey)
       .then((storefront) => {
         if (isNil(storefront)) {
           setSearching(false)
@@ -41,7 +45,7 @@ export const StorefrontProvider = ({ subdomain, children }: StorefrontProviderPr
         setStorefront(storefront)
         setSearching(false)
       })
-  }, [subdomain])
+  }, [wallet])
 
   return (
     <StorefrontContext.Provider value={{ searching, storefront }}>

@@ -1,4 +1,4 @@
-export type Partial<ArweaveFile> = {
+export type ArweaveFile = {
   name: string;
   type: string;
   url: string;

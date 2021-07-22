@@ -13,7 +13,7 @@ export type WalletContextProps = {
   wallet?: Wallet;
   initializing: boolean;
   solana?: Solana;
-  connect: (cb?: () => any) => any;
+  connect: (params?: any) => any;
   arweaveWallet?: any;
 
 }

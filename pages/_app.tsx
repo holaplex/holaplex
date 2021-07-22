@@ -5,10 +5,13 @@ import type { AppProps } from 'next/app'
 import { ToastContainer } from 'react-toastify'
 import styled from 'styled-components'
 import Link from 'next/link'
-import { Layout, Row, Col } from 'antd'
+import { Layout } from 'antd'
 import sv from '@/constants/styles'
+import Button from '@/components/elements/Button'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
+import router from 'next/router'
+import { StorefrontProvider } from '@/modules/storefront'
 
 const { Header } = Layout
 
@@ -36,21 +39,27 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
-        {({ verifying, initializing }) => (
-          <AppLayout>
-            <Header>
-              <Link href="/">
-                <HeaderTitle>👋 Holaplex</HeaderTitle>
-              </Link>
-            </Header>
-            <AppContent>
-              <Loading loading={verifying || initializing}>
-                <Component
-                  {...pageProps}
-                />
-              </Loading>
-            </AppContent>
-          </AppLayout>
+        {({ verifying, initializing, wallet }) => (
+          <StorefrontProvider verifying={verifying} wallet={wallet}>
+            {({ searching }) => {
+              return (
+                <AppLayout>
+                  <Header>
+                    <Link href="/">
+                      <HeaderTitle>👋 Holaplex</HeaderTitle>
+                    </Link>
+                  </Header>
+                  <AppContent>
+                    <Loading loading={verifying || initializing || searching}>
+                      <Component
+                        {...pageProps}
+                      />
+                    </Loading>
+                  </AppContent>
+                </AppLayout>
+              )
+            }}
+          </StorefrontProvider>
         )}
       </WalletProvider>
     </>
