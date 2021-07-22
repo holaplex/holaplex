@@ -126,7 +126,7 @@ export default function Edit() {
     { name: ['theme', 'logo'], value: [{ ...storefront?.theme.logo, status: "done" }] },
   ]);
 
-  if (isNil(solana)) {
+  if (isNil(solana) || isNil(storefront)) {
     return
   }
 
@@ -146,8 +146,8 @@ export default function Edit() {
     toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
 
     transaction.addTag("Content-Type", "text/css")
-    transaction.addTag("solana:pubkey", solana.publicKey.toString())
-    transaction.addTag("holaplex:metadata:subdomain", subdomain)
+    transaction.addTag("solana:pubkey", storefront.pubkey)
+    transaction.addTag("holaplex:metadata:subdomain", storefront.subdomain)
     transaction.addTag("holaplex:theme:logo:url", logo.url)
     transaction.addTag("holaplex:theme:logo:name", logo.name)
     transaction.addTag("holaplex:theme:logo:type", logo.type)
