@@ -8,6 +8,8 @@ import fs from 'fs'
     titleFont: "Work Sans",
     textFont: "Work Sans",
     logo: {
+      name: 'demo.png',
+      type: "image/png",
       url: '/demo-logo.png',
     }
   })

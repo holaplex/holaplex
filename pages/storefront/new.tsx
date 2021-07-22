@@ -146,7 +146,7 @@ export default function New() {
 
   const values = reduce((acc: any, item: FieldData) => {
     return assocPath(item.name as string[], item.value, acc)
-  }, {}, fields) as Storefront
+  }, {}, fields)
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
     const storefront = await arweaveSDK.search(arweave).storefront("holaplex:metadata:subdomain", subdomain || "")
@@ -161,8 +161,8 @@ export default function New() {
   const onSubmit = async () => {
     const { theme, subdomain } = values;
 
-    const css = stylesheet(theme)
     const logo = theme.logo[0].response
+    const css = stylesheet({ ...theme, logo })
 
     const transaction = await arweave.createTransaction({ data: css })
 

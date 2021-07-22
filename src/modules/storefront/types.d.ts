@@ -4,7 +4,7 @@ export type StorefrontTheme = {
   backgroundColor: string;
   textFont: string;
   titleFont: string;
-  logo: any;
+  logo: ArweaveFile;
 }
 
 export type Storefront = {

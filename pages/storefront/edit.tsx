@@ -132,14 +132,14 @@ export default function Edit() {
 
   const values = reduce((acc: any, item: FieldData) => {
     return assocPath(item.name as string[], item.value, acc)
-  }, {}, fields) as Storefront
+  }, {}, fields)
 
   const onSubmit = async () => {
     const { theme, subdomain } = values;
-
-    const css = stylesheet(theme)
     // @ts-ignore
     const logo = when(has('response'), prop('response'))(theme.logo[0])
+
+    const css = stylesheet({ ...theme, logo })
 
     const transaction = await arweave.createTransaction({ data: css })
 
@@ -147,7 +147,7 @@ export default function Edit() {
 
     transaction.addTag("Content-Type", "text/css")
     transaction.addTag("solana:pubkey", storefront.pubkey)
-    transaction.addTag("holaplex:metadata:subdomain", storefront.subdomain)
+    transaction.addTag("holaplex:metadata:subdomain", "espi-demo")
     transaction.addTag("holaplex:theme:logo:url", logo.url)
     transaction.addTag("holaplex:theme:logo:name", logo.name)
     transaction.addTag("holaplex:theme:logo:type", logo.type)
