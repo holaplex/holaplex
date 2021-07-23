@@ -137,7 +137,8 @@ export default function Edit() {
   }, {}, fields)
 
   const onSubmit = async () => {
-    const { theme, subdomain, pubkey } = values;
+    const { theme } = values
+    const { pubkey, subdomain } = storefront
     // @ts-ignore
     const logo = when(has('response'), prop('response'))(theme.logo[0])
 
@@ -161,6 +162,8 @@ export default function Edit() {
     await arweave.transactions.sign(transaction)
 
     await arweave.transactions.post(transaction)
+
+    debugger;
 
     toast(() => (<>Your storefront was updated. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to view the changes.</>), { autoClose: 60000 })
 
