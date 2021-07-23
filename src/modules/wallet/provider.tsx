@@ -16,23 +16,14 @@ type WalletProviderProps = {
 }
 
 
-const checkWalletApproval = async (pubkey: string) => {
+const upsertWallet = async (pubkey: string) => {
   return walletSDK.find(pubkey)
     .then((wallet: any) => {
       if (!wallet) {
-        toast(() => <>Holaplex is in a closed beta but we have added your wallet to the waitlist. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
-
-        walletSDK.create(pubkey)
-
-        return Promise.reject()
+        return walletSDK.create(pubkey)
       }
 
-      if (wallet.approved) {
-        return Promise.resolve(wallet)
-      }
-
-      toast(() => <>Holaplex is in a closed beta and your wallet has not yet been approved. Email the team at <a href="mailto:hola@holaplex.com">hola@holaplex.com</a> to join the beta.</>)
-      return Promise.reject()
+      return Promise.resolve(wallet)
     })
 }
 
@@ -83,22 +74,22 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     solana.on("connect", () => {
       const solanaPubkey = solana.publicKey.toString()
 
-      checkWalletApproval(solanaPubkey)
-      .then((wallet) => {
-        setWallet(wallet);
-        return arweaveSDK.search(arweave).storefront("solana:pubkey", wallet.pubkey)
-      })
-      .then((storefront: any) => {
-        if (storefront) {
-          return router.push("/storefront/edit")
-        }
+      upsertWallet(solanaPubkey)
+        .then((wallet) => {
+          setWallet(wallet);
+          return arweaveSDK.search(arweave).storefront("solana:pubkey", wallet.pubkey)
+        })
+        .then((storefront: any) => {
+          if (storefront) {
+            return router.push("/storefront/edit")
+          }
 
-        return router.push("/storefront/new") 
-      })
-      .catch(() => router.push("/"))
-      .finally(() => { 
-        setVerifying(false)
-      })
+          return router.push("/storefront/new") 
+        })
+        .catch(() => router.push("/"))
+        .finally(() => { 
+          setVerifying(false)
+        })
     })
   }, [solana])
 
