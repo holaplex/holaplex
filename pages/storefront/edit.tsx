@@ -119,6 +119,8 @@ export default function Edit() {
   const [form] = Form.useForm()
   const { solana } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
+    { name: ['subdomain'], value: storefront?.subdomain },
+    { name: ['pubkey'], value: storefront?.pubkey },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
     { name: ['theme', 'primaryColor'], value: storefront?.theme.primaryColor },
     { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont },
@@ -135,7 +137,7 @@ export default function Edit() {
   }, {}, fields)
 
   const onSubmit = async () => {
-    const { theme, subdomain } = values;
+    const { theme, subdomain, pubkey } = values;
     // @ts-ignore
     const logo = when(has('response'), prop('response'))(theme.logo[0])
 
@@ -146,8 +148,8 @@ export default function Edit() {
     toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
 
     transaction.addTag("Content-Type", "text/css")
-    transaction.addTag("solana:pubkey", storefront.pubkey)
-    transaction.addTag("holaplex:metadata:subdomain", "espi-demo")
+    transaction.addTag("solana:pubkey", pubkey)
+    transaction.addTag("holaplex:metadata:subdomain", subdomain)
     transaction.addTag("holaplex:theme:logo:url", logo.url)
     transaction.addTag("holaplex:theme:logo:name", logo.name)
     transaction.addTag("holaplex:theme:logo:type", logo.type)
