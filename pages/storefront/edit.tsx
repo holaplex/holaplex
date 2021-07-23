@@ -5,13 +5,13 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { Card, Row, Col, Typography, Space, Form, FormItemProps } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
-import { Storefront } from '@/modules/storefront/types'
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
 import FontSelect from '@/common/components/elements/FontSelect'
 import Upload from '@/common/components/elements/Upload'
-import { isDarkColor } from '@/utils/index'
 import { stylesheet } from '@/modules/theme'
+// @ts-ignore
+import Color from 'color'
 import { AuthProvider } from '@/modules/auth'
 import { initArweave } from '@/modules/arweave'
 import { StorefrontContext } from '@/modules/storefront'
@@ -163,15 +163,13 @@ export default function Edit() {
 
     await arweave.transactions.post(transaction)
 
-    debugger;
-
     toast(() => (<>Your storefront was updated. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to view the changes.</>), { autoClose: 60000 })
 
     router.push("/")
   }
 
-  const textColor = isDarkColor(values.theme.backgroundColor) ? sv.colors.buttonText : sv.colors.text
-  const buttontextColor = isDarkColor(values.theme.primaryColor) ? sv.colors.buttonText : sv.colors.text
+  const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
+  const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
 
   return (
     <AuthProvider storefront={storefront} wallet={wallet}>

@@ -25,9 +25,6 @@ export const StorefrontProvider = ({ wallet, verifying, children }: StorefrontPr
   const router = useRouter()
 
   useEffect(() => {
-    console.log(searching)
-    console.log(verifying)
-    console.log(wallet)
     if (!process.browser || !wallet)  {
       return
     }

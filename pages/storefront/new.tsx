@@ -3,14 +3,14 @@ import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
+// @ts-ignore
+import Color from 'color'
 import { Card, Row, Col, Typography, Input, Space, Form, FormItemProps } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
-import { Storefront } from '@/modules/storefront/types'
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
 import FontSelect from '@/common/components/elements/FontSelect'
 import Upload from '@/common/components/elements/Upload'
-import { isDarkColor } from '@/utils/index'
 import { stylesheet } from '@/modules/theme'
 import { initArweave } from '@/modules/arweave'
 import { WalletContext } from '@/modules/wallet'
@@ -18,7 +18,6 @@ import FillSpace from '@/components/elements/FillSpace'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
-import { ArweaveFile } from '@/modules/arweave/types';
 
 const { Text, Title } = Typography
 
@@ -188,8 +187,8 @@ export default function New() {
     router.push("/")
   }
 
-  const textColor = isDarkColor(values.theme.backgroundColor) ? sv.colors.buttonText : sv.colors.text
-  const buttontextColor = isDarkColor(values.theme.primaryColor) ? sv.colors.buttonText : sv.colors.text
+  const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
+  const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
 
   return (
     <Row justify="center" align="middle">

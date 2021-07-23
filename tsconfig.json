@@ -30,9 +30,6 @@
       "@/constants/*": [
         "src/common/constants/*"
       ],
-      "@/utils/*": [
-        "src/common/utils/*"
-      ],
       "@/layouts/*": [
         "src/layouts/*"
       ],

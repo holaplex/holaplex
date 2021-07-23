@@ -56,8 +56,6 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
         json.data.transactions.edges
       ) as Storefront[]
 
-      console.log(storefronts)
-
       return storefronts
 
     }
