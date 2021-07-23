@@ -192,7 +192,7 @@ export default function Edit() {
               <Row justify="space-between">
                 <Col sm={24} md={12} lg={12}>
                   <Title level={2}>Edit your store.</Title>
-                  <Paragraph>You are editing <a target="_blank" href={`https://${domain}`}>{domain}</a>.</Paragraph>
+                  <Paragraph>You are editing <a target="_blank" rel="noreferrer" href={`https://${domain}`}>{domain}</a>.</Paragraph>
                   <InlineFormItem
                     noBackground
                     labelCol={{ span: 10 }}
