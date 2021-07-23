@@ -12,7 +12,7 @@ generator client {
 
 model Wallets {
   id       Int     @id @default(autoincrement())
-  approved Boolean @default(false)
+  approved Boolean @default(true)
   pubkey   String  @unique @db.VarChar(44)
 
   @@index([pubkey])

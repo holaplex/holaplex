@@ -23,7 +23,7 @@ storefront.
 
 ```
 docker-compose up -d
-yarn db:schema:push
+yarn db:migrate
 yarn db:seed
 ```
 

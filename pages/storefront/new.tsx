@@ -19,7 +19,7 @@ import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
 
-const { Text, Title } = Typography
+const { Text, Title, Paragraph } = Typography
 
 const PreviewButton = styled.div<{ textColor: string }>`
   height: 52px;
@@ -43,15 +43,19 @@ const PreviewLink = styled.div`
   text-decoration: underline;
 `;
 
-const DomainInput = styled(Input)`
+const DomainFormItem = styled(Form.Item)`
   text-align: right;
   font-size: 24px;
   .ant-input {
     font-size: 24px;
+    border-radius: 0px;
   }
   .ant-input-suffix {
     margin: 0;
     color: rgb(102, 102, 102);
+  }
+  .ant-form-item-explain {
+    text-align: left;
   }
 `;
 
@@ -110,7 +114,6 @@ const InlineFormItem = styled(Form.Item)<InlineFormItemProps>`
   .ant-form-item-control-input-content, .ant-form-item-explain {
     text-align: right;
   }
-
 `
 interface FieldData {
   name: string | number | (string | number)[];
@@ -214,18 +217,18 @@ export default function New() {
               <FillSpace direction="vertical" size="large">
                 <Col>
                   <Title level={2}>Let&apos;s start with your sub-domain.</Title>
-                  <Text>This is the address that people will use to get to your store.</Text>
+                  <Paragraph>This is the address that people will use to get to your store.</Paragraph>
                 </Col>
                 <Col flex={1}>
-                  <Form.Item
+                  <DomainFormItem
                     name="subdomain"
                     rules={[
                       { required: true, message: "Enter a subdomain." },
                       { validator: subdomainUniqueness }
                     ]}
                   >
-                    <DomainInput autoFocus suffix=".holaplex.com" />
-                  </Form.Item>
+                    <Input autoFocus suffix=".holaplex.com" />
+                  </DomainFormItem>
                 </Col>
               </FillSpace>
             </Row>

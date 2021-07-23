@@ -18,7 +18,7 @@ import { StorefrontContext } from '@/modules/storefront'
 import { WalletContext } from '@/modules/wallet'
 import { isNil, reduce, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
 
-const { Text, Title } = Typography
+const { Text, Title, Paragraph } = Typography
 
 const PreviewButton = styled.div<{ textColor: string }>`
   height: 52px;
@@ -168,6 +168,8 @@ export default function Edit() {
     router.push("/")
   }
 
+  const domain = `${values.subdomain}.holaplex.com`
+
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
 
@@ -190,6 +192,7 @@ export default function Edit() {
               <Row justify="space-between">
                 <Col sm={24} md={12} lg={12}>
                   <Title level={2}>Edit your store.</Title>
+                  <Paragraph>You are editing <a target="_blank" href={`https://${domain}`}>{domain}</a>.</Paragraph>
                   <InlineFormItem
                     noBackground
                     labelCol={{ span: 10 }}
