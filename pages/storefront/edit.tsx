@@ -119,8 +119,6 @@ export default function Edit() {
   const [form] = Form.useForm()
   const { solana } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
-    { name: ['subdomain'], value: storefront?.subdomain },
-    { name: ['pubkey'], value: storefront?.pubkey },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
     { name: ['theme', 'primaryColor'], value: storefront?.theme.primaryColor },
     { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont },
@@ -131,6 +129,8 @@ export default function Edit() {
   if (isNil(solana) || isNil(storefront)) {
     return
   }
+
+  const domain = `${storefront.subdomain}.holaplex.com`
 
   const values = reduce((acc: any, item: FieldData) => {
     return assocPath(item.name as string[], item.value, acc)
@@ -163,12 +163,11 @@ export default function Edit() {
 
     await arweave.transactions.post(transaction)
 
-    toast(() => (<>Your storefront was updated. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to view the changes.</>), { autoClose: 60000 })
+    toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })
 
     router.push("/")
   }
 
-  const domain = `${values.subdomain}.holaplex.com`
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
