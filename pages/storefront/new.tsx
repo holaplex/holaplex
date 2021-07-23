@@ -195,7 +195,7 @@ export default function New() {
 
   return (
     <Row justify="center" align="middle">
-      <Col xs={21} lg={18} xl={14}  xxl={10}>
+      <Col xs={21} lg={18} xl={16} xxl={14}>
         <Card>
           <StepForm
             form={form}

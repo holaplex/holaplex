@@ -175,7 +175,7 @@ export default function Edit() {
   return (
     <AuthProvider storefront={storefront} wallet={wallet}>
       <Row justify="center" align="middle">
-        <Col xs={21} lg={18} xl={14} xxl={10}>
+        <Col xs={21} lg={18} xl={16} xxl={14}>
           <Card>
             <Form
               form={form}
