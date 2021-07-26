@@ -3,7 +3,7 @@ import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { Card, Row, Col, Typography, Space, Form, Input, FormItemProps } from 'antd'
+import { Card, Row, Col, Typography, Space, Form, Input, Alert } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
@@ -16,6 +16,7 @@ import { initArweave } from '@/modules/arweave'
 import { StorefrontContext } from '@/modules/storefront'
 import { WalletContext } from '@/modules/wallet'
 import arweaveSDK from '@/modules/arweave/client'
+import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import InlineFormItem from '@/common/components/elements/InlineFormItem';
 import { isNil, reduce, propEq, findIndex, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
 
@@ -95,22 +96,9 @@ interface FieldData {
 const PrevCol = styled(Col)`
   margin: 0 0 24px 0;
 `
-
-const DomainFormItem = styled(Form.Item)`
-  text-align: right;
-  font-size: 24px;
-  .ant-input {
-    font-size: 24px;
-    border-radius: 0px;
-  }
-  .ant-input-suffix {
-    margin: 0;
-    color: rgb(102, 102, 102);
-  }
-  .ant-form-item-explain {
-    text-align: left;
-  }
-`;
+const StepAlert = styled(Alert)`
+  margin: 0 0 24px 0;
+`
 
 // @ts-ignore
 const popFile = when(has('response'), prop('response'))
@@ -312,7 +300,7 @@ export default function Edit() {
           labelCol={{ xs: 8 }}
           wrapperCol={{ xs: 16 }}
         >
-          <Input />
+          <Input autoFocus />
         </InlineFormItem>
         <InlineFormItem
           name={["meta", "description"]}
@@ -325,6 +313,8 @@ export default function Edit() {
         >
           <Input.TextArea />
         </InlineFormItem>
+        <StepAlert showIcon type="info" message="We are still working on getting page meta data to apply to storefronts. Filling it out now will ensure its goes into affect as soon as the feature is live."/> 
+
       </>
     )
   }
@@ -338,8 +328,13 @@ export default function Edit() {
       >
         <Card
           activeTabKey={tab}
-          onTabChange={key => {
-            setTab(key)
+          onTabChange={async (key) => {
+            try {
+              await form.validateFields()
+            
+              setTab(key)
+            } catch {
+            }
           }}
           tabList={[
             { key: "theme", tab: "Theme" },

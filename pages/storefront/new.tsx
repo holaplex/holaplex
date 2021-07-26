@@ -5,11 +5,12 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 // @ts-ignore
 import Color from 'color'
-import { Card, Row, Col, Typography, Input, Space, Form, FormItemProps } from 'antd'
+import { Card, Row, Col, Typography, Input, Space, Form, Alert } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
 import FontSelect from '@/common/components/elements/FontSelect'
+import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import Upload from '@/common/components/elements/Upload'
 import { stylesheet } from '@/modules/theme'
 import { initArweave } from '@/modules/arweave'
@@ -17,7 +18,8 @@ import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
-import { isNil, pipe, reduce, assocPath, isEmpty, findIndex, propEq, update, test, sortBy } from 'ramda';
+import InlineFormItem from '@/common/components/elements/InlineFormItem'
+import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -41,22 +43,6 @@ const UploadedLogo = styled.img`
 const PreviewLink = styled.div`
   color: ${props => props.color};
   text-decoration: underline;
-`;
-
-const DomainFormItem = styled(Form.Item)`
-  text-align: right;
-  font-size: 24px;
-  .ant-input {
-    font-size: 24px;
-    border-radius: 0px;
-  }
-  .ant-input-suffix {
-    margin: 0;
-    color: rgb(102, 102, 102);
-  }
-  .ant-form-item-explain {
-    text-align: left;
-  }
 `;
 
 type PrevTitleProps = {
@@ -97,23 +83,8 @@ const PrevCard = styled(Card)`
 }
 `
 
-interface InlineFormItemProps extends FormItemProps {
-  noBackground?: boolean;
-}
-const InlineFormItem = styled(Form.Item) <InlineFormItemProps>`
-  &.ant-form-item {
-    background: ${({ noBackground }) => noBackground ? "none" : "#e0e0e0"};
-    border-radius: 12px;
-    padding: 0 0 0 15px;
-  }
-
-  .ant-form-item-label {
-    text-align: left;
-  }
-
-  .ant-form-item-control-input-content, .ant-form-item-explain {
-    text-align: right;
-  }
+const StepAlert = styled(Alert)`
+  margin: 0 0 24px 0;
 `
 
 const PageCard = styled(Card)`
@@ -179,8 +150,6 @@ export default function New() {
 
       const css = stylesheet({ ...theme, logo })
 
-      const transaction = await arweave.createTransaction({ data: css })
-
       await arweaveSDK.using(arweave).storefront.upsert(
         {
           pubkey: solana.publicKey.toString(),
@@ -191,12 +160,11 @@ export default function New() {
         css
       )
 
-      await arweave.transactions.post(transaction)
-
       toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
 
       router.push("/").then(() => { setSubmitting(false) })
     } catch (e) {
+      console.error(e)
       setSubmitting(false)
       toast.error(() => (<>There was an issue creating your storefront. Please wait a moment and try again.</>))
 
@@ -214,7 +182,6 @@ export default function New() {
             submitting={submitting}
             form={form}
             size="large"
-            submitting={submitting}
             fields={fields}
             onFieldsChange={([changed], _) => {
               if (isNil(changed)) {
@@ -249,7 +216,7 @@ export default function New() {
             </Row>
             <Row justify="space-between">
               <Col sm={24} md={12} lg={12}>
-                <Title level={2}>Customize your store.</Title>
+                <Title level={2}>Next, theme your store.</Title>
                 <Paragraph>Choose a logo, colors, and fonts to fit your store’s brand.</Paragraph>
                 <InlineFormItem
                   noBackground
@@ -328,9 +295,10 @@ export default function New() {
             </Row>
             <Row justify="space-between">
               <Col xs={24}>
-                <Title level={2}>Set page meta data.</Title>
-                <Paragraph>Upload a favicon and set other page meta data. This information will display when storefront links are shared on social platforms like Twitter and Facebook.</Paragraph>
-                <Form.Item
+                <Title level={2}>Finally, set page meta data.</Title>
+                <Paragraph>Upload a favicon and set other page meta data. This information will display on social platforms, such as Twitter and Facebook, when links to the store are shared.</Paragraph>
+                <InlineFormItem
+                  noBackground
                   labelCol={{ xs: 8, md: 6, xxl: 4 }}
                   wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
                   label="Favicon"
@@ -344,8 +312,8 @@ export default function New() {
                       <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
                     )}
                   </Upload>
-                </Form.Item>
-                <Form.Item
+                </InlineFormItem>
+                <InlineFormItem
                   name={["meta", "title"]}
                   rules={[
                     { required: true, message: "Please enter a page title." }
@@ -354,9 +322,9 @@ export default function New() {
                   labelCol={{ xs: 8, md: 6, xxl: 4 }}
                   wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
                 >
-                  <Input />
-                </Form.Item>
-                <Form.Item
+                  <Input autoFocus />
+                </InlineFormItem>
+                <InlineFormItem
                   name={["meta", "description"]}
                   label="Page Description"
                   rules={[
@@ -366,7 +334,8 @@ export default function New() {
                   wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
                 >
                   <Input.TextArea />
-                </Form.Item>
+                </InlineFormItem>
+                <StepAlert showIcon type="info" message="We are still working on getting page meta data to apply to storefronts. Filling it out now will ensure its goes into affect as soon as the feature is live."/> 
               </Col>
             </Row>
           </StepForm>

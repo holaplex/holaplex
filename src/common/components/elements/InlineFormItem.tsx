@@ -16,14 +16,29 @@ const StyledFormItem = styled(Form.Item) <InlineFormItemProps>`
     text-align: left;
   }
 
-  .ant-input-focused {
+  .ant-input {
     border: none;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  &.ant-form-item-with-help {
+    margin-bottom: 24px;
+  }
+
+  &.ant-form-item-has-error :not(.ant-input-disabled).ant-input:focus, 
+  &.ant-form-item-has-error :not(.ant-input-affix-wrapper-disabled).ant-input-affix-wrapper:focus, 
+  &.ant-form-item-has-error :not(.ant-input-disabled).ant-input-focused, 
+  &.ant-form-item-has-error :not(.ant-input-affix-wrapper-disabled).ant-input-affix-wrapper-focused {
+    border: none;
+    box-shadow: none;
   }
 `
 
 const InlineFormItem = (props: InlineFormItemProps) => {
   return (
-    <StyledFormItem {...props} />
+    <StyledFormItem {...props}  />
   )
 }
 
