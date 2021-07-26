@@ -3,7 +3,6 @@ import React, { useState, FunctionComponent } from 'react'
 import { Form, Row, Space, FormInstance } from 'antd'
 import Button from '@/components/elements/Button';
 import { FormProps } from 'antd'
-import { isNil } from 'ramda'
 
 interface StepFormProps extends FormProps {
   children: React.ReactElement[]

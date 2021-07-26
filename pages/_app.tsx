@@ -11,7 +11,7 @@ import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
 
-const { Header } = Layout
+const { Header, Content } = Layout
 
 const HeaderTitle = styled.a`
   font-size: 24px;
@@ -23,9 +23,6 @@ const HeaderTitle = styled.a`
     color: ${sv.colors.buttonText}
   }
 
-`
-const AppContent = styled(Header)`
-  padding: 72px 22px 0;
 `
 
 const AppLayout = styled(Layout)`
@@ -47,13 +44,13 @@ function MyApp({ Component, pageProps }: AppProps) {
                       <HeaderTitle>👋 Holaplex</HeaderTitle>
                     </Link>
                   </Header>
-                  <AppContent>
+                  <Content>
                     <Loading loading={verifying || initializing || searching}>
                       <Component
                         {...pageProps}
                       />
                     </Loading>
-                  </AppContent>
+                  </Content>
                 </AppLayout>
               )
             }}

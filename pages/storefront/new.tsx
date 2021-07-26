@@ -115,6 +115,15 @@ const InlineFormItem = styled(Form.Item) <InlineFormItemProps>`
     text-align: right;
   }
 `
+
+const PageCard = styled(Card)`
+  margin: 70px 0 32px 0;
+`
+
+const PrevCol = styled(Col)`
+  margin: 0 0 24px 0;
+`
+
 interface FieldData {
   name: string | number | (string | number)[];
   value?: any;
@@ -122,10 +131,6 @@ interface FieldData {
   validating?: boolean;
   errors?: string[];
 }
-
-const PrevCol = styled(Col)`
-  margin: 0 0 24px 0;
-`
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false)
@@ -141,6 +146,9 @@ export default function New() {
     { name: ['theme', 'titleFont'], value: 'Work Sans' },
     { name: ['theme', 'textFont'], value: 'Work Sans' },
     { name: ['theme', 'logo'], value: [] },
+    { name: ['meta', 'favicon'], value: [] },
+    { name: ['meta', 'title'], value: '' },
+    { name: ['meta', 'description'], value: '' }
   ]);
 
   if (isNil(solana)) {
@@ -152,7 +160,7 @@ export default function New() {
   }, {}, fields)
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
-    const storefront = await arweaveSDK.search(arweave).storefront("holaplex:metadata:subdomain", subdomain || "")
+    const storefront = await arweaveSDK.using(arweave).storefront.find("holaplex:metadata:subdomain", subdomain || "")
 
     if (isNil(storefront)) {
       return Promise.resolve(subdomain)
@@ -163,30 +171,25 @@ export default function New() {
 
   const onSubmit = async () => {
     try {
-      const { theme, subdomain } = values;
-
       setSubmitting(true)
+      const { theme, subdomain, meta } = values;
 
       const logo = theme.logo[0].response
+      const favicon = meta.favicon[0].response
+
       const css = stylesheet({ ...theme, logo })
 
       const transaction = await arweave.createTransaction({ data: css })
 
-      toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
-
-      transaction.addTag("Content-Type", "text/css")
-      transaction.addTag("solana:pubkey", solana.publicKey.toString())
-      transaction.addTag("holaplex:metadata:subdomain", subdomain)
-      transaction.addTag("holaplex:theme:logo:url", logo.url)
-      transaction.addTag("holaplex:theme:logo:name", logo.name)
-      transaction.addTag("holaplex:theme:logo:type", logo.type)
-      transaction.addTag("holaplex:theme:color:primary", theme.primaryColor)
-      transaction.addTag("holaplex:theme:color:background", theme.backgroundColor)
-      transaction.addTag("holaplex:theme:font:title", theme.titleFont)
-      transaction.addTag("holaplex:theme:font:text", theme.textFont)
-      transaction.addTag("Arweave-App", "holaplex")
-
-      await arweave.transactions.sign(transaction)
+      await arweaveSDK.using(arweave).storefront.upsert(
+        {
+          pubkey: solana.publicKey.toString(),
+          subdomain,
+          theme: { ...theme, logo },
+          meta: { ...meta, favicon }
+        },
+        css
+      )
 
       await arweave.transactions.post(transaction)
 
@@ -206,11 +209,12 @@ export default function New() {
   return (
     <Row justify="center" align="middle">
       <Col xs={21} lg={18} xl={16} xxl={14}>
-        <Card>
+        <PageCard>
           <StepForm
             submitting={submitting}
             form={form}
             size="large"
+            submitting={submitting}
             fields={fields}
             onFieldsChange={([changed], _) => {
               if (isNil(changed)) {
@@ -322,8 +326,51 @@ export default function New() {
                 </PrevCard>
               </PrevCol>
             </Row>
+            <Row justify="space-between">
+              <Col xs={24}>
+                <Title level={2}>Set page meta data.</Title>
+                <Paragraph>Upload a favicon and set other page meta data. This information will display when storefront links are shared on social platforms like Twitter and Facebook.</Paragraph>
+                <Form.Item
+                  labelCol={{ xs: 8, md: 6, xxl: 4 }}
+                  wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+                  label="Favicon"
+                  name={["meta", "favicon"]}
+                  rules={[
+                    { required: true, message: "Upload a favicon." }
+                  ]}
+                >
+                  <Upload>
+                    {isEmpty(values.meta.favicon) && (
+                      <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
+                    )}
+                  </Upload>
+                </Form.Item>
+                <Form.Item
+                  name={["meta", "title"]}
+                  rules={[
+                    { required: true, message: "Please enter a page title." }
+                  ]}
+                  label="Page Title"
+                  labelCol={{ xs: 8, md: 6, xxl: 4 }}
+                  wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  name={["meta", "description"]}
+                  label="Page Description"
+                  rules={[
+                    { required: true, message: "Please enter a page description." }
+                  ]}
+                  labelCol={{ xs: 8, md: 6, xxl: 4 }}
+                  wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+                >
+                  <Input.TextArea />
+                </Form.Item>
+              </Col>
+            </Row>
           </StepForm>
-        </Card>
+        </PageCard>
       </Col>
     </Row>
   )

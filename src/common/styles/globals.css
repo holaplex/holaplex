@@ -48,8 +48,9 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.25em;
 }
 
-input {
+input, textarea {
   text-align: inherit;
+  border: none;
 }
 
 body {
