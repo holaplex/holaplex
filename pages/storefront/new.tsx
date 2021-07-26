@@ -17,7 +17,7 @@ import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
-import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
+import { isNil, pipe, reduce, assocPath, isEmpty, findIndex, propEq, update, test, sortBy } from 'ramda';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -100,7 +100,7 @@ const PrevCard = styled(Card)`
 interface InlineFormItemProps extends FormItemProps {
   noBackground?: boolean;
 }
-const InlineFormItem = styled(Form.Item)<InlineFormItemProps>`
+const InlineFormItem = styled(Form.Item) <InlineFormItemProps>`
   &.ant-form-item {
     background: ${({ noBackground }) => noBackground ? "none" : "#e0e0e0"};
     border-radius: 12px;
@@ -128,6 +128,7 @@ const PrevCol = styled(Col)`
 `
 
 export default function New() {
+  const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
   const [form] = Form.useForm()
@@ -161,33 +162,42 @@ export default function New() {
   }
 
   const onSubmit = async () => {
-    const { theme, subdomain } = values;
+    try {
+      const { theme, subdomain } = values;
 
-    const logo = theme.logo[0].response
-    const css = stylesheet({ ...theme, logo })
+      setSubmitting(true)
 
-    const transaction = await arweave.createTransaction({ data: css })
+      const logo = theme.logo[0].response
+      const css = stylesheet({ ...theme, logo })
 
-    toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
+      const transaction = await arweave.createTransaction({ data: css })
 
-    transaction.addTag("Content-Type", "text/css")
-    transaction.addTag("solana:pubkey", solana.publicKey.toString())
-    transaction.addTag("holaplex:metadata:subdomain", subdomain)
-    transaction.addTag("holaplex:theme:logo:url", logo.url)
-    transaction.addTag("holaplex:theme:logo:name", logo.name)
-    transaction.addTag("holaplex:theme:logo:type", logo.type)
-    transaction.addTag("holaplex:theme:color:primary", theme.primaryColor)
-    transaction.addTag("holaplex:theme:color:background", theme.backgroundColor)
-    transaction.addTag("holaplex:theme:font:title", theme.titleFont)
-    transaction.addTag("holaplex:theme:font:text", theme.textFont)
+      toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
 
-    await arweave.transactions.sign(transaction)
+      transaction.addTag("Content-Type", "text/css")
+      transaction.addTag("solana:pubkey", solana.publicKey.toString())
+      transaction.addTag("holaplex:metadata:subdomain", subdomain)
+      transaction.addTag("holaplex:theme:logo:url", logo.url)
+      transaction.addTag("holaplex:theme:logo:name", logo.name)
+      transaction.addTag("holaplex:theme:logo:type", logo.type)
+      transaction.addTag("holaplex:theme:color:primary", theme.primaryColor)
+      transaction.addTag("holaplex:theme:color:background", theme.backgroundColor)
+      transaction.addTag("holaplex:theme:font:title", theme.titleFont)
+      transaction.addTag("holaplex:theme:font:text", theme.textFont)
+      transaction.addTag("Arweave-App", "holaplex")
 
-    await arweave.transactions.post(transaction)
+      await arweave.transactions.sign(transaction)
 
-    toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
+      await arweave.transactions.post(transaction)
 
-    router.push("/")
+      toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
+
+      router.push("/").then(() => { setSubmitting(false) })
+    } catch (e) {
+      setSubmitting(false)
+      toast.error(() => (<>There was an issue creating your storefront. Please wait a moment and try again.</>))
+
+    }
   }
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
@@ -198,6 +208,7 @@ export default function New() {
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <Card>
           <StepForm
+            submitting={submitting}
             form={form}
             size="large"
             fields={fields}
@@ -223,8 +234,8 @@ export default function New() {
                   <DomainFormItem
                     name="subdomain"
                     rules={[
-                      { required: true, message: "Enter a subdomain." },
-                      { validator: subdomainUniqueness }
+                      { required: true, pattern: /^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9]$/, message: "The subdomain entered is not valid." },
+                      { required: true, validator: subdomainUniqueness },
                     ]}
                   >
                     <Input autoFocus suffix=".holaplex.com" />
@@ -235,7 +246,7 @@ export default function New() {
             <Row justify="space-between">
               <Col sm={24} md={12} lg={12}>
                 <Title level={2}>Customize your store.</Title>
-                <Text>Choose a logo, colors, and fonts to fit your store’s brand.</Text>
+                <Paragraph>Choose a logo, colors, and fonts to fit your store’s brand.</Paragraph>
                 <InlineFormItem
                   noBackground
                   labelCol={{ span: 10 }}
@@ -243,7 +254,7 @@ export default function New() {
                   label="Logo"
                   name={["theme", "logo"]}
                   rules={[
-                    { required: true, message: "Upload a logo." }
+                    { required: true, message: "Upload a logo." },
                   ]}
                 >
                   <Upload>

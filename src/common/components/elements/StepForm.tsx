@@ -7,10 +7,11 @@ import { isNil } from 'ramda'
 
 interface StepFormProps extends FormProps {
   children: React.ReactElement[]
-  form: FormInstance
+  form: FormInstance,
+  submitting: boolean
 }
 
-const StepForm = ({ children, onFinish, fields, form, ...props }: StepFormProps) => {
+const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: StepFormProps) => {
   const [page, changePage] = useState(0)
   const activePage = React.Children.toArray(children)[page]
   const isLastPage = page === React.Children.count(children) - 1
@@ -25,11 +26,14 @@ const StepForm = ({ children, onFinish, fields, form, ...props }: StepFormProps)
 
 
   const handleSubmit = () => {
-    if (isLastPage && onFinish) {
-      onFinish(fields)
-    } else {
-      next()
-    }
+    form.validateFields()
+      .then(() => {
+        if (isLastPage && onFinish) {
+          onFinish(fields)
+        } else {
+          next()
+        }
+      })
   }
 
   return (
@@ -46,6 +50,7 @@ const StepForm = ({ children, onFinish, fields, form, ...props }: StepFormProps)
             <Button
               size="large"
               onClick={previous}
+              disabled={submitting}
             >
               Back
             </Button>
@@ -55,6 +60,8 @@ const StepForm = ({ children, onFinish, fields, form, ...props }: StepFormProps)
               type="primary"
               size="large"
               htmlType="submit"
+              disabled={submitting}
+              loading={submitting}
             >
               {isLastPage ? "Submit" : "Next"}
             </Button>

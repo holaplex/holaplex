@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               return (
                 <AppLayout>
                   <Header>
-                    <Link href="/">
+                    <Link href="/" passHref>
                       <HeaderTitle>👋 Holaplex</HeaderTitle>
                     </Link>
                   </Header>
