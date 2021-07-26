@@ -3,7 +3,7 @@ import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { Card, Row, Col, Typography, Space, Form, Input, FormItemProps, Tabs } from 'antd'
+import { Card, Row, Col, Typography, Space, Form, Input, Alert } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
@@ -12,14 +12,13 @@ import Upload from '@/common/components/elements/Upload'
 import { stylesheet } from '@/modules/theme'
 // @ts-ignore
 import Color from 'color'
-import { AuthProvider } from '@/modules/auth'
 import { initArweave } from '@/modules/arweave'
 import { StorefrontContext } from '@/modules/storefront'
 import { WalletContext } from '@/modules/wallet'
 import arweaveSDK from '@/modules/arweave/client'
+import DomainFormItem from '@/common/components/elements/DomainFormItem'
+import InlineFormItem from '@/common/components/elements/InlineFormItem';
 import { isNil, reduce, propEq, findIndex, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
-
-const { TabPane } = Tabs
 
 const { Text, Title, Paragraph } = Typography
 
@@ -44,6 +43,10 @@ const PreviewLink = styled.div`
   color: ${props => props.color};
   text-decoration: underline;
 `;
+
+const PageCard = styled(Card)`
+  margin: 70px 0 32px 0;
+`
 
 type PrevTitleProps = {
   color: string;
@@ -82,25 +85,6 @@ const PrevCard = styled(Card)`
   background-color: ${({ bgColor }: PrevCardProps) => bgColor};
 }
 `
-
-interface InlineFormItemProps extends FormItemProps {
-  noBackground?: boolean;
-}
-const InlineFormItem = styled(Form.Item) <InlineFormItemProps>`
-  &.ant-form-item {
-    background: ${({ noBackground }) => noBackground ? "none" : "#e0e0e0"};
-    border-radius: 12px;
-    padding: 0 0 0 15px;
-  }
-
-  .ant-form-item-label {
-    text-align: left;
-  }
-
-  .ant-form-item-control-input-content, .ant-form-item-explain {
-    text-align: right;
-  }
-`
 interface FieldData {
   name: string | number | (string | number)[];
   value?: any;
@@ -112,32 +96,21 @@ interface FieldData {
 const PrevCol = styled(Col)`
   margin: 0 0 24px 0;
 `
+const StepAlert = styled(Alert)`
+  margin: 0 0 24px 0;
+`
 
-const DomainFormItem = styled(Form.Item)`
-  text-align: right;
-  font-size: 24px;
-  .ant-input {
-    font-size: 24px;
-    border-radius: 0px;
-  }
-  .ant-input-suffix {
-    margin: 0;
-    color: rgb(102, 102, 102);
-  }
-  .ant-form-item-explain {
-    text-align: left;
-  }
-`;
+// @ts-ignore
+const popFile = when(has('response'), prop('response'))
 
 export default function Edit() {
+  const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
   const [tab, setTab] = useState("theme")
-  const [submitting, setSubmitting] = useState(false)
   const { storefront } = useContext(StorefrontContext)
-  const { wallet } = useContext(WalletContext)
   const [form] = Form.useForm()
-  const { solana } = useContext(WalletContext)
+  const { solana, wallet } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -145,6 +118,9 @@ export default function Edit() {
     { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont },
     { name: ['theme', 'textFont'], value: storefront?.theme.textFont },
     { name: ['theme', 'logo'], value: [{ ...storefront?.theme.logo, status: "done" }] },
+    { name: ['meta', 'favicon'], value: [{ ...storefront?.meta.favicon, status: "done" }]},
+    { name: ['meta', 'title'], value: storefront?.meta.title },
+    { name: ['meta', 'description'], value: storefront?.meta.description }
   ]);
 
   if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
@@ -158,7 +134,7 @@ export default function Edit() {
   const domain = `${values.subdomain}.holaplex.com`
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
-    const search = await arweaveSDK.search(arweave).storefront("holaplex:metadata:subdomain", subdomain || "")
+    const search = await arweaveSDK.using(arweave).storefront.find("holaplex:metadata:subdomain", subdomain || "")
 
     if (isNil(search) || search.pubkey === wallet.pubkey) {
       return Promise.resolve(subdomain)
@@ -171,32 +147,23 @@ export default function Edit() {
     try {
       setSubmitting(true)
 
-      const { theme, subdomain } = values
-      const { pubkey } = storefront
+      const { theme, meta } = values
+  
       // @ts-ignore
-      const logo = when(has('response'), prop('response'))(theme.logo[0])
-
+      const logo = popFile(theme.logo[0])
+      // @ts-ignore
+      const favicon = popFile(meta.favicon[0])
+  
       const css = stylesheet({ ...theme, logo })
-
-      const transaction = await arweave.createTransaction({ data: css })
-
-      toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
-
-      transaction.addTag("Content-Type", "text/css")
-      transaction.addTag("solana:pubkey", pubkey)
-      transaction.addTag("holaplex:metadata:subdomain", subdomain)
-      transaction.addTag("holaplex:theme:logo:url", logo.url)
-      transaction.addTag("holaplex:theme:logo:name", logo.name)
-      transaction.addTag("holaplex:theme:logo:type", logo.type)
-      transaction.addTag("holaplex:theme:color:primary", theme.primaryColor)
-      transaction.addTag("holaplex:theme:color:background", theme.backgroundColor)
-      transaction.addTag("holaplex:theme:font:title", theme.titleFont)
-      transaction.addTag("holaplex:theme:font:text", theme.textFont)
-      transaction.addTag("Arweave-App", "holaplex")
-
-      await arweave.transactions.sign(transaction)
-
-      await arweave.transactions.post(transaction)
+  
+      await arweaveSDK.using(arweave).storefront.upsert(
+        {
+          ...storefront,
+          theme: { ...theme, logo },
+          meta: { ...meta, favicon }
+        },
+        css
+      )
 
       toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })
 
@@ -214,7 +181,7 @@ export default function Edit() {
     theme: (
       <Row justify="space-between">
         <Col sm={24} md={12} lg={12}>
-          <Title level={2}>Edit your store theme.</Title>
+          <Title level={2}>Style your store.</Title>
           <InlineFormItem
             noBackground
             labelCol={{ span: 10 }}
@@ -304,52 +271,101 @@ export default function Edit() {
           <Input autoFocus suffix=".holaplex.com" />
         </DomainFormItem>
       </>
+    ),
+    meta: (
+      <>
+        <Title level={2}>Change page meta data.</Title>
+        <InlineFormItem
+            noBackground
+          labelCol={{ xs: 8 }}
+          wrapperCol={{ xs: 16 }}
+          label="Favicon"
+          name={["meta", "favicon"]}
+          rules={[
+            { required: true, message: "Upload a favicon." }
+          ]}
+        >
+          <Upload>
+            {isEmpty(values.meta.favicon) && (
+              <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
+            )}
+          </Upload>
+        </InlineFormItem>
+        <InlineFormItem
+          name={["meta", "title"]}
+          rules={[
+            { required: true, message: "Please enter a page title." }
+          ]}
+          label="Page Title"
+          labelCol={{ xs: 8 }}
+          wrapperCol={{ xs: 16 }}
+        >
+          <Input autoFocus />
+        </InlineFormItem>
+        <InlineFormItem
+          name={["meta", "description"]}
+          label="Page Description"
+          rules={[
+            { required: true, message: "Please enter a page description." }
+          ]}
+          labelCol={{ xs: 8 }}
+          wrapperCol={{ xs: 16 }}
+        >
+          <Input.TextArea />
+        </InlineFormItem>
+        <StepAlert showIcon type="info" message="We are still working on getting page meta data to apply to storefronts. Filling it out now will ensure its goes into affect as soon as the feature is live."/> 
+
+      </>
     )
   }
   return (
-    <AuthProvider storefront={storefront} wallet={wallet}>
-      <Row justify="center" align="middle">
-        <Col
-          xs={21}
-          lg={18}
-          xl={16}
-          xxl={14}
-        >
-          <Card
-            activeTabKey={tab}
-            onTabChange={key => {
+    <Row justify="center" align="middle">
+      <Col
+        xs={21}
+        lg={18}
+        xl={16}
+        xxl={14}
+      >
+        <Card
+          activeTabKey={tab}
+          onTabChange={async (key) => {
+            try {
+              await form.validateFields()
+            
               setTab(key)
+            } catch {
+            }
+          }}
+          tabList={[
+            { key: "theme", tab: "Theme" },
+            { key: "subdomain", tab: "Subdomain" },
+            { key: "meta", tab: "Page Meta Data" }
+          ]}
+        >
+          <Form
+            form={form}
+            size="large"
+            fields={fields}
+            onFieldsChange={([changed], _) => {
+              if (isNil(changed)) {
+                return
+              }
+
+              const current = findIndex(propEq('name', changed.name), fields)
+              setFields(update(current, changed, fields));
             }}
-            tabList={[
-              { key: "theme", tab: "Theme" },
-              { key: "subdomain", tab: "Subdomain" }
-            ]}
+            onFinish={onSubmit}
+            layout="horizontal"
+            colon={false}
           >
-            <Form
-              form={form}
-              size="large"
-              fields={fields}
-              onFieldsChange={([changed], _) => {
-                if (isNil(changed)) {
-                  return
-                }
-  
-                const current = findIndex(propEq('name', changed.name), fields)
-                setFields(update(current, changed, fields));
-              }}
-              onFinish={onSubmit}
-              layout="horizontal"
-              colon={false}
-            >
-              {/*@ts-ignore*/}
-              {tabs[tab]}
-              <Row justify="end">
-                <Button type="primary" htmlType="submit" disabled={submitting} loading={submitting}>Update</Button>
-              </Row>
-            </Form>
-          </Card>
-        </Col>
-      </Row>
-    </AuthProvider>
+            {/*@ts-ignore*/}
+            {tabs[tab]}
+            <Row justify="end">
+              <Button type="primary" htmlType="submit" disabled={submitting} loading={submitting}>Update</Button>
+            </Row>
+          </Form>
+        </Card>
+      </Col>
+    </Row>
   )
 }

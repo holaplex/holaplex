@@ -7,8 +7,15 @@ export type StorefrontTheme = {
   logo: ArweaveFile;
 }
 
+export type PageMetaData = {
+  title: string;
+  description: string;
+  favicon: ArweaveFile;
+}
+
 export type Storefront = {
   theme: StorefrontTheme;
+  meta: PageMetaData;
   subdomain: string;
   pubkey: string;
 }

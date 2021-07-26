@@ -6,6 +6,7 @@ import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 
 const Logo = styled.div`
+  margin: 70px 0 0 0;
   font-size: 90px;
   line-height: 90px;
 `;

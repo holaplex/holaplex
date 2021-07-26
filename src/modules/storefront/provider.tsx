@@ -31,7 +31,7 @@ export const StorefrontProvider = ({ wallet, verifying, children }: StorefrontPr
 
     setSearching(true)
 
-    arweaveSDK.search(arweave).storefront("solana:pubkey", wallet.pubkey)
+    arweaveSDK.using(arweave).storefront.find("solana:pubkey", wallet.pubkey)
       .then((storefront) => {
         if (isNil(storefront)) {
           setSearching(false)

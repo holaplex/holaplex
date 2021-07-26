@@ -77,7 +77,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       upsertWallet(solanaPubkey)
         .then((wallet) => {
           setWallet(wallet);
-          return arweaveSDK.search(arweave).storefront("solana:pubkey", wallet.pubkey)
+          return arweaveSDK.using(arweave).storefront.find("solana:pubkey", wallet.pubkey)
         })
         .then((storefront: any) => {
           if (storefront) {

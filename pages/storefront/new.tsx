@@ -5,11 +5,12 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 // @ts-ignore
 import Color from 'color'
-import { Card, Row, Col, Typography, Input, Space, Form, FormItemProps } from 'antd'
+import { Card, Row, Col, Typography, Input, Space, Form, Alert } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
 import FontSelect from '@/common/components/elements/FontSelect'
+import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import Upload from '@/common/components/elements/Upload'
 import { stylesheet } from '@/modules/theme'
 import { initArweave } from '@/modules/arweave'
@@ -17,7 +18,8 @@ import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
-import { isNil, pipe, reduce, assocPath, isEmpty, findIndex, propEq, update, test, sortBy } from 'ramda';
+import InlineFormItem from '@/common/components/elements/InlineFormItem'
+import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -41,22 +43,6 @@ const UploadedLogo = styled.img`
 const PreviewLink = styled.div`
   color: ${props => props.color};
   text-decoration: underline;
-`;
-
-const DomainFormItem = styled(Form.Item)`
-  text-align: right;
-  font-size: 24px;
-  .ant-input {
-    font-size: 24px;
-    border-radius: 0px;
-  }
-  .ant-input-suffix {
-    margin: 0;
-    color: rgb(102, 102, 102);
-  }
-  .ant-form-item-explain {
-    text-align: left;
-  }
 `;
 
 type PrevTitleProps = {
@@ -97,24 +83,18 @@ const PrevCard = styled(Card)`
 }
 `
 
-interface InlineFormItemProps extends FormItemProps {
-  noBackground?: boolean;
-}
-const InlineFormItem = styled(Form.Item) <InlineFormItemProps>`
-  &.ant-form-item {
-    background: ${({ noBackground }) => noBackground ? "none" : "#e0e0e0"};
-    border-radius: 12px;
-    padding: 0 0 0 15px;
-  }
-
-  .ant-form-item-label {
-    text-align: left;
-  }
-
-  .ant-form-item-control-input-content, .ant-form-item-explain {
-    text-align: right;
-  }
+const StepAlert = styled(Alert)`
+  margin: 0 0 24px 0;
 `
+
+const PageCard = styled(Card)`
+  margin: 70px 0 32px 0;
+`
+
+const PrevCol = styled(Col)`
+  margin: 0 0 24px 0;
+`
+
 interface FieldData {
   name: string | number | (string | number)[];
   value?: any;
@@ -122,10 +102,6 @@ interface FieldData {
   validating?: boolean;
   errors?: string[];
 }
-
-const PrevCol = styled(Col)`
-  margin: 0 0 24px 0;
-`
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false)
@@ -141,6 +117,9 @@ export default function New() {
     { name: ['theme', 'titleFont'], value: 'Work Sans' },
     { name: ['theme', 'textFont'], value: 'Work Sans' },
     { name: ['theme', 'logo'], value: [] },
+    { name: ['meta', 'favicon'], value: [] },
+    { name: ['meta', 'title'], value: '' },
+    { name: ['meta', 'description'], value: '' }
   ]);
 
   if (isNil(solana)) {
@@ -152,7 +131,7 @@ export default function New() {
   }, {}, fields)
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
-    const storefront = await arweaveSDK.search(arweave).storefront("holaplex:metadata:subdomain", subdomain || "")
+    const storefront = await arweaveSDK.using(arweave).storefront.find("holaplex:metadata:subdomain", subdomain || "")
 
     if (isNil(storefront)) {
       return Promise.resolve(subdomain)
@@ -163,37 +142,29 @@ export default function New() {
 
   const onSubmit = async () => {
     try {
-      const { theme, subdomain } = values;
-
       setSubmitting(true)
+      const { theme, subdomain, meta } = values;
 
       const logo = theme.logo[0].response
+      const favicon = meta.favicon[0].response
+
       const css = stylesheet({ ...theme, logo })
 
-      const transaction = await arweave.createTransaction({ data: css })
-
-      toast(() => (<>Your storefront theme is being uploaded to Arweave.</>))
-
-      transaction.addTag("Content-Type", "text/css")
-      transaction.addTag("solana:pubkey", solana.publicKey.toString())
-      transaction.addTag("holaplex:metadata:subdomain", subdomain)
-      transaction.addTag("holaplex:theme:logo:url", logo.url)
-      transaction.addTag("holaplex:theme:logo:name", logo.name)
-      transaction.addTag("holaplex:theme:logo:type", logo.type)
-      transaction.addTag("holaplex:theme:color:primary", theme.primaryColor)
-      transaction.addTag("holaplex:theme:color:background", theme.backgroundColor)
-      transaction.addTag("holaplex:theme:font:title", theme.titleFont)
-      transaction.addTag("holaplex:theme:font:text", theme.textFont)
-      transaction.addTag("Arweave-App", "holaplex")
-
-      await arweave.transactions.sign(transaction)
-
-      await arweave.transactions.post(transaction)
+      await arweaveSDK.using(arweave).storefront.upsert(
+        {
+          pubkey: solana.publicKey.toString(),
+          subdomain,
+          theme: { ...theme, logo },
+          meta: { ...meta, favicon }
+        },
+        css
+      )
 
       toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
 
       router.push("/").then(() => { setSubmitting(false) })
     } catch (e) {
+      console.error(e)
       setSubmitting(false)
       toast.error(() => (<>There was an issue creating your storefront. Please wait a moment and try again.</>))
 
@@ -206,7 +177,7 @@ export default function New() {
   return (
     <Row justify="center" align="middle">
       <Col xs={21} lg={18} xl={16} xxl={14}>
-        <Card>
+        <PageCard>
           <StepForm
             submitting={submitting}
             form={form}
@@ -245,7 +216,7 @@ export default function New() {
             </Row>
             <Row justify="space-between">
               <Col sm={24} md={12} lg={12}>
-                <Title level={2}>Customize your store.</Title>
+                <Title level={2}>Next, theme your store.</Title>
                 <Paragraph>Choose a logo, colors, and fonts to fit your store’s brand.</Paragraph>
                 <InlineFormItem
                   noBackground
@@ -322,8 +293,53 @@ export default function New() {
                 </PrevCard>
               </PrevCol>
             </Row>
+            <Row justify="space-between">
+              <Col xs={24}>
+                <Title level={2}>Finally, set page meta data.</Title>
+                <Paragraph>Upload a favicon and set other page meta data. This information will display on social platforms, such as Twitter and Facebook, when links to the store are shared.</Paragraph>
+                <InlineFormItem
+                  noBackground
+                  labelCol={{ xs: 8, md: 6, xxl: 4 }}
+                  wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+                  label="Favicon"
+                  name={["meta", "favicon"]}
+                  rules={[
+                    { required: true, message: "Upload a favicon." }
+                  ]}
+                >
+                  <Upload>
+                    {isEmpty(values.meta.favicon) && (
+                      <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
+                    )}
+                  </Upload>
+                </InlineFormItem>
+                <InlineFormItem
+                  name={["meta", "title"]}
+                  rules={[
+                    { required: true, message: "Please enter a page title." }
+                  ]}
+                  label="Page Title"
+                  labelCol={{ xs: 8, md: 6, xxl: 4 }}
+                  wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+                >
+                  <Input autoFocus />
+                </InlineFormItem>
+                <InlineFormItem
+                  name={["meta", "description"]}
+                  label="Page Description"
+                  rules={[
+                    { required: true, message: "Please enter a page description." }
+                  ]}
+                  labelCol={{ xs: 8, md: 6, xxl: 4 }}
+                  wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+                >
+                  <Input.TextArea />
+                </InlineFormItem>
+                <StepAlert showIcon type="info" message="We are still working on getting page meta data to apply to storefronts. Filling it out now will ensure its goes into affect as soon as the feature is live."/> 
+              </Col>
+            </Row>
           </StepForm>
-        </Card>
+        </PageCard>
       </Col>
     </Row>
   )
