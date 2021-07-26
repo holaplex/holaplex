@@ -7,10 +7,8 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { Layout } from 'antd'
 import sv from '@/constants/styles'
-import Button from '@/components/elements/Button'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
-import router from 'next/router'
 import { StorefrontProvider } from '@/modules/storefront'
 
 const { Header } = Layout
