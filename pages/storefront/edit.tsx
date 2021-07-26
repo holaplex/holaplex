@@ -297,7 +297,7 @@ export default function Edit() {
         <DomainFormItem
           name="subdomain"
           rules={[
-            { required: true, pattern: /^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9]$/, message: "The subdomain entered is not valid." },
+            { required: true, pattern: /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/, message: "The subdomain entered is not valid." },
             { required: true, validator: subdomainUniqueness },
           ]}
         >
