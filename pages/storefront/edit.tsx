@@ -97,9 +97,6 @@ interface FieldData {
 const PrevCol = styled(Col)`
   margin: 0 0 24px 0;
 `
-const StepAlert = styled(Alert)`
-  margin: 0 0 24px 0;
-`
 
 // @ts-ignore
 const popFile = when(has('response'), prop('response'))
@@ -315,8 +312,6 @@ export default function Edit() {
         >
           <Input.TextArea />
         </InlineFormItem>
-        <StepAlert showIcon type="info" message="We are still working on getting page meta data to apply to storefronts. Filling it out now will ensure its goes into affect as soon as the feature is live."/> 
-
       </>
     )
   }

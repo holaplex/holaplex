@@ -83,10 +83,6 @@ const PrevCard = styled(Card)`
 }
 `
 
-const StepAlert = styled(Alert)`
-  margin: 0 0 24px 0;
-`
-
 const PageCard = styled(Card)`
   margin: 70px 0 32px 0;
 `
@@ -335,7 +331,6 @@ export default function New() {
                 >
                   <Input.TextArea />
                 </InlineFormItem>
-                <StepAlert showIcon type="info" message="We are still working on getting page meta data to apply to storefronts. Filling it out now will ensure its goes into affect as soon as the feature is live."/> 
               </Col>
             </Row>
           </StepForm>
