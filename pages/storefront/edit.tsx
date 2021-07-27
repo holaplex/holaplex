@@ -17,8 +17,9 @@ import { StorefrontContext } from '@/modules/storefront'
 import { WalletContext } from '@/modules/wallet'
 import arweaveSDK from '@/modules/arweave/client'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
-import InlineFormItem from '@/common/components/elements/InlineFormItem';
-import { isNil, reduce, propEq, findIndex, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
+import InlineFormItem from '@/common/components/elements/InlineFormItem'
+import { isNil, reduce, propEq, findIndex, pipe, identity, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
+import Meta from 'antd/lib/card/Meta';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -118,7 +119,8 @@ export default function Edit() {
     { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont },
     { name: ['theme', 'textFont'], value: storefront?.theme.textFont },
     { name: ['theme', 'logo'], value: [{ ...storefront?.theme.logo, status: "done" }] },
-    { name: ['meta', 'favicon'], value: [{ ...storefront?.meta.favicon, status: "done" }]},
+    //@ts-ignore
+    { name: ['meta', 'favicon'], value: ifElse(pipe(prop('url'), isNil), () => ([]), (favicon) => [merge({ status: "done" })(favicon)])(storefront?.meta.favicon) },
     { name: ['meta', 'title'], value: storefront?.meta.title },
     { name: ['meta', 'description'], value: storefront?.meta.description }
   ]);

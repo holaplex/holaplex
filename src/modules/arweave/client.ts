@@ -32,7 +32,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
 
           const tags = reduce(
             (acc: any, { name, value }) => {
-              acc[name] = value
+              acc[name] = value || null
 
               return acc
             },
