@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import App from 'next/app'
 import Head from 'next/head'
 import type { AppProps, AppContext } from 'next/app'
@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { Layout } from 'antd'
 import sv from '@/constants/styles'
+import type { GoogleTracker } from '@/modules/ganalytics/types'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
@@ -45,37 +46,32 @@ declare global {
 function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
   const router = useRouter()
 
+  const gtag = (...args: any[]) => { window.dataLayer.push(args); }
+  const track = (...args: any[]) => { gtag('send', 'event', ...args) }
+
   useEffect(() => {
     if (!process.browser || !googleAnalyticsId) {
       return
     }
-
-
+    console.log("run google analytics app init")
     window.dataLayer = window.dataLayer || [];
-    function gtag(...args: any[]) { window.dataLayer.push(args); }
 
     gtag('js', new Date())
 
     gtag('config', googleAnalyticsId)
 
     const onRouteChanged = (path: string) => {
-      console.log('route changed')
-      console.log(path)
       gtag("set", "page", path)
       gtag("send", "pageview")
     }
 
     router.events.on('routeChangeComplete', onRouteChanged)
-
-    return () => {
-      router.events.off('routeChangeComplete', onRouteChanged)
-    }
-  }, [])
+  }, [googleAnalyticsId])
 
   return (
     <>
       <Head>
-        {googleAnalyticsId && (<script async src="https://www.googletagmanager.com/gtag/js" />)}
+        {googleAnalyticsId && (<script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`} />)}
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
@@ -93,6 +89,7 @@ function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
                     <Loading loading={verifying || initializing || searching}>
                       <Component
                         {...pageProps}
+                        track={track}
                       />
                     </Loading>
                   </Content>

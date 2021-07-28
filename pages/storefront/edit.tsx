@@ -3,7 +3,7 @@ import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { Card, Row, Col, Typography, Space, Form, Input, Alert } from 'antd'
+import { Card, Row, Col, Typography, Space, Form, Input } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
@@ -13,13 +13,13 @@ import { stylesheet } from '@/modules/theme'
 // @ts-ignore
 import Color from 'color'
 import { initArweave } from '@/modules/arweave'
+import type { GoogleTracker } from '@/modules/ganalytics/types'
 import { StorefrontContext } from '@/modules/storefront'
 import { WalletContext } from '@/modules/wallet'
 import arweaveSDK from '@/modules/arweave/client'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
 import { isNil, reduce, propEq, findIndex, pipe, identity, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
-import Meta from 'antd/lib/card/Meta';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -101,7 +101,11 @@ const PrevCol = styled(Col)`
 // @ts-ignore
 const popFile = when(has('response'), prop('response'))
 
-export default function Edit() {
+interface StorefrontEditProps {
+  track: GoogleTracker
+}
+
+export default function Edit( { track }: StorefrontEditProps) {
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
@@ -166,12 +170,15 @@ export default function Edit() {
 
       toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })
 
-      router.push("/").then(() => { setSubmitting(false) })
+      router.push("/")
+        .then(() => { 
+          track('storefront', 'updated')
+          setSubmitting(false)
+        })
     } catch {
       toast.error(() => (<>There was an issue updating your storefront. Please wait a moment and try again.</>))
     }
   }
-
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
