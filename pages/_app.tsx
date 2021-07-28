@@ -35,36 +35,24 @@ interface MyAppProps extends AppProps {
   googleAnalyticsId?: string;
 }
 
-declare global {
-  interface Window {
-    dataLayer: any;
-  }
-}
-
 function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
   const router = useRouter()
 
-  const gtag = (...args: any[]) => { window.dataLayer.push(args); }
-  const track = (...args: any[]) => { gtag('send', 'event', ...args) }
+  const track = (category: string, action: string) => { window.gtag('event', action, { event_category: category }) }
 
   useEffect(() => {
-    if (!process.browser || !googleAnalyticsId) {
+    if (!process.browser || !window.gtag) {
       return
     }
-
-    window.dataLayer = window.dataLayer || [];
-
-    gtag('js', new Date())
-
-    gtag('config', googleAnalyticsId)
+    console.log("on register google")
 
     const onRouteChanged = (path: string) => {
-      gtag("set", "page", path)
-      gtag("send", "pageview")
+      console.log(googleAnalyticsId, path)
+      window.gtag("config", googleAnalyticsId, { page_path: path })
     }
 
     router.events.on('routeChangeComplete', onRouteChanged)
-  }, [googleAnalyticsId])
+  }, [])
 
   return (
     <>
