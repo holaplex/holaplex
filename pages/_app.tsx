@@ -44,11 +44,9 @@ function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
     if (!process.browser || !window.gtag) {
       return
     }
-    console.log("on register google")
 
     const onRouteChanged = (path: string) => {
-      console.log(googleAnalyticsId, path)
-      window.gtag("config", googleAnalyticsId, { page_path: path })
+      window.gtag("config", googleAnalyticsId as string, { page_path: path })
     }
 
     router.events.on('routeChangeComplete', onRouteChanged)
