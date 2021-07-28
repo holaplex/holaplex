@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 // @ts-ignore
 import Color from 'color'
-import { Card, Row, Col, Typography, Input, Space, Form, Alert } from 'antd'
+import { Card, Row, Col, Typography, Input, Space, Form } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
@@ -18,6 +18,7 @@ import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
+import type { GoogleTracker } from '@/modules/ganalytics/types'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
 import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
 
@@ -99,7 +100,11 @@ interface FieldData {
   errors?: string[];
 }
 
-export default function New() {
+interface NewProps {
+  track: GoogleTracker
+}
+
+export default function New({ track }: NewProps) {
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
@@ -158,9 +163,12 @@ export default function New() {
 
       toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
 
-      router.push("/").then(() => { setSubmitting(false) })
+      router.push("/")
+        .then(() => {
+          track('storefront', 'created')
+          setSubmitting(false)
+        })
     } catch (e) {
-      console.error(e)
       setSubmitting(false)
       toast.error(() => (<>There was an issue creating your storefront. Please wait a moment and try again.</>))
 
