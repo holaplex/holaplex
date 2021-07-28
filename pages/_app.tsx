@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import App from 'next/app'
+import Head from 'next/head'
+import type { AppProps, AppContext } from 'next/app'
 import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router'
 import { ToastContainer } from 'react-toastify'
 import styled from 'styled-components'
 import Link from 'next/link'
@@ -29,9 +32,51 @@ const AppLayout = styled(Layout)`
   overflow-y: auto;
 `
 
-function MyApp({ Component, pageProps }: AppProps) {
+interface MyAppProps extends AppProps {
+  googleAnalyticsId?: string;
+}
+
+declare global {
+  interface Window {
+    dataLayer: any;
+  }
+}
+
+function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!process.browser || !googleAnalyticsId) {
+      return
+    }
+
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: any[]) { window.dataLayer.push(args); }
+
+    gtag('js', new Date())
+
+    gtag('config', googleAnalyticsId)
+
+    const onRouteChanged = (path: string) => {
+      console.log('route changed')
+      console.log(path)
+      gtag("set", "page", path)
+      gtag("send", "pageview")
+    }
+
+    router.events.on('routeChangeComplete', onRouteChanged)
+
+    return () => {
+      router.events.off('routeChangeComplete', onRouteChanged)
+    }
+  }, [])
+
   return (
     <>
+      <Head>
+        {googleAnalyticsId && (<script async src="https://www.googletagmanager.com/gtag/js" />)}
+      </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
         {({ verifying, initializing, wallet }) => (
@@ -60,4 +105,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     </>
   )
 }
+
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  const googleAnalyticsId = process.env.GOOGLE_ANALYTICS_ID
+
+  return { ...appProps, googleAnalyticsId }
+}
+
 export default MyApp
