@@ -46,6 +46,7 @@
     "@types/color": "^3.0.2",
     "@types/cors": "^2.8.10",
     "@types/formidable": "^1.2.2",
+    "@types/gtag.js": "^0.0.7",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.12.4",
     "@types/ramda": "^0.27.41",
