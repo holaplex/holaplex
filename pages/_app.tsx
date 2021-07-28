@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import App from 'next/app'
-import Head from 'next/head'
 import type { AppProps, AppContext } from 'next/app'
 import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/globals.css'
@@ -10,7 +9,6 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { Layout } from 'antd'
 import sv from '@/constants/styles'
-import type { GoogleTracker } from '@/modules/ganalytics/types'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
@@ -53,7 +51,7 @@ function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
     if (!process.browser || !googleAnalyticsId) {
       return
     }
-    console.log("run google analytics app init")
+
     window.dataLayer = window.dataLayer || [];
 
     gtag('js', new Date())
@@ -70,9 +68,6 @@ function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
 
   return (
     <>
-      <Head>
-        {googleAnalyticsId && (<script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`} />)}
-      </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
         {({ verifying, initializing, wallet }) => (

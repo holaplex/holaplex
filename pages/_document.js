@@ -1,10 +1,11 @@
-import Document from 'next/document'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
+    const googleAnalyticsId = process.env.GOOGLE_ANALYTICS_ID
 
     try {
       ctx.renderPage = () =>
@@ -16,6 +17,7 @@ export default class MyDocument extends Document {
       const initialProps = await Document.getInitialProps(ctx)
       return {
         ...initialProps,
+        googleAnalyticsId,
         styles: (
           <>
             {initialProps.styles}
@@ -26,5 +28,19 @@ export default class MyDocument extends Document {
     } finally {
       sheet.seal()
     }
+  }
+
+  render() {
+    return (
+      <Html>
+        <Head>
+          {this.props.googleAnalyticsId && (<script async src={`https://www.googletagmanager.com/gtag/js?id=${this.props.googleAnalyticsId}`} />)}
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    )
   }
 }
