@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { Layout } from 'antd'
 import sv from '@/constants/styles'
+import { isNil } from 'ramda'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
@@ -38,19 +39,29 @@ interface MyAppProps extends AppProps {
 function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
   const router = useRouter()
 
-  const track = (category: string, action: string) => { window.gtag('event', action, { event_category: category }) }
-
-  useEffect(() => {
-    if (!process.browser || !window.gtag) {
+  const track = (category: string, action: string) => { 
+    if (isNil(googleAnalyticsId)) {
       return
     }
 
-    const onRouteChanged = (path: string) => {
-      window.gtag("config", googleAnalyticsId as string, { page_path: path })
+    window.gtag('event', action, { event_category: category }) 
+  }
+
+  const onRouteChanged = (path: string) => {
+    if (isNil(googleAnalyticsId)) {
+      return
+    }
+    
+    window.gtag("config", googleAnalyticsId as string, { page_path: path })
+  }
+
+  useEffect(() => {
+    if (!process.browser || !googleAnalyticsId) {
+      return
     }
 
     router.events.on('routeChangeComplete', onRouteChanged)
-  }, [])
+  })
 
   return (
     <>
