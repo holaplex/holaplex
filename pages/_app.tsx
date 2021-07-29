@@ -50,7 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       return
     }
 
-    window.gtag("config", GOOGLE_ANALYTICS_ID as string, { page_path: path })
+    window.gtag("config", GOOGLE_ANALYTICS_ID, { page_path: path })
   }
 
   useEffect(() => {
@@ -59,7 +59,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     router.events.on('routeChangeComplete', onRouteChanged)
-  })
+
+    return () => {
+      router.events.off('routeChangeComplete', onRouteChanged)
+    }
+  }, [])
 
   return (
     <>
