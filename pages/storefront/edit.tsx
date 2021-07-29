@@ -169,10 +169,11 @@ export default function Edit( { track }: StorefrontEditProps) {
       )
 
       toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })
-
+      
       router.push("/")
         .then(() => { 
           track('storefront', 'updated')
+
           setSubmitting(false)
         })
     } catch {

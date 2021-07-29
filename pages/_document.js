@@ -5,7 +5,7 @@ export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
-    const googleAnalyticsId = process.env.GOOGLE_ANALYTICS_ID
+    const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
     try {
       ctx.renderPage = () =>

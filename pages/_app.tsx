@@ -14,6 +14,8 @@ import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
 
+const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+
 const { Header, Content } = Layout
 
 const HeaderTitle = styled.a`
@@ -32,15 +34,11 @@ const AppLayout = styled(Layout)`
   overflow-y: auto;
 `
 
-interface MyAppProps extends AppProps {
-  googleAnalyticsId?: string;
-}
-
-function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
   const track = (category: string, action: string) => { 
-    if (isNil(googleAnalyticsId)) {
+    if (isNil(GOOGLE_ANALYTICS_ID)) {
       return
     }
 
@@ -48,15 +46,15 @@ function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
   }
 
   const onRouteChanged = (path: string) => {
-    if (isNil(googleAnalyticsId)) {
+    if (isNil(GOOGLE_ANALYTICS_ID)) {
       return
     }
-    
-    window.gtag("config", googleAnalyticsId as string, { page_path: path })
+
+    window.gtag("config", GOOGLE_ANALYTICS_ID as string, { page_path: path })
   }
 
   useEffect(() => {
-    if (!process.browser || !googleAnalyticsId) {
+    if (!process.browser || !GOOGLE_ANALYTICS_ID) {
       return
     }
 
@@ -93,13 +91,6 @@ function MyApp({ Component, pageProps, googleAnalyticsId }: MyAppProps) {
       </WalletProvider>
     </>
   )
-}
-
-MyApp.getInitialProps = async (appContext: AppContext) => {
-  const appProps = await App.getInitialProps(appContext);
-  const googleAnalyticsId = process.env.GOOGLE_ANALYTICS_ID
-
-  return { ...appProps, googleAnalyticsId }
 }
 
 export default MyApp
