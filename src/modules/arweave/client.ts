@@ -1,11 +1,11 @@
 import Arweave from 'arweave';
 import { ArweaveTransaction } from './types';
 import { Storefront } from '@/modules/storefront/types'
-import { isEmpty, isNil, map, reduce, concat, pipe, last, prop, uniqBy, view, lensPath } from 'ramda'
+import { isEmpty, isNil, map, reduce, pipe, addIndex, concat, last, prop, uniqBy, view, lensPath } from 'ramda'
 
 interface StorefrontEdge {
   cursor: string;
-  storefront: Storefront;
+  storefront: Storefront | string;
 }
 
 interface StorefrontConnection {
@@ -14,13 +14,13 @@ interface StorefrontConnection {
 }
 
 interface ArweaveResponseTransformer {
-  storefronts: () => Promise<StorefrontConnection>;
+  storefronts: (arweave: Arweave) => Promise<StorefrontConnection>;
   json: () => Promise<any>;
 }
 
 interface ArweaveObjectInteraction {
   find: (tag: string, value: string) => Promise<Storefront | null>;
-  upsert: (storefront: Storefront, css: string) => Promise<Storefront>
+  upsert: (storefront: Storefront) => Promise<Storefront>
   list: (batch?: number, start?: string) => Promise<StorefrontEdge[]>
 }
 
@@ -31,9 +31,14 @@ interface ArweaveScope {
 const transformer = (response: Response): ArweaveResponseTransformer => {
   return {
     json: response.json,
+<<<<<<< HEAD
     storefronts: async () => {
       const { data: { transactions: { pageInfo: { hasNextPage }, edges }}} = await response.json()
 
+=======
+    storefronts: async (arweave) => {
+      const { data: { transactions: { hasNextPage, edges } } } = await response.json()
+>>>>>>> feat: save storefront manifst as json to arweave
       if (isEmpty(edges)) {
         return {
           hasNextPage: false,
@@ -41,59 +46,17 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
         }
       }
 
-      const storefronts = reduce(
-        (acc: StorefrontEdge[], { cursor, node }: any) => {
-          const transaction = node as ArweaveTransaction
-
-          const tags = reduce(
-            (acc: any, { name, value }) => {
-              acc[name] = value || null
-
-              return acc
-            },
-            {},
-            transaction.tags,
-          )
-
-          const edge = {
-            cursor: cursor,
-            storefront: {
-              pubkey: tags["solana:pubkey"],
-              subdomain: tags["holaplex:metadata:subdomain"],
-              theme: {
-                primaryColor: tags["holaplex:theme:color:primary"],
-                backgroundColor: tags["holaplex:theme:color:background"],
-                titleFont: tags["holaplex:theme:font:title"],
-                textFont: tags["holaplex:theme:font:text"],
-                logo: {
-                  url: tags["holaplex:theme:logo:url"],
-                  name: tags["holaplex:theme:logo:name"],
-                  type: tags["holaplex:theme:logo:type"]
-                }
-              },
-              meta: {
-                description: tags["holaplex:metadata:page:description"],
-                title: tags["holaplex:metadata:page:title"],
-                favicon: {
-                  url: tags["holaplex:metadata:favicon:url"],
-                  name: tags["holaplex:metadata:favicon:name"],
-                  type: tags["holaplex:metadata:favicon:type"]
-                }
-              }
-            }
+      const results = await Promise.all(map(pipe(view(lensPath(['node', 'id'])), (id) => arweave.transactions.getData(id, { decode: true, string: true })), edges))
+      return { 
+        hasNextPage,
+        edges: addIndex(map)((result: any, index: number) => {
+          const storefront = JSON.parse(result)
+          return {
+            cursor: edges[index].cursor,
+            storefront
           }
-
-          if (edge.storefront.subdomain) {
-            return [...acc, edge]
-          }
-
-          return acc
-        },
-        [],
-        edges
-      )
-
-      return { hasNextPage, edges: storefronts }
+        }, results)
+      }
 
     }
   } as ArweaveResponseTransformer
@@ -189,7 +152,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
         { name, value }
       )
 
-      const { edges } = await response.storefronts()
+      const { edges } = await response.storefronts(arweave)
 
       if (isEmpty(edges)) {
         return null
@@ -197,25 +160,15 @@ const using = (arweave: Arweave): ArweaveScope => ({
 
       return edges[0].storefront
     },
-    upsert: async (storefront: Storefront, css: string): Promise<Storefront> => {
-      const transaction = await arweave.createTransaction({ data: css })
+    upsert: async (storefront: Storefront): Promise<Storefront> => {
+      const transaction = await arweave.createTransaction({ data: JSON.stringify(storefront) })
 
-      transaction.addTag("Content-Type", "text/css")
+      transaction.addTag("Content-Type", "application/json")
       transaction.addTag("solana:pubkey", storefront.pubkey)
       transaction.addTag("holaplex:metadata:subdomain", storefront.subdomain)
-      transaction.addTag("holaplex:metadata:favicon:url", storefront.meta.favicon.url)
-      transaction.addTag("holaplex:metadata:favicon:name", storefront.meta.favicon.name)
-      transaction.addTag("holaplex:metadata:favicon:type", storefront.meta.favicon.type)
-      transaction.addTag("holaplex:metadata:page:title", storefront.meta.title)
-      transaction.addTag("holaplex:metadata:page:description", storefront.meta.description)
-      transaction.addTag("holaplex:theme:logo:url", storefront.theme.logo.url)
-      transaction.addTag("holaplex:theme:logo:name", storefront.theme.logo.name)
-      transaction.addTag("holaplex:theme:logo:type", storefront.theme.logo.type)
-      transaction.addTag("holaplex:theme:color:primary", storefront.theme.primaryColor)
-      transaction.addTag("holaplex:theme:color:background", storefront.theme.backgroundColor)
-      transaction.addTag("holaplex:theme:font:title", storefront.theme.titleFont)
-      transaction.addTag("holaplex:theme:font:text", storefront.theme.textFont)
+      transaction.addTag("holaplex:metadata:domain", storefront.domain as string)
       transaction.addTag("Arweave-App", "holaplex")
+      transaction.addTag("Holaplex-Version", "0.1")
 
       await arweave.transactions.sign(transaction)
 

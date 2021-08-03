@@ -17,5 +17,6 @@ export type Storefront = {
   theme: StorefrontTheme;
   meta: PageMetaData;
   subdomain: string;
+  domain?: string;
   pubkey: string;
 }

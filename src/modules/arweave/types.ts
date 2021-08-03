@@ -13,6 +13,7 @@ export type ArweaveTag = {
   value: string;
 }
 export type ArweaveTransaction = {
+  id: string;
   owner: ArweaveOwner;
   tags: ArweaveTag[];
 }

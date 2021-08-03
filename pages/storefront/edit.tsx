@@ -157,8 +157,6 @@ export default function Edit( { track }: StorefrontEditProps) {
       // @ts-ignore
       const favicon = popFile(meta.favicon[0])
   
-      const css = stylesheet({ ...theme, logo })
-  
       await arweaveSDK.using(arweave).storefront.upsert(
         {
           ...storefront,
@@ -166,7 +164,6 @@ export default function Edit( { track }: StorefrontEditProps) {
           theme: { ...theme, logo },
           meta: { ...meta, favicon }
         },
-        css
       )
 
       toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })

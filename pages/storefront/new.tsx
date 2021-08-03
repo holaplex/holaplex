@@ -149,16 +149,13 @@ export default function New({ track }: NewProps) {
       const logo = theme.logo[0].response
       const favicon = meta.favicon[0].response
 
-      const css = stylesheet({ ...theme, logo })
-
       await arweaveSDK.using(arweave).storefront.upsert(
         {
           pubkey: solana.publicKey.toString(),
           subdomain,
           theme: { ...theme, logo },
           meta: { ...meta, favicon }
-        },
-        css
+        }
       )
 
       toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
