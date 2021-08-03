@@ -150,7 +150,7 @@ export default function Edit( { track }: StorefrontEditProps) {
     try {
       setSubmitting(true)
 
-      const { theme, meta } = values
+      const { theme, meta, subdomain } = values
   
       // @ts-ignore
       const logo = popFile(theme.logo[0])
@@ -162,6 +162,7 @@ export default function Edit( { track }: StorefrontEditProps) {
       await arweaveSDK.using(arweave).storefront.upsert(
         {
           ...storefront,
+          subdomain,
           theme: { ...theme, logo },
           meta: { ...meta, favicon }
         },
