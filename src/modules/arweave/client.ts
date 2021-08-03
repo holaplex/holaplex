@@ -64,7 +64,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                 primaryColor: tags["holaplex:theme:color:primary"],
                 backgroundColor: tags["holaplex:theme:color:background"],
                 titleFont: tags["holaplex:theme:font:title"],
-                textFont: tags["holaplexjson:theme:font:text"],
+                textFont: tags["holaplex:theme:font:text"],
                 logo: {
                   url: tags["holaplex:theme:logo:url"],
                   name: tags["holaplex:theme:logo:name"],
