@@ -67,21 +67,28 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
 const query = async (arweave: Arweave, query: string, variables: object): Promise<any> => {
   const { api } = arweave.getConfig()
 
-  const response = await fetch(
-    `${api.protocol}://${api.host}:${api.port}/graphql`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables,
+  console.log(JSON.stringify(api))
+
+  try {
+    const response = await fetch(
+      `${api.protocol}://${api.host}:${api.port}/graphql`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          variables,
+        })
       })
-    })
-
-
-  return transformer(response)
+  
+  
+    return transformer(response)
+  } catch (e) {
+    console.error(e)
+    return
+  }
 }
 
 const using = (arweave: Arweave): ArweaveScope => ({
