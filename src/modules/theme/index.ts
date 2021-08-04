@@ -7,7 +7,6 @@ import { pipe, map, replace, join } from 'ramda'
 
 const joinFonts = pipe(map(replace(/\s+/g, '+')), join("&family="))
 
-
 export function variables({ backgroundColor, primaryColor, textFont, titleFont, logo }: StorefrontTheme): string {
   let contrastBackgroundColor = new Color(backgroundColor).darken(.1).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.05).hex()

@@ -16,7 +16,8 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
     "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts",
     "ts-config": "ts-node --show-config",
-    "theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/theme-variables.ts"
+    "theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/theme-variables.ts",
+    "storefront": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/print-storefront-manifest.ts"
 
   },
   "dependencies": {

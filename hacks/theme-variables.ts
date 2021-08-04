@@ -1,25 +1,21 @@
-import { initArweave } from '../src/modules/arweave'
-import arweaveSDK from '../src/modules/arweave/client'
 import fs from 'fs'
-import {variables} from './../src/modules/theme'
-import { isNil } from 'ramda'
+import { variables } from './../src/modules/theme'
+import { isEmpty } from 'ramda'
 
 const args = process.argv.slice(2)
 const pubkey = args[0]
 
-async function main() {
-  const arweave = initArweave()
-  const storefront = await arweaveSDK.using(arweave).storefront.find("solana:pubkey", pubkey)
-
-  if (isNil(storefront)) {
-    throw new Error("storefront does not exist")
+async function main(manifest: string) {
+  if (isEmpty(manifest)) {
+    throw new Error("No storefront manifest")
   }
+  const storefront = JSON.parse(manifest)
 
   const css = variables(storefront.theme)
 
-  fs.writeFile('ant-theme.less', css, function (err) {
+  fs.writeFile('ant-theme-overrides.less', css, function (err) {
     if (err) throw err;
   });
 }
 
-main()
+main(args[0])

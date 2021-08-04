@@ -5,7 +5,7 @@ export const initArweave  = () => {
     host: process.env.NEXT_PUBLIC_ARWEAVE_HOST,
     port: process.env.NEXT_PUBLIC_ARWEAVE_PORT,
     protocol: process.env.NEXT_PUBLIC_ARWEAVE_PROTOCOL,
-    logging: true,
+    logging: process.env.NEXT_PUBLIC_ARWEAVE_LOG === "true",
   })
 
   return arweave
