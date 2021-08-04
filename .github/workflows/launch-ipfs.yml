@@ -18,13 +18,12 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn install
       - id: manifest
-        run: echo "::set-output name=manifest::$(yarn run --silent storefront ${SOLANA_PUBLIC_KEY})"
+        run: echo "::set-output name=manifest::$(yarn run --silent storefront ${{ github.event.inputs.wallet }})"
         env:
           NEXT_PUBLIC_ARWEAVE_HOST: arweave.net
           NEXT_PUBLIC_ARWEAVE_PROTOCOL: https
           NEXT_PUBLIC_ARWEAVE_PORT: "443"
           NEXT_PUBLIC_ARWEAVE_LOGGING: "true"
-          SOLANA_PUBLIC_KEY: ${{ github.events.inputs.wallet }}
       - id: subdomain
         run: echo "::set-output name=subdomain::$(echo "${{ steps.manifest.outputs.manifest }}" | jq '.subdomain')"
   theme:
