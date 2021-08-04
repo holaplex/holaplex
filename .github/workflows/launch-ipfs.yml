@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v2
       - run: yarn install
       - name: Generate Theme
-        run: yarn theme ${{ needs.storefront.outputs.manifest }}
+        run: yarn theme ${{ fromJSON(needs.storefront.outputs.manifest) }}
       - name: Archive theme artifact
         uses: actions/upload-artifact@v2
         with:
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/setup-node@v2
       - uses: actions/checkout@v2
         with:
-          repository: git@github.com/kespinola/metaplex.git
+          repository: kespinola/metaplex
           ref: ant-theme-overrides
       - name: Download storefront theme
         uses: actions/download-artifact@v2
