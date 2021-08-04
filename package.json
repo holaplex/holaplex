@@ -18,7 +18,6 @@
     "ts-config": "ts-node --show-config",
     "theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/theme-variables.ts",
     "storefront": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/print-storefront-manifest.ts"
-
   },
   "dependencies": {
     "@prisma/client": "^2.25.0",
@@ -32,6 +31,7 @@
     "fetch": "^1.1.0",
     "final-form": "^4.20.2",
     "fs-extra": "^10.0.0",
+    "isomorphic-fetch": "^3.0.0",
     "next": "11.0.1",
     "next-plugin-antd-less": "^1.3.0",
     "polished": "^4.1.3",
