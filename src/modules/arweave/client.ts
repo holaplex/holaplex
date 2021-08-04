@@ -1,5 +1,5 @@
 import Arweave from 'arweave';
-import fetch from 'isomorphic-unfetch'
+import { ArweaveTransaction } from './types';
 import { Storefront } from '@/modules/storefront/types'
 import { isEmpty, isNil, map, reduce, pipe, addIndex, concat, last, prop, uniqBy, view, lensPath } from 'ramda'
 
@@ -31,14 +31,9 @@ interface ArweaveScope {
 const transformer = (response: Response): ArweaveResponseTransformer => {
   return {
     json: response.json,
-<<<<<<< HEAD
     storefronts: async () => {
       const { data: { transactions: { pageInfo: { hasNextPage }, edges }}} = await response.json()
 
-=======
-    storefronts: async (arweave) => {
-      const { data: { transactions: { hasNextPage, edges } } } = await response.json()
->>>>>>> feat: save storefront manifst as json to arweave
       if (isEmpty(edges)) {
         return {
           hasNextPage: false,
@@ -47,7 +42,6 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
       }
 
       const results = await Promise.all(map(pipe(view(lensPath(['node', 'id'])), (id) => arweave.transactions.getData(id, { decode: true, string: true })), edges))
-
       return { 
         hasNextPage,
         edges: addIndex(map)((result: any, index: number) => {
@@ -67,28 +61,21 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
 const query = async (arweave: Arweave, query: string, variables: object): Promise<any> => {
   const { api } = arweave.getConfig()
 
-  console.log(JSON.stringify(api))
-
-  try {
-    const response = await fetch(
-      `${api.protocol}://${api.host}:${api.port}/graphql`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables,
-        })
+  const response = await fetch(
+    `${api.protocol}://${api.host}:${api.port}/graphql`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables,
       })
-  
-  
-    return transformer(response)
-  } catch (e) {
-    console.error(e)
-    return
-  }
+    })
+
+
+  return transformer(response)
 }
 
 const using = (arweave: Arweave): ArweaveScope => ({
@@ -102,7 +89,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
         const response = await query(
           arweave,
           `query GetStorefronts($after: String, $first: Int) {
-            transactions(tags:[{ name: "Arweave-App", values: ["holaplex-dev"]}], first: $first , after: $after) {
+            transactions(tags:[{ name: "Arweave-App", values: ["holaplex"]}], first: $first , after: $after) {
               pageInfo {
                 hasNextPage
               }
@@ -175,7 +162,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag("solana:pubkey", storefront.pubkey)
       transaction.addTag("holaplex:metadata:subdomain", storefront.subdomain)
       transaction.addTag("holaplex:metadata:domain", storefront.domain as string)
-      transaction.addTag("Arweave-App", "holaplex-dev")
+      transaction.addTag("Arweave-App", "holaplex")
       transaction.addTag("Holaplex-Version", "0.1")
 
       await arweave.transactions.sign(transaction)
