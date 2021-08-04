@@ -18,7 +18,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn install
       - id: manifest
-        run: echo "::set-output name=manifest::$(yarn run --silent storefront ${{ github.events.inputs.wallet }})"
+        run: echo "::set-output name=manifest::$(yarn run --silent storefront EwuvFLHK7XCjMAHSCXkmvm6iEtzmYdkyYjHTN9rMvMMe)"
         env:
           NEXT_PUBLIC_ARWEAVE_HOST: arweave.net
           NEXT_PUBLIC_ARWEAVE_PROTOCOL: https
