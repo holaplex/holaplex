@@ -20,9 +20,10 @@ jobs:
       - id: manifest
         run: echo "::set-output name=manifest::$(yarn run --silent storefront ${{ github.events.inputs.wallet }})"
         env:
-          NEXT_PUBLIC_ARWEAVE_HOST: ${{ secrets.ARWEAVE_HOST }}
+          NEXT_PUBLIC_ARWEAVE_HOST: arweave.net
           NEXT_PUBLIC_ARWEAVE_PROTOCOL: https
-          NEXT_PUBLIC_ARWEAVE_PORT: 443
+          NEXT_PUBLIC_ARWEAVE_PORT: "443"
+          NEXT_PUBLIC_ARWEAVE_LOGGING: "true"
       - id: subdomain
         run: echo "::set-output name=subdomain::$(echo ${{ steps.manifest.outputs.manifest }} | jq '.subdomain')"
   theme:
