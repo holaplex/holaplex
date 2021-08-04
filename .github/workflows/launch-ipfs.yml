@@ -1,0 +1,74 @@
+name: Deploy to IPFS (Hosted by CloudFlare)
+on:
+  workflow_dispatch:
+    inputs:
+      wallet:
+        description: The storefront owner's pubkey
+        required: true
+jobs:
+  storefront:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: helaili/jq-action@latest
+      - id: manifest
+        run: echo "::set-output name=manifest::$(yarn run --silent storefront ${{ github.events.inputs.wallet }})"
+        env:
+          NEXT_PUBLIC_ARWEAVE_HOST: ${{ secrets.ARWEAVE_HOST }}
+          NEXT_PUBLIC_ARWEAVE_PROTOCOL: https
+          NEXT_PUBLIC_ARWEAVE_PORT: 443
+      - id: subdomain
+        run: echo "::set-output name=subdomain::$(echo ${{ steps.manifest.outputs.manifest }} | jq '.subdomain')"
+  theme:
+    needs:
+      - storefront
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Generate Theme
+        run: yarn theme ${{ needs.storefront.outputs.manifest }}
+      - name: Archive theme artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: storefront-theme
+          path: ant-theme-overrides.less
+  deploy:
+    environment: dev
+    runs-on: ubuntu-latest
+    needs:
+      - storefront
+      - theme
+    steps:
+      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: git@github.com/kespinola/metaplex.git
+          ref: ant-theme-overrides
+      - name: Download storefront theme
+        uses: actions/download-artifact@v2
+        with:
+          name: storefront-theme
+          path: js/packages/web
+      - name: Yarn install
+        working-directory: js
+        run: yarn install
+      - name: Build Metaplex
+        working-directory: js
+        env:
+          CI: false
+          REACT_APP_STORE_OWNER_ADDRESS_ADDRESS: ${{ github.event.inputs.wallet }}
+        run: yarn build
+      - name: Export Static Next
+        working-directory: js/packages/web
+        run: yarn export
+      - name: IPFS Deploy
+        working-directory: js
+        env:
+          IPFS_DEPLOY_CLOUDFLARE__RECORD: "_dnslink.${{ needs.storefront.outputs.subdomain }}.holaespi.com"
+          IPFS_DEPLOY_CLOUDFLARE__ZONE: ${{ secrets.IPFS_DEPLOY_CLOUDFLARE__ZONE }}
+          IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.IPFS_DEPLOY_PINATA__API_KEY }}
+          IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.IPFS_DEPLOY_PINATA__SECRET_API_KEY }}
+          IPFS_DEPLOY_CLOUDFLARE__API_TOKEN: ${{ secrets.IPFS_DEPLOY_CLOUDFLARE__API_TOKEN }}
+        run: npx ipfs-deploy -p pinata -d cloudflare build/web
