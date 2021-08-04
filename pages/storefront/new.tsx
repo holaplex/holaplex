@@ -133,7 +133,7 @@ export default function New({ track }: NewProps) {
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
     const storefront = await arweaveSDK.using(arweave).storefront.find("holaplex:metadata:subdomain", subdomain || "")
-
+    
     if (isNil(storefront)) {
       return Promise.resolve(subdomain)
     }

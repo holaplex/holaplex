@@ -47,6 +47,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
       }
 
       const results = await Promise.all(map(pipe(view(lensPath(['node', 'id'])), (id) => arweave.transactions.getData(id, { decode: true, string: true })), edges))
+
       return { 
         hasNextPage,
         edges: addIndex(map)((result: any, index: number) => {
@@ -94,7 +95,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
         const response = await query(
           arweave,
           `query GetStorefronts($after: String, $first: Int) {
-            transactions(tags:[{ name: "Arweave-App", values: ["holaplex"]}], first: $first , after: $after) {
+            transactions(tags:[{ name: "Arweave-App", values: ["holaplex-dev"]}], first: $first , after: $after) {
               pageInfo {
                 hasNextPage
               }
@@ -167,7 +168,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag("solana:pubkey", storefront.pubkey)
       transaction.addTag("holaplex:metadata:subdomain", storefront.subdomain)
       transaction.addTag("holaplex:metadata:domain", storefront.domain as string)
-      transaction.addTag("Arweave-App", "holaplex")
+      transaction.addTag("Arweave-App", "holaplex-dev")
       transaction.addTag("Holaplex-Version", "0.1")
 
       await arweave.transactions.sign(transaction)
