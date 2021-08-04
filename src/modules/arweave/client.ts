@@ -1,4 +1,5 @@
 import Arweave from 'arweave';
+import fetch from 'isomorphic-unfetch'
 import { ArweaveTransaction } from './types';
 import { Storefront } from '@/modules/storefront/types'
 import { isEmpty, isNil, map, reduce, pipe, addIndex, concat, last, prop, uniqBy, view, lensPath } from 'ramda'

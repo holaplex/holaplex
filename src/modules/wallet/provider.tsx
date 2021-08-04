@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import walletSDK from '@/modules/wallet/client'
 import { useRouter } from 'next/router'
-import { isNil, isEmpty } from 'ramda'
+import { isNil } from 'ramda'
 import { toast } from 'react-toastify'
 import { Wallet } from '@/modules/wallet/types'
 import { Solana } from '@/modules/solana/types'
