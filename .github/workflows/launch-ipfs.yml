@@ -78,7 +78,7 @@ jobs:
         working-directory: js/packages/web
         run: yarn export
       - id: subdomain
-        run: echo "::set-output name=value::$(echo '${{ needs.storefront.outputs.manifest }}' | jq '.subdomain' | sed 's/\"/'/g')"
+        run: echo "::set-output name=value::$(echo '${{ needs.storefront.outputs.manifest }}' | jq '.subdomain' | sed "s/\"//g")"
       - name: IPFS Deploy
         working-directory: js
         env:
