@@ -28,7 +28,11 @@ export function variables({ backgroundColor, primaryColor, textFont, titleFont, 
     buttonTextColor = '#FFFFFF'
   }
 
-  const themeVariables = `@body-background: ${backgroundColor};
+  const themeVariables = `@import '~antd/es/style/themes/dark.less';
+@import '~antd/dist/antd.dark.less';
+
+@import url('https://fonts.googleapis.com/css2?family=${joinFonts([titleFont, textFont])}&display=swap');
+@body-background: ${backgroundColor};
 @text-color: ${textColor};
 @component-background: ${backgroundColor};
 `
