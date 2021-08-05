@@ -28,11 +28,10 @@ export function variables({ backgroundColor, primaryColor, textFont, titleFont, 
     buttonTextColor = '#FFFFFF'
   }
 
-  const themeVariables = `@import url('https://fonts.googleapis.com/css2?family=${joinFonts([titleFont, textFont])}&display=swap');
-@body-background: ${backgroundColor};
+  const themeVariables = `@body-background: ${backgroundColor};
 @text-color: ${textColor};
 @component-background: ${backgroundColor};
-  `
+`
 
   return themeVariables
 }

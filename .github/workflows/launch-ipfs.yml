@@ -44,7 +44,6 @@ jobs:
           name: storefront-theme
           path: ant-theme-overrides.less
   deploy:
-    environment: dev
     runs-on: ubuntu-latest
     needs:
       - storefront
