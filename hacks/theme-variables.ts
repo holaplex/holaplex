@@ -6,6 +6,7 @@ const args = process.argv.slice(2)
 const pubkey = args[0]
 
 async function main(manifest: string) {
+  console.log(manifest)
   if (isEmpty(manifest)) {
     throw new Error("No storefront manifest")
   }
