@@ -8,24 +8,24 @@ on:
 jobs:
   storefront:
     runs-on: ubuntu-latest
+    outputs:
+      manifest: ${{ steps.manifest.outputs.value }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - uses: sergeysova/jq-action@v2
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn install
       - id: manifest
-        run: echo "::set-output name=manifest::$(yarn run --silent storefront ${{ github.event.inputs.wallet }})"
+        run: echo "::set-output name=value::$(yarn run --silent storefront ${{ github.event.inputs.wallet }})"
         env:
-          NEXT_PUBLIC_ARWEAVE_HOST: arweave.net
+          NEXT_PUBLIC_ARWEAVE_HOST: arweave.ngrok.io
           NEXT_PUBLIC_ARWEAVE_PROTOCOL: https
           NEXT_PUBLIC_ARWEAVE_PORT: "443"
           NEXT_PUBLIC_ARWEAVE_LOGGING: "true"
-      - id: subdomain
-        run: echo "::set-output name=subdomain::$(echo "${{ steps.manifest.outputs.manifest }}" | jq '.subdomain')"
+
   theme:
     needs:
       - storefront
@@ -39,7 +39,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn install
       - name: Generate Theme
-        run: yarn theme ${{ needs.storefront.outputs.manifest }}
+        run: yarn theme ${{ fromJSON(needs.storefront.outputs.manifest) }}
       - name: Archive theme artifact
         uses: actions/upload-artifact@v2
         with:
@@ -53,6 +53,7 @@ jobs:
       - theme
     steps:
       - uses: actions/setup-node@v2
+      - uses: sergeysova/jq-action@v2
       - uses: actions/checkout@v2
         with:
           repository: kespinola/metaplex
@@ -78,10 +79,12 @@ jobs:
       - name: Export Static Next
         working-directory: js/packages/web
         run: yarn export
+      - id: subdomain
+        run: echo "::set-output name=value::$(echo "${{ needs.storefront.outputs.manifest }}" | jq '.subdomain')"
       - name: IPFS Deploy
         working-directory: js
         env:
-          IPFS_DEPLOY_CLOUDFLARE__RECORD: "_dnslink.${{ needs.storefront.outputs.subdomain }}.holaespi.com"
+          IPFS_DEPLOY_CLOUDFLARE__RECORD: "_dnslink.${{ steps.subdomain.outputs.value }}.holaespi.com"
           IPFS_DEPLOY_CLOUDFLARE__ZONE: ${{ secrets.IPFS_DEPLOY_CLOUDFLARE__ZONE }}
           IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.IPFS_DEPLOY_PINATA__API_KEY }}
           IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.IPFS_DEPLOY_PINATA__SECRET_API_KEY }}
