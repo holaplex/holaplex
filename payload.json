@@ -1,0 +1,7 @@
+{
+  "branch": "ipfs-hosted-storefronts",
+  "parameters": {
+    "run_deploy_metaplex": true,
+    "manifest": "{\"pubkey\":\"EwuvFLHK7XCjMAHSCXkmvm6iEtzmYdkyYjHTN9rMvMMe\",\"subdomain\":\"holaespi\",\"theme\":{\"backgroundColor\":\"#333333\",\"primaryColor\":\"#F2C94C\",\"titleFont\":\"Work Sans\",\"textFont\":\"Work Sans\",\"logo\":{\"name\":\"exp-logo.png\",\"type\":\"image/png\",\"url\":\"http://localhost:1984/yVXN80IazrnqCe3RATDvcj6k5OF8_77toy4QfHbTtwk\",\"uid\":\"yVXN80IazrnqCe3RATDvcj6k5OF8_77toy4QfHbTtwk\"}},\"meta\":{\"favicon\":{\"name\":\"exp-logo.png\",\"type\":\"image/png\",\"url\":\"http://localhost:1984/BOXLtiAFA27zFTwIDAaHqmoqSkKtuOm_IIn0_GbIeaY\",\"uid\":\"BOXLtiAFA27zFTwIDAaHqmoqSkKtuOm_IIn0_GbIeaY\"},\"title\":\"Hola\",\"description\":\"Hola\"}}"
+  }
+}

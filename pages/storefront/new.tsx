@@ -12,7 +12,7 @@ import ColorPicker from '@/components/elements/ColorPicker'
 import FontSelect from '@/common/components/elements/FontSelect'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import Upload from '@/common/components/elements/Upload'
-import { stylesheet } from '@/modules/theme'
+import { PipelineSDK } from '@/modules/pipelines'
 import { initArweave } from '@/modules/arweave'
 import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
@@ -133,7 +133,7 @@ export default function New({ track }: NewProps) {
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
     const storefront = await arweaveSDK.using(arweave).storefront.find("holaplex:metadata:subdomain", subdomain || "")
-    
+
     if (isNil(storefront)) {
       return Promise.resolve(subdomain)
     }
@@ -144,29 +144,34 @@ export default function New({ track }: NewProps) {
   const onSubmit = async () => {
     try {
       setSubmitting(true)
+
+      const pubkey = solana.publicKey.toString()
       const { theme, subdomain, meta } = values;
 
       const logo = theme.logo[0].response
       const favicon = meta.favicon[0].response
 
-      await arweaveSDK.using(arweave).storefront.upsert(
-        {
-          pubkey: solana.publicKey.toString(),
-          subdomain,
-          theme: { ...theme, logo },
-          meta: { ...meta, favicon }
-        }
-      )
+      const storefront = {
+        pubkey,
+        subdomain,
+        theme: { ...theme, logo },
+        meta: { ...meta, favicon }
+      }
 
-      toast(() => (<>Your storefront is ready. Visit <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> to finish setting up your storefront.</>), { autoClose: 60000 })
+      const created = await arweaveSDK.using(arweave).storefront.upsert(storefront)
 
-      router.push("/")
+      await PipelineSDK.start(created.id as string)
+
+      toast(() => (<>Your storefront was uploaded to Arweave and is now building. It will be available at <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> once deployed.</>), { autoClose: 60000 })
+
+      router.push("/storefront/edit")
         .then(() => {
           track('storefront', 'created')
           setSubmitting(false)
         })
     } catch (e) {
       setSubmitting(false)
+
       toast.error(() => (<>There was an issue creating your storefront. Please wait a moment and try again.</>))
 
     }

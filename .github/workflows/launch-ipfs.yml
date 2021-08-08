@@ -2,28 +2,10 @@ name: Deploy to IPFS (Hosted by CloudFlare)
 on:
   workflow_dispatch:
     inputs:
-      wallet:
-        description: The storefront owner's pubkey
+      storefront:
+        description: The storefront manifest
         required: true
 jobs:
-  storefront:
-    runs-on: ubuntu-latest
-    outputs:
-      manifest: ${{ steps.manifest.outputs.value }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn install
-      - id: manifest
-        run: echo "::set-output name=value::$(yarn run --silent storefront ${{ github.event.inputs.wallet }})"
-        env:
-          NEXT_PUBLIC_ARWEAVE_HOST: arweave.ngrok.io
-          NEXT_PUBLIC_ARWEAVE_PROTOCOL: https
-          NEXT_PUBLIC_ARWEAVE_PORT: 443
   theme:
     needs:
       - storefront
@@ -31,13 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+      - uses: sergeysova/jq-action@v2
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn install
       - name: Generate Theme
-        run: yarn theme '${{ needs.storefront.outputs.manifest }}'
+        run: yarn theme '${{ github.event.inputs.storefront }}'
       - name: Archive theme artifact
         uses: actions/upload-artifact@v2
         with:
@@ -64,6 +47,14 @@ jobs:
         with:
           path: '**/js/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/js/yarn.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: '**/js/packages/web/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/js/packages/web/yarn.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: '**/js/packages/common/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/js/packages/common/yarn.lock') }}
       - name: Yarn install
         working-directory: js
         run: yarn install
@@ -71,13 +62,12 @@ jobs:
         working-directory: js
         env:
           CI: false
-          REACT_APP_STORE_OWNER_ADDRESS_ADDRESS: ${{ github.event.inputs.wallet }}
-        run: yarn build
+        run: REACT_APP_STORE_OWNER_ADDRESS_ADDRESS=$(echo '${{ github.event.inputs.storefront }}' | jq '.pubkey') yarn build
       - name: Export Static Next
         working-directory: js/packages/web
         run: yarn export
       - id: subdomain
-        run: echo "::set-output name=value::$(echo '${{ needs.storefront.outputs.manifest }}' | jq '.subdomain' | sed "s/\"//g")"
+        run: echo "::set-output name=value::$(echo '${{ github.event.inputs.storefront }}' | jq '.subdomain' | sed "s/\"//g")"
       - name: IPFS Deploy
         working-directory: js
         env:

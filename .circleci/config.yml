@@ -1,0 +1,82 @@
+version: 2.1
+
+orbs:
+  jq: circleci/jq@2.2.0
+
+parameters:
+  run_deploy_metaplex:
+    type: boolean
+    default: false
+  manifest:
+    type: string
+    default: '{}'
+
+workflows:
+  version: 2
+  deploy_metaplex:
+    when: << pipeline.parameters.run_deploy_metaplex >>
+    jobs:
+      - theme
+      - deploy:
+          requires:
+            - theme
+
+jobs:
+  theme:
+    docker:
+      - image: cimg/node:16.6.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-builder-node-modules-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - save_cache:
+          key: v1-builder-node-modules-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run: yarn theme '<< pipeline.parameters.manifest >>'
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - ant-theme-overrides.less
+  deploy:
+    working_directory: ~/project
+    docker:
+      - image: cimg/node:16.6.0
+    environment:
+      IPFS_DEPLOY_CLOUDFLARE__ZONE: holaespi.com
+    steps:
+      - run: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+      - run: git clone git@github.com:kespinola/metaplex.git --branch "ant-theme-overrides" .
+      - jq/install
+      - attach_workspace:
+          at: ~/project/js/packages/web
+      - restore_cache:
+          keys:
+          - v1-metaplex-node-modules-{{ checksum "js/yarn.lock" }}
+      - run:
+          command: yarn install
+          working_directory: js
+      - save_cache:
+          key: v1-metaplex-node-modules-{{ checksum "js/yarn.lock" }}
+          paths:
+            - js/node_modules
+            - js/packages/common/node_modules
+            - js/packages/web/node_modules
+      - run:
+          command: |
+            echo -n "REACT_APP_STORE_OWNER_ADDRESS_ADDRESS=$(echo '<< pipeline.parameters.manifest >>' | jq '.pubkey')" > ~/project/js/packages/web/.env
+
+            yarn build
+          working_directory: js
+      - run:
+          command: yarn export
+          working_directory: js/packages/web
+      - run:
+          command: |
+            export IPFS_DEPLOY_CLOUDFLARE__RECORD=$(echo '<< pipeline.parameters.manifest >>' | jq '.subdomain' | sed "s/\"//g" | xargs -I {} echo -n "_dnslink.{}.holaespi.com")
+
+            npx ipfs-deploy -p pinata -d cloudflare build/web --no-clipboard
+          working_directory: js
+

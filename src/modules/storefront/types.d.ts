@@ -14,6 +14,7 @@ export type PageMetaData = {
 }
 
 export type Storefront = {
+  id?: string;
   theme: StorefrontTheme;
   meta: PageMetaData;
   subdomain: string;

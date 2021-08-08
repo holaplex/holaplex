@@ -17,3 +17,11 @@ model Wallets {
 
   @@index([pubkey])
 }
+
+model PipelineRuns {
+  id        Int    @id @default(autoincrement())
+  arweaveId String @unique @db.VarChar(44)
+  runId     Int
+
+  @@index([arweaveId])
+}

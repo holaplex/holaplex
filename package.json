@@ -20,6 +20,7 @@
     "storefront": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/print-storefront-manifest.ts"
   },
   "dependencies": {
+    "@octokit/core": "^3.5.1",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
     "antd": "^4.16.7",
