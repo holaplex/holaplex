@@ -1,6 +1,7 @@
 const withAntdLess = require('next-plugin-antd-less');
+const withImages = require('next-images')
 
-module.exports = withAntdLess({
+module.exports = withImages(withAntdLess({
   reactStrictMode: true,
-  lessVarsFilePath: './ant-theme.less' 
-})
+  lessVarsFilePath: './ant-theme.less'
+}))

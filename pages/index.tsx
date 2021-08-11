@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
+import Image from 'next/image'
 import styled from 'styled-components'
-import HolaWaves from '@/assets/images/HolaWaves'
+import WavesSection from '@/assets/images/wave-section.svg'
 import { Space, Row, Col } from 'antd'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
@@ -28,31 +29,36 @@ const Pitch = styled.h2`
   color: rgba(253, 253, 253, 0.6);
 `
 
-const PageBackdrop = styled(HolaWaves)`
-  position: absolute;
-  bottom: 0;
-  left:0;
-  width: 100%;
-  height: 350px;
-  z-index: -1;
-`
+const VideoSection = styled(Row)`
+  background-image: url('${WavesSection}');
+  position: relative;
+  height: 800px;
+`;
+
+
+
 export default function Home() {
   const { solana, arweaveWallet, connect } = useContext(WalletContext)
   return (
-    <Row justify="center">
-      <Col sm={16} md={14} lg={12} xl={10}>
-        <Space direction="vertical" align="center" size="large">
-          <Logo>👋</Logo>
-          <HeroTitle>Holaplex</HeroTitle>
-          <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
-          {solana && arweaveWallet && (
-            <Space direction="horizontal" size="large">
-              <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
-            </Space>
-          )}
-        </Space>
-      </Col>
-      <PageBackdrop />
-    </Row>
+    <>
+      <Row justify="center">
+        <Col sm={16} md={14} lg={12} xl={10}>
+          <Space direction="vertical" align="center" size="large">
+            <Logo>👋</Logo>
+            <HeroTitle>Holaplex</HeroTitle>
+            <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
+            {solana && arweaveWallet && (
+              <Space direction="horizontal" size="large">
+                <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
+              </Space>
+            )}
+          </Space>
+        </Col>
+      </Row>
+      <VideoSection>
+        ballz
+        {/* <BackgroundWaves src={WavesSection} /> */}
+      </VideoSection>
+    </>
   )
 }
