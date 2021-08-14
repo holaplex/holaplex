@@ -3,7 +3,6 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import WavesSection from '@/assets/images/wave-section.svg'
-import Tester from '../public/demo-logo.png'
 import HighlightStores from '@/assets/highlight-stores/highlight-stores-stub'
 import HandLogo from '@/assets/images/hola-logo.svg'
 import { Space, Row, Col, Typography, Card } from 'antd'
@@ -154,10 +153,15 @@ export default function Home() {
             {HighlightStores.map((store, index) => {
               console.log(store)
               return (
-                <StoreItem>
+                <StoreItem
+                  key={index}
+                >
                   {/* <img src="../public/demo-logo.png" /> */}
-                  <img src={store.image} />
-                  <StoreImage image={store.image} />
+                  <Image 
+                    width={100}
+                    height={100}
+                    src={store.imagePath} />
+                  {/* <StoreImage image={store.image} /> */}
                   <StoreName>{store.name}</StoreName>
                 </StoreItem>
               )
