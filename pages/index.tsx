@@ -3,6 +3,7 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import WavesSection from '@/assets/images/wave-section.svg'
+import WavesFooter from '@/assets/images/wave-footer.svg'
 import HighlightStores from '@/assets/highlight-stores/highlight-stores-stub'
 import HandLogo from '@/assets/images/hola-logo.svg'
 import { Space, Row, Col, Typography, Card } from 'antd'
@@ -82,6 +83,7 @@ const Stores = styled.div`
   grid-template-columns: repeat(4, 1fr);
   grid-column-gap: ${sv.grid*2}px;
   width: 100%;
+  padding: ${sv.appPadding}px 0;
 `;
 
 const StoreItem = styled(Card)`
@@ -96,17 +98,36 @@ const StoreItem = styled(Card)`
 const StoreImage = styled.div`
   width: 100%;
   height: 212px;
-  background: aqua;
   background-image: url('${props => props.image}');
+  background-size: cover;
 `;
 
 const StoreName = styled.div`
   color: ${sv.colors.text};
+  text-align: center;
+  padding: ${sv.grid*2}px ${sv.grid}px;
+`;
+
+const Footer = styled(Row)`
+  background-image: url('${WavesFooter}');
+  margin-top: ${sv.sectionPadding}px;
+  padding-top: ${sv.sectionPadding*2.5}px;
+`;
+
+const FooterLinks = styled(Col)`
+  height: 80px;
+  ${sv.flexRow};
+  margin-top: ${sv.sectionPadding}px;
+`;
+
+const FooterSection = styled.div`
+  flex: 1;
+  color: rgba(253, 253, 253, 0.6);
 `;
 
 
+
 export default function Home() {
-  console.log(WavesSection)
   const { solana, arweaveWallet, connect } = useContext(WalletContext)
   return (
     <>
@@ -150,26 +171,34 @@ export default function Home() {
           <ComTitle level={2}>Join our community, 129 stores and counting!</ComTitle>
 
           <Stores>
-            {HighlightStores.map((store, index) => {
-              console.log(store)
-              return (
-                <StoreItem
-                  key={index}
-                >
-                  {/* <img src="../public/demo-logo.png" /> */}
-                  <Image 
-                    width={100}
-                    height={100}
-                    src={store.imagePath} />
-                  {/* <StoreImage image={store.image} /> */}
-                  <StoreName>{store.name}</StoreName>
-                </StoreItem>
-              )
-            })}
+            {HighlightStores.map((store, index) => (
+              <StoreItem
+                key={index}
+              >
+                <StoreImage image={store.imagePath} />
+                <StoreName>{store.name}</StoreName>
+              </StoreItem>
+            ))}
           </Stores>
 
         </Col>
       </Community>
+
+      <Footer justify="center">
+        <Space direction="vertical" align="center">
+          <LightTitle level={3}>Launch your own NFT store today!</LightTitle>
+          {solana && arweaveWallet && (
+            <Space direction="horizontal" size="large">
+              <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
+            </Space>
+          )}
+        </Space>
+        <FooterLinks span={22}>
+          <FooterSection style={{textAlign: 'left'}}>hola@holaplex.com</FooterSection>
+          <FooterSection style={{textAlign: 'center'}}>Made with 🤍 on Metaplex</FooterSection>
+          <FooterSection style={{textAlign: 'right'}}>🐓</FooterSection>
+        </FooterLinks>
+      </Footer>
     </>
   )
 }
