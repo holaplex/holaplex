@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Octokit } from '@octokit/core'
+import { CircleCISDK } from '@/modules/circleci'
+import prisma from  '@/modules/db'
+import { Prisma } from '@prisma/client'
 import { initArweave } from '@/modules/arweave'
 import type { Pipeline } from '@/modules/pipelines'
 
@@ -9,22 +11,31 @@ export default async function handler(
 ) {
   switch (req.method) {
     case 'POST': {
-      const octokit = new Octokit({ auth: process.env.GITHUB_ACCESS_TOKEN });
-      const arweave = initArweave()
+      try {
+        const arweaveId = req.body.arweaveId as string
+        const arweave = initArweave()
 
-      const storefront = await arweave.transactions.getData(req.body.arweaveId, { decode: true, string: true })
+        const storefront = await arweave.transactions.getData(arweaveId, { decode: true, string: true }) as string
+  
+        const pipeline = await CircleCISDK.pipelines.deployMetaplex({ storefront })
 
-      await octokit.request('POST /repos/holaplex/{repo}/actions/workflows/{workflow_id}/dispatches', {
-        owner: 'holaplex',
-        repo: 'holaplex-builder',
-        workflow_id: 'launch-ipfs.yml',
-        ref: 'ipfs-hosted-storefronts',
-        inputs: {
-          storefront
+        const data = {
+          arweaveId,
+          runId: pipeline.id
         }
-      })      
 
-      return res.status(200).json({})
+        const pipelineRun = await prisma.pipelineRuns.create({
+          data
+        })
+  
+        return res.status(200).json(pipelineRun) 
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          return res.status(422).end(error.message)
+        } else {
+          return res.status(500).end(error.message)
+        }
+      }
     }
     default:
       res.setHeader('Allow', ['POST'])

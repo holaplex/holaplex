@@ -7,7 +7,7 @@ parameters:
   run_deploy_metaplex:
     type: boolean
     default: false
-  manifest:
+  storefront:
     type: string
     default: '{}'
 
@@ -35,7 +35,7 @@ jobs:
           key: v1-builder-node-modules-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: yarn theme '<< pipeline.parameters.manifest >>'
+      - run: yarn theme '<< pipeline.parameters.storefront >>'
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -66,7 +66,7 @@ jobs:
             - js/packages/web/node_modules
       - run:
           command: |
-            echo -n "REACT_APP_STORE_OWNER_ADDRESS_ADDRESS=$(echo '<< pipeline.parameters.manifest >>' | jq '.pubkey')" > ~/project/js/packages/web/.env
+            echo -n "REACT_APP_STORE_OWNER_ADDRESS_ADDRESS=$(echo '<< pipeline.parameters.storefront >>' | jq '.pubkey')" > ~/project/js/packages/web/.env
 
             yarn build
           working_directory: js
@@ -75,7 +75,7 @@ jobs:
           working_directory: js/packages/web
       - run:
           command: |
-            export IPFS_DEPLOY_CLOUDFLARE__RECORD=$(echo '<< pipeline.parameters.manifest >>' | jq '.subdomain' | sed "s/\"//g" | xargs -I {} echo -n "_dnslink.{}.holaespi.com")
+            export IPFS_DEPLOY_CLOUDFLARE__RECORD=$(echo '<< pipeline.parameters.storefront >>' | jq '.subdomain' | sed "s/\"//g" | xargs -I {} echo -n "_dnslink.{}.holaespi.com")
 
             npx ipfs-deploy -p pinata -d cloudflare build/web --no-clipboard
           working_directory: js
