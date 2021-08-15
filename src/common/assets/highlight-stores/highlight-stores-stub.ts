@@ -37,7 +37,7 @@ const stores = [
   {
      name: 'Hola',
      url: 'https://hola.holaplex.com/#/',
-     imagePath: "/images/lobster-shack.jpg"
+     imagePath: "/images/hola.png"
   },
 ]
 

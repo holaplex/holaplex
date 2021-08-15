@@ -25,6 +25,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
+    "feather-icons-react": "^0.4.3",
     "fetch": "^1.1.0",
     "final-form": "^4.20.2",
     "fs-extra": "^10.0.0",

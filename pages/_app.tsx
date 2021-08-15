@@ -13,6 +13,8 @@ import { isNil } from 'ramda'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
+import SocialLinks from '@/components/SocialLinks'
+import useWindowDimensions from '@/hooks/useWindowDimensions'
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
@@ -27,8 +29,11 @@ const HeaderTitle = styled.a`
   &:hover {
     color: ${sv.colors.buttonText}
   }
-
 `
+
+const AppHeader = styled(Header)`
+  ${sv.flexRow};
+`;
 
 const AppLayout = styled(Layout)`
   overflow-y: auto;
@@ -36,13 +41,14 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
+  const windowDimensions = useWindowDimensions();
 
-  const track = (category: string, action: string) => { 
+  const track = (category: string, action: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
       return
     }
 
-    window.gtag('event', action, { event_category: category }) 
+    window.gtag('event', action, { event_category: category })
   }
 
   const onRouteChanged = (path: string) => {
@@ -74,11 +80,12 @@ function MyApp({ Component, pageProps }: AppProps) {
             {({ searching }) => {
               return (
                 <AppLayout>
-                  <Header>
+                  <AppHeader>
                     <Link href="/" passHref>
-                      <HeaderTitle>👋 Holaplex</HeaderTitle>
+                      <HeaderTitle>👋{windowDimensions.width > 460 && ' Holaplex'}</HeaderTitle>
                     </Link>
-                  </Header>
+                    <SocialLinks />
+                  </AppHeader>
                   <Content>
                     <Loading loading={verifying || initializing || searching}>
                       <Component
