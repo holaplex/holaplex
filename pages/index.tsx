@@ -42,6 +42,15 @@ const LightTitle = styled(Title)`
   color: #ffffff !important;
 `;
 
+const WhiteButton = styled(Button)`
+  background: white;
+  color: ${sv.colors.cta};
+  &:hover {
+    background: white;
+    color: ${sv.colors.ctaHover};
+  }
+`;
+
 const Pitch = styled.h2`
   font-size: 32px;
   line-height: 38px;
@@ -85,7 +94,7 @@ const Community = styled(Row)`
 `;
 
 type StoresProps = {
-  storesPerRow: integer;
+  storesPerRow: number;
 }
 
 const Stores = styled.div`
@@ -111,10 +120,14 @@ const StoreItem = styled(Card)`
   }
 `;
 
-const StoreImage = styled.div`
+type StoreImageProps = {
+  image: string;
+}
+
+const StoreImage = styled.div<StoreImageProps>`
   width: 100%;
   height: 212px;
-  background-image: url('${props => props.image}');
+  background-image: url('${({image}: StoreImageProps) => image}');
   background-size: cover;
   background-position: center;
 `;
@@ -184,12 +197,12 @@ export default function Home() {
         <Col sm={20} md={18} lg={16} xl={16}>
           <Row gutter={24}>
             <Col span={windowDimensions.width > 860 ? 12 : 24}>
-              <VideoPitch direction="vertical">
+              <VideoPitch>
                 <LightTitle level={2}>Build your store in about 5 minutes</LightTitle>
                 <LightText>Let’s be honest, nobody wants to spend weeks building a store. That’s why our team got together to create Holaplex - the no-code NFT store builder. Create a store in a couple of clicks so you can start selling! Need some guidance?  Try our <a href="https://docs.google.com/document/d/1fggieMGqgJqfp-TDoSsoeqS38iKPKcb1tTfxBkPXbeM/edit#" target="_blank">getting started guide.</a></LightText>
               </VideoPitch>
               {windowDimensions.width < 860 &&
-                <Button type="white" size="large" onClick={() => connect()}>Watch a Video</Button>
+                <WhiteButton size="large" onClick={() => connect()}>Watch a Video</WhiteButton>
               }
             </Col>
             {windowDimensions.width > 860 &&
@@ -230,7 +243,7 @@ export default function Home() {
           <CenteredTitle level={3}>Launch your own NFT store today!</CenteredTitle>
           {solana && arweaveWallet && (
             <Space direction="horizontal" size="large">
-              <Button type="white" size="large" onClick={() => connect()}>Create Your Store</Button>
+              <WhiteButton size="large" onClick={() => connect()}>Create Your Store</WhiteButton>
             </Space>
           )}
         </Space>
