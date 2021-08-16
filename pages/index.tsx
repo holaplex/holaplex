@@ -180,7 +180,7 @@ export default function Home() {
         <Col sm={16} md={14} lg={12} xl={10}>
           <Space direction="vertical" align="center" size="large">
             <Logo>
-              <Image width={90} height={90} src={HandLogo} />
+              <Image width={90} height={90} src={HandLogo} alt="hola" />
             </Logo>
             <HeroTitle>Holaplex</HeroTitle>
             <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
@@ -199,7 +199,7 @@ export default function Home() {
             <Col span={windowDimensions.width > 860 ? 12 : 24}>
               <VideoPitch>
                 <LightTitle level={2}>Build your store in about 5 minutes</LightTitle>
-                <LightText>Let’s be honest, nobody wants to spend weeks building a store. That’s why our team got together to create Holaplex - the no-code NFT store builder. Create a store in a couple of clicks so you can start selling! Need some guidance?  Try our <a href="https://docs.google.com/document/d/1fggieMGqgJqfp-TDoSsoeqS38iKPKcb1tTfxBkPXbeM/edit#" target="_blank">getting started guide.</a></LightText>
+                <LightText>Let’s be honest, nobody wants to spend weeks building a store. That’s why our team got together to create Holaplex - the no-code NFT store builder. Create a store in a couple of clicks so you can start selling! Need some guidance?  Try our <a href="https://docs.google.com/document/d/1fggieMGqgJqfp-TDoSsoeqS38iKPKcb1tTfxBkPXbeM/edit#" target="_blank" rel="noreferrer">getting started guide.</a></LightText>
               </VideoPitch>
               {windowDimensions.width < 860 &&
                 <WhiteButton size="large" onClick={() => connect()}>Watch a Video</WhiteButton>
@@ -226,6 +226,7 @@ export default function Home() {
                 key={index}
                 href={store.url}
                 target="_blank"
+                rel="noreferrer"
               >
                 <StoreItem>
                   <StoreImage image={store.imagePath} />
@@ -248,9 +249,11 @@ export default function Home() {
           )}
         </Space>
         <FooterLinks span={22}>
-          <FooterSection style={{textAlign: 'left'}}><a href="mailto:hola@holaplex.com">hola@holaplex.com</a></FooterSection>
+          <FooterSection style={{textAlign: 'left'}}>
+            <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
+          </FooterSection>
           {windowDimensions.width > 800 &&
-            <FooterSection style={{textAlign: 'center'}}>Made with 🤍 on <a href="https://www.metaplex.com" target="_blank">Metaplex</a></FooterSection>
+            <FooterSection style={{textAlign: 'center'}}>Made with 🤍 on <a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a></FooterSection>
           }
           <FooterSection style={{textAlign: 'right'}}>
             <SocialLinks />
