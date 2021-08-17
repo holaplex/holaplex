@@ -31,37 +31,27 @@ interface ArweaveScope {
 const transformer = (response: Response): ArweaveResponseTransformer => {
   return {
     json: response.json,
-    storefronts: async () => {
+    storefronts: async (arweave) => {
       const { data: { transactions: { pageInfo: { hasNextPage }, edges }}} = await response.json()
 
       if (isEmpty(edges)) {
         return {
-<<<<<<< HEAD
           hasNextPage: false,
           edges: []
-=======
-          hasNextPage,
-          edges: addIndex(map)((result: any, index: number) => {
-            const edge = edges[index]
-            const storefront = merge(JSON.parse(result), { id: edge.node.id })
-
-            return {
-              cursor: edge.cursor,
-              storefront
-            }
-          }, results)
->>>>>>> track pipeline runs and switch to circle ci bc dispatch workflow event doesnt return the ID of the pipeline for associating to the storefront launch.
         }
       }
 
       const results = await Promise.all(map(pipe(view(lensPath(['node', 'id'])), (id) => arweave.transactions.getData(id, { decode: true, string: true })), edges))
+      
       return { 
         hasNextPage,
         edges: addIndex(map)((result: any, index: number) => {
           const storefront = JSON.parse(result)
+          const { cursor, node: { id} } = edges[index]
+
           return {
-            cursor: edges[index].cursor,
-            storefront
+            cursor,
+            storefront: { ...storefront, id }
           }
         }, results)
       }
@@ -124,7 +114,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
           { after, first: batch }
         )
 
-        const { hasNextPage, edges } = await response.storefronts()
+        const { hasNextPage, edges } = await response.storefronts(arweave)
 
         storefronts = concat(storefronts, edges)
         //@ts-ignore

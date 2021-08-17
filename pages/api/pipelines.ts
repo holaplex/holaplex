@@ -27,8 +27,10 @@ export default async function handler(
         const pipelineRun = await prisma.pipelineRuns.create({
           data
         })
-  
-        return res.status(200).json(pipelineRun) 
+
+        const workflow = await CircleCISDK.pipelines.workflow(pipelineRun.runId)
+
+        return res.status(200).json({ ...pipelineRun, workflow }) 
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           return res.status(422).end(error.message)

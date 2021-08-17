@@ -160,11 +160,13 @@ export default function New({ track }: NewProps) {
 
       const created = await arweaveSDK.using(arweave).storefront.upsert(storefront)
 
-      await PipelineSDK.start(created.id as string)
+      const arweaveId = created.id as string
+
+      await PipelineSDK.start(arweaveId)
 
       toast(() => (<>Your storefront was uploaded to Arweave and is now building. It will be available at <a href={`https://${subdomain}.holaplex.com`}>{subdomain}.holaplex.com</a> once deployed.</>), { autoClose: 60000 })
 
-      router.push("/storefront/edit")
+      router.push("/")
         .then(() => {
           track('storefront', 'created')
           setSubmitting(false)

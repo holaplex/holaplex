@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 
 const FillSpace = styled(Space)`
-  flex: 1;
+  width: 100%;
 `
 
 export default FillSpace

@@ -3,13 +3,12 @@ import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { Card, Row, Col, Typography, Space, Form, Input } from 'antd'
+import { Alert, Card, Row, Col, Typography, Space, Form, Input } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
 import FontSelect from '@/common/components/elements/FontSelect'
 import Upload from '@/common/components/elements/Upload'
-import { stylesheet } from '@/modules/theme'
 // @ts-ignore
 import Color from 'color'
 import { initArweave } from '@/modules/arweave'
@@ -17,9 +16,12 @@ import type { GoogleTracker } from '@/modules/ganalytics/types'
 import { StorefrontContext } from '@/modules/storefront'
 import { WalletContext } from '@/modules/wallet'
 import arweaveSDK from '@/modules/arweave/client'
+import { PipelineSDK } from '@/modules/pipelines'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
-import { isNil, reduce, propEq, findIndex, pipe, identity, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
+import { isNil, reduce, propEq, findIndex, pipe, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
+import { WorflowStatus } from '@/modules/circleci'
+import FillSpace from '@/common/components/elements/FillSpace';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -101,16 +103,45 @@ const PrevCol = styled(Col)`
 // @ts-ignore
 const popFile = when(has('response'), prop('response'))
 
+type PipelineAlert = {
+  message: string;
+  description: string;
+  type: "success" | "error" | "info";
+
+}
+const pipelineAlertFromStatus = (status: WorflowStatus | void): PipelineAlert => {
+  switch (status) {
+    case "success":
+      return {
+        message: "Deploy successful",
+        description: "The storefront is live.",
+        type: "success"
+      };
+    case "running":
+      return {
+        message: "Deploy in progress",
+        description: "The storefront is currently being deployed. Check back in a few minutes.",
+        type: "info",
+      }
+    default:
+      return {
+        message: "Unkown pipeline status",
+        description: "The status of the deploy is unknown.",
+        type: "info"
+      }
+  }
+}
+
 interface StorefrontEditProps {
   track: GoogleTracker
 }
 
-export default function Edit( { track }: StorefrontEditProps) {
+export default function Edit({ track }: StorefrontEditProps) {
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
   const [tab, setTab] = useState("theme")
-  const { storefront } = useContext(StorefrontContext)
+  const { storefront, pipeline } = useContext(StorefrontContext)
   const [form] = Form.useForm()
   const { solana, wallet } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
@@ -151,13 +182,13 @@ export default function Edit( { track }: StorefrontEditProps) {
       setSubmitting(true)
 
       const { theme, meta, subdomain } = values
-  
+
       // @ts-ignore
       const logo = popFile(theme.logo[0])
       // @ts-ignore
       const favicon = popFile(meta.favicon[0])
-  
-      await arweaveSDK.using(arweave).storefront.upsert(
+
+      const updated = await arweaveSDK.using(arweave).storefront.upsert(
         {
           ...storefront,
           subdomain,
@@ -166,10 +197,14 @@ export default function Edit( { track }: StorefrontEditProps) {
         },
       )
 
-      toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })
-      
+      const arweaveId = updated.id as string
+
+      await PipelineSDK.start(arweaveId)
+
+      toast(() => (<>Your storefront was updated and is now being deployed. Once deployed your updates will be applied to <a href={`https://${domain}`}>{domain}</a>.</>), { autoClose: 60000 })
+
       router.push("/")
-        .then(() => { 
+        .then(() => {
           track('storefront', 'updated')
 
           setSubmitting(false)
@@ -181,7 +216,7 @@ export default function Edit( { track }: StorefrontEditProps) {
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
-
+  const pipelineAlert = pipelineAlertFromStatus(pipeline?.workflow.status)
   const tabs = {
     theme: (
       <Row justify="space-between">
@@ -281,7 +316,7 @@ export default function Edit( { track }: StorefrontEditProps) {
       <>
         <Title level={2}>Change page meta data.</Title>
         <InlineFormItem
-            noBackground
+          noBackground
           labelCol={{ xs: 8 }}
           wrapperCol={{ xs: 16 }}
           label="Favicon"
@@ -329,45 +364,53 @@ export default function Edit( { track }: StorefrontEditProps) {
         xl={16}
         xxl={14}
       >
-        <Card
-          activeTabKey={tab}
-          onTabChange={async (key) => {
-            try {
-              await form.validateFields()
-            
-              setTab(key)
-            } catch {
-            }
-          }}
-          tabList={[
-            { key: "theme", tab: "Theme" },
-            { key: "subdomain", tab: "Subdomain" },
-            { key: "meta", tab: "Page Meta Data" }
-          ]}
-        >
-          <Form
-            form={form}
-            size="large"
-            fields={fields}
-            onFieldsChange={([changed], _) => {
-              if (isNil(changed)) {
-                return
-              }
+        <FillSpace size="large" direction="vertical">
+          <Alert
+            message={pipelineAlert.message}
+            description={pipelineAlert.description}
+            type={pipelineAlert.type}
+            showIcon
+          />
+          <Card
+            activeTabKey={tab}
+            onTabChange={async (key) => {
+              try {
+                await form.validateFields()
 
-              const current = findIndex(propEq('name', changed.name), fields)
-              setFields(update(current, changed, fields));
+                setTab(key)
+              } catch {
+              }
             }}
-            onFinish={onSubmit}
-            layout="horizontal"
-            colon={false}
+            tabList={[
+              { key: "theme", tab: "Theme" },
+              { key: "subdomain", tab: "Subdomain" },
+              { key: "meta", tab: "Page Meta Data" }
+            ]}
           >
-            {/*@ts-ignore*/}
-            {tabs[tab]}
-            <Row justify="end">
-              <Button type="primary" htmlType="submit" disabled={submitting} loading={submitting}>Update</Button>
-            </Row>
-          </Form>
-        </Card>
+            <Form
+              form={form}
+              size="large"
+              fields={fields}
+              onFieldsChange={([changed], _) => {
+                if (isNil(changed)) {
+                  return
+                }
+
+                const current = findIndex(propEq('name', changed.name), fields)
+                setFields(update(current, changed, fields));
+              }}
+              onFinish={onSubmit}
+              layout="horizontal"
+              colon={false}
+            >
+              {/*@ts-ignore*/}
+              {tabs[tab]}
+              <Row justify="end">
+                <Button type="primary" htmlType="submit" disabled={submitting || pipeline?.workflow.status === "running"} loading={submitting}>Update</Button>
+              </Row>
+            </Form>
+          </Card>
+        </FillSpace>
       </Col>
     </Row>
   )

@@ -21,7 +21,7 @@ model Wallets {
 model PipelineRuns {
   id        Int    @id @default(autoincrement())
   arweaveId String @unique @db.VarChar(44)
-  runId     Int
+  runId     String @db.Uuid
 
   @@index([arweaveId])
 }

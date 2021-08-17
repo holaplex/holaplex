@@ -70,7 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ToastContainer autoClose={15000} />
       <WalletProvider>
         {({ verifying, initializing, wallet }) => (
-          <StorefrontProvider verifying={verifying} wallet={wallet}>
+          <StorefrontProvider wallet={wallet}>
             {({ searching }) => {
               return (
                 <AppLayout>
