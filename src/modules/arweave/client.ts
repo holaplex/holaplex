@@ -32,7 +32,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
   return {
     json: response.json,
     storefronts: async () => {
-      const { data: { transactions: { hasNextPage, edges }}} = await response.json()
+      const { data: { transactions: { pageInfo: { hasNextPage }, edges }}} = await response.json()
 
       if (isEmpty(edges)) {
         return {
