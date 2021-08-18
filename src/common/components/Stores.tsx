@@ -1,15 +1,11 @@
-import { useEffect, useState } from 'react'
 import sv from '@/constants/styles'
 import styled from 'styled-components'
 import { Grid } from 'antd-mobile'
 import {Typography} from 'antd'
-import ArweaveSDK from '@/modules/arweave/client'
-import { initArweave } from '@/modules/arweave'
 const {Text} = Typography
 
 type StoreProps = {
   bgColor: string;
-  primaryColor: string;
 }
 const Store = styled.a`
   ${sv.flexCenter};
@@ -41,26 +37,18 @@ const StoreName = styled(Text)`
   color: ${({color}: StoreNameProps) => color};
 `;
 
-const Stores = () => {
-  const [storefronts, setStorefronts] = useState([])
-  useEffect(() => {
-    const arweave = initArweave()
-    ArweaveSDK.using(arweave).storefront.list()
-      .then(storefrontData => {
-        const storefronts = storefrontData.map(st => st.storefront)
-        setStorefronts(storefronts)
-        // setStorefronts(storefronts
-      })
+type StoreGridProps = {
+  stores: any
+}
 
-  }, [])
 
-  console.log(storefronts[0])
+const StoresGrid = ({stores}: StoreGridProps) => {
+
   return (
     <div>
-
       <Grid
         itemStyle={{ display: 'inline-block' }}
-        data={storefronts}
+        data={stores}
         columnNum={4}
         renderItem={storefront => {
           return (
@@ -78,7 +66,6 @@ const Stores = () => {
                 {storefront?.meta?.title}
               </StoreName>
             </Store>
-
           )
         }}
       />
@@ -87,4 +74,4 @@ const Stores = () => {
   )
 };
 
-export default Stores;
+export default StoresGrid;
