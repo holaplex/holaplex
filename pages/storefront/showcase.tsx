@@ -1,42 +1,58 @@
-import { useEffect, useState } from 'react'
-import { Grid } from 'antd-mobile';
-import ArweaveSDK from '@/modules/arweave/client'
-import { initArweave } from '@/modules/arweave'
+// import  from 'react'
+import sv from '@/constants/styles'
+import styled from 'styled-components'
+import { Row, Col, Typography, Space } from 'antd'
+import Button from '@/components/elements/Button'
+import Stores from '@/components/Stores'
+const {Title, Text} = Typography
 
-export default () => {
-  const [storefronts, setStorefronts] = useState([])
-  useEffect(() => {
-    const arweave = initArweave()
-    ArweaveSDK.using(arweave).storefront.list()
-      .then(storefrontData => {
-        const storefronts = storefrontData.map(st => st.storefront)
-        setStorefronts(storefronts)
-        // setStorefronts(storefronts
-      })
+const LightText = styled(Text)`
+  color: rgba(255,255,255,.6);
+`;
 
-  }, [])
+const LightTitle = styled(Title)`
+  color: #ffffff !important;
+`;
 
-  console.log(storefronts[0])
+const Container = styled(Row)`
+  padding-bottom: ${sv.sectionPadding}px;
+`;
+
+const Pitch = styled.div`
+  margin: ${sv.appPadding}px 0;
+  ${sv.flexRow};
+  padding: ${sv.grid}px;
+  align-items: flex-start;
+`;
+
+const Words = styled.div`
+  flex: 1;
+  margin-right: ${sv.appPadding}px;
+`;
+
+const Showcase = () => {
+
   return (
-    <div>
-      
-      <Grid 
-        itemStyle={{ display: 'inline-block' }}
-        data={storefronts}
-        columnNum={5}
-        renderItem={storefront => {
-          return (
-            <div style={{ padding: '12.5px' }}>
-              <img src={storefront?.theme?.logo?.url} style={{ width: '75px', height: '75px' }} alt="" />
-              <div style={{ color: '#fff', fontSize: '14px', marginTop: '12px' }}>
-                <span>{storefront?.meta?.title}</span>
-              </div>
-            </div>
+    <Container justify="center" align="middle">
+      <Col xs={21} lg={18} xl={16} xxl={14}>
+        <Pitch>
+          <Words>
+            <LightTitle level={3}>114 stores and counting.</LightTitle>
+            <LightText>You can create your own NFT marketplace in about 5 minutes. Ready to show off what you got?</LightText>
+          </Words>
+          <Button
+            type="primary"
+            href="/"
+          >
+            Create Store
+          </Button>
+        </Pitch>
+        <Stores />
+      </Col>
+    </Container>
 
-          )
-        }}
-      />
-    </div>
 
   )
 };
+
+export default Showcase;
