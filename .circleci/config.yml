@@ -17,9 +17,11 @@ workflows:
     when: << pipeline.parameters.run_deploy_metaplex >>
     jobs:
       - theme
+      - dns
       - deploy:
           requires:
             - theme
+            - dns
 
 jobs:
   theme:
@@ -39,7 +41,27 @@ jobs:
       - persist_to_workspace:
           root: ~/project
           paths:
-            - ant-theme-overrides.less
+            - overrides.less
+  dns:
+    docker:
+      - image: cimg/node:16.6.0
+    steps:
+      - checkout
+      - jq/install
+      - restore_cache:
+          keys:
+          - v1-builder-node-modules-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - save_cache:
+          key: v1-builder-node-modules-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules    
+      - run:
+          name: Upsert Subdomain DNS Record
+          command: |
+            export SUBDOMAIN=$(echo '<< pipeline.parameters.storefront >>' | jq '.subdomain')
+
+            ./hacks/upsert-subdomain.sh      
   deploy:
     working_directory: ~/project
     docker:
@@ -51,7 +73,7 @@ jobs:
       - run: git clone git@github.com:kespinola/metaplex.git --branch "ant-theme-overrides" .
       - jq/install
       - attach_workspace:
-          at: ~/project/js/packages/web
+          at: ~/project/js/packages/web/src
       - restore_cache:
           keys:
           - v1-metaplex-node-modules-{{ checksum "js/yarn.lock" }}
@@ -74,6 +96,7 @@ jobs:
           command: yarn export
           working_directory: js/packages/web
       - run:
+          name: Deploy to IPFS
           command: |
             export IPFS_DEPLOY_CLOUDFLARE__RECORD=$(echo '<< pipeline.parameters.storefront >>' | jq '.subdomain' | sed "s/\"//g" | xargs -I {} echo -n "_dnslink.{}.holaespi.com")
 

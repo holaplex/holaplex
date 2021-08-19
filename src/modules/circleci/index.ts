@@ -2,15 +2,13 @@ import fetch from 'isomorphic-unfetch'
 
 const CIRCLECI_TOKEN = process.env.CIRCLECI_TOKEN as string
 
-export enum WorflowStatus {
+export enum WorkflowStatus {
   Success = "success",
   Running = "running",
-  Canceled = "canceled",
-  Failed = "failed",
 }
 
 export type WorkflowResponse = {
-  status: WorflowStatus;
+  status: WorkflowStatus;
 }
 
 export type PipelineResponse = {

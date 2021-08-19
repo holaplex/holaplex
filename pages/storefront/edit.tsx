@@ -3,7 +3,7 @@ import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { Alert, Card, Row, Col, Typography, Space, Form, Input } from 'antd'
+import { Alert, Card, Row, Col, Typography, Space, Form, Input, AlertProps } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
 import ColorPicker from '@/components/elements/ColorPicker'
@@ -20,7 +20,7 @@ import { PipelineSDK } from '@/modules/pipelines'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
 import { isNil, reduce, propEq, findIndex, pipe, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
-import { WorflowStatus } from '@/modules/circleci'
+import { WorkflowStatus } from '@/modules/circleci'
 import FillSpace from '@/common/components/elements/FillSpace';
 
 const { Text, Title, Paragraph } = Typography
@@ -103,32 +103,35 @@ const PrevCol = styled(Col)`
 // @ts-ignore
 const popFile = when(has('response'), prop('response'))
 
-type PipelineAlert = {
-  message: string;
-  description: string;
-  type: "success" | "error" | "info";
-
+type PipelineAlertMessages = {
+  [WorkflowStatus.Success]: AlertProps;
+  [WorkflowStatus.Running]: AlertProps;
 }
-const pipelineAlertFromStatus = (status: WorflowStatus | void): PipelineAlert => {
-  switch (status) {
-    case "success":
-      return {
-        message: "Deploy successful",
-        description: "The storefront is live.",
-        type: "success"
-      };
-    case "running":
-      return {
-        message: "Deploy in progress",
-        description: "The storefront is currently being deployed. Check back in a few minutes.",
-        type: "info",
-      }
-    default:
-      return {
-        message: "Unkown pipeline status",
-        description: "The status of the deploy is unknown.",
-        type: "info"
-      }
+
+const pipelineAlertMessages = {
+  success: {
+    message: "Deploy successful",
+    description: "The storefront is live.",
+    type: "success"
+  },
+  running: {
+    message: "Deploy in progress",
+    description: "The storefront is currently being deployed. Check back in a few minutes.",
+    type: "info",
+  }
+} as PipelineAlertMessages
+
+const pipelineAlertFromStatus = (status: WorkflowStatus): AlertProps => {
+  const alert = pipelineAlertMessages[status]
+
+  if (alert) {
+    return alert
+  }
+
+  return {
+    message: "Unkown pipeline status",
+    description: "The status of the deploy is unknown.",
+    type: "info"
   }
 }
 
@@ -216,7 +219,8 @@ export default function Edit({ track }: StorefrontEditProps) {
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
-  const pipelineAlert = pipelineAlertFromStatus(pipeline?.workflow.status)
+  const pipelineAlert = pipelineAlertFromStatus(pipeline?.workflow.status as WorkflowStatus)
+  
   const tabs = {
     theme: (
       <Row justify="space-between">

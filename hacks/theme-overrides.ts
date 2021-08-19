@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { variables } from './../src/modules/theme'
+import { stylesheet } from '../src/modules/theme'
 import { isEmpty } from 'ramda'
 
 const args = process.argv.slice(2)
@@ -12,9 +12,9 @@ async function main(manifest: string) {
   }
   const storefront = JSON.parse(manifest)
 
-  const css = variables(storefront.theme)
+  const less = stylesheet(storefront.theme)
 
-  fs.writeFile('ant-theme-overrides.less', css, function (err) {
+  fs.writeFile('./overrides.less', less, function (err) {
     if (err) throw err;
   });
 }
