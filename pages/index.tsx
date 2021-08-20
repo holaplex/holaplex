@@ -8,6 +8,7 @@ import WavesFooter from '@/assets/images/wave-footer.svg'
 import HighlightStores from '@/assets/highlight-stores/highlight-stores-stub'
 import HandLogo from '@/assets/images/hola-logo.svg'
 import { Space, Row, Col, Typography, Card } from 'antd'
+import Link from 'next/link'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 import useWindowDimensions from '@/hooks/useWindowDimensions'
@@ -235,6 +236,11 @@ export default function Home() {
               </a>
             ))}
           </Stores>
+          <Row justify="center">
+            <LightText>
+              <Link href="/storefront/showcase">View More Stores</Link>
+            </LightText>
+          </Row>
 
         </Col>
       </Community>
