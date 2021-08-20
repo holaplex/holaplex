@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { ToastContainer } from 'react-toastify'
 import styled from 'styled-components'
 import Link from 'next/link'
-import { Layout } from 'antd'
+import { Layout, Space } from 'antd'
 import sv from '@/constants/styles'
 import { isNil } from 'ramda'
 import Loading from '@/components/elements/Loading'
@@ -33,7 +33,11 @@ const HeaderTitle = styled.a`
 
 const AppHeader = styled(Header)`
   ${sv.flexRow};
-`;
+`
+
+const HeaderLink = styled.a`
+  color: ${sv.colors.buttonText};
+`
 
 const AppLayout = styled(Layout)`
   overflow-y: auto;
@@ -82,9 +86,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <AppLayout>
                   <AppHeader>
                     <Link href="/" passHref>
-                      <HeaderTitle>👋{windowDimensions.width > 460 && ' Holaplex'}</HeaderTitle>
+                      <HeaderTitle>👋{windowDimensions.width > 550 && ' Holaplex'}</HeaderTitle>
                     </Link>
-                    <SocialLinks />
+                    <Space size="large">
+                      <Link href="/storefront/showcase" passHref>
+                        <HeaderLink>View Stores</HeaderLink>
+                      </Link>
+                      {windowDimensions.width > 550 && <SocialLinks />}
+                    </Space>
                   </AppHeader>
                   <Content>
                     <Loading loading={verifying || initializing || searching}>

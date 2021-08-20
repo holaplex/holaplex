@@ -41,6 +41,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       return
     }
 
+    if (router.route === '/storefront/showcase') {
+      setVerifying(false)
+      return
+    }
+
     if (!solana) {
       toast(() => <>Phantom wallet is not installed on your browser. Visit <a href="https://phantom.app">phantom.app</a> to setup your wallet.</>)
       return
