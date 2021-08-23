@@ -217,7 +217,7 @@ export default function Home() {
 
       <Community justify="center">
         <Col sm={20} md={20} lg={20} xl={18}>
-          <CenteredTitle level={2}>Join our community, 129 stores and counting!</CenteredTitle>
+          <CenteredTitle level={2}>Join our community, 100+ stores and counting!</CenteredTitle>
 
           <Stores storesPerRow={storesPerRow}>
             {HighlightStores.map((store, index) => (

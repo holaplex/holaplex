@@ -25,7 +25,7 @@ const Container = styled(Row)`
 `;
 
 const Pitch = styled.div<{ flex: boolean; }>`
-  margin: ${sv.appPadding}px 0;
+  margin: 0 0 ${sv.appPadding}px 0;
   padding: ${sv.grid}px;
   display: ${props => props.flex ? 'flex' : 'block'};
 `;

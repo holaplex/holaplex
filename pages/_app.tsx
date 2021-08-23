@@ -25,15 +25,17 @@ const HeaderTitle = styled.div`
   line-height: 2px;
   font-weight: 900;
   margin-right: auto;
-  color: ${sv.colors.buttonText};
-  &:hover {
-    color: ${sv.colors.buttonText}
+  a {
+    color: ${sv.colors.buttonText};
+    &:hover {
+      color: ${sv.colors.buttonText}
+    }
   }
 `
 
 const AppHeader = styled(Header)`
   ${sv.flexRow};
-  margin: 0 0 70px 0;
+  margin: 0 0 40px 0;
 `
 
 const HeaderLinkWrapper = styled.div<{ active: boolean; }>`
@@ -87,9 +89,17 @@ function MyApp({ Component, pageProps }: AppProps) {
               return (
                 <AppLayout>
                   <AppHeader>
-                    <Link href="/" passHref>
-                      <HeaderTitle>👋{windowDimensions.width > 550 && ' Holaplex'}</HeaderTitle>
-                    </Link>
+                    <HeaderTitle>
+                      {windowDimensions.width > 550 ? (
+                        <Link href="/" passHref>
+                          👋 Holaplex
+                        </Link>
+                      ) : (
+                        <Link href="/" passHref>
+                          👋
+                        </Link>
+                      )}
+                    </HeaderTitle>
                     <Space size="large">
                       <HeaderLinkWrapper active={router.pathname == "/storefronts"}>
                         <Link href="/storefronts" passHref >
