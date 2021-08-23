@@ -37,9 +37,6 @@ const Words = styled.div`
   margin-bottom: ${sv.grid * 2}px;
 `;
 
-type StoreProps = {
-  bgColor: string;
-}
 const Store = styled.a`
   ${sv.flexCenter};
   flex-direction: column;
@@ -47,7 +44,7 @@ const Store = styled.a`
   padding: ${sv.grid * 2}px;
   ${sv.borderRadius};
   margin: ${sv.grid}px;
-  background-color: ${({ bgColor }: StoreProps) => bgColor};
+  background-color: white;
   ${sv.shadow};
   cursor: pointer;
   img {
@@ -59,15 +56,11 @@ const Store = styled.a`
   }
 `;
 
-type StoreNameProps = {
-  color: string;
-}
 const StoreName = styled(Text)`
   width: 100%;
   ${sv.label};
   text-align: center;
   margin-top: ${sv.grid}px;
-  color: ${({ color }: StoreNameProps) => color};
 `;
 
 
@@ -115,16 +108,12 @@ const StoreFronts = () => {
               renderItem={storefront => {
                 return (
                   <Store
-                    bgColor={storefront?.theme.backgroundColor}
                     href={`https://${storefront?.subdomain}.holaplex.com`}
                     target="_blank"
                     rel="noreferrer"
                   >
                     <Image src={storefront?.theme.logo.url} width={75} height={75} alt="" />
-                    <StoreName
-                      ellipsis
-                      color={storefront?.theme.primaryColor}
-                    >
+                    <StoreName ellipsis>
                       {storefront?.meta.title}
                     </StoreName>
                   </Store>

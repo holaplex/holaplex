@@ -236,7 +236,7 @@ export default function Home() {
           </Stores>
           <Row justify="center">
             <LightText>
-              <Link href="/storefront/showcase">View More Stores</Link>
+              <Link href="/storefronts">View More Stores</Link>
             </LightText>
           </Row>
 
