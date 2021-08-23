@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 // @ts-ignore
 import Color from 'color'
+import Image from 'next/image'
 import { Card, Row, Col, Typography, Input, Space, Form } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
@@ -184,10 +185,6 @@ export default function New({ track }: NewProps) {
 
     }
   }
-
-  useEffect(() => {
-
-  }, )
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text

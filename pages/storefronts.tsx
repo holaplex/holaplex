@@ -3,6 +3,7 @@ import sv from '@/constants/styles'
 import styled from 'styled-components'
 import ArweaveSDK from '@/modules/arweave/client'
 import { initArweave } from '@/modules/arweave'
+import Image from 'next/image'
 import { Grid } from 'antd-mobile'
 import { Row, Col, Typography, Space } from 'antd'
 import Button from '@/components/elements/Button'
@@ -119,7 +120,7 @@ const StoreFronts = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <img src={storefront?.theme.logo.url} style={{ width: '75px', height: '75px' }} alt="" />
+                    <Image src={storefront?.theme.logo.url} width={75} height={75} alt="" />
                     <StoreName
                       ellipsis
                       color={storefront?.theme.primaryColor}

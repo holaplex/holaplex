@@ -77,7 +77,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       router.events.off('routeChangeComplete', onRouteChanged)
     }
-  }, [])
+  }, [router.events])
 
   return (
     <>

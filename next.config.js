@@ -3,5 +3,8 @@ const withImages = require('next-images')
 
 module.exports = withImages(withAntdLess({
   reactStrictMode: true,
-  lessVarsFilePath: './ant-theme.less'
+  lessVarsFilePath: './ant-theme.less',
+  images: {
+    domains: ['arweave.net'],
+  },
 }))
