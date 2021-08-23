@@ -13,7 +13,7 @@ import { isNil } from 'ramda'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
-import SocialLinks from '@/components/SocialLinks'
+import SocialLinks from '@/components/elements/SocialLinks'
 import useWindowDimensions from '@/hooks/useWindowDimensions'
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
@@ -80,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ToastContainer autoClose={15000} />
       <WalletProvider>
         {({ verifying, initializing, wallet }) => (
-          <StorefrontProvider verifying={verifying} wallet={wallet}>
+          <StorefrontProvider wallet={wallet}>
             {({ searching }) => {
               return (
                 <AppLayout>
@@ -89,7 +89,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                       <HeaderTitle>👋{windowDimensions.width > 550 && ' Holaplex'}</HeaderTitle>
                     </Link>
                     <Space size="large">
-                      <Link href="/storefront/showcase" passHref>
+                      <Link href="/storefronts" passHref>
                         <HeaderLink>View Stores</HeaderLink>
                       </Link>
                       {windowDimensions.width > 550 && <SocialLinks />}

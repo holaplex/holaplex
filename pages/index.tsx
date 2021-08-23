@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
-import SocialLinks from '@/components/SocialLinks'
+import SocialLinks from '@/components/elements/SocialLinks'
 import WavesSection from '@/assets/images/wave-section.svg'
 import WavesFooter from '@/assets/images/wave-footer.svg'
 import HighlightStores from '@/assets/highlight-stores/highlight-stores-stub'
@@ -13,7 +13,7 @@ import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 import useWindowDimensions from '@/hooks/useWindowDimensions'
 
-const {Title, Text} = Typography;
+const { Title, Text } = Typography;
 
 const Logo = styled.div`
   margin: 70px 0 0 0;
@@ -64,7 +64,7 @@ const Pitch = styled.h2`
 const VideoSection = styled(Row)`
   background-image: url('${WavesSection}');
   margin-top: ${sv.sectionPadding}px;
-  padding: ${sv.sectionPadding*2.5}px ${sv.appPadding}px;
+  padding: ${sv.sectionPadding * 2.5}px ${sv.appPadding}px;
 `;
 
 const Video = styled.div`
@@ -101,7 +101,7 @@ type StoresProps = {
 const Stores = styled.div`
   display: grid;
   grid-template-columns: repeat(${({ storesPerRow }: StoresProps) => storesPerRow}, 1fr);
-  grid-column-gap: ${sv.grid*2}px;
+  grid-column-gap: ${sv.grid * 2}px;
   width: 100%;
   padding: ${sv.appPadding}px;
 `;
@@ -109,7 +109,7 @@ const Stores = styled.div`
 const StoreItem = styled(Card)`
   width: 100%;
   overflow: hidden;
-  margin-bottom: ${sv.grid*2}px;
+  margin-bottom: ${sv.grid * 2}px;
   cursor: pointer;
   transition: all .2s ease-out;
   .ant-card-body {
@@ -128,7 +128,7 @@ type StoreImageProps = {
 const StoreImage = styled.div<StoreImageProps>`
   width: 100%;
   height: 212px;
-  background-image: url('${({image}: StoreImageProps) => image}');
+  background-image: url('${({ image }: StoreImageProps) => image}');
   background-size: cover;
   background-position: center;
 `;
@@ -136,13 +136,13 @@ const StoreImage = styled.div<StoreImageProps>`
 const StoreName = styled.div`
   color: ${sv.colors.text};
   text-align: center;
-  padding: ${sv.grid*2}px ${sv.grid}px;
+  padding: ${sv.grid * 2}px ${sv.grid}px;
 `;
 
 const Footer = styled(Row)`
   background-image: url('${WavesFooter}');
   margin-top: ${sv.sectionPadding}px;
-  padding-top: ${sv.sectionPadding*2.5}px;
+  padding-top: ${sv.sectionPadding * 2.5}px;
 `;
 
 const CenteredTitle = styled(LightTitle)`
@@ -185,11 +185,9 @@ export default function Home() {
             </Logo>
             <HeroTitle>Holaplex</HeroTitle>
             <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
-            {solana && arweaveWallet && (
-              <Space direction="horizontal" size="large">
-                <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
-              </Space>
-            )}
+            <Space direction="horizontal" size="large">
+              <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
+            </Space>
           </Space>
         </Col>
       </Row>
@@ -248,20 +246,18 @@ export default function Home() {
       <Footer justify="center">
         <Space direction="vertical" align="center">
           <CenteredTitle level={3}>Launch your own NFT store today!</CenteredTitle>
-          {solana && arweaveWallet && (
-            <Space direction="horizontal" size="large">
-              <WhiteButton size="large" onClick={() => connect()}>Create Your Store</WhiteButton>
-            </Space>
-          )}
+          <Space direction="horizontal" size="large">
+            <WhiteButton size="large" onClick={() => connect()}>Create Your Store</WhiteButton>
+          </Space>
         </Space>
         <FooterLinks span={22}>
-          <FooterSection style={{textAlign: 'left'}}>
+          <FooterSection style={{ textAlign: 'left' }}>
             <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
           </FooterSection>
           {windowDimensions.width > 800 &&
-            <FooterSection style={{textAlign: 'center'}}>Made with 🤍 on <a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a></FooterSection>
+            <FooterSection style={{ textAlign: 'center' }}>Made with 🤍 on <a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a></FooterSection>
           }
-          <FooterSection style={{textAlign: 'right'}}>
+          <FooterSection style={{ textAlign: 'right' }}>
             <SocialLinks />
           </FooterSection>
         </FooterLinks>

@@ -30,36 +30,11 @@ const upsertWallet = async (pubkey: string) => {
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter()
   const arweave = initArweave()
-  const [verifying, setVerifying] = useState(true)
+  const [verifying, setVerifying] = useState(false)
   const [initializing, setInitialization] = useState(true)
   const [wallet, setWallet] = useState<Wallet>()
   const [solana, setSolana] = useState<Solana>()
   const [arweaveWallet, setArweaveWallet] = useState<any>()
-
-  useEffect(() => {
-    if (!process.browser || initializing) {
-      return
-    }
-
-    if (router.route === '/storefront/showcase') {
-      setVerifying(false)
-      return
-    }
-
-    if (!solana) {
-      toast(() => <>Phantom wallet is not installed on your browser. Visit <a href="https://phantom.app">phantom.app</a> to setup your wallet.</>)
-      return
-    }
-
-    if (!arweaveWallet) {
-      toast(() => <>ArConnect wallet is not installed on your browser. Visit <a href="https://arconnect.io">arconnect.io</a> to setup your wallet.</>)
-      return
-    }
-
-    router.push("/").then(() => {
-      setVerifying(false)
-    })
-  }, [initializing])
 
   useEffect(() => {
     if (process.browser) {
@@ -71,12 +46,18 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     }
   }, [])
 
-  useEffect(() => {
+  const connect = () =>  {
     if (isNil(solana)) {
+      toast(() => <>Phantom wallet is not installed on your browser. Visit <a href="https://phantom.app">phantom.app</a> to setup your wallet.</>)
       return
     }
 
-    solana.on("connect", () => {
+    if (isNil(arweaveWallet)) {
+      toast(() => <>ArConnect wallet is not installed on your browser. Visit <a href="https://arconnect.io">arconnect.io</a> to setup your wallet.</>)
+      return
+    }
+
+    solana.once("connect", () => {
       const solanaPubkey = solana.publicKey.toString()
 
       upsertWallet(solanaPubkey)
@@ -96,13 +77,6 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           setVerifying(false)
         })
     })
-  }, [solana])
-
-
-  const connect = () =>  {
-    if (isNil(solana)) {
-      return
-    }
 
     setVerifying(true)
 
