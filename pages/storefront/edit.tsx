@@ -105,14 +105,14 @@ interface StorefrontEditProps {
   track: GoogleTracker
 }
 
-export default function Edit( { track }: StorefrontEditProps) {
+export default function Edit({ track }: StorefrontEditProps) {
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
   const [tab, setTab] = useState("theme")
   const { storefront } = useContext(StorefrontContext)
   const [form] = Form.useForm()
-  const { solana, wallet } = useContext(WalletContext)
+  const { solana, wallet, connect } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -127,7 +127,16 @@ export default function Edit( { track }: StorefrontEditProps) {
   ]);
 
   if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
-    return
+    return (
+      <Row justify="center">
+        <Card>
+          <Space direction="vertical" >
+            <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
+            <Button type="primary" block onClick={connect}>Connect</Button>
+          </Space>
+        </Card>
+      </Row>
+    )
   }
 
   const values = reduce((acc: any, item: FieldData) => {
@@ -151,14 +160,14 @@ export default function Edit( { track }: StorefrontEditProps) {
       setSubmitting(true)
 
       const { theme, meta, subdomain } = values
-  
+
       // @ts-ignore
       const logo = popFile(theme.logo[0])
       // @ts-ignore
       const favicon = popFile(meta.favicon[0])
-  
+
       const css = stylesheet({ ...theme, logo })
-  
+
       await arweaveSDK.using(arweave).storefront.upsert(
         {
           ...storefront,
@@ -170,9 +179,9 @@ export default function Edit( { track }: StorefrontEditProps) {
       )
 
       toast(() => (<>Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the changes.</>), { autoClose: 60000 })
-      
+
       router.push("/")
-        .then(() => { 
+        .then(() => {
           track('storefront', 'updated')
 
           setSubmitting(false)
@@ -284,7 +293,7 @@ export default function Edit( { track }: StorefrontEditProps) {
       <>
         <Title level={2}>Change page meta data.</Title>
         <InlineFormItem
-            noBackground
+          noBackground
           labelCol={{ xs: 8 }}
           wrapperCol={{ xs: 16 }}
           label="Favicon"
@@ -337,7 +346,7 @@ export default function Edit( { track }: StorefrontEditProps) {
           onTabChange={async (key) => {
             try {
               await form.validateFields()
-            
+
               setTab(key)
             } catch {
             }

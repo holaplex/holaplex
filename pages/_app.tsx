@@ -20,7 +20,7 @@ const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
 const { Header, Content } = Layout
 
-const HeaderTitle = styled.a`
+const HeaderTitle = styled.div`
   font-size: 24px;
   line-height: 2px;
   font-weight: 900;
@@ -33,10 +33,12 @@ const HeaderTitle = styled.a`
 
 const AppHeader = styled(Header)`
   ${sv.flexRow};
+  margin: 0 0 70px 0;
 `
 
-const HeaderLink = styled.a`
+const HeaderLinkWrapper = styled.div<{ active: boolean; }>`
   color: ${sv.colors.buttonText};
+  ${({ active }) => active && `text-decoration: underline;`}
 `
 
 const AppLayout = styled(Layout)`
@@ -89,9 +91,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                       <HeaderTitle>👋{windowDimensions.width > 550 && ' Holaplex'}</HeaderTitle>
                     </Link>
                     <Space size="large">
-                      <Link href="/storefronts" passHref>
-                        <HeaderLink>View Stores</HeaderLink>
-                      </Link>
+                      <HeaderLinkWrapper active={router.pathname == "/storefronts"}>
+                        <Link href="/storefronts" passHref >
+                          View Stores
+                        </Link>
+                      </HeaderLinkWrapper>
                       {windowDimensions.width > 550 && <SocialLinks />}
                     </Space>
                   </AppHeader>

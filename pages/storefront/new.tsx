@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
@@ -16,6 +16,7 @@ import { stylesheet } from '@/modules/theme'
 import { initArweave } from '@/modules/arweave'
 import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
+import { StorefrontContext } from '@/modules/storefront'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import type { GoogleTracker } from '@/modules/ganalytics/types'
@@ -109,7 +110,7 @@ export default function New({ track }: NewProps) {
   const router = useRouter()
   const arweave = initArweave()
   const [form] = Form.useForm()
-  const { solana } = useContext(WalletContext)
+  const { wallet, connect } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -123,8 +124,17 @@ export default function New({ track }: NewProps) {
     { name: ['meta', 'description'], value: '' }
   ]);
 
-  if (isNil(solana)) {
-    return
+  if (isNil(wallet)) {
+    return (
+      <Row justify="center">
+        <Card>
+          <Space direction="vertical" >
+            <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
+            <Button type="primary" block onClick={connect}>Connect</Button>
+          </Space>
+        </Card>
+      </Row>
+    )
   }
 
   const values = reduce((acc: any, item: FieldData) => {
@@ -153,7 +163,7 @@ export default function New({ track }: NewProps) {
 
       await arweaveSDK.using(arweave).storefront.upsert(
         {
-          pubkey: solana.publicKey.toString(),
+          pubkey: wallet.pubkey,
           subdomain,
           theme: { ...theme, logo },
           meta: { ...meta, favicon }
@@ -174,6 +184,10 @@ export default function New({ track }: NewProps) {
 
     }
   }
+
+  useEffect(() => {
+
+  }, )
 
   const textColor = new Color(values.theme.backgroundColor).isDark() ? sv.colors.buttonText : sv.colors.text
   const buttontextColor = new Color(values.theme.primaryColor).isDark() ? sv.colors.buttonText : sv.colors.text
