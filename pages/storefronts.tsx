@@ -3,15 +3,16 @@ import sv from '@/constants/styles'
 import styled from 'styled-components'
 import ArweaveSDK from '@/modules/arweave/client'
 import { initArweave } from '@/modules/arweave'
-import Image from 'next/image'
-import { Grid } from 'antd-mobile'
-import { Row, Col, Typography, Space } from 'antd'
+import { replace } from 'ramda'
+import { Row, Col, Typography, Space, List, Image } from 'antd'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 import Loading from '@/components/elements/Loading'
 import type { Storefront } from '@/modules/storefront/types'
 const { Title, Text } = Typography
 import useWindowDimensions from '@/hooks/useWindowDimensions'
+
+const ARWEAVE_CDN_HOST = process.env.NEXT_PUBLIC_ARWEAVE_CDN_HOST as string
 
 const LightText = styled(Text)`
   color: rgba(255,255,255,.6);
@@ -63,6 +64,11 @@ const StoreName = styled(Text)`
   margin-top: ${sv.grid}px;
 `;
 
+const StoreImage = styled.img`
+  width: 75px;
+  height: 75px;
+`;
+
 
 const StoreFronts = () => {
   const { connect } = useContext(WalletContext)
@@ -76,13 +82,12 @@ const StoreFronts = () => {
     ArweaveSDK.using(arweave).storefront.list()
       .then(storefrontData => {
         const storefronts = storefrontData.map(st => st.storefront)
+
         setStorefronts(storefronts)
         setLoading(false)
       })
 
   }, [])
-
-  const columnNumber = windowDimensions.width < 800 ? 2 : 4
 
   return (
     <Container justify="center" align="middle">
@@ -101,24 +106,27 @@ const StoreFronts = () => {
                 Create Store
               </Button>
             </Pitch>
-            <Grid
-              itemStyle={{ display: 'inline-block' }}
-              data={storefronts}
-              columnNum={columnNumber}
-              renderItem={storefront => {
-                return (
+            <List
+              grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+              dataSource={storefronts}
+              pagination={{
+                pageSize: 20,
+                total: storefronts.length,
+              }}
+              renderItem={(item: Storefront) => (
+                <List.Item key={item.subdomain}>
                   <Store
-                    href={`https://${storefront?.subdomain}.holaplex.com`}
+                    href={`https://${item?.subdomain}.holaplex.com`}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Image src={storefront?.theme.logo.url} width={75} height={75} alt="" />
+                    <Image preview={false} src={replace('https://arweave.net:443', ARWEAVE_CDN_HOST, item?.theme.logo.url)} alt="" width={75} height={75} />
                     <StoreName ellipsis>
-                      {storefront?.meta.title}
+                      {item?.meta.title}
                     </StoreName>
                   </Store>
-                )
-              }}
+                </List.Item>
+              )}
             />
           </>
         </Loading>

@@ -71,11 +71,6 @@ a {
   text-decoration: none;
 }
 
-* {
-  line-height: initial;
-  box-sizing: border-box;
-}
-
 .ant-layout {
   overflow-y: auto;
 }
