@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { map, pipe, reduce, pick, isNil, toPairs, contains } from 'ramda'
+import { contains } from 'ramda'
 import { initArweave } from '@/modules/arweave'
 
 export default async function handler(
@@ -27,11 +27,13 @@ export default async function handler(
     catch (_) {
     }
 
-    if (contains(res.getHeader("Content-Type"), ["text/html", "text/plain"])) {
+    if (contains(res.getHeader("Content-Type"), ["text/html", "text/plain", , "text/xml", "application/json", "application/xml"])) {
       dataParams.string = true
     }
 
     const data = await arweave.transactions.getData(id, dataParams)
+
+    res.setHeader("Cache-Control", "max-age=31536000")
 
     switch (req.method) {
       case 'GET': {

@@ -217,7 +217,7 @@ export default function Home() {
 
       <Community justify="center">
         <Col sm={20} md={20} lg={20} xl={18}>
-          <CenteredTitle level={2}>Join our community, 100+ stores and counting!</CenteredTitle>
+          <CenteredTitle level={2}>Join our community, 150 stores and counting!</CenteredTitle>
 
           <Stores storesPerRow={storesPerRow}>
             {HighlightStores.map((store, index) => (
@@ -255,7 +255,7 @@ export default function Home() {
             <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
           </FooterSection>
           {windowDimensions.width > 800 &&
-            <FooterSection style={{ textAlign: 'center' }}>Made with 🤍 on <a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a></FooterSection>
+            <FooterSection style={{ textAlign: 'center' }}>Made with &#10084; on <a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a></FooterSection>
           }
           <FooterSection style={{ textAlign: 'right' }}>
             <SocialLinks />
