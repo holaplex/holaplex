@@ -3,11 +3,13 @@ import sv from '@/constants/styles'
 import styled from 'styled-components'
 import ArweaveSDK from '@/modules/arweave/client'
 import { initArweave } from '@/modules/arweave'
-import { replace } from 'ramda'
+import { replace, take, add, compose, always, when } from 'ramda'
+import useInfiniteScroll from 'react-infinite-scroll-hook'
 import { Row, Col, Typography, Space, List, Image } from 'antd'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 import Loading from '@/components/elements/Loading'
+import WavingHand from '@/components/elements/HandWaving'
 import type { Storefront } from '@/modules/storefront/types'
 const { Title, Text } = Typography
 import useWindowDimensions from '@/hooks/useWindowDimensions'
@@ -75,13 +77,32 @@ const StoreFronts = () => {
 
   const windowDimensions = useWindowDimensions();
   const [loading, setLoading] = useState(true)
+  const [show, setShow] = useState(20)
+  const [hasMoreStores, setHasMoreStores] = useState(true)
   const [storefronts, setStorefronts] = useState<Storefront[]>([])
+
+  const loadMoreStores = () => {
+    const total = storefronts.length
+    const next = compose(
+      when(next => next > storefronts.length, always(storefronts.length)),
+      add(20), 
+      )(show)
+
+    setShow(next)
+    setHasMoreStores(total > next)
+  }
+
+  const [sentryRef] = useInfiniteScroll({
+    loading: false,
+    hasNextPage: hasMoreStores,
+    onLoadMore: loadMoreStores,
+  });
 
   useEffect(() => {
     const arweave = initArweave()
     ArweaveSDK.using(arweave).storefront.list()
-      .then(storefrontData => {
-        const storefronts = storefrontData.map(st => st.storefront)
+      .then(data => {
+        const storefronts = data.map(st => st.storefront)
 
         setStorefronts(storefronts)
         setLoading(false)
@@ -108,11 +129,7 @@ const StoreFronts = () => {
             </Pitch>
             <List
               grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-              dataSource={storefronts}
-              pagination={{
-                pageSize: 20,
-                total: storefronts.length,
-              }}
+              dataSource={take(show, storefronts)}
               renderItem={(item: Storefront) => (
                 <List.Item key={item.subdomain}>
                   <Store
@@ -128,6 +145,7 @@ const StoreFronts = () => {
                 </List.Item>
               )}
             />
+            <div ref={sentryRef} />
           </>
         </Loading>
       </Col>
