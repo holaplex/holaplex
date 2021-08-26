@@ -19,7 +19,8 @@ import { WalletContext } from '@/modules/wallet'
 import arweaveSDK from '@/modules/arweave/client'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
-import { isNil, reduce, propEq, findIndex, pipe, identity, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
+import HowToArModal from '@/components/elements/HowToArModal'
+import { isNil, reduce, propEq, findIndex, pipe, not, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when, gt } from 'ramda';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -109,10 +110,12 @@ export default function Edit({ track }: StorefrontEditProps) {
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const arweave = initArweave()
+  const ar = arweaveSDK.using(arweave)
   const [tab, setTab] = useState("theme")
+  const [showARModal, setShowARModal] = useState(false)
   const { storefront } = useContext(StorefrontContext)
   const [form] = Form.useForm()
-  const { solana, wallet, connect } = useContext(WalletContext)
+  const { solana, wallet, arweaveWalletAddress, connect } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -126,12 +129,12 @@ export default function Edit({ track }: StorefrontEditProps) {
     { name: ['meta', 'description'], value: storefront?.meta.description }
   ]);
 
-  if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
+  if (isNil(solana) || isNil(storefront) || isNil(wallet) || isNil(arweaveWalletAddress)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical" >
-            <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
+            <Paragraph>Connect your Solana and ARConnect wallets to edit your store.</Paragraph>
             <Button type="primary" block onClick={connect}>Connect</Button>
           </Space>
         </Card>
@@ -146,13 +149,27 @@ export default function Edit({ track }: StorefrontEditProps) {
   const domain = `${values.subdomain}.holaplex.com`
 
   const subdomainUniqueness = async (_: any, subdomain: any) => {
-    const search = await arweaveSDK.using(arweave).storefront.find("holaplex:metadata:subdomain", subdomain || "")
+    const search = await ar.storefront.find("holaplex:metadata:subdomain", subdomain || "")
 
     if (isNil(search) || search.pubkey === wallet.pubkey) {
       return Promise.resolve(subdomain)
     }
 
     return Promise.reject("The subdomain is already in use. Please pick another.")
+  }
+
+  const hasArweaveFunds = async (_: any, [file]: any) => {
+    if (isNil(file) || file.url) {
+      return Promise.resolve()
+    }
+
+    if (ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
+      return Promise.resolve()
+    }
+
+    setShowARModal(true)
+
+    return Promise.reject(new Error("Not enough AR funds to cover the upload fee."))
   }
 
   const onSubmit = async () => {
@@ -206,7 +223,8 @@ export default function Edit({ track }: StorefrontEditProps) {
             label="Logo"
             name={["theme", "logo"]}
             rules={[
-              { required: true, message: "Upload a logo." }
+              { required: true, message: "Upload a logo." },
+              { required: true, validator: hasArweaveFunds }
             ]}
           >
             <Upload>
@@ -299,7 +317,8 @@ export default function Edit({ track }: StorefrontEditProps) {
           label="Favicon"
           name={["meta", "favicon"]}
           rules={[
-            { required: true, message: "Upload a favicon." }
+            { required: true, message: "Upload a favicon." },
+            { required: true, validator: hasArweaveFunds }
           ]}
         >
           <Upload>
@@ -335,6 +354,10 @@ export default function Edit({ track }: StorefrontEditProps) {
   }
   return (
     <Row justify="center" align="middle">
+      <HowToArModal
+        show={showARModal}
+        onCancel={() => setShowARModal(false)}
+      />
       <Col
         xs={21}
         lg={18}

@@ -83,7 +83,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
-        {({ verifying, initializing, wallet }) => (
+        {({ verifying, wallet }) => (
           <StorefrontProvider wallet={wallet}>
             {({ searching }) => {
               return (
@@ -110,7 +110,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     </Space>
                   </AppHeader>
                   <Content>
-                    <Loading loading={verifying || initializing || searching}>
+                    <Loading loading={verifying || searching}>
                       <Component
                         {...pageProps}
                         track={track}
