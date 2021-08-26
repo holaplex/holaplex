@@ -30,6 +30,9 @@
       "@/constants/*": [
         "src/common/constants/*"
       ],
+      "@/hooks/*": [
+        "src/common/hooks/*"
+      ],
       "@/layouts/*": [
         "src/layouts/*"
       ],

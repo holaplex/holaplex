@@ -7,27 +7,40 @@ import { useRouter } from 'next/router'
 import { ToastContainer } from 'react-toastify'
 import styled from 'styled-components'
 import Link from 'next/link'
-import { Layout } from 'antd'
+import { Layout, Space } from 'antd'
 import sv from '@/constants/styles'
 import { isNil } from 'ramda'
 import Loading from '@/components/elements/Loading'
 import { WalletProvider } from '@/modules/wallet'
 import { StorefrontProvider } from '@/modules/storefront'
+import SocialLinks from '@/components/elements/SocialLinks'
+import useWindowDimensions from '@/hooks/useWindowDimensions'
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
 const { Header, Content } = Layout
 
-const HeaderTitle = styled.a`
+const HeaderTitle = styled.div`
   font-size: 24px;
   line-height: 2px;
   font-weight: 900;
   margin-right: auto;
-  color: ${sv.colors.buttonText};
-  &:hover {
-    color: ${sv.colors.buttonText}
+  a {
+    color: ${sv.colors.buttonText};
+    &:hover {
+      color: ${sv.colors.buttonText}
+    }
   }
+`
 
+const AppHeader = styled(Header)`
+  ${sv.flexRow};
+  margin: 0 0 40px 0;
+`
+
+const HeaderLinkWrapper = styled.div<{ active: boolean; }>`
+  color: ${sv.colors.buttonText};
+  ${({ active }) => active && `text-decoration: underline;`}
 `
 
 const AppLayout = styled(Layout)`
@@ -36,13 +49,14 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
+  const windowDimensions = useWindowDimensions();
 
-  const track = (category: string, action: string) => { 
+  const track = (category: string, action: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
       return
     }
 
-    window.gtag('event', action, { event_category: category }) 
+    window.gtag('event', action, { event_category: category })
   }
 
   const onRouteChanged = (path: string) => {
@@ -63,24 +77,40 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       router.events.off('routeChangeComplete', onRouteChanged)
     }
-  }, [])
+  }, [router.events])
 
   return (
     <>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
-        {({ verifying, initializing, wallet }) => (
-          <StorefrontProvider verifying={verifying} wallet={wallet}>
+        {({ verifying, wallet }) => (
+          <StorefrontProvider wallet={wallet}>
             {({ searching }) => {
               return (
                 <AppLayout>
-                  <Header>
-                    <Link href="/" passHref>
-                      <HeaderTitle>👋 Holaplex</HeaderTitle>
-                    </Link>
-                  </Header>
+                  <AppHeader>
+                    <HeaderTitle>
+                      {windowDimensions.width > 550 ? (
+                        <Link href="/" passHref>
+                          👋 Holaplex
+                        </Link>
+                      ) : (
+                        <Link href="/" passHref>
+                          👋
+                        </Link>
+                      )}
+                    </HeaderTitle>
+                    <Space size="large">
+                      <HeaderLinkWrapper active={router.pathname == "/storefronts"}>
+                        <Link href="/storefronts" passHref >
+                          View Stores
+                        </Link>
+                      </HeaderLinkWrapper>
+                      {windowDimensions.width > 550 && <SocialLinks />}
+                    </Space>
+                  </AppHeader>
                   <Content>
-                    <Loading loading={verifying || initializing || searching}>
+                    <Loading loading={verifying || searching}>
                       <Component
                         {...pageProps}
                         track={track}

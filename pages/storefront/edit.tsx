@@ -22,7 +22,7 @@ import InlineFormItem from '@/common/components/elements/InlineFormItem'
 import HowToArModal from '@/components/elements/HowToArModal'
 import { isNil, reduce, propEq, findIndex, pipe, not, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when, gt } from 'ramda';
 
-const { Text, Title } = Typography
+const { Text, Title, Paragraph } = Typography
 
 const PreviewButton = styled.div<{ textColor: string }>`
   height: 52px;
@@ -115,7 +115,7 @@ export default function Edit({ track }: StorefrontEditProps) {
   const [showARModal, setShowARModal] = useState(false)
   const { storefront } = useContext(StorefrontContext)
   const [form] = Form.useForm()
-  const { solana, wallet, arweaveWalletAddress } = useContext(WalletContext)
+  const { solana, wallet, arweaveWalletAddress, connect } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -130,7 +130,16 @@ export default function Edit({ track }: StorefrontEditProps) {
   ]);
 
   if (isNil(solana) || isNil(storefront) || isNil(wallet) || isNil(arweaveWalletAddress)) {
-    return
+    return (
+      <Row justify="center">
+        <Card>
+          <Space direction="vertical" >
+            <Paragraph>Connect your Solana and ARConnect wallets to edit your store.</Paragraph>
+            <Button type="primary" block onClick={connect}>Connect</Button>
+          </Space>
+        </Card>
+      </Row>
+    )
   }
 
   const values = reduce((acc: any, item: FieldData) => {
@@ -175,13 +184,6 @@ export default function Edit({ track }: StorefrontEditProps) {
       const favicon = popFile(meta.favicon[0])
 
       const css = stylesheet({ ...theme, logo })
-
-      if (not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8')))) {
-        setSubmitting(false)
-        setShowARModal(true)
-
-        return Promise.reject()
-      }
 
       await arweaveSDK.using(arweave).storefront.upsert(
         {

@@ -16,3 +16,8 @@ export type ArweaveTransaction = {
   owner: ArweaveOwner;
   tags: ArweaveTag[];
 }
+
+export type ArweaveDataOptions = {
+  decode: boolean;
+  string: boolean;
+}

@@ -17,10 +17,22 @@ const StyledButton = styled(Button)`{
     &[disabled], &[disabled]:hover {
       background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
       color: #fff;
-      
+
       &:hover, &:active, &:focus {
         background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
       }
+    }
+  `}
+  ${({ type }) => equals("white", type) && css`
+    background: #ffffff;
+    color: #D24089;
+    &:hover, &:active, &:focus {
+      background: #ffffff;
+      color: #D24089;
+    }
+    &[disabled], &[disabled]:hover {
+      background: rgba(255,255,255,.5);
+      color: #D24089;
     }
   `}
 `

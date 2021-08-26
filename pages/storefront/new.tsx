@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 // @ts-ignore
 import Color from 'color'
+import Image from 'next/image'
 import { Card, Row, Col, Typography, Input, Space, Form } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
@@ -16,6 +17,7 @@ import { stylesheet } from '@/modules/theme'
 import { initArweave } from '@/modules/arweave'
 import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
+import { StorefrontContext } from '@/modules/storefront'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import type { GoogleTracker } from '@/modules/ganalytics/types'
@@ -114,7 +116,7 @@ export default function New({ track }: NewProps) {
   const arweave = initArweave()
   const ar = arweaveSDK.using(arweave)
   const [form] = Form.useForm()
-  const { solana, arweaveWalletAddress } = useContext(WalletContext)
+  const { wallet, connect, arweaveWalletAddress } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -128,8 +130,17 @@ export default function New({ track }: NewProps) {
     { name: ['meta', 'description'], value: '' }
   ]);
 
-  if (isNil(solana) || isNil(arweaveWalletAddress)) {
-    return
+  if (isNil(wallet)) {
+    return (
+      <Row justify="center">
+        <Card>
+          <Space direction="vertical" >
+            <Paragraph>Connect your Solana and ARConnect wallets to create a store.</Paragraph>
+            <Button type="primary" block onClick={connect}>Connect</Button>
+          </Space>
+        </Card>
+      </Row>
+    )
   }
 
   const values = reduce((acc: any, item: FieldData) => {
@@ -179,7 +190,7 @@ export default function New({ track }: NewProps) {
 
       await arweaveSDK.using(arweave).storefront.upsert(
         {
-          pubkey: solana.publicKey.toString(),
+          pubkey: wallet.pubkey,
           subdomain,
           theme: { ...theme, logo },
           meta: { ...meta, favicon }

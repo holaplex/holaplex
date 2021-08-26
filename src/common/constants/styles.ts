@@ -7,7 +7,7 @@ const subtleText = '#666666'
 const buttonText = '#FFFFFF'
 const background = '#fdfdfd'
 
-const cta = '#3369F4'
+const cta = '#D24089'
 const ctaHover = `${lighten(.05, cta)}`
 const subtleCta = 'rgba(45,156,219,.2)'
 

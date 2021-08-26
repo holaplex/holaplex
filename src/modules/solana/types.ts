@@ -10,6 +10,7 @@ export interface Solana {
   isConnected: boolean;
   on: (event: string, cb: () => void) => void;
   off: (event: string, cb: () => void) => void;
+  once: (event: string, cb: () => void) => void;
   publicKey: SolanaPublicKey;
   connect: (options?: SolanaConnectOptions) => Promise<any>;
 }
