@@ -192,7 +192,7 @@ export default function Home() {
             </Col>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12} offset={2}>
               <Video>
-                <iframe className="video" src="https://www.youtube.com/embed/3AEqDfN-lX8" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                <iframe className="video" src="https://www.youtube.com/embed/yCJgGzYdJC4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </Video>
             </Col>
           </Row>
