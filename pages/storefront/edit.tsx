@@ -113,7 +113,13 @@ export default function Edit( { track }: StorefrontEditProps) {
   const [tab, setTab] = useState("theme")
   const { storefront } = useContext(StorefrontContext)
   const [form] = Form.useForm()
-  const { solana, wallet, arweaveRoadblockVisible } = useContext(WalletContext)
+  const {
+    solana,
+    wallet,
+    arweaveRoadblockVisible,
+    arweaveBalance,
+    displayArweaveRoadblock,
+  } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -159,6 +165,11 @@ export default function Edit( { track }: StorefrontEditProps) {
       const favicon = popFile(meta.favicon[0])
   
       const css = stylesheet({ ...theme, logo })
+      if (arweaveBalance === NaN || arweaveBalance <= 0) {
+        displayArweaveRoadblock(true)
+        return
+      }
+
   
       await arweaveSDK.using(arweave).storefront.upsert(
         {

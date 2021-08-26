@@ -112,7 +112,9 @@ export default function New({ track }: NewProps) {
   const [form] = Form.useForm()
   const {
     solana,
-    arweaveRoadblockVisible
+    arweaveRoadblockVisible,
+    arweaveBalance,
+    displayArweaveRoadblock,
   } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
@@ -154,6 +156,11 @@ export default function New({ track }: NewProps) {
       const favicon = meta.favicon[0].response
 
       const css = stylesheet({ ...theme, logo })
+      
+      if (arweaveBalance === NaN || arweaveBalance <= 0) {
+        displayArweaveRoadblock(true)
+        return
+      }
 
       await arweaveSDK.using(arweave).storefront.upsert(
         {
