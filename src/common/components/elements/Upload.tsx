@@ -1,6 +1,6 @@
 import { Upload } from 'antd'
 import React from 'react'
-import { isNil } from 'ramda'
+import { isEmpty, isNil, always, not } from 'ramda'
 import { initArweave } from '@/modules/arweave'
 
 type UploadProps = {
@@ -48,13 +48,12 @@ export default function FileUpload({
     upload.onSuccess(response, file)
   }
 
-
   return (
     <Upload
       customRequest={handleInputChange}
       maxCount={1}
-      onChange={({ fileList }: any) => { 
-        if (isNil(onChange)) { 
+      onChange={({ fileList }: any) => {
+        if (isNil(onChange)) {
           return
         }
 

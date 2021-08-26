@@ -20,7 +20,8 @@ import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import type { GoogleTracker } from '@/modules/ganalytics/types'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
-import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
+import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update, not } from 'ramda';
+import HowToArModal from '@/components/elements/HowToArModal';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -106,10 +107,14 @@ interface NewProps {
 
 export default function New({ track }: NewProps) {
   const [submitting, setSubmitting] = useState(false)
+  const [showARModal, setShowARModal] = useState(false)
+  // we check for arweave at the last possible moment,
+  // assuming they do until we check.
   const router = useRouter()
   const arweave = initArweave()
+  const ar = arweaveSDK.using(arweave)
   const [form] = Form.useForm()
-  const { solana } = useContext(WalletContext)
+  const { solana, arweaveWalletAddress } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -123,7 +128,7 @@ export default function New({ track }: NewProps) {
     { name: ['meta', 'description'], value: '' }
   ]);
 
-  if (isNil(solana)) {
+  if (isNil(solana) || isNil(arweaveWalletAddress)) {
     return
   }
 
@@ -141,6 +146,20 @@ export default function New({ track }: NewProps) {
     return Promise.reject("The subdomain is already in use. Please pick another.")
   }
 
+  const hasArweaveFunds = async (_: any, [file]: any) => {
+    if (isNil(file) || file.url) {
+      return Promise.resolve()
+    }
+
+    if (ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
+      return Promise.resolve()
+    }
+
+    setShowARModal(true)
+
+    return Promise.reject(new Error("Not enough AR funds to cover the upload fee."))
+  }
+
   const onSubmit = async () => {
     try {
       setSubmitting(true)
@@ -150,6 +169,18 @@ export default function New({ track }: NewProps) {
       const favicon = meta.favicon[0].response
 
       const css = stylesheet({ ...theme, logo })
+      
+      if (arweaveBalance === NaN || arweaveBalance <= 0) {
+        displayArweaveRoadblock(true)
+        return
+      }
+
+      if (not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8')))) {
+        setSubmitting(false)
+        setShowARModal(true)
+
+        return Promise.reject()
+      }
 
       await arweaveSDK.using(arweave).storefront.upsert(
         {
@@ -180,6 +211,10 @@ export default function New({ track }: NewProps) {
 
   return (
     <Row justify="center" align="middle">
+      <HowToArModal
+        show={showARModal}
+        onCancel={() => setShowARModal(false)}
+      />
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <PageCard>
           <StepForm
@@ -230,6 +265,7 @@ export default function New({ track }: NewProps) {
                   name={["theme", "logo"]}
                   rules={[
                     { required: true, message: "Upload a logo." },
+                    { required: true, validator: hasArweaveFunds }
                   ]}
                 >
                   <Upload>
@@ -308,7 +344,8 @@ export default function New({ track }: NewProps) {
                   label="Favicon"
                   name={["meta", "favicon"]}
                   rules={[
-                    { required: true, message: "Upload a favicon." }
+                    { required: true, message: "Upload a favicon." },
+                    { required: true, validator: hasArweaveFunds }
                   ]}
                 >
                   <Upload>

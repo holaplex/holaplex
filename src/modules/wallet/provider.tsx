@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import walletSDK from '@/modules/wallet/client'
 import { useRouter } from 'next/router'
-import { isNil, isEmpty } from 'ramda'
+import { isNil } from 'ramda'
 import { toast } from 'react-toastify'
 import { Wallet } from '@/modules/wallet/types'
 import { Solana } from '@/modules/solana/types'
@@ -35,6 +35,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [wallet, setWallet] = useState<Wallet>()
   const [solana, setSolana] = useState<Solana>()
   const [arweaveWallet, setArweaveWallet] = useState<any>()
+  const [arweaveWalletAddress, setArweaveWalletAddress] = useState<string>()
 
   useEffect(() => {
     if (!process.browser || initializing) {
@@ -86,6 +87,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
 
           return router.push("/storefront/new") 
         })
+        .then(() => window.arweaveWallet.connect(['ACCESS_ADDRESS']))
+        .then(() => window.arweaveWallet.getActiveAddress())
+        .then((address) => {
+          setArweaveWalletAddress(address)
+        })
         .catch(() => router.push("/"))
         .finally(() => { 
           setVerifying(false)
@@ -105,8 +111,23 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   }
 
   return (
-    <WalletContext.Provider value={{ verifying, initializing, wallet, arweaveWallet, solana, connect }}>
-      {children({ verifying, initializing, wallet, solana, connect })}
+    <WalletContext.Provider
+      value={{
+        verifying,
+        initializing,
+        wallet,
+        arweaveWallet,
+        solana,
+        connect,
+        arweaveWalletAddress
+      }}>
+      {children({
+        verifying,
+        initializing,
+        wallet,
+        solana,
+        connect
+        })}
     </WalletContext.Provider>
   )
 }

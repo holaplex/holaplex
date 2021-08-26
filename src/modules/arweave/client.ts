@@ -24,8 +24,13 @@ interface ArweaveObjectInteraction {
   list: (batch?: number, start?: string) => Promise<StorefrontEdge[]>
 }
 
+interface ArweaveWalletHelpers {
+  canAfford: (address: string, bytes: number) => Promise<boolean>
+}
+
 interface ArweaveScope {
   storefront: ArweaveObjectInteraction;
+  wallet: ArweaveWalletHelpers;
 }
 
 const transformer = (response: Response): ArweaveResponseTransformer => {
@@ -121,6 +126,15 @@ const query = async (arweave: Arweave, query: string, variables: object): Promis
 }
 
 const using = (arweave: Arweave): ArweaveScope => ({
+  wallet: {
+    canAfford: async (address: string, bytes: number) => {
+      const balance = await arweave.wallets.getBalance(address)
+
+      const cost = await arweave.transactions.getPrice(bytes)
+  
+      return arweave.ar.isGreaterThan(balance, cost)
+    }
+  },
   storefront: {
     list: async (batch: number = 1000, start: string = "") => {
       let after = start
