@@ -35,6 +35,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [wallet, setWallet] = useState<Wallet>()
   const [solana, setSolana] = useState<Solana>()
   const [arweaveWallet, setArweaveWallet] = useState<any>()
+  const [arweaveWalletAddress, setArweaveWalletAddress] = useState<string>()
 
   useEffect(() => {
     if (!process.browser || initializing) {
@@ -86,6 +87,14 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
 
           return router.push("/storefront/new") 
         })
+        .then( async () => {
+          // only connect to arweave if we have a solana connection :-)
+          await window.arweaveWallet.connect(['ACCESS_ADDRESS'])
+          const address = await window.arweaveWallet.getActiveAddress()
+          setArweaveWalletAddress(address)
+
+
+        })
         .catch(() => router.push("/"))
         .finally(() => { 
           setVerifying(false)
@@ -105,7 +114,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   }
 
   return (
-    <WalletContext.Provider value={{ verifying, initializing, wallet, arweaveWallet, solana, connect }}>
+    <WalletContext.Provider value={{ verifying, initializing, wallet, arweaveWallet, arweaveWalletAddress, solana, connect }}>
       {children({ verifying, initializing, wallet, solana, connect })}
     </WalletContext.Provider>
   )

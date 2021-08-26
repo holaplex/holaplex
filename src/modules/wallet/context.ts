@@ -15,6 +15,7 @@ export type WalletContextProps = {
   solana?: Solana;
   connect: (params?: any) => any;
   arweaveWallet?: any;
+  arweaveWalletAddress?: string;
 
 }
 

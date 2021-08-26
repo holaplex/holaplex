@@ -10,3 +10,7 @@ export const initArweave  = () => {
 
   return arweave
 }
+
+export const getBalance = (address: string, arweave: Arweave) => {
+  return arweave.wallets.getBalance(address)
+}

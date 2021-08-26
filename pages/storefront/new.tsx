@@ -21,6 +21,7 @@ import StepForm from '@/components/elements/StepForm'
 import type { GoogleTracker } from '@/modules/ganalytics/types'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
 import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
+import HowToArModal from '@/common/components/elements/HowToArModal';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -106,6 +107,9 @@ interface NewProps {
 
 export default function New({ track }: NewProps) {
   const [submitting, setSubmitting] = useState(false)
+  const [hasArweave, setHasArweave] = useState(true)
+  // we check for arweave at the last possible moment,
+  // assuming they do until we check.
   const router = useRouter()
   const arweave = initArweave()
   const [form] = Form.useForm()
@@ -180,6 +184,9 @@ export default function New({ track }: NewProps) {
 
   return (
     <Row justify="center" align="middle">
+      <HowToArModal 
+        isModalVisible={!hasArweave}
+        />
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <PageCard>
           <StepForm
@@ -232,7 +239,8 @@ export default function New({ track }: NewProps) {
                     { required: true, message: "Upload a logo." },
                   ]}
                 >
-                  <Upload>
+                  <Upload 
+                    setHasArweave={setHasArweave}>
                     {isEmpty(values.theme.logo) && (
                       <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
                     )}
@@ -311,7 +319,7 @@ export default function New({ track }: NewProps) {
                     { required: true, message: "Upload a favicon." }
                   ]}
                 >
-                  <Upload>
+                  <Upload setHasArweave={setHasArweave}>
                     {isEmpty(values.meta.favicon) && (
                       <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
                     )}
