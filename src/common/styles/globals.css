@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&display=swap');
 
+a {
+  cursor: pointer;
+}
+
 .font-family-roboto {
   font-family: 'Roboto', sans;
 }
@@ -34,7 +38,7 @@
 }
 
 html,
-body, 
+body,
 button {
   padding: 0;
   margin: 0;
@@ -46,6 +50,10 @@ html, body, #__next, .ant-layout {
 
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.25em;
+  color: #FFFFFF;
+  font-weight: 800;
+  line-height: 1.25em;
+  letter-spacing: .2;
 }
 
 input, textarea {
@@ -61,11 +69,6 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-* {
-  line-height: initial;
-  box-sizing: border-box;
 }
 
 .ant-layout {

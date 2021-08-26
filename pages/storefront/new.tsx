@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import sv from '@/constants/styles'
 import styled from 'styled-components';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 // @ts-ignore
 import Color from 'color'
+import Image from 'next/image'
 import { Card, Row, Col, Typography, Input, Space, Form } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '@/components/elements/Button'
@@ -16,11 +17,13 @@ import { stylesheet } from '@/modules/theme'
 import { initArweave } from '@/modules/arweave'
 import { WalletContext } from '@/modules/wallet'
 import FillSpace from '@/components/elements/FillSpace'
+import { StorefrontContext } from '@/modules/storefront'
 import arweaveSDK from '@/modules/arweave/client'
 import StepForm from '@/components/elements/StepForm'
 import type { GoogleTracker } from '@/modules/ganalytics/types'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
-import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update } from 'ramda';
+import { isNil, reduce, assocPath, isEmpty, findIndex, propEq, update, not } from 'ramda';
+import HowToArModal from '@/components/elements/HowToArModal';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -106,10 +109,14 @@ interface NewProps {
 
 export default function New({ track }: NewProps) {
   const [submitting, setSubmitting] = useState(false)
+  const [showARModal, setShowARModal] = useState(false)
+  // we check for arweave at the last possible moment,
+  // assuming they do until we check.
   const router = useRouter()
   const arweave = initArweave()
+  const ar = arweaveSDK.using(arweave)
   const [form] = Form.useForm()
-  const { solana } = useContext(WalletContext)
+  const { wallet, connect, arweaveWalletAddress } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -123,8 +130,17 @@ export default function New({ track }: NewProps) {
     { name: ['meta', 'description'], value: '' }
   ]);
 
-  if (isNil(solana)) {
-    return
+  if (isNil(wallet)) {
+    return (
+      <Row justify="center">
+        <Card>
+          <Space direction="vertical" >
+            <Paragraph>Connect your Solana and ARConnect wallets to create a store.</Paragraph>
+            <Button type="primary" block onClick={connect}>Connect</Button>
+          </Space>
+        </Card>
+      </Row>
+    )
   }
 
   const values = reduce((acc: any, item: FieldData) => {
@@ -141,6 +157,22 @@ export default function New({ track }: NewProps) {
     return Promise.reject("The subdomain is already in use. Please pick another.")
   }
 
+  const hasArweaveFunds = async (_: any, [file]: any) => {
+    if (isNil(file) || file.url) {
+      return Promise.resolve()
+    }
+
+    const canAfford = arweaveWalletAddress && 
+      await ar.wallet.canAfford(arweaveWalletAddress, file.size)
+    if (canAfford){
+      return Promise.resolve()
+    }
+
+    setShowARModal(true)
+
+    return Promise.reject(new Error("Not enough AR funds to cover the upload fee."))
+  }
+
   const onSubmit = async () => {
     try {
       setSubmitting(true)
@@ -151,9 +183,16 @@ export default function New({ track }: NewProps) {
 
       const css = stylesheet({ ...theme, logo })
 
+      if (isNil(arweaveWalletAddress) || (not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8'))))) {
+        setSubmitting(false)
+        setShowARModal(true)
+
+        return Promise.reject()
+      }
+
       await arweaveSDK.using(arweave).storefront.upsert(
         {
-          pubkey: solana.publicKey.toString(),
+          pubkey: wallet.pubkey,
           subdomain,
           theme: { ...theme, logo },
           meta: { ...meta, favicon }
@@ -180,6 +219,10 @@ export default function New({ track }: NewProps) {
 
   return (
     <Row justify="center" align="middle">
+      <HowToArModal
+        show={showARModal}
+        onCancel={() => setShowARModal(false)}
+      />
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <PageCard>
           <StepForm
@@ -230,6 +273,7 @@ export default function New({ track }: NewProps) {
                   name={["theme", "logo"]}
                   rules={[
                     { required: true, message: "Upload a logo." },
+                    { required: true, validator: hasArweaveFunds }
                   ]}
                 >
                   <Upload>
@@ -308,7 +352,8 @@ export default function New({ track }: NewProps) {
                   label="Favicon"
                   name={["meta", "favicon"]}
                   rules={[
-                    { required: true, message: "Upload a favicon." }
+                    { required: true, message: "Upload a favicon." },
+                    { required: true, validator: hasArweaveFunds }
                   ]}
                 >
                   <Upload>

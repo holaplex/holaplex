@@ -14,11 +14,10 @@ type StorefrontProviderChildrenProps = {
 
 type StorefrontProviderProps = {
   wallet?: Wallet;
-  verifying: boolean;
   children: (props: StorefrontProviderChildrenProps) => React.ReactElement;
 }
 
-export const StorefrontProvider = ({ wallet, verifying, children }: StorefrontProviderProps) => {
+export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps) => {
   const [searching, setSearching] = useState(false)
   const [storefront, setStorefront] = useState<Storefront>()
   const arweave = initArweave()
