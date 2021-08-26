@@ -14,7 +14,8 @@
     "db:migrate": "prisma migrate deploy",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
-    "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts"
+    "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@prisma/client": "^2.25.0",
@@ -62,6 +63,7 @@
     "chai": "^4.3.4",
     "eslint": "7.29.0",
     "eslint-config-next": "11.0.1",
+    "husky": "^7.0.2",
     "mocha": "^9.0.1",
     "nodemon": "^2.0.12",
     "ts-node": "^10.0.0",
