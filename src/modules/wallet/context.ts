@@ -15,10 +15,7 @@ export type WalletContextProps = {
   solana?: Solana;
   connect: (params?: any) => any;
   arweaveWallet?: any;
-  arweaveBalance: number;
-  displayArweaveRoadblock: (display: boolean) => void;
-  arweaveRoadblockVisible: boolean;
-
+  arweaveWalletAddress?: string;
 }
 
 export const WalletContext = React.createContext<WalletContextProps>({ verifying: false, initializing: true, connect: () => {}, })

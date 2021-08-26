@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import walletSDK from '@/modules/wallet/client'
 import { useRouter } from 'next/router'
-import { isNil, isEmpty } from 'ramda'
+import { isNil } from 'ramda'
 import { toast } from 'react-toastify'
 import { Wallet } from '@/modules/wallet/types'
 import { Solana } from '@/modules/solana/types'
 import { initArweave } from '@/modules/arweave'
 import arweaveSDK from '@/modules/arweave/client'
 import { WalletContext, WalletContextProps } from './context'
-import { getBalance } from '@/modules/arweave'
-import Arweave from 'arweave'
 
 type WalletProviderProps = {
   wallet?: Wallet,
@@ -29,29 +27,6 @@ const upsertWallet = async (pubkey: string) => {
     })
 }
 
-const handleArweaveBalance = async (
-  arweave: Arweave,
-  setArweaveBalance: Function,
-) => {
-  try {
-    await window.arweaveWallet.connect(['ACCESS_ADDRESS'])
-    const address = await window.arweaveWallet.getActiveAddress()
-
-    const balanceResponse = await getBalance(address, arweave)
-    
-    if (balanceResponse.match(/not found/i)) {
-      setArweaveBalance(0)
-    } else {
-      const balance = parseInt(balanceResponse, 10)
-      setArweaveBalance(balance)
-    }
-  } catch(err) {
-    console.log("error getting arweave balance", err)
-    throw err
-  }
-
-}
-
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter()
   const arweave = initArweave()
@@ -60,11 +35,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [wallet, setWallet] = useState<Wallet>()
   const [solana, setSolana] = useState<Solana>()
   const [arweaveWallet, setArweaveWallet] = useState<any>()
-  const [arweaveBalance, setArweaveBalance] = useState<number>(0)
-  const [
-    arweaveRoadblockVisible,
-    displayArweaveRoadblock
-  ] = useState<boolean>(false)
+  const [arweaveWalletAddress, setArweaveWalletAddress] = useState<string>()
 
   useEffect(() => {
     if (!process.browser || initializing) {
@@ -116,12 +87,10 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
 
           return router.push("/storefront/new") 
         })
-        .then( async () => {
-          // only connect to arweave if we have a solana connection :-)
-          await handleArweaveBalance(
-            arweave, 
-            setArweaveBalance,
-          )
+        .then(() => window.arweaveWallet.connect(['ACCESS_ADDRESS']))
+        .then(() => window.arweaveWallet.getActiveAddress())
+        .then((address) => {
+          setArweaveWalletAddress(address)
         })
         .catch(() => router.push("/"))
         .finally(() => { 
@@ -148,16 +117,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         initializing,
         wallet,
         arweaveWallet,
-        arweaveBalance,
         solana,
         connect,
-        displayArweaveRoadblock,
-        arweaveRoadblockVisible,
+        arweaveWalletAddress
       }}>
       {children({
-        arweaveRoadblockVisible,
-        displayArweaveRoadblock,
-        arweaveBalance,
         verifying,
         initializing,
         wallet,

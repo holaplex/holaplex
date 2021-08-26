@@ -1,25 +1,28 @@
 import React from 'react';
-import { Modal } from 'antd';
-type Props = {
-  isModalVisible: boolean;
+import { Modal, Typography } from 'antd';
+const { Paragraph } = Typography
+
+type HowToARModalProps = {
+  show: boolean;
+  onCancel: (event: any) => void,
 }
 
 const HowToArModal = (
-  props: Props
-  ) => (
-		<Modal 
-      title=""
-      closable={false}
-      footer={[]}
-      visible={props.isModalVisible as boolean}>
-			<h1> Oh no! You need Arweave tokens!</h1>
-				<p>
-					Arweave (AR) token is available on Binance. 
-					If you are unable to access Binance please reach out to MaxJ on the 
-					<a href="https://discord.gg/uwmpEmPs">
-          &nbsp;Holaplex Discord server. 
-					</a>
-				</p>
-		</Modal>
+  { show, onCancel }: HowToARModalProps
+) => (
+  <Modal
+    title="Oh no! You need Arweave tokens!"
+    closable={true}
+    footer={[]}
+    onCancel={onCancel}
+    visible={show}>
+    <Paragraph>
+      Arweave (AR) token is available on Binance.
+      If you are unable to access Binance please reach out to MaxJ on the
+      <a href="https://discord.gg/uwmpEmPs" target="_blank">
+        &nbsp;Holaplex Discord server.
+      </a>
+    </Paragraph>
+  </Modal>
 );
 export default HowToArModal

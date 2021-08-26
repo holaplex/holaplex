@@ -1,8 +1,7 @@
 import { Upload } from 'antd'
-import React, { Dispatch, SetStateAction, useContext } from 'react'
-import { isNil, set } from 'ramda'
+import React from 'react'
+import { isEmpty, isNil, always, not } from 'ramda'
 import { initArweave } from '@/modules/arweave'
-import { WalletContext } from '@/modules/wallet'
 
 type UploadProps = {
   onChange?: (uploads: any) => any,
@@ -17,20 +16,11 @@ export default function FileUpload({
   value,
   onChange,
 }: UploadProps) {
-  const {
-    arweaveBalance,
-    displayArweaveRoadblock
-  } = useContext(WalletContext)
   const handleInputChange = async (upload: any) => {
     const arweave = initArweave()
     const file = upload.file
 
     if (isNil(file)) {
-      return
-    }
-
-    if (arweaveBalance === NaN || arweaveBalance <= 0) {
-      displayArweaveRoadblock(true)
       return
     }
 
@@ -58,13 +48,12 @@ export default function FileUpload({
     upload.onSuccess(response, file)
   }
 
-
   return (
     <Upload
       customRequest={handleInputChange}
       maxCount={1}
-      onChange={({ fileList }: any) => { 
-        if (isNil(onChange)) { 
+      onChange={({ fileList }: any) => {
+        if (isNil(onChange)) {
           return
         }
 
