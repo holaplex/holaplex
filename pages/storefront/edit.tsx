@@ -163,7 +163,7 @@ export default function Edit({ track }: StorefrontEditProps) {
       return Promise.resolve()
     }
 
-    if (ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
+    if (arweaveWalletAddress && ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
       return Promise.resolve()
     }
 

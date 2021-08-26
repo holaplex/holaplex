@@ -101,6 +101,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         arweaveWalletAddress
       }}>
       {children({
+        arweaveWalletAddress,
         verifying,
         initializing,
         wallet,

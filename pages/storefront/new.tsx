@@ -162,7 +162,7 @@ export default function New({ track }: NewProps) {
       return Promise.resolve()
     }
 
-    if (ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
+    if (arweaveWalletAddress && ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
       return Promise.resolve()
     }
 
@@ -181,7 +181,7 @@ export default function New({ track }: NewProps) {
 
       const css = stylesheet({ ...theme, logo })
 
-      if (not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8')))) {
+      if (isNil(arweaveWalletAddress) || (not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8'))))) {
         setSubmitting(false)
         setShowARModal(true)
 
