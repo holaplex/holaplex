@@ -170,10 +170,6 @@ export default function New({ track }: NewProps) {
 
       const css = stylesheet({ ...theme, logo })
       
-      if (arweaveBalance === NaN || arweaveBalance <= 0) {
-        displayArweaveRoadblock(true)
-        return
-      }
 
       if (not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8')))) {
         setSubmitting(false)
