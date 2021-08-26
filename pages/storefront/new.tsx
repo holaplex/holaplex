@@ -162,7 +162,9 @@ export default function New({ track }: NewProps) {
       return Promise.resolve()
     }
 
-    if (arweaveWalletAddress && ar.wallet.canAfford(arweaveWalletAddress, file.size)) {
+    const canAfford = arweaveWalletAddress && 
+      await ar.wallet.canAfford(arweaveWalletAddress, file.size)
+    if (canAfford){
       return Promise.resolve()
     }
 
