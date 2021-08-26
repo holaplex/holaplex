@@ -1,43 +1,43 @@
 const stores = [
   {
-     name: 'Solgangsta',
-     url: 'https://solgangsta.holaplex.com/',
-     imagePath: "/images/solgangsta.jpg"
+     name: 'Sol Hamster',
+     url: 'https://hams.holaplex.com/#/',
+     imagePath: "/images/sol-hamster.png"
+  },
+  {
+     name: 'Pixel Penguins',
+     url: 'https://pixelpenguins.holaplex.com/#/',
+     imagePath: "/images/pixel-penguins.jpeg"
   },
   {
      name: 'Top Hat Chicks',
      url: 'https://tophatchicks.holaplex.com/#/',
-     imagePath: "/images/top-hat-chicks.jpg"
+     imagePath: "/images/top-hat-chicks.png"
   },
   {
-     name: 'Crypto Monks',
-     url: 'https://cryptomonks.holaplex.com/#/',
-     imagePath: "/images/crypto-monks.jpg"
+     name: 'Swanlana',
+     url: 'https://swanlana.holaplex.com/#/',
+     imagePath: "/images/swanlana.jpeg"
   },
   {
-     name: 'Paausmusic',
-     url: 'https://paausmusic.holaplex.com/#/',
-     imagePath: "/images/paausmusic.jpg"
+     name: 'Fxnction',
+     url: 'https://fxnction.holaplex.com/#/',
+     imagePath: "/images/fxnction.jpeg"
   },
   {
-     name: 'SPL Cards',
-     url: 'https://splcards.holaplex.com/#/',
-     imagePath: "/images/spl-cards.jpg"
+     name: 'Sol Rox',
+     url: 'https://rox.holaplex.com/#/',
+     imagePath: "/images/sol-rox.gif"
   },
   {
-     name: 'Cosmic Bloom',
-     url: 'https://cosmicblooom.holaplex.com/#/',
-     imagePath: "/images/cosmic-bloom.jpg"
+     name: 'Boogle',
+     url: 'https://boogle.holaplex.com/#/',
+     imagePath: "/images/boogle.jpeg"
   },
   {
-     name: 'Lobster Shack',
-     url: 'https://lobstershack.holaplex.com/#/',
-     imagePath: "/images/lobster-shack.jpg"
-  },
-  {
-     name: 'Hola',
-     url: 'https://hola.holaplex.com/#/',
-     imagePath: "/images/hola.png"
+     name: 'Sol Gangsta',
+     url: 'https://solgangsta.holaplex.com/#/',
+     imagePath: "/images/sol-gangsta.jpeg"
   },
 ]
 
