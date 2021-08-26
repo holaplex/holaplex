@@ -68,7 +68,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   }, [])
 
   useEffect(() => {
-    if (isNil(solana)) {
+    if (isNil(solana) || isNil(arweaveWallet)) {
       return
     }
 
@@ -85,10 +85,10 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
             return router.push("/storefront/edit")
           }
 
-          return router.push("/storefront/new") 
+          return router.push("/storefront/new")
         })
-        .then(() => window.arweaveWallet.connect(['ACCESS_ADDRESS']))
-        .then(() => window.arweaveWallet.getActiveAddress())
+        .then(() => arweaveWallet.connect(['ACCESS_ADDRESS']))
+        .then(() => arweaveWallet.getActiveAddress())
         .then((address) => {
           setArweaveWalletAddress(address)
         })
@@ -97,7 +97,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           setVerifying(false)
         })
     })
-  }, [solana])
+  }, [solana, arweave, arweaveWallet, router])
 
 
   const connect = () =>  {
