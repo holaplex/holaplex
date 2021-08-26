@@ -107,13 +107,13 @@ interface NewProps {
 
 export default function New({ track }: NewProps) {
   const [submitting, setSubmitting] = useState(false)
-  const [hasArweave, setHasArweave] = useState(true)
-  // we check for arweave at the last possible moment,
-  // assuming they do until we check.
   const router = useRouter()
   const arweave = initArweave()
   const [form] = Form.useForm()
-  const { solana } = useContext(WalletContext)
+  const {
+    solana,
+    arweaveRoadblockVisible
+  } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -185,7 +185,7 @@ export default function New({ track }: NewProps) {
   return (
     <Row justify="center" align="middle">
       <HowToArModal 
-        isModalVisible={!hasArweave}
+        isModalVisible={arweaveRoadblockVisible}
         />
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <PageCard>
@@ -239,8 +239,7 @@ export default function New({ track }: NewProps) {
                     { required: true, message: "Upload a logo." },
                   ]}
                 >
-                  <Upload 
-                    setHasArweave={setHasArweave}>
+                  <Upload>
                     {isEmpty(values.theme.logo) && (
                       <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
                     )}
@@ -319,7 +318,7 @@ export default function New({ track }: NewProps) {
                     { required: true, message: "Upload a favicon." }
                   ]}
                 >
-                  <Upload setHasArweave={setHasArweave}>
+                  <Upload>
                     {isEmpty(values.meta.favicon) && (
                       <Button block type="primary" size="middle" icon={<UploadOutlined />} >Upload</Button>
                     )}

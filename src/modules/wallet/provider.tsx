@@ -8,6 +8,8 @@ import { Solana } from '@/modules/solana/types'
 import { initArweave } from '@/modules/arweave'
 import arweaveSDK from '@/modules/arweave/client'
 import { WalletContext, WalletContextProps } from './context'
+import { getBalance } from '@/modules/arweave'
+import Arweave from 'arweave'
 
 type WalletProviderProps = {
   wallet?: Wallet,
@@ -27,6 +29,29 @@ const upsertWallet = async (pubkey: string) => {
     })
 }
 
+const handleArweaveBalance = async (
+  arweave: Arweave,
+  setArweaveBalance: Function,
+) => {
+  try {
+    await window.arweaveWallet.connect(['ACCESS_ADDRESS'])
+    const address = await window.arweaveWallet.getActiveAddress()
+
+    const balanceResponse = await getBalance(address, arweave)
+    
+    if (balanceResponse.match(/not found/i)) {
+      setArweaveBalance(0)
+    } else {
+      const balance = parseInt(balanceResponse, 10)
+      setArweaveBalance(balance)
+    }
+  } catch(err) {
+    console.log("error getting arweave balance", err)
+    throw err
+  }
+
+}
+
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter()
   const arweave = initArweave()
@@ -35,7 +60,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [wallet, setWallet] = useState<Wallet>()
   const [solana, setSolana] = useState<Solana>()
   const [arweaveWallet, setArweaveWallet] = useState<any>()
-  const [arweaveWalletAddress, setArweaveWalletAddress] = useState<string>()
+  const [arweaveBalance, setArweaveBalance] = useState<number>(0)
+  const [
+    arweaveRoadblockVisible,
+    displayArweaveRoadblock
+  ] = useState<boolean>(false)
 
   useEffect(() => {
     if (!process.browser || initializing) {
@@ -89,11 +118,10 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         })
         .then( async () => {
           // only connect to arweave if we have a solana connection :-)
-          await window.arweaveWallet.connect(['ACCESS_ADDRESS'])
-          const address = await window.arweaveWallet.getActiveAddress()
-          setArweaveWalletAddress(address)
-
-
+          await handleArweaveBalance(
+            arweave, 
+            setArweaveBalance,
+          )
         })
         .catch(() => router.push("/"))
         .finally(() => { 
@@ -114,8 +142,28 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   }
 
   return (
-    <WalletContext.Provider value={{ verifying, initializing, wallet, arweaveWallet, arweaveWalletAddress, solana, connect }}>
-      {children({ verifying, initializing, wallet, solana, connect })}
+    <WalletContext.Provider
+      value={{
+        verifying,
+        initializing,
+        wallet,
+        arweaveWallet,
+        arweaveBalance,
+        solana,
+        connect,
+        displayArweaveRoadblock,
+        arweaveRoadblockVisible,
+      }}>
+      {children({
+        arweaveRoadblockVisible,
+        displayArweaveRoadblock,
+        arweaveBalance,
+        verifying,
+        initializing,
+        wallet,
+        solana,
+        connect
+        })}
     </WalletContext.Provider>
   )
 }

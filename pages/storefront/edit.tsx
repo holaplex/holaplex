@@ -20,6 +20,7 @@ import arweaveSDK from '@/modules/arweave/client'
 import DomainFormItem from '@/common/components/elements/DomainFormItem'
 import InlineFormItem from '@/common/components/elements/InlineFormItem'
 import { isNil, reduce, propEq, findIndex, pipe, identity, merge, update, assocPath, isEmpty, ifElse, has, prop, lensPath, view, when } from 'ramda';
+import HowToArModal from '@/common/components/elements/HowToArModal';
 
 const { Text, Title, Paragraph } = Typography
 
@@ -112,7 +113,7 @@ export default function Edit( { track }: StorefrontEditProps) {
   const [tab, setTab] = useState("theme")
   const { storefront } = useContext(StorefrontContext)
   const [form] = Form.useForm()
-  const { solana, wallet } = useContext(WalletContext)
+  const { solana, wallet, arweaveRoadblockVisible } = useContext(WalletContext)
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -188,6 +189,7 @@ export default function Edit( { track }: StorefrontEditProps) {
   const tabs = {
     theme: (
       <Row justify="space-between">
+        <HowToArModal isModalVisible={arweaveRoadblockVisible} />
         <Col sm={24} md={12} lg={12}>
           <Title level={2}>Style your store.</Title>
           <InlineFormItem
