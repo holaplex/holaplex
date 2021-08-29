@@ -74,12 +74,14 @@ const StoreImage = styled.img`
 
 const StoreFronts = () => {
   const { connect } = useContext(WalletContext)
+  const arweave = initArweave()
 
   const windowDimensions = useWindowDimensions();
   const [loading, setLoading] = useState(true)
   const [show, setShow] = useState(20)
   const [hasMoreStores, setHasMoreStores] = useState(true)
   const [storefronts, setStorefronts] = useState<Storefront[]>([])
+  const { api } = arweave.getConfig()
 
   const loadMoreStores = () => {
     const total = storefronts.length
@@ -99,7 +101,6 @@ const StoreFronts = () => {
   });
 
   useEffect(() => {
-    const arweave = initArweave()
     ArweaveSDK.using(arweave).storefront.list()
       .then(data => {
         const storefronts = data.map(st => st.storefront)
@@ -137,7 +138,7 @@ const StoreFronts = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Image preview={false} src={replace('https://arweave.net:443', ARWEAVE_CDN_HOST, item?.theme.logo.url || "")} alt="" width={75} height={75} />
+                    <Image preview={false} src={replace(`${api.protocol}://${api.host}:${api.port}`, ARWEAVE_CDN_HOST, item?.theme.logo.url || "")} alt="" width={75} height={75} />
                     <StoreName ellipsis>
                       {item?.meta.title}
                     </StoreName>
