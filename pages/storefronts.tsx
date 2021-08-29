@@ -137,7 +137,7 @@ const StoreFronts = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Image preview={false} src={replace('https://arweave.net:443', ARWEAVE_CDN_HOST, item?.theme.logo.url)} alt="" width={75} height={75} />
+                    <Image preview={false} src={replace('https://arweave.net:443', ARWEAVE_CDN_HOST, item?.theme.logo.url || "")} alt="" width={75} height={75} />
                     <StoreName ellipsis>
                       {item?.meta.title}
                     </StoreName>
