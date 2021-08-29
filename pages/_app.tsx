@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/globals.css'
 import { useRouter } from 'next/router'
 import { ToastContainer } from 'react-toastify'
+import Head from 'next/head'
 import styled from 'styled-components'
 import Link from 'next/link'
 import { Layout, Space } from 'antd'
@@ -81,6 +82,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Head>
+        <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
+      </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
         {({ verifying, wallet }) => (
