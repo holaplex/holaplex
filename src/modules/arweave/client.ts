@@ -175,7 +175,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
         next = hasNextPage
       }
 
-      return uniqBy(view(lensPath(['storefront', 'subdomain'])), storefronts)
+      return uniqBy(view(lensPath(['storefront', 'pubkey'])), storefronts)
     },
     find: async (name: string, value: string): Promise<Storefront | null> => {
       const response = await query(
@@ -240,6 +240,8 @@ const using = (arweave: Arweave): ArweaveScope => ({
   }
 })
 
-export default {
+const client = {
   using,
 }
+
+export default client
