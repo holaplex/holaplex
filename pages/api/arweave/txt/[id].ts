@@ -1,11 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { contains } from 'ramda'
 import { initArweave } from '@/modules/arweave'
+import NextCors from 'nextjs-cors'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<string>
 ) {
+  await NextCors(req, res, {
+    methods: ['GET', 'HEAD'],
+    origin: '*',
+  })
+
   try {
     const arweave = initArweave()
     const id = req.query.id as string
@@ -27,8 +33,8 @@ export default async function handler(
     catch (_) {
     }
 
-    if (contains(res.getHeader("Content-Type"), ["text/html", "text/plain", , "text/xml", "application/json", "application/xml"])) {
-      dataParams.string = true
+    if (contains(res.getHeader("Content-Type"), ["text/html", "text/plain", "text/xml", "application/json", "application/xml"])) {
+      dataParams["string"] = true
     }
 
     const data = await arweave.transactions.getData(id, dataParams)
@@ -43,7 +49,7 @@ export default async function handler(
         res.setHeader('Allow', ['GET'])
         return res.status(405).end(`Method ${req.method} Not Allowed`)
     }
-  } catch (_) {  
+  } catch (_) {
     res.status(500).end()
   }
 }
