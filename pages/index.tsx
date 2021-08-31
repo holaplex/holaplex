@@ -201,7 +201,7 @@ export default function Home() {
 
       <Community justify="center">
         <Col sm={20} md={20} lg={20} xl={18}>
-          <CenteredTitle level={2}>Join our community, 150 stores and counting!</CenteredTitle>
+          <CenteredTitle level={2}>Join our community, 200 stores and counting!</CenteredTitle>
           <List
             grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
             dataSource={higlightStores}
