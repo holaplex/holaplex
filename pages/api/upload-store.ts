@@ -6,7 +6,7 @@ import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { Buffer } from 'buffer';
-import formidable, { Fields, Files, File } from 'formidable';
+import formidable, { Fields, File, Files } from 'formidable';
 import fs from 'fs/promises';
 import { NextApiRequest, NextApiResponse } from 'next';
 import nacl from 'tweetnacl';
@@ -113,7 +113,6 @@ const SCHEMAS = (() => {
             additionalProperties: true,
           },
           subdomain: { type: 'string' },
-          pubkey: { type: 'string' },
         },
         additionalProperties: true,
       },
@@ -133,8 +132,6 @@ const verifyPostParams = async (params: FormData) => {
 
   const payload = params.files[PAYLOAD_FORM_NAME];
   const signature = params.fields[SIGNATURE_FORM_NAME];
-
-  console.log({ payload, signature });
 
   if (!(payload && typeof signature === 'string'))
     throw new ApiError(400, 'Invalid request parameters');
@@ -193,32 +190,68 @@ const verifyPostParams = async (params: FormData) => {
     throw new ApiError(400, { message: 'Insufficient funds', uploadFee });
   }
 
-  return payloadDec;
+  return { pubkey: pubkeys[sender], payload: payloadDec };
 };
 
 /** Upload a storefront to Arweave. */
 const postArweaveTransaction = async (
   { files }: FormData,
+  pubkey: PublicKey,
   { depositTransaction, storefront, css }: UploadPayload
 ) => {
   const {
     arweave,
     arweaveKeypair: { jwk },
   } = await ENV;
+  const { api } = arweave.getConfig();
+
+  {
+    const txs = await arweave.transactions.search(
+      'holaplex:deposit:transaction',
+      depositTransaction
+    );
+
+    if (txs.length > 0) throw new ApiError(400, 'Storefront already uploaded');
+  }
+
+  const uploadFile = async (id: string) => {
+    let file: File[] | File | undefined = files[id];
+    file = 'slice' in file ? file[0] : file;
+
+    if (file === undefined) throw new ApiError(400, `Missing file '${id}'`);
+
+    const data = await fs.readFile(file.path);
+    const tx = await arweave.createTransaction({ data });
+
+    if (file.type === null || file.name === null) throw new ApiError(400, `Invalid file '${id}'`);
+
+    const { name, type } = file;
+
+    tx.addTag('Content-Type', type);
+    tx.addTag('File-Name', name);
+
+    await arweave.transactions.sign(tx, jwk);
+    await arweave.transactions.post(tx);
+
+    return { url: `${api.protocol}://${api.host}:${api.port}/${tx.id}`, name, type };
+  };
+
+  const [logo, favicon] = await Promise.all([uploadFile('logo'), uploadFile('favicon')]);
 
   const tx = await arweave.createTransaction({ data: css });
 
   tx.addTag('Content-Type', 'text/css');
-  tx.addTag('solana:pubkey', storefront.pubkey);
+  tx.addTag('solana:pubkey', pubkey.toBase58());
+  tx.addTag('holaplex:deposit:transaction', depositTransaction);
   tx.addTag('holaplex:metadata:subdomain', storefront.subdomain);
-  tx.addTag('holaplex:metadata:favicon:url', ''); // TODO make a transaction for this
-  tx.addTag('holaplex:metadata:favicon:name', '');
-  tx.addTag('holaplex:metadata:favicon:type', '');
+  tx.addTag('holaplex:metadata:favicon:url', favicon.url);
+  tx.addTag('holaplex:metadata:favicon:name', favicon.name);
+  tx.addTag('holaplex:metadata:favicon:type', favicon.type);
   tx.addTag('holaplex:metadata:page:title', storefront.meta.title);
   tx.addTag('holaplex:metadata:page:description', storefront.meta.description);
-  tx.addTag('holaplex:theme:logo:url', ''); // TODO make a transaction for this
-  tx.addTag('holaplex:theme:logo:name', '');
-  tx.addTag('holaplex:theme:logo:type', '');
+  tx.addTag('holaplex:theme:logo:url', logo.url);
+  tx.addTag('holaplex:theme:logo:name', logo.name);
+  tx.addTag('holaplex:theme:logo:type', logo.type);
   tx.addTag('holaplex:theme:color:primary', storefront.theme.primaryColor);
   tx.addTag('holaplex:theme:color:background', storefront.theme.backgroundColor);
   tx.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
@@ -252,6 +285,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
       // Verify the upload fee was paid and post the storefront to Arweave
       case 'POST': {
+        // Attempt to advise the client this request may take awhile
+        res.setHeader('Connection', 'Keep-Alive');
+        res.setHeader('Keep-Alive', `timeout=${5 * 60}`);
+
         const params = await new Promise<FormData>((ok) => {
           const form = new formidable.IncomingForm({ keepExtensions: true });
 
@@ -265,8 +302,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           });
         });
 
-        const storeInfo = await verifyPostParams(params);
-        const result = await postArweaveTransaction(params, storeInfo);
+        const { pubkey, payload } = await verifyPostParams(params);
+        const result = await postArweaveTransaction(params, pubkey, payload);
 
         return res.status(200).json({ success: true });
       }

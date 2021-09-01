@@ -1,4 +1,4 @@
-import { ArweaveFile } from '@/modules/arweave/types'
+import { ArweaveFile } from '@/modules/arweave/types';
 export interface StorefrontTheme<F = ArweaveFile> {
   primaryColor: string;
   backgroundColor: string;
@@ -13,9 +13,12 @@ export interface PageMetaData<F = ArweaveFile> {
   favicon: F;
 }
 
-export interface Storefront<F = ArweaveFile> {
+export interface AnonStorefront<F> {
   theme: StorefrontTheme<F>;
   meta: PageMetaData<F>;
   subdomain: string;
+}
+
+export interface Storefront extends AnonStorefront<ArweaveFile> {
   pubkey: string;
 }
