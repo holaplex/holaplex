@@ -1,5 +1,12 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
 import { WalletContext } from '@/modules/wallet';
+import {
+  Connection,
+  PublicKey,
+  sendAndConfirmRawTransaction,
+  SystemProgram,
+  Transaction,
+} from '@solana/web3.js';
 import { Buffer } from 'buffer';
 import { useCallback, useContext } from 'react';
 import nacl from 'tweetnacl';
@@ -9,7 +16,7 @@ const Tmp = () => {
 
   const submit = useCallback(async () => {
     try {
-      if (!solana) throw new Error('Could not connect to Solana!');
+      if (!solana) throw new Error('Could not connect to Solana');
 
       if (!solana.isConnected) {
         await Promise.all([
@@ -18,9 +25,45 @@ const Tmp = () => {
         ]);
       }
 
-      // TODO
-      const depositTransaction =
-        '3pqb74BgdDE8LWCDfu85tbgTASph4ZNUdC2JjVgKL83i1ViPBsQfbjDKsssJ5ado5MyxZkzeovurdNN94uHpdLC';
+      const infoResp = await fetch('/api/upload-store', { method: 'GET' });
+
+      if (!infoResp.ok) throw new Error('Could not get upload information');
+
+      const info = await infoResp.json();
+
+      if (!(typeof info === 'object' && info))
+        throw new Error('Invalid upload information received');
+
+      const { uploadFee, depositKey: depositKeyStr, solanaEndpoint } = info;
+
+      if (
+        !(
+          typeof uploadFee === 'number' &&
+          typeof depositKeyStr === 'string' &&
+          typeof solanaEndpoint === 'string'
+        )
+      )
+        throw new Error('Invalid upload information received');
+
+      const depositKey = new PublicKey(depositKeyStr);
+      const connection = new Connection(solanaEndpoint);
+      const payer = new PublicKey(solana.publicKey);
+
+      const tx = new Transaction();
+
+      tx.add(
+        SystemProgram.transfer({
+          fromPubkey: payer,
+          toPubkey: depositKey,
+          lamports: uploadFee,
+        })
+      );
+
+      tx.feePayer = payer;
+      tx.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+
+      const signed = await solana.signTransaction(tx);
+      const depositTransaction = await sendAndConfirmRawTransaction(connection, tx.serialize());
 
       const nonceBytes = Buffer.from(nacl.randomBytes(4));
       const payload = Buffer.from(
@@ -40,11 +83,16 @@ const Tmp = () => {
         signature: signature.toString('base64'),
       };
 
-      const res = await fetch('/api/upload-store', {
+      const postResp = await fetch('/api/upload-store', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(notarized),
       });
+
+      if (!postResp.ok) {
+        const json = await postResp.json();
+        throw new Error(`Store upload failed: ${json.message ?? JSON.stringify(json)}`);
+      }
     } catch (e) {
       console.error(e);
 

@@ -142,8 +142,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     switch (req.method) {
       case 'GET': {
-        const { uploadFee } = await ENV;
-        return res.status(200).json({ uploadFee });
+        const {
+          uploadFee,
+          solanaKeypair: { publicKey }, // Cowardly refusing to load the private key
+          solanaEndpoint,
+        } = await ENV;
+
+        return res
+          .status(200)
+          .json({ uploadFee, depositKey: publicKey.toBase58(), solanaEndpoint });
       }
       case 'POST': {
         const params = await verifyPostParams(req.body);
@@ -152,7 +159,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return res.status(200).json({ success: true });
       }
       default:
-        res.setHeader('Allow', ['POST']);
+        res.setHeader('Allow', ['GET', 'POST']);
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
   } catch (e) {
