@@ -1,75 +1,167 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
-import { Storefront } from '@/modules/storefront/types';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { initArweave } from '@/modules/arweave';
+import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { JWKInterface } from 'arweave/node/lib/wallet';
 import { Buffer } from 'buffer';
 import { NextApiRequest, NextApiResponse } from 'next';
 import nacl from 'tweetnacl';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Storefront[] | object>
-) {
-  switch (req.method) {
-    case 'POST': {
-      try {
-        const badRequest = () => res.status(400).end('Bad Request');
-        const params = req.body;
+class ApiError extends Error {
+  public readonly json: Readonly<object>;
 
-        if (!(typeof params === 'object' && params)) return badRequest();
+  constructor(public readonly status: number, message: string | Record<string, any>) {
+    super(typeof message === 'string' ? message : JSON.stringify(message));
+    this.json = typeof message === 'string' ? { message } : message;
+  }
+}
 
-        const { payload, signature } = params;
+const loadBuf = (a: Uint8Array | undefined) =>
+  a === undefined ? undefined : Buffer.from(a).toString('utf-8');
 
-        if (!(typeof payload === 'string' && typeof signature === 'string')) return badRequest();
+const ENV = (async () => {
+  const client = new SecretsManagerClient({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+    },
+  });
 
-        let payloadBuf: Buffer;
-        let signatureBuf: Buffer;
-        let payloadDec: any;
+  const [solanaResp, arweaveResp] = await Promise.all([
+    client.send(
+      new GetSecretValueCommand({
+        SecretId: process.env.SOLANA_SECRET_ID ?? '',
+      })
+    ),
+    client.send(
+      new GetSecretValueCommand({
+        SecretId: process.env.ARWEAVE_SECRET_ID ?? '',
+      })
+    ),
+  ]);
 
-        try {
-          payloadBuf = Buffer.from(payload, 'base64');
-          signatureBuf = Buffer.from(signature, 'base64');
-          payloadDec = JSON.parse(payloadBuf.toString('utf-8'));
-        } catch {
-          return badRequest();
-        }
+  const solanaSecret = solanaResp.SecretString ?? loadBuf(solanaResp.SecretBinary);
+  const arweaveSecret = arweaveResp.SecretString ?? loadBuf(arweaveResp.SecretBinary);
 
-        if (!(typeof payloadDec === 'object' && payloadDec)) return badRequest();
+  if (solanaSecret === undefined || arweaveSecret === undefined)
+    throw new Error('Missing AWS secrets');
 
-        const { depositTransaction } = payloadDec;
+  const solanaEndpoint = process.env.SOLANA_ENDPOINT;
+  if (solanaEndpoint === undefined) throw new Error('Missing SOLANA_ENDPOINT');
 
-        if (typeof depositTransaction !== 'string') return badRequest();
+  const solana = new Connection(solanaEndpoint);
+  const solanaSecretKey = new Uint8Array(JSON.parse(solanaSecret));
+  const solanaKeypair = Keypair.fromSecretKey(solanaSecretKey);
 
-        // TODO
-        const conn = new Connection('https://api.devnet.solana.com');
-        let tx;
+  console.log(`Solana public key: ${solanaKeypair.publicKey.toBase58()}`);
 
-        try {
-          tx = await conn.getTransaction(depositTransaction);
-        } catch {
-          return badRequest();
-        }
+  const arweave = initArweave();
+  const arweaveJwk = JSON.parse(arweaveSecret);
+  const arweaveKeypair = {
+    jwk: arweaveJwk as JWKInterface,
+    address: await arweave.wallets.jwkToAddress(arweaveJwk),
+  };
 
-        if (tx === null) return badRequest();
+  console.log(`Arweave public key: ${arweaveKeypair.address}`);
 
-        const pubkeys = tx.transaction.message.accountKeys.map((k) => new PublicKey(k));
+  const uploadFee = Number(process.env.STORE_UPLOAD_FEE);
+  if (!Number.isFinite(uploadFee) || uploadFee !== Math.trunc(uploadFee))
+    throw new Error('Invalid STORE_UPLOAD_FEE');
 
-        const msg = await formatFingerprint(payloadBuf);
-        const sender = pubkeys.find((k) =>
-          nacl.sign.detached.verify(msg, signatureBuf, k.toBytes())
-        );
+  return { solana, arweave, solanaKeypair, arweaveKeypair, uploadFee, solanaEndpoint };
+})();
 
-        if (sender === undefined) return res.status(403).end('Bad Keypair');
+const verifyPostParams = async (params: any) => {
+  const { solana, solanaKeypair, uploadFee, solanaEndpoint } = await ENV;
 
-        // TODO: arweave stuff
+  if (!(typeof params === 'object' && params))
+    throw new ApiError(400, 'Missing request parameters');
 
-        return res.status(204).end();
-      } catch (e) {
-        console.error(e);
-        return res.status(500).end();
+  const { payload, signature } = params;
+
+  if (!(typeof payload === 'string' && typeof signature === 'string'))
+    throw new ApiError(400, 'Invalid request parameters');
+
+  let payloadBuf: Buffer;
+  let signatureBuf: Buffer;
+  let payloadDec: any;
+
+  try {
+    payloadBuf = Buffer.from(payload, 'base64');
+    signatureBuf = Buffer.from(signature, 'base64');
+    payloadDec = JSON.parse(payloadBuf.toString('utf-8'));
+  } catch {
+    throw new ApiError(400, 'Invalid parameter encoding');
+  }
+
+  if (!(typeof payloadDec === 'object' && payloadDec))
+    throw new ApiError(400, 'Invalid parameter encoding');
+
+  const { depositTransaction } = payloadDec;
+
+  if (typeof depositTransaction !== 'string') throw new ApiError(400, 'Invalid request parameters');
+
+  let tx;
+
+  try {
+    tx = await solana.getTransaction(depositTransaction);
+  } catch {
+    throw new ApiError(400, 'Invalid deposit transaction');
+  }
+
+  if (tx === null || tx.meta === null || tx.meta.err !== null)
+    throw new ApiError(400, 'Invalid deposit transaction');
+
+  const pubkeys = tx.transaction.message.accountKeys.map((k) => new PublicKey(k));
+
+  const msg = await formatFingerprint(payloadBuf);
+  const sender = pubkeys.findIndex((k) =>
+    nacl.sign.detached.verify(msg, signatureBuf, k.toBytes())
+  );
+  const receiver = pubkeys.findIndex((k) => k.equals(solanaKeypair.publicKey));
+
+  if (sender < 0 || receiver < 0) throw new ApiError(403, { message: 'Bad public keys' });
+
+  if (
+    !(
+      tx.meta.preBalances[sender] - tx.meta.postBalances[sender] >= uploadFee &&
+      tx.meta.postBalances[receiver] > tx.meta.preBalances[receiver]
+    )
+  ) {
+    throw new ApiError(400, { message: 'Insufficient funds', uploadFee });
+  }
+};
+
+const postArweaveTransaction = async () => {
+  const {} = await ENV;
+  // TODO
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<object>) {
+  try {
+    switch (req.method) {
+      case 'GET': {
+        const { uploadFee } = await ENV;
+        return res.status(200).json({ uploadFee });
       }
+      case 'POST': {
+        const params = await verifyPostParams(req.body);
+        const result = await postArweaveTransaction();
+
+        return res.status(200).json({ success: true });
+      }
+      default:
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
-    default:
-      res.setHeader('Allow', ['POST']);
-      return res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (e) {
+    console.error(e);
+
+    if (e instanceof ApiError) {
+      return res.status(e.status).json(e.json);
+    } else {
+      return res.status(500).end();
+    }
   }
 }

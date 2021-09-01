@@ -18,6 +18,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.28.0",
+    "@aws-sdk/types": "^3.25.0",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
     "@solana/web3.js": "^1.24.1",
