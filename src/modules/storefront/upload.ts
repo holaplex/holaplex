@@ -10,6 +10,8 @@ import { AnonStorefront } from './types';
 
 export const PAYLOAD_FORM_NAME = 'payload';
 export const SIGNATURE_FORM_NAME = 'signature';
+export const LOGO_FORM_NAME = 'logo'
+export const FAVICON_FORM_NAME = 'favicon';
 
 export interface UploadPayload {
   depositTransaction: string;
@@ -148,8 +150,8 @@ export const uploadStorefront = async ({
 
     body.append(PAYLOAD_FORM_NAME, new Blob([payloadBuf], { type: 'application/json' }));
     body.append(SIGNATURE_FORM_NAME, signature.toString('base64'));
-    body.append('logo', logo, logoName);
-    body.append('favicon', favicon, faviconName);
+    body.append(LOGO_FORM_NAME, logo, logoName);
+    body.append(FAVICON_FORM_NAME, favicon, faviconName);
 
     const postResp = await fetch('/api/upload-store', { method: 'POST', body });
 

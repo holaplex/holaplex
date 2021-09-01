@@ -1,6 +1,12 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
 import { initArweave } from '@/modules/arweave';
-import { PAYLOAD_FORM_NAME, SIGNATURE_FORM_NAME, UploadPayload } from '@/modules/storefront/upload';
+import {
+    FAVICON_FORM_NAME,
+    LOGO_FORM_NAME,
+    PAYLOAD_FORM_NAME,
+    SIGNATURE_FORM_NAME,
+    UploadPayload
+} from '@/modules/storefront/upload';
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
@@ -236,7 +242,10 @@ const postArweaveTransaction = async (
     return { url: `${api.protocol}://${api.host}:${api.port}/${tx.id}`, name, type };
   };
 
-  const [logo, favicon] = await Promise.all([uploadFile('logo'), uploadFile('favicon')]);
+  const [logo, favicon] = await Promise.all([
+    uploadFile(LOGO_FORM_NAME),
+    uploadFile(FAVICON_FORM_NAME),
+  ]);
 
   const tx = await arweave.createTransaction({ data: css });
 
