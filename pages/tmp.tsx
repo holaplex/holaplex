@@ -1,4 +1,6 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
+import { Storefront } from '@/modules/storefront/types';
+import { PAYLOAD_FORM_NAME, SIGNATURE_FORM_NAME, UploadPayload } from '@/modules/storefront/upload';
 import { WalletContext } from '@/modules/wallet';
 import {
   Connection,
@@ -66,28 +68,26 @@ const Tmp = () => {
       const depositTransaction = await sendAndConfirmRawTransaction(connection, tx.serialize());
 
       const nonceBytes = Buffer.from(nacl.randomBytes(4));
-      const payload = Buffer.from(
-        JSON.stringify({
-          depositTransaction,
-          nonce: nonceBytes.toString('base64'),
-        }),
-        'utf-8'
-      );
-      const { publicKey, signature } = await solana.signMessage(
-        await formatFingerprint(payload),
-        'utf-8'
-      );
-
-      const notarized = {
-        payload: payload.toString('base64'),
-        signature: signature.toString('base64'),
+      const payload: UploadPayload = {
+        depositTransaction,
+        storefront: {} as Storefront<string>, // TODO
+        css: '', // TODO
+        nonce: nonceBytes.toString('base64'),
       };
+      const payloadBuf = Buffer.from(JSON.stringify(payload), 'utf-8');
+      const { publicKey, signature } = await solana.signMessage(
+        await formatFingerprint(payloadBuf),
+        'utf-8'
+      );
 
-      const postResp = await fetch('/api/upload-store', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(notarized),
-      });
+      const body = new FormData();
+
+      body.append(PAYLOAD_FORM_NAME, new Blob([payloadBuf], { type: 'application/json' }));
+      body.append(SIGNATURE_FORM_NAME, signature.toString('base64'));
+      // body.append('logo', ...);
+      // body.append('favicon', ...);
+
+      const postResp = await fetch('/api/upload-store', { method: 'POST', body });
 
       if (!postResp.ok) {
         const json = await postResp.json();

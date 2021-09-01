@@ -1,12 +1,23 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
 import { initArweave } from '@/modules/arweave';
+import { PAYLOAD_FORM_NAME, SIGNATURE_FORM_NAME, UploadPayload } from '@/modules/storefront/upload';
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { Buffer } from 'buffer';
+import formidable, { Fields, Files, File } from 'formidable';
+import fs from 'fs/promises';
 import { NextApiRequest, NextApiResponse } from 'next';
 import nacl from 'tweetnacl';
 
+/** Helper for formidable. */
+interface FormData {
+  fields: Fields;
+  files: Files;
+}
+
+/** Helper for nonlocal control flow for REST errors. */
 class ApiError extends Error {
   public readonly json: Readonly<object>;
 
@@ -16,9 +27,11 @@ class ApiError extends Error {
   }
 }
 
+/** Small helper for loading buffers from nullable byte arrays. */
 const loadBuf = (a: Uint8Array | undefined) =>
   a === undefined ? undefined : Buffer.from(a).toString('utf-8');
 
+/** Promise containing static environment data for this module. */
 const ENV = (async () => {
   const client = new SecretsManagerClient({
     region: process.env.AWS_REGION,
@@ -72,35 +85,83 @@ const ENV = (async () => {
   return { solana, arweave, solanaKeypair, arweaveKeypair, uploadFee, solanaEndpoint };
 })();
 
-const verifyPostParams = async (params: any) => {
+/** JSON schemas for parsing request parameters. */
+const SCHEMAS = (() => {
+  const ajv = new Ajv();
+
+  const payload: JTDSchemaType<UploadPayload> = {
+    properties: {
+      depositTransaction: { type: 'string' },
+      storefront: {
+        properties: {
+          theme: {
+            properties: {
+              primaryColor: { type: 'string' },
+              backgroundColor: { type: 'string' },
+              textFont: { type: 'string' },
+              titleFont: { type: 'string' },
+              logo: { type: 'string' },
+            },
+            additionalProperties: true,
+          },
+          meta: {
+            properties: {
+              title: { type: 'string' },
+              description: { type: 'string' },
+              favicon: { type: 'string' },
+            },
+            additionalProperties: true,
+          },
+          subdomain: { type: 'string' },
+          pubkey: { type: 'string' },
+        },
+        additionalProperties: true,
+      },
+      css: { type: 'string' },
+      nonce: { type: 'string' },
+    },
+    additionalProperties: true,
+  };
+
+  return { parsePayload: ajv.compileParser(payload) };
+})();
+
+/** Verify a notarized post request, returning the storefront to upload. */
+const verifyPostParams = async (params: FormData) => {
   const { solana, solanaKeypair, uploadFee, solanaEndpoint } = await ENV;
+  const { parsePayload } = await SCHEMAS;
 
-  if (!(typeof params === 'object' && params))
-    throw new ApiError(400, 'Missing request parameters');
+  const payload = params.files[PAYLOAD_FORM_NAME];
+  const signature = params.fields[SIGNATURE_FORM_NAME];
 
-  const { payload, signature } = params;
+  console.log({ payload, signature });
 
-  if (!(typeof payload === 'string' && typeof signature === 'string'))
+  if (!(payload && typeof signature === 'string'))
     throw new ApiError(400, 'Invalid request parameters');
 
   let payloadBuf: Buffer;
   let signatureBuf: Buffer;
-  let payloadDec: any;
+  let payloadDec: UploadPayload | undefined;
 
   try {
-    payloadBuf = Buffer.from(payload, 'base64');
+    const payloadFile: File | undefined = 'slice' in payload ? payload[0] : payload;
+    if (payloadFile === undefined) throw new Error();
+
+    payloadBuf = await fs.readFile(payloadFile.path);
     signatureBuf = Buffer.from(signature, 'base64');
-    payloadDec = JSON.parse(payloadBuf.toString('utf-8'));
+    payloadDec = parsePayload(payloadBuf.toString('utf-8'));
   } catch {
     throw new ApiError(400, 'Invalid parameter encoding');
   }
 
-  if (!(typeof payloadDec === 'object' && payloadDec))
-    throw new ApiError(400, 'Invalid parameter encoding');
+  if (payloadDec === undefined) {
+    throw new ApiError(400, `Invalid request parameters: ${parsePayload.message}`);
+  }
 
-  const { depositTransaction } = payloadDec;
+  const { depositTransaction, storefront, css } = payloadDec;
 
-  if (typeof depositTransaction !== 'string') throw new ApiError(400, 'Invalid request parameters');
+  if (!(typeof depositTransaction === 'string' && typeof storefront === 'object' && storefront))
+    throw new ApiError(400, 'Invalid request parameters');
 
   let tx;
 
@@ -131,16 +192,53 @@ const verifyPostParams = async (params: any) => {
   ) {
     throw new ApiError(400, { message: 'Insufficient funds', uploadFee });
   }
+
+  return payloadDec;
 };
 
-const postArweaveTransaction = async () => {
-  const {} = await ENV;
-  // TODO
+/** Upload a storefront to Arweave. */
+const postArweaveTransaction = async (
+  { files }: FormData,
+  { depositTransaction, storefront, css }: UploadPayload
+) => {
+  const {
+    arweave,
+    arweaveKeypair: { jwk },
+  } = await ENV;
+
+  const tx = await arweave.createTransaction({ data: css });
+
+  tx.addTag('Content-Type', 'text/css');
+  tx.addTag('solana:pubkey', storefront.pubkey);
+  tx.addTag('holaplex:metadata:subdomain', storefront.subdomain);
+  tx.addTag('holaplex:metadata:favicon:url', ''); // TODO make a transaction for this
+  tx.addTag('holaplex:metadata:favicon:name', '');
+  tx.addTag('holaplex:metadata:favicon:type', '');
+  tx.addTag('holaplex:metadata:page:title', storefront.meta.title);
+  tx.addTag('holaplex:metadata:page:description', storefront.meta.description);
+  tx.addTag('holaplex:theme:logo:url', ''); // TODO make a transaction for this
+  tx.addTag('holaplex:theme:logo:name', '');
+  tx.addTag('holaplex:theme:logo:type', '');
+  tx.addTag('holaplex:theme:color:primary', storefront.theme.primaryColor);
+  tx.addTag('holaplex:theme:color:background', storefront.theme.backgroundColor);
+  tx.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
+  tx.addTag('holaplex:theme:font:text', storefront.theme.textFont);
+  tx.addTag('Arweave-App', 'holaplex');
+
+  await arweave.transactions.sign(tx, jwk);
+  await arweave.transactions.post(tx);
+};
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<object>) {
   try {
     switch (req.method) {
+      // Return info for uploading a store
       case 'GET': {
         const {
           uploadFee,
@@ -152,9 +250,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           .status(200)
           .json({ uploadFee, depositKey: publicKey.toBase58(), solanaEndpoint });
       }
+      // Verify the upload fee was paid and post the storefront to Arweave
       case 'POST': {
-        const params = await verifyPostParams(req.body);
-        const result = await postArweaveTransaction();
+        const params = await new Promise<FormData>((ok) => {
+          const form = new formidable.IncomingForm({ keepExtensions: true });
+
+          form.parse(req, (formErr, fields, files) => {
+            if (formErr) {
+              console.error(formErr);
+              throw new ApiError(400, 'Malformed request body');
+            }
+
+            ok({ fields, files });
+          });
+        });
+
+        const storeInfo = await verifyPostParams(params);
+        const result = await postArweaveTransaction(params, storeInfo);
 
         return res.status(200).json({ success: true });
       }
@@ -163,11 +275,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
   } catch (e) {
-    console.error(e);
-
     if (e instanceof ApiError) {
       return res.status(e.status).json(e.json);
     } else {
+      console.error(e);
+
       return res.status(500).end();
     }
   }
