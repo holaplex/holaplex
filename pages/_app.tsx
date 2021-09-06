@@ -110,6 +110,15 @@ function MyApp({ Component, pageProps }: AppProps) {
                           View Stores
                         </Link>
                       </HeaderLinkWrapper>
+                      <HeaderLinkWrapper active={false}>
+                        <a
+                          href="https://docs.google.com/document/d/e/2PACX-1vSMDXh4TbZCR70AqA3O3-pRnvWVBSxE5cFM4LcprS_BHa20aRK8xFLDMwv-2YbZydWYQS1DBl2GBFNX/pub"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          FAQ
+                        </a>
+                      </HeaderLinkWrapper>
                       {windowDimensions.width > 550 && <SocialLinks />}
                     </Space>
                   </AppHeader>
