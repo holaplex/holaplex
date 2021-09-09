@@ -1,18 +1,20 @@
-import cors from './cors'
-import type { NextApiRequest, NextApiResponse } from 'next'
+import cors from './cors';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-function initMiddleware(middleware: (req: NextApiRequest, res: NextApiResponse, callback: (result: any) => any) => void): (req: NextApiRequest, res: NextApiResponse) => void {
+function initMiddleware(
+  middleware: (req: NextApiRequest, res: NextApiResponse, callback: (result: any) => any) => void
+): (req: NextApiRequest, res: NextApiResponse) => Promise<void> {
   return (req: NextApiRequest, res: NextApiResponse) =>
     new Promise((resolve, reject) => {
       middleware(req, res, (result) => {
         if (result instanceof Error) {
-          return reject(result)
+          return reject(result);
         }
-        return resolve(result)
-      })
-    })
+        return resolve(result);
+      });
+    });
 }
 
-const corsMiddleware = initMiddleware(cors)
+const corsMiddleware = initMiddleware(cors);
 
-export { corsMiddleware as cors }
+export { corsMiddleware as cors };

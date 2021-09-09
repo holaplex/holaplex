@@ -1,3 +1,4 @@
+import { cors } from '@/modules/middleware';
 import { ApproveNFTParams } from '@/modules/storefront/approve-nft';
 import { ApiError } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
@@ -37,6 +38,7 @@ const SCHEMAS = (() => {
 
   const params: JTDSchemaType<ApproveNFTParams> = {
     properties: {
+      solanaEndpoint: { type: 'string' },
       metadata: { type: 'string' },
       metaProgramId: { type: 'string' },
     },
@@ -48,9 +50,11 @@ const SCHEMAS = (() => {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<object>) {
   try {
+    await cors(req, res);
+
     switch (req.method) {
       case 'POST': {
-        const { solana, solanaKeypair } = await WALLETS;
+        const { solana, solanaKeypair, solanaEndpoint } = await WALLETS;
         const { validateParams } = SCHEMAS;
 
         const params = req.body;
@@ -62,10 +66,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           );
         }
 
-        const { metadata: metadataStr, metaProgramId: metaProgramIdStr } = params;
+        const {
+          solanaEndpoint: clientSolEndpoint,
+          metadata: metadataStr,
+          metaProgramId: metaProgramIdStr,
+        } = params;
 
         if (!metaProgramIdStr.startsWith('meta')) {
           throw new ApiError(400, 'Invalid program ID');
+        }
+
+        if (clientSolEndpoint !== solanaEndpoint) {
+          throw new ApiError(400, 'Mismatched Solana endpoint');
         }
 
         let metadata;
@@ -95,8 +107,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         return res.status(204).end();
       }
+      case 'OPTIONS': return res.status(204).end();
       default:
-        res.setHeader('Allow', ['Post']);
+        res.setHeader('Allow', ['POST', 'OPTIONS']);
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
   } catch (e) {

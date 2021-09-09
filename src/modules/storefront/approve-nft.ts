@@ -1,17 +1,20 @@
 import { PublicKey } from '@solana/web3.js';
 
 export interface ApproveNFTParams {
+  solanaEndpoint: string;
   metadata: string;
   metaProgramId: string;
 }
 
 export const approveNFT = async ({
+  solanaEndpoint,
   metadata,
   metaProgramId,
   onProgress,
   onComplete,
   onError,
 }: {
+  solanaEndpoint: string;
   metadata: PublicKey;
   metaProgramId: PublicKey;
   onProgress?: (status: 'setup' | 'approving' | 'approved' | 'failed') => void;
@@ -24,6 +27,7 @@ export const approveNFT = async ({
     onProgress('setup');
 
     const params: ApproveNFTParams = {
+      solanaEndpoint,
       metadata: metadata.toBase58(),
       metaProgramId: metaProgramId.toBase58(),
     };
