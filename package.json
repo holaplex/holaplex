@@ -23,6 +23,7 @@
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
     "@solana/web3.js": "^1.25.0",
+    "ajv": "^8.6.2",
     "antd": "^4.16.7",
     "antd-mobile": "^2.3.4",
     "arweave": "^1.10.15",
