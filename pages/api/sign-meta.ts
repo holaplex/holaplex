@@ -1,4 +1,4 @@
-import { ApproveNFTParams } from '@/modules/storefront/approve-nft';
+import { SignMetaParams } from '@/modules/storefront/approve-nft';
 import { ApiError } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
@@ -36,7 +36,7 @@ function signMetadata(
 const SCHEMAS = (() => {
   const ajv = new Ajv();
 
-  const params: JTDSchemaType<ApproveNFTParams> = {
+  const params: JTDSchemaType<SignMetaParams> = {
     properties: {
       solanaEndpoint: { type: 'string' },
       metadata: { type: 'string' },
