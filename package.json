@@ -6,6 +6,7 @@
     "dev": "nodemon",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
+    "update-stores": "yarn build && cross-env NODE_ENV=production node .next/server/updateStores.js",
     "lint": "next lint",
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
