@@ -1,14 +1,14 @@
-import { cors } from '@/modules/middleware';
-import { ApproveNFTParams } from '@/modules/storefront/approve-nft';
+import { SignMetaParams } from '@/modules/storefront/approve-nft';
 import { ApiError } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import { Buffer } from 'buffer';
 import { NextApiRequest, NextApiResponse } from 'next';
+import NextCors from 'nextjs-cors';
 
 /** Adapted from metaplex/js/packages/common/src/actions/metadata.ts */
-export function signMetadata(
+function signMetadata(
   metadata: PublicKey,
   creator: PublicKey,
   tx: Transaction,
@@ -36,7 +36,7 @@ export function signMetadata(
 const SCHEMAS = (() => {
   const ajv = new Ajv();
 
-  const params: JTDSchemaType<ApproveNFTParams> = {
+  const params: JTDSchemaType<SignMetaParams> = {
     properties: {
       solanaEndpoint: { type: 'string' },
       metadata: { type: 'string' },
@@ -49,9 +49,12 @@ const SCHEMAS = (() => {
 })();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<object>) {
-  try {
-    await cors(req, res);
+  await NextCors(req, res, {
+    methods: ['POST', 'HEAD', 'OPTIONS'],
+    origin: '*',
+  });
 
+  try {
     switch (req.method) {
       case 'POST': {
         const { solana, solanaKeypair, solanaEndpoint } = await WALLETS;
@@ -107,9 +110,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         return res.status(204).end();
       }
-      case 'OPTIONS': return res.status(204).end();
+      case 'HEAD':
+      case 'OPTIONS':
+        return res.status(204).end();
       default:
-        res.setHeader('Allow', ['POST', 'OPTIONS']);
+        res.setHeader('Allow', ['POST', 'HEAD', 'OPTIONS']);
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
   } catch (e) {

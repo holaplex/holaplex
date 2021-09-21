@@ -1,12 +1,12 @@
 import { PublicKey } from '@solana/web3.js';
 
-export interface ApproveNFTParams {
+export interface SignMetaParams {
   solanaEndpoint: string;
   metadata: string;
   metaProgramId: string;
 }
 
-export const approveNFT = async ({
+export const holaSignMetadata = async ({
   solanaEndpoint,
   metadata,
   metaProgramId,
@@ -17,7 +17,7 @@ export const approveNFT = async ({
   solanaEndpoint: string;
   metadata: PublicKey;
   metaProgramId: PublicKey;
-  onProgress?: (status: 'setup' | 'approving' | 'approved' | 'failed') => void;
+  onProgress?: (status: 'setup' | 'signing' | 'signed' | 'failed') => void;
   onComplete?: () => void;
   onError?: (msg: string) => void;
 }) => {
@@ -26,15 +26,15 @@ export const approveNFT = async ({
 
     onProgress('setup');
 
-    const params: ApproveNFTParams = {
+    const params: SignMetaParams = {
       solanaEndpoint,
       metadata: metadata.toBase58(),
       metaProgramId: metaProgramId.toBase58(),
     };
 
-    onProgress('approving');
+    onProgress('signing');
 
-    const resp = await fetch('/api/approve-nft', {
+    const resp = await fetch('/api/sign-meta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params),
@@ -52,7 +52,7 @@ export const approveNFT = async ({
       throw new Error(`Store upload failed: ${json.message ?? JSON.stringify(json)}`);
     }
 
-    onProgress('approved');
+    onProgress('signed');
 
     if (onComplete) onComplete();
   } catch (e) {
