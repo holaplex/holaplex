@@ -28,7 +28,7 @@ interface ArweaveWalletHelpers {
   canAfford: (address: string, bytes: number) => Promise<boolean>
 }
 
-interface ArweaveScope {
+export interface ArweaveScope {
   storefront: ArweaveObjectInteraction;
   wallet: ArweaveWalletHelpers;
 }
