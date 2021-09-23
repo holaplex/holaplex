@@ -5,19 +5,32 @@ import Upload from '@/common/components/elements/Upload';
 import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import HowToArModal from '@/components/elements/HowToArModal';
-import sv from '@/constants/styles';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import type { GoogleTracker } from '@/modules/ganalytics/types';
 import { StorefrontContext } from '@/modules/storefront';
-import { stylesheet } from '@/modules/theme';
+import {
+  FieldData,
+  getTextColor,
+  Paragraph,
+  PrevCard,
+  PrevCol,
+  PreviewButton,
+  PreviewLink,
+  PrevText,
+  PrevTitle,
+  reduceFieldData,
+  StorefrontEditorProps,
+  submitCallback,
+  Title,
+  UploadedLogo,
+  validateArweaveFunds,
+  validateSubdomainUniqueness,
+} from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
 import { UploadOutlined } from '@ant-design/icons';
-import { Card, Col, Form, Input, Row, Space, Typography } from 'antd';
-import Color from 'color';
+import { Card, Col, Form, Input, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
 import {
-  assocPath,
   findIndex,
   has,
   ifElse,
@@ -25,101 +38,18 @@ import {
   isNil,
   lensPath,
   merge,
-  not,
   pipe,
   prop,
   propEq,
-  reduce,
   update,
   view,
-  when,
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import styled from 'styled-components';
-
-const { Text, Title, Paragraph } = Typography;
-
-const PreviewButton = styled.div<{ textColor: string }>`
-  height: 52px;
-  background: ${(props) => props.color};
-  color: ${(props) => props.textColor};
-  width: fit-content;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  border-radius: 8px;
-  font-weight: 700;
-`;
-
-const UploadedLogo = styled.img`
-  height: 48px;
-  width: 48px;
-`;
-
-const PreviewLink = styled.div`
-  color: ${(props) => props.color};
-  text-decoration: underline;
-`;
-
-type PrevTitleProps = {
-  color: string;
-  level: number;
-  fontFamily: string;
-};
-const PrevTitle = styled(Title)`
-  &.ant-typography {
-    font-family: '${({ fontFamily }: PrevTitleProps) => fontFamily}', sans;
-    color: ${({ color }: PrevTitleProps) => color};
-  }
-`;
-
-type PrevTextProps = {
-  color: string;
-  fontFamily: string;
-};
-
-const PrevText = styled(Text)`
-  &.ant-typography {
-    font-family: '${({ fontFamily }: PrevTextProps) => fontFamily}', sans;
-    color: ${({ color }: PrevTextProps) => color};
-  }
-`;
-type PrevCardProps = {
-  bgColor: string;
-};
-
-const PrevCard = styled(Card)`
-  &.ant-card {
-    border-radius: 12px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    background-color: ${({ bgColor }: PrevCardProps) => bgColor};
-  }
-`;
-
-const PrevCol = styled(Col)`
-  margin: 0 0 24px 0;
-`;
-
-interface FieldData {
-  name: string | number | (string | number)[];
-  value?: any;
-  touched?: boolean;
-  validating?: boolean;
-  errors?: string[];
-}
-
-const popFile = when<any, any>(has('response'), prop('response'));
-
-interface StorefrontEditProps {
-  track: GoogleTracker;
-}
 
 type TabKey = 'subdomain' | 'theme' | 'meta';
 
-export default function Edit({ track }: StorefrontEditProps) {
+export default function Edit({ track }: StorefrontEditorProps) {
   const [submitting, setSubmitting] = useState(false);
   const [showARModal, setShowARModal] = useState(false);
   // we check for arweave at the last possible moment,
@@ -165,101 +95,35 @@ export default function Edit({ track }: StorefrontEditProps) {
     );
   }
 
-  const values = reduce(
-    (acc: any, item: FieldData) => {
-      return assocPath(item.name as string[], item.value, acc);
-    },
-    {},
-    fields
-  );
+  const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = async (_: any, subdomain: any) => {
-    const storefront = await ar.storefront.find('holaplex:metadata:subdomain', subdomain || '');
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
+  const hasArweaveFunds = validateArweaveFunds(arweaveWalletAddress, ar, setShowARModal);
 
-    if (isNil(storefront) || storefront.pubkey === wallet.pubkey) {
-      return Promise.resolve(subdomain);
-    }
-
-    return Promise.reject('The subdomain is already in use. Please pick another.');
-  };
-
-  const hasArweaveFunds = async (_: any, [file]: any) => {
-    if (isNil(file) || file.url) {
-      return Promise.resolve();
-    }
-
-    const canAfford =
-      arweaveWalletAddress && (await ar.wallet.canAfford(arweaveWalletAddress, file.size));
-    if (canAfford) {
-      return Promise.resolve();
-    }
-
-    setShowARModal(true);
-
-    return Promise.reject(new Error('Not enough AR funds to cover the upload fee.'));
-  };
-
-  const onSubmit = async () => {
-    try {
-      setSubmitting(true);
-
-      const { theme, meta, subdomain } = values;
-      const domain = `${subdomain}.holaplex.com`;
-
-      const logo = popFile(theme.logo[0]);
-      const favicon = popFile(meta.favicon[0]);
-
-      const css = stylesheet({ ...theme, logo });
-
-      if (
-        isNil(arweaveWalletAddress) ||
-        not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8')))
-      ) {
-        setSubmitting(false);
-        setShowARModal(true);
-
-        return Promise.reject();
-      }
-
-      await arweaveSDK.using(arweave).storefront.upsert(
-        {
-          ...storefront,
-          subdomain,
-          theme: { ...theme, logo },
-          meta: { ...meta, favicon },
-        },
-        css
-      );
-
+  const onSubmit = submitCallback({
+    track,
+    router,
+    arweaveWalletAddress,
+    ar,
+    pubkey: storefront.pubkey,
+    values,
+    setSubmitting,
+    setShowARModal,
+    onSuccess: (domain) =>
       toast(
-        () => (
-          <>
-            Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view
-            the changes.
-          </>
-        ),
+        <>
+          Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the
+          changes.
+        </>,
         { autoClose: 60000 }
-      );
+      ),
+    onError: () =>
+      toast(<>There was an issue updating your storefront. Please wait a moment and try again.</>),
+    trackEvent: 'updated',
+  });
 
-      router.push('/').then(() => {
-        track('storefront', 'updated');
-
-        setSubmitting(false);
-      });
-    } catch {
-      setSubmitting(false);
-      toast.error(() => (
-        <>There was an issue updating your storefront. Please wait a moment and try again.</>
-      ));
-    }
-  };
-
-  const textColor = new Color(values.theme.backgroundColor).isDark()
-    ? sv.colors.buttonText
-    : sv.colors.text;
-  const buttontextColor = new Color(values.theme.primaryColor).isDark()
-    ? sv.colors.buttonText
-    : sv.colors.text;
+  const textColor = getTextColor(values.theme.backgroundColor);
+  const buttontextColor = getTextColor(values.theme.primaryColor);
 
   const subdomain = (
     <>
