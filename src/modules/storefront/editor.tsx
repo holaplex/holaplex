@@ -2,7 +2,7 @@ import StyleVariables from '@/common/constants/styles';
 import { Card, Col, Typography } from 'antd';
 import Color from 'color';
 import { NextRouter } from 'next/router';
-import { assocPath, has, isNil, not, reduce } from 'ramda';
+import { assocPath, has, isNil, reduce } from 'ramda';
 import { RuleObject } from 'rc-field-form/lib/interface';
 import { ReactChild } from 'react';
 import { toast } from 'react-toastify';
@@ -10,7 +10,9 @@ import styled from 'styled-components';
 import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
 import type { GoogleTracker } from '../ganalytics/types';
-import { stylesheet } from '../theme';
+import { Solana } from '../solana/types';
+import { PageMetaData, StorefrontTheme } from './types';
+import { uploadStorefront } from './upload-store';
 
 export const { Text, Title, Paragraph } = Typography;
 
@@ -89,6 +91,11 @@ export interface FieldData {
   errors?: string[];
 }
 
+export interface LocalFile {
+  file: File | undefined;
+  url: string | undefined;
+}
+
 /// Half reverse-engineered, mostly to avoid use of any
 export interface AntdFile {
   uid: string;
@@ -97,13 +104,13 @@ export interface AntdFile {
   size: number;
   percent?: number;
   status?: 'uploading' | 'done' | 'error' | 'removed';
-  response: ArweaveFile;
+  response: LocalFile;
   xhr?: unknown;
 }
 
-export type FileInput = ArweaveFile | AntdFile;
+export type FileInput = (ArweaveFile & { file?: undefined }) | LocalFile | AntdFile;
 
-export const popFile = (f: FileInput): ArweaveFile => {
+export const popFile = (f: FileInput): (ArweaveFile & { file?: undefined }) | LocalFile => {
   if (has<'response'>('response', f)) {
     return f.response;
   } else {
@@ -158,24 +165,18 @@ export const validateArweaveFunds = (
 export const submitCallback = ({
   track,
   router,
-  arweaveWalletAddress,
-  ar,
-  pubkey,
+  solana,
   values,
   setSubmitting,
-  setShowARModal,
   onSuccess,
   onError,
   trackEvent,
 }: {
   track: GoogleTracker;
   router: NextRouter;
-  arweaveWalletAddress: string;
-  ar: ArweaveScope;
-  pubkey: string;
+  solana: Solana | undefined;
   values: any;
   setSubmitting: (val: boolean) => void;
-  setShowARModal: (val: boolean) => void;
   onSuccess: (domain: string) => void;
   onError: () => void;
   trackEvent: string;
@@ -190,27 +191,24 @@ export const submitCallback = ({
       const logo = popFile(theme.logo[0]);
       const favicon = popFile(meta.favicon[0]);
 
-      const css = stylesheet({ ...theme, logo });
-
-      if (
-        isNil(arweaveWalletAddress) ||
-        not(ar.wallet.canAfford(arweaveWalletAddress, Buffer.byteLength(css, 'utf8')))
-      ) {
-        setSubmitting(false);
-        setShowARModal(true);
-
-        return Promise.reject();
-      }
-
-      await ar.storefront.upsert(
-        {
-          pubkey,
+      await uploadStorefront({
+        solana,
+        storefront: {
+          theme: {
+            ...(theme as StorefrontTheme<undefined>),
+            logo: 'file' in logo ? undefined : logo,
+          },
+          meta: {
+            ...(meta as PageMetaData<undefined>),
+            favicon: 'file' in favicon ? undefined : favicon,
+          },
           subdomain,
-          theme: { ...theme, logo },
-          meta: { ...meta, favicon },
         },
-        css
-      );
+        logo: logo.file,
+        favicon: favicon.file,
+        onProgress: (s) => console.log(s),
+        onError: (e) => console.log(e),
+      });
 
       onSuccess(domain);
 

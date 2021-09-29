@@ -103,12 +103,9 @@ export default function Edit({ track }: StorefrontEditorProps) {
   const onSubmit = submitCallback({
     track,
     router,
-    arweaveWalletAddress,
-    ar,
-    pubkey: storefront.pubkey,
+    solana,
     values,
     setSubmitting,
-    setShowARModal,
     onSuccess: (domain) =>
       toast(
         <>
