@@ -1,22 +1,18 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
-import {
-  Connection,
-  PublicKey, SystemProgram,
-  Transaction
-} from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import nacl from 'tweetnacl';
+import { ArweaveFile } from '../arweave/types';
 import { Solana } from '../solana/types';
 import { AnonStorefront } from './types';
 
 export const PAYLOAD_FORM_NAME = 'payload';
 export const SIGNATURE_FORM_NAME = 'signature';
-export const LOGO_FORM_NAME = 'logo'
+export const LOGO_FORM_NAME = 'logo';
 export const FAVICON_FORM_NAME = 'favicon';
 
 export interface UploadPayload {
   depositTransaction: string;
-  storefront: AnonStorefront<string>;
-  css: string;
+  storefront: AnonStorefront<ArweaveFile | undefined>;
   nonce: string;
 }
 
@@ -28,23 +24,17 @@ export const uploadStorefront = async ({
   solana,
   depositTransaction,
   storefront,
-  css,
   logo,
-  logoName,
   favicon,
-  faviconName,
   onProgress,
   onComplete,
   onError,
 }: {
   solana: Solana | undefined;
   depositTransaction?: string;
-  storefront: AnonStorefront<string>;
-  css: string;
-  logo: Blob;
-  logoName: string;
-  favicon: Blob;
-  faviconName: string;
+  storefront: AnonStorefront<ArweaveFile | undefined>;
+  logo: File | undefined;
+  favicon: File | undefined;
   onProgress?: (
     status:
       | 'connecting-wallet'
@@ -135,14 +125,10 @@ export const uploadStorefront = async ({
     const payload: UploadPayload = {
       depositTransaction,
       storefront,
-      css,
       nonce: nonceBytes.toString('base64'),
     };
     const payloadBuf = Buffer.from(JSON.stringify(payload), 'utf-8');
-    const { publicKey, signature } = await solana.signMessage(
-      await formatFingerprint(payloadBuf),
-      'utf-8'
-    );
+    const { signature } = await solana.signMessage(await formatFingerprint(payloadBuf), 'utf-8');
 
     onProgress('uploading');
 
@@ -150,8 +136,9 @@ export const uploadStorefront = async ({
 
     body.append(PAYLOAD_FORM_NAME, new Blob([payloadBuf], { type: 'application/json' }));
     body.append(SIGNATURE_FORM_NAME, signature.toString('base64'));
-    body.append(LOGO_FORM_NAME, logo, logoName);
-    body.append(FAVICON_FORM_NAME, favicon, faviconName);
+
+    if (logo !== undefined) body.append(LOGO_FORM_NAME, logo);
+    if (favicon !== undefined) body.append(FAVICON_FORM_NAME, favicon);
 
     const postResp = await fetch('/api/upload-store', { method: 'POST', body });
 

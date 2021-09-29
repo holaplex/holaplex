@@ -1,52 +1,32 @@
-import { Upload } from 'antd'
-import React from 'react'
-import { isEmpty, isNil, always, not } from 'ramda'
-import { initArweave } from '@/modules/arweave'
+import { Upload } from 'antd';
+import { isNil } from 'ramda';
+import React, { useRef } from 'react';
 
 type UploadProps = {
-  onChange?: (uploads: any) => any,
-  className?: string,
-  disabled?: boolean,
-  value?: any,
-  children?: React.ReactElement | boolean,
-}
+  onChange?: (uploads: any) => any;
+  className?: string;
+  disabled?: boolean;
+  value?: any;
+  children?: React.ReactElement | boolean;
+};
 
-export default function FileUpload({
-  children,
-  value,
-  onChange,
-}: UploadProps) {
+export default function FileUpload({ children, value, onChange }: UploadProps) {
+  const fileUrlRef = useRef<string | undefined>(undefined);
+
   const handleInputChange = async (upload: any) => {
-    const arweave = initArweave()
-    const file = upload.file
+    const file = upload.file;
 
     if (isNil(file)) {
-      return
+      return;
     }
 
-    const { api } = arweave.getConfig()
-
-    const data = await file.arrayBuffer()
-    const transaction = await arweave.createTransaction({ data })
-
-    transaction.addTag("Content-Type", file.type)
-    transaction.addTag("File-Name", file.name)
-
-    await arweave.transactions.sign(transaction)
-
-    let uploader = await arweave.transactions.getUploader(transaction)
-
-    while (!uploader.isComplete) {
-      await uploader.uploadChunk()
-      upload.onProgress({ percent: upload.ptcComplete })
+    if (!isNil(fileUrlRef.current)) {
+      URL.revokeObjectURL(fileUrlRef.current);
     }
 
-    const url = `${api.protocol}://${api.host}:${api.port}/${transaction.id}`
-
-    const response = { name: file.name, type: file.type, url, uid: transaction.id }
-
-    upload.onSuccess(response, file)
-  }
+    fileUrlRef.current = URL.createObjectURL(file);
+    upload.onSuccess({ file: file, url: fileUrlRef.current }, file);
+  };
 
   return (
     <Upload
@@ -54,15 +34,14 @@ export default function FileUpload({
       maxCount={1}
       onChange={({ fileList }: any) => {
         if (isNil(onChange)) {
-          return
+          return;
         }
 
-        onChange(fileList)
+        onChange(fileList);
       }}
       fileList={value}
     >
       {children}
     </Upload>
-  )
-
+  );
 }

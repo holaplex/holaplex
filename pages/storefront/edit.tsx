@@ -102,12 +102,9 @@ export default function Edit({ track }: StorefrontEditorProps) {
   const onSubmit = submitCallback({
     track,
     router,
-    arweaveWalletAddress,
-    ar,
-    pubkey: storefront.pubkey,
+    solana,
     values,
     setSubmitting,
-    setShowARModal,
     successToast: (domain) => (
       <>
         Your storefront was updated. Visit <a href={`https://${domain}`}>{domain}</a> to view the

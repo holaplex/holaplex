@@ -1,11 +1,13 @@
 import { formatFingerprint } from '@/common/constants/signature-message';
+import { ArweaveFile } from '@/modules/arweave/types';
 import {
   FAVICON_FORM_NAME,
   LOGO_FORM_NAME,
   PAYLOAD_FORM_NAME,
   SIGNATURE_FORM_NAME,
-  UploadPayload
+  UploadPayload,
 } from '@/modules/storefront/upload-store';
+import { stylesheet } from '@/modules/theme';
 import { ApiError, FormData } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey } from '@solana/web3.js';
@@ -31,7 +33,16 @@ const SCHEMAS = (() => {
               backgroundColor: { type: 'string' },
               textFont: { type: 'string' },
               titleFont: { type: 'string' },
-              logo: { type: 'string' },
+            },
+            optionalProperties: {
+              logo: {
+                properties: {
+                  name: { type: 'string' },
+                  type: { type: 'string' },
+                  url: { type: 'string' },
+                },
+                additionalProperties: true,
+              },
             },
             additionalProperties: true,
           },
@@ -39,7 +50,16 @@ const SCHEMAS = (() => {
             properties: {
               title: { type: 'string' },
               description: { type: 'string' },
-              favicon: { type: 'string' },
+            },
+            optionalProperties: {
+              favicon: {
+                properties: {
+                  name: { type: 'string' },
+                  type: { type: 'string' },
+                  url: { type: 'string' },
+                },
+                additionalProperties: true,
+              },
             },
             additionalProperties: true,
           },
@@ -47,7 +67,6 @@ const SCHEMAS = (() => {
         },
         additionalProperties: true,
       },
-      css: { type: 'string' },
       nonce: { type: 'string' },
     },
     additionalProperties: true,
@@ -124,7 +143,7 @@ const verifyPostParams = async (params: FormData, uploadFee: number) => {
 const postArweaveTransaction = async (
   { files }: FormData,
   pubkey: PublicKey,
-  { depositTransaction, storefront, css }: UploadPayload
+  { depositTransaction, storefront }: UploadPayload
 ) => {
   const {
     arweave,
@@ -141,11 +160,12 @@ const postArweaveTransaction = async (
     if (txs.length > 0) throw new ApiError(400, 'Storefront already uploaded');
   }
 
-  const uploadFile = async (id: string) => {
+  const uploadFile = async (id: string): Promise<ArweaveFile | undefined> => {
     let file: File[] | File | undefined = files[id];
-    file = 'slice' in file ? file[0] : file;
 
-    if (file === undefined) throw new ApiError(400, `Missing file '${id}'`);
+    if (file === undefined) return undefined;
+
+    file = 'slice' in file ? file[0] : file;
 
     const data = await fs.readFile(file.path);
     const tx = await arweave.createTransaction({ data });
@@ -163,12 +183,18 @@ const postArweaveTransaction = async (
     return { url: `${api.protocol}://${api.host}:${api.port}/${tx.id}`, name, type };
   };
 
-  const [logo, favicon] = await Promise.all([
+  const [newLogo, newFavicon] = await Promise.all([
     uploadFile(LOGO_FORM_NAME),
     uploadFile(FAVICON_FORM_NAME),
   ]);
 
-  const tx = await arweave.createTransaction({ data: css });
+  const logo = newLogo ?? storefront.theme.logo;
+  const favicon = newFavicon ?? storefront.meta.favicon;
+
+  if (logo === undefined) throw new ApiError(400, 'Missing store logo');
+  if (favicon === undefined) throw new ApiError(400, 'Missing store favicon');
+
+  const tx = await arweave.createTransaction({ data: stylesheet({ ...storefront.theme, logo }) });
 
   tx.addTag('Content-Type', 'text/css');
   tx.addTag('solana:pubkey', pubkey.toBase58());

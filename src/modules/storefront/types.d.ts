@@ -1,6 +1,6 @@
 import { ArweaveFile } from '@/modules/arweave/types';
 
-export interface StorefrontTheme<F = ArweaveFile> {
+export interface StorefrontTheme<F extends ArweaveFile | undefined = ArweaveFile> {
   primaryColor: string;
   backgroundColor: string;
   textFont: string;
@@ -8,7 +8,7 @@ export interface StorefrontTheme<F = ArweaveFile> {
   logo: F;
 }
 
-export interface PageMetaData<F = ArweaveFile> {
+export interface PageMetaData<F extends ArweaveFile | undefined = ArweaveFile> {
   title: string;
   description: string;
   favicon: F;
