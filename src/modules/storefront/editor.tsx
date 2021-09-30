@@ -12,7 +12,7 @@ import { ArweaveFile } from '../arweave/types';
 import type { GoogleTracker } from '../ganalytics/types';
 import { Solana } from '../solana/types';
 import { PageMetaData, StorefrontTheme } from './types';
-import { uploadStorefront } from './upload-store';
+import { putStorefront } from './put-storefront';
 
 export const { Text, Title, Paragraph } = Typography;
 
@@ -191,7 +191,7 @@ export const submitCallback = ({
       const logo = popFile(theme.logo[0]);
       const favicon = popFile(meta.favicon[0]);
 
-      await uploadStorefront({
+      await putStorefront({
         solana,
         storefront: {
           theme: {
