@@ -105,8 +105,11 @@ export default function Edit({ track }: StorefrontEditorProps) {
         changes.
       </>
     ),
-    errorToast: () => (
-      <>There was an issue updating your storefront. Please wait a moment and try again.</>
+    errorToast: (e) => (
+      <>
+        There was an issue updating your storefront. Please wait a moment and try again.
+        {e && ` (${e})`}
+      </>
     ),
     trackEvent: 'updated',
   });

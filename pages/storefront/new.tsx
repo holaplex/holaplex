@@ -95,8 +95,11 @@ export default function New({ track }: StorefrontEditorProps) {
         up your storefront.
       </>
     ),
-    errorToast: () => (
-      <>There was an issue creating your storefront. Please wait a moment and try again.</>
+    errorToast: (e) => (
+      <>
+        There was an issue creating your storefront. Please wait a moment and try again.
+        {e && ` (${e})`}
+      </>
     ),
     trackEvent: 'created',
   });

@@ -154,7 +154,7 @@ export const submitCallback = ({
   values: any;
   setSubmitting: (val: boolean) => void;
   successToast: (domain: string) => ReactChild;
-  errorToast: () => ReactChild;
+  errorToast: (e: string | undefined) => ReactChild;
   trackEvent: string;
 }): (() => Promise<void>) => {
   return async () => {
@@ -182,18 +182,18 @@ export const submitCallback = ({
           pubkey: solana?.publicKey.toBase58() ?? '',
         },
         onProgress: (s) => console.log(s),
-        onError: (e) => console.log(e),
+        onError: (e) => toast.error(errorToast(e)),
       });
 
-      toast(successToast.bind(undefined, domain), { autoClose: 60000 });
+      toast(successToast(domain), { autoClose: 60000 });
 
       router.push('/').then(() => {
         track('storefront', trackEvent);
-        setSubmitting(false);
       });
-    } catch {
+    } catch (e) {
+      console.error(e);
+    } finally {
       setSubmitting(false);
-      toast.error(errorToast);
     }
   };
 };
