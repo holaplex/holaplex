@@ -154,7 +154,7 @@ export const submitCallback = ({
   values: any;
   setSubmitting: (val: boolean) => void;
   onSuccess: (domain: string) => void;
-  onError: () => void;
+  onError: (e: string | undefined) => void;
   trackEvent: string;
 }): (() => Promise<void>) => {
   return async () => {
@@ -182,18 +182,18 @@ export const submitCallback = ({
           pubkey: solana?.publicKey.toBase58() ?? '',
         },
         onProgress: (s) => console.log(s),
-        onError: (e) => console.log(e),
+        onError,
       });
 
       onSuccess(domain);
 
       router.push('/').then(() => {
         track('storefront', trackEvent);
-        setSubmitting(false);
       });
-    } catch {
+    } catch (e) {
+      console.error(e);
+    } finally {
       setSubmitting(false);
-      onError();
     }
   };
 };

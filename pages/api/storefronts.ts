@@ -8,6 +8,7 @@ import {
   verifyNaclSelfContained,
 } from '@/modules/notary';
 import { resultThenAsync } from '@/modules/result';
+import { formatMessage } from '@/modules/storefront/put-storefront';
 import type { Storefront } from '@/modules/storefront/types';
 import { stylesheet } from '@/modules/theme';
 import { ApiError } from '@/modules/utils';
@@ -66,7 +67,7 @@ const verifyPutParams = async (params: any) => {
     unpackNotarized(
       params,
       verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
-      { parse: parseStorefront }
+      { parse: parseStorefront, format: formatMessage }
     )
   );
 

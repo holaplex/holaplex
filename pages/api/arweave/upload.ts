@@ -3,6 +3,7 @@ import {
   ArweaveUploadParams,
   ArweaveUploadPayload,
   FILE_FORM_NAME,
+  formatMessage,
   PAYLOAD_FORM_NAME,
 } from '@/modules/arweave/upload';
 import {
@@ -54,7 +55,7 @@ const verifyPostParams = async (params: FormData) => {
       unpackNotarized(
         payload,
         verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
-        { parse: parsePayload }
+        { parse: parsePayload, format: formatMessage }
       )
   );
 

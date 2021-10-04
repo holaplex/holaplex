@@ -108,8 +108,13 @@ export default function Edit({ track }: StorefrontEditorProps) {
         </>,
         { autoClose: 60000 }
       ),
-    onError: () =>
-      toast(<>There was an issue updating your storefront. Please wait a moment and try again.</>),
+    onError: (e) =>
+      toast(
+        <>
+          There was an issue updating your storefront. Please wait a moment and try again.
+          {e && ` (${e})`}
+        </>
+      ),
     trackEvent: 'updated',
   });
 

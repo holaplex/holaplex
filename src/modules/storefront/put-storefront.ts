@@ -1,4 +1,4 @@
-import { notarize, Notarized, signPhantom, stringifyNotarized } from '../notary';
+import { Formatter, notarize, Notarized, signPhantom, stringifyNotarized } from '../notary';
 import { Solana } from '../solana/types';
 import { Storefront } from './types';
 
@@ -7,6 +7,9 @@ export type PutStorefrontParams = Notarized<Storefront>;
 export interface PutStorefrontResult {
   storefront: Storefront;
 }
+
+export const formatMessage: Formatter = (bytes) =>
+  `Your storefront upload fingerprint is ${bytes.toString('base64')}`;
 
 export const putStorefront = async ({
   solana,
@@ -36,20 +39,22 @@ export const putStorefront = async ({
 
     onProgress('signing');
 
-    const notarized: PutStorefrontParams = await notarize(storefront, signPhantom(solana));
+    const notarized: PutStorefrontParams = await notarize(storefront, signPhantom(solana), {
+      format: formatMessage,
+    });
 
     onProgress('uploading');
 
-    const postResp = await fetch('/api/storefronts', {
+    const putResp = await fetch('/api/storefronts', {
       method: 'PUT',
       body: stringifyNotarized(notarized),
     });
 
-    if (!postResp.ok) {
+    if (!putResp.ok) {
       let json;
 
       try {
-        json = await postResp.json();
+        json = await putResp.json();
       } catch {
         json = { message: 'An error occurred' };
       }
@@ -59,7 +64,7 @@ export const putStorefront = async ({
 
     onProgress('uploaded');
 
-    const result = { storefront: (await postResp.json()).storefront };
+    const result: PutStorefrontResult = await putResp.json();
     if (onComplete) onComplete(result);
     return result;
   } catch (e) {

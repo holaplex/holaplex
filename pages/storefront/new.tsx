@@ -98,8 +98,13 @@ export default function New({ track }: StorefrontEditorProps) {
         </>,
         { autoClose: 60000 }
       ),
-    onError: () =>
-      toast(<>There was an issue creating your storefront. Please wait a moment and try again.</>),
+    onError: (e) =>
+      toast(
+        <>
+          There was an issue creating your storefront. Please wait a moment and try again.
+          {e && ` (${e})`}
+        </>
+      ),
     trackEvent: 'created',
   });
 
