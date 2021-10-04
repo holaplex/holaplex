@@ -1,6 +1,18 @@
 import { ArweaveFile } from '@/modules/arweave/types';
-import { ArweaveUploadPayload, FILE_FORM_NAME, PAYLOAD_FORM_NAME } from '@/modules/arweave/upload';
-import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
+import {
+  ArweaveUploadParams,
+  ArweaveUploadPayload,
+  FILE_FORM_NAME,
+  PAYLOAD_FORM_NAME,
+} from '@/modules/arweave/upload';
+import {
+  ajvParse,
+  JsonString,
+  parseNotarized,
+  unpackNotarized,
+  verifyNaclSelfContained,
+} from '@/modules/notary';
+import { resultThenAsync } from '@/modules/result';
 import { ApiError, FormData } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey } from '@solana/web3.js';
@@ -21,34 +33,35 @@ const SCHEMAS = (() => {
     },
   };
 
-  return { parsePayload: ajv.compileParser(payload) };
+  return { parsePayload: ajvParse(ajv.compileParser(payload)) };
 })();
 
 /** Verify a notarized post request, returning the file to upload. */
 const verifyPostParams = async (params: FormData) => {
   const { parsePayload } = SCHEMAS;
 
-  const payloads: string[] | string | undefined = params.fields[PAYLOAD_FORM_NAME];
+  const notarizedFields: string[] | string | undefined = params.fields[PAYLOAD_FORM_NAME];
   const files: File[] | File | undefined = params.files[FILE_FORM_NAME];
 
-  if (payloads === undefined || files === undefined)
+  if (notarizedFields === undefined || files === undefined)
     throw new ApiError(400, 'Invalid request parameters');
 
-  const payload: string = payloads instanceof Array ? payloads[0] : payloads;
+  const notarized: string = notarizedFields instanceof Array ? notarizedFields[0] : notarizedFields;
 
-  parsePayload.message = undefined;
-  const payloadDec = await unpackNotarized<ArweaveUploadPayload>(
-    parseNotarized(payload),
-    verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
-    { parse: parsePayload }
+  const payloadRes = await resultThenAsync(
+    parseNotarized<ArweaveUploadPayload>(notarized as JsonString<ArweaveUploadParams>),
+    (payload) =>
+      unpackNotarized(
+        payload,
+        verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
+        { parse: parsePayload }
+      )
   );
 
-  if (payloadDec === undefined) {
-    throw new ApiError(
-      400,
-      `Invalid request parameters: ${parsePayload.message ?? 'Signature verification failed'}`
-    );
+  if (payloadRes.err !== undefined) {
+    throw new ApiError(400, `Invalid request parameters: ${payloadRes.err}`);
   }
+  const { ok: payload } = payloadRes;
 
   const file: File = files instanceof Array ? files[0] : files;
 
@@ -59,8 +72,7 @@ const verifyPostParams = async (params: FormData) => {
 
   const hash = Buffer.from(await sha256(dataArr, { outputFormat: 'buffer' }));
 
-  if (hash.toString('base64') !== payloadDec.fileHash)
-    throw new ApiError(400, 'File hash mismatch');
+  if (hash.toString('base64') !== payload.fileHash) throw new ApiError(400, 'File hash mismatch');
 
   if (file.type == null || file.name == null) throw new ApiError(400, 'Invalid file');
   const { name, type } = file;

@@ -1,4 +1,4 @@
-import { notarize, Notarized, signPhantom } from '../notary';
+import { notarize, Notarized, signPhantom, stringifyNotarized } from '../notary';
 import { Solana } from '../solana/types';
 import { Storefront } from './types';
 
@@ -40,9 +40,9 @@ export const putStorefront = async ({
 
     onProgress('uploading');
 
-    const postResp = await fetch('/api/upload-store', {
-      method: 'POST',
-      body: JSON.stringify(notarized),
+    const postResp = await fetch('/api/storefronts', {
+      method: 'PUT',
+      body: stringifyNotarized(notarized),
     });
 
     if (!postResp.ok) {

@@ -91,11 +91,6 @@ export interface FieldData {
   errors?: string[];
 }
 
-export interface LocalFile {
-  file: File | undefined;
-  url: string | undefined;
-}
-
 /// Half reverse-engineered, mostly to avoid use of any
 export interface AntdFile {
   uid: string;
@@ -104,13 +99,13 @@ export interface AntdFile {
   size: number;
   percent?: number;
   status?: 'uploading' | 'done' | 'error' | 'removed';
-  response: LocalFile;
+  response: ArweaveFile;
   xhr?: unknown;
 }
 
-export type FileInput = (ArweaveFile & { file?: undefined }) | LocalFile | AntdFile;
+export type FileInput = (ArweaveFile & { file?: undefined }) | AntdFile;
 
-export const popFile = (f: FileInput): (ArweaveFile & { file?: undefined }) | LocalFile => {
+export const popFile = (f: FileInput): (ArweaveFile & { file?: undefined }) => {
   if (has<'response'>('response', f)) {
     return f.response;
   } else {
@@ -140,25 +135,6 @@ export const validateSubdomainUniqueness = (
     if (allowPubkey && storefront.pubkey === allowPubkey) return;
 
     throw new Error('The subdomain is already in use.  Please pick another.');
-  };
-};
-
-export const validateArweaveFunds = (
-  arweaveWalletAddress: string,
-  ar: ArweaveScope,
-  setShowARModal: (val: boolean) => void
-): ((rule: RuleObject, [file]: [FileInput?]) => Promise<void>) => {
-  return async (_, [file]) => {
-    if (isNil(file) || has('url', file)) return;
-
-    const canAfford =
-      arweaveWalletAddress && (await ar.wallet.canAfford(arweaveWalletAddress, file.size));
-
-    if (canAfford) return;
-
-    setShowARModal(true);
-
-    throw new Error('Not enough AR funds to cover the upload fee.');
   };
 };
 
@@ -195,17 +171,16 @@ export const submitCallback = ({
         solana,
         storefront: {
           theme: {
-            ...(theme as StorefrontTheme<undefined>),
-            logo: 'file' in logo ? undefined : logo,
+            ...(theme as StorefrontTheme<unknown>),
+            logo,
           },
           meta: {
-            ...(meta as PageMetaData<undefined>),
-            favicon: 'file' in favicon ? undefined : favicon,
+            ...(meta as PageMetaData<unknown>),
+            favicon,
           },
           subdomain,
+          pubkey: solana?.publicKey.toBase58() ?? '',
         },
-        logo: logo.file,
-        favicon: favicon.file,
         onProgress: (s) => console.log(s),
         onError: (e) => console.log(e),
       });

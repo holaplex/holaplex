@@ -5,7 +5,6 @@ import Upload from '@/common/components/elements/Upload';
 import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import FillSpace from '@/components/elements/FillSpace';
-import HowToArModal from '@/components/elements/HowToArModal';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
@@ -25,7 +24,6 @@ import {
   submitCallback,
   Title,
   UploadedLogo,
-  validateArweaveFunds,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
@@ -49,14 +47,11 @@ import { toast } from 'react-toastify';
 
 export default function New({ track }: StorefrontEditorProps) {
   const [submitting, setSubmitting] = useState(false);
-  const [showARModal, setShowARModal] = useState(false);
-  // we check for arweave at the last possible moment,
-  // assuming they do until we check.
   const router = useRouter();
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet, arweaveWalletAddress, connect } = useContext(WalletContext);
+  const { solana, wallet, connect } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -70,12 +65,12 @@ export default function New({ track }: StorefrontEditorProps) {
     { name: ['meta', 'description'], value: '' },
   ]);
 
-  if (isNil(solana) || isNil(wallet) || isNil(arweaveWalletAddress)) {
+  if (isNil(solana) || isNil(wallet)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
-            <Paragraph>Connect your Solana and ARConnect wallets to create a store.</Paragraph>
+            <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
             <Button type="primary" block onClick={connect}>
               Connect
             </Button>
@@ -88,7 +83,6 @@ export default function New({ track }: StorefrontEditorProps) {
   const values = reduceFieldData(fields);
 
   const subdomainUniqueness = validateSubdomainUniqueness(ar);
-  const hasArweaveFunds = validateArweaveFunds(arweaveWalletAddress, ar, setShowARModal);
 
   const onSubmit = submitCallback({
     track,
@@ -147,10 +141,7 @@ export default function New({ track }: StorefrontEditorProps) {
           wrapperCol={{ span: 14 }}
           label="Logo"
           name={['theme', 'logo']}
-          rules={[
-            { required: true, message: 'Upload a logo.' },
-            { required: true, validator: hasArweaveFunds },
-          ]}
+          rules={[{ required: true, message: 'Upload a logo.' }]}
         >
           <Upload>
             {isEmpty(values.theme.logo) && (
@@ -242,10 +233,7 @@ export default function New({ track }: StorefrontEditorProps) {
         wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
         label="Favicon"
         name={['meta', 'favicon']}
-        rules={[
-          { required: true, message: 'Upload a favicon.' },
-          { required: true, validator: hasArweaveFunds },
-        ]}
+        rules={[{ required: true, message: 'Upload a favicon.' }]}
       >
         <Upload>
           {isEmpty(values.meta.favicon) && (
@@ -278,7 +266,6 @@ export default function New({ track }: StorefrontEditorProps) {
 
   return (
     <Row justify="center" align="middle">
-      <HowToArModal show={showARModal} onCancel={() => setShowARModal(false)} />
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <PageCard>
           <StepForm
