@@ -1,6 +1,9 @@
+import { uploadFile } from '@/modules/arweave/upload';
+import { WalletContext } from '@/modules/wallet';
 import { Upload } from 'antd';
 import { isNil } from 'ramda';
-import React, { useRef } from 'react';
+import React, { useContext } from 'react';
+import { toast } from 'react-toastify';
 
 type UploadProps = {
   onChange?: (uploads: any) => any;
@@ -11,7 +14,7 @@ type UploadProps = {
 };
 
 export default function FileUpload({ children, value, onChange }: UploadProps) {
-  const fileUrlRef = useRef<string | undefined>(undefined);
+  const { solana } = useContext(WalletContext);
 
   const handleInputChange = async (upload: any) => {
     const file = upload.file;
@@ -20,12 +23,19 @@ export default function FileUpload({ children, value, onChange }: UploadProps) {
       return;
     }
 
-    if (!isNil(fileUrlRef.current)) {
-      URL.revokeObjectURL(fileUrlRef.current);
-    }
-
-    fileUrlRef.current = URL.createObjectURL(file);
-    upload.onSuccess({ file: file, url: fileUrlRef.current }, file);
+    uploadFile({
+      solana,
+      file,
+      onProgress: (_status, pct) => upload.onProgress({ percent: pct ?? 0 }),
+    })
+      .then((res) => {
+        upload.onSuccess(res, file);
+      })
+      .catch((e) => {
+        console.error(e);
+        upload.onError(e);
+        toast.error(<>{e instanceof Error ? e.message : 'Upload to Arweave failed.'}</>);
+      });
   };
 
   return (

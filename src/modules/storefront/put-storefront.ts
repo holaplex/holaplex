@@ -1,4 +1,5 @@
 import { Formatter, notarize, Notarized, signPhantom, stringifyNotarized } from '../notary';
+import { connectSolana } from '../solana';
 import { Solana } from '../solana/types';
 import { Storefront } from './types';
 
@@ -33,8 +34,7 @@ export const putStorefront = async ({
 
     if (!solana.isConnected) {
       onProgress('connecting-wallet');
-
-      await Promise.all([new Promise<void>((ok) => solana.once('connect', ok)), solana.connect()]);
+      connectSolana(solana);
     }
 
     onProgress('signing');
