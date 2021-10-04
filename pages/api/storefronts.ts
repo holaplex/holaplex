@@ -1,15 +1,20 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { Storefront } from '@/modules/storefront/types';
-import ArweaveSDK from '@/modules/arweave/client';
 import { initArweave } from '@/modules/arweave';
-import { ApiError } from '@/modules/utils';
-import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
+import ArweaveSDK from '@/modules/arweave/client';
 import { ArweaveFile } from '@/modules/arweave/types';
-import { PutStorefrontParams } from '@/modules/storefront/put-storefront';
-import { unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
-import { PublicKey } from '@solana/web3.js';
-import { WALLETS } from '@/modules/wallet/server';
+import {
+  ajvParse,
+  parseNotarized,
+  unpackNotarized,
+  verifyNaclSelfContained,
+} from '@/modules/notary';
+import { resultThenAsync } from '@/modules/result';
+import type { Storefront } from '@/modules/storefront/types';
 import { stylesheet } from '@/modules/theme';
+import { ApiError } from '@/modules/utils';
+import { WALLETS } from '@/modules/wallet/server';
+import { PublicKey } from '@solana/web3.js';
+import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 /** JSON schemas for parsing request parameters. */
 const SCHEMAS = (() => {
@@ -21,6 +26,7 @@ const SCHEMAS = (() => {
       type: { type: 'string' },
       url: { type: 'string' },
     },
+    additionalProperties: true,
   };
 
   const storefront: JTDSchemaType<Storefront> = {
@@ -49,28 +55,27 @@ const SCHEMAS = (() => {
     additionalProperties: true,
   };
 
-  return { parseStorefront: ajv.compileParser(storefront) };
+  return { parseStorefront: ajvParse(ajv.compileParser(storefront)) };
 })();
 
 /** Verify a notarized put request, returning the storefront to upload. */
-const verifyPutParams = async (params: PutStorefrontParams) => {
+const verifyPutParams = async (params: any) => {
   const { parseStorefront } = SCHEMAS;
 
-  parseStorefront.message = undefined;
-  const payloadDec = await unpackNotarized(
-    params,
-    verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
-    { parse: parseStorefront }
+  const payloadRes = await resultThenAsync(parseNotarized<Storefront>(params), (params) =>
+    unpackNotarized(
+      params,
+      verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
+      { parse: parseStorefront }
+    )
   );
 
-  if (payloadDec === undefined) {
-    throw new ApiError(
-      400,
-      `Invalid request parameters: ${parseStorefront.message ?? 'Signature verification failed.'}`
-    );
+  if (payloadRes.err !== undefined) {
+    throw new ApiError(400, `Invalid request parameters: ${payloadRes.err}`);
   }
+  const { ok: storefront } = payloadRes;
 
-  return { storefront: payloadDec };
+  return { storefront };
 };
 
 /** Upload a storefront to Arweave. */

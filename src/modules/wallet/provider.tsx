@@ -34,14 +34,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [initializing, setInitialization] = useState(true)
   const [wallet, setWallet] = useState<Wallet>()
   const [solana, setSolana] = useState<Solana>()
-  const [arweaveWallet, setArweaveWallet] = useState<any>()
-  const [arweaveWalletAddress, setArweaveWalletAddress] = useState<string>()
 
   useEffect(() => {
     if (process.browser) {
       window.addEventListener("load", () => {
         setSolana(window.solana)
-        setArweaveWallet(window.arweaveWallet)
         setInitialization(false)
       }, false)
     }
@@ -50,11 +47,6 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const connect = () =>  {
     if (isNil(solana)) {
       toast(() => <>Phantom wallet is not installed on your browser. Visit <a href="https://phantom.app">phantom.app</a> to setup your wallet.</>)
-      return
-    }
-
-    if (isNil(arweaveWallet)) {
-      toast(() => <>ArConnect wallet is not installed on your browser. Visit <a href="https://arconnect.io">arconnect.io</a> to setup your wallet.</>)
       return
     }
 
@@ -73,11 +65,6 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
 
           return router.push("/storefront/new")
         })
-        .then(() => arweaveWallet.connect(['ACCESS_ADDRESS']))
-        .then(() => arweaveWallet.getActiveAddress())
-        .then((address) => {
-          setArweaveWalletAddress(address)
-        })
         .catch(() => router.push("/"))
         .finally(() => { 
           setVerifying(false)
@@ -95,13 +82,10 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         verifying,
         initializing,
         wallet,
-        arweaveWallet,
         solana,
         connect,
-        arweaveWalletAddress
       }}>
       {children({
-        arweaveWalletAddress,
         verifying,
         initializing,
         wallet,
