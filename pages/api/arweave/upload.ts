@@ -1,4 +1,5 @@
 import { ArweaveFile } from '@/modules/arweave/types';
+import ArweaveSDK from '@/modules/arweave/client';
 import {
   ArweaveUploadParams,
   ArweaveUploadPayload,
@@ -22,6 +23,7 @@ import { sha256 } from 'crypto-hash';
 import { File, IncomingForm } from 'formidable';
 import fs from 'fs/promises';
 import { NextApiRequest, NextApiResponse } from 'next';
+import getConfig from 'next/config'
 
 /** JSON schemas for parsing request parameters. */
 const SCHEMAS = (() => {
@@ -91,11 +93,12 @@ const postArweaveFile = async ({
   name: string;
   type: string;
 }): Promise<ArweaveFile> => {
-  const {
-    arweave,
-    arweaveKeypair: { jwk },
-    arweaveCanAfford,
-  } = await WALLETS;
+  const { serverRuntimeConfig } = getConfig()
+
+  const { jwk, arweave, address } = await serverRuntimeConfig.arweave
+
+  const arweaveClient = ArweaveSDK.using(arweave)
+
   const tx = await arweave.createTransaction({ data });
 
   tx.addTag('Content-Type', type);
@@ -103,7 +106,9 @@ const postArweaveFile = async ({
 
   await arweave.transactions.sign(tx, jwk);
 
-  if (!arweaveCanAfford(tx)) throw new ApiError(400, 'Holaplex account needs more AR');
+  if (!arweaveClient.wallet.canAfford(address, data.byteLength)) {
+    throw new ApiError(400, 'Holaplex account needs more AR');
+  }
 
   await arweave.transactions.post(tx);
 
