@@ -1,5 +1,5 @@
-import { ArweaveFile } from '@/modules/arweave/types';
 import ArweaveSDK from '@/modules/arweave/client';
+import { ArweaveFile } from '@/modules/arweave/types';
 import {
   ArweaveUploadParams,
   ArweaveUploadPayload,
@@ -7,6 +7,8 @@ import {
   formatMessage,
   PAYLOAD_FORM_NAME,
 } from '@/modules/arweave/upload';
+import { getArweaveConfig } from '@/modules/next/plugins/arweave';
+import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
 import {
   ajvParse,
   JsonString,
@@ -16,32 +18,16 @@ import {
 } from '@/modules/notary';
 import { resultThenAsync } from '@/modules/result';
 import { ApiError, FormData } from '@/modules/utils';
-import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey } from '@solana/web3.js';
-import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import { sha256 } from 'crypto-hash';
 import { File, IncomingForm } from 'formidable';
 import fs from 'fs/promises';
 import { NextApiRequest, NextApiResponse } from 'next';
-import getConfig from 'next/config'
-
-/** JSON schemas for parsing request parameters. */
-const SCHEMAS = (() => {
-  const ajv = new Ajv();
-
-  const payload: JTDSchemaType<ArweaveUploadPayload> = {
-    properties: {
-      pubkey: { type: 'string' },
-      fileHash: { type: 'string' },
-    },
-  };
-
-  return { parsePayload: ajvParse(ajv.compileParser(payload)) };
-})();
 
 /** Verify a notarized post request, returning the file to upload. */
 const verifyPostParams = async (params: FormData) => {
-  const { parsePayload } = SCHEMAS;
+  const schemas = getJsonSchemas();
+  const parsePayload = ajvParse(schemas.parser(SCHEMAS.arweaveUploadPayload));
 
   const notarizedFields: string[] | string | undefined = params.fields[PAYLOAD_FORM_NAME];
   const files: File[] | File | undefined = params.files[FILE_FORM_NAME];
@@ -93,11 +79,9 @@ const postArweaveFile = async ({
   name: string;
   type: string;
 }): Promise<ArweaveFile> => {
-  const { serverRuntimeConfig } = getConfig()
+  const { jwk, arweave, address } = await getArweaveConfig();
 
-  const { jwk, arweave, address } = await serverRuntimeConfig.arweave
-
-  const arweaveClient = ArweaveSDK.using(arweave)
+  const arweaveClient = ArweaveSDK.using(arweave);
 
   const tx = await arweave.createTransaction({ data });
 

@@ -1,8 +1,7 @@
-import { SignMetaParams } from '@/modules/storefront/approve-nft';
+import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
 import { ApiError } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import { Buffer } from 'buffer';
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextCors from 'nextjs-cors';
@@ -32,22 +31,6 @@ function signMetadata(
   tx.add(new TransactionInstruction({ keys, programId, data }));
 }
 
-/** JSON schemas for parsing request parameters. */
-const SCHEMAS = (() => {
-  const ajv = new Ajv();
-
-  const params: JTDSchemaType<SignMetaParams> = {
-    properties: {
-      solanaEndpoint: { type: 'string' },
-      metadata: { type: 'string' },
-      metaProgramId: { type: 'string' },
-    },
-    additionalProperties: true,
-  };
-
-  return { validateParams: ajv.compile(params) };
-})();
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse<object>) {
   await NextCors(req, res, {
     methods: ['POST', 'HEAD', 'OPTIONS'],
@@ -58,7 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     switch (req.method) {
       case 'POST': {
         const { solana, solanaKeypair, solanaEndpoint } = await WALLETS;
-        const { validateParams } = SCHEMAS;
+        const schemas = getJsonSchemas();
+        const validateParams = schemas.validator(SCHEMAS.signMetaParams);
 
         const params = req.body;
 

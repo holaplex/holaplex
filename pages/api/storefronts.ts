@@ -1,6 +1,6 @@
 import { initArweave } from '@/modules/arweave';
 import ArweaveSDK from '@/modules/arweave/client';
-import { ArweaveFile } from '@/modules/arweave/types';
+import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
 import {
   ajvParse,
   parseNotarized,
@@ -14,54 +14,12 @@ import { stylesheet } from '@/modules/theme';
 import { ApiError } from '@/modules/utils';
 import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey } from '@solana/web3.js';
-import Ajv, { JTDSchemaType } from 'ajv/dist/jtd';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-/** JSON schemas for parsing request parameters. */
-const SCHEMAS = (() => {
-  const ajv = new Ajv();
-
-  const arweaveFile: JTDSchemaType<ArweaveFile> = {
-    properties: {
-      name: { type: 'string' },
-      type: { type: 'string' },
-      url: { type: 'string' },
-    },
-    additionalProperties: true,
-  };
-
-  const storefront: JTDSchemaType<Storefront> = {
-    properties: {
-      theme: {
-        properties: {
-          primaryColor: { type: 'string' },
-          backgroundColor: { type: 'string' },
-          textFont: { type: 'string' },
-          titleFont: { type: 'string' },
-          logo: arweaveFile,
-        },
-        additionalProperties: true,
-      },
-      meta: {
-        properties: {
-          title: { type: 'string' },
-          description: { type: 'string' },
-          favicon: arweaveFile,
-        },
-        additionalProperties: true,
-      },
-      subdomain: { type: 'string' },
-      pubkey: { type: 'string' },
-    },
-    additionalProperties: true,
-  };
-
-  return { parseStorefront: ajvParse(ajv.compileParser(storefront)) };
-})();
 
 /** Verify a notarized put request, returning the storefront to upload. */
 const verifyPutParams = async (params: any) => {
-  const { parseStorefront } = SCHEMAS;
+  const schemas = getJsonSchemas();
+  const parseStorefront = ajvParse(schemas.parser(SCHEMAS.storefront));
 
   const payloadRes = await resultThenAsync(parseNotarized<Storefront>(params), (params) =>
     unpackNotarized(

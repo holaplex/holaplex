@@ -1,7 +1,8 @@
-import Ajv, { JTDParser, JTDSchemaType, ValidateFunction } from 'ajv/dist/jtd';
+import { JTDParser, ValidateFunction } from 'ajv/dist/jtd';
 import { Buffer } from 'buffer';
 import { sha256 } from 'crypto-hash';
 import nacl from 'tweetnacl';
+import { getJsonSchemas, SCHEMAS } from '../next/plugins/json-schemas';
 import { Result } from '../result';
 import { Solana } from '../solana/types';
 
@@ -35,7 +36,9 @@ export const ajvValidate =
   (val: any) => {
     if (validate(val)) return { ok: val };
 
-    return { err: validate.errors?.join('; ') ?? 'Failed to validate object' };
+    return {
+      err: validate.errors?.map((e) => e.message).join('; ') ?? 'Failed to validate object',
+    };
   };
 
 export const ajvParse =
@@ -132,26 +135,14 @@ export const unpackNotarized = async <T>(
   return verified ? payloadRes : { err: 'Verification failed' };
 };
 
-const SCHEMA = (() => {
-  const ajv = new Ajv();
-
-  const schema: JTDSchemaType<NotarizedStr<unknown>> = {
-    properties: {
-      payload: { type: 'string' } as unknown as JTDSchemaType<JsonString<unknown>>,
-      signature: { type: 'string' } as unknown as JTDSchemaType<SignatureStr>,
-    },
-    additionalProperties: true,
-  };
-
-  return { validate: ajvValidate(ajv.compile(schema)), parse: ajvParse(ajv.compileParser(schema)) };
-})();
-
 export const parseNotarized = <T>(
   val: JsonString<NotarizedStr<T>> | object
 ): Result<Notarized<T>> => {
   if (!val && typeof val !== 'string') return { err: 'Invalid input type' };
 
-  const { validate, parse } = SCHEMA;
+  const schemas = getJsonSchemas();
+  const validate = ajvValidate(schemas.validator(SCHEMAS.notarized));
+  const parse = ajvParse(schemas.parser(SCHEMAS.notarized));
   const res: Result<NotarizedStr<unknown>> = typeof val === 'string' ? parse(val) : validate(val);
 
   if (res.err !== undefined) return res;
