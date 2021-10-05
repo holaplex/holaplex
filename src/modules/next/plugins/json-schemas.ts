@@ -1,8 +1,9 @@
 import { ArweaveFile } from '@/modules/arweave/types';
 import { ArweaveUploadPayload } from '@/modules/arweave/upload';
-import { JsonString, NotarizedStr } from '@/modules/notary';
+import { NotarizedStr } from '@/modules/notary';
 import { SignMetaParams } from '@/modules/storefront/approve-nft';
 import { Storefront } from '@/modules/storefront/types';
+import { JsonString } from '@/modules/utils/json';
 import Ajv, { JTDParser, JTDSchemaType, ValidateFunction } from 'ajv/dist/jtd';
 import getConfig from 'next/config';
 import { NextConfig } from 'next/dist/next-server/server/config-shared';

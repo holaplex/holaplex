@@ -1,54 +1,27 @@
-import { JTDParser, ValidateFunction } from 'ajv/dist/jtd';
 import { Buffer } from 'buffer';
 import { sha256 } from 'crypto-hash';
 import nacl from 'tweetnacl';
 import { getJsonSchemas, SCHEMAS } from '../next/plugins/json-schemas';
-import { Result } from '../result';
 import { Solana } from '../solana/types';
+import {
+  ajvParse,
+  ajvValidate,
+  jsonParse,
+  JsonString,
+  jsonStringify,
+  Parser,
+  Validator,
+} from '../utils/json';
+import { Result } from '../utils/result';
 
 // Tagged type hack
-declare const jsonStr: unique symbol;
 declare const signature: unique symbol;
-export type JsonString<T> = string & { readonly [jsonStr]: T };
 export type Signature = Buffer & { readonly [signature]: typeof signature };
 type SignatureStr = string & { readonly [signature]: typeof signature };
 
-export type Validator<T> = (val: any) => Result<T>;
-export type Parser<T> = (str: JsonString<T>) => Result<T>;
 export type Formatter = (bytes: Buffer) => string;
 export type Signer = (utf8: Buffer) => Promise<Signature>;
 export type Verifier<T> = (utf8: Buffer, signature: Signature, payload: T) => Promise<boolean>;
-
-export const jsonStringify = <T>(value: T): JsonString<T> => JSON.stringify(value) as JsonString<T>;
-
-export const jsonParse =
-  <T>(validate: Validator<T>): Parser<T> =>
-  (string: JsonString<T>) => {
-    const ret = JSON.parse(string);
-
-    if (validate(ret)) return ret;
-
-    return undefined;
-  };
-
-export const ajvValidate =
-  <T>(validate: ValidateFunction<T>): Validator<T> =>
-  (val: any) => {
-    if (validate(val)) return { ok: val };
-
-    return {
-      err: validate.errors?.map((e) => e.message).join('; ') ?? 'Failed to validate object',
-    };
-  };
-
-export const ajvParse =
-  <T>(parse: JTDParser<T>): Parser<T> =>
-  (val: string) => {
-    const ok = parse(val);
-    if (ok !== undefined) return { ok };
-
-    return { err: parse.message ?? 'Failed to parse JSON string' };
-  };
 
 export interface Notarized<T, S extends { [signature]: typeof signature } = Signature> {
   payload: JsonString<T>;

@@ -9,15 +9,10 @@ import {
 } from '@/modules/arweave/upload';
 import { getArweaveConfig } from '@/modules/next/plugins/arweave';
 import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
-import {
-  ajvParse,
-  JsonString,
-  parseNotarized,
-  unpackNotarized,
-  verifyNaclSelfContained,
-} from '@/modules/notary';
-import { resultThenAsync } from '@/modules/result';
+import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
 import { ApiError, FormData } from '@/modules/utils';
+import { ajvParse, JsonString } from '@/modules/utils/json';
+import { resultThenAsync } from '@/modules/utils/result';
 import { PublicKey } from '@solana/web3.js';
 import { sha256 } from 'crypto-hash';
 import { File, IncomingForm } from 'formidable';
