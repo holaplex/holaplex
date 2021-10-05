@@ -22,6 +22,7 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const showHeader = router.pathname !== '/bulk-upload';
 
   const track = (category: string, action: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
@@ -63,7 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             {({ searching }) => {
               return (
                 <AppLayout>
-                  <AppHeader />
+                  {showHeader && <AppHeader />}
                   <Content>
                     <Loading loading={verifying || searching}>
                       <Component {...pageProps} track={track} />
