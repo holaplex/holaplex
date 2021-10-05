@@ -26,7 +26,7 @@ export default function FileUpload({ children, value, onChange }: UploadProps) {
     uploadFile({
       solana,
       file,
-      onProgress: (_status, pct) => upload.onProgress({ percent: pct ?? 0 }),
+      onProgress: (_status, pct) => upload.onProgress({ percent: (pct ?? 0) * 100 }),
     })
       .then((res) => {
         upload.onSuccess(res, file);

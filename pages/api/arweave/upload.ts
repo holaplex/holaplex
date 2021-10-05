@@ -94,6 +94,7 @@ const postArweaveFile = async ({
   const {
     arweave,
     arweaveKeypair: { jwk },
+    arweaveCanAfford,
   } = await WALLETS;
   const tx = await arweave.createTransaction({ data });
 
@@ -101,6 +102,9 @@ const postArweaveFile = async ({
   tx.addTag('File-Name', name);
 
   await arweave.transactions.sign(tx, jwk);
+
+  if (!arweaveCanAfford(tx)) throw new ApiError(400, 'Holaplex account needs more AR');
+
   await arweave.transactions.post(tx);
 
   const { api } = arweave.getConfig();
