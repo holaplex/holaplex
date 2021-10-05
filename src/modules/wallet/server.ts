@@ -1,5 +1,6 @@
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { Connection, Keypair } from '@solana/web3.js';
+import Transaction from 'arweave/node/lib/transaction';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { Buffer } from 'buffer';
 import { initArweave } from '../arweave';
@@ -55,5 +56,12 @@ export const WALLETS = (async () => {
 
   console.log(`Arweave public key: ${arweaveKeypair.address}`);
 
-  return { solana, arweave, solanaKeypair, arweaveKeypair, solanaEndpoint };
+  const arweaveCanAfford = async (tx: Transaction) => {
+    const bal = await arweave.wallets.getBalance(arweaveKeypair.address);
+    const cost = await arweave.transactions.getPrice(Number(tx.data_size));
+
+    return arweave.ar.isGreaterThan(bal, cost);
+  };
+
+  return { solana, arweave, solanaKeypair, arweaveKeypair, solanaEndpoint, arweaveCanAfford };
 })();

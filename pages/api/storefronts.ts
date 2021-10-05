@@ -84,10 +84,8 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   const {
     arweave,
     arweaveKeypair: { jwk },
+    arweaveCanAfford,
   } = await WALLETS;
-  const { api } = arweave.getConfig();
-
-  // TODO: move and sign
   const tx = await arweave.createTransaction({ data: stylesheet(storefront.theme) });
 
   tx.addTag('Content-Type', 'text/css');
@@ -108,7 +106,12 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   tx.addTag('Arweave-App', 'holaplex');
 
   await arweave.transactions.sign(tx, jwk);
-  await arweave.transactions.post(tx);
+
+  if (!arweaveCanAfford(tx)) throw new ApiError(400, 'Holaplex account needs more AR');
+
+  const { status } = await arweave.transactions.post(tx);
+
+  if (status < 200 || status >= 300) throw new ApiError(400, 'Arweave transaction failed');
 };
 
 export default async function handler(
