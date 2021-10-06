@@ -1,6 +1,6 @@
 import { initArweave } from '@/modules/arweave';
 import ArweaveSDK from '@/modules/arweave/client';
-import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
+import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary/server';
 import singletons from '@/modules/singletons';
 import { SCHEMAS } from '@/modules/singletons/json-schemas';
 import { formatMessage } from '@/modules/storefront/put-storefront';

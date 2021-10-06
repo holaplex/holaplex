@@ -1,4 +1,5 @@
-import { Formatter, notarize, Notarized, signPhantom, stringifyNotarized } from '../notary';
+import { notarize, signPhantom, stringifyNotarized } from '../notary/client';
+import { Formatter, Notarized } from '../notary/common';
 import { connectSolana } from '../solana';
 import { Solana } from '../solana/types';
 import { Storefront } from './types';

@@ -5,14 +5,16 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, run the development server:
 
 ```bash
-yarn dev
+PORT=3001 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Replace 3001 with an available port on your machine for this and any of the following examples.
+
+Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.tsx`.
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3001/api/hello](http://localhost:3001/api/hello). This endpoint can be edited in `pages/api/hello.tsx`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
@@ -27,10 +29,18 @@ yarn db:migrate
 yarn db:seed
 ```
 
-A local instance of arweave can be booted with the following command. It will bind to port 1984. A graphiql explore is available at [http://localhost:1984/graphiql](http://localhost:1984/graphiql).
+A local instance of Arweave can be booted with the following command. It will bind to port 1984. A GraphQL explore is available at [http://localhost:1984/graphql](http://localhost:1984/graphql).
 
 ```
 npx @textury/arlocal
+```
+
+To configure the server to use `arlocal`, add the following to `.env.local`:
+
+```env
+NEXT_PUBLIC_ARWEAVE_HOST=localhost
+NEXT_PUBLIC_ARWEAVE_PORT=1984
+NEXT_PUBLIC_ARWEAVE_PROTOCOL=http
 ```
 
 Run the db seed command to populate the database with your Solana wallet

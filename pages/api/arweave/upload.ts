@@ -7,7 +7,7 @@ import {
   formatMessage,
   PAYLOAD_FORM_NAME,
 } from '@/modules/arweave/upload';
-import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
+import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary/server';
 import singletons from '@/modules/singletons';
 import { SCHEMAS } from '@/modules/singletons/json-schemas';
 import { ApiError, FormData } from '@/modules/utils';

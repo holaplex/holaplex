@@ -1,11 +1,11 @@
 import { ArweaveFile } from '@/modules/arweave/types';
 import { ArweaveUploadPayload } from '@/modules/arweave/upload';
-import { NotarizedStr } from '@/modules/notary';
 import { SignMetaParams } from '@/modules/storefront/approve-nft';
 import { Storefront } from '@/modules/storefront/types';
 import { JsonString } from '@/modules/utils/json';
 import Ajv, { JTDParser, JTDSchemaType, ValidateFunction } from 'ajv/dist/jtd';
 import getConfig from 'next/config';
+import { NotarizedStr, SignatureStr } from '../notary/common';
 
 // Tagged type hack
 declare const schema: unique symbol;
@@ -87,7 +87,7 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
   schemas.addSchema(SCHEMAS.notarized, {
     properties: {
       payload: { type: 'string' } as unknown as JTDSchemaType<JsonString<unknown>>,
-      signature: { type: 'string' } as unknown as JTDSchemaType<NotarizedStr<unknown>['signature']>,
+      signature: { type: 'string' } as unknown as JTDSchemaType<SignatureStr>,
     },
   });
 
