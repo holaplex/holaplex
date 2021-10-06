@@ -6,13 +6,15 @@ const { Option } = Select
 
 const availableFonts = [
   "Roboto",
+  "Inter",
   "Work Sans",
   "Montserrat",
+  "Urbanist",
   "Source Sans Pro",
   "Merriweather",
   "Playfair Display",
   "Noto Serif",
-  "Domine"
+  "Domine",
 ]
 
 interface Props {
