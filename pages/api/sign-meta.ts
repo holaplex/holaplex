@@ -1,6 +1,6 @@
-import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
+import singletons from '@/modules/singletons';
+import { SCHEMAS } from '@/modules/singletons/json-schemas';
 import { ApiError } from '@/modules/utils';
-import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -40,8 +40,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     switch (req.method) {
       case 'POST': {
-        const { solana, solanaKeypair, solanaEndpoint } = await WALLETS;
-        const schemas = getJsonSchemas();
+        const { connection, keypair, endpoint } = await singletons.solana;
+        const schemas = singletons.jsonSchemas;
         const validateParams = schemas.validator(SCHEMAS.signMetaParams);
 
         const params = req.body;
@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           throw new ApiError(400, 'Invalid program ID');
         }
 
-        if (clientSolEndpoint !== solanaEndpoint) {
+        if (clientSolEndpoint !== endpoint) {
           throw new ApiError(400, 'Mismatched Solana endpoint');
         }
 
@@ -79,13 +79,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         const tx = new Transaction();
 
-        signMetadata(metadata, solanaKeypair.publicKey, tx, metaProgramId);
+        signMetadata(metadata, keypair.publicKey, tx, metaProgramId);
 
-        tx.feePayer = solanaKeypair.publicKey;
-        tx.recentBlockhash = (await solana.getRecentBlockhash()).blockhash;
+        tx.feePayer = keypair.publicKey;
+        tx.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
 
-        const signature = await solana.sendTransaction(tx, [solanaKeypair]);
-        const status = (await solana.confirmTransaction(signature)).value;
+        const signature = await connection.sendTransaction(tx, [keypair]);
+        const status = (await connection.confirmTransaction(signature)).value;
         const err = status.err;
 
         if (err !== null) {

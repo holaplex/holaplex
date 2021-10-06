@@ -1,20 +1,20 @@
 import { initArweave } from '@/modules/arweave';
 import ArweaveSDK from '@/modules/arweave/client';
-import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
 import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
+import singletons from '@/modules/singletons';
+import { SCHEMAS } from '@/modules/singletons/json-schemas';
 import { formatMessage } from '@/modules/storefront/put-storefront';
 import type { Storefront } from '@/modules/storefront/types';
 import { stylesheet } from '@/modules/theme';
 import { ApiError } from '@/modules/utils';
 import { ajvParse } from '@/modules/utils/json';
 import { resultThenAsync } from '@/modules/utils/result';
-import { WALLETS } from '@/modules/wallet/server';
 import { PublicKey } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 /** Verify a notarized put request, returning the storefront to upload. */
 const verifyPutParams = async (params: any) => {
-  const schemas = getJsonSchemas();
+  const schemas = singletons.jsonSchemas;
   const parseStorefront = ajvParse(schemas.parser(SCHEMAS.storefront));
 
   const payloadRes = await resultThenAsync(parseNotarized<Storefront>(params), (params) =>
@@ -35,11 +35,9 @@ const verifyPutParams = async (params: any) => {
 
 /** Upload a storefront to Arweave. */
 const postArweaveStorefront = async (storefront: Storefront) => {
-  const {
-    arweave,
-    arweaveKeypair: { jwk },
-    arweaveCanAfford,
-  } = await WALLETS;
+  const { arweave, jwk, address } = await singletons.arweave;
+  const arweaveClient = ArweaveSDK.using(arweave);
+
   const tx = await arweave.createTransaction({ data: stylesheet(storefront.theme) });
 
   tx.addTag('Content-Type', 'text/css');
@@ -61,7 +59,9 @@ const postArweaveStorefront = async (storefront: Storefront) => {
 
   await arweave.transactions.sign(tx, jwk);
 
-  if (!arweaveCanAfford(tx)) throw new ApiError(400, 'Holaplex account needs more AR');
+  if (!arweaveClient.wallet.canAfford(address, tx.data.byteLength)) {
+    throw new ApiError(400, 'Holaplex account needs more AR');
+  }
 
   const { status } = await arweave.transactions.post(tx);
 

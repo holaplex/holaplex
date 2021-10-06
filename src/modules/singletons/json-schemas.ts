@@ -6,13 +6,12 @@ import { Storefront } from '@/modules/storefront/types';
 import { JsonString } from '@/modules/utils/json';
 import Ajv, { JTDParser, JTDSchemaType, ValidateFunction } from 'ajv/dist/jtd';
 import getConfig from 'next/config';
-import { NextConfig } from 'next/dist/next-server/server/config-shared';
 
 // Tagged type hack
 declare const schema: unique symbol;
 export type Schema<T> = Symbol & { readonly [schema]: T };
 
-export const Schema = Symbol.for as unknown as <T>(id: string) => Schema<T>;
+export const Schema = Symbol as unknown as <T>(id: string) => Schema<T>;
 
 export const SCHEMAS = {
   arweaveFile: Schema<ArweaveFile>('ArweaveFile'),
@@ -23,7 +22,7 @@ export const SCHEMAS = {
 };
 
 class SchemaManager {
-  private static ajv: Ajv = new Ajv();
+  private ajv: Ajv = new Ajv();
   private schemas: Map<Schema<unknown>, JTDSchemaType<unknown>> = new Map();
   private validators: Map<Schema<unknown>, ValidateFunction<unknown>> = new Map();
   private parsers: Map<Schema<unknown>, JTDParser<unknown>> = new Map();
@@ -46,7 +45,7 @@ class SchemaManager {
       if (validator !== undefined) return validator as ValidateFunction<T>;
     }
 
-    const validator = SchemaManager.ajv.compile(this.schema(key));
+    const validator = this.ajv.compile(this.schema(key));
     this.validators.set(key, validator);
 
     return validator;
@@ -58,7 +57,7 @@ class SchemaManager {
       if (parser !== undefined) return parser as JTDParser<T>;
     }
 
-    const parser = SchemaManager.ajv.compileParser(this.schema(key));
+    const parser = this.ajv.compileParser(this.schema(key));
     this.parsers.set(key, parser);
 
     return parser;
@@ -128,14 +127,6 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
 
 export const getJsonSchemas = (): SchemaManager => getConfig().serverRuntimeConfig.jsonSchemas;
 
-const withJsonSchemas = (nextConfig: NextConfig): NextConfig => {
-  return {
-    ...nextConfig,
-    serverRuntimeConfig: {
-      ...(nextConfig.serverRuntimeConfig ?? {}),
-      jsonSchemas: addDefaultBuilders(new SchemaManager()),
-    },
-  };
-};
+const buildJsonSchemas = () => addDefaultBuilders(new SchemaManager());
 
-export default withJsonSchemas;
+export default buildJsonSchemas;

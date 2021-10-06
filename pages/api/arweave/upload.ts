@@ -7,9 +7,9 @@ import {
   formatMessage,
   PAYLOAD_FORM_NAME,
 } from '@/modules/arweave/upload';
-import { getArweaveConfig } from '@/modules/next/plugins/arweave';
-import { getJsonSchemas, SCHEMAS } from '@/modules/next/plugins/json-schemas';
 import { parseNotarized, unpackNotarized, verifyNaclSelfContained } from '@/modules/notary';
+import singletons from '@/modules/singletons';
+import { SCHEMAS } from '@/modules/singletons/json-schemas';
 import { ApiError, FormData } from '@/modules/utils';
 import { ajvParse, JsonString } from '@/modules/utils/json';
 import { resultThenAsync } from '@/modules/utils/result';
@@ -21,7 +21,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 /** Verify a notarized post request, returning the file to upload. */
 const verifyPostParams = async (params: FormData) => {
-  const schemas = getJsonSchemas();
+  const schemas = singletons.jsonSchemas;
   const parsePayload = ajvParse(schemas.parser(SCHEMAS.arweaveUploadPayload));
 
   const notarizedFields: string[] | string | undefined = params.fields[PAYLOAD_FORM_NAME];
@@ -74,8 +74,7 @@ const postArweaveFile = async ({
   name: string;
   type: string;
 }): Promise<ArweaveFile> => {
-  const { jwk, arweave, address } = await getArweaveConfig();
-
+  const { jwk, arweave, address } = await singletons.arweave;
   const arweaveClient = ArweaveSDK.using(arweave);
 
   const tx = await arweave.createTransaction({ data });

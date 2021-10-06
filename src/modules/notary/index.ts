@@ -1,7 +1,8 @@
 import { Buffer } from 'buffer';
 import { sha256 } from 'crypto-hash';
 import nacl from 'tweetnacl';
-import { getJsonSchemas, SCHEMAS } from '../next/plugins/json-schemas';
+import singletons from '../singletons';
+import { SCHEMAS } from '../singletons/json-schemas';
 import { Solana } from '../solana/types';
 import {
   ajvParse,
@@ -113,7 +114,7 @@ export const parseNotarized = <T>(
 ): Result<Notarized<T>> => {
   if (!val && typeof val !== 'string') return { err: 'Invalid input type' };
 
-  const schemas = getJsonSchemas();
+  const schemas = singletons.jsonSchemas;
   const validate = ajvValidate(schemas.validator(SCHEMAS.notarized));
   const parse = ajvParse(schemas.parser(SCHEMAS.notarized));
   const res: Result<NotarizedStr<unknown>> = typeof val === 'string' ? parse(val) : validate(val);
