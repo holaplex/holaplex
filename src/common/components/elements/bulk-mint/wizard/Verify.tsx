@@ -1,10 +1,11 @@
 import Button from '@/common/components/elements/Button';
-import { Layout, PageHeader, Row, Col, Space } from 'antd';
+import { Layout, PageHeader, Space } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import ArrowLeft from '@/common/assets/images/arrow-left.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
+import { StepWizardChildProps } from 'react-step-wizard';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -70,13 +71,13 @@ const AddNFTButton = styled.button`
   }
 `;
 
-export default function BulkUpload() {
+export default function Verify({ previousStep, nextStep, goToStep }: StepWizardChildProps) {
   return (
     <StyledLayout>
-      <GoBack onClick={() => console.log('go back')}>
+      <GoBack onClick={previousStep}>
         <Image width={24} height={24} src={ArrowLeft} alt="arrow-left" />
       </GoBack>
-      <XClose onClick={() => console.log('go to first')}>
+      <XClose onClick={() => goToStep(1)}>
         <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
       </XClose>
 
