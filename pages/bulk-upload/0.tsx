@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/elements/bulk-mint/wizard/Upload';
 import Verify from '@/common/components/elements/bulk-mint/wizard/Verify';
+import InfoScreen from '@/common/components/elements/bulk-mint/wizard/InfoScreen';
 
 const StyledLayout = styled(Layout)`
   width: 100%;
@@ -41,6 +42,7 @@ export default function BulkUploadWizard() {
   return (
     <StyledLayout>
       <StepWizard>
+        <InfoScreen images={state.images} />
         <Upload dispatch={dispatch} />
         <Verify images={state.images} dispatch={dispatch} />
       </StepWizard>

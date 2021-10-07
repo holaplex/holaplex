@@ -1,20 +1,14 @@
 import Button from '@/common/components/elements/Button';
-import { Layout, PageHeader, Space } from 'antd';
+import { PageHeader, Space } from 'antd';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
-import ArrowLeft from '@/common/assets/images/arrow-left.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { ImageAction } from 'pages/bulk-upload/0';
 import { useDropzone } from 'react-dropzone';
-
-const StyledLayout = styled(Layout)`
-  display: flex;
-  align-items: center;
-  padding: 61px 142px 97px;
-`;
+import NavContainer from '@/common/components/elements/bulk-mint/wizard/NavContainer';
 
 const Header = styled(PageHeader)`
   font-family: Nunito Sans;
@@ -26,20 +20,6 @@ const Header = styled(PageHeader)`
   width: 701px;
 
   color: #fff;
-`;
-
-const GoBack = styled.i`
-  position: absolute;
-  top: 32px;
-  left: 40px;
-  cursor: pointer;
-`;
-
-const XClose = styled.i`
-  position: absolute;
-  top: 32px;
-  right: 40px;
-  cursor: pointer;
 `;
 
 const Grid = styled(Space)`
@@ -134,14 +114,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
   });
 
   return (
-    <StyledLayout>
-      <GoBack onClick={previousStep}>
-        <Image width={24} height={24} src={ArrowLeft} alt="arrow-left" />
-      </GoBack>
-      <XClose onClick={() => goToStep!(1)}>
-        <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
-      </XClose>
-
+    <NavContainer previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
       <Grid>
         {images.map((i) => (
@@ -170,6 +143,6 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
       <Button type="primary" size="large">
         Looks good
       </Button>
-    </StyledLayout>
+    </NavContainer>
   );
 }
