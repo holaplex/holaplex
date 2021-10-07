@@ -6,28 +6,53 @@ import { Result } from '../utils/result';
 import {
   createMessage,
   defaultFormat,
+  Formatter,
   Notarized,
   NotarizedStr,
   Signature,
   Verifier,
 } from './common';
 
+/**
+ * Create a verifier function using an already known public key.
+ * @param pubkey the public key to verify the data against
+ * @returns a verifier function to check signatures against `pubkey`
+ */
 export const verifyNacl =
   (pubkey: Uint8Array): Verifier<unknown> =>
   async (utf8, sig) =>
     nacl.sign.detached.verify(utf8, sig, pubkey);
 
+/**
+ * Create a verifier function that extracts an embedded public key from the data being verified.
+ * @param pubkey function to retrieve the public key from the data to be verified
+ * @returns a verifier function to check signatures using `pubkey`
+ */
 export const verifyNaclSelfContained =
   <T>(pubkey: (val: T) => Uint8Array): Verifier<T> =>
   async (utf8, sig, payload) =>
     nacl.sign.detached.verify(utf8, sig, pubkey(payload));
 
+/**
+ * Unpack and verify the inner value of a `Notarized<T>`.
+ * @param notarized the notarized data to unpack
+ * @param verify verifier function to check the embedded signature
+ * @param options additional options for unpacking
+ * @returns the unpacked data, or a verification error
+ */
 export const unpackNotarized = async <T>(
   notarized: Notarized<T>,
-  verify: (utf8: Buffer, signature: Signature, payload: T) => Promise<boolean>,
+  verify: Verifier<T>,
   options: {
-    format?: (bytes: Buffer) => string;
-  } & ({ parse?: undefined; validate: Validator<T> } | { parse: Parser<T> })
+    /**
+     * Format function for the message.
+     * **NOTE:** Must be the same function used when creating the message.
+     */
+    format?: Formatter;
+  } & (
+    | { parse?: undefined; /** Function to validate the parsed JSON with */ validate: Validator<T> }
+    | { /** Function to parse and validate the JSON with */ parse: Parser<T> }
+  )
 ): Promise<Result<T>> => {
   const { payload, signature } = notarized;
   const parse = options.parse ?? jsonParse(options.validate);
@@ -48,6 +73,11 @@ export const unpackNotarized = async <T>(
   return verified ? payloadRes : { err: 'Verification failed' };
 };
 
+/**
+ * Parses and/or validates a serialized representation of `Notarized<T>`.
+ * @param val the data to parse
+ * @returns a valid `Notarized<T>` object
+ */
 export const parseNotarized = <T>(
   val: JsonString<NotarizedStr<T>> | object
 ): Result<Notarized<T>> => {
