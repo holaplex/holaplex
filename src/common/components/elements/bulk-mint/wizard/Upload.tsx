@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { useDropzone } from 'react-dropzone';
 import { StepWizardChildProps } from 'react-step-wizard';
+import { ImageAction } from 'pages/bulk-upload/0';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -48,17 +49,17 @@ const DropZone = styled(Space)`
 `;
 
 interface Props extends Partial<StepWizardChildProps> {
-  setImages: (files: any) => void;
+  dispatch: (payload: ImageAction) => void;
 }
 
-export default function Upload({ nextStep, setImages }: Props) {
+export default function Upload({ nextStep, dispatch }: Props) {
   const onDrop = useCallback(
     (acceptedFiles) => {
       console.log('accepted files are', acceptedFiles);
-      setImages(acceptedFiles);
+      dispatch({ type: 'SET_IMAGES', payload: acceptedFiles });
       nextStep!();
     },
-    [setImages],
+    [dispatch, nextStep],
   );
 
   const { getRootProps, getInputProps, open } = useDropzone({

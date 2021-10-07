@@ -7,6 +7,7 @@ import ArrowLeft from '@/common/assets/images/arrow-left.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
+import { ImageAction } from 'pages/bulk-upload/0';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -48,17 +49,6 @@ const Grid = styled(Space)`
   margin: 59px 0 83px;
 `;
 
-const imageLinks = [
-  '/images/test-image.png',
-  '/images/test-image.png',
-  '/images/test-image.png',
-  '/images/test-image.png',
-  '/images/test-image.png',
-  '/images/test-image.png',
-  '/images/test-image.png',
-  '/images/test-image.png',
-];
-
 const AddNFTButton = styled.button`
   width: 120px;
   height: 120px;
@@ -92,9 +82,10 @@ const ImageContainer = styled.div`
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
+  dispatch: (payload: ImageAction) => void;
 }
 
-export default function Verify({ previousStep, nextStep, goToStep, images }: Props) {
+export default function Verify({ previousStep, nextStep, dispatch, goToStep, images }: Props) {
   return (
     <StyledLayout>
       <GoBack onClick={previousStep}>
@@ -116,6 +107,7 @@ export default function Verify({ previousStep, nextStep, goToStep, images }: Pro
               unoptimized={true}
             />
 
+            {/* TODO: Implement remove */}
             <StyledRemoveNFT onClick={() => console.log('remove')}>
               <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
             </StyledRemoveNFT>
