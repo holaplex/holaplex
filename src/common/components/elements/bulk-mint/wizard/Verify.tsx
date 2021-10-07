@@ -90,11 +90,11 @@ const ImageContainer = styled.div`
   }
 `;
 
-export default function Verify({
-  previousStep,
-  nextStep,
-  goToStep,
-}: Partial<StepWizardChildProps>) {
+interface Props extends Partial<StepWizardChildProps> {
+  images: Array<File>;
+}
+
+export default function Verify({ previousStep, nextStep, goToStep, images }: Props) {
   return (
     <StyledLayout>
       <GoBack onClick={previousStep}>
@@ -106,9 +106,16 @@ export default function Verify({
 
       <Header>Do these look right?</Header>
       <Grid>
-        {imageLinks.map((i) => (
-          <ImageContainer>
-            <Image width={120} height={120} src={i} alt="test-image" />
+        {images.map((i) => (
+          <ImageContainer key={i.name}>
+            <Image
+              width={120}
+              height={120}
+              src={URL.createObjectURL(i)}
+              alt="test-image"
+              unoptimized={true}
+            />
+
             <StyledRemoveNFT onClick={() => console.log('remove')}>
               <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
             </StyledRemoveNFT>

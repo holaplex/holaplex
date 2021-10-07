@@ -47,11 +47,20 @@ const DropZone = styled(Space)`
   border-radius: 8px;
 `;
 
-export default function Upload({ nextStep }: Partial<StepWizardChildProps>) {
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-    console.log('acceptedFiles', acceptedFiles);
-  }, []);
+interface Props extends Partial<StepWizardChildProps> {
+  setImages: (files: any) => void;
+}
+
+export default function Upload({ nextStep, setImages }: Props) {
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      console.log('accepted files are', acceptedFiles);
+      setImages(acceptedFiles);
+      nextStep!();
+    },
+    [setImages],
+  );
+
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
     noClick: true,

@@ -1,6 +1,6 @@
 import Button from '@/common/components/elements/Button';
 import { Layout, PageHeader, Space } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/elements/bulk-mint/wizard/Upload';
@@ -11,13 +11,14 @@ const StyledLayout = styled(Layout)`
 `;
 
 // TODO: we have this as a separate next.js page route for now, but eventually we would like to modalize it when we know where it kicks off
-// Wizardize as well
 export default function BulkUploadWizard() {
+  const [images, setImages] = useState([]);
+
   return (
     <StyledLayout>
       <StepWizard>
-        <Upload />
-        <Verify />
+        <Upload setImages={setImages} />
+        <Verify images={images} />
       </StepWizard>
     </StyledLayout>
   );
