@@ -95,7 +95,6 @@ function findDuplicates(name: string, images: Array<File>) {
 
 export default function Verify({ previousStep, nextStep, dispatch, goToStep, images }: Props) {
   const removeImage = (imageName: string) => {
-    console.log('imageName to delete is', imageName);
     dispatch({ type: 'DELETE_IMAGE', payload: imageName });
   };
 
@@ -123,7 +122,6 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
 
       console.log('uploadedImage', uploadedImage);
       dispatch({ type: 'ADD_IMAGE', payload: uploadedImage });
-      // nextStep!();
     },
     [dispatch, images],
   );

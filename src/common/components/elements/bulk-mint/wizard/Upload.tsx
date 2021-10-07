@@ -55,7 +55,6 @@ interface Props extends Partial<StepWizardChildProps> {
 export default function Upload({ nextStep, dispatch }: Props) {
   const onDrop = useCallback(
     (acceptedFiles) => {
-      console.log('accepted files are', acceptedFiles);
       dispatch({ type: 'SET_IMAGES', payload: acceptedFiles });
       nextStep!();
     },
@@ -71,11 +70,11 @@ export default function Upload({ nextStep, dispatch }: Props) {
 
   return (
     <StyledLayout>
-      <Header>Add images or videos to create NFTs</Header>
+      <Header>Add images to create NFTs</Header>
       <button onClick={nextStep}>next step</button>
       <DropZone {...getRootProps()}>
         <input {...getInputProps()} />
-        <Copy>Drag up to 10 pngs, jpegs, gifs, or video files here.</Copy>
+        <Copy>Drag up to 10 pngs, jpegs, or gifs here.</Copy>
         <Copy transparent>or</Copy>
         <Button type="primary" size="large" onClick={open}>
           Browse Files

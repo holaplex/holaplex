@@ -1,6 +1,5 @@
-import Button from '@/common/components/elements/Button';
-import { Layout, PageHeader, Space } from 'antd';
-import React, { useReducer, useState } from 'react';
+import { Layout } from 'antd';
+import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/elements/bulk-mint/wizard/Upload';
@@ -10,27 +9,27 @@ const StyledLayout = styled(Layout)`
   width: 100%;
 `;
 
-const initialState = { images: [] };
-
 interface State {
   images: Array<File>;
 }
 
+const initialState: State = { images: [] };
+
 export interface ImageAction {
   type: 'SET_IMAGES' | 'DELETE_IMAGE' | 'ADD_IMAGE';
-  payload: any; // TODO: Type this
+  payload: File[] | File | String;
 }
 
 function reducer(state: State, action: ImageAction) {
   switch (action.type) {
     case 'SET_IMAGES':
-      return { images: action.payload };
+      return { images: action.payload as File[] };
     case 'DELETE_IMAGE':
       return {
-        images: state.images.filter((i) => i.name !== action.payload),
+        images: state.images.filter((i) => i.name !== (action.payload as String)),
       };
     case 'ADD_IMAGE':
-      return { images: [...state.images, action.payload] };
+      return { images: [...state.images, action.payload as File] };
     default:
       throw new Error('No valid action for images state');
   }
