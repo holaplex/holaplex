@@ -86,6 +86,11 @@ interface Props extends Partial<StepWizardChildProps> {
 }
 
 export default function Verify({ previousStep, nextStep, dispatch, goToStep, images }: Props) {
+  // Is it good enough to filter by imageName? do we need to concat with lastModified?
+  const removeImage = (imageName: string) => {
+    dispatch({ type: 'DELETE_IMAGE', payload: imageName });
+  };
+
   return (
     <StyledLayout>
       <GoBack onClick={previousStep}>
@@ -107,8 +112,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
               unoptimized={true}
             />
 
-            {/* TODO: Implement remove */}
-            <StyledRemoveNFT onClick={() => console.log('remove')}>
+            <StyledRemoveNFT onClick={() => removeImage(i.name)}>
               <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
             </StyledRemoveNFT>
           </ImageContainer>

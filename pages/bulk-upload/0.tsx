@@ -17,7 +17,7 @@ interface State {
 }
 
 export interface ImageAction {
-  type: string;
+  type: 'SET_IMAGES' | 'DELETE_IMAGE' | 'ADD_IMAGE';
   payload: any; // TODO: Type this
 }
 
@@ -25,8 +25,8 @@ function reducer(state: State, action: ImageAction) {
   switch (action.type) {
     case 'SET_IMAGES':
       return { images: action.payload };
-    case 'DELETE_IMAGES':
-      return { images: state.images.filter((i) => i.name === action.payload) };
+    case 'DELETE_IMAGE':
+      return { images: state.images.filter((i) => i.name !== action.payload) };
     case 'ADD_IMAGE':
     // TODO: Implement
     default:
