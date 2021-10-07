@@ -9,8 +9,8 @@ interface Props extends Partial<StepWizardChildProps> {
 
 export default function InfoScreen({ previousStep, goToStep, images }: Props) {
   return (
-    <NavContainer title="testing" previousStep={previousStep} goToStep={goToStep}>
-      hello
+    <NavContainer title="Info for #1 of 8" previousStep={previousStep} goToStep={goToStep}>
+      <div>hello</div>
     </NavContainer>
   );
 }
