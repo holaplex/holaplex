@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import ArrowLeft from '@/common/assets/images/arrow-left.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
+import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 
 const StyledLayout = styled(Layout)`
@@ -71,20 +72,47 @@ const AddNFTButton = styled.button`
   }
 `;
 
-export default function Verify({ previousStep, nextStep, goToStep }: StepWizardChildProps) {
+const StyledRemoveNFT = styled.div`
+  position: absolute;
+  top: -9px;
+  right: 4px;
+  display: none;
+  cursor: pointer;
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+
+  &:hover {
+    ${StyledRemoveNFT} {
+      display: block;
+    }
+  }
+`;
+
+export default function Verify({
+  previousStep,
+  nextStep,
+  goToStep,
+}: Partial<StepWizardChildProps>) {
   return (
     <StyledLayout>
       <GoBack onClick={previousStep}>
         <Image width={24} height={24} src={ArrowLeft} alt="arrow-left" />
       </GoBack>
-      <XClose onClick={() => goToStep(1)}>
+      <XClose onClick={() => goToStep!(1)}>
         <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
       </XClose>
 
       <Header>Do these look right?</Header>
       <Grid>
         {imageLinks.map((i) => (
-          <Image width={120} height={120} src={i} alt="test-image" />
+          <ImageContainer>
+            <Image width={120} height={120} src={i} alt="test-image" />
+            <StyledRemoveNFT onClick={() => console.log('remove')}>
+              <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
+            </StyledRemoveNFT>
+          </ImageContainer>
         ))}
         <AddNFTButton>
           <Image width={24} height={24} src={XCloseIcon} alt="x-close" />

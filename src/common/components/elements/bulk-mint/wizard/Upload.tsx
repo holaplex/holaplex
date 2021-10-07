@@ -47,7 +47,7 @@ const DropZone = styled(Space)`
   border-radius: 8px;
 `;
 
-export default function Upload({ nextStep }: StepWizardChildProps) {
+export default function Upload({ nextStep }: Partial<StepWizardChildProps>) {
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files
     console.log('acceptedFiles', acceptedFiles);
