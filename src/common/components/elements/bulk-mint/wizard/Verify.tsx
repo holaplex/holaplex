@@ -1,6 +1,6 @@
 import Button from '@/common/components/elements/Button';
 import { Layout, PageHeader, Space } from 'antd';
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import ArrowLeft from '@/common/assets/images/arrow-left.svg';
@@ -8,6 +8,7 @@ import XCloseIcon from '@/common/assets/images/x-close.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { ImageAction } from 'pages/bulk-upload/0';
+import { useDropzone } from 'react-dropzone';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -85,11 +86,54 @@ interface Props extends Partial<StepWizardChildProps> {
   dispatch: (payload: ImageAction) => void;
 }
 
+function findDuplicates(name: string, images: Array<File>) {
+  const regex = new RegExp(`${name}_[0-9]+.[A-z]*`);
+  const duplicates = images.filter((i) => regex.test(i.name));
+
+  return duplicates;
+}
+
 export default function Verify({ previousStep, nextStep, dispatch, goToStep, images }: Props) {
-  // Is it good enough to filter by imageName? do we need to concat with lastModified?
   const removeImage = (imageName: string) => {
+    console.log('imageName to delete is', imageName);
     dispatch({ type: 'DELETE_IMAGE', payload: imageName });
   };
+
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      let uploadedImage = acceptedFiles[0];
+
+      if (images.some((i) => i.name === uploadedImage.name)) {
+        const imageNameWithoutExt = uploadedImage.name.replace(/\.[^/.]+$/, ''); //
+        const duplicates = findDuplicates(imageNameWithoutExt, images);
+        const fileExtension = uploadedImage.name.split('.').pop();
+        let newName = `${imageNameWithoutExt}_1.${fileExtension}`;
+
+        if (duplicates.length > 0) {
+          const lastItem = duplicates.pop();
+          if (lastItem) {
+            const lastItemName = lastItem.name.replace(/\.[^/.]+$/, '');
+            const count = Number(lastItemName.slice(-1));
+            newName = `${imageNameWithoutExt}_${count + 1}.${fileExtension}`;
+          }
+        }
+
+        uploadedImage = new File([uploadedImage], newName, { type: uploadedImage.type });
+      }
+
+      console.log('uploadedImage', uploadedImage);
+      dispatch({ type: 'ADD_IMAGE', payload: uploadedImage });
+      // nextStep!();
+    },
+    [dispatch, images],
+  );
+
+  const { open, getInputProps } = useDropzone({
+    onDrop,
+    noClick: true,
+    maxFiles: 1,
+    accept: 'image/jpeg, image/png, image/gif',
+  });
 
   return (
     <StyledLayout>
@@ -117,9 +161,12 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
             </StyledRemoveNFT>
           </ImageContainer>
         ))}
-        <AddNFTButton>
-          <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
-        </AddNFTButton>
+        {images.length < 10 ? (
+          <AddNFTButton onClick={open}>
+            <input {...getInputProps()} />
+            <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
+          </AddNFTButton>
+        ) : null}
       </Grid>
 
       <Button type="primary" size="large">

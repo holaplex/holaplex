@@ -26,9 +26,11 @@ function reducer(state: State, action: ImageAction) {
     case 'SET_IMAGES':
       return { images: action.payload };
     case 'DELETE_IMAGE':
-      return { images: state.images.filter((i) => i.name !== action.payload) };
+      return {
+        images: state.images.filter((i) => i.name !== action.payload),
+      };
     case 'ADD_IMAGE':
-    // TODO: Implement
+      return { images: [...state.images, action.payload] };
     default:
       throw new Error('No valid action for images state');
   }
