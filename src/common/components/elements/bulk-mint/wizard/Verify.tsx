@@ -99,7 +99,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
   };
 
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles: File[]) => {
       let uploadedImage = acceptedFiles[0];
 
       if (images.some((i) => i.name === uploadedImage.name)) {
