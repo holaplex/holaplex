@@ -6,7 +6,6 @@ import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
-import { divide } from 'ramda';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -79,8 +78,6 @@ export default function InfoScreen({ previousStep, goToStep, images }: Props) {
   const [form] = Form.useForm();
   const { TextArea } = Input;
 
-  const [attributeRows, setAttributeRows] = useState(5);
-
   const onFinish = () => {};
 
   const onFill = () => {};
@@ -152,7 +149,6 @@ export default function InfoScreen({ previousStep, goToStep, images }: Props) {
         <StyledDivider type="vertical" />
         <Grid>
           {images.map((i) => (
-            // <ImageContainer key={i.name}>
             <Image
               width={120}
               height={120}
@@ -161,7 +157,6 @@ export default function InfoScreen({ previousStep, goToStep, images }: Props) {
               unoptimized={true}
               key={i.name}
             />
-            // </ImageContainer>
           ))}
         </Grid>
       </InnerContainer>
