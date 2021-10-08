@@ -2,9 +2,9 @@ import { Layout } from 'antd';
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
-import Upload from '@/common/components/elements/bulk-mint/wizard/Upload';
-import Verify from '@/common/components/elements/bulk-mint/wizard/Verify';
-import InfoScreen from '@/common/components/elements/bulk-mint/wizard/InfoScreen';
+import Upload from '@/common/components/wizard/Upload';
+import Verify from '@/common/components/wizard/Verify';
+import InfoScreen from '@/common/components/wizard/InfoScreen';
 
 const StyledLayout = styled(Layout)`
   width: 100%;

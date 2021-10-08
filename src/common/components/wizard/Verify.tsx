@@ -8,10 +8,9 @@ import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { ImageAction } from 'pages/bulk-upload/0';
 import { useDropzone } from 'react-dropzone';
-import NavContainer from '@/common/components/elements/bulk-mint/wizard/NavContainer';
+import NavContainer from '@/common/components/wizard/NavContainer';
 
 const Header = styled(PageHeader)`
-  font-family: Nunito Sans;
   font-style: normal;
   font-weight: 900;
   font-size: 48px;
@@ -140,7 +139,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
         ) : null}
       </Grid>
 
-      <Button type="primary" size="large">
+      <Button type="primary" size="large" onClick={nextStep}>
         Looks good
       </Button>
     </NavContainer>

@@ -7,13 +7,13 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 
 const Header = styled(PageHeader)`
-  font-family: Nunito Sans;
   font-style: normal;
   font-weight: 900;
   font-size: 24px;
   line-height: 65px;
   text-align: center;
   color: #fff;
+  padding-top: 10px;
 `;
 
 const StyledLayout = styled(Layout)`

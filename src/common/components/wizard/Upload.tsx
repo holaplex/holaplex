@@ -13,7 +13,6 @@ const StyledLayout = styled(Layout)`
 `;
 
 const Header = styled(PageHeader)`
-  font-family: Nunito Sans;
   font-style: normal;
   font-weight: 900;
   font-size: 48px;
@@ -26,7 +25,6 @@ const Header = styled(PageHeader)`
 
 const Copy = styled.p<{ transparent?: boolean }>`
   color: #fff;
-  font-family: Nunito Sans;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;

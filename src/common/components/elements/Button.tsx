@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { Button } from 'antd';
 import { equals } from 'ramda';
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ noStyle?: boolean }>`
   &:hover,
   &:active,
   &:focus {
@@ -48,6 +48,21 @@ const StyledButton = styled(Button)`
         background: rgba(255, 255, 255, 0.5);
         color: #d24089;
       }
+    `}
+
+    ${({ noStyle }) =>
+    noStyle &&
+    css`
+      background: none;
+      border: none;
+      margin: 0;
+      padding: 0;
+      width: auto;
+      overflow: visible;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      line-height: normal;
     `}
 `;
 
