@@ -14,8 +14,6 @@ export type WalletContextProps = {
   initializing: boolean;
   solana?: Solana;
   connect: (params?: any) => any;
-  arweaveWallet?: any;
-  arweaveWalletAddress?: string;
 }
 
 export const WalletContext = React.createContext<WalletContextProps>({ verifying: false, initializing: true, connect: () => {}, })

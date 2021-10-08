@@ -1,21 +1,22 @@
-import { ArweaveFile } from '@/modules/arweave/types'
-export type StorefrontTheme = {
+import { ArweaveFile } from '@/modules/arweave/types';
+
+export interface StorefrontTheme<F = ArweaveFile> {
   primaryColor: string;
   backgroundColor: string;
   textFont: string;
   titleFont: string;
-  logo: ArweaveFile;
+  logo: F;
 }
 
-export type PageMetaData = {
+export interface PageMetaData<F = ArweaveFile> {
   title: string;
   description: string;
-  favicon: ArweaveFile;
+  favicon: F;
 }
 
-export type Storefront = {
-  theme: StorefrontTheme;
-  meta: PageMetaData;
+export interface Storefront<F = ArweaveFile> {
+  theme: StorefrontTheme<F>;
+  meta: PageMetaData<F>;
   subdomain: string;
   pubkey: string;
 }

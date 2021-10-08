@@ -28,7 +28,7 @@ interface ArweaveWalletHelpers {
   canAfford: (address: string, bytes: number) => Promise<boolean>
 }
 
-interface ArweaveScope {
+export interface ArweaveScope {
   storefront: ArweaveObjectInteraction;
   wallet: ArweaveWalletHelpers;
 }
@@ -145,7 +145,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
         const response = await query(
           arweave,
           `query GetStorefronts($after: String, $first: Int) {
-            transactions(tags:[{ name: "Arweave-App", values: ["holaplex"]}], first: $first , after: $after) {
+            transactions(tags:[{ name: "Arweave-App", values: ["holaplex"]}], after: $after, sort: HEIGHT_DESC, first: 1) {
               pageInfo {
                 hasNextPage
               }
