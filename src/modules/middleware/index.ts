@@ -1,4 +1,3 @@
-import cors from './cors';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 function initMiddleware(
@@ -14,7 +13,3 @@ function initMiddleware(
       });
     });
 }
-
-const corsMiddleware = initMiddleware(cors);
-
-export { corsMiddleware as cors };
