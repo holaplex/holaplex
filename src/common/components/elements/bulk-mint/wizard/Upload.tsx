@@ -71,7 +71,6 @@ export default function Upload({ nextStep, dispatch }: Props) {
   return (
     <StyledLayout>
       <Header>Add images to create NFTs</Header>
-      <button onClick={nextStep}>next step</button>
       <DropZone {...getRootProps()}>
         <input {...getInputProps()} />
         <Copy>Drag up to 10 pngs, jpegs, or gifs here.</Copy>

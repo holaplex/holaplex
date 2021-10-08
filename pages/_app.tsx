@@ -13,7 +13,6 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { Content } from 'antd/lib/layout/layout';
 import { AppHeader } from '@/components/elements/AppHeader';
-import { route } from 'next/dist/next-server/server/router';
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
@@ -23,7 +22,6 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const showHeader = router.pathname !== '/bulk-upload/0' && router.pathname !== '/bulk-upload/1';
 
   const track = (category: string, action: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
@@ -65,7 +63,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             {({ searching }) => {
               return (
                 <AppLayout>
-                  {showHeader && <AppHeader />}
+                  <AppHeader />
                   <Content>
                     <Loading loading={verifying || searching}>
                       <Component {...pageProps} track={track} />
