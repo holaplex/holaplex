@@ -74,7 +74,8 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                   url: tags["holaplex:theme:logo:url"],
                   name: tags["holaplex:theme:logo:name"],
                   type: tags["holaplex:theme:logo:type"]
-                }
+                },
+                version: tags["holaplex:theme:version"]
               },
               meta: {
                 description: tags["holaplex:metadata:page:description"],
@@ -83,7 +84,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                   url: tags["holaplex:metadata:favicon:url"],
                   name: tags["holaplex:metadata:favicon:name"],
                   type: tags["holaplex:metadata:favicon:type"]
-                }
+                },
               }
             }
           }
@@ -223,8 +224,8 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag("holaplex:metadata:page:title", storefront.meta.title)
       transaction.addTag("holaplex:metadata:page:description", storefront.meta.description)
       
-      transaction.addTag("holaplex:metadata:theme:version", version)
       
+      transaction.addTag("holaplex:theme:version", version)
       transaction.addTag("holaplex:theme:logo:url", storefront.theme.logo.url)
       transaction.addTag("holaplex:theme:logo:name", storefront.theme.logo.name)
       transaction.addTag("holaplex:theme:logo:type", storefront.theme.logo.type)

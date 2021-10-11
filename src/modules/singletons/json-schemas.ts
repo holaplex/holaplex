@@ -117,6 +117,7 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
           primaryColor: { type: 'string' },
           textFont: { type: 'string' },
           titleFont: { type: 'string' },
+          version: { type: 'string' }
         },
       },
     },

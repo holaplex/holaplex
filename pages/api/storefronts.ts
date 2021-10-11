@@ -49,7 +49,7 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   tx.addTag('holaplex:metadata:page:title', storefront.meta.title);
   tx.addTag('holaplex:metadata:page:description', storefront.meta.description);
 
-  tx.addTag("holaplex:metadata:theme:version", '2')
+  tx.addTag('holaplex:theme:version', '2')
   tx.addTag('holaplex:theme:logo:url', storefront.theme.logo.url);
   tx.addTag('holaplex:theme:logo:name', storefront.theme.logo.name);
   tx.addTag('holaplex:theme:logo:type', storefront.theme.logo.type);

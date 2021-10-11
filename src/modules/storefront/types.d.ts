@@ -6,6 +6,7 @@ export interface StorefrontTheme<F = ArweaveFile> {
   textFont: string;
   titleFont: string;
   logo: F;
+  version: string;
 }
 
 export interface PageMetaData<F = ArweaveFile> {
