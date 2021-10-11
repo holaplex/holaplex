@@ -6,13 +6,19 @@ import Image from 'next/image'
 import FeatherIcon from 'feather-icons-react'
 import DiscordLogo from '@/assets/images/discord-logo.svg'
 
+const Container = styled.div`
+  ${sv.flexRow};
+`;
+
 const SocialLink = styled.a`
+  display: block;
+  ${sv.flexCenter};
   margin-left: ${sv.grid*2}px;
   color: ${sv.colors.buttonText};
   opacity: .5;
   transition: opacity .2s ease;
   &:hover {
-    color: ${sv.colors.buttonText};
+    color: ${sv.colors.cta};
     opacity: 1;
   }
 `;
@@ -20,7 +26,7 @@ const SocialLink = styled.a`
 const SocialLinks = () => {
 
   return (
-    <>
+    <Container>
       <SocialLink href="https://twitter.com/holaplex" target="_blank" rel="noreferrer">
         <FeatherIcon icon="twitter" />
       </SocialLink>
@@ -33,7 +39,7 @@ const SocialLinks = () => {
       <SocialLink href="https://discord.com/invite/TEu7Qx5ux3" target="_blank" rel="noreferrer">
         <Image width={24} height={24} src={DiscordLogo} alt="discord" />
       </SocialLink>
-    </>
+    </Container>
 
   )
 }
