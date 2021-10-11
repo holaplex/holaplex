@@ -5,7 +5,7 @@ import singletons from '@/modules/singletons';
 import { SCHEMAS } from '@/modules/singletons/json-schemas';
 import { formatMessage } from '@/modules/storefront/put-storefront';
 import type { Storefront } from '@/modules/storefront/types';
-import { stylesheet } from '@/modules/theme';
+import { stylesheetV2 } from '@/modules/theme';
 import { ApiError } from '@/modules/utils';
 import { ajvParse } from '@/modules/utils/json';
 import { resultThenAsync } from '@/modules/utils/result';
@@ -38,7 +38,7 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   const { arweave, jwk, address } = await singletons.arweave;
   const arweaveClient = ArweaveSDK.using(arweave);
 
-  const tx = await arweave.createTransaction({ data: stylesheet(storefront.theme) });
+  const tx = await arweave.createTransaction({ data: stylesheetV2(storefront.theme) });
 
   tx.addTag('Content-Type', 'text/css');
   tx.addTag('solana:pubkey', storefront.pubkey);
@@ -48,6 +48,8 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   tx.addTag('holaplex:metadata:favicon:type', storefront.meta.favicon.type);
   tx.addTag('holaplex:metadata:page:title', storefront.meta.title);
   tx.addTag('holaplex:metadata:page:description', storefront.meta.description);
+
+  tx.addTag("holaplex:metadata:theme:version", '2')
   tx.addTag('holaplex:theme:logo:url', storefront.theme.logo.url);
   tx.addTag('holaplex:theme:logo:name', storefront.theme.logo.name);
   tx.addTag('holaplex:theme:logo:type', storefront.theme.logo.type);

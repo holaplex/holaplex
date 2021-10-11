@@ -8,6 +8,44 @@ import text from "@/common/constants/text";
 
 const joinFonts = pipe(map(replace(/\s+/g, '+')), join("&family="))
 
+export function stylesheetV2({ backgroundColor, primaryColor, textFont, titleFont, logo }: StorefrontTheme): string {
+  const v1css = stylesheet({ backgroundColor, primaryColor, textFont, titleFont, logo})
+  // duplicating this code from v1, want to leave that function as is.
+  let contrastBackgroundColor = new Color(backgroundColor).darken(.1).hex()
+  let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.05).hex()
+  let textColor = '#000000'
+  let subtleTextColor = rgba('#000000', .6)
+  let buttonTextColor = '#000000'
+  let primaryHoverColor = new Color(primaryColor).darken(.2).hex()
+  let boxShadow = '0 0 16px rgba(0,0,0,.3)'
+
+  if (new Color(backgroundColor).isDark()) {
+    contrastBackgroundColor = new Color(backgroundColor).lighten(.2).hex()
+    lesserContrastBackgroundColor = new Color(backgroundColor).lighten(.1).hex()
+    textColor = '#FFFFFF'
+    subtleTextColor = rgba('#FFFFFF', .6)
+    boxShadow = '0 0 16px rgba(0,0,0,.8)'
+  }
+
+  if (new Color(primaryColor).isDark()) {
+    buttonTextColor = '#FFFFFF'
+  }
+  const themedVarsCss = `
+  :root {
+    --theme-text-font-color: ${textFont};
+    --theme-title-font-color: ${titleFont};
+    --theme-background-color: ${backgroundColor};
+    --theme-primary-color: ${primaryColor};
+    --theme-contrast-background-color: ${contrastBackgroundColor};
+    --theme-lesser-contrast-background-color: ${lesserContrastBackgroundColor};
+    --theme-subtle-text-color: ${subtleTextColor};
+    --theme-button-text-color: ${buttonTextColor};
+    --theme-box-shadow: ${boxShadow};
+    --theme-primary-hover-color: ${primaryHoverColor};
+  }`
+
+  return themedVarsCss + v1css;
+}
 export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont, logo }: StorefrontTheme): string {
   let contrastBackgroundColor = new Color(backgroundColor).darken(.1).hex()
   let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.05).hex()

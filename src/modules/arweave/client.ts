@@ -20,7 +20,7 @@ interface ArweaveResponseTransformer {
 
 interface ArweaveObjectInteraction {
   find: (tag: string, value: string) => Promise<Storefront | null>;
-  upsert: (storefront: Storefront, css: string) => Promise<Storefront>
+  upsert: (storefront: Storefront, css: string, version: string) => Promise<Storefront>
   list: (batch?: number, start?: string) => Promise<StorefrontEdge[]>
 }
 
@@ -211,7 +211,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
 
       return edges[0].storefront
     },
-    upsert: async (storefront: Storefront, css: string): Promise<Storefront> => {
+    upsert: async (storefront: Storefront, css: string, version: string): Promise<Storefront> => {
       const transaction = await arweave.createTransaction({ data: css })
 
       transaction.addTag("Content-Type", "text/css")
@@ -222,6 +222,9 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag("holaplex:metadata:favicon:type", storefront.meta.favicon.type)
       transaction.addTag("holaplex:metadata:page:title", storefront.meta.title)
       transaction.addTag("holaplex:metadata:page:description", storefront.meta.description)
+      
+      transaction.addTag("holaplex:metadata:theme:version", version)
+      
       transaction.addTag("holaplex:theme:logo:url", storefront.theme.logo.url)
       transaction.addTag("holaplex:theme:logo:name", storefront.theme.logo.name)
       transaction.addTag("holaplex:theme:logo:type", storefront.theme.logo.type)
