@@ -41,7 +41,7 @@ export function stylesheetV2({ backgroundColor, primaryColor, textFont, titleFon
     --theme-subtle-text-color: ${subtleTextColor};
     --theme-button-text-color: ${buttonTextColor};
     --theme-box-shadow: ${boxShadow};
-    --theme-primary-hover-color: ${primaryHoverColor};
+    --theme-primary-hover-color: ${boxShadow};
   }`
 
   return themedVarsCss + v1css;
