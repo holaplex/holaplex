@@ -70,8 +70,7 @@ input, textarea {
 }
 
 body {
-  /* background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%); */
-  background: #000000;
+  background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
   background-repeat: no-repeat;
 }
 

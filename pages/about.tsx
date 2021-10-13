@@ -172,7 +172,7 @@ export default function About() {
                 </Row>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.purpleGradient}>6k+</StatTitle>
+                    <StatTitle textColor={sv.colors.orangeGradient}>6k+</StatTitle>
                     <LightText>Twitter followers</LightText>
                   </Stat>
                   <Stat span={12}>
@@ -185,7 +185,7 @@ export default function About() {
           </Row>
         </Col>
       </Community>
-      
+
       <Footer justify="center">
         <Col xs={18}>
           <Row>
