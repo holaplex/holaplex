@@ -6,7 +6,7 @@ export default async function uploadFile(file: File): Promise<PinFileResponse> {
   try {
     const response = await fetch("https://api.nft.storage/upload", {
       //@ts-ignore
-      body: fs.createReadStream(path),
+      body: fs.createReadStream(file.path),
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.NFT_STORAGE_API_KEY || ''}`,
