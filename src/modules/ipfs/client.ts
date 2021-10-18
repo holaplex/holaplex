@@ -1,18 +1,7 @@
-import { Files, File } from 'formidable';
-import fs from 'fs'
+import { Files } from 'formidable';
 import { PinFileResponse } from './types';
-
-const uploadPromise = (file: File) => (
-  fetch("https://api.nft.storage/upload", {
-    //@ts-ignore
-    body: fs.createReadStream(file.path),
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.NFT_STORAGE_API_KEY || ''}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    } 
-  })
-)
+import uploadFile from './nft.storage';
+import { fromCloudFlare } from '.';
 
 export default async function UploadFiles(formFiles: Files ) {
   const files = Object.values(formFiles)
@@ -20,7 +9,7 @@ export default async function UploadFiles(formFiles: Files ) {
 
   const uploadPromises: Promise<any>[] = []
   files.forEach((file) => {
-    uploadPromises.push(uploadPromise(file));
+    uploadPromises.push(uploadFile(file.path));
   })
 
   const results = await Promise.allSettled(uploadPromises)
@@ -37,7 +26,7 @@ export default async function UploadFiles(formFiles: Files ) {
       fileResponse.error = result.reason
     } else {
       const json = await result.value.json()
-      fileResponse.uri = `https://${json.value.cid}.ipfs.dweb.link`
+      fileResponse.uri = fromCloudFlare(json.value.cid)
     }
     mixedResults.push(fileResponse)
   }))
