@@ -1,7 +1,7 @@
 import { Files } from 'formidable';
 import { PinFileResponse } from './types';
 import uploadFile from './nft.storage';
-import { fromCloudFlare } from '.';
+import { fromDwebLink } from '.';
 
 export default async function UploadFiles(formFiles: Files ) {
   const files = Object.values(formFiles)
@@ -26,7 +26,7 @@ export default async function UploadFiles(formFiles: Files ) {
       fileResponse.error = result.reason
     } else {
       const json = await result.value.json()
-      fileResponse.uri = fromCloudFlare(json.value.cid)
+      fileResponse.uri = fromDwebLink(json.value.cid)
     }
     mixedResults.push(fileResponse)
   }))
