@@ -1,7 +1,6 @@
 export type PinFileResponse = {
-  file: {
-   url?: string;
-   name?: string;
-  };
-  error?: string | undefined;
+  uri?: string;
+  name?: string;
+  type?: string;
+  error?: string;
 }

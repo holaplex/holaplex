@@ -1,40 +1,47 @@
-import { pinata } from './'
+import { Files, File } from 'formidable';
+import fs from 'fs'
 import { PinFileResponse } from './types';
-import { Files } from 'formidable';
-const GATEWAY = 'https://gateway.pinata.cloud/ipfs/'
-export default async function UploadFiles(files: Files ) {
-  const fileNames = Object.keys(files)
-  const uploadPromises = fileNames.map((fileName) => {
-    const options = {
-      pinataMetadata: {
-        name: fileName,
-      },
-      pinataOptions: {
-        cidVersion: 1 as 1 // I think this is right, not sure why.
-      }
-    };
-    const file = files[fileName]
-    return pinata.pinFileToIPFS(file, options)
 
+const uploadPromise = (file: File) => (
+  fetch("https://api.nft.storage/upload", {
+    //@ts-ignore
+    body: fs.createReadStream(file.path),
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.NFT_STORAGE_API_KEY || ''}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    } 
+  })
+)
+
+export default async function UploadFiles(formFiles: Files ) {
+  const files = Object.values(formFiles)
+    .map(maybeFiles =>  maybeFiles instanceof Array ? maybeFiles[0] : maybeFiles)
+
+  const uploadPromises: Promise<any>[] = []
+  files.forEach((file) => {
+    uploadPromises.push(uploadPromise(file));
   })
 
-  const mixedResults: PinFileResponse[] = []
-
   const results = await Promise.allSettled(uploadPromises)
-  results.forEach((result, index) => {
+
+  const mixedResults: PinFileResponse[] = []
+  await Promise.all(results.map(async(result, index) => {
     const fileResponse: PinFileResponse = {
-      file: {}
+      error: undefined,
+      uri: '',
+      name: files[index].name || '',
+      type: files[index].type || ''
     }
     if (result.status === "rejected"){
       fileResponse.error = result.reason
-      
     } else {
-      fileResponse.file = {
-        url: GATEWAY + result.value.IpfsHash,
-        name: fileNames[index],
-      }
+      const json = await result.value.json()
+      fileResponse.uri = `https://${json.value.cid}.ipfs.dweb.link`
     }
     mixedResults.push(fileResponse)
-  })
-  return mixedResults;
+  }))
+
+  return mixedResults
+
 }
