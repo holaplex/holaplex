@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import UploadFiles from '@/modules/ipfs/client'
+import uploadFiles from '@/modules/ipfs/client'
 import { IncomingForm } from 'formidable';
 import { ApiError, FormData } from '@/modules/utils';
 import NextCors from 'nextjs-cors';
@@ -36,7 +36,7 @@ export default async function handler(
             })
             
         });
-        const files = await UploadFiles(params.files)
+        const files = await uploadFiles(params.files)
         const containsErrors = files.find(result => !!result.error)
         if (containsErrors) {
           res.status(500)

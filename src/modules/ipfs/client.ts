@@ -1,36 +1,21 @@
 import { Files } from 'formidable';
-import { PinFileResponse } from './types';
 import uploadFile from './nft.storage';
-import { fromDwebLink } from '.';
+import {
+  values,
+  map,
+  pipe,
+  is,
+  take,
+  when
+} from 'ramda'
 
-export default async function UploadFiles(formFiles: Files ) {
-  const files = Object.values(formFiles)
-    .map(maybeFiles =>  maybeFiles instanceof Array ? maybeFiles[0] : maybeFiles)
+export default async function uploadFiles(formFiles: Files) {
+  // @ts-ignore
+  const files = pipe(values, map(when(is(Array), take(0))))(formFiles) as File[]
+  const uploadPromises = files.map((file) => (
+    uploadFile(file)
+  ))
+  return await Promise.all(uploadPromises)
 
-  const uploadPromises: Promise<any>[] = []
-  files.forEach((file) => {
-    uploadPromises.push(uploadFile(file.path));
-  })
-
-  const results = await Promise.allSettled(uploadPromises)
-
-  const mixedResults: PinFileResponse[] = []
-  await Promise.all(results.map(async(result, index) => {
-    const fileResponse: PinFileResponse = {
-      error: undefined,
-      uri: '',
-      name: files[index].name || '',
-      type: files[index].type || ''
-    }
-    if (result.status === "rejected"){
-      fileResponse.error = result.reason
-    } else {
-      const json = await result.value.json()
-      fileResponse.uri = fromDwebLink(json.value.cid)
-    }
-    mixedResults.push(fileResponse)
-  }))
-
-  return mixedResults
 
 }
