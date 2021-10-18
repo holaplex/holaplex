@@ -30,8 +30,9 @@ export default async function uploadFile(file: File): Promise<PinFileResponse> {
       type: file.type || ''
     }
   } catch(error) {
+    console.error(error)
     return {
-      error: error as string,
+      error: "Upload error",
       uri: undefined,
       name: file.name || '',
       type: file.type || ''
