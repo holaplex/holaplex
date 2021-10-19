@@ -16,6 +16,8 @@ http {
 
 	server_tokens off;
 
+	 client_max_body_size 100M; # max file size 100MB
+
 	log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
 	access_log <%= ENV['NGINX_ACCESS_LOG_PATH'] || 'logs/nginx/access.log' %> l2met;
 	error_log <%= ENV['NGINX_ERROR_LOG_PATH'] || 'logs/nginx/error.log' %>;
