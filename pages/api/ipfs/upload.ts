@@ -14,7 +14,7 @@ export default async function handler(
   res: NextApiResponse<object>
 ) {
   await NextCors(req, res, {
-    methods: ['POST'],
+    methods: ['POST', 'HEAD', 'OPTIONS'],
     origin: '*',
   });
   try {
