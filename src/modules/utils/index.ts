@@ -1,3 +1,11 @@
+import { Fields, Files } from 'formidable';
+
+/** Helper for formidable. */
+export interface FormData {
+  fields: Fields;
+  files: Files;
+}
+
 /** Helper for nonlocal control flow for REST errors. */
 export class ApiError extends Error {
   public readonly json: Readonly<object>;

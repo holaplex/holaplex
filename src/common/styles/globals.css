@@ -1,39 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Nunito+Sans:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Nunito+Sans:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&family=Inter&family=Urbanist&display=swap');
 
 a {
   cursor: pointer;
 }
 
 .font-family-roboto {
-  font-family: 'Roboto', sans;
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-family-inter {
+  font-family: 'Inter', sans-serif;
 }
 
 .font-family-work-sans {
-  font-family: 'Work Sans', sans;
+  font-family: 'Work Sans', sans-serif;
 }
 
 .font-family-montserrat {
-  font-family: 'Montserrat', sans;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-family-urbanist {
+  font-family: 'Urbanist', sans-serif;
 }
 
 .font-family-source-sans-pro {
-  font-family: 'Source Sans Prop', sans;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
-.font-family-marriweather {
-  font-family: 'Playfair Display', sans;
+.font-family-merriweather {
+  font-family: 'Merriweather', serif;
 }
 
 .font-family-playfair-display {
-  font-family: 'Playfair Display', sans;
+  font-family: 'Playfair Display', serif;
 }
 
 .font-family-noto-serif {
-  font-family: 'Noto Serif', sans;
+  font-family: 'Noto Serif', serif;
 }
 
 .font-family-domine {
-  font-family: 'Domine', sans;
+  font-family: 'Domine', serif;
 }
 
 html,
