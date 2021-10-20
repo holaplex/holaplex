@@ -1,15 +1,17 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Space, Form } from 'antd';
+import { Divider, Input, Space, Form, FormInstance } from 'antd';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
+import { FormListFieldData } from 'antd/lib/form/FormList';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
-  // dispatch: (payload: ImageAction) => void;
+  index: number;
+  form: FormInstance;
 }
 
 const Grid = styled.div`
@@ -74,62 +76,83 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
-export default function InfoScreen({ previousStep, goToStep, images }: Props) {
-  const [form] = Form.useForm();
+export default function InfoScreen({
+  previousStep,
+  goToStep,
+  images,
+  index,
+  nextStep,
+  form,
+}: Props) {
   const { TextArea } = Input;
+  const nftNumber = `nft-${index}`;
 
-  const onFinish = () => {};
-
-  const onFill = () => {};
+  const handleNext = () => {
+    form
+      .validateFields([[nftNumber, 'name']])
+      .then(() => {
+        nextStep!();
+      })
+      .catch((info) => {
+        // TODO: Do we need this catch?
+        console.log('Errors are', info);
+      });
+  };
 
   // TODO: Extract out?
   const AttributeRow = ({
-    name,
     remove,
     fieldsLength,
+    field,
   }: {
-    name: number;
     remove: (index: number | number[]) => void;
     fieldsLength: number;
+    field: FormListFieldData;
   }) => (
     <Input.Group style={{ marginBottom: 18 }}>
-      <Input style={{ width: 178, marginRight: 10, borderRadius: 4 }} placeholder="e.g. Color" />
-      <Input style={{ width: 178, marginRight: 8, borderRadius: 4 }} placeholder="e.g. Green" />
-      {fieldsLength > 1 && <AttributeClearButton onClick={() => remove(name)} />}
+      <Form.Item name={[field.name, 'attrKey']}>
+        <Input style={{ width: 178, marginRight: 10, borderRadius: 4 }} placeholder="e.g. Color" />
+      </Form.Item>
+      <Form.Item name={[field.name, 'attrVal']}>
+        <Input style={{ width: 178, marginRight: 8, borderRadius: 4 }} placeholder="e.g. Green" />
+      </Form.Item>
+      {fieldsLength > 1 && <AttributeClearButton onClick={() => remove(field.name)} />}
     </Input.Group>
   );
 
   return (
-    <NavContainer title="Info for #1 of 8" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title={`Info for #${index + 1} of ${images.length}`}
+      previousStep={previousStep}
+      goToStep={goToStep}
+    >
       <InnerContainer>
         <FormWrapper>
-          <Form
-            form={form}
-            layout="vertical"
-            name="control-hooks"
-            onFinish={onFinish}
-            requiredMark={false}
-          >
-            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Form.Item name={`nft-${0}`}>
+            <Form.Item
+              name={[nftNumber, 'name']}
+              label="Name"
+              rules={[{ required: true, message: 'Name is required' }]}
+            >
               <Input placeholder="required" />
             </Form.Item>
-            <Form.Item name="description" label="Description">
+            <Form.Item name={[nftNumber, 'description']} label="Description">
               <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
             </Form.Item>
-            <Form.Item name="collection" label="Collection">
+            <Form.Item name={[nftNumber, 'collection']} label="Collection">
               <Input placeholder="e.g. Stylish Studs (optional)" />
             </Form.Item>
 
             <Form.Item label="Attributes">
-              <Form.List name="attributes" initialValue={[1, 2, 3, 4, 5, 6]}>
+              <Form.List name={[nftNumber, 'attributes']} initialValue={[null]}>
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map((field) => (
                       <AttributeRow
                         key={field.key}
                         remove={remove}
-                        name={field.name}
                         fieldsLength={fields.length}
+                        field={field}
                       />
                     ))}
                     <Button onClick={add}>Add Attribute</Button>
@@ -139,11 +162,11 @@ export default function InfoScreen({ previousStep, goToStep, images }: Props) {
             </Form.Item>
 
             <ButtonFormItem style={{ marginTop: 42 }}>
-              <Button type="primary" onClick={onFill}>
+              <Button type="primary" onClick={handleNext}>
                 Next
               </Button>
             </ButtonFormItem>
-          </Form>
+          </Form.Item>
         </FormWrapper>
 
         <StyledDivider type="vertical" />

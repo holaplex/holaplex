@@ -1,10 +1,11 @@
-import { Layout } from 'antd';
+import { Form, Layout } from 'antd';
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/wizard/Upload';
 import Verify from '@/common/components/wizard/Verify';
 import InfoScreen from '@/common/components/wizard/InfoScreen';
+import { useForm } from 'antd/lib/form/Form';
 
 const StyledLayout = styled(Layout)`
   width: 100%;
@@ -35,17 +36,34 @@ function reducer(state: State, action: ImageAction) {
       throw new Error('No valid action for images state');
   }
 }
+
 // TODO: we have this as a separate next.js page route for now, but eventually we would like to modalize it when we know where it kicks off
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [form] = useForm();
 
+  const onFinish = (values: any) => {
+    console.log('form values are', values);
+  };
+
+  const InfoScreens: Function = (): JSX.Element[] => {
+    return state.images.map((image, index) => (
+      <InfoScreen images={state.images} index={index} key={index} form={form} />
+    ));
+  };
+
+  const data = [1, 2, 3, 4];
   return (
-    <StyledLayout>
-      <StepWizard>
-        <InfoScreen images={state.images} />
-        <Upload dispatch={dispatch} />
-        <Verify images={state.images} dispatch={dispatch} />
-      </StepWizard>
-    </StyledLayout>
+    <Form name="bulk-mint" form={form} onFinish={onFinish} requiredMark={false} layout="vertical">
+      <StyledLayout>
+        <StepWizard>
+          <Upload dispatch={dispatch} />
+          <Verify images={state.images} dispatch={dispatch} />
+          {state.images.map((image, index) => (
+            <InfoScreen images={state.images} index={index} key={index} form={form} />
+          ))}
+        </StepWizard>
+      </StyledLayout>
+    </Form>
   );
 }

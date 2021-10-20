@@ -6,9 +6,9 @@ import Image from 'next/image';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
-import { ImageAction } from 'pages/bulk-upload/0';
 import { useDropzone } from 'react-dropzone';
 import NavContainer from '@/common/components/wizard/NavContainer';
+import { ImageAction } from 'pages/nfts/new';
 
 const Header = styled(PageHeader)`
   font-style: normal;
