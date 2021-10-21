@@ -1,26 +1,29 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Space, Form, FormInstance } from 'antd';
-import React, { useState } from 'react';
+import { Divider, Input, Form, FormInstance } from 'antd';
+import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
+import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   index: number;
   form: FormInstance;
+  clearForm: () => void;
 }
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: min-content min-content;
   width: 216px;
   column-gap: 16px;
   row-gap: 16px;
-  /* margin: 59px 0 83px; */
+  max-height: 500px;
 `;
 
 const InnerContainer = styled.div`
@@ -30,6 +33,7 @@ const InnerContainer = styled.div`
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
   height: 500px;
+  margin: 0 46px;
 `;
 
 const FormWrapper = styled.div`
@@ -76,6 +80,23 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
+const CheckWrapper = styled.div`
+  position: relative;
+  height: 24px;
+  width: 24px;
+  top: -68px;
+  right: -42px;
+`;
+
+const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
+  height: 108px;
+  width: 108px;
+  border-radius: 4px;
+  padding: 4px;
+  ${({ isCurrent }) => (isCurrent ? 'border: 2px solid #d24089;;' : null)}
+  ${({ isFinished }) => (isFinished ? 'opacity: 0.5;' : null)}
+`;
+
 export default function InfoScreen({
   previousStep,
   goToStep,
@@ -83,6 +104,7 @@ export default function InfoScreen({
   index,
   nextStep,
   form,
+  clearForm,
 }: Props) {
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
@@ -90,11 +112,12 @@ export default function InfoScreen({
   const handleNext = () => {
     form
       .validateFields([[nftNumber, 'name']])
-      .then(() => {
+      .then((values) => {
         nextStep!();
       })
       .catch((info) => {
         // TODO: Do we need this catch?
+        nextStep!();
         console.log('Errors are', info);
       });
   };
@@ -109,7 +132,7 @@ export default function InfoScreen({
     fieldsLength: number;
     field: FormListFieldData;
   }) => (
-    <Input.Group style={{ marginBottom: 18 }}>
+    <Input.Group style={{ marginBottom: 18, display: 'flex', flexDirection: 'row' }}>
       <Form.Item name={[field.name, 'attrKey']}>
         <Input style={{ width: 178, marginRight: 10, borderRadius: 4 }} placeholder="e.g. Color" />
       </Form.Item>
@@ -125,6 +148,7 @@ export default function InfoScreen({
       title={`Info for #${index + 1} of ${images.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
+      clearForm={clearForm}
     >
       <InnerContainer>
         <FormWrapper>
@@ -155,7 +179,11 @@ export default function InfoScreen({
                         field={field}
                       />
                     ))}
-                    <Button onClick={add}>Add Attribute</Button>
+                    {fields.length < 10 && (
+                      <Button onClick={add} type="default">
+                        Add Attribute
+                      </Button>
+                    )}
                   </>
                 )}
               </Form.List>
@@ -171,15 +199,22 @@ export default function InfoScreen({
 
         <StyledDivider type="vertical" />
         <Grid>
-          {images.map((i) => (
-            <Image
-              width={120}
-              height={120}
-              src={URL.createObjectURL(i)}
-              alt="test-image"
-              unoptimized={true}
-              key={i.name}
-            />
+          {images.map((image, i) => (
+            <ImageOverlay key={image.name} isFinished={i < index} isCurrent={i === index}>
+              <Image
+                width={100}
+                height={100}
+                src={URL.createObjectURL(image)}
+                alt={image.name}
+                unoptimized={true}
+              />
+
+              {i < index && (
+                <CheckWrapper>
+                  <Image width={24} height={24} src={GreenCheckIcon} alt="green-check" />
+                </CheckWrapper>
+              )}
+            </ImageOverlay>
           ))}
         </Grid>
       </InnerContainer>

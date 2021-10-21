@@ -1,14 +1,16 @@
 import { Form, Layout } from 'antd';
-import React, { useReducer } from 'react';
+import React, { ReactElement, useReducer } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/wizard/Upload';
 import Verify from '@/common/components/wizard/Verify';
 import InfoScreen from '@/common/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
+import Edition from '@/common/components/wizard/Edition';
 
 const StyledLayout = styled(Layout)`
   width: 100%;
+  overflow: hidden;
 `;
 
 interface State {
@@ -46,22 +48,26 @@ export default function BulkUploadWizard() {
     console.log('form values are', values);
   };
 
-  const InfoScreens: Function = (): JSX.Element[] => {
-    return state.images.map((image, index) => (
-      <InfoScreen images={state.images} index={index} key={index} form={form} />
-    ));
-  };
+  const clearForm = () => form.resetFields();
 
-  const data = [1, 2, 3, 4];
   return (
     <Form name="bulk-mint" form={form} onFinish={onFinish} requiredMark={false} layout="vertical">
       <StyledLayout>
         <StepWizard>
           <Upload dispatch={dispatch} />
           <Verify images={state.images} dispatch={dispatch} />
-          {state.images.map((image, index) => (
-            <InfoScreen images={state.images} index={index} key={index} form={form} />
-          ))}
+          {
+            state.images.map((image, index) => (
+              <InfoScreen
+                images={state.images}
+                index={index}
+                key={index}
+                form={form}
+                clearForm={clearForm}
+              />
+            )) as any // Very annoying TS error here only solved by any
+          }
+          {/* <Edition images={state.images} /> */}
         </StepWizard>
       </StyledLayout>
     </Form>

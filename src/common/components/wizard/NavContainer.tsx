@@ -39,15 +39,27 @@ const GoBack = styled.i`
 interface Props extends Partial<StepWizardChildProps> {
   children?: React.ReactElement | React.ReactElement[] | boolean;
   title?: string;
+  clearForm?: () => void;
 }
 
-export default function NavContainer({ previousStep, goToStep, children, title }: Props) {
+export default function NavContainer({
+  previousStep,
+  goToStep,
+  children,
+  title,
+  clearForm,
+}: Props) {
   return (
     <StyledLayout>
       <GoBack onClick={previousStep}>
         <Image width={24} height={24} src={ArrowLeft} alt="arrow-left" />
       </GoBack>
-      <XClose onClick={() => goToStep!(1)}>
+      <XClose
+        onClick={() => {
+          clearForm && clearForm();
+          goToStep!(1);
+        }}
+      >
         <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
       </XClose>
       {title ? <Header>{title}</Header> : null}

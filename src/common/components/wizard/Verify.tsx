@@ -122,7 +122,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
               width={120}
               height={120}
               src={URL.createObjectURL(i)}
-              alt="test-image"
+              alt={i.name}
               unoptimized={true}
             />
 
