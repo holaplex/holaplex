@@ -7,6 +7,7 @@ import Verify from '@/common/components/wizard/Verify';
 import InfoScreen from '@/common/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
 import Edition from '@/common/components/wizard/Edition';
+import Summary from '@/common/components/wizard/Summary';
 
 const StyledLayout = styled(Layout)`
   width: 100%;
@@ -43,6 +44,7 @@ function reducer(state: State, action: ImageAction) {
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form] = useForm();
+  const { images } = state;
 
   const onFinish = (values: any) => {
     console.log('form values are', values);
@@ -55,11 +57,11 @@ export default function BulkUploadWizard() {
       <StyledLayout>
         <StepWizard>
           <Upload dispatch={dispatch} />
-          <Verify images={state.images} dispatch={dispatch} />
+          <Verify images={images} dispatch={dispatch} />
           {
-            state.images.map((image, index) => (
+            images.map((image, index) => (
               <InfoScreen
-                images={state.images}
+                images={images}
                 index={index}
                 key={index}
                 form={form}
@@ -67,7 +69,8 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
-          {/* <Edition images={state.images} /> */}
+          <Summary images={images} />
+          {/* <Edition images={images} /> */}
         </StepWizard>
       </StyledLayout>
     </Form>
