@@ -1,5 +1,5 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, FormInstance, PageHeader, Space } from 'antd';
+import { Divider, FormInstance, PageHeader, Space, Typography } from 'antd';
 import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -16,11 +16,9 @@ interface Props extends Partial<StepWizardChildProps> {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 216px;
-  column-gap: 16px;
-  row-gap: 16px;
-  max-height: 500px;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 34px;
+  row-gap: 74px;
 `;
 
 const InnerContainer = styled.div`
@@ -34,10 +32,52 @@ const Header = styled(PageHeader)`
   line-height: 65px;
   text-align: center;
   width: 701px;
-  margin-top: 102px;
+  margin-top: 47px;
   color: #fff;
 `;
 
+const { Text, Paragraph, Title } = Typography;
+
+const StyledSummaryItem = styled.div`
+  max-width: 245px;
+  .ant-typography {
+    color: #ffffff;
+  }
+`;
+
+const Attributes = styled.div``;
+
+const Attribute = styled(Space)``;
+const SummaryItem = ({ image }) => {
+  return (
+    <StyledSummaryItem>
+      <Image
+        width={245}
+        height={245}
+        src={URL.createObjectURL(image)}
+        alt={image.name}
+        unoptimized={true}
+        key={image.name}
+      />
+      <Title level={4}>Stylish Stud #124</Title>
+      <Paragraph>Stylish Studs</Paragraph>
+      <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>
+        Here they come down the stretch! The Stylish Studs are a collection of 10,000 unique NFT's
+        some more text that we have to expand........
+      </Paragraph>
+      <Attributes>
+        <Attribute>
+          <Paragraph>Background:</Paragraph>
+          <Paragraph>Red</Paragraph>
+        </Attribute>
+        <Attribute>
+          <Paragraph>Head:</Paragraph>
+          <Paragraph>Biker Helmet</Paragraph>
+        </Attribute>
+      </Attributes>
+    </StyledSummaryItem>
+  );
+};
 export default function Summary({
   previousStep,
   goToStep,
@@ -56,7 +96,6 @@ export default function Summary({
 
     images.forEach((i) => body.append(i.name, i, i.name));
 
-    console.log('DEBUG: post body for images', [...body]);
     const resp = await fetch('/api/ipfs/upload', {
       method: 'POST',
       body,
@@ -73,8 +112,6 @@ export default function Summary({
     //   ],
     // };
 
-    console.log('DEBUG RESP', uploadedFilePins);
-    console.log('json resp is', JSON.stringify(uploadedFilePins));
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
     form.submit();
   };
@@ -82,18 +119,14 @@ export default function Summary({
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
+      <Button onClick={upload} type="primary" style={{ margin: '24px 0 78px;' }}>
+        Looks good
+      </Button>
+
       <InnerContainer>
-        <Button onClick={upload}>Looks good</Button>
         <Grid>
           {images.map((image) => (
-            <Image
-              width={100}
-              height={100}
-              src={URL.createObjectURL(image)}
-              alt={image.name}
-              unoptimized={true}
-              key={image.name}
-            />
+            <SummaryItem image={image} />
           ))}
         </Grid>
       </InnerContainer>

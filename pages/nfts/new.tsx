@@ -81,30 +81,8 @@ export default function BulkUploadWizard() {
   const { images } = state;
 
   const buildMetaData = (values, uploadedFiles) => {
-    // const metadata = {
-    //   name: values.name,
-    //   symbol: values.symbol,
-    //   description: values.description,
-    //   sellerFeeBasisPoints: values.seller_fee_basis_points,
-    //   image: uploadedFiles[0].uri,
-    //   animation_url: uploadedFiles[1].uri,
-    //   attributes: values.attributes,
-    //   external_url: values.external_url,
-    //   properties: {
-    //     ...values.properties,
-    //     creators: values.creators?.map(creator => {
-    //       return {
-    //         address: creator.address,
-    //         share: creator.share,
-    //       };
-    //     }),
-    //   },
-    // };
-    // return metadata;
-
     // TODO: type this properly
     return values.map((v: any, i: number) => {
-      console.log('DEBUG VALUE IS', values);
       const file = uploadedFiles[i]; // assuming everything is in order, should we use a key check?
       console.log('FILE IS', file);
 
@@ -121,8 +99,6 @@ export default function BulkUploadWizard() {
   };
   const onFinish = async (values: any) => {
     const arrayValues = Object.values(values);
-    console.log('form values are', arrayValues);
-    console.log('state is ', state);
 
     console.log('DEBUG: built meta data', buildMetaData(arrayValues, state.uploadedFiles));
     const builtMetaData = buildMetaData(arrayValues, state.uploadedFiles);
@@ -147,9 +123,11 @@ export default function BulkUploadWizard() {
       <StyledLayout>
         <StepWizard>
           <Upload dispatch={dispatch} />
+          <Summary images={images} dispatch={dispatch} form={form} />
           <Verify images={images} dispatch={dispatch} />
           {
-            images.map((image, index) => (
+            // TODO: pipe in image name here and set as invisible form field
+            images.map((_, index) => (
               <InfoScreen
                 images={images}
                 index={index}
@@ -159,7 +137,6 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
-          <Summary images={images} dispatch={dispatch} form={form} />
           {/* <Edition images={images} /> */}
         </StepWizard>
       </StyledLayout>
