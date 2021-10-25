@@ -41,13 +41,23 @@ const { Text, Paragraph, Title } = Typography;
 const StyledSummaryItem = styled.div`
   max-width: 245px;
   .ant-typography {
-    color: #ffffff;
+    color: #fff;
   }
 `;
 
 const Attributes = styled.div``;
 
-const Attribute = styled(Space)``;
+const Attribute = styled(Space)`
+  :not(:last-child) {
+    margin-bottom: 9px;
+  }
+
+  .ant-space-item:first-of-type {
+    .ant-typography {
+      opacity: 60%;
+    }
+  }
+`;
 const SummaryItem = ({ image }) => {
   return (
     <StyledSummaryItem>
@@ -59,19 +69,24 @@ const SummaryItem = ({ image }) => {
         unoptimized={true}
         key={image.name}
       />
-      <Title level={4}>Stylish Stud #124</Title>
-      <Paragraph>Stylish Studs</Paragraph>
-      <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>
+      <Title level={4} style={{ marginBottom: 3 }}>
+        Stylish Stud #124
+      </Title>
+      <Paragraph style={{ marginBottom: 18 }}>Stylish Studs</Paragraph>
+      <Paragraph
+        ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
+        style={{ opacity: '60%', color: '#fff' }}
+      >
         Here they come down the stretch! The Stylish Studs are a collection of 10,000 unique NFT's
         some more text that we have to expand........
       </Paragraph>
       <Attributes>
         <Attribute>
-          <Paragraph>Background:</Paragraph>
+          <Paragraph style={{ width: 110 }}>Background:</Paragraph>
           <Paragraph>Red</Paragraph>
         </Attribute>
         <Attribute>
-          <Paragraph>Head:</Paragraph>
+          <Paragraph style={{ width: 110 }}>Head:</Paragraph>
           <Paragraph>Biker Helmet</Paragraph>
         </Attribute>
       </Attributes>
