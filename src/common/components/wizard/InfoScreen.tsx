@@ -14,6 +14,7 @@ interface Props extends Partial<StepWizardChildProps> {
   index: number;
   form: FormInstance;
   clearForm: () => void;
+  currentImage: File;
 }
 
 const Grid = styled.div`
@@ -105,14 +106,19 @@ export default function InfoScreen({
   nextStep,
   form,
   clearForm,
+  currentImage,
 }: Props) {
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
 
   const handleNext = () => {
+    const current = form.getFieldValue(nftNumber);
+    current.imageName = currentImage.name;
+    form.setFieldsValue({ nftNumber: current });
+
     form
       .validateFields([[nftNumber, 'name']])
-      .then((values) => {
+      .then(() => {
         nextStep!();
       })
       .catch((info) => {
@@ -166,7 +172,6 @@ export default function InfoScreen({
             <Form.Item name={[nftNumber, 'collection']} label="Collection">
               <Input placeholder="e.g. Stylish Studs (optional)" />
             </Form.Item>
-
             <Form.Item label="Attributes">
               <Form.List name={[nftNumber, 'attributes']} initialValue={[null]}>
                 {(fields, { add, remove }) => (
@@ -188,7 +193,6 @@ export default function InfoScreen({
                 )}
               </Form.List>
             </Form.Item>
-
             <ButtonFormItem style={{ marginTop: 42 }}>
               <Button type="primary" onClick={handleNext}>
                 Next

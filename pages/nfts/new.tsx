@@ -9,14 +9,12 @@ import { useForm } from 'antd/lib/form/Form';
 import Edition from '@/common/components/wizard/Edition';
 import Summary from '@/common/components/wizard/Summary';
 
-const nftStorageHolaplexEndpoint = 'https://www.holaplex.com/api/ipfs/upload';
+const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
 const StyledLayout = styled(Layout)`
   width: 100%;
   overflow: hidden;
 `;
-
-// {"files":[{"uri":"https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link","name":"image 8.png","type":"image/png"}]}
 
 type UploadedFile = {
   name: string;
@@ -27,12 +25,13 @@ type UploadedFile = {
 interface State {
   images: Array<File>;
   uploadedFiles: Array<UploadedFile>;
+  formValues: any;
 }
 
-const initialState: State = { images: [], uploadedFiles: [] };
+const initialState: State = { images: [], uploadedFiles: [], formValues: null };
 
 export interface MintAction {
-  type: 'SET_IMAGES' | 'DELETE_IMAGE' | 'ADD_IMAGE' | 'UPLOAD_FILES';
+  type: 'SET_IMAGES' | 'DELETE_IMAGE' | 'ADD_IMAGE' | 'UPLOAD_FILES' | 'SET_FORM_VALUES';
   payload: File[] | File | String | Array<UploadedFile>;
 }
 
@@ -49,6 +48,8 @@ function reducer(state: State, action: MintAction) {
       return { ...state, images: [...state.images, action.payload as File] };
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFile> };
+    case 'SET_FORM_VALUES':
+      return { ...state, formValues: action.payload as any };
     default:
       throw new Error('No valid action for state');
   }
@@ -80,7 +81,8 @@ export default function BulkUploadWizard() {
   const [form] = useForm();
   const { images } = state;
 
-  const buildMetaData = (values, uploadedFiles) => {
+  // TODO: type this
+  const buildMetaData = (values: any, uploadedFiles: any) => {
     // TODO: type this properly
     return values.map((v: any, i: number) => {
       const file = uploadedFiles[i]; // assuming everything is in order, should we use a key check?
@@ -98,14 +100,17 @@ export default function BulkUploadWizard() {
     });
   };
   const onFinish = async (values: any) => {
+    console.log('values are ', values);
     const arrayValues = Object.values(values);
+    console.log('arrayValues', arrayValues);
+    dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
 
-    console.log('DEBUG: built meta data', buildMetaData(arrayValues, state.uploadedFiles));
-    const builtMetaData = buildMetaData(arrayValues, state.uploadedFiles);
+    // console.log('DEBUG: built meta data', buildMetaData(arrayValues, state.uploadedFiles));
+    // const builtMetaData = buildMetaData(arrayValues, state.uploadedFiles);
 
-    const metaData = new File([JSON.stringify(builtMetaData)], 'metadata.json');
-    const metaDataFileForm = new FormData();
-    metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name); // TODO: how can we avoid going from form to json to form?
+    // const metaData = new File([JSON.stringify(builtMetaData)], 'metadata.json');
+    // const metaDataFileForm = new FormData();
+    // metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name); // TODO: how can we avoid going from form to json to form?
 
     // const resp = await fetch('/api/ipfs/upload', {
     //   body: metaDataFileForm,
@@ -116,6 +121,10 @@ export default function BulkUploadWizard() {
     // console.log('metadataupload response is ', json);
   };
 
+  // const onStepChange = (stats: any) => {
+  //   console.log('step change', stats);
+  // };
+
   const clearForm = () => form.resetFields();
 
   return (
@@ -123,20 +132,21 @@ export default function BulkUploadWizard() {
       <StyledLayout>
         <StepWizard>
           <Upload dispatch={dispatch} />
-          <Summary images={images} dispatch={dispatch} form={form} />
           <Verify images={images} dispatch={dispatch} />
           {
             // TODO: pipe in image name here and set as invisible form field
-            images.map((_, index) => (
+            images.map((image, index) => (
               <InfoScreen
                 images={images}
                 index={index}
+                currentImage={image}
                 key={index}
                 form={form}
                 clearForm={clearForm}
               />
             )) as any // Very annoying TS error here only solved by any
           }
+          <Summary images={images} dispatch={dispatch} form={form} formValues={state.formValues} />
           {/* <Edition images={images} /> */}
         </StepWizard>
       </StyledLayout>

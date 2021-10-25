@@ -1,6 +1,6 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
 import { Divider, FormInstance, PageHeader, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -11,7 +11,7 @@ interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   dispatch: (payload: MintAction) => void;
   form: FormInstance;
-  // index: number;
+  formValues: any; // TODO: Type this
 }
 
 const Grid = styled.div`
@@ -36,7 +36,7 @@ const Header = styled(PageHeader)`
   color: #fff;
 `;
 
-const { Text, Paragraph, Title } = Typography;
+const { Paragraph, Title } = Typography;
 
 const StyledSummaryItem = styled.div`
   max-width: 245px;
@@ -58,7 +58,7 @@ const Attribute = styled(Space)`
     }
   }
 `;
-const SummaryItem = ({ image }) => {
+const SummaryItem = ({ value, image }: { value: any; image: File }) => {
   return (
     <StyledSummaryItem>
       <Image
@@ -70,25 +70,22 @@ const SummaryItem = ({ image }) => {
         key={image.name}
       />
       <Title level={4} style={{ marginBottom: 3 }}>
-        Stylish Stud #124
+        {value.name}
       </Title>
       <Paragraph style={{ marginBottom: 18 }}>Stylish Studs</Paragraph>
       <Paragraph
         ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
         style={{ opacity: '60%', color: '#fff' }}
       >
-        Here they come down the stretch! The Stylish Studs are a collection of 10,000 unique NFT's
-        some more text that we have to expand........
+        {value.description}
       </Paragraph>
       <Attributes>
-        <Attribute>
-          <Paragraph style={{ width: 110 }}>Background:</Paragraph>
-          <Paragraph>Red</Paragraph>
-        </Attribute>
-        <Attribute>
-          <Paragraph style={{ width: 110 }}>Head:</Paragraph>
-          <Paragraph>Biker Helmet</Paragraph>
-        </Attribute>
+        {value.attributes.map((attribute: any, index: number) => (
+          <Attribute key={index}>
+            <Paragraph style={{ width: 110 }}>{attribute.attrKey}:</Paragraph>
+            <Paragraph>{attribute.attrVal}</Paragraph>
+          </Attribute>
+        ))}
       </Attributes>
     </StyledSummaryItem>
   );
@@ -99,12 +96,22 @@ export default function Summary({
   images,
   nextStep,
   dispatch,
+  formValues,
+  isActive,
   form,
 }: Props) {
+  useEffect(() => {
+    if (isActive) {
+      form.submit();
+    }
+  }, [form, isActive]);
   const handleNext = () => {
     nextStep!();
   };
-
+  useEffect(() => {
+    console.log('DEBUG: formValues are ', formValues);
+  }, [formValues]);
+  ('');
   const upload = async () => {
     console.log('uploading images', images);
     const body = new FormData();
@@ -128,9 +135,10 @@ export default function Summary({
     // };
 
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-    form.submit();
+    // form.submit();
   };
 
+  if (!formValues) return null;
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
@@ -140,8 +148,12 @@ export default function Summary({
 
       <InnerContainer>
         <Grid>
-          {images.map((image) => (
-            <SummaryItem image={image} />
+          {formValues.map((fv) => (
+            <SummaryItem
+              key={fv.name}
+              value={fv}
+              image={images.find((i) => i.name === fv.imageName)}
+            />
           ))}
         </Grid>
       </InnerContainer>
