@@ -1,6 +1,6 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
 import { Divider, Input, Form, FormInstance } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -105,30 +105,37 @@ export default function InfoScreen({
   index,
   nextStep,
   form,
+  isActive,
   clearForm,
   currentImage,
 }: Props) {
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
 
-  const handleNext = () => {
-    const current = form.getFieldValue(nftNumber);
-    current.imageName = currentImage.name;
-    form.setFieldsValue({ nftNumber: current });
+  // useEffect(() => {
+  //   if (isActive) {
+  //     // const current = form.getFieldValue(nftNumber);
+  //     // current.imageName = currentImage.name;
+  //     // console.log('CURRENT IMAGE IS ', currentImage.name);
+  //     // console.log('DEBUG CURRENT IS', current);
+  //     // console.log('nftnumber is ', nftNumber);
+  //     // form.setFieldsValue({ nftNumber: current });
+  //   }
+  // }, [isActive]);
 
+  const handleNext = () => {
     form
       .validateFields([[nftNumber, 'name']])
       .then(() => {
         nextStep!();
       })
-      .catch((info) => {
+      .catch((errors) => {
         // TODO: Do we need this catch?
         nextStep!();
-        console.log('Errors are', info);
+        console.log('Errors are', errors);
       });
   };
 
-  // TODO: Extract out?
   const AttributeRow = ({
     remove,
     fieldsLength,

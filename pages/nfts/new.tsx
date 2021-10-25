@@ -22,17 +22,28 @@ type UploadedFile = {
   type: string;
 };
 
+export type NFTFormAttribute = { attrKey: string; attrVal: string };
+
+type FormValues = { [key: string]: FormValue };
+
+export interface FormValue {
+  name: string;
+  imageName: string;
+  description: string;
+  collection: string;
+  attributes: Array<NFTFormAttribute>;
+}
 interface State {
   images: Array<File>;
   uploadedFiles: Array<UploadedFile>;
-  formValues: any;
+  formValues: FormValue[] | null;
 }
 
 const initialState: State = { images: [], uploadedFiles: [], formValues: null };
 
 export interface MintAction {
   type: 'SET_IMAGES' | 'DELETE_IMAGE' | 'ADD_IMAGE' | 'UPLOAD_FILES' | 'SET_FORM_VALUES';
-  payload: File[] | File | String | Array<UploadedFile>;
+  payload: File[] | File | String | Array<UploadedFile> | FormValue[];
 }
 
 function reducer(state: State, action: MintAction) {
@@ -94,13 +105,13 @@ export default function BulkUploadWizard() {
         sellerFeeBasisPoints: 100,
         image: file.uri,
         files: [{ uri: file.uri, type: file.type }],
-        attributes: v.attributes.map((a) => ({ [a.attrKey]: a.attrVal })),
+        attributes: v.attributes.map((a: NFTFormAttribute) => ({ [a.attrKey]: a.attrVal })),
         properties: {},
       };
     });
   };
-  const onFinish = async (values: any) => {
-    console.log('values are ', values);
+  const onFinish = async (values: FormValues) => {
+    console.log('form values are ', values);
     const arrayValues = Object.values(values);
     console.log('arrayValues', arrayValues);
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
@@ -134,7 +145,6 @@ export default function BulkUploadWizard() {
           <Upload dispatch={dispatch} />
           <Verify images={images} dispatch={dispatch} />
           {
-            // TODO: pipe in image name here and set as invisible form field
             images.map((image, index) => (
               <InfoScreen
                 images={images}

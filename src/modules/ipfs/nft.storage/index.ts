@@ -17,7 +17,6 @@ export default async function uploadFile(file: File): Promise<PinFileResponse> {
 
     const json = await response.json();
     if (!json.ok) {
-      console.log('DEBUG: JSON is', json);
       return {
         error: json.error.code + ': ' + json.error.message,
         uri: '',

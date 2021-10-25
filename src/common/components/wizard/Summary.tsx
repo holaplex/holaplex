@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import { MintAction } from 'pages/nfts/new';
+import { FormValue, MintAction, NFTFormAttribute } from 'pages/nfts/new';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -58,7 +58,11 @@ const Attribute = styled(Space)`
     }
   }
 `;
-const SummaryItem = ({ value, image }: { value: any; image: File }) => {
+const SummaryItem = ({ value, image }: { value: FormValue; image: File }) => {
+  if (!image) {
+    throw new Error('Image is required');
+  }
+
   return (
     <StyledSummaryItem>
       <Image
@@ -80,12 +84,15 @@ const SummaryItem = ({ value, image }: { value: any; image: File }) => {
         {value.description}
       </Paragraph>
       <Attributes>
-        {value.attributes.map((attribute: any, index: number) => (
-          <Attribute key={index}>
-            <Paragraph style={{ width: 110 }}>{attribute.attrKey}:</Paragraph>
-            <Paragraph>{attribute.attrVal}</Paragraph>
-          </Attribute>
-        ))}
+        {/* Is there a way to not have undefined values show in the form object? */}
+        {value.attributes.map((attribute: NFTFormAttribute, index: number) =>
+          attribute.attrKey ? (
+            <Attribute key={index}>
+              <Paragraph style={{ width: 110 }}>{attribute.attrKey}:</Paragraph>
+              <Paragraph>{attribute.attrVal}</Paragraph>
+            </Attribute>
+          ) : null,
+        )}
       </Attributes>
     </StyledSummaryItem>
   );
@@ -108,10 +115,9 @@ export default function Summary({
   const handleNext = () => {
     nextStep!();
   };
-  useEffect(() => {
-    console.log('DEBUG: formValues are ', formValues);
-  }, [formValues]);
-  ('');
+  // useEffect(() => {
+  //   console.log('DEBUG: formValues are ', formValues);
+  // }, [formValues]);
   const upload = async () => {
     console.log('uploading images', images);
     const body = new FormData();
@@ -148,12 +154,8 @@ export default function Summary({
 
       <InnerContainer>
         <Grid>
-          {formValues.map((fv) => (
-            <SummaryItem
-              key={fv.name}
-              value={fv}
-              image={images.find((i) => i.name === fv.imageName)}
-            />
+          {formValues.map((fv: FormValue, index: number) => (
+            <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
           ))}
         </Grid>
       </InnerContainer>
