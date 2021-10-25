@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { useDropzone } from 'react-dropzone';
 import { StepWizardChildProps } from 'react-step-wizard';
-import { ImageAction } from 'pages/bulk-upload/0';
+import { MintAction } from 'pages/nfts/new';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -47,7 +47,7 @@ const DropZone = styled(Space)`
 `;
 
 interface Props extends Partial<StepWizardChildProps> {
-  dispatch: (payload: ImageAction) => void;
+  dispatch: (payload: MintAction) => void;
 }
 
 export default function Upload({ nextStep, dispatch }: Props) {

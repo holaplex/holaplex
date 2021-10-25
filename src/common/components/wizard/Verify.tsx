@@ -8,7 +8,7 @@ import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { useDropzone } from 'react-dropzone';
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { ImageAction } from 'pages/nfts/new';
+import { MintAction } from 'pages/nfts/new';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -62,7 +62,7 @@ const ImageContainer = styled.div`
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
-  dispatch: (payload: ImageAction) => void;
+  dispatch: (payload: MintAction) => void;
 }
 
 function findDuplicates(name: string, images: Array<File>) {
