@@ -1,5 +1,5 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Space } from 'antd';
+import { Divider, Input, Form, FormInstance, Space, Row } from 'antd';
 import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -22,10 +22,6 @@ const Grid = styled.div`
   column-gap: 16px;
   row-gap: 16px;
   max-height: 500px;
-`;
-
-const InnerContainer = styled.div`
-  display: flex;
 `;
 
 const StyledDivider = styled(Divider)`
@@ -72,7 +68,7 @@ export default function RoyaltiesCreators({
 
   return (
     <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep}>
-      <InnerContainer>
+      <Row>
         <FormWrapper>
           <Form.Item name="edition">
             <Form.Item rules={[{ required: true }]}>
@@ -106,7 +102,7 @@ export default function RoyaltiesCreators({
             />
           ))}
         </Grid>
-      </InnerContainer>
+      </Row>
     </NavContainer>
   );
 }

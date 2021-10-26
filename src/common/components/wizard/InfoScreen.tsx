@@ -1,5 +1,5 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance } from 'antd';
+import { Divider, Input, Form, FormInstance, Row } from 'antd';
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -25,10 +25,6 @@ const Grid = styled.div`
   column-gap: 16px;
   row-gap: 16px;
   max-height: 500px;
-`;
-
-const InnerContainer = styled.div`
-  display: flex;
 `;
 
 const StyledDivider = styled(Divider)`
@@ -163,7 +159,7 @@ export default function InfoScreen({
       goToStep={goToStep}
       clearForm={clearForm}
     >
-      <InnerContainer>
+      <Row>
         <FormWrapper>
           <Form.Item name={`nft-${0}`}>
             <Form.Item
@@ -171,7 +167,7 @@ export default function InfoScreen({
               label="Name"
               rules={[{ required: true, message: 'Name is required' }]}
             >
-              <Input placeholder="required" />
+              <Input placeholder="required" autoFocus />
             </Form.Item>
             <Form.Item name={[nftNumber, 'description']} label="Description">
               <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
@@ -228,7 +224,7 @@ export default function InfoScreen({
             </ImageOverlay>
           ))}
         </Grid>
-      </InnerContainer>
+      </Row>
     </NavContainer>
   );
 }

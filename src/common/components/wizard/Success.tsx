@@ -1,12 +1,10 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Space } from 'antd';
+import { Divider, Form, FormInstance, Space, Row } from 'antd';
 import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import XCloseIcon from '@/common/assets/images/x-close.svg';
-import { FormListFieldData } from 'antd/lib/form/FormList';
 import { Radio } from 'antd';
 
 interface Props extends Partial<StepWizardChildProps> {
@@ -22,10 +20,6 @@ const Grid = styled.div`
   column-gap: 16px;
   row-gap: 16px;
   max-height: 500px;
-`;
-
-const InnerContainer = styled.div`
-  display: flex;
 `;
 
 const StyledDivider = styled(Divider)`
@@ -72,7 +66,7 @@ export default function RoyaltiesCreators({
 
   return (
     <NavContainer title="Success" previousStep={previousStep} goToStep={goToStep}>
-      <InnerContainer>
+      <Row>
         <FormWrapper>
           <Form.Item name="edition">
             <Form.Item rules={[{ required: true }]}>
@@ -106,7 +100,7 @@ export default function RoyaltiesCreators({
             />
           ))}
         </Grid>
-      </InnerContainer>
+      </Row>
     </NavContainer>
   );
 }

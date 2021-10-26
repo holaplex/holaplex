@@ -8,6 +8,7 @@ import InfoScreen from '@/common/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
 import Edition from '@/common/components/wizard/Edition';
 import Summary from '@/common/components/wizard/Summary';
+import RoyaltiesCreators from '@/common/components/wizard/RoyaltiesCreators';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
@@ -143,6 +144,7 @@ export default function BulkUploadWizard() {
       <StyledLayout>
         <StepWizard>
           <Upload dispatch={dispatch} />
+          <RoyaltiesCreators images={images} form={form} />
           <Verify images={images} dispatch={dispatch} />
           {
             images.map((image, index) => (

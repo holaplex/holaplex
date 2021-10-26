@@ -1,5 +1,5 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, FormInstance, PageHeader, Space, Typography } from 'antd';
+import { Divider, FormInstance, PageHeader, Row, Space, Typography } from 'antd';
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -19,11 +19,6 @@ const Grid = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 34px;
   row-gap: 74px;
-`;
-
-const InnerContainer = styled.div`
-  display: flex;
-  margin-top: 78px;
 `;
 
 const Header = styled(PageHeader)`
@@ -153,13 +148,13 @@ export default function Summary({
         Looks good
       </Button>
 
-      <InnerContainer>
+      <Row style={{ marginTop: 78 }}>
         <Grid>
           {formValues.map((fv: FormValue, index: number) => (
             <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
           ))}
         </Grid>
-      </InnerContainer>
+      </Row>
     </NavContainer>
   );
 }
