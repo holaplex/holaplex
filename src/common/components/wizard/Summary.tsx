@@ -23,6 +23,7 @@ const Grid = styled.div`
 
 const InnerContainer = styled.div`
   display: flex;
+  margin-top: 78px;
 `;
 
 const Header = styled(PageHeader)`
@@ -148,7 +149,7 @@ export default function Summary({
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
-      <Button onClick={upload} type="primary" style={{ margin: '24px 0 78px;' }}>
+      <Button onClick={upload} type="primary">
         Looks good
       </Button>
 
