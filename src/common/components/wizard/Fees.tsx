@@ -5,8 +5,7 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import XCloseIcon from '@/common/assets/images/x-close.svg';
-import { FormListFieldData } from 'antd/lib/form/FormList';
+
 import { Radio } from 'antd';
 
 interface Props extends Partial<StepWizardChildProps> {

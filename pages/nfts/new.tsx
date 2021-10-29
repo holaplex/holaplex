@@ -142,7 +142,14 @@ export default function BulkUploadWizard() {
   return (
     <Form name="bulk-mint" form={form} onFinish={onFinish} requiredMark={false} layout="vertical">
       <StyledLayout>
-        <StepWizard>
+        <StepWizard
+          transitions={{
+            enterLeft: undefined,
+            enterRight: undefined,
+            exitRight: undefined,
+            exitLeft: undefined,
+          }}
+        >
           <Upload dispatch={dispatch} />
           <RoyaltiesCreators images={images} form={form} />
           <Verify images={images} dispatch={dispatch} />
