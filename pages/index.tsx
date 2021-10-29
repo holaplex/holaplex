@@ -187,7 +187,7 @@ export default function Home() {
             <Col xs={24} md={10} lg={10} xl={10} xxl={10}>
               <VideoPitch>
                 <LightTitle level={2}>Build your store in about 5 minutes</LightTitle>
-                <LightText>Let’s be honest, nobody wants to spend weeks building a store. That’s why our team got together to create Holaplex - the no-code NFT store builder. Create a store in a couple of clicks so you can start selling! Need some guidance?  Try our <a href="https://docs.google.com/document/d/1fggieMGqgJqfp-TDoSsoeqS38iKPKcb1tTfxBkPXbeM/edit#" target="_blank" rel="noreferrer">getting started guide.</a></LightText>
+                <LightText>Let’s be honest, nobody wants to spend weeks building a store. That’s why our team got together to create Holaplex - the no-code NFT store builder. Create a store in a couple of clicks so you can start selling! Need some guidance?  Try our <a href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407782141971-Set-Up-A-Store" target="_blank" rel="noreferrer">getting started guide.</a></LightText>
               </VideoPitch>
             </Col>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12} offset={2}>
@@ -201,7 +201,7 @@ export default function Home() {
 
       <Community justify="center">
         <Col sm={20} md={20} lg={20} xl={18}>
-          <CenteredTitle level={2}>Join our community, 200 stores and counting!</CenteredTitle>
+          <CenteredTitle level={2}>Join our community, 1000+ stores and counting!</CenteredTitle>
           <List
             grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
             dataSource={higlightStores}
@@ -220,11 +220,11 @@ export default function Home() {
               </List.Item>
             )}
           />
-          <Row justify="center">
+          {/* <Row justify="center">
             <LightText>
               <Link href="/storefronts">View More Stores</Link>
             </LightText>
-          </Row>
+          </Row> */}
 
         </Col>
       </Community>

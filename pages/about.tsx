@@ -5,6 +5,8 @@ import sv from '@/constants/styles'
 import SocialLinks from '@/components/elements/SocialLinks'
 import HandLogo from '@/assets/images/hola-logo.svg'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
+import InvestorsData from '@/assets/investors/investors-stub'
+import LogoTest from '@/assets/investors/logos/test.svg'
 import { List, Space, Row, Col, Typography, Card } from 'antd'
 import Link from 'next/link'
 import Button from '@/components/elements/Button'
@@ -111,6 +113,33 @@ const WhiteButton = styled(Button)`
   }
 `;
 
+const BackedBy = styled(Row)`
+  margin-top: ${sv.sectionPadding*2}px;
+`;
+
+const Investors = styled.div`
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  margin-top: ${sv.appPadding}px;
+`;
+
+const Investor = styled.div`
+  margin: ${sv.grid*4}px;
+  position: relative;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const LogoContainer = styled.a`
+  width: 100%;
+  height: 100%;
+  max-width: 120px;
+  display: block;
+  position: relative;
+`;
 
 const Footer = styled(Row)`
   margin: 112px 0 0 0;
@@ -162,7 +191,7 @@ export default function About() {
               <Stats>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.mainGradient}>900+</StatTitle>
+                    <StatTitle textColor={sv.colors.mainGradient}>1k+</StatTitle>
                     <LightText>Stores created</LightText>
                   </Stat>
                   <Stat span={12}>
@@ -185,6 +214,32 @@ export default function About() {
           </Row>
         </Col>
       </Community>
+
+      <BackedBy justify="center">
+        <Col sm={20} md={18} lg={16} xl={16}>
+          <CenteredTitle level={2}>Backed by</CenteredTitle>
+          <Investors>
+            <List
+              grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+              dataSource={InvestorsData}
+              renderItem={(investor: { url: string, logo: string, name: string }) => (
+                <List.Item key={investor.url}>
+                  <Investor>
+                    <LogoContainer
+                      href={investor.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Image layout="fill" objectFit="contain" src={investor.logo} alt={investor.name} />
+                    </LogoContainer>
+                  </Investor>
+                </List.Item>
+              )}
+            />
+          </Investors>
+        </Col>
+      </BackedBy>
+
 
       <Footer justify="center">
         <Col xs={18}>
