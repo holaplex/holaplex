@@ -17,6 +17,7 @@ interface Royalty {
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   form: FormInstance;
+  userKey: string;
 }
 
 const Grid = styled.div`
@@ -111,12 +112,12 @@ const StyledPercentageInput = styled(InputNumber)`
 const CreatorsRow = ({
   creatorKey,
   amount,
-  isYou = false,
+  isUser = false,
   updateCreator,
 }: {
   creatorKey: string;
   amount: number;
-  isYou: boolean;
+  isUser: boolean;
   updateCreator: (key: string, amount: number) => void;
 }) => {
   const ref = React.useRef(null);
@@ -149,7 +150,7 @@ const CreatorsRow = ({
           openNotification();
         }}
       />
-      {isYou && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
+      {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
       {showPercentageInput ? (
         <StyledPercentageInput
           defaultValue={amount}
@@ -158,8 +159,7 @@ const CreatorsRow = ({
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
-          onChange={(value) => updateCreator(creatorKey, value)}
-          // controls={false}
+          // controls={false} // not supported in this version of antd, upgrade?
         />
       ) : (
         <Paragraph
@@ -179,9 +179,10 @@ export default function RoyaltiesCreators({
   images,
   nextStep,
   form,
+  userKey,
 }: Props) {
   const [creators, setCreators] = React.useState<Array<Royalty>>([
-    { creatorKey: 'o3279wawu7mjdq6kauxhb11fmd6fob1teaes6ckwn3xbluayrh5zjv5ruubkcq', amount: 100 },
+    { creatorKey: userKey, amount: 100 },
   ]);
   const [showCreatorField, toggleCreatorField] = React.useState(false);
   // const [creatorInputVal, setCreatorInputVal] = React.useState<Royalty | null>(null);
@@ -239,7 +240,7 @@ export default function RoyaltiesCreators({
               <CreatorsRow
                 creatorKey={creator.creatorKey}
                 amount={creator.amount}
-                isYou={true}
+                isUser={creator.creatorKey === userKey}
                 key={creator.creatorKey}
                 updateCreator={updateCreator}
               />

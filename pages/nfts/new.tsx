@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { ReactElement, useReducer, useRef } from 'react';
+import React, { useContext, useReducer, useRef } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/wizard/Upload';
@@ -9,6 +9,7 @@ import { useForm } from 'antd/lib/form/Form';
 import Edition from '@/common/components/wizard/Edition';
 import Summary from '@/common/components/wizard/Summary';
 import RoyaltiesCreators from '@/common/components/wizard/RoyaltiesCreators';
+import { WalletContext, WalletProvider } from '@/modules/wallet';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
@@ -92,6 +93,13 @@ export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form] = useForm();
   const { images } = state;
+  const { connect, wallet } = useContext(WalletContext);
+
+  if (!wallet) {
+    connect({ redirect: '/nfts/new' });
+  }
+
+  console.log('wallet', wallet);
 
   // TODO: type this
   const buildMetaData = (values: any, uploadedFiles: any) => {
@@ -166,7 +174,7 @@ export default function BulkUploadWizard() {
           }}
         >
           <Upload dispatch={dispatch} />
-          <RoyaltiesCreators images={images} form={form} />
+          <RoyaltiesCreators images={images} form={form} userKey={wallet?.pubkey} />
           <Verify images={images} dispatch={dispatch} />
           {
             images.map((image, index) => (

@@ -46,12 +46,12 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           setSolana(window.solana);
           setInitialization(false);
         },
-        { capture: false }
+        { capture: false },
       );
     }
   }
 
-  const connect = () => {
+  const connect = ({ redirect }: { redirect: string }) => {
     if (isNil(solana)) {
       toast(() => (
         <>
@@ -71,6 +71,10 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           return arweaveSDK.using(arweave).storefront.find('solana:pubkey', wallet.pubkey);
         })
         .then((storefront: any) => {
+          if (redirect) {
+            return router.push(redirect);
+          }
+
           if (storefront) {
             return router.push('/storefront/edit');
           }
