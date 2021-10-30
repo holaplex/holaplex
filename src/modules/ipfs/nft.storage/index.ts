@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { fromDwebLink } from '..';
 import { PinFileResponse } from '../types';
 
@@ -18,15 +19,16 @@ export default async function uploadFile(file: File): Promise<PinFileResponse> {
     const json = await response.json();
     if (!json.ok) {
       return {
-        error: json.error.code + ': ' + json.error.message,
+        error: json.error?.code + ': ' + json.error?.message,
         uri: '',
         name: file.name || '',
         type: file.type || '',
       };
     }
+    const ext = path.extname(file.name).replace('.', '');
     return {
       error: undefined,
-      uri: fromDwebLink(json.value.cid),
+      uri: fromDwebLink(json.value.cid) + `?ext=${ext}`,
       name: file.name || '',
       type: file.type || '',
     };
