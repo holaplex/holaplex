@@ -1,13 +1,13 @@
 import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Space, InputNumber, Row } from 'antd';
+import { Divider, Input, Form, FormInstance, Space, InputNumber, Row, notification } from 'antd';
 import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import Paragraph from 'antd/lib/typography/Paragraph';
+import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-import { configOptions } from 'final-form';
 
 interface Royalty {
   creatorKey: string;
@@ -88,7 +88,40 @@ const StyledAddCrtrBtn = styled(Button)`
   }
 `;
 
-const CreatorsRow = ({ hash, isYou = false }: { hash: string; isYou: boolean }) => {
+// TODO: Style notification
+const openNotification = () => {
+  notification.open({
+    message: 'Key copied to clipboard!',
+  });
+};
+
+const StyledPercentageInput = styled(InputNumber)`
+  margin: 0 23px 0 auto;
+  font-size: 14px;
+  border-radius: 4px;
+  width: 70px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+
+  input {
+    height: 32px;
+  }
+`;
+
+const CreatorsRow = ({
+  creatorKey,
+  amount,
+  isYou = false,
+  updateCreator,
+}: {
+  creatorKey: string;
+  amount: number;
+  isYou: boolean;
+  updateCreator: (key: string, amount: number) => void;
+}) => {
+  const ref = React.useRef(null);
+  const [showPercentageInput, setShowPercentageInput] = React.useState(false);
+  useOnClickOutside(ref, () => setShowPercentageInput(false));
   return (
     <StyledCreatorsRow>
       <Image height={32} width={32} src="/images/creator-standin.png" alt="creator" />
@@ -103,7 +136,7 @@ const CreatorsRow = ({ hash, isYou = false }: { hash: string; isYou: boolean }) 
           whiteSpace: 'nowrap',
         }}
       >
-        {hash}
+        {creatorKey}
       </Paragraph>
       <Image
         className="clipboard-icon"
@@ -112,12 +145,30 @@ const CreatorsRow = ({ hash, isYou = false }: { hash: string; isYou: boolean }) 
         src={clipBoardIcon}
         alt="copyToClipboard"
         onClick={() => {
-          navigator.clipboard.writeText(hash);
+          navigator.clipboard.writeText(creatorKey);
+          openNotification();
         }}
       />
       {isYou && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
-
-      <Paragraph style={{ margin: '0 5px 0 auto', fontSize: 14 }}>100%</Paragraph>
+      {showPercentageInput ? (
+        <StyledPercentageInput
+          defaultValue={amount}
+          min={0}
+          max={100}
+          formatter={(value) => `${value}%`}
+          parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
+          ref={ref}
+          onChange={(value) => updateCreator(creatorKey, value)}
+          // controls={false}
+        />
+      ) : (
+        <Paragraph
+          onClick={() => setShowPercentageInput(true)}
+          style={{ margin: '0 5px 0 auto', fontSize: 14, cursor: 'pointer' }}
+        >
+          {amount}%
+        </Paragraph>
+      )}
     </StyledCreatorsRow>
   );
 };
@@ -129,21 +180,26 @@ export default function RoyaltiesCreators({
   nextStep,
   form,
 }: Props) {
-  const [creators, setCreators] = React.useState<Array<string>>([
-    'o3279wawu7mjdq6kauxhb11fmd6fob1teaes6ckwn3xbluayrh5zjv5ruubkcq',
+  const [creators, setCreators] = React.useState<Array<Royalty>>([
+    { creatorKey: 'o3279wawu7mjdq6kauxhb11fmd6fob1teaes6ckwn3xbluayrh5zjv5ruubkcq', amount: 100 },
   ]);
-  const [showCreatorField, toggleCreatorField] = React.useState(true);
-  const [creatorInputVal, setCreatorInputVal] = React.useState('');
+  const [showCreatorField, toggleCreatorField] = React.useState(false);
+  // const [creatorInputVal, setCreatorInputVal] = React.useState<Royalty | null>(null);
 
   const handleNext = () => {
     nextStep!();
+  };
+
+  const updateCreator = (creatorKey: string, amount: number) => {
+    const prevCreators = creators.filter((creator) => creator.creatorKey !== creatorKey);
+    setCreators([...prevCreators, { creatorKey, amount }]);
   };
 
   const validate = () => {
     form
       .validateFields(['addCreator'])
       .then((values) => {
-        setCreators([...creators, values.addCreator]);
+        setCreators([...creators, { creatorKey: values.addCreator, amount: 100 }]);
         toggleCreatorField(false);
         form.resetFields(['addCreator']);
       })
@@ -180,7 +236,13 @@ export default function RoyaltiesCreators({
           </Row>
           <Row>
             {creators.map((creator) => (
-              <CreatorsRow hash={creator} isYou={true} key={creator} />
+              <CreatorsRow
+                creatorKey={creator.creatorKey}
+                amount={creator.amount}
+                isYou={true}
+                key={creator.creatorKey}
+                updateCreator={updateCreator}
+              />
             ))}
           </Row>
           {showCreatorField && (
@@ -199,7 +261,9 @@ export default function RoyaltiesCreators({
                   style={{ margin: '39px 0 13px', height: 50 }}
                   placeholder="Enter creator’s public key..."
                   maxLength={44}
-                  onChange={(value) => setCreatorInputVal(value.target.value)}
+                  // onChange={(value) =>
+                  //   setCreatorInputVal({ creatorKey: value.target.value, amount: 100 })
+                  // }
                   required
                 />
               </Form.Item>

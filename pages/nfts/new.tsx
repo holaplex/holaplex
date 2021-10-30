@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { ReactElement, useReducer } from 'react';
+import React, { ReactElement, useReducer, useRef } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/common/components/wizard/Upload';
@@ -138,9 +138,24 @@ export default function BulkUploadWizard() {
   // };
 
   const clearForm = () => form.resetFields();
+  const ref = useRef();
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
+    // Prevent Enter submit
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  }
 
   return (
-    <Form name="bulk-mint" form={form} onFinish={onFinish} requiredMark={false} layout="vertical">
+    <Form
+      name="bulk-mint"
+      form={form}
+      onFinish={onFinish}
+      requiredMark={false}
+      layout="vertical"
+      onKeyDown={handleKeyDown}
+    >
       <StyledLayout>
         <StepWizard
           transitions={{
