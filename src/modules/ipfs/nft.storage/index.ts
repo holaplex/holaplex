@@ -4,7 +4,6 @@ import { fromDwebLink } from '..';
 import { PinFileResponse } from '../types';
 
 export default async function uploadFile(file: File): Promise<PinFileResponse> {
-  console.log('DEBUG: NFT_API_KEY IS', process.env.NFT_STORAGE_API_KEY);
   try {
     const response = await fetch('https://api.nft.storage/upload', {
       //@ts-ignore

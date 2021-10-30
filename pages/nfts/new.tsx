@@ -35,16 +35,29 @@ export interface FormValue {
   collection: string;
   attributes: Array<NFTFormAttribute>;
 }
+
+type MetaDataLink = {
+  name: string;
+  uri: string;
+  type: string;
+};
 interface State {
   images: Array<File>;
   uploadedFiles: Array<UploadedFile>;
   formValues: FormValue[] | null;
+  metaDataLinks: MetaDataLink[];
 }
 
-const initialState: State = { images: [], uploadedFiles: [], formValues: null };
+const initialState: State = { images: [], uploadedFiles: [], formValues: null, metaDataLinks: [] };
 
 export interface MintAction {
-  type: 'SET_IMAGES' | 'DELETE_IMAGE' | 'ADD_IMAGE' | 'UPLOAD_FILES' | 'SET_FORM_VALUES';
+  type:
+    | 'SET_IMAGES'
+    | 'DELETE_IMAGE'
+    | 'ADD_IMAGE'
+    | 'UPLOAD_FILES'
+    | 'SET_FORM_VALUES'
+    | 'SET_META_DATA_LINKS';
   payload: File[] | File | String | Array<UploadedFile> | FormValue[];
 }
 
@@ -63,6 +76,8 @@ function reducer(state: State, action: MintAction) {
       return { ...state, uploadedFiles: action.payload as Array<UploadedFile> };
     case 'SET_FORM_VALUES':
       return { ...state, formValues: action.payload as any };
+    case 'SET_META_DATA_LINKS':
+      return { ...state, metaDataLinks: action.payload as any };
     default:
       throw new Error('No valid action for state');
   }
@@ -96,16 +111,14 @@ export default function BulkUploadWizard() {
   const { connect, wallet } = useContext(WalletContext);
 
   if (!wallet) {
-    connect({ redirect: '/nfts/new' });
+    // connect({ redirect: '/nfts/new' });
   }
-
-  console.log('wallet', wallet);
 
   // TODO: type this
   const buildMetaData = (values: any, uploadedFiles: any) => {
     // TODO: type this properly
     return values.map((v: any, i: number) => {
-      const file = uploadedFiles[i]; // assuming everything is in order, should we use a key check?
+      const file = uploadedFiles[i]; //  we are assuming everything is in order, should we use a key check?
       console.log('FILE IS', file);
 
       return {
@@ -119,26 +132,37 @@ export default function BulkUploadWizard() {
       };
     });
   };
-  const onFinish = async (values: FormValues) => {
-    console.log('form values are ', values);
+  const onFinish = (values: FormValues) => {
     const arrayValues = Object.values(values);
-    console.log('arrayValues', arrayValues);
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
+  };
 
-    // console.log('DEBUG: built meta data', buildMetaData(arrayValues, state.uploadedFiles));
-    // const builtMetaData = buildMetaData(arrayValues, state.uploadedFiles);
+  const uploadMetaData = () => {
+    const { formValues, uploadedFiles, metaDataLinks } = state;
+    if (!uploadedFiles) {
+      throw new Error('No files uploaded');
+    }
 
-    // const metaData = new File([JSON.stringify(builtMetaData)], 'metadata.json');
-    // const metaDataFileForm = new FormData();
-    // metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name); // TODO: how can we avoid going from form to json to form?
+    const builtMetaData = buildMetaData(state.formValues, state.uploadedFiles);
 
-    // const resp = await fetch('/api/ipfs/upload', {
-    //   body: metaDataFileForm,
-    //   method: 'POST',
-    // });
-    // const json = await resp.json();
+    console.log('builtMetaData', builtMetaData);
 
-    // console.log('metadataupload response is ', json);
+    // TODO: type this
+    // Do we need to do a Promise.all here?
+    builtMetaData.forEach(async (m: any, i: number) => {
+      const metaData = new File([JSON.stringify(m)], `metadata-${i}`); // TODO: what to name this?
+      const metaDataFileForm = new FormData();
+      metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
+      const resp = await fetch('/api/ipfs/upload', {
+        body: metaDataFileForm,
+        method: 'POST',
+      });
+      const json = await resp.json();
+      console.log('metadataupload response is ' + i, json);
+
+      console.log('metaupload links prev are ', metaDataLinks);
+      dispatch({ type: 'SET_META_DATA_LINKS', payload: [...metaDataLinks, json.files[0]] });
+    });
   };
 
   // const onStepChange = (stats: any) => {
@@ -146,7 +170,6 @@ export default function BulkUploadWizard() {
   // };
 
   const clearForm = () => form.resetFields();
-  const ref = useRef();
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     // Prevent Enter submit
@@ -174,7 +197,7 @@ export default function BulkUploadWizard() {
           }}
         >
           <Upload dispatch={dispatch} />
-          <RoyaltiesCreators images={images} form={form} userKey={wallet?.pubkey} />
+          {/* <RoyaltiesCreators images={images} form={form} userKey={wallet?.pubkey} /> */}
           <Verify images={images} dispatch={dispatch} />
           {
             images.map((image, index) => (
@@ -188,7 +211,13 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
-          <Summary images={images} dispatch={dispatch} form={form} formValues={state.formValues} />
+          <Summary
+            images={images}
+            dispatch={dispatch}
+            form={form}
+            formValues={state.formValues}
+            uploadMetaData={uploadMetaData}
+          />
           {/* <Edition images={images} /> */}
         </StepWizard>
       </StyledLayout>

@@ -12,6 +12,7 @@ interface Props extends Partial<StepWizardChildProps> {
   dispatch: (payload: MintAction) => void;
   form: FormInstance;
   formValues: any; // TODO: Type this
+  uploadMetaData: () => void;
 }
 
 const Grid = styled.div`
@@ -102,42 +103,48 @@ export default function Summary({
   formValues,
   isActive,
   form,
+  uploadMetaData,
 }: Props) {
   useEffect(() => {
     if (isActive) {
       form.submit();
     }
   }, [form, isActive]);
+
   const handleNext = () => {
     nextStep!();
   };
-  // useEffect(() => {
-  //   console.log('DEBUG: formValues are ', formValues);
-  // }, [formValues]);
+
+  // TODO: Can extract this to top level component
   const upload = async () => {
     console.log('uploading images', images);
     const body = new FormData();
 
     images.forEach((i) => body.append(i.name, i, i.name));
 
-    const resp = await fetch('/api/ipfs/upload', {
-      method: 'POST',
-      body,
-    });
+    // const resp = await fetch('/api/ipfs/upload', {
+    //   method: 'POST',
+    //   body,
+    // });
 
-    const uploadedFilePins = await resp.json();
-    // const uploadedFilePins = {
-    //   files: [
-    //     {
-    //       uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link',
-    //       name: 'image 8.png',
-    //       type: 'image/png',
-    //     },
-    //   ],
-    // };
+    // const uploadedFilePins = await resp.json()
+    const uploadedFilePins = {
+      files: [
+        {
+          uri: 'https://bafkreiaqyueyi6pj4dno6a5xdioh3qq4wcckk6zp3a4r3o4ugu63qsgpci.ipfs.dweb.link?ext=png',
+          name: 'image 3.png',
+          type: 'image/png',
+        },
+        {
+          uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link?ext=png',
+          name: 'image 8.png',
+          type: 'image/png',
+        },
+      ],
+    };
 
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-    // form.submit();
+    uploadMetaData();
   };
 
   if (!formValues) return null;
