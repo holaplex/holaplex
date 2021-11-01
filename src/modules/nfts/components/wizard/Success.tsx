@@ -1,4 +1,3 @@
-import NavContainer from '@/common/components/wizard/NavContainer';
 import { Divider, Form, FormInstance, Space, Row } from 'antd';
 import React from 'react';
 import Image from 'next/image';
@@ -6,6 +5,7 @@ import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import { Radio } from 'antd';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
