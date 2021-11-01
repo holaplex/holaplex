@@ -9,6 +9,7 @@ import { useForm } from 'antd/lib/form/Form';
 import Summary from '@/common/components/wizard/Summary';
 import RoyaltiesCreators from '@/common/components/wizard/RoyaltiesCreators';
 import { WalletContext, WalletProvider } from '@/modules/wallet';
+import PriceSummary from '@/common/components/wizard/PriceSummary';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
@@ -122,7 +123,7 @@ export default function BulkUploadWizard() {
   const { connect, wallet } = useContext(WalletContext);
 
   if (!wallet) {
-    connect({ redirect: '/nfts/new' });
+    // connect({ redirect: '/nfts/new' });
   }
 
   // TODO: type this
@@ -211,7 +212,7 @@ export default function BulkUploadWizard() {
           }}
         >
           <Upload dispatch={dispatch} />
-
+          <PriceSummary images={images} />
           <Verify images={images} dispatch={dispatch} />
           {
             images.map((image, index) => (

@@ -12,7 +12,7 @@ interface Props extends Partial<StepWizardChildProps> {
   dispatch: MintDispatch;
   form: FormInstance;
   formValues: any; // TODO: Type this
-  uploadMetaData: () => void;
+  uploadMetaData: (files: any) => void;
 }
 
 const Grid = styled.div`
@@ -158,7 +158,7 @@ export default function Summary({
 
       <Row style={{ marginTop: 78 }}>
         <Grid>
-          {formValues.map((fv: FormValue, index: number) => (
+          {formValues.map((fv: NFTFormValue, index: number) => (
             <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
           ))}
         </Grid>
