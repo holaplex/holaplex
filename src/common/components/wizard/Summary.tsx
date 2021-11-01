@@ -5,11 +5,11 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import { FormValue, MintAction, NFTFormAttribute } from 'pages/nfts/new';
+import { NFTFormAttribute, MintDispatch, NFTFormValue } from 'pages/nfts/new';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
-  dispatch: (payload: MintAction) => void;
+  dispatch: MintDispatch;
   form: FormInstance;
   formValues: any; // TODO: Type this
   uploadMetaData: () => void;
@@ -55,7 +55,7 @@ const Attribute = styled(Space)`
     }
   }
 `;
-const SummaryItem = ({ value, image }: { value: FormValue; image: File }) => {
+const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => {
   if (!image) {
     throw new Error('Image is required');
   }
@@ -105,11 +105,11 @@ export default function Summary({
   form,
   uploadMetaData,
 }: Props) {
-  useEffect(() => {
-    if (isActive) {
-      form.submit();
-    }
-  }, [form, isActive]);
+  // useEffect(() => {
+  //   if (isActive) {
+  //     form.submit();
+  //   }
+  // }, [form, isActive]);
 
   const handleNext = () => {
     nextStep!();
@@ -143,8 +143,9 @@ export default function Summary({
       ],
     };
 
+    console.log('up loaded files are being set');
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-    uploadMetaData();
+    uploadMetaData(uploadedFilePins.files); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
   };
 
   if (!formValues) return null;

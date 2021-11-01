@@ -8,16 +8,14 @@ import Button from '@/common/components/elements/Button';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-
-interface Royalty {
-  creatorKey: string;
-  amount: number;
-}
+import { MintDispatch, NFTFormValue, Royalty } from 'pages/nfts/new';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   form: FormInstance;
-  userKey: string;
+  userKey?: string;
+  dispatch: MintDispatch;
+  formValues: NFTFormValue[] | null;
 }
 
 const Grid = styled.div`
@@ -177,18 +175,33 @@ export default function RoyaltiesCreators({
   previousStep,
   goToStep,
   images,
+  dispatch,
   nextStep,
   form,
   userKey,
+  formValues,
+  isActive,
 }: Props) {
   const [creators, setCreators] = React.useState<Array<Royalty>>([
-    { creatorKey: userKey, amount: 100 },
+    { creatorKey: userKey ?? '', amount: 100 },
   ]);
   const [showCreatorField, toggleCreatorField] = React.useState(false);
   // const [creatorInputVal, setCreatorInputVal] = React.useState<Royalty | null>(null);
 
-  const handleNext = () => {
-    nextStep!();
+  const applyToAll = () => {
+    if (formValues) {
+      const newFormValues = formValues.map((formValue) => {
+        formValue.properties = { creators };
+        return formValue;
+      });
+
+      console.log('setting new form values with creatirs', newFormValues);
+      dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
+
+      nextStep!();
+    } else {
+      throw new Error('No form values found');
+    }
   };
 
   const updateCreator = (creatorKey: string, amount: number) => {
@@ -208,15 +221,14 @@ export default function RoyaltiesCreators({
         console.log('err is ', err);
       });
   };
+
+  if (!userKey) return null;
+
   return (
     <NavContainer title="Royalties & Creators" previousStep={previousStep} goToStep={goToStep}>
       <Row>
         <FormWrapper>
-          <Form.Item
-            name="royaltiesPercentage"
-            label="Royalties"
-            rules={[{ required: true, message: 'Name is required' }]}
-          >
+          <Form.Item name="royaltiesPercentage" label="Royalties">
             <Paragraph style={{ color: '#fff', opacity: 0.6, fontSize: 14, fontWeight: 400 }}>
               What percentage of future sales will you receive
             </Paragraph>
@@ -262,10 +274,10 @@ export default function RoyaltiesCreators({
                   style={{ margin: '39px 0 13px', height: 50 }}
                   placeholder="Enter creator’s public key..."
                   maxLength={44}
+                  required
                   // onChange={(value) =>
                   //   setCreatorInputVal({ creatorKey: value.target.value, amount: 100 })
                   // }
-                  required
                 />
               </Form.Item>
               <Row>
@@ -283,7 +295,9 @@ export default function RoyaltiesCreators({
             </Row>
           )}
 
-          {/* <Button type="primary">Apply to All</Button> */}
+          <Button type="primary" onClick={applyToAll}>
+            Apply to All
+          </Button>
         </FormWrapper>
 
         <StyledDivider type="vertical" />

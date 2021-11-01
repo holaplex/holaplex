@@ -6,49 +6,70 @@ import Upload from '@/common/components/wizard/Upload';
 import Verify from '@/common/components/wizard/Verify';
 import InfoScreen from '@/common/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
-import Edition from '@/common/components/wizard/Edition';
 import Summary from '@/common/components/wizard/Summary';
 import RoyaltiesCreators from '@/common/components/wizard/RoyaltiesCreators';
 import { WalletContext, WalletProvider } from '@/modules/wallet';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
+export interface Royalty {
+  creatorKey: string;
+  amount: number;
+}
+
 const StyledLayout = styled(Layout)`
   width: 100%;
   overflow: hidden;
 `;
 
-type UploadedFile = {
+interface UploadedFile {
   name: string;
   uri: string;
   type: string;
-};
+}
 
 export type NFTFormAttribute = { attrKey: string; attrVal: string };
 
-type FormValues = { [key: string]: FormValue };
+export type FormValues = { [key: string]: NFTFormValue };
 
-export interface FormValue {
+export interface NFTFormValue {
   name: string;
   imageName: string;
   description: string;
   collection: string;
   attributes: Array<NFTFormAttribute>;
+  properties: { creators: Array<Royalty> };
 }
 
-type MetaDataLink = {
+interface MetaDataLink {
   name: string;
   uri: string;
   type: string;
-};
+}
+
+interface MetaDataContent {
+  properties: {
+    creators: Array<Royalty>;
+  };
+}
+
+export type MintDispatch = (action: MintAction) => void;
+
 interface State {
   images: Array<File>;
   uploadedFiles: Array<UploadedFile>;
-  formValues: FormValue[] | null;
+  formValues: NFTFormValue[] | null;
+  metaData: MetaDataContent[] | null;
   metaDataLinks: MetaDataLink[];
 }
 
-const initialState: State = { images: [], uploadedFiles: [], formValues: null, metaDataLinks: [] };
+const initialState: State = {
+  images: [],
+  uploadedFiles: [],
+  formValues: null,
+  metaData: [],
+  metaDataLinks: [],
+};
 
 export interface MintAction {
   type:
@@ -57,8 +78,16 @@ export interface MintAction {
     | 'ADD_IMAGE'
     | 'UPLOAD_FILES'
     | 'SET_FORM_VALUES'
+    | 'SET_META_DATA'
     | 'SET_META_DATA_LINKS';
-  payload: File[] | File | String | Array<UploadedFile> | FormValue[];
+  payload:
+    | File[]
+    | File
+    | String
+    | Array<UploadedFile>
+    | NFTFormValue[]
+    | MetaDataContent[]
+    | MetaDataLink[];
 }
 
 function reducer(state: State, action: MintAction) {
@@ -75,33 +104,15 @@ function reducer(state: State, action: MintAction) {
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFile> };
     case 'SET_FORM_VALUES':
-      return { ...state, formValues: action.payload as any };
+      return { ...state, formValues: action.payload as NFTFormValue[] };
+    case 'SET_META_DATA':
+      return { ...state, metaData: action.payload as MetaDataContent[] };
     case 'SET_META_DATA_LINKS':
-      return { ...state, metaDataLinks: action.payload as any };
+      return { ...state, metaDataLinks: action.payload as MetaDataLink[] };
     default:
       throw new Error('No valid action for state');
   }
 }
-
-// const metadataContent = {
-//   name: metadata.name,
-//   symbol: metadata.symbol,
-//   description: metadata.description,
-//   seller_fee_basis_points: metadata.sellerFeeBasisPoints,
-//   image: metadata.image,
-//   animation_url: metadata.animation_url,
-//   attributes: metadata.attributes,
-//   external_url: metadata.external_url,
-//   properties: {
-//     ...metadata.properties,
-//     creators: metadata.creators?.map(creator => {
-//       return {
-//         address: creator.address,
-//         share: creator.share,
-//       };
-//     }),
-//   },
-// };
 
 // TODO: we have this as a separate next.js page route for now, but eventually we would like to modalize it when we know where it kicks off
 export default function BulkUploadWizard() {
@@ -111,13 +122,16 @@ export default function BulkUploadWizard() {
   const { connect, wallet } = useContext(WalletContext);
 
   if (!wallet) {
-    // connect({ redirect: '/nfts/new' });
+    connect({ redirect: '/nfts/new' });
   }
 
   // TODO: type this
   const buildMetaData = (values: any, uploadedFiles: any) => {
     // TODO: type this properly
     return values.map((v: any, i: number) => {
+      console.log('attempt to find file with index of ', i);
+      console.log('values are ', values);
+      console.log('uploaded files are ', uploadedFiles);
       const file = uploadedFiles[i]; //  we are assuming everything is in order, should we use a key check?
       console.log('FILE IS', file);
 
@@ -137,13 +151,13 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
   };
 
-  const uploadMetaData = () => {
-    const { formValues, uploadedFiles, metaDataLinks } = state;
-    if (!uploadedFiles) {
+  const uploadMetaData = (files: any) => {
+    const { formValues, metaDataLinks } = state;
+    if (!files?.length) {
       throw new Error('No files uploaded');
     }
 
-    const builtMetaData = buildMetaData(state.formValues, state.uploadedFiles);
+    const builtMetaData = buildMetaData(state.formValues, files);
 
     console.log('builtMetaData', builtMetaData);
 
@@ -197,7 +211,7 @@ export default function BulkUploadWizard() {
           }}
         >
           <Upload dispatch={dispatch} />
-          {/* <RoyaltiesCreators images={images} form={form} userKey={wallet?.pubkey} /> */}
+
           <Verify images={images} dispatch={dispatch} />
           {
             images.map((image, index) => (
@@ -208,9 +222,18 @@ export default function BulkUploadWizard() {
                 key={index}
                 form={form}
                 clearForm={clearForm}
+                isLast={index === images.length - 1}
+                dispatch={dispatch}
               />
             )) as any // Very annoying TS error here only solved by any
           }
+          <RoyaltiesCreators
+            images={images}
+            form={form}
+            userKey={wallet?.pubkey}
+            formValues={state.formValues}
+            dispatch={dispatch}
+          />
           <Summary
             images={images}
             dispatch={dispatch}

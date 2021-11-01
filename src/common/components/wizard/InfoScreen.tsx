@@ -8,6 +8,7 @@ import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
+import { FormValues, MintDispatch } from 'pages/nfts/new';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -15,6 +16,8 @@ interface Props extends Partial<StepWizardChildProps> {
   form: FormInstance;
   clearForm: () => void;
   currentImage: File;
+  isLast: boolean;
+  dispatch: MintDispatch;
 }
 
 const Grid = styled.div`
@@ -103,6 +106,8 @@ export default function InfoScreen({
   form,
   isActive,
   clearForm,
+  isLast,
+  dispatch,
   currentImage,
 }: Props) {
   const { TextArea } = Input;
@@ -123,10 +128,23 @@ export default function InfoScreen({
     form
       .validateFields([[nftNumber, 'name']])
       .then(() => {
+        if (isLast) {
+          form
+            .validateFields()
+            .then((values: FormValues) => {
+              const arrayValues = Object.values(values).filter((v) => v !== undefined);
+              console.log('array values are ', arrayValues);
+              dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
+            })
+            .catch((err) => {
+              console.log('err', err);
+            });
+          // form.submit();
+        }
+        // TODO: Do we need this catch?
         nextStep!();
       })
       .catch((errors) => {
-        // TODO: Do we need this catch?
         nextStep!();
         console.log('Errors are', errors);
       });
@@ -170,10 +188,14 @@ export default function InfoScreen({
               <Input placeholder="required" autoFocus />
             </Form.Item>
             <Form.Item name={[nftNumber, 'description']} label="Description">
-              <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
+              <TextArea
+                placeholder="optional"
+                autoSize={{ minRows: 3, maxRows: 8 }}
+                defaultValue={''}
+              />
             </Form.Item>
             <Form.Item name={[nftNumber, 'collection']} label="Collection">
-              <Input placeholder="e.g. Stylish Studs (optional)" />
+              <Input placeholder="e.g. Stylish Studs (optional)" defaultValue={''} />
             </Form.Item>
             <Form.Item label="Attributes">
               <Form.List name={[nftNumber, 'attributes']} initialValue={[null]}>
