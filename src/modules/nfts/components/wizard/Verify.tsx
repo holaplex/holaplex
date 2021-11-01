@@ -7,8 +7,9 @@ import XCloseIcon from '@/common/assets/images/x-close.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { useDropzone } from 'react-dropzone';
-import NavContainer from '@/common/components/wizard/NavContainer';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
+import { MAX_IMAGES } from '@/modules/nfts/components/wizard/Upload';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -131,12 +132,12 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
             </StyledRemoveNFT>
           </ImageContainer>
         ))}
-        {images.length < 10 ? (
+        {images.length < MAX_IMAGES && (
           <AddNFTButton onClick={open}>
             <input {...getInputProps()} />
             <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
           </AddNFTButton>
-        ) : null}
+        )}
       </Grid>
 
       <Button type="primary" size="large" onClick={nextStep}>

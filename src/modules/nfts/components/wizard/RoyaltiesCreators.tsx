@@ -1,4 +1,4 @@
-import NavContainer from '@/common/components/wizard/NavContainer';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Divider, Input, Form, FormInstance, Space, InputNumber, Row, notification } from 'antd';
 import React from 'react';
 import Image from 'next/image';
@@ -75,7 +75,7 @@ const StyledCreatorsRow = styled.div`
 `;
 
 // TODO: Extract to the Button component since this style is so common
-const StyledAddCrtrBtn = styled(Button)`
+export const StyledClearButton = styled(Button)`
   font-size: 14px;
   color: #b92d44;
   height: fit-content;
@@ -243,9 +243,9 @@ export default function RoyaltiesCreators({
           </Form.Item>
           <Row justify="space-between" align="middle">
             <Paragraph style={{ fontWeight: 900 }}>Creators & royalty split</Paragraph>
-            <StyledAddCrtrBtn type="text" noStyle onClick={() => toggleCreatorField(true)}>
+            <StyledClearButton type="text" noStyle onClick={() => toggleCreatorField(true)}>
               Add Creator
-            </StyledAddCrtrBtn>
+            </StyledClearButton>
           </Row>
           <Row>
             {creators.map((creator) => (

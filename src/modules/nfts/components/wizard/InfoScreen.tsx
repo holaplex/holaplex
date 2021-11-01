@@ -1,6 +1,6 @@
-import NavContainer from '@/common/components/wizard/NavContainer';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Divider, Input, Form, FormInstance, Row } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -9,6 +9,7 @@ import XCloseIcon from '@/common/assets/images/x-close.svg';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import { FormValues, MintDispatch } from 'pages/nfts/new';
+import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -54,18 +55,19 @@ const FormWrapper = styled.div`
   }
 `;
 
+const StyledButton = styled(Button)`
+  background: #1a1a1a;
+  border-radius: 4px;
+  width: 39px;
+  height: 50px;
+
+  img {
+    opacity: 0.5;
+  }
+`;
+
 // TODO: Type the props
 const AttributeClearButton = (props: any) => {
-  const StyledButton = styled(Button)`
-    background: #1a1a1a;
-    border-radius: 4px;
-    width: 39px;
-    height: 50px;
-
-    img {
-      opacity: 0.5;
-    }
-  `;
   return (
     <StyledButton {...props} noStyle={true}>
       <Image width={24} height={24} src={XCloseIcon} alt="remove-attribute" />
@@ -210,9 +212,9 @@ export default function InfoScreen({
                       />
                     ))}
                     {fields.length < 10 && (
-                      <Button onClick={add} type="default">
+                      <StyledClearButton onClick={add} type="default" noStyle={true}>
                         Add Attribute
-                      </Button>
+                      </StyledClearButton>
                     )}
                   </>
                 )}

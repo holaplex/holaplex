@@ -6,6 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { MintDispatch } from 'pages/nfts/new';
 
+export const MAX_IMAGES = 10;
 const StyledLayout = styled(Layout)`
   display: flex;
   align-items: center;
@@ -62,7 +63,7 @@ export default function Upload({ nextStep, dispatch }: Props) {
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
     noClick: true,
-    maxFiles: 10,
+    maxFiles: MAX_IMAGES,
     accept: 'image/jpeg, image/png, image/gif',
   });
 

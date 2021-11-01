@@ -1,5 +1,5 @@
-import NavContainer from '@/common/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Space, Row } from 'antd';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
+import { Divider, Form, FormInstance, Space, Row } from 'antd';
 import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';

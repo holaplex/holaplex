@@ -1,4 +1,4 @@
-import NavContainer from '@/common/components/wizard/NavContainer';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Divider, FormInstance, PageHeader, Row, Space, Typography } from 'antd';
 import React, { useEffect } from 'react';
 import Image from 'next/image';

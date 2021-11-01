@@ -2,14 +2,14 @@ import { Form, Layout } from 'antd';
 import React, { useContext, useReducer, useRef } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
-import Upload from '@/common/components/wizard/Upload';
-import Verify from '@/common/components/wizard/Verify';
-import InfoScreen from '@/common/components/wizard/InfoScreen';
+import Upload from '@/modules/nfts/components/wizard/Upload';
+import Verify from '@/modules/nfts/components/wizard/Verify';
+import InfoScreen from '@/modules/nfts/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
-import Summary from '@/common/components/wizard/Summary';
-import RoyaltiesCreators from '@/common/components/wizard/RoyaltiesCreators';
+import Summary from '@/modules/nfts/components/wizard/Summary';
+import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import { WalletContext, WalletProvider } from '@/modules/wallet';
-import PriceSummary from '@/common/components/wizard/PriceSummary';
+import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
@@ -123,7 +123,7 @@ export default function BulkUploadWizard() {
   const { connect, wallet } = useContext(WalletContext);
 
   if (!wallet) {
-    // connect({ redirect: '/nfts/new' });
+    connect({ redirect: '/nfts/new' });
   }
 
   // TODO: type this
@@ -212,7 +212,7 @@ export default function BulkUploadWizard() {
           }}
         >
           <Upload dispatch={dispatch} />
-          <PriceSummary images={images} />
+
           <Verify images={images} dispatch={dispatch} />
           {
             images.map((image, index) => (
@@ -242,7 +242,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-          {/* <Edition images={images} /> */}
+          <PriceSummary images={images} />
         </StepWizard>
       </StyledLayout>
     </Form>
