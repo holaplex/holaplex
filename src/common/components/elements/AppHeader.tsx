@@ -48,6 +48,11 @@ export function AppHeader() {
         )}
       </HeaderTitle>
       <Space size="large">
+        <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
+          <Link href="/nfts/new" passHref>
+            Mint NFTs
+          </Link>
+        </HeaderLinkWrapper>
         <HeaderLinkWrapper active={router.pathname == '/storefronts'}>
           <Link href="/storefronts" passHref>
             View Stores
