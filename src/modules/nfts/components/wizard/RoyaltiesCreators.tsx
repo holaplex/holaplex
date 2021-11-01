@@ -1,5 +1,16 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Space, InputNumber, Row, notification } from 'antd';
+import {
+  Divider,
+  Input,
+  Form,
+  FormInstance,
+  Space,
+  InputNumber,
+  Row,
+  notification,
+  Radio,
+  Col,
+} from 'antd';
 import React from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -71,6 +82,42 @@ const StyledCreatorsRow = styled.div`
   .clipboard-icon {
     margin-right: 6px;
     cursor: pointer;
+  }
+`;
+
+// Extract these out since they are global styles for Radio that can't be controlled by less vars
+const StyledRadio = styled(Radio)`
+  display: flex;
+  align-items: center;
+  .ant-radio {
+    margin-bottom: 8px;
+    color: transparent;
+    &:hover {
+      color: transparent;
+    }
+  }
+
+  .ant-radio-checked {
+    border-color: transparent;
+
+    &:hover {
+      color: transparent;
+    }
+  }
+
+  .ant-radio-input,
+  .ant-radio-inner {
+    border-color: transparent;
+    color: transparent;
+
+    &:hover {
+      border-color: transparent;
+    }
+
+    &:focus,
+    &:focus-visible {
+      outline: transparent;
+    }
   }
 `;
 
@@ -294,6 +341,36 @@ export default function RoyaltiesCreators({
               </Row>
             </Row>
           )}
+          <Row>
+            <Paragraph style={{ fontWeight: 900, marginTop: 62 }}>Editions</Paragraph>
+          </Row>
+
+          <Row>
+            <Form.Item name="edition">
+              <Form.Item rules={[{ required: true }]}>
+                <Radio.Group buttonStyle="outline">
+                  <Space direction="vertical">
+                    <Col>
+                      <StyledRadio value="one" style={{ fontWeight: 900 }} autoFocus>
+                        One of One
+                      </StyledRadio>
+                      <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                        This is a single one of a kind NFT.
+                      </Paragraph>
+                    </Col>
+                    <Col>
+                      <StyledRadio value="limited" style={{ fontWeight: 900 }}>
+                        Limited Edition
+                      </StyledRadio>
+                      <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                        A fixed number of identical NFT will be minted.
+                      </Paragraph>
+                    </Col>
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+            </Form.Item>
+          </Row>
 
           <Button type="primary" onClick={applyToAll}>
             Apply to All
