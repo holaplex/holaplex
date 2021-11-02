@@ -10,6 +10,7 @@ import Summary from '@/modules/nfts/components/wizard/Summary';
 import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import { WalletContext, WalletProvider } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
+import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 
@@ -123,7 +124,7 @@ export default function BulkUploadWizard() {
   const { connect, wallet } = useContext(WalletContext);
 
   if (!wallet) {
-    connect({ redirect: '/nfts/new' });
+    // connect({ redirect: '/nfts/new' });
   }
 
   // TODO: type this
@@ -180,10 +181,6 @@ export default function BulkUploadWizard() {
     });
   };
 
-  // const onStepChange = (stats: any) => {
-  //   console.log('step change', stats);
-  // };
-
   const clearForm = () => form.resetFields();
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
@@ -214,6 +211,7 @@ export default function BulkUploadWizard() {
           <Upload dispatch={dispatch} />
 
           <Verify images={images} dispatch={dispatch} />
+          <MintInProgress images={images} />
           {
             images.map((image, index) => (
               <InfoScreen
