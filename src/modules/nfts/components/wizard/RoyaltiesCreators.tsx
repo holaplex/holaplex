@@ -27,6 +27,9 @@ interface Props extends Partial<StepWizardChildProps> {
   userKey?: string;
   dispatch: MintDispatch;
   formValues: NFTFormValue[] | null;
+  isFirst?: boolean;
+  index: number;
+  setDoEachRoyaltyInd?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Grid = styled.div`
@@ -228,13 +231,19 @@ export default function RoyaltiesCreators({
   userKey,
   formValues,
   isActive,
+  setDoEachRoyaltyInd,
+  index,
+  isFirst = false,
 }: Props) {
+  // TODO: Test purposes only, please remove before prod
+  userKey = 'ZiG1cukk0SRU5eIi3O4kVqSz2hKfsB9LOFaMXtvF5Oep';
   const [creators, setCreators] = React.useState<Array<Royalty>>([
     { creatorKey: userKey ?? '', amount: 100 },
   ]);
   const [showCreatorField, toggleCreatorField] = React.useState(false);
   // const [creatorInputVal, setCreatorInputVal] = React.useState<Royalty | null>(null);
 
+  // TODO: DRY this up
   const applyToAll = () => {
     if (formValues) {
       const newFormValues = formValues.map((formValue) => {
@@ -242,7 +251,6 @@ export default function RoyaltiesCreators({
         return formValue;
       });
 
-      console.log('setting new form values with creatirs', newFormValues);
       dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
 
       nextStep!();
@@ -251,6 +259,17 @@ export default function RoyaltiesCreators({
     }
   };
 
+  const next = () => {
+    if (formValues) {
+      console.log('formValues ', formValues);
+      const currentNFTFormValue = formValues[index];
+      currentNFTFormValue.properties = { creators };
+
+      const restOfValues = formValues.splice(index, 1);
+      dispatch({ type: 'SET_FORM_VALUES', payload: [...restOfValues, { ...currentNFTFormValue }] });
+    }
+    nextStep!();
+  };
   const updateCreator = (creatorKey: string, amount: number) => {
     const prevCreators = creators.filter((creator) => creator.creatorKey !== creatorKey);
     setCreators([...prevCreators, { creatorKey, amount }]);
@@ -372,9 +391,26 @@ export default function RoyaltiesCreators({
             </Form.Item>
           </Row>
 
-          <Button type="primary" onClick={applyToAll}>
-            Apply to All
-          </Button>
+          <Row justify="end">
+            <Space>
+              {images.length > 1 && isFirst && (
+                <StyledClearButton
+                  type="text"
+                  noStyle
+                  onClick={() => {
+                    if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(true);
+                    nextStep!();
+                  }}
+                >
+                  Do each individually
+                </StyledClearButton>
+              )}
+
+              <Button type="primary" onClick={isFirst ? applyToAll : next}>
+                {isFirst ? 'Apply to All' : 'Next'}
+              </Button>
+            </Space>
+          </Row>
         </FormWrapper>
 
         <StyledDivider type="vertical" />

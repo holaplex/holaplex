@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import { NFTFormAttribute, MintDispatch, NFTFormValue } from 'pages/nfts/new';
+import { NFTAttribute, MintDispatch, NFTFormValue } from 'pages/nfts/new';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -82,11 +82,11 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
       </Paragraph>
       <Attributes>
         {/* Is there a way to not have undefined values show in the form object? */}
-        {value.attributes.map((attribute: NFTFormAttribute, index: number) =>
-          attribute.attrKey ? (
+        {value.attributes.map((attribute: NFTAttribute, index: number) =>
+          attribute.trait_type ? (
             <Attribute key={index}>
-              <Paragraph style={{ width: 110 }}>{attribute.attrKey}:</Paragraph>
-              <Paragraph>{attribute.attrVal}</Paragraph>
+              <Paragraph style={{ width: 110 }}>{attribute.trait_type}:</Paragraph>
+              <Paragraph>{attribute.value}</Paragraph>
             </Attribute>
           ) : null,
         )}

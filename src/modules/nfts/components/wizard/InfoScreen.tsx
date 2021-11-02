@@ -162,10 +162,10 @@ export default function InfoScreen({
     field: FormListFieldData;
   }) => (
     <Input.Group style={{ marginBottom: 18, display: 'flex', flexDirection: 'row' }}>
-      <Form.Item name={[field.name, 'attrKey']}>
+      <Form.Item name={[field.name, 'trait_type']}>
         <Input style={{ width: 178, marginRight: 10, borderRadius: 4 }} placeholder="e.g. Color" />
       </Form.Item>
-      <Form.Item name={[field.name, 'attrVal']}>
+      <Form.Item name={[field.name, 'value']}>
         <Input style={{ width: 178, marginRight: 8, borderRadius: 4 }} placeholder="e.g. Green" />
       </Form.Item>
       {fieldsLength > 1 && <AttributeClearButton onClick={() => remove(field.name)} />}

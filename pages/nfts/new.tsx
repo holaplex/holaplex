@@ -13,6 +13,34 @@ import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
+// export interface IMetadataExtension {
+//   name: string;
+//   symbol: string;
+
+//   creators: Creator[] | null;
+//   description: string;
+//   // preview image absolute URI
+//   image: string;
+//   animation_url?: string;
+
+//   attributes?: Attribute[];
+
+//   // stores link to item on meta
+//   external_url: string;
+
+//   seller_fee_basis_points: number;
+
+//   properties: {
+//     files?: FileOrString[];
+//     category: MetadataCategory;
+//     maxSupply?: number;
+//     creators?: {
+//       address: string;
+//       shares: number;
+//     }[];
+//   };
+// }
+export const MAX_CREATOR_LIMIT = 5;
 
 export interface Royalty {
   creatorKey: string;
@@ -30,8 +58,6 @@ interface UploadedFile {
   type: string;
 }
 
-export type NFTFormAttribute = { attrKey: string; attrVal: string };
-
 export type FormValues = { [key: string]: NFTFormValue };
 
 export interface NFTFormValue {
@@ -39,19 +65,46 @@ export interface NFTFormValue {
   imageName: string;
   description: string;
   collection: string;
-  attributes: Array<NFTFormAttribute>;
+  attributes: Array<NFTAttribute>;
   properties: { creators: Array<Royalty> };
 }
 
-interface MetaDataLink {
+interface MetadataFile {
   name: string;
   uri: string;
   type: string;
 }
 
+export type FileOrString = MetadataFile | string;
+
+export type NFTAttribute = {
+  trait_type?: string;
+  // display_type?: string; // what does this do?
+  value: string | number;
+};
+
 interface MetaDataContent {
+  name: string;
+  description: string;
+  attributes?: NFTAttribute[];
+  seller_fee_basis_points: number;
+
+  // symbol: string;
+  // creators: Creator[] | null;
+  // // preview image absolute URI
+  // image: string;
+  // animation_url?: string;
+  // stores link to item on meta
+  // external_url: string;
+
   properties: {
-    creators: Array<Royalty>;
+    files?: FileOrString[];
+    // category: MetadataCategory;
+    maxSupply?: number;
+    creators?: {
+      address: string;
+      shares: number;
+    }[];
   };
 }
 
@@ -62,7 +115,7 @@ interface State {
   uploadedFiles: Array<UploadedFile>;
   formValues: NFTFormValue[] | null;
   metaData: MetaDataContent[] | null;
-  metaDataLinks: MetaDataLink[];
+  MetadataFiles: MetadataFile[];
 }
 
 const initialState: State = {
@@ -70,7 +123,7 @@ const initialState: State = {
   uploadedFiles: [],
   formValues: null,
   metaData: [],
-  metaDataLinks: [],
+  MetadataFiles: [],
 };
 
 export interface MintAction {
@@ -89,7 +142,7 @@ export interface MintAction {
     | Array<UploadedFile>
     | NFTFormValue[]
     | MetaDataContent[]
-    | MetaDataLink[];
+    | MetadataFile[];
 }
 
 function reducer(state: State, action: MintAction) {
@@ -110,7 +163,7 @@ function reducer(state: State, action: MintAction) {
     case 'SET_META_DATA':
       return { ...state, metaData: action.payload as MetaDataContent[] };
     case 'SET_META_DATA_LINKS':
-      return { ...state, metaDataLinks: action.payload as MetaDataLink[] };
+      return { ...state, MetadataFiles: action.payload as MetadataFile[] };
     default:
       throw new Error('No valid action for state');
   }
@@ -122,6 +175,7 @@ export default function BulkUploadWizard() {
   const [form] = useForm();
   const { images } = state;
   const { connect, wallet } = useContext(WalletContext);
+  const [doEachRoyaltyInd, setDoEachRoyaltyInd] = React.useState(false);
 
   if (!wallet) {
     // connect({ redirect: '/nfts/new' });
@@ -143,7 +197,7 @@ export default function BulkUploadWizard() {
         sellerFeeBasisPoints: 100,
         image: file.uri,
         files: [{ uri: file.uri, type: file.type }],
-        attributes: v.attributes.map((a: NFTFormAttribute) => ({ [a.attrKey]: a.attrVal })),
+        attributes: v.attributes.map((a: NFTAttribute) => ({ [a.trait_type]: a.value })),
         properties: {},
       };
     });
@@ -154,7 +208,7 @@ export default function BulkUploadWizard() {
   };
 
   const uploadMetaData = (files: any) => {
-    const { formValues, metaDataLinks } = state;
+    const { formValues, MetadataFiles } = state;
     if (!files?.length) {
       throw new Error('No files uploaded');
     }
@@ -176,8 +230,8 @@ export default function BulkUploadWizard() {
       const json = await resp.json();
       console.log('metadataupload response is ' + i, json);
 
-      console.log('metaupload links prev are ', metaDataLinks);
-      dispatch({ type: 'SET_META_DATA_LINKS', payload: [...metaDataLinks, json.files[0]] });
+      console.log('metaupload links prev are ', MetadataFiles);
+      dispatch({ type: 'SET_META_DATA_LINKS', payload: [...MetadataFiles, json.files[0]] });
     });
   };
 
@@ -209,9 +263,7 @@ export default function BulkUploadWizard() {
           }}
         >
           <Upload dispatch={dispatch} />
-
           <Verify images={images} dispatch={dispatch} />
-          <MintInProgress images={images} />
           {
             images.map((image, index) => (
               <InfoScreen
@@ -232,7 +284,24 @@ export default function BulkUploadWizard() {
             userKey={wallet?.pubkey}
             formValues={state.formValues}
             dispatch={dispatch}
+            isFirst={true}
+            setDoEachRoyaltyInd={setDoEachRoyaltyInd}
+            index={0}
           />
+          {doEachRoyaltyInd &&
+            images
+              .slice(1)
+              .map((_, index) => (
+                <RoyaltiesCreators
+                  images={images}
+                  form={form}
+                  userKey={wallet?.pubkey}
+                  formValues={state.formValues}
+                  dispatch={dispatch}
+                  key={index}
+                  index={index}
+                />
+              ))}
           <Summary
             images={images}
             dispatch={dispatch}
@@ -241,6 +310,7 @@ export default function BulkUploadWizard() {
             uploadMetaData={uploadMetaData}
           />
           <PriceSummary images={images} />
+          <MintInProgress images={images} />
         </StepWizard>
       </StyledLayout>
     </Form>

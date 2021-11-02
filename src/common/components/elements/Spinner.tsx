@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const StyledSpinner = styled.svg`
-  animation: rotate 2s linear infinite;
+  animation: rotate 2.5s linear infinite;
   z-index: 2;
   width: 32px;
   height: 32px;
@@ -10,7 +10,7 @@ const StyledSpinner = styled.svg`
   & .path {
     stroke: hsl(210, 70, 75);
     stroke-linecap: round;
-    animation: dash 1.5s ease-in-out infinite;
+    animation: dash 2s ease-in-out infinite;
   }
 
   @keyframes rotate {
