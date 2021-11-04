@@ -220,11 +220,6 @@ export default function Home() {
               </List.Item>
             )}
           />
-          {/* <Row justify="center">
-            <LightText>
-              <Link href="/storefronts">View More Stores</Link>
-            </LightText>
-          </Row> */}
 
         </Col>
       </Community>
