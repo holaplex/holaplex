@@ -276,19 +276,17 @@ export default function RoyaltiesCreators({
       .validateFields(['royaltiesPercentage', 'numOfEditions'])
       .then(() => {
         if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(false);
+
         if (formValues) {
-          const newFormValues = formValues.map((formValue) => {
-            console.log('creators are', creators);
-            formValue.properties = { creators, maxSupply };
-            formValue.seller_fee_basis_points = royaltiesInput;
-
-            console.log('formValue is', formValue);
-            return formValue;
-          });
-
-          dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
-
-          nextStep!();
+          //   const newFormValues = formValues.map((formValue) => {
+          //     console.log('creators are', creators);
+          //     formValue.properties = { creators, maxSupply };
+          //     formValue.seller_fee_basis_points = royaltiesInput;
+          //     console.log('formValue is', formValue);
+          //     return formValue;
+          //   });
+          //   dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
+          //   nextStep!();
         } else {
           throw new Error('No form values found');
         }
@@ -307,11 +305,17 @@ export default function RoyaltiesCreators({
         currentNFTFormValue.seller_fee_basis_points = royaltiesInput;
 
         const restOfValues = formValues.filter((_, i) => i !== index);
+
         dispatch({
           type: 'SET_FORM_VALUES',
           payload: [...restOfValues, { ...currentNFTFormValue }],
         });
+        setRoyaltiesInput(ROYALTIES_INPUT_DEFAULT);
+        form.setFieldsValue({ royaltiesPercentage: ROYALTIES_INPUT_DEFAULT });
+      } else {
+        throw new Error('No form values found');
       }
+
       nextStep!();
     });
   };
@@ -364,7 +368,7 @@ export default function RoyaltiesCreators({
               ]}
             >
               <InputNumber<number>
-                defaultValue={ROYALTIES_INPUT_DEFAULT}
+                defaultValue={royaltiesInput}
                 min={1}
                 max={100}
                 formatter={(value) => `${value}%`}
