@@ -114,7 +114,7 @@ export default function InfoScreen({
 }: Props) {
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
-
+  const nftNumberList = images.map((_, i) => `nft-${i}`);
   // useEffect(() => {
   //   if (isActive) {
   //     // const current = form.getFieldValue(nftNumber);
@@ -127,29 +127,27 @@ export default function InfoScreen({
   // }, [isActive]);
 
   const handleNext = () => {
-    form
-      .validateFields([[nftNumber, 'name']])
-      .then(() => {
-        if (isLast) {
-          form
-            .validateFields()
-            .then((values: FormValues) => {
-              const arrayValues = Object.values(values).filter((v) => v !== undefined);
-              console.log('array values are ', arrayValues);
-              dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
-            })
-            .catch((err) => {
-              console.log('err', err);
-            });
-          // form.submit();
-        }
-        // TODO: Do we need this catch?
-        nextStep!();
-      })
-      .catch((errors) => {
-        nextStep!();
-        console.log('Errors are', errors);
-      });
+    form.validateFields([[nftNumber, 'name']]).then(() => {
+      if (isLast) {
+        const values = form.getFieldsValue(nftNumberList) as FormValues;
+        console.log('VALUES', values);
+        const arrayValues = Object.values(values).filter((v) => v !== undefined);
+        console.log('array values are ', arrayValues);
+        dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
+
+        // .then((values: FormValues) => {
+        //   console.log('VALUES', values);
+        //   const arrayValues = Object.values(values).filter((v) => v !== undefined);
+        //   console.log('array values are ', arrayValues);
+        //   dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
+        // })
+        // .catch((err) => {
+        //   console.log('err', err);
+        // });
+        // form.submit();
+      }
+      nextStep!();
+    });
   };
 
   const AttributeRow = ({
@@ -200,7 +198,10 @@ export default function InfoScreen({
               <Input placeholder="e.g. Stylish Studs (optional)" defaultValue={''} />
             </Form.Item>
             <Form.Item label="Attributes">
-              <Form.List name={[nftNumber, 'attributes']} initialValue={[null]}>
+              <Form.List
+                name={[nftNumber, 'attributes']}
+                initialValue={[{ trait_type: undefined, value: undefined }]}
+              >
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map((field) => (

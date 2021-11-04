@@ -60,6 +60,9 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
     throw new Error('Image is required');
   }
 
+  console.log('DEBUG >>>>>>>>>>>>>>>');
+  console.log('value is ', value);
+
   return (
     <StyledSummaryItem>
       <Image
@@ -81,7 +84,6 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
         {value.description}
       </Paragraph>
       <Attributes>
-        {/* Is there a way to not have undefined values show in the form object? */}
         {value.attributes.map((attribute: NFTAttribute, index: number) =>
           attribute.trait_type ? (
             <Attribute key={index}>

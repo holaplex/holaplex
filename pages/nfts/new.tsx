@@ -11,6 +11,7 @@ import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreator
 import { WalletContext, WalletProvider } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
+import { isNil } from 'ramda';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 // export interface IMetadataExtension {
@@ -182,7 +183,7 @@ export default function BulkUploadWizard() {
     // connect({ redirect: '/nfts/new' });
   }
 
-  // TODO: type this
+  // TODO: type this and extract to helper file
   const buildMetaData = (values: any, uploadedFiles: any) => {
     // TODO: type this properly
     return values.map((v: any, i: number) => {
@@ -199,7 +200,12 @@ export default function BulkUploadWizard() {
         seller_fee_basis_points: v.seller_fee_basis_points,
         image: file.uri,
         files: [{ uri: file.uri, type: file.type }],
-        attributes: v.attributes.map((a: NFTAttribute) => ({ [a.trait_type]: a.value })),
+        attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
+          if (!isNil(a?.trait_type)) {
+            result.push({ trait_type: a.trait_type, value: a.value });
+          }
+          return result;
+        }, []),
         properties: v.properties,
       };
     });

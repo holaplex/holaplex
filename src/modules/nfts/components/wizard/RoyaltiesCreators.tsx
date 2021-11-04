@@ -238,7 +238,6 @@ export default function RoyaltiesCreators({
   form,
   userKey,
   formValues,
-  isActive,
   setDoEachRoyaltyInd,
   index,
   isFirst = false,
@@ -296,7 +295,9 @@ export default function RoyaltiesCreators({
           throw new Error('No form values found');
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log('err', err);
+      });
   };
 
   // TODO: DRY this up
@@ -342,23 +343,36 @@ export default function RoyaltiesCreators({
     <NavContainer title="Royalties & Creators" previousStep={previousStep} goToStep={goToStep}>
       <Row>
         <FormWrapper>
-          <Form.Item
-            name="royaltiesPercentage"
-            label="Royalties"
-            // rules={[{ required: true, message: 'Please enter a value' }, { max: 100 }, { min: 0 }]}
-          >
+          <Form.Item label="Royalties">
             <Paragraph style={{ color: '#fff', opacity: 0.6, fontSize: 14, fontWeight: 400 }}>
               What percentage of future sales will you receive
             </Paragraph>
-            <InputNumber<number>
-              defaultValue={ROYALTIES_INPUT_DEFAULT}
-              min={0}
-              max={100}
-              formatter={(value) => `${value}%`}
-              parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
-              style={{ borderRadius: 4, minWidth: 103 }}
-              onChange={(val: number) => setRoyaltiesInput(val)}
-            />
+            <Form.Item
+              name="royaltiesPercentage"
+              rules={[
+                { required: true, message: 'Required' },
+                {
+                  type: 'number',
+                  min: 1, // Can this be 0?
+                  message: 'Percentage must be between 1 and 100',
+                },
+                {
+                  type: 'number',
+                  max: 100,
+                  message: 'Percentage must be between 1 and 100',
+                },
+              ]}
+            >
+              <InputNumber<number>
+                defaultValue={ROYALTIES_INPUT_DEFAULT}
+                min={1}
+                max={100}
+                formatter={(value) => `${value}%`}
+                parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
+                style={{ borderRadius: 4, minWidth: 103 }}
+                onChange={(val: number) => setRoyaltiesInput(val)}
+              />
+            </Form.Item>
           </Form.Item>
           <Row justify="space-between" align="middle">
             <Paragraph style={{ fontWeight: 900 }}>Creators & royalty split</Paragraph>
