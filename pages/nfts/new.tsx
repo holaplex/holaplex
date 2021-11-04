@@ -66,7 +66,8 @@ export interface NFTFormValue {
   description: string;
   collection: string;
   attributes: Array<NFTAttribute>;
-  properties: { creators: Array<Royalty> };
+  seller_fee_basis_points: number;
+  properties: { creators: Array<Royalty>; maxSupply: number };
 }
 
 interface MetadataFile {
@@ -78,7 +79,7 @@ interface MetadataFile {
 export type FileOrString = MetadataFile | string;
 
 export type NFTAttribute = {
-  trait_type?: string;
+  trait_type: string;
   // display_type?: string; // what does this do?
   value: string | number;
 };
@@ -191,14 +192,15 @@ export default function BulkUploadWizard() {
       const file = uploadedFiles[i]; //  we are assuming everything is in order, should we use a key check?
       console.log('FILE IS', file);
 
+      // We should be able to
       return {
         name: v.name,
         description: v.description,
-        sellerFeeBasisPoints: 100,
+        seller_fee_basis_points: v.seller_fee_basis_points,
         image: file.uri,
         files: [{ uri: file.uri, type: file.type }],
         attributes: v.attributes.map((a: NFTAttribute) => ({ [a.trait_type]: a.value })),
-        properties: {},
+        properties: v.properties,
       };
     });
   };
@@ -213,9 +215,11 @@ export default function BulkUploadWizard() {
       throw new Error('No files uploaded');
     }
 
-    const builtMetaData = buildMetaData(state.formValues, files);
+    console.log('formValues are ', formValues);
+    const builtMetaData = buildMetaData(formValues, files);
 
     console.log('builtMetaData', builtMetaData);
+    return; // todo: remove this
 
     // TODO: type this
     // Do we need to do a Promise.all here?

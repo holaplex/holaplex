@@ -21,6 +21,8 @@ import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import { MintDispatch, NFTFormValue, Royalty } from 'pages/nfts/new';
 
+const ROYALTIES_INPUT_DEFAULT = 10;
+
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   form: FormInstance;
@@ -207,6 +209,12 @@ const CreatorsRow = ({
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
+          onChange={(value) => updateCreator(creatorKey, value as number)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setShowPercentageInput(false);
+            }
+          }}
           // controls={false} // not supported in this version of antd, upgrade?
         />
       ) : (
@@ -241,35 +249,56 @@ export default function RoyaltiesCreators({
     { creatorKey: userKey ?? '', amount: 100 },
   ]);
   const [showCreatorField, toggleCreatorField] = React.useState(false);
-  // const [creatorInputVal, setCreatorInputVal] = React.useState<Royalty | null>(null);
+  const [royaltiesInput, setRoyaltiesInput] = React.useState(ROYALTIES_INPUT_DEFAULT);
+  const [editionsSelection, setEditionsSelection] = React.useState('one');
+  const [maxSupply, setMaxSupply] = React.useState<number>(1);
 
   // TODO: DRY this up
   const applyToAll = () => {
-    if (formValues) {
-      const newFormValues = formValues.map((formValue) => {
-        formValue.properties = { creators };
-        return formValue;
-      });
+    console.log('did this run?');
 
-      dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
+    form
+      .validateFields(['royaltiesPercentage'])
+      .then(() => {
+        if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(false);
+        if (formValues) {
+          const newFormValues = formValues.map((formValue) => {
+            console.log('creators are', creators);
+            formValue.properties = { creators, maxSupply };
+            formValue.seller_fee_basis_points = royaltiesInput;
 
-      nextStep!();
-    } else {
-      throw new Error('No form values found');
-    }
+            console.log('formValue is', formValue);
+            return formValue;
+          });
+
+          dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
+
+          nextStep!();
+        } else {
+          throw new Error('No form values found');
+        }
+      })
+      .catch((err) => {});
   };
 
+  // TODO: DRY this up
   const next = () => {
-    if (formValues) {
-      console.log('formValues ', formValues);
-      const currentNFTFormValue = formValues[index];
-      currentNFTFormValue.properties = { creators };
+    form.validateFields(['royaltiesPercentage']).then(() => {
+      if (formValues) {
+        const currentNFTFormValue = formValues[index];
+        currentNFTFormValue.properties = { creators, maxSupply };
+        currentNFTFormValue.seller_fee_basis_points = royaltiesInput;
 
-      const restOfValues = formValues.splice(index, 1);
-      dispatch({ type: 'SET_FORM_VALUES', payload: [...restOfValues, { ...currentNFTFormValue }] });
-    }
-    nextStep!();
+        const restOfValues = formValues.filter((_, i) => i !== index);
+        dispatch({
+          type: 'SET_FORM_VALUES',
+          payload: [...restOfValues, { ...currentNFTFormValue }],
+        });
+      }
+      nextStep!();
+    });
   };
+
   const updateCreator = (creatorKey: string, amount: number) => {
     const prevCreators = creators.filter((creator) => creator.creatorKey !== creatorKey);
     setCreators([...prevCreators, { creatorKey, amount }]);
@@ -294,17 +323,22 @@ export default function RoyaltiesCreators({
     <NavContainer title="Royalties & Creators" previousStep={previousStep} goToStep={goToStep}>
       <Row>
         <FormWrapper>
-          <Form.Item name="royaltiesPercentage" label="Royalties">
+          <Form.Item
+            name="royaltiesPercentage"
+            label="Royalties"
+            // rules={[{ required: true, message: 'Please enter a value' }, { max: 100 }, { min: 0 }]}
+          >
             <Paragraph style={{ color: '#fff', opacity: 0.6, fontSize: 14, fontWeight: 400 }}>
               What percentage of future sales will you receive
             </Paragraph>
             <InputNumber<number>
-              defaultValue={10}
+              defaultValue={ROYALTIES_INPUT_DEFAULT}
               min={0}
               max={100}
               formatter={(value) => `${value}%`}
               parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
               style={{ borderRadius: 4, minWidth: 103 }}
+              onChange={(val: number) => setRoyaltiesInput(val)}
             />
           </Form.Item>
           <Row justify="space-between" align="middle">
@@ -341,9 +375,6 @@ export default function RoyaltiesCreators({
                   placeholder="Enter creator’s public key..."
                   maxLength={44}
                   required
-                  // onChange={(value) =>
-                  //   setCreatorInputVal({ creatorKey: value.target.value, amount: 100 })
-                  // }
                 />
               </Form.Item>
               <Row>
@@ -365,29 +396,52 @@ export default function RoyaltiesCreators({
           </Row>
 
           <Row>
-            <Form.Item name="edition">
-              <Form.Item rules={[{ required: true }]}>
-                <Radio.Group buttonStyle="outline">
-                  <Space direction="vertical">
-                    <Col>
-                      <StyledRadio value="one" style={{ fontWeight: 900 }} autoFocus>
-                        One of One
-                      </StyledRadio>
-                      <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                        This is a single one of a kind NFT.
-                      </Paragraph>
-                    </Col>
-                    <Col>
-                      <StyledRadio value="limited" style={{ fontWeight: 900 }}>
-                        Limited Edition
-                      </StyledRadio>
-                      <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                        A fixed number of identical NFT will be minted.
-                      </Paragraph>
-                    </Col>
-                  </Space>
-                </Radio.Group>
-              </Form.Item>
+            <Form.Item rules={[{ required: true }]}>
+              <Radio.Group
+                buttonStyle="outline"
+                onChange={({ target: { value } }) => {
+                  setEditionsSelection(value);
+                  if (value === 'one') {
+                    setMaxSupply(1);
+                  }
+                }}
+                value={editionsSelection}
+              >
+                <Space direction="vertical">
+                  <Col>
+                    <StyledRadio value="one" style={{ fontWeight: 900 }} autoFocus>
+                      One of One
+                    </StyledRadio>
+                    <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                      This is a single one of a kind NFT.
+                    </Paragraph>
+                  </Col>
+                  <Col>
+                    <StyledRadio value="limited" style={{ fontWeight: 900 }}>
+                      Limited Edition
+                    </StyledRadio>
+                    <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                      A fixed number of identical NFT will be minted.
+                    </Paragraph>
+                  </Col>
+                </Space>
+                {/* TODO: Set as required and validate */}
+                {editionsSelection === 'limited' && (
+                  <Form.Item name="numberOfEditions">
+                    <Row>
+                      <Col>
+                        <Paragraph style={{ fontSize: 12 }}>Number of editions</Paragraph>
+                        <InputNumber<number>
+                          min={1}
+                          max={100}
+                          placeholder="1-100"
+                          onChange={(n) => setMaxSupply(n)}
+                        />
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                )}
+              </Radio.Group>
             </Form.Item>
           </Row>
 
@@ -399,7 +453,7 @@ export default function RoyaltiesCreators({
                   noStyle
                   onClick={() => {
                     if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(true);
-                    nextStep!();
+                    next();
                   }}
                 >
                   Do each individually
