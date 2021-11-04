@@ -19,7 +19,7 @@ import Button from '@/common/components/elements/Button';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-import { MintDispatch, NFTFormValue, Royalty } from 'pages/nfts/new';
+import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Royalty } from 'pages/nfts/new';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -255,13 +255,11 @@ export default function RoyaltiesCreators({
   const [maxSupply, setMaxSupply] = useState<number>(1);
 
   useEffect(() => {
-    console.log('we run?', creators);
     // When creators changes, sum up all the amounts.
     const total = creators.reduce((totalShares, creator) => {
       return totalShares + creator.amount;
     }, 0);
 
-    console.log('total is ', total);
     setTotalRoyaltiesShare(total);
   }, [creators]);
 
@@ -324,10 +322,13 @@ export default function RoyaltiesCreators({
     setCreators([...prevCreators, { creatorKey, amount }]);
   };
 
-  const validate = () => {
+  const addCreator = () => {
     form
       .validateFields(['addCreator'])
       .then((values) => {
+        if (creators.length >= MAX_CREATOR_LIMIT) {
+          throw new Error('Max level of creators reached');
+        }
         setCreators([...creators, { creatorKey: values.addCreator, amount: 0 }]);
         toggleCreatorField(false);
         form.resetFields(['addCreator']);
@@ -370,12 +371,14 @@ export default function RoyaltiesCreators({
               />
             </Form.Item>
           </Form.Item>
-          <Row justify="space-between" align="middle">
-            <Paragraph style={{ fontWeight: 900 }}>Creators & royalty split</Paragraph>
-            <StyledClearButton type="text" noStyle onClick={() => toggleCreatorField(true)}>
-              Add Creator
-            </StyledClearButton>
-          </Row>
+          {creators.length < MAX_CREATOR_LIMIT && (
+            <Row justify="space-between" align="middle">
+              <Paragraph style={{ fontWeight: 900 }}>Creators & royalty split</Paragraph>
+              <StyledClearButton type="text" noStyle onClick={() => toggleCreatorField(true)}>
+                Add Creator
+              </StyledClearButton>
+            </Row>
+          )}
           <Row>
             {creators.map((creator) => (
               <CreatorsRow
@@ -414,7 +417,7 @@ export default function RoyaltiesCreators({
                 >
                   Cancel
                 </Button>
-                <Button type="primary" onClick={validate}>
+                <Button type="primary" onClick={addCreator}>
                   Add
                 </Button>
               </Row>

@@ -12,7 +12,7 @@ interface Props extends Partial<StepWizardChildProps> {
   dispatch: MintDispatch;
   form: FormInstance;
   formValues: any; // TODO: Type this
-  uploadMetaData: (files: any) => void;
+  uploadMetaData: (files: any) => Promise<void>;
 }
 
 const Grid = styled.div`
@@ -103,6 +103,7 @@ export default function Summary({
   nextStep,
   dispatch,
   formValues,
+  goToNamedStep,
   isActive,
   form,
   uploadMetaData,
@@ -147,7 +148,10 @@ export default function Summary({
 
     console.log('up loaded files are being set');
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-    uploadMetaData(uploadedFilePins.files); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
+    uploadMetaData(uploadedFilePins.files).then(() => {
+      console.log('does this fire?');
+      nextStep!();
+    }); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
   };
 
   if (!formValues) return null;

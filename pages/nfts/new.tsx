@@ -215,7 +215,7 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
   };
 
-  const uploadMetaData = (files: any) => {
+  const uploadMetaData = async (files: any) => {
     const { formValues, MetadataFiles } = state;
     if (!files?.length) {
       throw new Error('No files uploaded');
@@ -225,7 +225,7 @@ export default function BulkUploadWizard() {
     const builtMetaData = buildMetaData(formValues, files);
 
     console.log('builtMetaData', builtMetaData);
-    return; // todo: remove this
+    // return; // todo: remove this
 
     // TODO: type this
     // Do we need to do a Promise.all here?
@@ -243,6 +243,8 @@ export default function BulkUploadWizard() {
       console.log('metaupload links prev are ', MetadataFiles);
       dispatch({ type: 'SET_META_DATA_LINKS', payload: [...MetadataFiles, json.files[0]] });
     });
+
+    return Promise.resolve();
   };
 
   const clearForm = () => form.resetFields();
@@ -262,6 +264,7 @@ export default function BulkUploadWizard() {
       requiredMark={false}
       layout="vertical"
       onKeyDown={handleKeyDown}
+      initialValues={{ royaltiesPercentage: 10 }}
     >
       <StyledLayout>
         <StepWizard
@@ -319,7 +322,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-          <PriceSummary images={images} />
+          <PriceSummary images={images} stepName={'priceSummary'} />
           <MintInProgress images={images} />
         </StepWizard>
       </StyledLayout>
