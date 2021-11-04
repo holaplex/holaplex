@@ -316,10 +316,13 @@ export default function RoyaltiesCreators({
     });
   };
 
-  // TODO: Insert at same index to prevent reordering
   const updateCreator = (creatorKey: string, amount: number) => {
-    const prevCreators = creators.filter((creator) => creator.creatorKey !== creatorKey);
-    setCreators([...prevCreators, { creatorKey, amount }]);
+    const creatorIndex = creators.findIndex((creator) => creator.creatorKey === creatorKey);
+    setCreators([
+      ...creators.slice(0, creatorIndex),
+      { creatorKey, amount },
+      ...creators.slice(creatorIndex + 1),
+    ]);
   };
 
   const addCreator = () => {
@@ -407,6 +410,9 @@ export default function RoyaltiesCreators({
                   placeholder="Enter creator’s public key..."
                   maxLength={44}
                   required
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') addCreator();
+                  }}
                 />
               </Form.Item>
               <Row>
