@@ -11,7 +11,7 @@ import {
   Radio,
   Col,
 } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -245,17 +245,35 @@ export default function RoyaltiesCreators({
 }: Props) {
   // TODO: Test purposes only, please remove before prod
   userKey = 'ZiG1cukk0SRU5eIi3O4kVqSz2hKfsB9LOFaMXtvF5Oep';
-  const [creators, setCreators] = React.useState<Array<Royalty>>([
+  const [creators, setCreators] = useState<Array<Royalty>>([
     { creatorKey: userKey ?? '', amount: 100 },
   ]);
-  const [showCreatorField, toggleCreatorField] = React.useState(false);
-  const [royaltiesInput, setRoyaltiesInput] = React.useState(ROYALTIES_INPUT_DEFAULT);
-  const [editionsSelection, setEditionsSelection] = React.useState('one');
-  const [maxSupply, setMaxSupply] = React.useState<number>(1);
+  const [showCreatorField, toggleCreatorField] = useState(false);
+  const [royaltiesInput, setRoyaltiesInput] = useState(ROYALTIES_INPUT_DEFAULT);
+  const [totalRoyaltyShares, setTotalRoyaltiesShare] = useState<number>(0);
+  const [showErrors, setShowErrors] = useState<boolean>(false);
+  const [editionsSelection, setEditionsSelection] = useState('one');
+  const [maxSupply, setMaxSupply] = useState<number>(1);
+
+  useEffect(() => {
+    console.log('we run?', creators);
+    // When creators changes, sum up all the amounts.
+    const total = creators.reduce((totalShares, creator) => {
+      return totalShares + creator.amount;
+    }, 0);
+
+    console.log('total is ', total);
+    setTotalRoyaltiesShare(total);
+  }, [creators]);
 
   // TODO: DRY this up
   const applyToAll = () => {
-    console.log('did this run?');
+    const zeroedRoyalties = creators.filter((creator) => creator.amount === 0);
+
+    if (totalRoyaltyShares === 0 || totalRoyaltyShares > 100 || zeroedRoyalties.length > 0) {
+      setShowErrors(true);
+      return;
+    }
 
     form
       .validateFields(['royaltiesPercentage'])
@@ -299,6 +317,7 @@ export default function RoyaltiesCreators({
     });
   };
 
+  // TODO: Insert at same index to prevent reordering
   const updateCreator = (creatorKey: string, amount: number) => {
     const prevCreators = creators.filter((creator) => creator.creatorKey !== creatorKey);
     setCreators([...prevCreators, { creatorKey, amount }]);
@@ -308,7 +327,7 @@ export default function RoyaltiesCreators({
     form
       .validateFields(['addCreator'])
       .then((values) => {
-        setCreators([...creators, { creatorKey: values.addCreator, amount: 100 }]);
+        setCreators([...creators, { creatorKey: values.addCreator, amount: 0 }]);
         toggleCreatorField(false);
         form.resetFields(['addCreator']);
       })
@@ -391,6 +410,14 @@ export default function RoyaltiesCreators({
               </Row>
             </Row>
           )}
+          {showErrors && (
+            <Row style={{ marginTop: 7 }}>
+              <Paragraph style={{ color: 'red', fontSize: 14 }}>
+                Percentages must equal up to 100 and not be 0
+              </Paragraph>
+            </Row>
+          )}
+
           <Row>
             <Paragraph style={{ fontWeight: 900, marginTop: 62 }}>Editions</Paragraph>
           </Row>
