@@ -275,7 +275,7 @@ export default function RoyaltiesCreators({
     }
 
     form
-      .validateFields(['royaltiesPercentage'])
+      .validateFields(['royaltiesPercentage', 'numOfEditions'])
       .then(() => {
         if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(false);
         if (formValues) {
@@ -354,10 +354,6 @@ export default function RoyaltiesCreators({
                 {
                   type: 'number',
                   min: 1, // Can this be 0?
-                  message: 'Percentage must be between 1 and 100',
-                },
-                {
-                  type: 'number',
                   max: 100,
                   message: 'Percentage must be between 1 and 100',
                 },
@@ -472,12 +468,32 @@ export default function RoyaltiesCreators({
                     <Row>
                       <Col>
                         <Paragraph style={{ fontSize: 12 }}>Number of editions</Paragraph>
-                        <InputNumber<number>
-                          min={1}
-                          max={100}
-                          placeholder="1-100"
-                          onChange={(n) => setMaxSupply(n)}
-                        />
+                        <Form.Item
+                          name="numOfEditions"
+                          rules={
+                            editionsSelection === 'limited'
+                              ? [
+                                  {
+                                    required: true,
+                                    message: 'Required',
+                                  },
+                                  {
+                                    type: 'number',
+                                    min: 1,
+                                    max: 100,
+                                    message: 'Must be between 1 and 100',
+                                  },
+                                ]
+                              : []
+                          }
+                        >
+                          <InputNumber<number>
+                            min={1}
+                            max={100}
+                            placeholder="1-100"
+                            onChange={(n) => setMaxSupply(n)}
+                          />
+                        </Form.Item>
                       </Col>
                     </Row>
                   </Form.Item>
