@@ -4,9 +4,14 @@ import { equals } from 'ramda'
 
 const StyledButton = styled(Button)`{
   font-weight: 500;
+  color: #000000;
+  background: #ffffff;
   &:hover, &:active, &:focus {
-    color: #fff;
-    background: rgb(129, 129, 129);
+    color: #000000;
+    background: #ffffff;
+  }
+  &:hover {
+    background: rgba(255,255,255,.8);
   }
   &.ant-btn-icon-only {
     width: 52px;
@@ -22,19 +27,6 @@ const StyledButton = styled(Button)`{
       &:hover, &:active, &:focus {
         background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
       }
-    }
-  `}
-  ${({ type }) => equals("white", type) && css`
-    background: #ffffff;
-    color: #000000;
-    &:hover, &:active, &:focus {
-      background: #ffffff;
-      color: #000000;
-      text-decoration: underline;
-    }
-    &[disabled], &[disabled]:hover {
-      background: rgba(255,255,255,.5);
-      color: #000000;
     }
   `}
 `

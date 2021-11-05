@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import styled from 'styled-components'
+//@ts-ignore
 import FeatherIcon from 'feather-icons-react'
 
 type ContainerProps = {

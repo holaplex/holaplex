@@ -94,10 +94,10 @@ export default function Home() {
         <CenterdCol xs={22} sm={22} md={22} lg={22}>
           <Row>
             <Marketing xs={24} md={16}>
-              <HeroTitle lg={20}>Empowering a community of thousands of creators. </HeroTitle>
+              <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
               <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
               <Space direction="horizontal" size="large">
-                <Button type="white" size="large" onClick={() => connect()}>Create your Store</Button>
+                <Button size="large" onClick={() => connect()}>Create your Store</Button>
               </Space>
             </Marketing>
             <Col xs={0} md={8}>
@@ -130,7 +130,6 @@ export default function Home() {
                   <FeaturedStore
                     name={store.name}
                     image={store.imagePath}
-                    twitter={store.twitter}
                   />
                 </a>
               </List.Item>
@@ -145,7 +144,7 @@ export default function Home() {
           <FinalCall justify="center">
             <Space direction="vertical" align="center">
               <CenteredTitle level={3}>Launch your own NFT store today!</CenteredTitle>
-              <Button type="white" size="large" onClick={() => connect()}>Create Your Store</Button>
+              <Button size="large" onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </FinalCall>
           <Row>
