@@ -105,9 +105,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                       )}
                     </HeaderTitle>
                     <Space size="large">
-                      <HeaderLinkWrapper active={router.pathname == "/storefronts"}>
-                        <Link href="/storefronts" passHref >
-                          Stores
+                      <HeaderLinkWrapper active={router.pathname == "/about"}>
+                        <Link href="/about" passHref >
+                          About
                         </Link>
                       </HeaderLinkWrapper>
                       <HeaderLinkWrapper active={false}>
@@ -118,11 +118,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                         >
                           FAQ
                         </a>
-                      </HeaderLinkWrapper>
-                      <HeaderLinkWrapper active={router.pathname == "/about"}>
-                        <Link href="/about" passHref >
-                          About
-                        </Link>
                       </HeaderLinkWrapper>
                       {windowDimensions.width > 550 && <SocialLinks />}
                     </Space>

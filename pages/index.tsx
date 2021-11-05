@@ -6,6 +6,7 @@ import SocialLinks from '@/components/elements/SocialLinks'
 import WavesSection from '@/assets/images/wave-section.svg'
 import WavesFooter from '@/assets/images/wave-footer.svg'
 import higlightStores from '@/assets/highlight-stores/highlight-stores-stub'
+import FeaturedStore from '@/components/elements/FeaturedStore'
 import HandLogo from '@/assets/images/hola-logo.svg'
 import { List, Space, Row, Col, Typography, Card } from 'antd'
 import Link from 'next/link'
@@ -14,15 +15,10 @@ import { WalletContext } from '@/modules/wallet'
 
 const { Title, Text, Paragraph } = Typography;
 
-const Logo = styled.div`
-  margin: 70px 0 0 0;
-`;
-
 const HeroTitle = styled.h1`
-  text-align: center;
   font-weight: 800;
-  font-size: 68px;
-  line-height: 68px;
+  font-size: 48px;
+  line-height: 48px;
   color: #fff;
 `;
 
@@ -41,111 +37,39 @@ const LightText = styled(Paragraph)`
 const LightTitle = styled(Title)`
   &.ant-typography, &.ant-typography {
     color: #ffffff;
+    margin-bottom: 1rem;
   }
 `;
 
-const WhiteButton = styled(Button)`
-  background: white;
-  color: ${sv.colors.cta};
-  &:hover {
-    background: white;
-    color: ${sv.colors.ctaHover};
-  }
-`;
-
-const Pitch = styled.h2`
-  font-size: 32px;
-  line-height: 38px;
-  letter-spacing: 0.2px;
-  text-align: center;
-  font-weight: 300;
-  color: rgba(253, 253, 253, 0.6);
-`
-
-const VideoSection = styled(Row)`
-  background-image: url('${WavesSection}');
-  margin-top: ${sv.sectionPadding}px;
-  padding: ${sv.sectionPadding * 2.5}px ${sv.appPadding}px;
-`;
-
-const Video = styled.div`
-  border-radius: ${sv.grid}px;
-  overflow: hidden;
-  position: relative;
-  padding: 0 0 56.25% 0;
-  min-height: 100px;
-  box-shadow: 0 0 8px rgba(0,0,0,.2);
-  .video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-`;
-
-const VideoPitch = styled.div`
-  height: 100%;
-  ${sv.flexColumn};
+const Marketing = styled(Col)`
+  padding-right: 48px;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
 `;
 
-const Community = styled(Row)`
+const Pitch = styled.h2`
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: 0.2px;
+  font-weight: 300;
+  margin: 32px 0 40px 0;
+  color: rgba(253, 253, 253, 0.6);
+`
+
+const Section = styled(Row)`
   margin-top: ${sv.sectionPadding}px;
 `;
 
-type StoresProps = {
-  storesPerRow: number;
-}
-
-const Stores = styled.div`
-  display: grid;
-  grid-template-columns: repeat(${({ storesPerRow }: StoresProps) => storesPerRow}, 1fr);
-  grid-column-gap: ${sv.grid * 2}px;
-  width: 100%;
-  padding: ${sv.appPadding}px;
+const CenterdCol = styled(Col)`
+  max-width: 1400px;
 `;
-
-const StoreItem = styled(Card)`
-  width: 100%;
-  overflow: hidden;
-  margin-bottom: ${sv.grid * 2}px;
-  cursor: pointer;
-  transition: all .2s ease-out;
-  .ant-card-body {
-    padding: 0;
-  }
-  &:hover {
-    transform: translate(0px, -4px);
-    box-shadow: 0 0 8px rgba(0,0,0,.5);
-  }
-`;
-
-type StoreImageProps = {
-  image: string;
-}
 
 const FinalCall = styled(Row)`
   margin: 0 0 100px 0;
 `
-const StoreImage = styled.div<StoreImageProps>`
-  width: 100%;
-  height: 212px;
-  background-image: url('${({ image }: StoreImageProps) => image}');
-  background-size: cover;
-  background-position: center;
-`;
-
-const StoreName = styled.div`
-  color: ${sv.colors.text};
-  text-align: center;
-  padding: ${sv.grid * 2}px ${sv.grid}px;
-`;
 
 const Footer = styled(Row)`
-  background-image: url('${WavesFooter}');
-  margin: 112px 0 0 0;
   padding: 280px 0 60px 0;
   color: rgba(253, 253, 253, 0.6);
   a {
@@ -166,45 +90,36 @@ export default function Home() {
 
   return (
     <>
-      <Row justify="center">
-        <Col sm={16} md={14} lg={12} xl={10}>
-          <Space direction="vertical" align="center" size="large">
-            <Logo>
-              <Image width={90} height={90} src={HandLogo} alt="hola" />
-            </Logo>
-            <HeroTitle>Holaplex</HeroTitle>
-            <Pitch>Design, launch, and host your Metaplex NFT marketplace. No coding required!</Pitch>
-            <Space direction="horizontal" size="large">
-              <Button type="primary" size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
-            </Space>
-          </Space>
-        </Col>
-      </Row>
-
-      <VideoSection justify="center">
-        <Col sm={20} md={18} lg={16} xl={16}>
-          <Row gutter={24}>
-            <Col xs={24} md={10} lg={10} xl={10} xxl={10}>
-              <VideoPitch>
-                <LightTitle level={2}>Build your store in about 5 minutes</LightTitle>
-                <LightText>Let’s be honest, nobody wants to spend weeks building a store. That’s why our team got together to create Holaplex - the no-code NFT store builder. Create a store in a couple of clicks so you can start selling! Need some guidance?  Try our <a href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407782141971-Set-Up-A-Store" target="_blank" rel="noreferrer">getting started guide.</a></LightText>
-              </VideoPitch>
-            </Col>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12} offset={2}>
-              <Video>
-                <iframe className="video" src="https://www.youtube.com/embed/yCJgGzYdJC4" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-              </Video>
+      <Section justify="center">
+        <CenterdCol xs={22} sm={22} md={22} lg={22}>
+          <Row>
+            <Marketing xs={24} md={16}>
+              <HeroTitle lg={20}>Empowering a community of thousands of creators. </HeroTitle>
+              <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
+              <Space direction="horizontal" size="large">
+                <Button type="white" size="large" onClick={() => connect()}>Create your Store</Button>
+              </Space>
+            </Marketing>
+            <Col xs={0} md={8}>
+              <FeaturedStore
+                name={higlightStores[0].name}
+                image={higlightStores[0].imagePath}
+                twitter={higlightStores[0].twitter}
+              />
             </Col>
           </Row>
-        </Col>
-      </VideoSection>
 
-      <Community justify="center">
-        <Col sm={20} md={20} lg={20} xl={18}>
-          <CenteredTitle level={2}>Join our community, 1000+ stores and counting!</CenteredTitle>
+        </CenterdCol>
+      </Section>
+
+
+
+      <Section justify="center">
+        <CenterdCol xs={22} sm={22} md={22} lg={22}>
+          <LightTitle level={5}>Featured creators</LightTitle>
           <List
-            grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-            dataSource={higlightStores}
+            grid={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+            dataSource={higlightStores.slice(1)}
             renderItem={(store: { url: string, imagePath: string, name: string }) => (
               <List.Item key={store.url}>
                 <a
@@ -212,24 +127,25 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <StoreItem>
-                    <StoreImage image={store.imagePath} />
-                    <StoreName>{store.name}</StoreName>
-                  </StoreItem>
+                  <FeaturedStore
+                    name={store.name}
+                    image={store.imagePath}
+                    twitter={store.twitter}
+                  />
                 </a>
               </List.Item>
             )}
           />
 
-        </Col>
-      </Community>
+        </CenterdCol>
+      </Section>
 
       <Footer justify="center">
-        <Col xs={18}>
+        <Col span={23}>
           <FinalCall justify="center">
             <Space direction="vertical" align="center">
               <CenteredTitle level={3}>Launch your own NFT store today!</CenteredTitle>
-              <WhiteButton size="large" onClick={() => connect()}>Create Your Store</WhiteButton>
+              <Button type="white" size="large" onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </FinalCall>
           <Row>

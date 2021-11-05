@@ -113,6 +113,10 @@ const WhiteButton = styled(Button)`
   }
 `;
 
+const CenterdCol = styled(Col)`
+  max-width: 1400px;
+`;
+
 const BackedBy = styled(Row)`
   margin-top: ${sv.sectionPadding*2}px;
 `;
@@ -163,12 +167,12 @@ export default function About() {
   return (
     <Container>
       <Row justify="center">
-        <Col sm={16} md={14} lg={12} xl={14}>
+        <CenterdCol sm={16} md={14} lg={12} xl={14}>
           <Space direction="vertical" align="center" size="large">
             <HeroTitle>Building the best NFT ecosystem on the blockchain.</HeroTitle>
             <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
           </Space>
-        </Col>
+        </CenterdCol>
       </Row>
 
       <Row justify="center">
@@ -180,7 +184,7 @@ export default function About() {
       </Row>
 
       <Community justify="center">
-        <Col sm={20} md={18} lg={16} xl={16}>
+        <CenterdCol sm={20} md={18} lg={16} xl={16}>
           <Row>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
               <LightTitle level={2}>We exist for our community of creators.</LightTitle>
@@ -212,11 +216,11 @@ export default function About() {
               </Stats>
             </Col>
           </Row>
-        </Col>
+        </CenterdCol>
       </Community>
 
       <BackedBy justify="center">
-        <Col sm={20} md={18} lg={16} xl={16}>
+        <CenterdCol sm={20} md={18} lg={16} xl={16}>
           <CenteredTitle level={2}>Backed by</CenteredTitle>
           <Investors>
             <List
@@ -237,7 +241,7 @@ export default function About() {
               )}
             />
           </Investors>
-        </Col>
+        </CenterdCol>
       </BackedBy>
 
 

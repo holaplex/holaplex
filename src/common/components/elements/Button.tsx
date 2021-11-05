@@ -3,6 +3,7 @@ import { Button } from 'antd'
 import { equals } from 'ramda'
 
 const StyledButton = styled(Button)`{
+  font-weight: 500;
   &:hover, &:active, &:focus {
     color: #fff;
     background: rgb(129, 129, 129);
@@ -25,14 +26,15 @@ const StyledButton = styled(Button)`{
   `}
   ${({ type }) => equals("white", type) && css`
     background: #ffffff;
-    color: #D24089;
+    color: #000000;
     &:hover, &:active, &:focus {
       background: #ffffff;
-      color: #D24089;
+      color: #000000;
+      text-decoration: underline;
     }
     &[disabled], &[disabled]:hover {
       background: rgba(255,255,255,.5);
-      color: #D24089;
+      color: #000000;
     }
   `}
 `
