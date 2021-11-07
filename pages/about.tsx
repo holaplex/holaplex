@@ -1,20 +1,17 @@
 import React, { useContext } from 'react'
-import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
-import SocialLinks from '@/components/elements/SocialLinks'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
 import InvestorsData from '@/assets/investors/investors-stub'
-import { List, Space, Row, Col, Typography, Card } from 'antd'
-import Button from '@/components/elements/Button'
+import { List, Space, Row, Col, Typography, Image } from 'antd'
+
 const { Title, Text, Paragraph } = Typography;
 
 const Container = styled.div``;
-const Roadmap = styled.div`
+const Roadmap = styled(Col)`
   margin: 70px 0 0 0;
   width: 100%;
   overflow-x: auto;
-  padding: 0 ${sv.appPadding}px;
 `;
 
 const HeroTitle = styled.h1`
@@ -66,8 +63,8 @@ const LightTitle = styled(Title)`
   }
 `;
 
-const Community = styled(Row)`
-  margin-top: ${sv.sectionPadding*2}px;
+const Community = styled(Col)`
+  margin-top: ${sv.sectionPadding * 2}px;
   @media screen and (max-width: 550px) {
     margin-top: ${sv.sectionPadding}px;
     padding: 0 ${sv.appPadding}px;
@@ -98,32 +95,20 @@ const StatTitle = styled.h1`
   }
 `;
 
-const WhiteButton = styled(Button)`
-  background: white;
-  color: ${sv.colors.cta};
-  &:hover {
-    background: white;
-    color: ${sv.colors.ctaHover};
-  }
-`;
-
-const CenterdCol = styled(Col)`
-  max-width: 1400px;
-`;
-
-const BackedBy = styled(Row)`
-  margin-top: ${sv.sectionPadding*2}px;
+const BackedBy = styled(Col)`
+  margin-top: ${sv.sectionPadding * 2}px;
 `;
 
 const Investors = styled.div`
   width: 100%;
   background: #fff;
   border-radius: 8px;
+  margin: 224px 0 300px 0;
   margin-top: ${sv.appPadding}px;
 `;
 
 const Investor = styled.div`
-  margin: ${sv.grid*4}px;
+  margin: ${sv.grid * 4}px;
   position: relative;
   height: 60px;
   display: flex;
@@ -139,45 +124,26 @@ const LogoContainer = styled.a`
   position: relative;
 `;
 
-const Footer = styled(Row)`
-  margin: 112px 0 0 0;
-  padding: 280px 0 60px 0;
-  color: rgba(253, 253, 253, 0.6);
-  a {
-    color: rgba(253, 253, 253, 0.6);
-    &:hover {
-      color: rgba(253, 253, 253, 1);
-    }
-  }
-`;
-
 const CenteredTitle = styled(LightTitle)`
   text-align: center;
 `;
 
-
 export default function About() {
   return (
     <Container>
-      <Row justify="center">
-        <CenterdCol sm={16} md={14} lg={12} xl={14}>
+      <Row justify="center" align="middle">
+        <Col xs={{ span: 22 }} sm={{ span: 18 }} md={{ span: 16 }} lg={{ span: 14 }}>
           <Space direction="vertical" align="center" size="large">
             <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
             <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
           </Space>
-        </CenterdCol>
-      </Row>
-
-      <Row justify="center">
-        <Col>
-          <Roadmap>
-            <Image layout="fixed" width={1147} height={185} src={RoadmapImage} alt="hola" />
-          </Roadmap>
         </Col>
-      </Row>
 
-      <Community justify="center">
-        <CenterdCol sm={20} md={18} lg={16} xl={16}>
+        <Roadmap xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
+            <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
+        </Roadmap>
+
+        <Community xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
           <Row>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
               <LightTitle level={2}>We exist for our community of creators.</LightTitle>
@@ -188,7 +154,7 @@ export default function About() {
               <Stats>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.mainGradient}>1k+</StatTitle>
+                    <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
                     <LightText>Stores created</LightText>
                   </Stat>
                   <Stat span={12}>
@@ -198,7 +164,7 @@ export default function About() {
                 </Row>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.purpleGradient}>8k+</StatTitle>
+                    <StatTitle textColor={sv.colors.orangeGradient}>8k+</StatTitle>
                     <LightText>Twitter followers</LightText>
                   </Stat>
                   <Stat span={12}>
@@ -209,12 +175,10 @@ export default function About() {
               </Stats>
             </Col>
           </Row>
-        </CenterdCol>
-      </Community>
+        </Community>
 
-      <BackedBy justify="center">
-        <CenterdCol sm={20} md={18} lg={16} xl={16}>
-          <CenteredTitle level={2}>Backed by</CenteredTitle>
+        <BackedBy xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
+          <CenteredTitle level={2} >Backed by</CenteredTitle>
           <Investors>
             <List
               grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
@@ -227,39 +191,15 @@ export default function About() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      <Image layout="fill" objectFit="contain" src={investor.logo} alt={investor.name} />
+                      <Image preview={false} src={investor.logo} alt={investor.name} />
                     </LogoContainer>
                   </Investor>
                 </List.Item>
               )}
             />
           </Investors>
-        </CenterdCol>
-      </BackedBy>
-
-
-      <Footer justify="center">
-        <Col xs={18}>
-          <Row>
-            <Col md={8}>
-              <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
-
-            </Col>
-            <Col md={8}
-            >
-              <Row justify="center">
-                Made with &#10084; on &#160;<a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a>
-              </Row>
-            </Col>
-            <Col md={8}
-            >
-              <Row justify="end">
-                <SocialLinks />
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-      </Footer>
+        </BackedBy>
+      </Row>
     </Container>
   )
 }
