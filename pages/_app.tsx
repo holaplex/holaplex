@@ -112,7 +112,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                       </HeaderLinkWrapper>
                       <HeaderLinkWrapper active={false}>
                         <a
-                          href="https://holaplex-support.zendesk.com/hc/en-us%7C"
+                          href="https://holaplex-support.zendesk.com/hc/en-us"
                           target="_blank"
                           rel="noreferrer"
                         >

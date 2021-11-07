@@ -10,7 +10,7 @@ type ColorPreviewProps = {
 
 const ColorPreview = styled.div<ColorPreviewProps>`
   height: 32px;
-  width: 100%;
+  width: 100px;
   margin: 0 16px 0 0;
   border-radius: 4px;
   background: ${props => props.color};
@@ -47,7 +47,7 @@ const ColorPickerField = ({ onChange, value }: Props) => {
         />
       }
     >
-      <ColorSelect className="ant-input-affix-wrapper ant-input-lg">
+      <ColorSelect className="ant-input-affix-wrapper">
         <ColorPreview color={value} />
         <span className="ant-select-arrow">
           <DownOutlined />

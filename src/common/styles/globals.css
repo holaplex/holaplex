@@ -58,7 +58,6 @@ html, body, #__next, .ant-layout {
 
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.25em;
-  color: #FFFFFF;
   font-weight: 800;
   line-height: 1.25em;
   letter-spacing: .2;

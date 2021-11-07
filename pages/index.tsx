@@ -1,44 +1,19 @@
 import React, { useContext } from 'react'
-import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import SocialLinks from '@/components/elements/SocialLinks'
-import WavesSection from '@/assets/images/wave-section.svg'
-import WavesFooter from '@/assets/images/wave-footer.svg'
 import higlightStores from '@/assets/highlight-stores/highlight-stores-stub'
 import FeaturedStore from '@/components/elements/FeaturedStore'
-import HandLogo from '@/assets/images/hola-logo.svg'
 import { List, Space, Row, Col, Typography, Card } from 'antd'
-import Link from 'next/link'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 
-const { Title, Text, Paragraph } = Typography;
+const { Title } = Typography;
 
 const HeroTitle = styled.h1`
   font-weight: 800;
   font-size: 48px;
   line-height: 48px;
-  color: #fff;
-`;
-
-const LightText = styled(Paragraph)`
-  color: rgba(255,255,255,.6);
-  a {
-    color: rgba(255,255,255,1);
-    text-decoration: underline;
-    &:hover {
-      color: rgba(255,255,255,.6);
-      text-decoration: underline;
-    }
-  }
-`;
-
-const LightTitle = styled(Title)`
-  &.ant-typography, &.ant-typography {
-    color: #ffffff;
-    margin-bottom: 1rem;
-  }
 `;
 
 const Marketing = styled(Col)`
@@ -61,27 +36,12 @@ const Section = styled(Row)`
   margin-top: ${sv.sectionPadding}px;
 `;
 
-const CenterdCol = styled(Col)`
-  max-width: 1400px;
-`;
-
 const FinalCall = styled(Row)`
   margin: 0 0 100px 0;
 `
 
 const Footer = styled(Row)`
   padding: 280px 0 60px 0;
-  color: rgba(253, 253, 253, 0.6);
-  a {
-    color: rgba(253, 253, 253, 0.6);
-    &:hover {
-      color: rgba(253, 253, 253, 1);
-    }
-  }
-`;
-
-const CenteredTitle = styled(LightTitle)`
-  text-align: center;
 `;
 
 
@@ -90,8 +50,8 @@ export default function Home() {
 
   return (
     <>
-      <Section justify="center">
-        <CenterdCol xs={22} sm={22} md={22} lg={22}>
+      <Section justify="center" align="middle">
+        <Col xs={22} sm={22} md={22} lg={22} xl={18} xxl={16}>
           <Row>
             <Marketing xs={24} md={16}>
               <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
@@ -104,19 +64,14 @@ export default function Home() {
               <FeaturedStore
                 name={higlightStores[0].name}
                 image={higlightStores[0].imagePath}
-                twitter={higlightStores[0].twitter}
               />
             </Col>
           </Row>
-
-        </CenterdCol>
+        </Col>
       </Section>
-
-
-
       <Section justify="center">
-        <CenterdCol xs={22} sm={22} md={22} lg={22}>
-          <LightTitle level={5}>Featured creators</LightTitle>
+        <Col xs={22} sm={22} md={22} lg={22} xl={18} xxl={16}>
+          <Title level={5}>Featured creators</Title>
           <List
             grid={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
             dataSource={higlightStores.slice(1)}
@@ -136,14 +91,14 @@ export default function Home() {
             )}
           />
 
-        </CenterdCol>
+        </Col>
       </Section>
 
       <Footer justify="center">
         <Col span={23}>
-          <FinalCall justify="center">
+          <FinalCall justify="center" align="middle">
             <Space direction="vertical" align="center">
-              <CenteredTitle level={3}>Launch your own NFT store today!</CenteredTitle>
+              <Title level={3}>Launch your own NFT store today!</Title>
               <Button size="large" onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </FinalCall>

@@ -4,14 +4,10 @@ import { equals } from 'ramda'
 
 const StyledButton = styled(Button)`{
   font-weight: 500;
-  color: #000000;
-  background: #ffffff;
-  &:hover, &:active, &:focus {
-    color: #000000;
-    background: #ffffff;
-  }
+  color: #000;
   &:hover {
-    background: rgba(255,255,255,.8);
+    color: #000;
+    background; rgba(255, 255, 255, 0.8);
   }
   &.ant-btn-icon-only {
     width: 52px;

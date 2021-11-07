@@ -3,19 +3,13 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import SocialLinks from '@/components/elements/SocialLinks'
-import HandLogo from '@/assets/images/hola-logo.svg'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
 import InvestorsData from '@/assets/investors/investors-stub'
-import LogoTest from '@/assets/investors/logos/test.svg'
 import { List, Space, Row, Col, Typography, Card } from 'antd'
-import Link from 'next/link'
 import Button from '@/components/elements/Button'
 const { Title, Text, Paragraph } = Typography;
 
-const Container = styled.div`
-
-`;
-
+const Container = styled.div``;
 const Roadmap = styled.div`
   margin: 70px 0 0 0;
   width: 100%;
@@ -163,7 +157,6 @@ const CenteredTitle = styled(LightTitle)`
 
 
 export default function About() {
-
   return (
     <Container>
       <Row justify="center">
