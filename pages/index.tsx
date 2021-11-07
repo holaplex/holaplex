@@ -46,7 +46,9 @@ const Footer = styled(Row)`
 
 
 export default function Home() {
-  const { connect } = useContext(WalletContext)
+  const { connect } = useContext(WalletContext);
+
+  const heroStorefront = higlightStores[0];
 
   return (
     <>
@@ -61,10 +63,16 @@ export default function Home() {
               </Space>
             </Marketing>
             <Col xs={0} md={8}>
-              <FeaturedStore
-                name={higlightStores[0].name}
-                image={higlightStores[0].imagePath}
-              />
+              <a
+                href={heroStorefront.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FeaturedStore
+                  name={heroStorefront.name}
+                  image={heroStorefront.imagePath}
+                />
+              </a>
             </Col>
           </Row>
         </Col>
@@ -103,17 +111,24 @@ export default function Home() {
             </Space>
           </FinalCall>
           <Row>
-            <Col md={8}>
+            <Col
+              xs={12}
+              md={8}
+            >
               <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
 
             </Col>
-            <Col md={8}
+            <Col
+              xs={0}
+              md={8}
             >
               <Row justify="center">
                 Made with &#10084; on &#160;<a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a>
               </Row>
             </Col>
-            <Col md={8}
+            <Col
+              xs={12}
+              md={8}
             >
               <Row justify="end">
                 <SocialLinks />
