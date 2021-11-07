@@ -162,8 +162,8 @@ export default function About() {
       <Row justify="center">
         <CenterdCol sm={16} md={14} lg={12} xl={14}>
           <Space direction="vertical" align="center" size="large">
-            <HeroTitle>Building the best NFT ecosystem on the blockchain.</HeroTitle>
-            <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
+            <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
+            <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
           </Space>
         </CenterdCol>
       </Row>
