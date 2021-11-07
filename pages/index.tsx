@@ -57,7 +57,7 @@ export default function Home() {
               <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
               <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
               <Space direction="horizontal" size="large">
-                <Button size="large" onClick={() => connect()}>Create your Store</Button>
+                <Button size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
               </Space>
             </Marketing>
             <Col xs={0} md={8}>
@@ -99,7 +99,7 @@ export default function Home() {
           <FinalCall justify="center" align="middle">
             <Space direction="vertical" align="center">
               <Title level={3}>Launch your own NFT store today!</Title>
-              <Button size="large" onClick={() => connect()}>Create Your Store</Button>
+              <Button size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
             </Space>
           </FinalCall>
           <Row>
