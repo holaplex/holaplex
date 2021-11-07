@@ -198,12 +198,12 @@ export default function About() {
                 </Row>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.orangeGradient}>6k+</StatTitle>
+                    <StatTitle textColor={sv.colors.purpleGradient}>8k+</StatTitle>
                     <LightText>Twitter followers</LightText>
                   </Stat>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.greenGradient}>1m+</StatTitle>
-                    <LightText>USD transaction volume</LightText>
+                    <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
+                    <LightText>SOL transaction volume</LightText>
                   </Stat>
                 </Row>
               </Stats>
