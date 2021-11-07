@@ -105,14 +105,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                       )}
                     </HeaderTitle>
                     <Space size="large">
-                      <HeaderLinkWrapper active={router.pathname == "/storefronts"}>
-                        <Link href="/storefronts" passHref >
-                          View Stores
+                      <HeaderLinkWrapper active={router.pathname == "/about"}>
+                        <Link href="/about" passHref >
+                          About
                         </Link>
                       </HeaderLinkWrapper>
                       <HeaderLinkWrapper active={false}>
                         <a
-                          href="https://docs.google.com/document/d/e/2PACX-1vSMDXh4TbZCR70AqA3O3-pRnvWVBSxE5cFM4LcprS_BHa20aRK8xFLDMwv-2YbZydWYQS1DBl2GBFNX/pub"
+                          href="https://holaplex-support.zendesk.com/hc/en-us"
                           target="_blank"
                           rel="noreferrer"
                         >

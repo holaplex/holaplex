@@ -44,7 +44,7 @@ const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: St
     >
       {activePage}
       <Row justify="end">
-        <Space>
+        <Space size="middle">
           {page > 0 && (
             <Button
               size="large"

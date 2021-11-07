@@ -36,8 +36,6 @@ const FontSelect = (props: Props) => {
 
   return (
     <StyledSelect
-      bordered={false}
-      size="large"
       value={value}
       onChange={onChange}
     >
