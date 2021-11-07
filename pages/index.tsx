@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
-import SocialLinks from '@/components/elements/SocialLinks'
 import higlightStores from '@/assets/highlight-stores/highlight-stores-stub'
 import FeaturedStore from '@/components/elements/FeaturedStore'
 import { List, Space, Row, Col, Typography, Card } from 'antd'
@@ -102,41 +101,12 @@ export default function Home() {
         </Col>
       </Section>
 
-      <Footer justify="center">
-        <Col span={23}>
-          <FinalCall justify="center" align="middle">
-            <Space direction="vertical" align="center">
-              <Title level={3}>Launch your own NFT store today!</Title>
-              <Button size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
-            </Space>
-          </FinalCall>
-          <Row>
-            <Col
-              xs={12}
-              md={8}
-            >
-              <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
-
-            </Col>
-            <Col
-              xs={0}
-              md={8}
-            >
-              <Row justify="center">
-                Made with &#10084; on &#160;<a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a>
-              </Row>
-            </Col>
-            <Col
-              xs={12}
-              md={8}
-            >
-              <Row justify="end">
-                <SocialLinks />
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-      </Footer>
+      <Section justify="center" align="middle">
+        <Space direction="vertical" align="center">
+          <Title level={3}>Launch your own NFT store today!</Title>
+          <Button size="large" onClick={() => connect()}>Create / Edit Your Store</Button>
+        </Space>
+      </Section>
     </>
   )
 }

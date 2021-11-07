@@ -1,19 +1,17 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
-import SocialLinks from '@/components/elements/SocialLinks'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
 import InvestorsData from '@/assets/investors/investors-stub'
 import { List, Space, Row, Col, Typography, Image } from 'antd'
-import Button from '@/components/elements/Button'
+
 const { Title, Text, Paragraph } = Typography;
 
 const Container = styled.div``;
-const Roadmap = styled.div`
+const Roadmap = styled(Col)`
   margin: 70px 0 0 0;
   width: 100%;
   overflow-x: auto;
-  padding: 0 ${sv.appPadding}px;
 `;
 
 const HeroTitle = styled.h1`
@@ -65,8 +63,8 @@ const LightTitle = styled(Title)`
   }
 `;
 
-const Community = styled(Row)`
-  margin-top: ${sv.sectionPadding*2}px;
+const Community = styled(Col)`
+  margin-top: ${sv.sectionPadding * 2}px;
   @media screen and (max-width: 550px) {
     margin-top: ${sv.sectionPadding}px;
     padding: 0 ${sv.appPadding}px;
@@ -97,32 +95,20 @@ const StatTitle = styled.h1`
   }
 `;
 
-const WhiteButton = styled(Button)`
-  background: white;
-  color: ${sv.colors.cta};
-  &:hover {
-    background: white;
-    color: ${sv.colors.ctaHover};
-  }
-`;
-
-const CenterdCol = styled(Col)`
-  max-width: 1400px;
-`;
-
-const BackedBy = styled(Row)`
-  margin-top: ${sv.sectionPadding*2}px;
+const BackedBy = styled(Col)`
+  margin-top: ${sv.sectionPadding * 2}px;
 `;
 
 const Investors = styled.div`
   width: 100%;
   background: #fff;
   border-radius: 8px;
+  margin: 224px 0 300px 0;
   margin-top: ${sv.appPadding}px;
 `;
 
 const Investor = styled.div`
-  margin: ${sv.grid*4}px;
+  margin: ${sv.grid * 4}px;
   position: relative;
   height: 60px;
   display: flex;
@@ -158,25 +144,19 @@ const CenteredTitle = styled(LightTitle)`
 export default function About() {
   return (
     <Container>
-      <Row justify="center">
-        <CenterdCol sm={16} md={14} lg={12} xl={14}>
+      <Row justify="center" align="middle">
+        <Col xs={{ span: 22 }} sm={{ span: 18 }} md={{ span: 16 }} lg={{ span: 14 }}>
           <Space direction="vertical" align="center" size="large">
             <HeroTitle>Building the best NFT ecosystem on the blockchain.</HeroTitle>
             <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
           </Space>
-        </CenterdCol>
-      </Row>
-
-      <Row justify="center">
-        <Col>
-          <Roadmap>
-            <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
-          </Roadmap>
         </Col>
-      </Row>
 
-      <Community justify="center">
-        <CenterdCol sm={20} md={18} lg={16} xl={16}>
+        <Roadmap xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
+            <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
+        </Roadmap>
+
+        <Community xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
           <Row>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
               <LightTitle level={2}>We exist for our community of creators.</LightTitle>
@@ -208,11 +188,9 @@ export default function About() {
               </Stats>
             </Col>
           </Row>
-        </CenterdCol>
-      </Community>
+        </Community>
 
-      <BackedBy justify="center">
-        <CenterdCol sm={20} md={18} lg={16} xl={16}>
+        <BackedBy xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
           <CenteredTitle level={2}>Backed by</CenteredTitle>
           <Investors>
             <List
@@ -233,32 +211,8 @@ export default function About() {
               )}
             />
           </Investors>
-        </CenterdCol>
-      </BackedBy>
-
-
-      <Footer justify="center">
-        <Col xs={18}>
-          <Row>
-            <Col md={8}>
-              <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
-
-            </Col>
-            <Col md={8}
-            >
-              <Row justify="center">
-                Made with &#10084; on &#160;<a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a>
-              </Row>
-            </Col>
-            <Col md={8}
-            >
-              <Row justify="end">
-                <SocialLinks />
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-      </Footer>
+        </BackedBy>
+      </Row>
     </Container>
   )
 }
