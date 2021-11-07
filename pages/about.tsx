@@ -1,11 +1,10 @@
 import React, { useContext } from 'react'
-import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import SocialLinks from '@/components/elements/SocialLinks'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
 import InvestorsData from '@/assets/investors/investors-stub'
-import { List, Space, Row, Col, Typography, Card } from 'antd'
+import { List, Space, Row, Col, Typography, Image } from 'antd'
 import Button from '@/components/elements/Button'
 const { Title, Text, Paragraph } = Typography;
 
@@ -171,7 +170,7 @@ export default function About() {
       <Row justify="center">
         <Col>
           <Roadmap>
-            <Image layout="fixed" width={1147} height={185} src={RoadmapImage} alt="hola" />
+            <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
           </Roadmap>
         </Col>
       </Row>
@@ -188,7 +187,7 @@ export default function About() {
               <Stats>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.mainGradient}>1k+</StatTitle>
+                    <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
                     <LightText>Stores created</LightText>
                   </Stat>
                   <Stat span={12}>
@@ -198,7 +197,7 @@ export default function About() {
                 </Row>
                 <Row>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.orangeGradient}>6k+</StatTitle>
+                    <StatTitle textColor={sv.colors.orangeGradient}>8k+</StatTitle>
                     <LightText>Twitter followers</LightText>
                   </Stat>
                   <Stat span={12}>
@@ -227,7 +226,7 @@ export default function About() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      <Image layout="fill" objectFit="contain" src={investor.logo} alt={investor.name} />
+                      <Image preview={false} src={investor.logo} alt={investor.name} />
                     </LogoContainer>
                   </Investor>
                 </List.Item>
