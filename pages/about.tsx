@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
-import InvestorsData from '@/assets/investors/investors-stub'
-import { List, Space, Row, Col, Typography, Image } from 'antd'
+import investorData from '@/assets/investors/investors-stub';
+import { List, Space, Row, Col, Typography, Image, ListProps } from 'antd'
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -14,16 +14,11 @@ const Roadmap = styled(Image)`
 const HeroTitle = styled.h1`
   text-align: center;
   font-weight: 800;
-  font-size: 68px;
   line-height: auto;
   color: #fff;
-  margin-top: ${sv.sectionPadding}px;
-  @media screen and (max-width: 550px) {
-    margin-top: ${sv.appPadding}px;
-    font-size: 48px;
-    line-height: auto;
-    text-align: left;
-    padding: 0 ${sv.appPadding}px;
+  font-size: 48px;
+  @media screen and (min-width: 800px) {
+    font-size: 68px;
   }
 `;
 
@@ -80,31 +75,25 @@ const StatTitle = styled.h1`
 `;
 
 const Investors = styled.div`
-  width: 100%;
   background: #fff;
   border-radius: 8px;
-  padding: 20px;
-`;
-
-const Investor = styled.div`
-  position: relative;
-  display: flex;
-  align-items: middle;
-  justify-content: center;
-  padding: 0 20px;
-`;
-
-const LogoContainer = styled.a`
-  width: 100%;
-  display: block;
-  position: relative;
+  padding: 24px;
+  .ant-col {
+    > .ant-list-item {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin: 0 0 22px 0;
+    }
+  }
 `;
 
 
 export default function About() {
   return (
     <Row justify="center" align="middle">
-      <Col xs={24} sm={22} md={20} xl={18} xxl={16}>
+      <Col xs={22} sm={22} md={20} xl={18} xxl={16}>
         <Space direction="vertical" align="center" size="large">
           <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
           <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
@@ -145,19 +134,17 @@ export default function About() {
         <Title level={2} >Backed by</Title>
         <Investors>
           <List
-            grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-            dataSource={InvestorsData}
-            renderItem={(investor: { url: string, logo: string, name: string }) => (
+            grid={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4, gutter: 28 }}
+            dataSource={investorData}
+            renderItem={(investor) => (
               <List.Item key={investor.url}>
-                <Investor>
-                  <LogoContainer
-                    href={investor.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Image preview={false} src={investor.logo} alt={investor.name} />
-                  </LogoContainer>
-                </Investor>
+                <a
+                  href={investor.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Image preview={false} src={investor.logo} alt={investor.name} />
+                </a>
               </List.Item>
             )}
           />
