@@ -141,17 +141,23 @@ function MyApp({ Component, pageProps }: AppProps) {
                         <AppFooter justify="center">
                           <Col span={24}>
                             <Row>
-                              <Col xs={12} md={8}>
+                              <Col
+                                xs={24}
+                                md={8}
+                              >
                                 <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
-
                               </Col>
-                              <Col xs={0} md={8}
+                              <Col
+                                xs={0}
+                                md={8}
                               >
                                 <Row justify="center">
                                   Made with &#10084; on &#160;<a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a>
                                 </Row>
                               </Col>
-                              <Col xs={12} md={8}
+                              <Col
+                                xs={0}
+                                md={8}
                               >
                                 <Row justify="end">
                                   <SocialLinks />
