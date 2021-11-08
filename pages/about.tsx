@@ -7,10 +7,8 @@ import { List, Space, Row, Col, Typography, Image } from 'antd'
 
 const { Title, Text, Paragraph } = Typography;
 
-const Roadmap = styled(Col)`
+const Roadmap = styled(Image)`
   margin: 70px 0 0 0;
-  width: 100%;
-  overflow-x: auto;
 `;
 
 const HeroTitle = styled.h1`
@@ -43,7 +41,6 @@ const Pitch = styled.h2`
   }
 `
 
-
 const LightText = styled(Paragraph)`
   color: rgba(255,255,255,.6);
   a {
@@ -56,21 +53,9 @@ const LightText = styled(Paragraph)`
   }
 `;
 
-const LightTitle = styled(Title)`
-  &.ant-typography, &.ant-typography {
-    color: #ffffff;
-  }
+const Community = styled(Row)`
+  margin: 124px 0 84px 0;
 `;
-
-const Community = styled(Col)`
-  margin-top: ${sv.sectionPadding * 2}px;
-  @media screen and (max-width: 550px) {
-    margin-top: ${sv.sectionPadding}px;
-    padding: 0 ${sv.appPadding}px;
-  }
-`;
-
-const Stats = styled.div``;
 
 const Stat = styled(Col)`
   text-align: center;
@@ -94,89 +79,70 @@ const StatTitle = styled.h1`
   }
 `;
 
-const BackedBy = styled(Col)`
-  margin-top: ${sv.sectionPadding * 2}px;
-`;
-
 const Investors = styled.div`
   width: 100%;
   background: #fff;
   border-radius: 8px;
-  margin: 224px 0 300px 0;
-  margin-top: ${sv.appPadding}px;
+  padding: 20px;
 `;
 
 const Investor = styled.div`
-  margin: ${sv.grid * 4}px;
   position: relative;
-  height: 60px;
   display: flex;
-  align-items: center;
+  align-items: middle;
   justify-content: center;
+  padding: 0 20px;
 `;
 
 const LogoContainer = styled.a`
   width: 100%;
-  height: 100%;
-  max-width: 120px;
   display: block;
   position: relative;
 `;
 
-const CenteredTitle = styled(LightTitle)`
-  text-align: center;
-`;
 
 export default function About() {
   return (
     <Row justify="center" align="middle">
-      <Col xs={{ span: 22 }} sm={{ span: 18 }} md={{ span: 16 }} lg={{ span: 14 }}>
+      <Col xs={24} sm={22} md={20} xl={18} xxl={16}>
         <Space direction="vertical" align="center" size="large">
           <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
           <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
         </Space>
-      </Col>
 
-      <Roadmap xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-        <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
-      </Roadmap>
+        <Roadmap preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
 
-      <Community xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-        <Row>
+        <Community>
           <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
             <Title level={2}>We exist for our community of creators.</Title>
             <LightText>The rapid rise of NFTs has allowed creators to build communities and monetize their work in  innovative ways. So much talent has come into this space but there are barriers preventing some from joining. Using the tools needed to mint and sell NFTs is non-trivial even for experienced developers.</LightText>
             <LightText>Holaplex is committed to building tools that will allow creators and collectors to join the NFT community easily and safely.</LightText>
           </Col>
           <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-            <Stats>
-              <Row>
-                <Stat span={12}>
-                  <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
-                  <LightText>Stores created</LightText>
-                </Stat>
-                <Stat span={12}>
-                  <StatTitle textColor={sv.colors.orangeGradient}>5k+</StatTitle>
-                  <LightText>NFTs minted</LightText>
-                </Stat>
-              </Row>
-              <Row>
-                <Stat span={12}>
-                  <StatTitle textColor={sv.colors.orangeGradient}>8k+</StatTitle>
-                  <LightText>Twitter followers</LightText>
-                </Stat>
-                <Stat span={12}>
-                  <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
-                  <LightText>SOL transaction volume</LightText>
-                </Stat>
-              </Row>
-            </Stats>
+            <Row>
+              <Stat span={12}>
+                <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
+                <LightText>Stores created</LightText>
+              </Stat>
+              <Stat span={12}>
+                <StatTitle textColor={sv.colors.orangeGradient}>5k+</StatTitle>
+                <LightText>NFTs minted</LightText>
+              </Stat>
+            </Row>
+            <Row>
+              <Stat span={12}>
+                <StatTitle textColor={sv.colors.orangeGradient}>8k+</StatTitle>
+                <LightText>Twitter followers</LightText>
+              </Stat>
+              <Stat span={12}>
+                <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
+                <LightText>SOL transaction volume</LightText>
+              </Stat>
+            </Row>
           </Col>
-        </Row>
-      </Community>
+        </Community>
 
-      <BackedBy xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-        <CenteredTitle level={2} >Backed by</CenteredTitle>
+        <Title level={2} >Backed by</Title>
         <Investors>
           <List
             grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
@@ -196,7 +162,7 @@ export default function About() {
             )}
           />
         </Investors>
-      </BackedBy>
+      </Col>
     </Row>
   )
 }
