@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import App from 'next/app'
-import type { AppProps, AppContext } from 'next/app'
+import type { AppProps } from 'next/app'
 import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/globals.css'
 import { useRouter } from 'next/router'
