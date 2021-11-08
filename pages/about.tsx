@@ -7,7 +7,6 @@ import { List, Space, Row, Col, Typography, Image } from 'antd'
 
 const { Title, Text, Paragraph } = Typography;
 
-const Container = styled.div``;
 const Roadmap = styled(Col)`
   margin: 70px 0 0 0;
   width: 100%;
@@ -130,76 +129,74 @@ const CenteredTitle = styled(LightTitle)`
 
 export default function About() {
   return (
-    <Container>
-      <Row justify="center" align="middle">
-        <Col xs={{ span: 22 }} sm={{ span: 18 }} md={{ span: 16 }} lg={{ span: 14 }}>
-          <Space direction="vertical" align="center" size="large">
-            <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
-            <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
-          </Space>
-        </Col>
+    <Row justify="center" align="middle">
+      <Col xs={{ span: 22 }} sm={{ span: 18 }} md={{ span: 16 }} lg={{ span: 14 }}>
+        <Space direction="vertical" align="center" size="large">
+          <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
+          <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
+        </Space>
+      </Col>
 
-        <Roadmap xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-            <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
-        </Roadmap>
+      <Roadmap xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
+        <Image preview={false} width="100%" src={RoadmapImage} alt="holaplex roadmap" />
+      </Roadmap>
 
-        <Community xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-          <Row>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <LightTitle level={2}>We exist for our community of creators.</LightTitle>
-              <LightText>The rapid rise of NFTs has allowed creators to build communities and monetize their work in  innovative ways. So much talent has come into this space but there are barriers preventing some from joining. Using the tools needed to mint and sell NFTs is non-trivial even for experienced developers.</LightText>
-              <LightText>Holaplex is committed to building tools that will allow creators and collectors to join the NFT community easily and safely.</LightText>
-            </Col>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <Stats>
-                <Row>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
-                    <LightText>Stores created</LightText>
-                  </Stat>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.orangeGradient}>5k+</StatTitle>
-                    <LightText>NFTs minted</LightText>
-                  </Stat>
-                </Row>
-                <Row>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.orangeGradient}>8k+</StatTitle>
-                    <LightText>Twitter followers</LightText>
-                  </Stat>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
-                    <LightText>SOL transaction volume</LightText>
-                  </Stat>
-                </Row>
-              </Stats>
-            </Col>
-          </Row>
-        </Community>
+      <Community xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
+        <Row>
+          <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
+            <Title level={2}>We exist for our community of creators.</Title>
+            <LightText>The rapid rise of NFTs has allowed creators to build communities and monetize their work in  innovative ways. So much talent has come into this space but there are barriers preventing some from joining. Using the tools needed to mint and sell NFTs is non-trivial even for experienced developers.</LightText>
+            <LightText>Holaplex is committed to building tools that will allow creators and collectors to join the NFT community easily and safely.</LightText>
+          </Col>
+          <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
+            <Stats>
+              <Row>
+                <Stat span={12}>
+                  <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
+                  <LightText>Stores created</LightText>
+                </Stat>
+                <Stat span={12}>
+                  <StatTitle textColor={sv.colors.orangeGradient}>5k+</StatTitle>
+                  <LightText>NFTs minted</LightText>
+                </Stat>
+              </Row>
+              <Row>
+                <Stat span={12}>
+                  <StatTitle textColor={sv.colors.orangeGradient}>8k+</StatTitle>
+                  <LightText>Twitter followers</LightText>
+                </Stat>
+                <Stat span={12}>
+                  <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
+                  <LightText>SOL transaction volume</LightText>
+                </Stat>
+              </Row>
+            </Stats>
+          </Col>
+        </Row>
+      </Community>
 
-        <BackedBy xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-          <CenteredTitle level={2} >Backed by</CenteredTitle>
-          <Investors>
-            <List
-              grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-              dataSource={InvestorsData}
-              renderItem={(investor: { url: string, logo: string, name: string }) => (
-                <List.Item key={investor.url}>
-                  <Investor>
-                    <LogoContainer
-                      href={investor.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Image preview={false} src={investor.logo} alt={investor.name} />
-                    </LogoContainer>
-                  </Investor>
-                </List.Item>
-              )}
-            />
-          </Investors>
-        </BackedBy>
-      </Row>
-    </Container>
+      <BackedBy xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
+        <CenteredTitle level={2} >Backed by</CenteredTitle>
+        <Investors>
+          <List
+            grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+            dataSource={InvestorsData}
+            renderItem={(investor: { url: string, logo: string, name: string }) => (
+              <List.Item key={investor.url}>
+                <Investor>
+                  <LogoContainer
+                    href={investor.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Image preview={false} src={investor.logo} alt={investor.name} />
+                  </LogoContainer>
+                </Investor>
+              </List.Item>
+            )}
+          />
+        </Investors>
+      </BackedBy>
+    </Row>
   )
 }
