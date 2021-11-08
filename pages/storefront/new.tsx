@@ -1,6 +1,5 @@
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
 import FontSelect from '@/common/components/elements/FontSelect';
-import InlineFormItem from '@/common/components/elements/InlineFormItem';
 import Upload from '@/common/components/elements/Upload';
 import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
@@ -11,7 +10,6 @@ import arweaveSDK from '@/modules/arweave/client';
 import {
   FieldData,
   getTextColor,
-  PageCard,
   Paragraph,
   PrevCard,
   PrevCol,
@@ -140,10 +138,7 @@ export default function New({ track }: StorefrontEditorProps) {
       <Col sm={24} md={12} lg={12}>
         <Title level={2}>Next, theme your store.</Title>
         <Paragraph>Choose a logo, colors, and fonts to fit your store’s brand.</Paragraph>
-        <InlineFormItem
-          noBackground
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
+        <Form.Item
           label="Logo"
           name={['theme', 'logo']}
           rules={[{ required: true, message: 'Upload a logo.' }]}
@@ -155,39 +150,31 @@ export default function New({ track }: StorefrontEditorProps) {
               </Button>
             )}
           </Upload>
-        </InlineFormItem>
-        <InlineFormItem
+        </Form.Item>
+        <Form.Item
           name={['theme', 'backgroundColor']}
           label="Background"
-          labelCol={{ xs: 10 }}
-          wrapperCol={{ xs: 14 }}
         >
           <ColorPicker />
-        </InlineFormItem>
-        <InlineFormItem
+        </Form.Item>
+        <Form.Item
           name={['theme', 'primaryColor']}
           label="Buttons &amp; Links"
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
         >
           <ColorPicker />
-        </InlineFormItem>
-        <InlineFormItem
+        </Form.Item>
+        <Form.Item
           name={['theme', 'titleFont']}
           label="Title Font"
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
         >
           <FontSelect />
-        </InlineFormItem>
-        <InlineFormItem
+        </Form.Item>
+        <Form.Item
           name={['theme', 'textFont']}
           label="Main Text Font"
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
         >
           <FontSelect />
-        </InlineFormItem>
+        </Form.Item>
       </Col>
       <PrevCol sm={24} md={11} lg={10}>
         <PrevCard bgColor={values.theme.backgroundColor}>
@@ -232,10 +219,7 @@ export default function New({ track }: StorefrontEditorProps) {
         Upload a favicon and set other page meta data. This information will display on social
         platforms, such as Twitter and Facebook, when links to the store are shared.
       </Paragraph>
-      <InlineFormItem
-        noBackground
-        labelCol={{ xs: 8, md: 6, xxl: 4 }}
-        wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
+      <Form.Item
         label="Favicon"
         name={['meta', 'favicon']}
         rules={[{ required: true, message: 'Upload a favicon.' }]}
@@ -247,60 +231,53 @@ export default function New({ track }: StorefrontEditorProps) {
             </Button>
           )}
         </Upload>
-      </InlineFormItem>
-      <InlineFormItem
+      </Form.Item>
+      <Form.Item
         name={['meta', 'title']}
         rules={[{ required: true, message: 'Please enter a page title.' }]}
         label="Page Title"
-        labelCol={{ xs: 8, md: 6, xxl: 4 }}
-        wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
       >
         <Input autoFocus />
-      </InlineFormItem>
-      <InlineFormItem
+      </Form.Item>
+      <Form.Item
         name={['meta', 'description']}
         label="Page Description"
         rules={[{ required: true, message: 'Please enter a page description.' }]}
-        labelCol={{ xs: 8, md: 6, xxl: 4 }}
-        wrapperCol={{ xs: 16, md: 18, xxl: 20 }}
       >
         <Input.TextArea />
-      </InlineFormItem>
+      </Form.Item>
     </>
   );
 
   return (
     <Row justify="center" align="middle">
       <Col xs={21} lg={18} xl={16} xxl={14}>
-        <PageCard>
-          <StepForm
-            submitting={submitting}
-            form={form}
-            size="large"
-            fields={fields}
-            onFieldsChange={([changed], _) => {
-              if (isNil(changed)) {
-                return;
-              }
+        <StepForm
+          submitting={submitting}
+          form={form}
+          layout="vertical"
+          fields={fields}
+          onFieldsChange={([changed], _) => {
+            if (isNil(changed)) {
+              return;
+            }
 
-              const current = findIndex(propEq('name', changed.name), fields);
-              setFields(update(current, changed, fields));
-            }}
-            onFinish={onSubmit}
-            layout="horizontal"
-            colon={false}
-          >
-            <Row>
-              <FillSpace direction="vertical" size="large">
-                {subdomain}
-              </FillSpace>
-            </Row>
-            <Row justify="space-between">{theme}</Row>
-            <Row justify="space-between">
-              <Col xs={24}>{meta}</Col>
-            </Row>
-          </StepForm>
-        </PageCard>
+            const current = findIndex(propEq('name', changed.name), fields);
+            setFields(update(current, changed, fields));
+          }}
+          onFinish={onSubmit}
+          colon={false}
+        >
+          <Row>
+            <FillSpace direction="vertical" size="large">
+              {subdomain}
+            </FillSpace>
+          </Row>
+          <Row justify="space-between">{theme}</Row>
+          <Row justify="space-between">
+            <Col xs={24}>{meta}</Col>
+          </Row>
+        </StepForm>
       </Col>
     </Row>
   );

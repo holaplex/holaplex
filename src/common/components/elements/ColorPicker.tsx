@@ -1,5 +1,5 @@
 // @ts-ignore
-import { SketchPicker } from 'react-color';
+import { ChromePicker } from 'react-color';
 import { Dropdown } from 'antd'
 import styled from 'styled-components';
 import { DownOutlined } from '@ant-design/icons'
@@ -10,17 +10,17 @@ type ColorPreviewProps = {
 
 const ColorPreview = styled.div<ColorPreviewProps>`
   height: 32px;
-  width: 100%;
+  width: 85px;
   margin: 0 16px 0 0;
   border-radius: 4px;
   background: ${props => props.color};
-  border: 3px solid #fff;
-`;
-
-const ColorSelect = styled.div`
+  `;
+  
+  const ColorSelect = styled.div`
   display: flex;
   align-items: center;
-`
+  color: rgba(255, 255, 255, .6);
+  `
 
 type Props = {
   onChange?: (hex: string) => void,
@@ -39,7 +39,7 @@ const ColorPickerField = ({ onChange, value }: Props) => {
   return (
     <Dropdown
       overlay={
-        <SketchPicker
+        <ChromePicker
           disableAlpha
           presetColors={[]}
           color={value}
@@ -47,8 +47,9 @@ const ColorPickerField = ({ onChange, value }: Props) => {
         />
       }
     >
-      <ColorSelect className="ant-input-affix-wrapper ant-input-lg">
+      <ColorSelect className="ant-input-affix-wrapper">
         <ColorPreview color={value} />
+        {value}
         <span className="ant-select-arrow">
           <DownOutlined />
         </span>

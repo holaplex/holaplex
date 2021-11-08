@@ -15,6 +15,10 @@ const mainGradient = 'linear-gradient(165.77deg, #D24089 8.62%, #B92D44 84.54%)'
 const mainGradientHover = 'linear-gradient(10.77deg, #D24089 8.62%, #B92D44 84.54%)'
 const mainGradientDisabled = `linear-gradient(10.77deg, ${lighten(.1, '#D24089')} 8.62%, ${lighten(0.1, '#B92D44')} 84.54%)`
 
+const orangeGradient = 'linear-gradient(143.77deg, #D9B351 8.62%, #CA6128 84.54%)'
+const purpleGradient = 'linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%)'
+const greenGradient = 'linear-gradient(143.77deg, #84DBC8 8.62%, #55AB86 84.54%)'
+
 const cell = '#E0E0E0'
 const cellHover = '#E3E3E3'
 const cellSubtle = '#EDEDED'
@@ -47,6 +51,9 @@ const StyleVariables = {
     mainGradient: mainGradient,
     mainGradientHover: mainGradientHover,
     mainGradentDisabled: mainGradientDisabled,
+    orangeGradient: orangeGradient,
+    purpleGradient: purpleGradient,
+    greenGradient: greenGradient,
     cta: cta,
     ctaHover: ctaHover,
     subtleCta: subtleCta,

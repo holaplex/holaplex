@@ -58,7 +58,6 @@ html, body, #__next, .ant-layout {
 
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.25em;
-  color: #FFFFFF;
   font-weight: 800;
   line-height: 1.25em;
   letter-spacing: .2;
@@ -70,7 +69,7 @@ input, textarea {
 }
 
 body {
-  background: linear-gradient(128.42deg, #841896 24.41%, #4F1364 83.01%);
+  background: #000;
   background-repeat: no-repeat;
 }
 
