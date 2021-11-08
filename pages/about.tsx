@@ -124,22 +124,9 @@ const LogoContainer = styled.a`
   position: relative;
 `;
 
-const Footer = styled(Row)`
-  margin: 112px 0 0 0;
-  padding: 280px 0 60px 0;
-  color: rgba(253, 253, 253, 0.6);
-  a {
-    color: rgba(253, 253, 253, 0.6);
-    &:hover {
-      color: rgba(253, 253, 253, 1);
-    }
-  }
-`;
-
 const CenteredTitle = styled(LightTitle)`
   text-align: center;
 `;
-
 
 export default function About() {
   return (
@@ -147,8 +134,8 @@ export default function About() {
       <Row justify="center" align="middle">
         <Col xs={{ span: 22 }} sm={{ span: 18 }} md={{ span: 16 }} lg={{ span: 14 }}>
           <Space direction="vertical" align="center" size="large">
-            <HeroTitle>Building the best NFT ecosystem on the blockchain.</HeroTitle>
-            <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
+            <HeroTitle>Empowering a community of thousands of creators. </HeroTitle>
+            <Pitch>We’re building a suite of no-code required tools to enable creators and collectors to mint, discover, and sell NFTs.</Pitch>
           </Space>
         </Col>
 
@@ -181,8 +168,8 @@ export default function About() {
                     <LightText>Twitter followers</LightText>
                   </Stat>
                   <Stat span={12}>
-                    <StatTitle textColor={sv.colors.greenGradient}>1m+</StatTitle>
-                    <LightText>USD transaction volume</LightText>
+                    <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
+                    <LightText>SOL transaction volume</LightText>
                   </Stat>
                 </Row>
               </Stats>
@@ -191,7 +178,7 @@ export default function About() {
         </Community>
 
         <BackedBy xs={{ span: 22 }} sm={{ span: 20 }} md={{ span: 18 }} lg={{ span: 16 }}>
-          <CenteredTitle level={2}>Backed by</CenteredTitle>
+          <CenteredTitle level={2} >Backed by</CenteredTitle>
           <Investors>
             <List
               grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
