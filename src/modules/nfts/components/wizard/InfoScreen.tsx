@@ -182,6 +182,7 @@ export default function InfoScreen({
           <Form.Item name={`nft-${0}`}>
             <Form.Item
               name={[nftNumber, 'name']}
+              initialValue={images[index]?.name || ''}
               label="Name"
               rules={[{ required: true, message: 'Name is required' }]}
             >

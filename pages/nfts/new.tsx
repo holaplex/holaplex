@@ -12,6 +12,7 @@ import { WalletContext, WalletProvider } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
+import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 // export interface IMetadataExtension {
@@ -291,6 +292,10 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
+          <OffRampScreen
+            images={images}
+            clearForm={clearForm}
+          />
           <RoyaltiesCreators
             images={images}
             form={form}
