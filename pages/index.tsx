@@ -9,11 +9,19 @@ import { WalletContext } from '@/modules/wallet'
 
 const { Title, Text, Paragraph } = Typography;
 
+const ContentCol = styled(Col)`
+  max-width: 1400px;
+`;
+
 const HeroTitle = styled.h1`
   font-weight: 800;
-  font-size: 48px;
-  line-height: 48px;
-  color: #fff;
+  font-size: 68px;
+  line-height: auto;
+  @media screen and (max-width: 550px) {
+    font-size: 48px;
+    line-height: auto;
+    text-align: left;
+  }
 `;
 
 const Marketing = styled(Col)`
@@ -42,65 +50,63 @@ export default function Home() {
   const heroStorefront = higlightStores[0];
 
   return (
-    <>
-      <Section justify="center">
-        <Col xs={22} md={20} lg={18} xl={16}>
-          <Row>
-            <Marketing xs={24} md={16}>
-              <HeroTitle>Find, buy, and sell NFTs from incredible artists.</HeroTitle>
-              <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
-              <Space direction="horizontal" size="large">
-                <Button size="large" onClick={() => connect()}>Create Your Store</Button>
-              </Space>
-            </Marketing>
-            <Col xs={0} md={8}>
-              <a
-                href={heroStorefront.url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <FeaturedStore
-                  name={heroStorefront.name}
-                  image={heroStorefront.imagePath}
-                  twitter={heroStorefront.twitter}
-                />
-              </a>
-            </Col>
-          </Row>
-        </Col>
-      </Section>
+    <Row justify="center">
+      <ContentCol xs={22} md={20}>
+        <Section justify="center">
+          <Marketing xs={24} md={16}>
+            <HeroTitle>Find, buy, and sell NFTs from incredible artists.</HeroTitle>
+            <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
+            <Space direction="horizontal" size="large">
+              <Button size="large" onClick={() => connect()}>Create Your Store</Button>
+            </Space>
+          </Marketing>
+          <Col xs={0} md={8}>
+            <a
+              href={heroStorefront.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FeaturedStore
+                name={heroStorefront.name}
+                image={heroStorefront.imagePath}
+                twitter={heroStorefront.twitter}
+              />
+            </a>
+          </Col>
+        </Section>
 
-      <Section justify="center">
-        <Col xs={22} md={20} lg={18} xl={16}>
-          <Title level={3}>Featured creators</Title>
-          <List
-            grid={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-            dataSource={higlightStores.slice(1)}
-            renderItem={(store: { url: string, imagePath: string, name: string }) => (
-              <List.Item key={store.url}>
-                <a
-                  href={store.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <FeaturedStore
-                    name={store.name}
-                    image={store.imagePath}
-                  />
-                </a>
-              </List.Item>
-            )}
-          />
+        <Section justify="center">
+          <Col>
+            <Title level={3}>Featured creators</Title>
+            <List
+              grid={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+              dataSource={higlightStores.slice(1)}
+              renderItem={(store: { url: string, imagePath: string, name: string }) => (
+                <List.Item key={store.url}>
+                  <a
+                    href={store.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FeaturedStore
+                      name={store.name}
+                      image={store.imagePath}
+                    />
+                  </a>
+                </List.Item>
+              )}
+            />
 
-        </Col>
-      </Section>
+          </Col>
+        </Section>
 
-      <Section justify="center" align="middle">
-        <Space direction="vertical" align="center">
-          <Title level={3}>Launch your own NFT store today!</Title>
-          <Button size="large" onClick={() => connect()}>Create Your Store</Button>
-        </Space>
-      </Section>
-    </>
+        <Section justify="center" align="middle">
+          <Space direction="vertical" align="center">
+            <Title level={3}>Launch your own NFT store today!</Title>
+            <Button size="large" onClick={() => connect()}>Create Your Store</Button>
+          </Space>
+        </Section>
+      </ContentCol>
+    </Row>
   )
 }
