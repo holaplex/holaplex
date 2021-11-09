@@ -70,6 +70,11 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                 backgroundColor: tags["holaplex:theme:color:background"],
                 titleFont: tags["holaplex:theme:font:title"],
                 textFont: tags["holaplex:theme:font:text"],
+                banner: {
+                  url: tags["holaplex:theme:banner:url"],
+                  name: tags["holaplex:theme:banner:name"],
+                  type: tags["holaplex:theme:banner:type"]
+                },
                 logo: {
                   url: tags["holaplex:theme:logo:url"],
                   name: tags["holaplex:theme:logo:name"],
@@ -225,6 +230,9 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag("holaplex:theme:logo:url", storefront.theme.logo.url)
       transaction.addTag("holaplex:theme:logo:name", storefront.theme.logo.name)
       transaction.addTag("holaplex:theme:logo:type", storefront.theme.logo.type)
+      transaction.addTag("holaplex:theme:banner:url", storefront.theme.banner.url)
+      transaction.addTag("holaplex:theme:banner:name", storefront.theme.banner.name)
+      transaction.addTag("holaplex:theme:banner:type", storefront.theme.banner.type)
       transaction.addTag("holaplex:theme:color:primary", storefront.theme.primaryColor)
       transaction.addTag("holaplex:theme:color:background", storefront.theme.backgroundColor)
       transaction.addTag("holaplex:theme:font:title", storefront.theme.titleFont)

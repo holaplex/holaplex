@@ -7,6 +7,11 @@ import fs from 'fs'
     primaryColor: '#F2C94C',
     titleFont: "Work Sans",
     textFont: "Work Sans",
+    banner: {
+      name: 'banner.png',
+      type: "image/png",
+      url: '/demo-banner.png',
+    },
     logo: {
       name: 'demo.png',
       type: "image/png",
