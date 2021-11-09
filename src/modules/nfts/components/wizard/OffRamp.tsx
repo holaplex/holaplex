@@ -47,11 +47,7 @@ const FormWrapper = styled.div`
   }
 `;
 
-export default function OffRampScreen({
-  goToStep,
-  clearForm,
-  images,
-}: Props) {
+export default function OffRampScreen({ goToStep, clearForm, images }: Props) {
   const nrOfNfts = images.length;
 
   return (
@@ -64,8 +60,8 @@ export default function OffRampScreen({
       <Row>
         <FormWrapper>
           <Header>
-            Congratulations! You{"'"}ve minted {nrOfNfts} NFT
-            {nrOfNfts > 1 ? "s" : ""}
+            Congratulations! You&apos;ve minted {nrOfNfts} NFT
+            {nrOfNfts && "s"}
           </Header>
           <Paragraph
             style={{

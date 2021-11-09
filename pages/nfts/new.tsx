@@ -292,10 +292,6 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
-          <OffRampScreen
-            images={images}
-            clearForm={clearForm}
-          />
           <RoyaltiesCreators
             images={images}
             form={form}
@@ -329,6 +325,10 @@ export default function BulkUploadWizard() {
           />
           <PriceSummary images={images} stepName={'priceSummary'} />
           <MintInProgress images={images} />
+          <OffRampScreen
+            images={images}
+            clearForm={clearForm}
+          />
         </StepWizard>
       </StyledLayout>
     </Form>
