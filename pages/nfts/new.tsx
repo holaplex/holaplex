@@ -1,20 +1,20 @@
-import { Form, Layout } from 'antd';
-import React, { useContext, useReducer, useRef } from 'react';
-import styled from 'styled-components';
-import StepWizard from 'react-step-wizard';
-import Upload from '@/modules/nfts/components/wizard/Upload';
-import Verify from '@/modules/nfts/components/wizard/Verify';
-import InfoScreen from '@/modules/nfts/components/wizard/InfoScreen';
-import { useForm } from 'antd/lib/form/Form';
-import Summary from '@/modules/nfts/components/wizard/Summary';
-import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreators';
-import { WalletContext, WalletProvider } from '@/modules/wallet';
-import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
-import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
-import { isNil } from 'ramda';
-import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
+import { Form, Layout } from "antd";
+import React, { useContext, useReducer, useRef } from "react";
+import styled from "styled-components";
+import StepWizard from "react-step-wizard";
+import Upload from "@/modules/nfts/components/wizard/Upload";
+import Verify from "@/modules/nfts/components/wizard/Verify";
+import InfoScreen from "@/modules/nfts/components/wizard/InfoScreen";
+import { useForm } from "antd/lib/form/Form";
+import Summary from "@/modules/nfts/components/wizard/Summary";
+import RoyaltiesCreators from "@/modules/nfts/components/wizard/RoyaltiesCreators";
+import { WalletContext, WalletProvider } from "@/modules/wallet";
+import PriceSummary from "@/modules/nfts/components/wizard/PriceSummary";
+import MintInProgress from "@/modules/nfts/components/wizard/MintInProgress";
+import { isNil } from "ramda";
+import OffRampScreen from "@/modules/nfts/components/wizard/OffRamp";
 
-const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
+const nftStorageHolaplexEndpoint = "/api/ipfs/upload";
 // export interface IMetadataExtension {
 //   name: string;
 //   symbol: string;
@@ -131,13 +131,13 @@ const initialState: State = {
 
 export interface MintAction {
   type:
-    | 'SET_IMAGES'
-    | 'DELETE_IMAGE'
-    | 'ADD_IMAGE'
-    | 'UPLOAD_FILES'
-    | 'SET_FORM_VALUES'
-    | 'SET_META_DATA'
-    | 'SET_META_DATA_LINKS';
+    | "SET_IMAGES"
+    | "DELETE_IMAGE"
+    | "ADD_IMAGE"
+    | "UPLOAD_FILES"
+    | "SET_FORM_VALUES"
+    | "SET_META_DATA"
+    | "SET_META_DATA_LINKS";
   payload:
     | File[]
     | File
@@ -150,25 +150,27 @@ export interface MintAction {
 
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
-    case 'SET_IMAGES':
+    case "SET_IMAGES":
       return { ...state, images: action.payload as File[] };
-    case 'DELETE_IMAGE':
+    case "DELETE_IMAGE":
       return {
         ...state,
-        images: state.images.filter((i) => i.name !== (action.payload as String)),
+        images: state.images.filter(
+          (i) => i.name !== (action.payload as String)
+        ),
       };
-    case 'ADD_IMAGE':
+    case "ADD_IMAGE":
       return { ...state, images: [...state.images, action.payload as File] };
-    case 'UPLOAD_FILES':
+    case "UPLOAD_FILES":
       return { ...state, uploadedFiles: action.payload as Array<UploadedFile> };
-    case 'SET_FORM_VALUES':
+    case "SET_FORM_VALUES":
       return { ...state, formValues: action.payload as NFTFormValue[] };
-    case 'SET_META_DATA':
+    case "SET_META_DATA":
       return { ...state, metaData: action.payload as MetaDataContent[] };
-    case 'SET_META_DATA_LINKS':
+    case "SET_META_DATA_LINKS":
       return { ...state, MetadataFiles: action.payload as MetadataFile[] };
     default:
-      throw new Error('No valid action for state');
+      throw new Error("No valid action for state");
   }
 }
 
@@ -188,11 +190,11 @@ export default function BulkUploadWizard() {
   const buildMetaData = (values: any, uploadedFiles: any) => {
     // TODO: type this properly
     return values.map((v: any, i: number) => {
-      console.log('attempt to find file with index of ', i);
-      console.log('values are ', values);
-      console.log('uploaded files are ', uploadedFiles);
+      console.log("attempt to find file with index of ", i);
+      console.log("values are ", values);
+      console.log("uploaded files are ", uploadedFiles);
       const file = uploadedFiles[i]; //  we are assuming everything is in order, should we use a key check?
-      console.log('FILE IS', file);
+      console.log("FILE IS", file);
 
       // We should be able to
       return {
@@ -201,31 +203,34 @@ export default function BulkUploadWizard() {
         seller_fee_basis_points: v.seller_fee_basis_points,
         image: file.uri,
         files: [{ uri: file.uri, type: file.type }],
-        attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
-          if (!isNil(a?.trait_type)) {
-            result.push({ trait_type: a.trait_type, value: a.value });
-          }
-          return result;
-        }, []),
+        attributes: v.attributes.reduce(
+          (result: Array<NFTAttribute>, a: NFTAttribute) => {
+            if (!isNil(a?.trait_type)) {
+              result.push({ trait_type: a.trait_type, value: a.value });
+            }
+            return result;
+          },
+          []
+        ),
         properties: v.properties,
       };
     });
   };
   const onFinish = (values: FormValues) => {
     const arrayValues = Object.values(values);
-    dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
+    dispatch({ type: "SET_FORM_VALUES", payload: arrayValues });
   };
 
   const uploadMetaData = async (files: any) => {
     const { formValues, MetadataFiles } = state;
     if (!files?.length) {
-      throw new Error('No files uploaded');
+      throw new Error("No files uploaded");
     }
 
-    console.log('formValues are ', formValues);
+    console.log("formValues are ", formValues);
     const builtMetaData = buildMetaData(formValues, files);
 
-    console.log('builtMetaData', builtMetaData);
+    console.log("builtMetaData", builtMetaData);
     // return; // todo: remove this
 
     // TODO: type this
@@ -233,16 +238,23 @@ export default function BulkUploadWizard() {
     builtMetaData.forEach(async (m: any, i: number) => {
       const metaData = new File([JSON.stringify(m)], `metadata-${i}`); // TODO: what to name this?
       const metaDataFileForm = new FormData();
-      metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
-      const resp = await fetch('/api/ipfs/upload', {
+      metaDataFileForm.append(
+        `file[${metaData.name}]`,
+        metaData,
+        metaData.name
+      );
+      const resp = await fetch("/api/ipfs/upload", {
         body: metaDataFileForm,
-        method: 'POST',
+        method: "POST",
       });
       const json = await resp.json();
-      console.log('metadataupload response is ' + i, json);
+      console.log("metadataupload response is " + i, json);
 
-      console.log('metaupload links prev are ', MetadataFiles);
-      dispatch({ type: 'SET_META_DATA_LINKS', payload: [...MetadataFiles, json.files[0]] });
+      console.log("metaupload links prev are ", MetadataFiles);
+      dispatch({
+        type: "SET_META_DATA_LINKS",
+        payload: [...MetadataFiles, json.files[0]],
+      });
     });
 
     return Promise.resolve();
@@ -252,7 +264,7 @@ export default function BulkUploadWizard() {
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     // Prevent Enter submit
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
     }
   }
@@ -269,6 +281,7 @@ export default function BulkUploadWizard() {
     >
       <StyledLayout>
         <StepWizard
+          isHashEnabled={true}
           transitions={{
             enterLeft: undefined,
             enterRight: undefined,
@@ -276,11 +289,12 @@ export default function BulkUploadWizard() {
             exitLeft: undefined,
           }}
         >
-          <Upload dispatch={dispatch} />
-          <Verify images={images} dispatch={dispatch} />
+          <Upload dispatch={dispatch} images={images} hashKey="upload" />
+          <Verify images={images} dispatch={dispatch} hashKey="verify" />
           {
             images.map((image, index) => (
               <InfoScreen
+                hashKey={"info-" + index}
                 images={images}
                 index={index}
                 currentImage={image}
@@ -295,6 +309,7 @@ export default function BulkUploadWizard() {
           <RoyaltiesCreators
             images={images}
             form={form}
+            hashKey="royalties"
             userKey={wallet?.pubkey}
             formValues={state.formValues}
             dispatch={dispatch}
@@ -308,6 +323,7 @@ export default function BulkUploadWizard() {
               .map((_, index) => (
                 <RoyaltiesCreators
                   images={images}
+                  hashKey={"royalties-" + index}
                   form={form}
                   userKey={wallet?.pubkey}
                   formValues={state.formValues}
@@ -318,14 +334,16 @@ export default function BulkUploadWizard() {
               ))}
           <Summary
             images={images}
+            hashKey="summary"
             dispatch={dispatch}
             form={form}
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-          <PriceSummary images={images} stepName={'priceSummary'} />
-          <MintInProgress images={images} />
+          <PriceSummary images={images} hashKey="priceSummary" />
+          <MintInProgress images={images} hashKey="minting" />
           <OffRampScreen
+            hashKey="success"
             images={images}
             clearForm={clearForm}
           />

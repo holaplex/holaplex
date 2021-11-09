@@ -1,10 +1,10 @@
-import sv from '@/constants/styles';
-import Link from 'next/link';
-import styled from 'styled-components';
-import { Layout, Space } from 'antd';
-import useWindowDimensions from '@/hooks/useWindowDimensions';
-import SocialLinks from '@/components/elements/SocialLinks';
-import { useRouter } from 'next/router';
+import sv from "@/constants/styles";
+import Link from "next/link";
+import styled from "styled-components";
+import { Layout, Space } from "antd";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import SocialLinks from "@/components/elements/SocialLinks";
+import { useRouter } from "next/router";
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -48,12 +48,12 @@ export function AppHeader() {
         )}
       </HeaderTitle>
       <Space size="large">
-        <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
+        <HeaderLinkWrapper active={router.pathname == "/nfts/new"}>
           <Link href="/nfts/new" passHref>
             Mint NFTs
           </Link>
         </HeaderLinkWrapper>
-        <HeaderLinkWrapper active={router.pathname == '/storefronts'}>
+        <HeaderLinkWrapper active={router.pathname == "/storefronts"}>
           <Link href="/storefronts" passHref>
             View Stores
           </Link>

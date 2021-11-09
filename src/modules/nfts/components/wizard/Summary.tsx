@@ -84,7 +84,7 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
         {value.description}
       </Paragraph>
       <Attributes>
-        {value.attributes.map((attribute: NFTAttribute, index: number) =>
+        {value.attributes?.map((attribute: NFTAttribute, index: number) =>
           attribute.trait_type ? (
             <Attribute key={index}>
               <Paragraph style={{ width: 110 }}>{attribute.trait_type}:</Paragraph>
@@ -165,7 +165,7 @@ export default function Summary({
       <Row style={{ marginTop: 78 }}>
         <Grid>
           {formValues.map((fv: NFTFormValue, index: number) => (
-            <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
+            images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
           ))}
         </Grid>
       </Row>

@@ -1,5 +1,5 @@
 import Button from '@/common/components/elements/Button';
-import { PageHeader, Space } from 'antd';
+import { PageHeader, Space, Upload } from 'antd';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
 import { MAX_IMAGES } from '@/modules/nfts/components/wizard/Upload';
+import { NftPreviewGrid } from '@/common/components/elements/NftPreviewGrid';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -80,28 +81,33 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      let uploadedImage = acceptedFiles[0];
 
-      if (images.some((i) => i.name === uploadedImage.name)) {
-        const imageNameWithoutExt = uploadedImage.name.replace(/\.[^/.]+$/, ''); //
-        const duplicates = findDuplicates(imageNameWithoutExt, images);
-        const fileExtension = uploadedImage.name.split('.').pop();
-        let newName = `${imageNameWithoutExt}_1.${fileExtension}`;
+      console.log(acceptedFiles, acceptedFiles.length)
 
-        if (duplicates.length > 0) {
-          const lastItem = duplicates.pop();
-          if (lastItem) {
-            const lastItemName = lastItem.name.replace(/\.[^/.]+$/, '');
-            const count = Number(lastItemName.slice(-1));
-            newName = `${imageNameWithoutExt}_${count + 1}.${fileExtension}`;
+      for (const file of acceptedFiles) {
+        let uploadedImage = file;
+        if (images.some((i) => i.name === uploadedImage.name)) {
+          const imageNameWithoutExt = uploadedImage.name.replace(/\.[^/.]+$/, ''); //
+          const duplicates = findDuplicates(imageNameWithoutExt, images);
+          const fileExtension = uploadedImage.name.split('.').pop();
+          let newName = `${imageNameWithoutExt}_1.${fileExtension}`;
+  
+          if (duplicates.length > 0) {
+            const lastItem = duplicates.pop();
+            if (lastItem) {
+              const lastItemName = lastItem.name.replace(/\.[^/.]+$/, '');
+              const count = Number(lastItemName.slice(-1));
+              newName = `${imageNameWithoutExt}_${count + 1}.${fileExtension}`;
+            }
           }
+  
+          uploadedImage = new File([uploadedImage], newName, { type: uploadedImage.type });
         }
-
-        uploadedImage = new File([uploadedImage], newName, { type: uploadedImage.type });
+        
+        console.log('uploadedImage', uploadedImage);
+        dispatch({ type: 'ADD_IMAGE', payload: uploadedImage });
       }
 
-      console.log('uploadedImage', uploadedImage);
-      dispatch({ type: 'ADD_IMAGE', payload: uploadedImage });
     },
     [dispatch, images],
   );
@@ -109,37 +115,26 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
   const { open, getInputProps } = useDropzone({
     onDrop,
     noClick: true,
-    maxFiles: 1,
+    maxFiles: MAX_IMAGES - images.length,
     accept: 'image/jpeg, image/png, image/gif',
   });
 
   return (
     <NavContainer previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
-      <Grid>
-        {images.map((i) => (
-          <ImageContainer key={i.name}>
-            <Image
-              width={120}
-              height={120}
-              src={URL.createObjectURL(i)}
-              alt={i.name}
-              unoptimized={true}
-            />
-
-            <StyledRemoveNFT onClick={() => removeImage(i.name)}>
-              <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
-            </StyledRemoveNFT>
-          </ImageContainer>
-        ))}
-        {images.length < MAX_IMAGES && (
-          <AddNFTButton onClick={open}>
+      <NftPreviewGrid removeImage={removeImage} images={images} width={5}>
+      {images.length < MAX_IMAGES && (
+        <Upload
+        showUploadList={false}
+        beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
+      >
+          <AddNFTButton >
             <input {...getInputProps()} />
             <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
           </AddNFTButton>
+          </Upload>
         )}
-      </Grid>
-
+        </NftPreviewGrid>
       <Button type="primary" size="large" onClick={nextStep}>
         Looks good
       </Button>

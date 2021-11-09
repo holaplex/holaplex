@@ -92,7 +92,7 @@ export default function MintInProgress({ previousStep, goToStep, images, nextSte
       isActive: false,
     },
     {
-      text: 'Preparing assets',
+      text: 'Preparing assets ', // removed an annoying duplicate key warning
       icon: <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />,
       isActive: false,
     },
