@@ -12,6 +12,7 @@ import { WalletContext, WalletProvider } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
+import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 
 const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 // export interface IMetadataExtension {
@@ -326,6 +327,10 @@ export default function BulkUploadWizard() {
           />
           <PriceSummary images={images} stepName={'priceSummary'} />
           <MintInProgress images={images} />
+          <OffRampScreen
+            images={images}
+            clearForm={clearForm}
+          />
         </StepWizard>
       </StyledLayout>
     </Form>
