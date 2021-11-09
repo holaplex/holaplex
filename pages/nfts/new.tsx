@@ -277,6 +277,8 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} />
           <Verify images={images} dispatch={dispatch} />
+          <PriceSummary images={images} stepName={'priceSummary'} />
+
           {
             images.map((image, index) => (
               <InfoScreen

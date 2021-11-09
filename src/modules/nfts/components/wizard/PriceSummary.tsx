@@ -1,11 +1,14 @@
 import { Divider, Form, Row, Col } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import Paragraph from 'antd/lib/typography/Paragraph';
+import { Coingecko, Currency } from '@metaplex/js';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
+
+const SOL_COST_PER_NFT = 0.00714;
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -30,21 +33,26 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
-const StyledPriceRow = styled(Row)``;
-
-const PriceRow = () => {
-  return (
-    <StyledPriceRow justify="space-between">
-      <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>Network fee:</Paragraph>
-      <Paragraph style={{ fontSize: 14 }}>◎ 0.00714</Paragraph>
-    </StyledPriceRow>
-  );
-};
+async function getSolRate() {
+  const rates = await new Coingecko().getRate([Currency.SOL], Currency.USD);
+  return rates[0].rate;
+}
 
 export default function PriceSummary({ previousStep, goToStep, images, nextStep }: Props) {
+  const [totalSolCost, setTotalSolCost] = React.useState(images.length * SOL_COST_PER_NFT);
+  const [totalInUSD, setTotalInUSD] = React.useState(0.0);
   const handleNext = () => {
     nextStep!();
   };
+
+  useEffect(() => {
+    const total = images.length * SOL_COST_PER_NFT;
+    setTotalSolCost(total);
+
+    getSolRate().then((rate) => {
+      setTotalInUSD(rate * total);
+    });
+  }, [images, setTotalSolCost, setTotalInUSD]);
 
   return (
     <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep}>
@@ -56,9 +64,12 @@ export default function PriceSummary({ previousStep, goToStep, images, nextStep 
 
           <Row>
             <Col style={{ minWidth: 237 }}>
-              {images.map((_, index) => (
-                <PriceRow key={index} />
-              ))}
+              <Row justify="space-between">
+                <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                  Network fee x{images.length}
+                </Paragraph>
+                <Paragraph style={{ fontSize: 14 }}>◎ 0.00714</Paragraph>
+              </Row>
             </Col>
           </Row>
 
@@ -68,10 +79,12 @@ export default function PriceSummary({ previousStep, goToStep, images, nextStep 
             <Paragraph style={{ opacity: 0.6, fontSize: 14 }}>Total:</Paragraph>
             <Col>
               <Row>
-                <Paragraph style={{ fontSize: 18, marginBottom: 0 }}>◎ 0.05712</Paragraph>
+                <Paragraph style={{ fontSize: 18, marginBottom: 0 }}>◎ {totalSolCost}</Paragraph>
               </Row>
               <Row justify="end">
-                <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>$9.02</Paragraph>
+                <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                  ${totalInUSD.toFixed(2)}
+                </Paragraph>
               </Row>
             </Col>
           </Row>
