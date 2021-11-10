@@ -1,8 +1,7 @@
-import styled from "styled-components";
-import Image from "next/image";
-import GreenCheckIcon from "@/common/assets/images/green-check.svg";
+import styled from 'styled-components';
+import Image from 'next/image';
+import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
-
 
 const CheckWrapper = styled.div`
   position: relative;
@@ -17,8 +16,8 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   width: 120px;
   border-radius: 4px;
   padding: 4px;
-  ${({ isCurrent }) => (isCurrent ? "border: 2px solid #d24089;;" : null)}
-  ${({ isFinished }) => (isFinished ? "opacity: 0.5;" : null)}
+  ${({ isCurrent }) => (isCurrent ? 'border: 2px solid #d24089;;' : null)}
+  ${({ isFinished }) => (isFinished ? 'opacity: 0.5;' : null)}
 `;
 
 const StyledRemoveNFT = styled.div`
@@ -41,7 +40,7 @@ const ImageContainer = styled.div`
 
 const Grid_old = styled.div`
   display: grid;
-  grid-template-columns: ${(props: {width: number}) => '1fr '.repeat(props.width)};
+  grid-template-columns: ${(props: { width: number }) => '1fr '.repeat(props.width)};
   grid-template-rows: min-content min-content;
   width: 216px;
   column-gap: 16px;
@@ -51,7 +50,7 @@ const Grid_old = styled.div`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: ${(props: {width: number}) => '1fr '.repeat(props.width)};
+  grid-template-columns: ${(props: { width: number }) => '1fr '.repeat(props.width)};
   grid-template-rows: min-content min-content;
   column-gap: 8px;
   row-gap: 16px;
@@ -61,56 +60,48 @@ const Grid = styled.div`
 export const NftPreviewGrid = ({
   images,
   index = -1,
-  width=2,
+  width = 2,
   removeImage,
-  children
+  children,
 }: {
   images: Array<File>;
   index?: number;
   width?: number;
-  removeImage?: (id:string) => void;
+  removeImage?: (id: string) => void;
   children?: any;
 }) => {
-
   return (
-    <Grid width={width} >
+    <Grid width={width}>
       {images.map((image, i) => (
-        <ImageOverlay
-          key={image.name}
-          isFinished={i < index}
-          isCurrent={i === index}
-        >
+        <ImageOverlay key={image.name} isFinished={i < index} isCurrent={i === index}>
           {removeImage ? (
             <ImageContainer key={image.name}>
               <Image
-            width={120}
-            height={120}
-            src={URL.createObjectURL(image)}
-            objectFit="cover"
-            alt={image.name}
-            unoptimized={true}
-          />
-          <StyledRemoveNFT onClick={() => removeImage(image.name)}>
-              <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
-            </StyledRemoveNFT>
+                width={120}
+                height={120}
+                src={URL.createObjectURL(image)}
+                objectFit="cover"
+                alt={image.name}
+                unoptimized={true}
+              />
+              <StyledRemoveNFT onClick={() => removeImage(image.name)}>
+                <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
+              </StyledRemoveNFT>
             </ImageContainer>
-          ) : <Image
-          width={120}
-          height={120}
-          src={URL.createObjectURL(image)}
-          objectFit="cover"
-          alt={image.name}
-          unoptimized={true}
-        />}
+          ) : (
+            <Image
+              width={120}
+              height={120}
+              src={URL.createObjectURL(image)}
+              objectFit="cover"
+              alt={image.name}
+              unoptimized={true}
+            />
+          )}
 
           {i < index && (
             <CheckWrapper>
-              <Image
-                width={24}
-                height={24}
-                src={GreenCheckIcon}
-                alt="green-check"
-              />
+              <Image width={24} height={24} src={GreenCheckIcon} alt="green-check" />
             </CheckWrapper>
           )}
         </ImageOverlay>
