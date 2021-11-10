@@ -20,8 +20,12 @@
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.30.0",
     "@aws-sdk/types": "^3.29.0",
+    "@metaplex/js": "^4.0.0",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
+    "@solana/wallet-adapter-base": "^0.7.0",
+    "@solana/wallet-adapter-react": "^0.13.1",
+    "@solana/wallet-adapter-wallets": "^0.11.3",
     "@solana/web3.js": "^1.25.0",
     "ajv": "^8.6.2",
     "antd": "^4.16.7",
