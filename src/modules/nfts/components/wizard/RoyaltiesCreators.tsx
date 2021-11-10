@@ -366,9 +366,9 @@ export default function RoyaltiesCreators({
                   message: 'Percentage must be between 1 and 100',
                 },
               ]}
+              // initialValue={royaltiesInput}
             >
               <InputNumber<number>
-                defaultValue={royaltiesInput}
                 min={1}
                 max={100}
                 formatter={(value) => `${value}%`}

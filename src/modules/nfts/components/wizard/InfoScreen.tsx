@@ -10,6 +10,7 @@ import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import { FormValues, MintDispatch } from 'pages/nfts/new';
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
+import { NftPreviewGrid } from '@/common/components/elements/NftPreviewGrid';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -188,15 +189,16 @@ export default function InfoScreen({
             >
               <Input placeholder="required" autoFocus />
             </Form.Item>
-            <Form.Item name={[nftNumber, 'description']} label="Description">
+            <Form.Item name={[nftNumber, 'description']} label="Description" 
+            initialValue={''}
+            >
               <TextArea
                 placeholder="optional"
                 autoSize={{ minRows: 3, maxRows: 8 }}
-                defaultValue={''}
               />
             </Form.Item>
-            <Form.Item name={[nftNumber, 'collection']} label="Collection">
-              <Input placeholder="e.g. Stylish Studs (optional)" defaultValue={''} />
+            <Form.Item name={[nftNumber, 'collection']} label="Collection" initialValue={''}>
+              <Input placeholder="e.g. Stylish Studs (optional)"  />
             </Form.Item>
             <Form.Item label="Attributes">
               <Form.List
@@ -231,7 +233,8 @@ export default function InfoScreen({
         </FormWrapper>
 
         <StyledDivider type="vertical" />
-        <Grid>
+        <NftPreviewGrid images={images} index={index} width={2} />
+        {/* <Grid>
           {images.map((image, i) => (
             <ImageOverlay key={image.name} isFinished={i < index} isCurrent={i === index}>
               <Image
@@ -249,7 +252,7 @@ export default function InfoScreen({
               )}
             </ImageOverlay>
           ))}
-        </Grid>
+        </Grid> */}
       </Row>
     </NavContainer>
   );

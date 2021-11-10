@@ -237,7 +237,10 @@ export default function BulkUploadWizard() {
       console.log('metadataupload response is ' + i, json);
 
       console.log('metaupload links prev are ', MetadataFiles);
-      dispatch({ type: 'SET_META_DATA_LINKS', payload: [...MetadataFiles, json.files[0]] });
+      dispatch({
+        type: 'SET_META_DATA_LINKS',
+        payload: [...MetadataFiles, json.files[0]],
+      });
     });
 
     return Promise.resolve();
@@ -264,6 +267,7 @@ export default function BulkUploadWizard() {
     >
       <StyledLayout>
         <StepWizard
+          isHashEnabled={true}
           transitions={{
             enterLeft: undefined,
             enterRight: undefined,
@@ -271,13 +275,13 @@ export default function BulkUploadWizard() {
             exitLeft: undefined,
           }}
         >
-          <Upload dispatch={dispatch} />
-          <Verify images={images} dispatch={dispatch} />
-          <PriceSummary images={images} stepName={'priceSummary'} />
-
+          <Upload dispatch={dispatch} images={images} hashKey="upload" />
+          <Verify images={images} dispatch={dispatch} hashKey="verify" />
+           <PriceSummary images={images} stepName={'priceSummary'} />
           {
             images.map((image, index) => (
               <InfoScreen
+                hashKey={'info-' + index}
                 images={images}
                 index={index}
                 currentImage={image}
@@ -292,6 +296,7 @@ export default function BulkUploadWizard() {
           <RoyaltiesCreators
             images={images}
             form={form}
+            hashKey="royalties"
             userKey={wallet?.pubkey}
             formValues={state.formValues}
             dispatch={dispatch}
@@ -305,6 +310,7 @@ export default function BulkUploadWizard() {
               .map((_, index) => (
                 <RoyaltiesCreators
                   images={images}
+                  hashKey={'royalties-' + index}
                   form={form}
                   userKey={wallet?.pubkey}
                   formValues={state.formValues}
@@ -315,17 +321,15 @@ export default function BulkUploadWizard() {
               ))}
           <Summary
             images={images}
+            hashKey="summary"
             dispatch={dispatch}
             form={form}
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-          <PriceSummary images={images} stepName={'priceSummary'} />
-          <MintInProgress images={images} />
-          <OffRampScreen
-            images={images}
-            clearForm={clearForm}
-          />
+          <PriceSummary images={images} hashKey="priceSummary" />
+          <MintInProgress images={images} hashKey="minting" />
+          <OffRampScreen hashKey="success" images={images} clearForm={clearForm} />
         </StepWizard>
       </StyledLayout>
     </Form>
