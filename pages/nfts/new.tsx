@@ -277,11 +277,11 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} images={images} hashKey="upload" />
           <Verify images={images} dispatch={dispatch} hashKey="verify" />
-           <PriceSummary images={images} stepName={'priceSummary'} />
+
           {
             images.map((image, index) => (
               <InfoScreen
-                hashKey={'info-' + index}
+                hashKey={'info'}
                 images={images}
                 index={index}
                 currentImage={image}
@@ -330,6 +330,7 @@ export default function BulkUploadWizard() {
           <PriceSummary images={images} hashKey="priceSummary" />
           <MintInProgress images={images} hashKey="minting" />
           <OffRampScreen hashKey="success" images={images} clearForm={clearForm} />
+          <PriceSummary images={images} stepName={'priceSummary'} />
         </StepWizard>
       </StyledLayout>
     </Form>
