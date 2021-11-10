@@ -14,7 +14,6 @@ import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 
-const nftStorageHolaplexEndpoint = '/api/ipfs/upload';
 // export interface IMetadataExtension {
 //   name: string;
 //   symbol: string;
@@ -172,27 +171,23 @@ function reducer(state: State, action: MintAction) {
   }
 }
 
-// TODO: we have this as a separate next.js page route for now, but eventually we would like to modalize it when we know where it kicks off
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form] = useForm();
   const { images } = state;
   const { connect, wallet } = useContext(WalletContext);
+
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = React.useState(false);
 
   if (!wallet) {
-    // connect({ redirect: '/nfts/new' });
+    connect({ redirect: '/nfts/new' });
   }
 
   // TODO: type this and extract to helper file
   const buildMetaData = (values: any, uploadedFiles: any) => {
     // TODO: type this properly
     return values.map((v: any, i: number) => {
-      console.log('attempt to find file with index of ', i);
-      console.log('values are ', values);
-      console.log('uploaded files are ', uploadedFiles);
       const file = uploadedFiles[i]; //  we are assuming everything is in order, should we use a key check?
-      console.log('FILE IS', file);
 
       // We should be able to
       return {
