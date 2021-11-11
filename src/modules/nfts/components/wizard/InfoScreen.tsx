@@ -189,16 +189,11 @@ export default function InfoScreen({
             >
               <Input placeholder="required" autoFocus />
             </Form.Item>
-            <Form.Item name={[nftNumber, 'description']} label="Description" 
-            initialValue={''}
-            >
-              <TextArea
-                placeholder="optional"
-                autoSize={{ minRows: 3, maxRows: 8 }}
-              />
+            <Form.Item name={[nftNumber, 'description']} label="Description" initialValue={''}>
+              <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
             </Form.Item>
             <Form.Item name={[nftNumber, 'collection']} label="Collection" initialValue={''}>
-              <Input placeholder="e.g. Stylish Studs (optional)"  />
+              <Input placeholder="e.g. Stylish Studs (optional)" />
             </Form.Item>
             <Form.Item label="Attributes">
               <Form.List
@@ -234,25 +229,6 @@ export default function InfoScreen({
 
         <StyledDivider type="vertical" />
         <NftPreviewGrid images={images} index={index} width={2} />
-        {/* <Grid>
-          {images.map((image, i) => (
-            <ImageOverlay key={image.name} isFinished={i < index} isCurrent={i === index}>
-              <Image
-                width={100}
-                height={100}
-                src={URL.createObjectURL(image)}
-                alt={image.name}
-                unoptimized={true}
-              />
-
-              {i < index && (
-                <CheckWrapper>
-                  <Image width={24} height={24} src={GreenCheckIcon} alt="green-check" />
-                </CheckWrapper>
-              )}
-            </ImageOverlay>
-          ))}
-        </Grid> */}
       </Row>
     </NavContainer>
   );

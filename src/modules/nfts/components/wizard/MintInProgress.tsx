@@ -102,6 +102,9 @@ export default function MintInProgress({
   index,
 }: Props) {
   const [transactionStep, setTransactionStep] = React.useState(TransactionStep.APPROVING);
+  const showErrors =
+    transactionStep === TransactionStep.SENDING_FAILED ||
+    transactionStep === TransactionStep.APPROVAL_FAILED;
 
   const handleNext = useCallback(() => {
     setTransactionStep(TransactionStep.APPROVING);
@@ -171,23 +174,24 @@ export default function MintInProgress({
               />
             </Col>
           </Row>
-          <Row style={{ marginTop: 144 }}>
-            {transactionStep === TransactionStep.SENDING_FAILED ||
-              (transactionStep === TransactionStep.APPROVAL_FAILED && (
+          {showErrors && (
+            <>
+              <Row style={{ marginTop: 144 }}>
                 <Paragraph style={{ fontSize: 14, color: '#D24040' }}>
                   {/* TODO: Show error */}
                   Mint #{index + 1} failed.
                 </Paragraph>
-              ))}
-          </Row>
-          <Row>
-            <Space size={8}>
-              <Button onClick={handleNext}>Skip</Button>
-              <Button type="primary" onClick={attemptMint}>
-                Try Again
-              </Button>
-            </Space>
-          </Row>
+              </Row>
+              <Row>
+                <Space size={8}>
+                  <Button onClick={handleNext}>Skip</Button>
+                  <Button type="primary" onClick={attemptMint}>
+                    Try Again
+                  </Button>
+                </Space>
+              </Row>
+            </>
+          )}
         </Col>
 
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />

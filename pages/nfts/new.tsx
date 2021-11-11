@@ -291,7 +291,7 @@ export default function BulkUploadWizard() {
                   formValues={state.formValues}
                   dispatch={dispatch}
                   key={index}
-                  index={index}
+                  index={index + 1}
                 />
               ))}
           <Summary

@@ -20,6 +20,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
+import { NftPreviewGrid } from '@/common/components/elements/NftPreviewGrid';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -301,7 +302,6 @@ export default function RoyaltiesCreators({
         const currentNFTFormValue = formValues[index];
         currentNFTFormValue.properties = { creators, maxSupply };
         currentNFTFormValue.seller_fee_basis_points = royaltiesInput;
-
         const restOfValues = formValues.filter((_, i) => i !== index);
 
         dispatch({
@@ -534,20 +534,8 @@ export default function RoyaltiesCreators({
             </Space>
           </Row>
         </FormWrapper>
-
         <StyledDivider type="vertical" />
-        <Grid>
-          {images.map((image) => (
-            <Image
-              width={100}
-              height={100}
-              src={URL.createObjectURL(image)}
-              alt={image.name}
-              unoptimized={true}
-              key={image.name}
-            />
-          ))}
-        </Grid>
+        <NftPreviewGrid images={images} index={index} width={2} />
       </Row>
     </NavContainer>
   );

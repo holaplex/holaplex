@@ -98,7 +98,6 @@ export const NftPreviewGrid = ({
               unoptimized={true}
             />
           )}
-
           {i < index && (
             <CheckWrapper>
               <Image width={24} height={24} src={GreenCheckIcon} alt="green-check" />
