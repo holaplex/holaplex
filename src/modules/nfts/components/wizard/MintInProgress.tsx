@@ -14,6 +14,8 @@ import { actions } from '@metaplex/js';
 import { MetadataFile, MetaDataContent } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 
+const { mintNFT } = actions;
+
 const APPROVAL_FAILED_CODE = 4001;
 enum TransactionStep {
   SENDING_FAILED,
@@ -99,14 +101,10 @@ export default function MintInProgress({
   connection,
   index,
 }: Props) {
-  const { mintNFT } = actions;
-
   const [transactionStep, setTransactionStep] = React.useState(TransactionStep.APPROVING);
-  const [reset, setReset] = React.useState(false);
 
   const handleNext = useCallback(() => {
     setTransactionStep(TransactionStep.APPROVING);
-    setReset(true);
     nextStep!();
   }, [nextStep, setTransactionStep]);
 
@@ -132,22 +130,13 @@ export default function MintInProgress({
           setTransactionStep(TransactionStep.SENDING_FAILED);
         }
       });
-  }, [metaDataFile, handleNext, metaDataContent, mintNFT, connection, wallet]);
+  }, [metaDataFile, handleNext, metaDataContent, connection, wallet]);
 
   useEffect(() => {
-    console.log('isActive', isActive);
-    console.log('metadatacontent ', metaDataContent);
-    console.log('metaDataFile', metaDataFile);
     if (isActive && metaDataFile && metaDataContent) {
-      // console.log('!reset && index < 1', !reset && index < 1);
-      // console.log('reset && index > 0', reset && index > 0);
-      // if ((!reset && index < 1) || (reset && index > 0)) {
-      console.log('index is now', index);
       attemptMint();
-      // setReset(false);
-      // }
     }
-  }, [isActive, metaDataContent, attemptMint, metaDataFile, connection, reset, index]);
+  }, [isActive, metaDataContent, attemptMint, metaDataFile, connection, index]);
 
   return (
     <NavContainer
