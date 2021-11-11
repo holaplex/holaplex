@@ -160,15 +160,15 @@ const StyledPercentageInput = styled(InputNumber)`
 `;
 
 const CreatorsRow = ({
-  address,
+  creatorAddress,
   share,
   isUser = false,
   updateCreator,
 }: {
-  address: string;
+  creatorAddress: string;
   share: number;
   isUser: boolean;
-  updateCreator: (addresss: string, share: number) => void;
+  updateCreator: (address: string, share: number) => void;
 }) => {
   const ref = React.useRef(null);
   const [showPercentageInput, setShowPercentageInput] = React.useState(false);
@@ -187,7 +187,7 @@ const CreatorsRow = ({
           whiteSpace: 'nowrap',
         }}
       >
-        {address}
+        {creatorAddress}
       </Paragraph>
       <Image
         className="clipboard-icon"
@@ -196,7 +196,7 @@ const CreatorsRow = ({
         src={clipBoardIcon}
         alt="copyToClipboard"
         onClick={() => {
-          navigator.clipboard.writeText(address);
+          navigator.clipboard.writeText(creatorAddress);
           openNotification();
         }}
       />
@@ -209,7 +209,7 @@ const CreatorsRow = ({
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
-          onChange={(value) => updateCreator(address, value as number)}
+          onChange={(value) => updateCreator(creatorAddress, value as number)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowPercentageInput(false);

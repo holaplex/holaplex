@@ -183,7 +183,7 @@ export default function InfoScreen({
           <Form.Item name={`nft-${0}`}>
             <Form.Item
               name={[nftNumber, 'name']}
-              initialValue={images[index]?.name || ''}
+              initialValue={images[index]?.name || ''}
               label="Name"
               rules={[{ required: true, message: 'Name is required' }]}
             >
@@ -216,7 +216,7 @@ export default function InfoScreen({
                       />
                     ))}
                     {fields.length < 10 && (
-                      <StyledClearButton onClick={add} type="default" noStyle={true}>
+                      <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
                         Add Attribute
                       </StyledClearButton>
                     )}

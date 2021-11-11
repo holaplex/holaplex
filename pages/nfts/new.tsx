@@ -15,33 +15,6 @@ import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
 
-// export interface IMetadataExtension {
-//   name: string;
-//   symbol: string;
-
-//   creators: Creator[] | null;
-//   description: string;
-//   // preview image absolute URI
-//   image: string;
-//   animation_url?: string;
-
-//   attributes?: Attribute[];
-
-//   // stores link to item on meta
-//   external_url: string;
-
-//   seller_fee_basis_points: number;
-
-//   properties: {
-//     files?: FileOrString[];
-//     category: MetadataCategory;
-//     maxSupply?: number;
-//     creators?: {
-//       address: string;
-//       shares: number;
-//     }[];
-//   };
-// }
 export const MAX_CREATOR_LIMIT = 5;
 
 export interface Creator {
@@ -69,7 +42,7 @@ export interface NFTFormValue {
   collection: string;
   attributes: Array<NFTAttribute>;
   seller_fee_basis_points: number;
-  properties: { creators: Array<Royalty>; maxSupply: number };
+  properties: { creators: Array<Creator>; maxSupply: number };
 }
 
 export interface MetadataFile {
@@ -82,11 +55,10 @@ export type FileOrString = MetadataFile | string;
 
 export type NFTAttribute = {
   trait_type: string;
-  // display_type?: string; // what does this do?
   value: string | number;
 };
 
-interface MetaDataContent {
+export interface MetaDataContent {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
@@ -95,7 +67,7 @@ interface MetaDataContent {
   properties: {
     files?: FileOrString[];
     // category: MetadataCategory;
-    maxSupply?: number;
+    maxSupply: number;
     creators?: {
       address: string;
       shares: number;
@@ -109,7 +81,7 @@ interface State {
   images: Array<File>;
   uploadedFiles: Array<UploadedFile>;
   formValues: NFTFormValue[] | null;
-  metaData: MetaDataContent[] | null;
+  metaData: MetaDataContent[];
   metadataFiles: MetadataFile[];
 }
 
@@ -218,24 +190,30 @@ export default function BulkUploadWizard() {
     const builtMetaData = buildMetaData(formValues, files);
 
     console.log('builtMetaData', builtMetaData);
-    // return; // todo: remove this
 
     // TODO: type this
     // Do we need to do a Promise.all here?
-    builtMetaData.forEach(async (m: any, i: number) => {
+    const promises = builtMetaData.map(async (m: any, i: number) => {
       const metaData = new File([JSON.stringify(m)], `metadata-${i}`); // TODO: what to name this?
       const metaDataFileForm = new FormData();
       metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
-      const resp = await fetch('/api/ipfs/upload', {
+      return await fetch('/api/ipfs/upload', {
         body: metaDataFileForm,
         method: 'POST',
       });
-      const json = await resp.json();
-      console.log('metadataupload response is ' + i, json);
-
-      console.log('metaupload links prev are ', metadataFiles);
-      dispatch({ type: 'SET_META_DATA_LINKS', payload: [...metadataFiles, json.files[0]] });
     });
+
+    Promise.all(promises).then((responses) => {
+      const jsonPromises = responses.map(async (resp: any) => await resp.json());
+
+      Promise.all(jsonPromises).then((json) => {
+        const payload = json.map((j) => j.files[0]);
+        console.log('payload is ', payload);
+        dispatch({ type: 'SET_META_DATA_LINKS', payload });
+      });
+    });
+
+    dispatch({ type: 'SET_META_DATA', payload: builtMetaData });
 
     return Promise.resolve();
   };
@@ -326,14 +304,19 @@ export default function BulkUploadWizard() {
           />
 
           <PriceSummary images={images} connection={connection} stepName={'priceSummary'} />
-          <MintInProgress
-            images={images}
-            wallet={solana}
-            connection={connection}
-            metaDataFile={state.metadataFiles[0]}
-            maxSupply={1}
-            // maxSupply={state.metaData ? state.metaData[0].properties.maxSupply : 1}
-          />
+
+          {images.map((_, index) => (
+            <MintInProgress
+              key={index}
+              images={images}
+              wallet={solana}
+              connection={connection}
+              metaDataFile={state.metadataFiles[index]}
+              metaDataContent={state.metaData[index]}
+              index={index}
+            />
+          ))}
+
           <OffRampScreen hashKey="success" images={images} clearForm={clearForm} />
         </StepWizard>
       </StyledLayout>
