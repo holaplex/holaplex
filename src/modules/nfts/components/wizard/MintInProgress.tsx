@@ -1,5 +1,5 @@
 import { Divider, Form, Row, Col, Space } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -11,11 +11,21 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spinner } from '@/common/components/elements/Spinner';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { NodeWallet, Wallet, actions } from '@metaplex/js';
+import { MetadataFile } from 'pages/nfts/new';
+import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { Solana } from '@/modules/solana/types';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
+  wallet: Solana;
+  connection: Connection;
+  metaDataFile: MetadataFile;
+  maxSupply: number;
 }
 
 const Grid = styled.div`
@@ -65,34 +75,53 @@ const MintStep = ({
   );
 };
 
-export default function MintInProgress({ previousStep, goToStep, images, nextStep }: Props) {
-  const handleNext = () => {
-    nextStep!();
-  };
+export default function MintInProgress({
+  previousStep,
+  goToStep,
+  images,
+  nextStep,
+  isActive,
+  metaDataFile,
+  wallet,
+  connection,
+  maxSupply,
+}: Props) {
+  // const handleNext = () => {
+  //   nextStep!();
+  // };
+  const { mintNFT } = actions;
+
+  useEffect(() => {
+    if (isActive && metaDataFile) {
+      console.log('metaDataFile', metaDataFile);
+      mintNFT({
+        connection,
+        wallet,
+        uri: metaDataFile.uri,
+        maxSupply,
+      })
+        .then((mintResp) => {
+          console.log('mintResp', mintResp);
+        })
+        .catch((err) => {
+          console.log('mintNFT err', err);
+        });
+    }
+  }, [isActive, mintNFT, metaDataFile, wallet, connection]);
 
   const steps = [
     {
-      text: 'Starting mint process',
+      text: 'Approving Transaction',
       icon: <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />,
       isActive: false,
     },
     {
-      text: 'Preparing assets',
+      text: 'Sending transsaction to Solana',
       icon: <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />,
       isActive: false,
     },
     {
-      text: 'Signing metadata',
-      icon: <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />,
-      isActive: false,
-    },
-    {
-      text: 'Waiting for initial confirmation',
-      icon: <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />,
-      isActive: false,
-    },
-    {
-      text: 'Preparing assets ', // removed an annoying duplicate key warning
+      text: 'Waiting for final confirmation',
       icon: <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />,
       isActive: false,
     },
@@ -101,21 +130,6 @@ export default function MintInProgress({ previousStep, goToStep, images, nextSte
       icon: <Spinner />,
       // icon: <Spin indicator={<Image width={32} height={32} src={SpinnerIcon} alt="spinner" />} />,
       isActive: true,
-    },
-    {
-      text: 'Uploading to Arweave',
-      icon: <Image width={32} height={32} src={EmptySpinnerIcon} alt="empty-spinner" />,
-      isActive: false,
-    },
-    {
-      text: 'Uploading metadata',
-      icon: <Image width={32} height={32} src={EmptySpinnerIcon} alt="empty-spinner" />,
-      isActive: false,
-    },
-    {
-      text: 'Signing token',
-      icon: <Image width={32} height={32} src={EmptySpinnerIcon} alt="empty-spinner" />,
-      isActive: false,
     },
   ];
 

@@ -14,6 +14,7 @@ const SOL_COST_PER_NFT = 0.01;
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
+  connection: Connection;
 }
 
 const Grid = styled.div`
@@ -39,9 +40,14 @@ async function getSolRate() {
   const rates = await new Coingecko().getRate([Currency.SOL], Currency.USD);
   return rates[0].rate;
 }
-const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
 
-export default function PriceSummary({ previousStep, goToStep, images, nextStep }: Props) {
+export default function PriceSummary({
+  previousStep,
+  goToStep,
+  images,
+  nextStep,
+  connection,
+}: Props) {
   const [totalSolCost, setTotalSolCost] = useState(images.length * SOL_COST_PER_NFT);
   const [totalInUSD, setTotalInUSD] = useState(0.0);
   const { wallet } = useContext(WalletContext);
@@ -54,7 +60,7 @@ export default function PriceSummary({ previousStep, goToStep, images, nextStep 
         .getBalance(new PublicKey(wallet.pubkey))
         .then((balance) => setSolBalance(balance / LAMPORTS_PER_SOL));
     }
-  }, [wallet]);
+  }, [wallet, connection]);
 
   const handleNext = () => {
     nextStep!();
@@ -105,7 +111,7 @@ export default function PriceSummary({ previousStep, goToStep, images, nextStep 
             </Col>
           </Row>
           <Row justify="end">
-            {hasEnoughSol && (
+            {!hasEnoughSol && (
               <Paragraph style={{ fontSize: 14, color: '#D24040' }}>
                 Not enough SOL in this wallet.
               </Paragraph>

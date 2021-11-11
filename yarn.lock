@@ -921,10 +921,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@metaplex/js@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@metaplex/js/-/js-4.0.0.tgz#2618d737e23f3d6b1e50e009b2603858b39fa6e5"
-  integrity sha512-s1WJabMt5OI22IiOWKpb/j1EcEaJsv8/Lb8rygaGjplD++bgsdpLu9isDgJsbV+Y6FKmCPru+igP3exGberp8Q==
+"@metaplex/js@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@metaplex/js/-/js-4.1.0.tgz#cf116f4009bbde421b56e188888ab8d0c6ad5825"
+  integrity sha512-P6V3HIEO2+6HwS/xMrkzPjR1WpzNEP3iHKxf5U3KQyM3JE7iNHS7gGAHRLqiJ/4zOTbd7SmpyaREZJakDBnt2Q==
   dependencies:
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.30.2"

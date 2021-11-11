@@ -20,7 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.30.0",
     "@aws-sdk/types": "^3.29.0",
-    "@metaplex/js": "^4.0.0",
+    "@metaplex/js": "file:.yalc/@metaplex/js",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
     "@solana/wallet-adapter-base": "^0.7.0",
