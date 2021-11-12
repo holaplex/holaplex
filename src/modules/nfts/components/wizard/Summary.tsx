@@ -11,7 +11,7 @@ interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   dispatch: MintDispatch;
   form: FormInstance;
-  formValues: any; // TODO: Type this
+  formValues: NFTFormValue[] | null;
   uploadMetaData: (files: any) => Promise<void>;
 }
 
@@ -55,7 +55,15 @@ const Attribute = styled(Space)`
     }
   }
 `;
-const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => {
+const SummaryItem = ({
+  value,
+  image,
+  showRoyaltyPercentage,
+}: {
+  value: NFTFormValue;
+  image: File;
+  showRoyaltyPercentage: boolean;
+}) => {
   if (!image) {
     throw new Error('Image is required');
   }
@@ -66,6 +74,7 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
         width={245}
         height={245}
         src={URL.createObjectURL(image)}
+        objectFit="cover"
         alt={image.name}
         unoptimized={true}
         key={image.name}
@@ -73,13 +82,20 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
       <Title level={4} style={{ marginBottom: 3 }}>
         {value.name}
       </Title>
-      <Paragraph style={{ marginBottom: 18 }}>Stylish Studs</Paragraph>
+      {value.collection && <Paragraph style={{ marginBottom: 18 }}>{value.collection}</Paragraph>}
       <Paragraph
         ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
         style={{ opacity: '60%', color: '#fff' }}
       >
         {value.description}
       </Paragraph>
+      {showRoyaltyPercentage && (
+        <Attribute>
+          <Paragraph style={{ width: 110 }}>Royalty:</Paragraph>
+          <Paragraph>{value.seller_fee_basis_points}</Paragraph>
+        </Attribute>
+      )}
+
       <Attributes>
         {value.attributes?.map((attribute: NFTAttribute, index: number) =>
           attribute.trait_type ? (
@@ -162,7 +178,18 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
+              images[index] && (
+                <SummaryItem
+                  key={fv.name}
+                  value={fv}
+                  image={images[index]}
+                  showRoyaltyPercentage={formValues.some((nft1) =>
+                    formValues.some(
+                      (nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points
+                    )
+                  )}
+                />
+              ) // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
           )}
         </Grid>
       </Row>

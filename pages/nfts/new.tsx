@@ -279,6 +279,18 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
+          {/* {images.map((image, index) => (
+            <RoyaltiesCreators
+            hashKey={'royalties-' + index}
+            images={images}
+            index={index}
+              form={form}
+              userKey={wallet.pubkey}
+              formValues={state.formValues}
+              dispatch={dispatch}
+              key={index}
+            />
+          ))} */}
           <RoyaltiesCreators
             images={images}
             form={form}
@@ -303,6 +315,7 @@ export default function BulkUploadWizard() {
                   dispatch={dispatch}
                   key={index}
                   index={index + 1}
+                  doEachRoyaltyInd={doEachRoyaltyInd}
                 />
               ))}
           <Summary
