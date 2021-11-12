@@ -1,12 +1,11 @@
-import { Layout, PageHeader } from "antd";
-import React from "react";
-import styled from "styled-components";
-import ArrowLeft from "@/common/assets/images/arrow-left.svg";
-import XCloseIcon from "@/common/assets/images/x-close.svg";
-import Image from "next/image";
-import { StepWizardChildProps } from "react-step-wizard";
-import Button from "@/common/components/elements/Button";
-import { StyledClearButton } from "./RoyaltiesCreators";
+import { Layout, PageHeader } from 'antd';
+import React from 'react';
+import styled from 'styled-components';
+import ArrowLeft from '@/common/assets/images/arrow-left.svg';
+import XCloseIcon from '@/common/assets/images/x-close.svg';
+import Image from 'next/image';
+import { StepWizardChildProps } from 'react-step-wizard';
+import { StyledClearButton } from './RoyaltiesCreators';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -38,7 +37,7 @@ const GoBack = styled.i`
   cursor: pointer;
 `;
 
-const AltClearTextLink = StyledClearButton
+const AltClearTextLink = StyledClearButton;
 
 interface Props extends Partial<StepWizardChildProps> {
   children?: React.ReactElement | React.ReactElement[] | boolean;
@@ -68,9 +67,12 @@ export default function NavContainer({
           clearForm && clearForm();
           goToStep!(1);
         }}
+        style={{ fontStyle: 'normal' }}
       >
         {altClearText ? (
-          <AltClearTextLink noStyle type="text" >{altClearText}</AltClearTextLink>
+          <AltClearTextLink noStyle type="text">
+            {altClearText}
+          </AltClearTextLink>
         ) : (
           <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
         )}
