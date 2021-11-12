@@ -147,13 +147,11 @@ export default function MintInProgress({
   }, [metaDataFile, nftValue, handleNext, connection, wallet]);
 
   useEffect(() => {
-    console.log('attemptMint', attemptMint);
     if (showErrors) {
       return;
     }
 
     if (isActive && metaDataFile && nftValue) {
-      console.count('attemptMint');
       attemptMint();
     }
   }, [isActive, showErrors, metaDataFile, nftValue, attemptMint, index]);

@@ -258,6 +258,7 @@ export default function BulkUploadWizard() {
       <StyledLayout>
         <StepWizard
           isHashEnabled={true}
+          isLazyMount={true}
           transitions={{
             enterLeft: undefined,
             enterRight: undefined,
