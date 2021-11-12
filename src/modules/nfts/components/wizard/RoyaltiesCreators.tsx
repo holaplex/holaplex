@@ -20,7 +20,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
-import { NftPreviewGrid } from '@/common/components/elements/NftPreviewGrid';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -34,14 +34,6 @@ interface Props extends Partial<StepWizardChildProps> {
   index: number;
   setDoEachRoyaltyInd?: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 16px;
-  row-gap: 16px;
-  grid-template-rows: 100px 100px 100px 100px 100px;
-`;
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -278,6 +270,9 @@ export default function RoyaltiesCreators({
 
         if (formValues) {
           const newFormValues = formValues.map((formValue) => {
+            if (!creators.length || !maxSupply || !royaltiesInput) {
+              throw new Error('No creators or max supply or royalties input');
+            }
             console.log('creators are', creators);
             formValue.properties = { creators, maxSupply };
             formValue.seller_fee_basis_points = royaltiesInput;
@@ -300,14 +295,17 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
+        if (!creators.length || !maxSupply || !royaltiesInput) {
+          throw new Error('No creators or max supply or royalties input');
+        }
+
         currentNFTFormValue.properties = { creators, maxSupply };
         currentNFTFormValue.seller_fee_basis_points = royaltiesInput;
-        const restOfValues = formValues.filter((_, i) => i !== index);
 
-        dispatch({
-          type: 'SET_FORM_VALUES',
-          payload: [...restOfValues, { ...currentNFTFormValue }],
-        });
+        const formValuesCopy = [...formValues];
+        formValuesCopy[index] = { ...currentNFTFormValue };
+
+        dispatch({ type: 'SET_FORM_VALUES', payload: formValuesCopy });
         setRoyaltiesInput(ROYALTIES_INPUT_DEFAULT);
         form.setFieldsValue({ royaltiesPercentage: ROYALTIES_INPUT_DEFAULT });
       } else {
@@ -535,7 +533,7 @@ export default function RoyaltiesCreators({
           </Row>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NftPreviewGrid images={images} index={index} width={2} />
+        <NFTPreviewGrid images={images} index={index} width={2} />
       </Row>
     </NavContainer>
   );

@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { useContext, useReducer, useRef } from 'react';
+import React, { useContext, useReducer } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/modules/nfts/components/wizard/Upload';
@@ -8,7 +8,7 @@ import InfoScreen from '@/modules/nfts/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
 import Summary from '@/modules/nfts/components/wizard/Summary';
 import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreators';
-import { WalletContext, WalletProvider } from '@/modules/wallet';
+import { WalletContext } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
@@ -45,12 +45,6 @@ export interface NFTFormValue {
   properties: { creators: Array<Creator>; maxSupply: number };
 }
 
-export interface MetadataFile {
-  name: string;
-  uri: string;
-  type: string;
-}
-
 export type FileOrString = MetadataFile | string;
 
 export type NFTAttribute = {
@@ -58,15 +52,26 @@ export type NFTAttribute = {
   value: string | number;
 };
 
-export interface MetaDataContent {
+export interface MetadataFile {
+  name: string;
+  uri: string;
+  type: string;
+}
+
+export enum MintStatus {
+  FAILED,
+  SUCCESS,
+}
+
+export interface NFTValue {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
   seller_fee_basis_points: number;
+  mintStatus?: MintStatus;
 
   properties: {
     files?: FileOrString[];
-    // category: MetadataCategory;
     maxSupply: number;
     creators?: {
       address: string;
@@ -81,17 +86,9 @@ interface State {
   images: Array<File>;
   uploadedFiles: Array<UploadedFile>;
   formValues: NFTFormValue[] | null;
-  metaData: MetaDataContent[];
+  nftValues: NFTValue[];
   metadataFiles: MetadataFile[];
 }
-
-const initialState: State = {
-  images: [],
-  uploadedFiles: [],
-  formValues: null,
-  metaData: [],
-  metadataFiles: [],
-};
 
 export interface MintAction {
   type:
@@ -100,7 +97,7 @@ export interface MintAction {
     | 'ADD_IMAGE'
     | 'UPLOAD_FILES'
     | 'SET_FORM_VALUES'
-    | 'SET_META_DATA'
+    | 'SET_NFT_VALUES'
     | 'SET_META_DATA_LINKS';
   payload:
     | File[]
@@ -108,9 +105,17 @@ export interface MintAction {
     | String
     | Array<UploadedFile>
     | NFTFormValue[]
-    | MetaDataContent[]
+    | NFTValue[]
     | MetadataFile[];
 }
+
+const initialState: State = {
+  images: [],
+  uploadedFiles: [],
+  formValues: null,
+  nftValues: [],
+  metadataFiles: [],
+};
 
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
@@ -127,8 +132,8 @@ function reducer(state: State, action: MintAction) {
       return { ...state, uploadedFiles: action.payload as Array<UploadedFile> };
     case 'SET_FORM_VALUES':
       return { ...state, formValues: action.payload as NFTFormValue[] };
-    case 'SET_META_DATA':
-      return { ...state, metaData: action.payload as MetaDataContent[] };
+    case 'SET_NFT_VALUES': // can we combine this with with SET_META_DATA_LINKS?
+      return { ...state, nftValues: action.payload as NFTValue[] };
     case 'SET_META_DATA_LINKS':
       return { ...state, metadataFiles: action.payload as MetadataFile[] };
     default:
@@ -203,6 +208,8 @@ export default function BulkUploadWizard() {
       });
     });
 
+    dispatch({ type: 'SET_NFT_VALUES', payload: builtMetaData });
+
     Promise.all(promises).then((responses) => {
       const jsonPromises = responses.map(async (resp: any) => await resp.json());
 
@@ -213,9 +220,13 @@ export default function BulkUploadWizard() {
       });
     });
 
-    dispatch({ type: 'SET_META_DATA', payload: builtMetaData });
-
     return Promise.resolve();
+  };
+
+  const updateNFTValue = (value: NFTValue, index: number) => {
+    const nftValues = [...state.nftValues];
+    nftValues[index] = value;
+    dispatch({ type: 'SET_NFT_VALUES', payload: nftValues });
   };
 
   const clearForm = () => form.resetFields();
@@ -312,7 +323,8 @@ export default function BulkUploadWizard() {
               wallet={solana}
               connection={connection}
               metaDataFile={state.metadataFiles[index]}
-              metaDataContent={state.metaData[index]}
+              nftValues={state.nftValues}
+              updateNFTValue={updateNFTValue}
               index={index}
             />
           ))}

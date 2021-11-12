@@ -11,8 +11,9 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
 import { Connection } from '@solana/web3.js';
 import { actions } from '@metaplex/js';
-import { MetadataFile, MetaDataContent } from 'pages/nfts/new';
+import { MetadataFile, MintDispatch, MintStatus, NFTValue } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const { mintNFT } = actions;
 
@@ -31,8 +32,9 @@ interface Props extends Partial<StepWizardChildProps> {
   wallet: Solana;
   connection: Connection;
   metaDataFile: MetadataFile;
-  metaDataContent: MetaDataContent;
+  nftValues: NFTValue[];
   index: number;
+  updateNFTValue: (value: NFTValue, index: number) => void;
 }
 
 const Grid = styled.div`
@@ -96,8 +98,9 @@ export default function MintInProgress({
   nextStep,
   isActive,
   metaDataFile,
-  metaDataContent,
+  nftValues,
   wallet,
+  updateNFTValue,
   connection,
   index,
 }: Props) {
@@ -106,10 +109,17 @@ export default function MintInProgress({
     transactionStep === TransactionStep.SENDING_FAILED ||
     transactionStep === TransactionStep.APPROVAL_FAILED;
 
+  const nftValue = nftValues[index];
+
   const handleNext = useCallback(() => {
+    if (showErrors) {
+      const updatedValue = { ...nftValue, mintStatus: MintStatus.FAILED };
+      console.log(updatedValue);
+      updateNFTValue(updatedValue, index);
+    }
     setTransactionStep(TransactionStep.APPROVING);
     nextStep!();
-  }, [nextStep, setTransactionStep]);
+  }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
   const attemptMint = useCallback(() => {
     setTransactionStep(TransactionStep.APPROVING);
@@ -117,7 +127,7 @@ export default function MintInProgress({
       connection,
       wallet,
       uri: metaDataFile.uri,
-      maxSupply: metaDataContent.properties.maxSupply,
+      maxSupply: nftValue.properties.maxSupply,
     })
       .then((mintResp) => {
         // TODO: How do we know if it's sending
@@ -133,13 +143,23 @@ export default function MintInProgress({
           setTransactionStep(TransactionStep.SENDING_FAILED);
         }
       });
-  }, [metaDataFile, handleNext, metaDataContent, connection, wallet]);
+  }, [metaDataFile, nftValue, handleNext, connection, wallet]);
 
   useEffect(() => {
-    if (isActive && metaDataFile && metaDataContent) {
+    console.log('attemptMint', attemptMint);
+    if (showErrors) {
+      return;
+    }
+
+    if (isActive && metaDataFile && nftValue) {
+      console.count('attemptMint');
       attemptMint();
     }
-  }, [isActive, metaDataContent, attemptMint, metaDataFile, connection, index]);
+  }, [isActive, showErrors, metaDataFile, nftValue, attemptMint, index]);
+
+  if (!nftValue) {
+    return null;
+  }
 
   return (
     <NavContainer
@@ -152,7 +172,7 @@ export default function MintInProgress({
           <Row>
             <Paragraph style={{ fontWeight: 900 }}>Progress</Paragraph>
           </Row>
-
+          transactionStep is {transactionStep}
           <Row style={{ marginTop: 37 }}>
             <Col style={{ minWidth: 237 }}>
               <MintStep
@@ -185,7 +205,10 @@ export default function MintInProgress({
               <Row>
                 <Space size={8}>
                   <Button onClick={handleNext}>Skip</Button>
-                  <Button type="primary" onClick={attemptMint}>
+                  <Button
+                    type="primary"
+                    onClick={() => setTransactionStep(TransactionStep.APPROVING)}
+                  >
                     Try Again
                   </Button>
                 </Space>
@@ -195,18 +218,7 @@ export default function MintInProgress({
         </Col>
 
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
-        <Grid>
-          {images.map((image) => (
-            <Image
-              width={100}
-              height={100}
-              src={URL.createObjectURL(image)}
-              alt={image.name}
-              unoptimized={true}
-              key={image.name}
-            />
-          ))}
-        </Grid>
+        <NFTPreviewGrid index={index} images={images} isMintStep={true} nftValues={nftValues} />
       </Row>
     </NavContainer>
   );
