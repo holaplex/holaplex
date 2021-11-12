@@ -117,7 +117,7 @@ export default function InfoScreen({
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
   const nftNumberList = images.map((_, i) => `nft-${i}`);
-  const [errorList, setErrorList] = useState([]);
+  const [errorList, setErrorList] = useState<string[]>([]);
   // useEffect(() => {
   //   if (isActive) {
   //     // const current = form.getFieldValue(nftNumber);
