@@ -124,7 +124,9 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
         {images.length < MAX_IMAGES && (
           <Upload
             showUploadList={false}
-            beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
+            beforeUpload={(f) =>
+              images.every((i) => i.name !== f.name) && dispatch({ type: 'ADD_IMAGE', payload: f })
+            }
           >
             <AddNFTButton>
               <input {...getInputProps()} />

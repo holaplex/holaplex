@@ -197,14 +197,6 @@ const CreatorsRow = ({
           openNotification();
         }}
       />
-      <Image
-        className="creator-row-icon"
-        width={20}
-        height={20}
-        src={XCloseIcon}
-        alt="x-close"
-        onClick={() => removeCreator(creatorAddress)}
-      />
       {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
       {showPercentageInput ? (
         <StyledPercentageInput
@@ -227,7 +219,7 @@ const CreatorsRow = ({
           onClick={() => setShowPercentageInput(true)}
           style={{ margin: '0 5px 0 auto', fontSize: 14, cursor: 'pointer' }}
         >
-          {share}%
+          {share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
     </StyledCreatorsRow>
@@ -307,7 +299,7 @@ export default function RoyaltiesCreators({
   const next = () => {
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
-        const currentNFTFormValue = doEachRoyaltyInd ? formValues[index - 1] : formValues[index];
+        const currentNFTFormValue = formValues[index];
         console.log('validate royalties and creators', { formValues, currentNFTFormValue, index });
         if (!creators.length || !maxSupply || !royaltiesInput) {
           throw new Error('No creators or max supply or royalties input');
@@ -319,7 +311,6 @@ export default function RoyaltiesCreators({
         const formValuesCopy = [...formValues];
         formValuesCopy[index] = { ...currentNFTFormValue };
 
-        dispatch({ type: 'SET_FORM_VALUES', payload: formValuesCopy });
         setRoyaltiesInput(ROYALTIES_INPUT_DEFAULT);
         form.setFieldsValue({ royaltiesPercentage: ROYALTIES_INPUT_DEFAULT });
       } else {
@@ -430,12 +421,12 @@ export default function RoyaltiesCreators({
                 rules={[
                   { required: true, message: 'Please enter a value' },
                   { max: 44 },
+                  // need to handle someone pasting in a string longer than 44 char. Right now the input just caps it at 44 without showing anything
                   { min: 44, message: 'Must be at least 44 characters long' },
                   {
                     message: 'All creator hashes must be unique',
                     async validator(rule, value: string) {
                       const existingCreators = creators.map((c) => c.address);
-                      console.log('validator value', { rule, value });
                       const indexOfDuplicate = existingCreators.findIndex((a, i) => value === a);
                       if (indexOfDuplicate !== -1) {
                         throw new Error();
@@ -443,14 +434,18 @@ export default function RoyaltiesCreators({
                     },
                   },
                   {
-                    message: 'All creator hashes must be in base64',
-                    async validator(rule, value: any[]) {
-                      // a bit unsure about this requirement in the end
+                    message: 'Creator address is not valid',
+                    async validator(rule, creatorAddress: string) {
+                      if (creatorAddress.indexOf(' ') >= 0) {
+                        // whitespace detected
+                        throw new Error();
+                      }
                       return true;
+                      // a bit unsure about this requirement in the end
                       const base64RegEx =
                         /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
-                      const creatorHashes = value;
-                      if (creatorHashes.some((hash) => !base64RegEx.test(hash))) {
+
+                      if (!base64RegEx.test(creatorAddress)) {
                         throw new Error();
                       }
                     },
@@ -531,6 +526,7 @@ export default function RoyaltiesCreators({
                         <Paragraph style={{ fontSize: 12 }}>Number of editions</Paragraph>
                         <Form.Item
                           name="numOfEditions"
+                          initialValue={1}
                           rules={
                             editionsSelection === 'limited'
                               ? [

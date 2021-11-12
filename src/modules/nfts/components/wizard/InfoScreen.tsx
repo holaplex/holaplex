@@ -142,7 +142,13 @@ export default function InfoScreen({
       .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
         console.log('validate all fields');
         if (isLast) {
-          const arrayValues = Object.values(values).filter((v) => v !== undefined);
+          const values2 = form.getFieldsValue(nftNumberList) as FormValues;
+          console.log('VALUES2', {
+            values,
+            values2,
+          });
+          const arrayValues = Object.values(values2).filter((v) => v !== undefined);
+          console.log('info screen', { arrayValues, values2 });
           dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
         }
         nextStep!();
@@ -255,7 +261,7 @@ export default function InfoScreen({
                   },
                 ]}
               >
-                {(fields, { add, remove }, { errors }) => (
+                {(fields, { add, remove }) => (
                   <>
                     {fields.map((field) => (
                       <AttributeRow
@@ -265,16 +271,16 @@ export default function InfoScreen({
                         field={field}
                       />
                     ))}
-                    {fields.length < 10 && (
-                      <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
-                        Add Attribute
-                      </StyledClearButton>
-                    )}
                     {errorList.map((error, j) => (
                       <div key={j}>
                         <Text type="danger">{error}</Text>
                       </div>
                     ))}
+                    {fields.length < 10 && (
+                      <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
+                        Add Attribute
+                      </StyledClearButton>
+                    )}
                   </>
                 )}
               </Form.List>

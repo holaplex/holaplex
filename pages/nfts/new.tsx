@@ -145,6 +145,7 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  console.log('state', state.formValues);
   const [form] = useForm();
   const { images } = state;
   const { connect, wallet, solana } = useContext(WalletContext);
@@ -229,7 +230,10 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_NFT_VALUES', payload: nftValues });
   };
 
-  const clearForm = () => form.resetFields();
+  const clearForm = () => {
+    dispatch({ type: 'SET_IMAGES', payload: [] });
+    form.resetFields();
+  };
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     // Prevent Enter submit
@@ -279,18 +283,6 @@ export default function BulkUploadWizard() {
               />
             )) as any // Very annoying TS error here only solved by any
           }
-          {/* {images.map((image, index) => (
-            <RoyaltiesCreators
-            hashKey={'royalties-' + index}
-            images={images}
-            index={index}
-              form={form}
-              userKey={wallet.pubkey}
-              formValues={state.formValues}
-              dispatch={dispatch}
-              key={index}
-            />
-          ))} */}
           <RoyaltiesCreators
             images={images}
             form={form}
@@ -326,9 +318,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-
-          {/* <PriceSummary images={images} connection={connection} stepName={'priceSummary'} /> */}
-
+          <PriceSummary images={images} connection={connection} stepName={'priceSummary'} />
           {images.map((_, index) => (
             <MintInProgress
               key={index}

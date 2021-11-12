@@ -1,12 +1,13 @@
 import Button from '@/common/components/elements/Button';
 import { Layout, PageHeader, Space, Upload, message } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDropzone } from 'react-dropzone';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { MintDispatch } from 'pages/nfts/new';
 const { Dragger } = Upload;
 import { DraggerProps } from 'antd/lib/upload';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 export const MAX_IMAGES = 10;
 const StyledLayout = styled(Layout)`
@@ -68,29 +69,33 @@ interface Props extends Partial<StepWizardChildProps> {
 }
 
 export default function UploadStep({ nextStep, dispatch, images }: Props) {
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      dispatch({ type: 'SET_IMAGES', payload: acceptedFiles });
-      nextStep!();
-    },
-    [dispatch, nextStep]
-  );
+  // const onDrop = useCallback(
+  //   (acceptedFiles) => {
+  //     dispatch({ type: 'SET_IMAGES', payload: acceptedFiles });
+  //     nextStep!();
+  //   },
+  //   [dispatch, nextStep]
+  // );
 
-  const { getRootProps, getInputProps, open } = useDropzone({
-    onDrop,
-    noClick: true,
-    maxFiles: MAX_IMAGES,
-    accept: 'image/jpeg, image/png, image/gif',
-  });
+  // const { getRootProps, getInputProps, open } = useDropzone({
+  //   onDrop,
+  //   noClick: true,
+  //   maxFiles: MAX_IMAGES,
+  //   accept: 'image/jpeg, image/png, image/gif',
+  // });
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   let count = 0;
 
   const draggerProps: DraggerProps = {
     name: 'file',
+    fileList,
     multiple: true,
     accept: 'image/jpeg,image/png,image/gif',
     showUploadList: false,
     // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+
     style: {
       //     display: flex;
       // flex-direction: column;
@@ -102,8 +107,10 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
       // padding: "0",
       border: '1px dashed rgba(255, 255, 255, 0.2)',
       boxSizing: 'border-box',
+
       // borderRadius: "8px",
     },
+
     onChange(info) {
       count++;
       console.log('on change', count, info.fileList.length);
@@ -118,10 +125,14 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
       }
       if (count === info.fileList.length) {
         nextStep!();
+        setFileList([]);
       }
     },
     beforeUpload: (file, list) => {
-      dispatch({ type: 'ADD_IMAGE', payload: file });
+      const isUniqueFile = images.every((i) => i.name !== file.name);
+      if (isUniqueFile) {
+        dispatch({ type: 'ADD_IMAGE', payload: file });
+      }
       // nextStep!();
       return false;
     },

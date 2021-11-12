@@ -138,26 +138,26 @@ export default function Summary({
 
     images.forEach((i) => body.append(i.name, i, i.name));
 
-    // const resp = await fetch('/api/ipfs/upload', {
-    //   method: 'POST',
-    //   body,
-    // });
+    const resp = await fetch('/api/ipfs/upload', {
+      method: 'POST',
+      body,
+    });
 
-    // const uploadedFilePins = await resp.json()
-    const uploadedFilePins = {
-      files: [
-        {
-          uri: 'https://bafkreiaqyueyi6pj4dno6a5xdioh3qq4wcckk6zp3a4r3o4ugu63qsgpci.ipfs.dweb.link?ext=png',
-          name: 'image 3.png',
-          type: 'image/png',
-        },
-        {
-          uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link?ext=png',
-          name: 'image 8.png',
-          type: 'image/png',
-        },
-      ],
-    };
+    const uploadedFilePins = await resp.json();
+    // const uploadedFilePins = {
+    //   files: [
+    //     {
+    //       uri: 'https://bafkreiaqyueyi6pj4dno6a5xdioh3qq4wcckk6zp3a4r3o4ugu63qsgpci.ipfs.dweb.link?ext=png',
+    //       name: 'image 3.png',
+    //       type: 'image/png',
+    //     },
+    //     {
+    //       uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link?ext=png',
+    //       name: 'image 8.png',
+    //       type: 'image/png',
+    //     },
+    //   ],
+    // };
 
     console.log('up loaded files are being set');
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
@@ -166,6 +166,7 @@ export default function Summary({
     }); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
   };
 
+  console.log('summary', { formValues });
   if (!formValues) return null;
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
