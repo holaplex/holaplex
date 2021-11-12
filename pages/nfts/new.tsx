@@ -277,11 +277,10 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} images={images} hashKey="upload" />
           <Verify images={images} dispatch={dispatch} hashKey="verify" />
-
           {
             images.map((image, index) => (
               <InfoScreen
-                hashKey={'info'}
+                hashKey={'info-' + index}
                 images={images}
                 index={index}
                 currentImage={image}

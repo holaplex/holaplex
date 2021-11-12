@@ -229,7 +229,20 @@ export default function InfoScreen({
             >
               <Input placeholder="e.g. Stylish Studs (optional)" />
             </Form.Item>
-            <Form.Item label="Attributes">
+            <Form.Item
+              label="Attributes"
+              rules={[
+                {
+                  message: 'All attributes must be unique',
+                  async validator(rule, value) {
+                    console.log('Rule', {
+                      rule,
+                      value,
+                    });
+                  },
+                },
+              ]}
+            >
               <Form.List
                 name={[nftNumber, 'attributes']}
                 initialValue={
