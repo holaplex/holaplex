@@ -51,7 +51,6 @@
     "react-color": "^2.19.3",
     "react-device-detect": "^1.17.0",
     "react-dom": "17.0.2",
-    "react-dropzone": "^11.4.2",
     "react-hook-form": "^7.17.1",
     "react-infinite-scroll-hook": "^4.0.1",
     "react-step-wizard": "^5.3.9",

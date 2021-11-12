@@ -229,7 +229,10 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_NFT_VALUES', payload: nftValues });
   };
 
-  const clearForm = () => form.resetFields();
+  const clearForm = () => {
+    dispatch({ type: 'SET_IMAGES', payload: [] });
+    form.resetFields();
+  };
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     // Prevent Enter submit
@@ -282,7 +285,7 @@ export default function BulkUploadWizard() {
           <RoyaltiesCreators
             images={images}
             form={form}
-            hashKey="royalties"
+            hashKey="royalties-0"
             userKey={wallet.pubkey}
             formValues={state.formValues}
             dispatch={dispatch}
@@ -303,6 +306,7 @@ export default function BulkUploadWizard() {
                   dispatch={dispatch}
                   key={index}
                   index={index + 1}
+                  doEachRoyaltyInd={doEachRoyaltyInd}
                 />
               ))}
           <Summary
@@ -313,9 +317,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-
           <PriceSummary images={images} connection={connection} stepName={'priceSummary'} />
-
           {images.map((_, index) => (
             <MintInProgress
               key={index}

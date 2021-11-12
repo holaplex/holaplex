@@ -9,6 +9,7 @@ import { Coingecko, Currency } from '@metaplex/js';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { WalletContext } from '@/modules/wallet';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const SOL_COST_PER_NFT = 0.01;
 
@@ -127,18 +128,7 @@ export default function PriceSummary({
           DEBUG for Sol balance : {solBalanceInLamports}
         </Col>
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
-        <Grid>
-          {images.map((image) => (
-            <Image
-              width={100}
-              height={100}
-              src={URL.createObjectURL(image)}
-              alt={image.name}
-              unoptimized={true}
-              key={image.name}
-            />
-          ))}
-        </Grid>
+        <NFTPreviewGrid images={images} />
       </Row>
     </NavContainer>
   );

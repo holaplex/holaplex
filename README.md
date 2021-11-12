@@ -41,6 +41,7 @@ To configure the server to use `arlocal`, add the following to `.env.local`:
 NEXT_PUBLIC_ARWEAVE_HOST=localhost
 NEXT_PUBLIC_ARWEAVE_PORT=1984
 NEXT_PUBLIC_ARWEAVE_PROTOCOL=http
+NEXT_PUBLIC_SOLANA_ENDPOINT="https://holaplex.rpcpool.com/"
 ```
 
 Run the db seed command to populate the database with your Solana wallet
@@ -58,4 +59,3 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
