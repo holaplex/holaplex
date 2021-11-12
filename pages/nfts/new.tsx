@@ -145,7 +145,6 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  console.log('state', state.formValues);
   const [form] = useForm();
   const { images } = state;
   const { connect, wallet, solana } = useContext(WalletContext);
@@ -286,7 +285,7 @@ export default function BulkUploadWizard() {
           <RoyaltiesCreators
             images={images}
             form={form}
-            hashKey="royalties"
+            hashKey="royalties-0"
             userKey={wallet.pubkey}
             formValues={state.formValues}
             dispatch={dispatch}

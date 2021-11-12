@@ -166,7 +166,6 @@ export default function Summary({
     }); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
   };
 
-  console.log('summary', { formValues });
   if (!formValues) return null;
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
