@@ -257,7 +257,7 @@ export default function BulkUploadWizard() {
     >
       <StyledLayout>
         <StepWizard
-          isHashEnabled={true}
+          isHashEnabled={true} // does not work properly with the dynamically rendered Images
           isLazyMount={true}
           transitions={{
             enterLeft: undefined,

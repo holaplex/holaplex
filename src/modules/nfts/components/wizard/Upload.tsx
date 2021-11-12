@@ -12,18 +12,23 @@ export const MAX_IMAGES = 10;
 const StyledLayout = styled(Layout)`
   display: flex;
   align-items: center;
-  padding: 61px 142px 97px;
+  @media only screen and (min-width: 768px) {
+    padding: 61px 142px 97px;
+  }
 `;
 
 const Header = styled(PageHeader)`
   font-style: normal;
   font-weight: 900;
-  font-size: 48px;
-  line-height: 65px;
+  font-size: 3rem;
+  line-height: 3rem;
   text-align: center;
-  width: 701px;
-
   color: #fff;
+  width: 100%;
+
+  @media only screen and (min-width: 768px) {
+    width: 701px;
+  }
 `;
 
 const Copy = styled.p<{ transparent?: boolean }>`
@@ -35,6 +40,14 @@ const Copy = styled.p<{ transparent?: boolean }>`
   letter-spacing: 0em;
   text-align: center;
   ${(p) => (p.transparent ? 'opacity: 0.6;' : null)}
+`;
+
+const StyledSpace = styled(Space)`
+  max-width: 80%;
+  @media only screen and (min-width: 768px) {
+    padding: 101px;
+    width: 856px;
+  }
 `;
 
 interface Props extends Partial<StepWizardChildProps> {
@@ -55,11 +68,10 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
     accept: 'image/jpeg,image/png,image/gif',
     showUploadList: false,
     style: {
-      // TODO: work on responsiveness
-      width: '856px',
       background: 'rgba(255,255,255,0.1)',
       border: '1px dashed rgba(255, 255, 255, 0.2)',
       boxSizing: 'border-box',
+      marginTop: 50,
     },
 
     onChange(info) {
@@ -92,16 +104,23 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
     <StyledLayout>
       <Header>Add images to create NFTs</Header>
       <Dragger {...draggerProps}>
-        <div
+        <StyledSpace direction="vertical" size={24}>
+          <Copy>Drag up to 10 pngs, jpegs, or gifs here.</Copy>
+          <Copy transparent>or</Copy>
+          <Button type="primary" size="large">
+            Browse Files
+          </Button>
+        </StyledSpace>
+        {/* <div
           style={{
             display: 'flex',
-            width: 420,
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'space-between',
             margin: '0 auto',
             padding: '40px 0',
-            height: 250,
+            width: '100%',
+            maxWidth: '856px',
           }}
         >
           <Copy>Drag up to 10 pngs, jpegs, or gifs here.</Copy>
@@ -109,7 +128,7 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
           <Button type="primary" size="large">
             Browse Files
           </Button>
-        </div>
+        </div> */}
       </Dragger>
     </StyledLayout>
   );

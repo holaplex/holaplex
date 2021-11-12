@@ -222,6 +222,7 @@ const CreatorsRow = ({
           {share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
+      {/* {false ? <div>Lock</div> : <XCloseIcon />} */}
     </StyledCreatorsRow>
   );
 };
