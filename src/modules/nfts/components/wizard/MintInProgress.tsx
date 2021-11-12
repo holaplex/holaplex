@@ -172,7 +172,6 @@ export default function MintInProgress({
           <Row>
             <Paragraph style={{ fontWeight: 900 }}>Progress</Paragraph>
           </Row>
-          transactionStep is {transactionStep}
           <Row style={{ marginTop: 37 }}>
             <Col style={{ minWidth: 237 }}>
               <MintStep

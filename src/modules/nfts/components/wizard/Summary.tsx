@@ -42,8 +42,6 @@ const StyledSummaryItem = styled.div`
   }
 `;
 
-const Attributes = styled.div``;
-
 const Attribute = styled(Space)`
   :not(:last-child) {
     margin-bottom: 9px;
@@ -95,8 +93,6 @@ const SummaryItem = ({
           <Paragraph>{value.seller_fee_basis_points}</Paragraph>
         </Attribute>
       )}
-
-      <Attributes>
         {value.attributes?.map((attribute: NFTAttribute, index: number) =>
           attribute.trait_type ? (
             <Attribute key={index}>
@@ -105,7 +101,7 @@ const SummaryItem = ({
             </Attribute>
           ) : null
         )}
-      </Attributes>
+      </div>
     </StyledSummaryItem>
   );
 };
@@ -121,12 +117,6 @@ export default function Summary({
   form,
   uploadMetaData,
 }: Props) {
-  // useEffect(() => {
-  //   if (isActive) {
-  //     form.submit();
-  //   }
-  // }, [form, isActive]);
-
   const handleNext = () => {
     nextStep!();
   };
@@ -178,18 +168,12 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              images[index] && (
-                <SummaryItem
-                  key={fv.name}
-                  value={fv}
-                  image={images[index]}
-                  showRoyaltyPercentage={formValues.some((nft1) =>
+              images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]}                   showRoyaltyPercentage={formValues.some((nft1) =>
                     formValues.some(
                       (nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points
                     )
                   )}
-                />
-              ) // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
+ />
           )}
         </Grid>
       </Row>
