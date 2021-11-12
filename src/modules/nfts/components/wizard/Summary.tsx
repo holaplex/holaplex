@@ -93,15 +93,14 @@ const SummaryItem = ({
           <Paragraph>{value.seller_fee_basis_points}</Paragraph>
         </Attribute>
       )}
-        {value.attributes?.map((attribute: NFTAttribute, index: number) =>
-          attribute.trait_type ? (
-            <Attribute key={index}>
-              <Paragraph style={{ width: 110 }}>{attribute.trait_type}:</Paragraph>
-              <Paragraph>{attribute.value}</Paragraph>
-            </Attribute>
-          ) : null
-        )}
-      </div>
+      {value.attributes?.map((attribute: NFTAttribute, index: number) =>
+        attribute.trait_type ? (
+          <Attribute key={index}>
+            <Paragraph style={{ width: 110 }}>{attribute.trait_type}:</Paragraph>
+            <Paragraph>{attribute.value}</Paragraph>
+          </Attribute>
+        ) : null
+      )}
     </StyledSummaryItem>
   );
 };
@@ -168,12 +167,18 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]}                   showRoyaltyPercentage={formValues.some((nft1) =>
+              images[index] && (
+                <SummaryItem
+                  key={fv.name}
+                  value={fv}
+                  image={images[index]}
+                  showRoyaltyPercentage={formValues.some((nft1) =>
                     formValues.some(
                       (nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points
                     )
                   )}
- />
+                />
+              )
           )}
         </Grid>
       </Row>

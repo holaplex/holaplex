@@ -1,12 +1,10 @@
 import Button from '@/common/components/elements/Button';
-import { PageHeader, Space, Upload } from 'antd';
-import React, { useCallback } from 'react';
+import { PageHeader, Upload } from 'antd';
+import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
-import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
-import { useDropzone } from 'react-dropzone';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
 import { MAX_IMAGES } from '@/modules/nfts/components/wizard/Upload';
