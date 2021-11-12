@@ -329,7 +329,12 @@ export default function BulkUploadWizard() {
             />
           ))}
 
-          <OffRampScreen hashKey="success" images={images} clearForm={clearForm} />
+          <OffRampScreen
+            hashKey="success"
+            images={images}
+            clearForm={clearForm}
+            nftValues={state.nftValues}
+          />
         </StepWizard>
       </StyledLayout>
     </Form>

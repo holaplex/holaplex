@@ -6,7 +6,6 @@ import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
-import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import { FormValues, MintDispatch } from 'pages/nfts/new';
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
@@ -21,16 +20,6 @@ interface Props extends Partial<StepWizardChildProps> {
   isLast: boolean;
   dispatch: MintDispatch;
 }
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: min-content min-content;
-  width: 216px;
-  column-gap: 16px;
-  row-gap: 16px;
-  max-height: 500px;
-`;
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -67,8 +56,7 @@ const StyledButton = styled(Button)`
   }
 `;
 
-// TODO: Type the props
-const AttributeClearButton = (props: any) => {
+const AttributeClearButton = (props: { onClick: () => void }) => {
   return (
     <StyledButton {...props} noStyle={true}>
       <Image width={24} height={24} src={XCloseIcon} alt="remove-attribute" />
@@ -81,23 +69,6 @@ const ButtonFormItem = styled(Form.Item)`
     display: flex;
     flex-direction: row-reverse;
   }
-`;
-
-const CheckWrapper = styled.div`
-  position: relative;
-  height: 24px;
-  width: 24px;
-  top: -68px;
-  right: -42px;
-`;
-
-const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
-  height: 108px;
-  width: 108px;
-  border-radius: 4px;
-  padding: 4px;
-  ${({ isCurrent }) => (isCurrent ? 'border: 2px solid #d24089;;' : null)}
-  ${({ isFinished }) => (isFinished ? 'opacity: 0.5;' : null)}
 `;
 
 export default function InfoScreen({

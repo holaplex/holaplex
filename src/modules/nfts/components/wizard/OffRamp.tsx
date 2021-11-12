@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { StepWizardChildProps } from 'react-step-wizard';
-import { Divider, Input, PageHeader, FormInstance, Row } from 'antd';
-import { FormValues, MintDispatch } from 'pages/nfts/new';
-import { FormListFieldData } from 'antd/lib/form/FormList';
+import { Divider, PageHeader, Row } from 'antd';
+import { MintStatus, NFTValue } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Button from '@/common/components/elements/Button';
@@ -11,6 +10,7 @@ import Button from '@/common/components/elements/Button';
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   clearForm: () => void;
+  nftValues: NFTValue[];
 }
 
 const StyledDivider = styled(Divider)`
@@ -29,7 +29,7 @@ const Header = styled(PageHeader)`
   padding-left: 0;
 `;
 
-const FormWrapper = styled.div`
+const Wrapper = styled.div`
   width: 413px;
 
   .ant-form-item-label {
@@ -47,36 +47,50 @@ const FormWrapper = styled.div`
   }
 `;
 
-export default function OffRampScreen({ goToStep, clearForm, images }: Props) {
-  const nrOfNfts = images.length;
+export default function OffRampScreen({ goToStep, clearForm, images, nftValues }: Props) {
+  const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
 
   return (
     <NavContainer
-      title={`🎉 You’ve minted ${nrOfNfts} NFTs!`}
+      title={`🎉 You’ve minted ${successfulMints} NFT${successfulMints > 1 ? 's' : ''}!`}
       goToStep={goToStep}
       clearForm={clearForm}
       altClearText="Mint more NFTs"
     >
       <Row>
-        <FormWrapper>
+        <Wrapper>
           <Header>
-            Congratulations! You&apos;ve minted {nrOfNfts} NFT
-            {nrOfNfts && 's'}
+            {successfulMints > 0
+              ? `Congratulations! You've minted ${successfulMints} NFT${
+                  successfulMints > 1 ? 's.' : '.'
+                }`
+              : 'No NFTs minted.'}
           </Header>
-          <Paragraph
-            style={{
-              color: '#fff',
-              opacity: 0.6,
-              fontSize: 14,
-              fontWeight: 400,
-            }}
-          >
-            They are available in your wallet. Now you can list them on your Holaplex store.
-          </Paragraph>
-          <Button type="primary">List on your Holaplex store</Button>
-        </FormWrapper>
+          {successfulMints > 0 && (
+            <>
+              <Paragraph
+                style={{
+                  color: '#fff',
+                  opacity: 0.6,
+                  fontSize: 14,
+                  fontWeight: 400,
+                }}
+              >
+                {successfulMints > 1 ? 'They are' : 'It is'} available in your wallet. Now you can
+                list {successfulMints > 1 ? 'them' : 'it'} on your Holaplex store.
+              </Paragraph>
+              <Button type="primary" onClick={() => console.log('go to holoplex store')}>
+                List on your Holaplex store
+              </Button>
+            </>
+          )}
+        </Wrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid images={images} />
+        <NFTPreviewGrid
+          index={images.length} // trigger all NFT statuses for grid
+          images={images}
+          nftValues={nftValues}
+        />
       </Row>
     </NavContainer>
   );

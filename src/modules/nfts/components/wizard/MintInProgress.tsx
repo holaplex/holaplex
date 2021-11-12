@@ -11,13 +11,14 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
 import { Connection } from '@solana/web3.js';
 import { actions } from '@metaplex/js';
-import { MetadataFile, MintDispatch, MintStatus, NFTValue } from 'pages/nfts/new';
+import { MetadataFile, MintStatus, NFTValue } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const { mintNFT } = actions;
 
 const APPROVAL_FAILED_CODE = 4001;
+
 enum TransactionStep {
   SENDING_FAILED,
   APPROVAL_FAILED,
@@ -112,11 +113,11 @@ export default function MintInProgress({
   const nftValue = nftValues[index];
 
   const handleNext = useCallback(() => {
-    if (showErrors) {
-      const updatedValue = { ...nftValue, mintStatus: MintStatus.FAILED };
-      console.log(updatedValue);
-      updateNFTValue(updatedValue, index);
-    }
+    const updatedValue = showErrors
+      ? { ...nftValue, mintStatus: MintStatus.FAILED }
+      : { ...nftValue, mintStatus: MintStatus.SUCCESS };
+    updateNFTValue(updatedValue, index);
+
     setTransactionStep(TransactionStep.APPROVING);
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
@@ -203,7 +204,14 @@ export default function MintInProgress({
               </Row>
               <Row>
                 <Space size={8}>
-                  <Button onClick={handleNext}>Skip</Button>
+                  <Button
+                    type="default"
+                    onClick={handleNext}
+                    style={{ background: 'rgba(53, 53, 53, 1)' }}
+                  >
+                    Skip
+                  </Button>
+
                   <Button
                     type="primary"
                     onClick={() => setTransactionStep(TransactionStep.APPROVING)}
@@ -217,7 +225,7 @@ export default function MintInProgress({
         </Col>
 
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
-        <NFTPreviewGrid index={index} images={images} isMintStep={true} nftValues={nftValues} />
+        <NFTPreviewGrid index={index} images={images} nftValues={nftValues} />
       </Row>
     </NavContainer>
   );

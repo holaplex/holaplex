@@ -8,8 +8,8 @@ const CheckWrapper = styled.div`
   position: relative;
   height: 24px;
   width: 24px;
-  top: -68px;
-  right: -42px;
+  top: -74px;
+  right: -47px;
 `;
 
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
