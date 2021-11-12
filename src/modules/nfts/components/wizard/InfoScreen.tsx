@@ -114,11 +114,10 @@ export default function InfoScreen({
   dispatch,
   currentImage,
 }: Props) {
-  const [errors, setErrors] = useState<string[]>([]);
-
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
   const nftNumberList = images.map((_, i) => `nft-${i}`);
+  const [errorList, setErrorList] = useState([]);
   // useEffect(() => {
   //   if (isActive) {
   //     // const current = form.getFieldValue(nftNumber);
@@ -131,50 +130,34 @@ export default function InfoScreen({
   // }, [isActive]);
 
   const values = form.getFieldsValue(nftNumberList) as FormValues;
-  const previousNft: NFTFormValue | undefined = values[`nft-${index - 1}`];
-
+  const previousNFT: NFTFormValue | undefined = values[`nft-${index - 1}`];
+  console.log('previousNFT', previousNFT);
   const handleNext = () => {
-    const DUPLICATE_ATTRIBUTE_TYPE_ERROR = 'Duplicate attributes';
+    setErrorList([]);
     form
       .validateFields([
         [nftNumber, 'name'],
         [nftNumber, 'attributes'],
       ])
       .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
-        setErrors([]);
-
-        const traitTypes = v2[nftNumber].attributes.map((a) => a.trait_type);
-        const indexOfDuplicate = traitTypes.findIndex((a, i) => traitTypes.indexOf(a) !== i);
-
-        if (indexOfDuplicate !== -1) {
-          throw new Error(DUPLICATE_ATTRIBUTE_TYPE_ERROR);
-        }
-
+        console.log('validate all fields');
         if (isLast) {
           const arrayValues = Object.values(values).filter((v) => v !== undefined);
-          console.log('array values are ', arrayValues);
           dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
-
-          // .then((values: FormValues) => {
-          //   console.log('VALUES', values);
-          //   const arrayValues = Object.values(values).filter((v) => v !== undefined);
-          //   console.log('array values are ', arrayValues);
-          //   dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
-          // })
-          // .catch((err) => {
-          //   console.log('err', err);
-          // });
-          // form.submit();
         }
         nextStep!();
       })
-      .catch((errorInfo) => {
-        if (errorInfo?.message === DUPLICATE_ATTRIBUTE_TYPE_ERROR) {
-          setErrors(['Identical attribute types are not allowed']);
-        } else {
-          console.error(errorInfo);
+      .catch(
+        (errorInfo: {
+          errorFields: {
+            name: string[];
+            errors: string[];
+          }[];
+        }) => {
+          console.log('errorInfo', errorInfo);
+          setErrorList(errorInfo.errorFields.map((ef) => ef?.errors).flat());
         }
-      });
+      );
   };
 
   const AttributeRow = ({
@@ -218,43 +201,61 @@ export default function InfoScreen({
             <Form.Item
               name={[nftNumber, 'description']}
               label="Description"
-              initialValue={previousNft ? previousNft.description : ''}
+              initialValue={previousNFT ? previousNFT.description : ''}
             >
               <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
             </Form.Item>
             <Form.Item
               name={[nftNumber, 'collection']}
               label="Collection"
-              initialValue={previousNft ? previousNft.collection : ''}
+              initialValue={previousNFT ? previousNFT.collection : ''}
             >
               <Input placeholder="e.g. Stylish Studs (optional)" />
             </Form.Item>
-            <Form.Item
-              label="Attributes"
-              rules={[
-                {
-                  message: 'All attributes must be unique',
-                  async validator(rule, value) {
-                    console.log('Rule', {
-                      rule,
-                      value,
-                    });
-                  },
-                },
-              ]}
-            >
+            <Form.Item label="Attributes">
               <Form.List
                 name={[nftNumber, 'attributes']}
                 initialValue={
-                  previousNft
-                    ? previousNft?.attributes.map((a) => ({
+                  previousNFT
+                    ? previousNFT?.attributes.map((a) => ({
                         trait_type: a.trait_type,
                         value: undefined,
                       }))
                     : [{ trait_type: undefined, value: undefined }]
                 }
+                rules={[
+                  {
+                    message: 'All attributes must have defined trait types',
+                    async validator(rule, value: NFTAttribute[]) {
+                      if (value.length === 1) return;
+                      if (value.some((a, i) => !a?.trait_type)) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                  {
+                    message: 'All attributes must be unique',
+                    async validator(rule, value: NFTAttribute[]) {
+                      const traitTypes = value.map((a) => a?.trait_type);
+                      const indexOfDuplicate = traitTypes.findIndex(
+                        (a, i) => traitTypes.indexOf(a) !== i
+                      );
+                      if (indexOfDuplicate !== -1) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                  {
+                    message: 'All attributes with a trait type must have a value',
+                    async validator(rule, value: NFTAttribute[]) {
+                      if (value.some((a, i) => a?.trait_type && !a?.value)) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                ]}
               >
-                {(fields, { add, remove }) => (
+                {(fields, { add, remove }, { errors }) => (
                   <>
                     {fields.map((field) => (
                       <AttributeRow
@@ -269,9 +270,11 @@ export default function InfoScreen({
                         Add Attribute
                       </StyledClearButton>
                     )}
-                    <div>
-                      <Text type="danger">{errors}</Text>
-                    </div>
+                    {errorList.map((error, j) => (
+                      <div key={j}>
+                        <Text type="danger">{error}</Text>
+                      </div>
+                    ))}
                   </>
                 )}
               </Form.List>
