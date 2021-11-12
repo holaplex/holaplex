@@ -19,6 +19,7 @@ import Button from '@/common/components/elements/Button';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
+import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
@@ -33,6 +34,7 @@ interface Props extends Partial<StepWizardChildProps> {
   isFirst?: boolean;
   index: number;
   setDoEachRoyaltyInd?: React.Dispatch<React.SetStateAction<boolean>>;
+  doEachRoyaltyInd?: boolean;
 }
 
 const StyledDivider = styled(Divider)`
@@ -77,7 +79,7 @@ const StyledCreatorsRow = styled.div`
     margin: 0;
   }
 
-  .clipboard-icon {
+  .creator-row-icon {
     margin-right: 6px;
     cursor: pointer;
   }
@@ -157,11 +159,13 @@ const CreatorsRow = ({
   share,
   isUser = false,
   updateCreator,
+  removeCreator,
 }: {
   creatorAddress: string;
   share: number;
   isUser: boolean;
   updateCreator: (address: string, share: number) => void;
+  removeCreator: (address: string) => void;
 }) => {
   const ref = React.useRef(null);
   const [showPercentageInput, setShowPercentageInput] = React.useState(false);
@@ -183,7 +187,7 @@ const CreatorsRow = ({
         {creatorAddress}
       </Paragraph>
       <Image
-        className="clipboard-icon"
+        className="creator-row-icon"
         height={20}
         width={20}
         src={clipBoardIcon}
@@ -215,7 +219,7 @@ const CreatorsRow = ({
           onClick={() => setShowPercentageInput(true)}
           style={{ margin: '0 5px 0 auto', fontSize: 14, cursor: 'pointer' }}
         >
-          {share}%
+          {share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
     </StyledCreatorsRow>
@@ -232,6 +236,7 @@ export default function RoyaltiesCreators({
   userKey,
   formValues,
   setDoEachRoyaltyInd,
+  doEachRoyaltyInd,
   index,
   isFirst = false,
 }: Props) {
@@ -295,6 +300,7 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
+        console.log('validate royalties and creators', { formValues, currentNFTFormValue, index });
         if (!creators.length || !maxSupply || !royaltiesInput) {
           throw new Error('No creators or max supply or royalties input');
         }
@@ -305,7 +311,6 @@ export default function RoyaltiesCreators({
         const formValuesCopy = [...formValues];
         formValuesCopy[index] = { ...currentNFTFormValue };
 
-        dispatch({ type: 'SET_FORM_VALUES', payload: formValuesCopy });
         setRoyaltiesInput(ROYALTIES_INPUT_DEFAULT);
         form.setFieldsValue({ royaltiesPercentage: ROYALTIES_INPUT_DEFAULT });
       } else {
@@ -332,13 +337,25 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        setCreators([...creators, { address: values.addCreator, share: 0 }]);
+        const newShareSplit = 100 / (creators.length + 1);
+        setCreators([
+          ...creators.map((c) => ({ ...c, share: newShareSplit })),
+          { address: values.addCreator, share: newShareSplit },
+        ]);
         toggleCreatorField(false);
         form.resetFields(['addCreator']);
       })
       .catch((err) => {
         console.log('err is ', err);
       });
+  };
+  const removeCreator = (creatorAddress: string) => {
+    const newShareSplit = 100 / (creators.length - 1) || 100;
+    setCreators(
+      creators
+        .filter((c) => c.address !== creatorAddress)
+        .map((c) => ({ ...c, share: newShareSplit }))
+    );
   };
 
   if (!userKey) return null;
@@ -357,7 +374,7 @@ export default function RoyaltiesCreators({
                 { required: true, message: 'Required' },
                 {
                   type: 'number',
-                  min: 1, // Can this be 0?
+                  min: 1, // Can this be 0? // we set it to 100 elsewhere, sooo?
                   max: 100,
                   message: 'Percentage must be between 1 and 100',
                 },
@@ -374,6 +391,7 @@ export default function RoyaltiesCreators({
               />
             </Form.Item>
           </Form.Item>
+          {/* Display creators */}
           {creators.length < MAX_CREATOR_LIMIT && (
             <Row justify="space-between" align="middle">
               <Paragraph style={{ fontWeight: 900 }}>Creators & royalty split</Paragraph>
@@ -390,19 +408,48 @@ export default function RoyaltiesCreators({
                 isUser={creator.address === userKey}
                 key={creator.address}
                 updateCreator={updateCreator}
+                removeCreator={removeCreator}
               />
             ))}
           </Row>
+          {/* Add creator form */}
           {showCreatorField && (
             <Row>
-              {/* TODO: Extract out */}
               <Form.Item
                 name="addCreator"
                 style={{ width: '100%' }}
                 rules={[
                   { required: true, message: 'Please enter a value' },
                   { max: 44 },
+                  // need to handle someone pasting in a string longer than 44 char. Right now the input just caps it at 44 without showing anything
                   { min: 44, message: 'Must be at least 44 characters long' },
+                  {
+                    message: 'All creator hashes must be unique',
+                    async validator(rule, value: string) {
+                      const existingCreators = creators.map((c) => c.address);
+                      const indexOfDuplicate = existingCreators.findIndex((a, i) => value === a);
+                      if (indexOfDuplicate !== -1) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                  {
+                    message: 'Creator address is not valid',
+                    async validator(rule, creatorAddress: string) {
+                      if (creatorAddress.indexOf(' ') >= 0) {
+                        // whitespace detected
+                        throw new Error();
+                      }
+                      return true;
+                      // a bit unsure about this requirement in the end
+                      const base64RegEx =
+                        /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
+
+                      if (!base64RegEx.test(creatorAddress)) {
+                        throw new Error();
+                      }
+                    },
+                  },
                 ]}
               >
                 <Input
@@ -479,6 +526,7 @@ export default function RoyaltiesCreators({
                         <Paragraph style={{ fontSize: 12 }}>Number of editions</Paragraph>
                         <Form.Item
                           name="numOfEditions"
+                          initialValue={1}
                           rules={
                             editionsSelection === 'limited'
                               ? [

@@ -1,6 +1,6 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Divider, Input, Form, FormInstance, Row } from 'antd';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -8,8 +8,9 @@ import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
-import { FormValues, MintDispatch } from 'pages/nfts/new';
+import { FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts/new';
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
+import Text from 'antd/lib/typography/Text';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 interface Props extends Partial<StepWizardChildProps> {
@@ -116,6 +117,7 @@ export default function InfoScreen({
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
   const nftNumberList = images.map((_, i) => `nft-${i}`);
+  const [errorList, setErrorList] = useState<string[]>([]);
   // useEffect(() => {
   //   if (isActive) {
   //     // const current = form.getFieldValue(nftNumber);
@@ -127,28 +129,41 @@ export default function InfoScreen({
   //   }
   // }, [isActive]);
 
+  const values = form.getFieldsValue(nftNumberList) as FormValues;
+  const previousNFT: NFTFormValue | undefined = values[`nft-${index - 1}`];
+  console.log('previousNFT', previousNFT);
   const handleNext = () => {
-    form.validateFields([[nftNumber, 'name']]).then(() => {
-      if (isLast) {
-        const values = form.getFieldsValue(nftNumberList) as FormValues;
-        console.log('VALUES', values);
-        const arrayValues = Object.values(values).filter((v) => v !== undefined);
-        console.log('array values are ', arrayValues);
-        dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
-
-        // .then((values: FormValues) => {
-        //   console.log('VALUES', values);
-        //   const arrayValues = Object.values(values).filter((v) => v !== undefined);
-        //   console.log('array values are ', arrayValues);
-        //   dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
-        // })
-        // .catch((err) => {
-        //   console.log('err', err);
-        // });
-        // form.submit();
-      }
-      nextStep!();
-    });
+    setErrorList([]);
+    form
+      .validateFields([
+        [nftNumber, 'name'],
+        [nftNumber, 'attributes'],
+      ])
+      .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
+        console.log('validate all fields');
+        if (isLast) {
+          const values2 = form.getFieldsValue(nftNumberList) as FormValues;
+          console.log('VALUES2', {
+            values,
+            values2,
+          });
+          const arrayValues = Object.values(values2).filter((v) => v !== undefined);
+          console.log('info screen', { arrayValues, values2 });
+          dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
+        }
+        nextStep!();
+      })
+      .catch(
+        (errorInfo: {
+          errorFields: {
+            name: string[];
+            errors: string[];
+          }[];
+        }) => {
+          console.log('errorInfo', errorInfo);
+          setErrorList(errorInfo.errorFields.map((ef) => ef?.errors).flat());
+        }
+      );
   };
 
   const AttributeRow = ({
@@ -171,7 +186,7 @@ export default function InfoScreen({
     </Input.Group>
   );
 
-  return (
+  return isActive ? (
     <NavContainer
       title={`Info for #${index + 1} of ${images.length}`}
       previousStep={previousStep}
@@ -189,16 +204,62 @@ export default function InfoScreen({
             >
               <Input placeholder="required" autoFocus />
             </Form.Item>
-            <Form.Item name={[nftNumber, 'description']} label="Description" initialValue={''}>
+            <Form.Item
+              name={[nftNumber, 'description']}
+              label="Description"
+              initialValue={previousNFT ? previousNFT.description : ''}
+            >
               <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
             </Form.Item>
-            <Form.Item name={[nftNumber, 'collection']} label="Collection" initialValue={''}>
+            <Form.Item
+              name={[nftNumber, 'collection']}
+              label="Collection"
+              initialValue={previousNFT ? previousNFT.collection : ''}
+            >
               <Input placeholder="e.g. Stylish Studs (optional)" />
             </Form.Item>
             <Form.Item label="Attributes">
               <Form.List
                 name={[nftNumber, 'attributes']}
-                initialValue={[{ trait_type: undefined, value: undefined }]}
+                initialValue={
+                  previousNFT
+                    ? previousNFT?.attributes.map((a) => ({
+                        trait_type: a.trait_type,
+                        value: undefined,
+                      }))
+                    : [{ trait_type: undefined, value: undefined }]
+                }
+                rules={[
+                  {
+                    message: 'All attributes must have defined trait types',
+                    async validator(rule, value: NFTAttribute[]) {
+                      if (value.length === 1) return;
+                      if (value.some((a, i) => !a?.trait_type)) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                  {
+                    message: 'All attributes must be unique',
+                    async validator(rule, value: NFTAttribute[]) {
+                      const traitTypes = value.map((a) => a?.trait_type);
+                      const indexOfDuplicate = traitTypes.findIndex(
+                        (a, i) => traitTypes.indexOf(a) !== i
+                      );
+                      if (indexOfDuplicate !== -1) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                  {
+                    message: 'All attributes with a trait type must have a value',
+                    async validator(rule, value: NFTAttribute[]) {
+                      if (value.some((a, i) => a?.trait_type && !a?.value)) {
+                        throw new Error();
+                      }
+                    },
+                  },
+                ]}
               >
                 {(fields, { add, remove }) => (
                   <>
@@ -209,6 +270,11 @@ export default function InfoScreen({
                         fieldsLength={fields.length}
                         field={field}
                       />
+                    ))}
+                    {errorList.map((error, j) => (
+                      <div key={j}>
+                        <Text type="danger">{error}</Text>
+                      </div>
                     ))}
                     {fields.length < 10 && (
                       <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
@@ -226,10 +292,9 @@ export default function InfoScreen({
             </ButtonFormItem>
           </Form.Item>
         </FormWrapper>
-
         <StyledDivider type="vertical" />
         <NFTPreviewGrid images={images} index={index} width={2} />
       </Row>
     </NavContainer>
-  );
+  ) : null;
 }

@@ -1,12 +1,12 @@
 import Button from '@/common/components/elements/Button';
 import { Layout, PageHeader, Space, Upload, message } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useDropzone } from 'react-dropzone';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { MintDispatch } from 'pages/nfts/new';
-const { Dragger } = Upload;
 import { DraggerProps } from 'antd/lib/upload';
+import { UploadFile } from 'antd/lib/upload/interface';
+const { Dragger } = Upload;
 
 export const MAX_IMAGES = 10;
 const StyledLayout = styled(Layout)`
@@ -37,73 +37,31 @@ const Copy = styled.p<{ transparent?: boolean }>`
   ${(p) => (p.transparent ? 'opacity: 0.6;' : null)}
 `;
 
-const StyledDragger = styled(Dragger)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 856px;
-  height: 362px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  box-sizing: border-box;
-  border-radius: 8px;
-  background: black;
-`;
-
-const DropZone = styled(Space)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 856px;
-  height: 362px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  box-sizing: border-box;
-  border-radius: 8px;
-`;
-
 interface Props extends Partial<StepWizardChildProps> {
   dispatch: MintDispatch;
   images: Array<File>;
 }
 
 export default function UploadStep({ nextStep, dispatch, images }: Props) {
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      dispatch({ type: 'SET_IMAGES', payload: acceptedFiles });
-      nextStep!();
-    },
-    [dispatch, nextStep]
-  );
-
-  const { getRootProps, getInputProps, open } = useDropzone({
-    onDrop,
-    noClick: true,
-    maxFiles: MAX_IMAGES,
-    accept: 'image/jpeg, image/png, image/gif',
-  });
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   let count = 0;
 
   const draggerProps: DraggerProps = {
     name: 'file',
+    maxCount: MAX_IMAGES, // doesn't actually seem to do anything, hence the checkes in other places
+    fileList,
     multiple: true,
     accept: 'image/jpeg,image/png,image/gif',
     showUploadList: false,
-    // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
     style: {
-      //     display: flex;
-      // flex-direction: column;
-      // justify-content: center;
+      // TODO: work on responsiveness
       width: '856px',
       background: 'rgba(255,255,255,0.1)',
-      // width: '100%',
-      // height: '100%',
-      // padding: "0",
       border: '1px dashed rgba(255, 255, 255, 0.2)',
       boxSizing: 'border-box',
-      // borderRadius: "8px",
     },
+
     onChange(info) {
       count++;
       console.log('on change', count, info.fileList.length);
@@ -118,11 +76,14 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
       }
       if (count === info.fileList.length) {
         nextStep!();
+        setFileList([]); // reset local File upload state
       }
     },
     beforeUpload: (file, list) => {
-      dispatch({ type: 'ADD_IMAGE', payload: file });
-      // nextStep!();
+      const isUniqueFile = images.every((i) => i.name !== file.name);
+      if (isUniqueFile && images.length < 11) {
+        dispatch({ type: 'ADD_IMAGE', payload: file });
+      }
       return false;
     },
   };

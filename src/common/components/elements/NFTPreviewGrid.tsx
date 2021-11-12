@@ -24,7 +24,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
 const StyledRemoveNFT = styled.div`
   position: absolute;
   top: -9px;
-  right: 4px;
+  right: -9px;
   display: none;
   cursor: pointer;
 `;
