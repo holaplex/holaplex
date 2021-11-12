@@ -42,8 +42,6 @@ const StyledSummaryItem = styled.div`
   }
 `;
 
-const Attributes = styled.div``;
-
 const Attribute = styled(Space)`
   :not(:last-child) {
     margin-bottom: 9px;
@@ -80,7 +78,7 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
       >
         {value.description}
       </Paragraph>
-      <Attributes>
+      <div>
         {value.attributes?.map((attribute: NFTAttribute, index: number) =>
           attribute.trait_type ? (
             <Attribute key={index}>
@@ -89,7 +87,7 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
             </Attribute>
           ) : null
         )}
-      </Attributes>
+      </div>
     </StyledSummaryItem>
   );
 };
@@ -105,12 +103,6 @@ export default function Summary({
   form,
   uploadMetaData,
 }: Props) {
-  // useEffect(() => {
-  //   if (isActive) {
-  //     form.submit();
-  //   }
-  // }, [form, isActive]);
-
   const handleNext = () => {
     nextStep!();
   };
@@ -122,26 +114,26 @@ export default function Summary({
 
     images.forEach((i) => body.append(i.name, i, i.name));
 
-    // const resp = await fetch('/api/ipfs/upload', {
-    //   method: 'POST',
-    //   body,
-    // });
+    const resp = await fetch('/api/ipfs/upload', {
+      method: 'POST',
+      body,
+    });
 
-    // const uploadedFilePins = await resp.json()
-    const uploadedFilePins = {
-      files: [
-        {
-          uri: 'https://bafkreiaqyueyi6pj4dno6a5xdioh3qq4wcckk6zp3a4r3o4ugu63qsgpci.ipfs.dweb.link?ext=png',
-          name: 'image 3.png',
-          type: 'image/png',
-        },
-        {
-          uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link?ext=png',
-          name: 'image 8.png',
-          type: 'image/png',
-        },
-      ],
-    };
+    const uploadedFilePins = await resp.json();
+    // const uploadedFilePins = {
+    //   files: [
+    //     {
+    //       uri: 'https://bafkreiaqyueyi6pj4dno6a5xdioh3qq4wcckk6zp3a4r3o4ugu63qsgpci.ipfs.dweb.link?ext=png',
+    //       name: 'image 3.png',
+    //       type: 'image/png',
+    //     },
+    //     {
+    //       uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link?ext=png',
+    //       name: 'image 8.png',
+    //       type: 'image/png',
+    //     },
+    //   ],
+    // };
 
     console.log('up loaded files are being set');
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
@@ -162,7 +154,7 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
+              images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]} />
           )}
         </Grid>
       </Row>
