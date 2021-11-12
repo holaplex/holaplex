@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
+import { MintStatus, NFTValue } from 'pages/nfts/new';
 
 const CheckWrapper = styled.div`
   position: relative;
@@ -38,16 +39,6 @@ const ImageContainer = styled.div`
   }
 `;
 
-const Grid_old = styled.div`
-  display: grid;
-  grid-template-columns: ${(props: { width: number }) => '1fr '.repeat(props.width)};
-  grid-template-rows: min-content min-content;
-  width: 216px;
-  column-gap: 16px;
-  row-gap: 16px;
-  max-height: 500px;
-`;
-
 const Grid = styled.div`
   display: grid;
   grid-template-columns: ${(props: { width: number }) => '1fr '.repeat(props.width)};
@@ -57,19 +48,40 @@ const Grid = styled.div`
   max-height: 500px;
 `;
 
-export const NftPreviewGrid = ({
-  images,
-  index = -1,
-  width = 2,
-  removeImage,
-  children,
-}: {
+interface Props {
   images: Array<File>;
   index?: number;
   width?: number;
   removeImage?: (id: string) => void;
   children?: any;
-}) => {
+  isMintStep?: boolean;
+  nftValues?: NFTValue[];
+}
+
+const getOverlayStatus = (index: number, nftValues?: NFTValue[]) => {
+  const nftValue = nftValues && nftValues[index];
+  const showFailedOverlay = nftValue && nftValue.mintStatus === MintStatus.FAILED;
+
+  return showFailedOverlay ? (
+    <CheckWrapper>
+      <Image width={24} height={24} src={RedXClose} alt="failed" />
+    </CheckWrapper>
+  ) : (
+    <CheckWrapper>
+      <Image width={24} height={24} src={GreenCheckIcon} alt="green-check" />
+    </CheckWrapper>
+  );
+};
+
+export const NFTPreviewGrid = ({
+  images,
+  index = -1,
+  width = 2,
+  removeImage,
+  children,
+  isMintStep,
+  nftValues,
+}: Props) => {
   return (
     <Grid width={width}>
       {images.map((image, i) => (
@@ -98,12 +110,7 @@ export const NftPreviewGrid = ({
               unoptimized={true}
             />
           )}
-
-          {i < index && (
-            <CheckWrapper>
-              <Image width={24} height={24} src={GreenCheckIcon} alt="green-check" />
-            </CheckWrapper>
-          )}
+          {i < index && getOverlayStatus(i, nftValues)}
         </ImageOverlay>
       ))}
       {children}

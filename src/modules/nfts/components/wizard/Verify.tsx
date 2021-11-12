@@ -10,7 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
 import { MAX_IMAGES } from '@/modules/nfts/components/wizard/Upload';
-import { NftPreviewGrid } from '@/common/components/elements/NftPreviewGrid';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -81,8 +81,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-
-      console.log(acceptedFiles, acceptedFiles.length)
+      console.log(acceptedFiles, acceptedFiles.length);
 
       for (const file of acceptedFiles) {
         let uploadedImage = file;
@@ -91,7 +90,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
           const duplicates = findDuplicates(imageNameWithoutExt, images);
           const fileExtension = uploadedImage.name.split('.').pop();
           let newName = `${imageNameWithoutExt}_1.${fileExtension}`;
-  
+
           if (duplicates.length > 0) {
             const lastItem = duplicates.pop();
             if (lastItem) {
@@ -100,16 +99,15 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
               newName = `${imageNameWithoutExt}_${count + 1}.${fileExtension}`;
             }
           }
-  
+
           uploadedImage = new File([uploadedImage], newName, { type: uploadedImage.type });
         }
-        
+
         console.log('uploadedImage', uploadedImage);
         dispatch({ type: 'ADD_IMAGE', payload: uploadedImage });
       }
-
     },
-    [dispatch, images],
+    [dispatch, images]
   );
 
   const { open, getInputProps } = useDropzone({
@@ -122,19 +120,19 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
   return (
     <NavContainer previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
-      <NftPreviewGrid removeImage={removeImage} images={images} width={5}>
-      {images.length < MAX_IMAGES && (
-        <Upload
-        showUploadList={false}
-        beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
-      >
-          <AddNFTButton >
-            <input {...getInputProps()} />
-            <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
-          </AddNFTButton>
+      <NFTPreviewGrid removeImage={removeImage} images={images} width={5}>
+        {images.length < MAX_IMAGES && (
+          <Upload
+            showUploadList={false}
+            beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
+          >
+            <AddNFTButton>
+              <input {...getInputProps()} />
+              <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
+            </AddNFTButton>
           </Upload>
         )}
-        </NftPreviewGrid>
+      </NFTPreviewGrid>
       <Button type="primary" size="large" onClick={nextStep}>
         Looks good
       </Button>

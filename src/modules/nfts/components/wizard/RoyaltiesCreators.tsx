@@ -19,7 +19,8 @@ import Button from '@/common/components/elements/Button';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Royalty } from 'pages/nfts/new';
+import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -33,14 +34,6 @@ interface Props extends Partial<StepWizardChildProps> {
   index: number;
   setDoEachRoyaltyInd?: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 16px;
-  row-gap: 16px;
-  grid-template-rows: 100px 100px 100px 100px 100px;
-`;
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -160,15 +153,15 @@ const StyledPercentageInput = styled(InputNumber)`
 `;
 
 const CreatorsRow = ({
-  creatorKey,
-  amount,
+  creatorAddress,
+  share,
   isUser = false,
   updateCreator,
 }: {
-  creatorKey: string;
-  amount: number;
+  creatorAddress: string;
+  share: number;
   isUser: boolean;
-  updateCreator: (key: string, amount: number) => void;
+  updateCreator: (address: string, share: number) => void;
 }) => {
   const ref = React.useRef(null);
   const [showPercentageInput, setShowPercentageInput] = React.useState(false);
@@ -187,7 +180,7 @@ const CreatorsRow = ({
           whiteSpace: 'nowrap',
         }}
       >
-        {creatorKey}
+        {creatorAddress}
       </Paragraph>
       <Image
         className="clipboard-icon"
@@ -196,20 +189,20 @@ const CreatorsRow = ({
         src={clipBoardIcon}
         alt="copyToClipboard"
         onClick={() => {
-          navigator.clipboard.writeText(creatorKey);
+          navigator.clipboard.writeText(creatorAddress);
           openNotification();
         }}
       />
       {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
       {showPercentageInput ? (
         <StyledPercentageInput
-          defaultValue={amount}
+          defaultValue={share}
           min={0}
           max={100}
           formatter={(value) => `${value}%`}
           parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
           ref={ref}
-          onChange={(value) => updateCreator(creatorKey, value as number)}
+          onChange={(value) => updateCreator(creatorAddress, value as number)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowPercentageInput(false);
@@ -222,7 +215,7 @@ const CreatorsRow = ({
           onClick={() => setShowPercentageInput(true)}
           style={{ margin: '0 5px 0 auto', fontSize: 14, cursor: 'pointer' }}
         >
-          {amount}%
+          {share}%
         </Paragraph>
       )}
     </StyledCreatorsRow>
@@ -242,10 +235,8 @@ export default function RoyaltiesCreators({
   index,
   isFirst = false,
 }: Props) {
-  // TODO: Test purposes only, please remove before prod
-  userKey = 'ZiG1cukk0SRU5eIi3O4kVqSz2hKfsB9LOFaMXtvF5Oep';
-  const [creators, setCreators] = useState<Array<Royalty>>([
-    { creatorKey: userKey ?? '', amount: 100 },
+  const [creators, setCreators] = useState<Array<Creator>>([
+    { address: userKey ?? '', share: 100 },
   ]);
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesInput, setRoyaltiesInput] = useState(ROYALTIES_INPUT_DEFAULT);
@@ -255,9 +246,9 @@ export default function RoyaltiesCreators({
   const [maxSupply, setMaxSupply] = useState<number>(1);
 
   useEffect(() => {
-    // When creators changes, sum up all the amounts.
+    // When creators changes, sum up all the shares.
     const total = creators.reduce((totalShares, creator) => {
-      return totalShares + creator.amount;
+      return totalShares + creator.share;
     }, 0);
 
     setTotalRoyaltiesShare(total);
@@ -265,7 +256,7 @@ export default function RoyaltiesCreators({
 
   // TODO: DRY this up
   const applyToAll = () => {
-    const zeroedRoyalties = creators.filter((creator) => creator.amount === 0);
+    const zeroedRoyalties = creators.filter((creator) => creator.share === 0);
 
     if (totalRoyaltyShares === 0 || totalRoyaltyShares > 100 || zeroedRoyalties.length > 0) {
       setShowErrors(true);
@@ -278,15 +269,18 @@ export default function RoyaltiesCreators({
         if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(false);
 
         if (formValues) {
-          //   const newFormValues = formValues.map((formValue) => {
-          //     console.log('creators are', creators);
-          //     formValue.properties = { creators, maxSupply };
-          //     formValue.seller_fee_basis_points = royaltiesInput;
-          //     console.log('formValue is', formValue);
-          //     return formValue;
-          //   });
-          //   dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
-          //   nextStep!();
+          const newFormValues = formValues.map((formValue) => {
+            if (!creators.length || !maxSupply || !royaltiesInput) {
+              throw new Error('No creators or max supply or royalties input');
+            }
+            console.log('creators are', creators);
+            formValue.properties = { creators, maxSupply };
+            formValue.seller_fee_basis_points = royaltiesInput;
+            console.log('formValue is', formValue);
+            return formValue;
+          });
+          dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
+          nextStep!();
         } else {
           throw new Error('No form values found');
         }
@@ -301,15 +295,17 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
+        if (!creators.length || !maxSupply || !royaltiesInput) {
+          throw new Error('No creators or max supply or royalties input');
+        }
+
         currentNFTFormValue.properties = { creators, maxSupply };
         currentNFTFormValue.seller_fee_basis_points = royaltiesInput;
 
-        const restOfValues = formValues.filter((_, i) => i !== index);
+        const formValuesCopy = [...formValues];
+        formValuesCopy[index] = { ...currentNFTFormValue };
 
-        dispatch({
-          type: 'SET_FORM_VALUES',
-          payload: [...restOfValues, { ...currentNFTFormValue }],
-        });
+        dispatch({ type: 'SET_FORM_VALUES', payload: formValuesCopy });
         setRoyaltiesInput(ROYALTIES_INPUT_DEFAULT);
         form.setFieldsValue({ royaltiesPercentage: ROYALTIES_INPUT_DEFAULT });
       } else {
@@ -320,11 +316,11 @@ export default function RoyaltiesCreators({
     });
   };
 
-  const updateCreator = (creatorKey: string, amount: number) => {
-    const creatorIndex = creators.findIndex((creator) => creator.creatorKey === creatorKey);
+  const updateCreator = (address: string, share: number) => {
+    const creatorIndex = creators.findIndex((creator) => creator.address === address);
     setCreators([
       ...creators.slice(0, creatorIndex),
-      { creatorKey, amount },
+      { address, share },
       ...creators.slice(creatorIndex + 1),
     ]);
   };
@@ -336,7 +332,7 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        setCreators([...creators, { creatorKey: values.addCreator, amount: 0 }]);
+        setCreators([...creators, { address: values.addCreator, share: 0 }]);
         toggleCreatorField(false);
         form.resetFields(['addCreator']);
       })
@@ -389,10 +385,10 @@ export default function RoyaltiesCreators({
           <Row>
             {creators.map((creator) => (
               <CreatorsRow
-                creatorKey={creator.creatorKey}
-                amount={creator.amount}
-                isUser={creator.creatorKey === userKey}
-                key={creator.creatorKey}
+                creatorAddress={creator.address}
+                share={creator.share}
+                isUser={creator.address === userKey}
+                key={creator.address}
                 updateCreator={updateCreator}
               />
             ))}
@@ -536,20 +532,8 @@ export default function RoyaltiesCreators({
             </Space>
           </Row>
         </FormWrapper>
-
         <StyledDivider type="vertical" />
-        <Grid>
-          {images.map((image) => (
-            <Image
-              width={100}
-              height={100}
-              src={URL.createObjectURL(image)}
-              alt={image.name}
-              unoptimized={true}
-              key={image.name}
-            />
-          ))}
-        </Grid>
+        <NFTPreviewGrid images={images} index={index} width={2} />
       </Row>
     </NavContainer>
   );

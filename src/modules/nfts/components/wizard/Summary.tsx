@@ -60,9 +60,6 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
     throw new Error('Image is required');
   }
 
-  console.log('DEBUG >>>>>>>>>>>>>>>');
-  console.log('value is ', value);
-
   return (
     <StyledSummaryItem>
       <Image
@@ -90,7 +87,7 @@ const SummaryItem = ({ value, image }: { value: NFTFormValue; image: File }) => 
               <Paragraph style={{ width: 110 }}>{attribute.trait_type}:</Paragraph>
               <Paragraph>{attribute.value}</Paragraph>
             </Attribute>
-          ) : null,
+          ) : null
         )}
       </Attributes>
     </StyledSummaryItem>
@@ -149,7 +146,6 @@ export default function Summary({
     console.log('up loaded files are being set');
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
     uploadMetaData(uploadedFilePins.files).then(() => {
-      console.log('does this fire?');
       nextStep!();
     }); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
   };
@@ -164,9 +160,10 @@ export default function Summary({
 
       <Row style={{ marginTop: 78 }}>
         <Grid>
-          {formValues.map((fv: NFTFormValue, index: number) => (
-            images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
-          ))}
+          {formValues.map(
+            (fv: NFTFormValue, index: number) =>
+              images[index] && <SummaryItem key={fv.name} value={fv} image={images[index]} /> // I don't like finding the image by assumption of its position by index, but attaching the image name to the form value is an incredible pain, how else can we confidently find our image?
+          )}
         </Grid>
       </Row>
     </NavContainer>

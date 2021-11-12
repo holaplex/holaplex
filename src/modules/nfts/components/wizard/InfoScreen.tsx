@@ -10,8 +10,8 @@ import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
 import { FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts/new';
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
-import { NftPreviewGrid } from '@/common/components/elements/NftPreviewGrid';
 import Text from 'antd/lib/typography/Text';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -284,7 +284,7 @@ export default function InfoScreen({
           </Form.Item>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NftPreviewGrid images={images} index={index} width={2} />
+        <NFTPreviewGrid images={images} index={index} width={2} />
       </Row>
     </NavContainer>
   ) : null;

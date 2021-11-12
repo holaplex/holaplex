@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import NavContainer from "@/modules/nfts/components/wizard/NavContainer";
-import { StepWizardChildProps } from "react-step-wizard";
-import { Divider, Input, PageHeader, FormInstance, Row } from "antd";
-import { FormValues, MintDispatch } from "pages/nfts/new";
-import { FormListFieldData } from "antd/lib/form/FormList";
-import { NftPreviewGrid } from "@/common/components/elements/NftPreviewGrid";
-import Paragraph from "antd/lib/typography/Paragraph";
-import Button from "@/common/components/elements/Button";
+import styled from 'styled-components';
+import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
+import { StepWizardChildProps } from 'react-step-wizard';
+import { Divider, Input, PageHeader, FormInstance, Row } from 'antd';
+import { FormValues, MintDispatch } from 'pages/nfts/new';
+import { FormListFieldData } from 'antd/lib/form/FormList';
+import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import Paragraph from 'antd/lib/typography/Paragraph';
+import Button from '@/common/components/elements/Button';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -61,23 +61,22 @@ export default function OffRampScreen({ goToStep, clearForm, images }: Props) {
         <FormWrapper>
           <Header>
             Congratulations! You&apos;ve minted {nrOfNfts} NFT
-            {nrOfNfts && "s"}
+            {nrOfNfts && 's'}
           </Header>
           <Paragraph
             style={{
-              color: "#fff",
+              color: '#fff',
               opacity: 0.6,
               fontSize: 14,
               fontWeight: 400,
             }}
           >
-            They are available in your wallet. Now you can list them on your
-            Holaplex store.
+            They are available in your wallet. Now you can list them on your Holaplex store.
           </Paragraph>
           <Button type="primary">List on your Holaplex store</Button>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NftPreviewGrid images={images} />
+        <NFTPreviewGrid images={images} />
       </Row>
     </NavContainer>
   );
