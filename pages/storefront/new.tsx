@@ -22,6 +22,7 @@ import {
   submitCallback,
   Title,
   UploadedLogo,
+  UploadedBanner,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
@@ -58,6 +59,7 @@ export default function New({ track }: StorefrontEditorProps) {
     { name: ['theme', 'titleFont'], value: 'Work Sans' },
     { name: ['theme', 'textFont'], value: 'Work Sans' },
     { name: ['theme', 'logo'], value: [] },
+    { name: ['theme', 'banner'], value: [] },
     { name: ['meta', 'favicon'], value: [] },
     { name: ['meta', 'title'], value: '' },
     { name: ['meta', 'description'], value: '' },
@@ -137,7 +139,20 @@ export default function New({ track }: StorefrontEditorProps) {
     <Row justify="space-between">
       <Col sm={24} md={12} lg={12}>
         <Title level={2}>Next, theme your store.</Title>
-        <Paragraph>Choose a logo, colors, and fonts to fit your store’s brand.</Paragraph>
+        <Paragraph>Choose a images, colors, and fonts to fit your store’s brand.</Paragraph>
+        <Form.Item
+          label="Hero Banner"
+          name={['theme', 'banner']}
+          rules={[{ required: true, message: 'Upload a Hero Image' }]}
+        >
+          <Upload>
+            {isEmpty(values.theme.banner) && (
+              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                Upload Banner
+              </Button>
+            )}
+          </Upload>
+        </Form.Item>
         <Form.Item
           label="Logo"
           name={['theme', 'logo']}
@@ -146,7 +161,7 @@ export default function New({ track }: StorefrontEditorProps) {
           <Upload>
             {isEmpty(values.theme.logo) && (
               <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload
+                Upload Logo
               </Button>
             )}
           </Upload>
@@ -179,6 +194,15 @@ export default function New({ track }: StorefrontEditorProps) {
       <PrevCol sm={24} md={11} lg={10}>
         <PrevCard bgColor={values.theme.backgroundColor}>
           <Space direction="vertical">
+            {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
+              <UploadedBanner
+                src={ifElse(
+                  has('response'),
+                  view(lensPath(['response', 'url'])),
+                  prop('url')
+                )(values.theme.banner[0])}
+              />
+            )}
             {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
               <UploadedLogo
                 src={ifElse(
