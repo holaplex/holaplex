@@ -142,8 +142,9 @@ export default function New({ track }: StorefrontEditorProps) {
         <Paragraph>Choose a images, colors, and fonts to fit your store’s brand.</Paragraph>
         <Form.Item
           label="Hero Banner"
+          tooltip="Sits at the top of your store, 1500px wide and 500px works best!"
           name={['theme', 'banner']}
-          rules={[{ required: true, message: 'Upload a Hero Image' }]}
+          rules={[{ required: false, message: 'Upload a Hero Image' }]}
         >
           <Upload>
             {isEmpty(values.theme.banner) && (

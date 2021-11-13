@@ -148,10 +148,15 @@ export default function Edit({ track }: StorefrontEditorProps) {
                   <Form.Item
                     label="Banner"
                     name={['theme', 'banner']}
-                    rules={[{ required: true, message: 'Upload your Banner.' }]}
+                    tooltip="Sits at the top of your store, 1500px wide and 500px works best!"
+                    rules={[{ required: false, message: 'Upload your Banner.' }]}
                   >
                     <Upload>
-                      {isEmpty(values.theme.banner) && (
+                      {(isEmpty(values.theme.banner) || !ifElse(
+                            has('response'),
+                            view(lensPath(['response', 'url'])),
+                            prop('url')
+                          )(values.theme.banner[0])) && (
                         <Button block type="primary" size="middle" icon={<UploadOutlined />}>
                           Upload Banner
                         </Button>

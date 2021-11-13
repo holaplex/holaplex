@@ -230,14 +230,17 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag("holaplex:theme:logo:url", storefront.theme.logo.url)
       transaction.addTag("holaplex:theme:logo:name", storefront.theme.logo.name)
       transaction.addTag("holaplex:theme:logo:type", storefront.theme.logo.type)
-      transaction.addTag("holaplex:theme:banner:url", storefront.theme.banner.url)
-      transaction.addTag("holaplex:theme:banner:name", storefront.theme.banner.name)
-      transaction.addTag("holaplex:theme:banner:type", storefront.theme.banner.type)
       transaction.addTag("holaplex:theme:color:primary", storefront.theme.primaryColor)
       transaction.addTag("holaplex:theme:color:background", storefront.theme.backgroundColor)
       transaction.addTag("holaplex:theme:font:title", storefront.theme.titleFont)
       transaction.addTag("holaplex:theme:font:text", storefront.theme.textFont)
       transaction.addTag("Arweave-App", "holaplex")
+
+      if (storefront.theme.banner) {
+        transaction.addTag("holaplex:theme:banner:url", storefront.theme.banner.url)
+        transaction.addTag("holaplex:theme:banner:name", storefront.theme.banner.name)
+        transaction.addTag("holaplex:theme:banner:type", storefront.theme.banner.type)
+      }
 
       await arweave.transactions.sign(transaction)
 

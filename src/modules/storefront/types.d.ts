@@ -1,7 +1,7 @@
 import { ArweaveFile } from '@/modules/arweave/types';
 
 export interface StorefrontTheme<F = ArweaveFile> {
-  banner: F;
+  banner?: F;
   primaryColor: string;
   backgroundColor: string;
   textFont: string;

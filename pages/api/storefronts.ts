@@ -51,15 +51,18 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   tx.addTag('holaplex:theme:logo:url', storefront.theme.logo.url);
   tx.addTag('holaplex:theme:logo:name', storefront.theme.logo.name);
   tx.addTag('holaplex:theme:logo:type', storefront.theme.logo.type);
-  tx.addTag('holaplex:theme:banner:url', storefront.theme.banner.url);
-  tx.addTag('holaplex:theme:banner:name', storefront.theme.banner.name);
-  tx.addTag('holaplex:theme:banner:type', storefront.theme.banner.type);
   tx.addTag('holaplex:theme:color:primary', storefront.theme.primaryColor);
   tx.addTag('holaplex:theme:color:background', storefront.theme.backgroundColor);
   tx.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
   tx.addTag('holaplex:theme:font:text', storefront.theme.textFont);
   tx.addTag('Arweave-App', 'holaplex');
 
+  if (storefront.theme.banner) {
+    tx.addTag('holaplex:theme:banner:url', storefront.theme.banner.url);
+    tx.addTag('holaplex:theme:banner:name', storefront.theme.banner.name);
+    tx.addTag('holaplex:theme:banner:type', storefront.theme.banner.type);
+  }
+  
   await arweave.transactions.sign(tx, jwk);
 
   if (!arweaveClient.wallet.canAfford(address, tx.data.byteLength)) {

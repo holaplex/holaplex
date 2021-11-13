@@ -114,11 +114,13 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
         properties: {
           backgroundColor: { type: 'string' },
           logo: arweaveFile,
-          banner: arweaveFile,
           primaryColor: { type: 'string' },
           textFont: { type: 'string' },
           titleFont: { type: 'string' },
         },
+        optionalProperties: {
+          banner: arweaveFile,
+        }
       },
     },
   });
