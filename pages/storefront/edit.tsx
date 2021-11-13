@@ -148,7 +148,7 @@ export default function Edit({ track }: StorefrontEditorProps) {
                   <Form.Item
                     label="Banner"
                     name={['theme', 'banner']}
-                    tooltip="Sits at the top of your store, 1500px wide and 500px works best!"
+                    tooltip="Sits at the top of your store, 1500px wide and 500px tall works best!"
                     rules={[{ required: false, message: 'Upload your Banner.' }]}
                   >
                     <Upload>
