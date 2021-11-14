@@ -21,6 +21,7 @@ import {
   submitCallback,
   Title,
   UploadedLogo,
+  UploadedBanner,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
@@ -62,6 +63,7 @@ export default function Edit({ track }: StorefrontEditorProps) {
     { name: ['theme', 'primaryColor'], value: storefront?.theme.primaryColor ?? '#F2C94C' },
     { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont ?? 'Work Sans' },
     { name: ['theme', 'textFont'], value: storefront?.theme.textFont ?? 'Work Sans' },
+    { name: ['theme', 'banner'], value: [{ ...storefront?.theme.banner, status: 'done' }] },
     { name: ['theme', 'logo'], value: [{ ...storefront?.theme.logo, status: 'done' }] },
     {
       name: ['meta', 'favicon'],
@@ -144,6 +146,24 @@ export default function Edit({ track }: StorefrontEditorProps) {
                 <Col sm={24} md={12} lg={12}>
                   <Title level={2}>Style your store.</Title>
                   <Form.Item
+                    label="Banner"
+                    name={['theme', 'banner']}
+                    tooltip="Sits at the top of your store, 1500px wide and 500px tall works best!"
+                    rules={[{ required: false, message: 'Upload your Banner.' }]}
+                  >
+                    <Upload>
+                      {(isEmpty(values.theme.banner) || !ifElse(
+                            has('response'),
+                            view(lensPath(['response', 'url'])),
+                            prop('url')
+                          )(values.theme.banner[0])) && (
+                        <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                          Upload Banner
+                        </Button>
+                      )}
+                    </Upload>
+                  </Form.Item>
+                  <Form.Item
                     label="Logo"
                     name={['theme', 'logo']}
                     rules={[{ required: true, message: 'Upload a logo.' }]}
@@ -184,6 +204,15 @@ export default function Edit({ track }: StorefrontEditorProps) {
                 <PrevCol sm={24} md={11} lg={10}>
                   <PrevCard bgColor={values.theme.backgroundColor}>
                     <Space direction="vertical">
+                    {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
+                        <UploadedBanner
+                          src={ifElse(
+                            has('response'),
+                            view(lensPath(['response', 'url'])),
+                            prop('url')
+                          )(values.theme.banner[0])}
+                        />
+                      )}
                       {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
                         <UploadedLogo
                           src={ifElse(

@@ -32,6 +32,9 @@ export const UploadedLogo = styled.img`
   height: 48px;
   width: 48px;
 `;
+export const UploadedBanner = styled.img`
+  width: 100%;
+`;
 
 export const PreviewLink = styled.div`
   color: ${(props) => props.color};
@@ -165,6 +168,7 @@ export const submitCallback = ({
       const domain = `${subdomain}.holaplex.com`;
 
       const logo = popFile(theme.logo[0]);
+      const banner = popFile(theme.banner[0]);
       const favicon = popFile(meta.favicon[0]);
 
       await putStorefront({
@@ -173,6 +177,7 @@ export const submitCallback = ({
           theme: {
             ...(theme as StorefrontTheme<unknown>),
             logo,
+            banner
           },
           meta: {
             ...(meta as PageMetaData<unknown>),
