@@ -112,14 +112,8 @@ export default function Summary({
   dispatch,
   formValues,
   goToNamedStep,
-  isActive,
-  form,
   uploadMetaData,
 }: Props) {
-  const handleNext = () => {
-    nextStep!();
-  };
-
   // TODO: Can extract this to top level component
   const upload = async () => {
     console.log('uploading images', images);
@@ -133,29 +127,13 @@ export default function Summary({
     });
 
     const uploadedFilePins = await resp.json();
-    // const uploadedFilePins = {
-    //   files: [
-    //     {
-    //       uri: 'https://bafkreiaqyueyi6pj4dno6a5xdioh3qq4wcckk6zp3a4r3o4ugu63qsgpci.ipfs.dweb.link?ext=png',
-    //       name: 'image 3.png',
-    //       type: 'image/png',
-    //     },
-    //     {
-    //       uri: 'https://bafkreihoddhywijzgytw7tocwilq7bnuvdbm3cu5t2wass3f7ce6whv3qm.ipfs.dweb.link?ext=png',
-    //       name: 'image 8.png',
-    //       type: 'image/png',
-    //     },
-    //   ],
-    // };
-
-    console.log('up loaded files are being set');
     dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-    uploadMetaData(uploadedFilePins.files).then(() => {
-      nextStep!();
-    }); // TODO: we should probably be doing this all in the same location, i would move this function to the top level component
+    await uploadMetaData(uploadedFilePins.files);
+    nextStep!();
   };
 
   if (!formValues) return null;
+
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>

@@ -46,7 +46,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           setSolana(window.solana);
           setInitialization(false);
         },
-        { capture: false },
+        { capture: false }
       );
     }
   }
@@ -72,6 +72,9 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         })
         .then((storefront: any) => {
           if (redirect) {
+            if (redirect === '') {
+              return;
+            }
             return router.push(redirect);
           }
 

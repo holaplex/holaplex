@@ -1,5 +1,5 @@
 import { Divider, Form, Row, Col, Space, Button } from 'antd';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -14,6 +14,7 @@ import { actions } from '@metaplex/js';
 import { MetadataFile, MintStatus, NFTValue } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { WalletContext } from '@/modules/wallet';
 
 const { mintNFT } = actions;
 
@@ -110,7 +111,12 @@ export default function MintInProgress({
     transactionStep === TransactionStep.SENDING_FAILED ||
     transactionStep === TransactionStep.APPROVAL_FAILED;
 
+  const { connect } = useContext(WalletContext);
   const nftValue = nftValues[index];
+
+  if (!wallet) {
+    // connect({ redirect: '/nfts/new' });
+  }
 
   const handleNext = useCallback(() => {
     const updatedValue = showErrors
@@ -122,28 +128,28 @@ export default function MintInProgress({
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
-  const attemptMint = useCallback(() => {
+  const attemptMint = useCallback(async () => {
     setTransactionStep(TransactionStep.APPROVING);
-    mintNFT({
-      connection,
-      wallet,
-      uri: metaDataFile.uri,
-      maxSupply: nftValue.properties.maxSupply,
-    })
-      .then((mintResp) => {
-        // TODO: How do we know if it's sending
-        setTransactionStep(TransactionStep.FINALIZING);
-        console.log('mintResp', mintResp);
-        handleNext();
-      })
-      .catch((err) => {
-        console.log('mintNFT err', err);
-        if (err?.code === APPROVAL_FAILED_CODE) {
-          setTransactionStep(TransactionStep.APPROVAL_FAILED);
-        } else {
-          setTransactionStep(TransactionStep.SENDING_FAILED);
-        }
+
+    try {
+      const mintResp = await mintNFT({
+        connection,
+        wallet,
+        uri: metaDataFile.uri,
+        maxSupply: nftValue.properties.maxSupply,
       });
+      setTransactionStep(TransactionStep.FINALIZING);
+      await connection.confirmTransaction(mintResp.txId);
+      setTransactionStep(TransactionStep.SUCCESS);
+      handleNext();
+    } catch (err) {
+      console.log('mintNFT err', err);
+      if (err?.code === APPROVAL_FAILED_CODE) {
+        setTransactionStep(TransactionStep.APPROVAL_FAILED);
+      } else {
+        setTransactionStep(TransactionStep.SENDING_FAILED);
+      }
+    }
   }, [metaDataFile, nftValue, handleNext, connection, wallet]);
 
   useEffect(() => {

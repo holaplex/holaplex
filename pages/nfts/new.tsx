@@ -318,7 +318,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             uploadMetaData={uploadMetaData}
           />
-          <PriceSummary images={images} connection={connection} stepName={'priceSummary'} />
+          <PriceSummary images={images} connection={connection} hashKey="priceSummary" />
           {images.map((_, index) => (
             <MintInProgress
               key={index}
@@ -329,6 +329,7 @@ export default function BulkUploadWizard() {
               nftValues={state.nftValues}
               updateNFTValue={updateNFTValue}
               index={index}
+              hashKey="mint"
             />
           ))}
 
