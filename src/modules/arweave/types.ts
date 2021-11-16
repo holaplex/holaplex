@@ -8,6 +8,10 @@ export type ArweaveOwner = {
   address: string;
 }
 
+export type AreweaveTagFilter = {
+  name: string;
+  values: string[];
+}
 export type ArweaveTag = {
   name: string;
   value: string;
