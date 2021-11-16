@@ -1,9 +1,9 @@
-import Arweave from 'arweave';
-import { ArweaveTransaction } from './types';
+ import Arweave from 'arweave';
+import { ArweaveTransaction, AreweaveTagFilter } from './types';
 import { Storefront } from '@/modules/storefront/types'
 import { isEmpty, isNil, map, reduce, concat, pipe, last, prop, uniqBy, view, lensPath } from 'ramda'
 
-interface StorefrontEdge {
+export interface StorefrontEdge {
   cursor: string;
   storefront: Storefront;
 }
@@ -21,7 +21,7 @@ interface ArweaveResponseTransformer {
 interface ArweaveObjectInteraction {
   find: (tag: string, value: string) => Promise<Storefront | null>;
   upsert: (storefront: Storefront, css: string) => Promise<Storefront>
-  list: (batch?: number, start?: string) => Promise<StorefrontEdge[]>
+  list: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<StorefrontEdge[]>
 }
 
 interface ArweaveWalletHelpers {
@@ -71,9 +71,9 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                 titleFont: tags["holaplex:theme:font:title"],
                 textFont: tags["holaplex:theme:font:text"],
                 banner: {
-                  url: tags["holaplex:theme:banner:url"],
-                  name: tags["holaplex:theme:banner:name"],
-                  type: tags["holaplex:theme:banner:type"]
+                  url: tags["holaplex:theme:banner:url"] || null,
+                  name: tags["holaplex:theme:banner:name"] || null,
+                  type: tags["holaplex:theme:banner:type"] || null,
                 },
                 logo: {
                   url: tags["holaplex:theme:logo:url"],
@@ -126,31 +126,30 @@ const query = async (arweave: Arweave, query: string, variables: object): Promis
       })
     })
 
-
   return transformer(response)
 }
 
 const using = (arweave: Arweave): ArweaveScope => ({
   wallet: {
     canAfford: async (address: string, bytes: number) => {
-      const balance = await arweave.wallets.getBalance(address)
+      const balance = await arweave.wallets.getBalance(address);
 
-      const cost = await arweave.transactions.getPrice(bytes)
+      const cost = await arweave.transactions.getPrice(bytes);
   
-      return arweave.ar.isGreaterThan(balance, cost)
+      return arweave.ar.isGreaterThan(balance, cost);
     }
   },
   storefront: {
-    list: async (batch: number = 1000, start: string = "") => {
-      let after = start
-      let next = true
-      let storefronts = [] as StorefrontEdge[]
-
+    list: async (tags = [], batch = 1000, start = "") => {
+      let after = start;
+      let next = true;
+      let storefronts = [] as StorefrontEdge[];
+      
       while (next) {
         const response = await query(
           arweave,
-          `query GetStorefronts($after: String, $first: Int) {
-            transactions(tags:[{ name: "Arweave-App", values: ["holaplex"]}], first: $first , after: $after) {
+          `query GetStorefronts($after: String, $first: Int, $tags: [TagFilter!]) {
+            transactions(tags: $tags, first: $first , after: $after) {
               pageInfo {
                 hasNextPage
               }
@@ -169,7 +168,11 @@ const using = (arweave: Arweave): ArweaveScope => ({
               }
             }
           }`,
-          { after, first: batch }
+          {
+            after,
+            first: batch,
+            tags: [{ name: "Arweave-App", values: ["holaplex"]}, ...tags] 
+          },
         )
 
         const { hasNextPage, edges } = await response.storefronts()
