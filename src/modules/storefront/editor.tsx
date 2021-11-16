@@ -11,7 +11,7 @@ import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
 import type { GoogleTracker } from '../ganalytics/types';
 import { Solana } from '../solana/types';
-import { PageMetaData, StorefrontTheme } from './types';
+import { PageMetaData, Storefront, StorefrontTheme } from './types';
 import { putStorefront } from './put-storefront';
 
 export const { Text, Title, Paragraph } = Typography;
@@ -170,22 +170,29 @@ export const submitCallback = ({
       const logo = popFile(theme.logo[0]);
       const banner = popFile(theme.banner[0]);
       const favicon = popFile(meta.favicon[0]);
+      
 
+      const storefront: Storefront = {
+        theme: {
+          ...(theme as StorefrontTheme<unknown>),
+          logo,
+          banner: undefined
+        },
+        meta: {
+          ...(meta as PageMetaData<unknown>),
+          favicon,
+        },
+        subdomain,
+        pubkey: solana?.publicKey.toBase58() ?? '',
+      }     
+      
+      if (banner.url) {
+        storefront.theme.banner = banner
+      }
+      
       await putStorefront({
         solana,
-        storefront: {
-          theme: {
-            ...(theme as StorefrontTheme<unknown>),
-            logo,
-            banner
-          },
-          meta: {
-            ...(meta as PageMetaData<unknown>),
-            favicon,
-          },
-          subdomain,
-          pubkey: solana?.publicKey.toBase58() ?? '',
-        },
+        storefront,
         onProgress: (s) => console.log(s),
         onError,
       });
