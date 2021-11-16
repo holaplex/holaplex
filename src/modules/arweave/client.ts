@@ -60,8 +60,6 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
             transaction.tags,
           )
 
-          console.log(tags);
-
           const edge = {
             cursor: cursor,
             storefront: {

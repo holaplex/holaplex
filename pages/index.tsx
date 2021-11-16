@@ -51,6 +51,9 @@ const FeaturedStores = styled(Section) <RowProps>`
     .ant-col > .ant-list-item {
       margin-bottom: 66px;
     }
+    .ant-card-meta-title {
+      line-height: 20px;
+    }
   }
   .ant-typography {
     margin: 0 0 62px 0;

@@ -38,5 +38,17 @@
   {
     "subdomain": "johnlestudio",
     "metadata": ["https://bafybeigkrkkw3zpskm7wkf6qztrgyq7zzrwr5tpemnqo24nrolbpc6gdya.ipfs.dweb.link", "https://bafybeido2cflg5havc2yajul5zrj5tqae3ztiyfacgepktaxjohkt36pm4.ipfs.dweb.link"]
+  },
+  {
+    "subdomain": "paragonart",
+    "metadata": ["https://www.arweave.net/dBvDm9bZtTMHxPpZmwBXNm7vHTOSUGpGJyTPVFUqTAI", "https://www.arweave.net/Bi-8mW6Eg5clVKvHBVHwgNLvOdDf8aAEusTyAmb98a8"]
+  },
+  {
+    "subdomain": "basketpresidente",
+    "metadata": ["https://bafybeid4wmqalonunobwzle5fk2a7rup2hatpuqtt3xqww35bjxchx765a.ipfs.dweb.link", "https://www.arweave.net/MgQI2_W3Wb5kPeS1fCOx0yQICkxIwa5H1kotIgcag8w"]
+  },
+  {
+    "subdomain": "peanug",
+    "metadata": ["https://www.arweave.net/zgZqUBHzL7Sd1WmYeooYOoLaDVEV-fyfJwgCRBYxX2U", "https://www.arweave.net/Zor6KC8SSiHGFsCllmW3-spAjasPmennwXaAc1qx8Wg"]
   }
 ]
