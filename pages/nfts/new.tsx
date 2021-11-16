@@ -108,7 +108,9 @@ function reducer(state: State, action: MintAction) {
         images: state.images.filter((i) => i.name !== (action.payload as String)),
       };
     case 'ADD_IMAGE':
-      return { ...state, images: [...state.images, action.payload as File] };
+      return state.images.length < 10
+        ? { ...state, images: [...state.images, action.payload as File] }
+        : state; // since the dispactch is async(?) it did not reliably limit number of files from the Upload component.
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFilePin> };
     case 'SET_FORM_VALUES':
@@ -230,7 +232,7 @@ export default function BulkUploadWizard() {
     >
       <StyledLayout>
         <StepWizard
-          isHashEnabled={true} // does not work properly with the dynamically rendered Images
+          isHashEnabled={false} // does not work properly with the dynamically rendered Images
           isLazyMount={true}
           transitions={{
             enterLeft: undefined,

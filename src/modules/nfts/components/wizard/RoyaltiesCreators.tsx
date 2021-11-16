@@ -5,6 +5,7 @@ import {
   Form,
   FormInstance,
   Space,
+  Layout,
   InputNumber,
   Row,
   notification,
@@ -12,18 +13,19 @@ import {
   Col,
   Modal,
 } from 'antd';
+const { Header, Content } = Layout;
+import Paragraph from 'antd/lib/typography/Paragraph';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import Paragraph from 'antd/lib/typography/Paragraph';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
-import PartnerWithUsModal from '@/common/components/presentational/PartnerWithUsModal';
+import PartnerWithUsModalContent from '@/common/components/presentational/PartnerWithUsModalContent';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -164,6 +166,29 @@ const LightText = styled(Paragraph)`
   -webkit-text-fill-color: transparent;
 `;
 
+const StyledSVG = styled.svg.attrs({
+  version: '1.1',
+  xmlns: 'http://www.w3.org/2000/svg',
+  xmlnsXlink: 'http://www.w3.org/1999/xlink',
+})``;
+
+const StyledCloseIcon = styled(StyledSVG)`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border-radius: 100%;
+  &:hover {
+    background: gray;
+  }
+`;
+
+const HolaLink = styled(Paragraph)`
+  cursor: pointer;
+  background: linear-gradient(143.77deg, #d24089 8.62%, #b92d44 84.54%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
 const CreatorsRow = ({
   creatorAddress,
   share,
@@ -198,12 +223,14 @@ const CreatorsRow = ({
           margin: '0 14px 0 6px',
           maxWidth: 90,
           fontSize: 14,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
+          // overflow: 'hidden',
+          // textOverflow: 'ellipsis',
+          // whiteSpace: 'nowrap',
         }}
       >
-        {creatorAddress}
+        {isHolaplex
+          ? creatorAddress
+          : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
       </Paragraph>
       {!isHolaplex && (
         <Image
@@ -249,7 +276,7 @@ const CreatorsRow = ({
           {share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
-      {isHolaplex && (
+      {isHolaplex ? (
         <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g opacity="0.5">
             <path
@@ -264,14 +291,57 @@ const CreatorsRow = ({
             />
           </g>
         </svg>
+      ) : (
+        <StyledCloseIcon viewBox="0 0 24 24" onClick={() => removeCreator(creatorAddress)}>
+          <path
+            d="M18 6L6 18"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M6 6L18 18"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </StyledCloseIcon>
       )}
-      {/* {false ? <div>Lock</div> : <XCloseIcon />} */}
       {isHolaplex && (
-        <PartnerWithUsModal
+        <Modal
+          width={668}
           visible={isModalVisible}
           onOk={() => setIsModalVisible(false)}
           onCancel={() => setIsModalVisible(false)}
-        />
+          closeIcon={
+            <StyledCloseIcon viewBox="0 0 24 24">
+              <path
+                d="M18 6L6 18"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M6 6L18 18"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </StyledCloseIcon>
+          }
+          footer={null}
+          bodyStyle={{
+            borderRadius: '10px',
+            background: '#1a1a1a',
+            padding: '114px 67px',
+          }}
+        >
+          <PartnerWithUsModalContent />
+        </Modal>
       )}
     </StyledCreatorsRow>
   );
@@ -293,7 +363,7 @@ export default function RoyaltiesCreators({
 }: Props) {
   const [creators, setCreators] = useState<Array<Creator>>([
     { address: 'Holaplex', share: 2 },
-    { address: userKey ?? '', share: 100 },
+    { address: userKey ?? '', share: 98 },
   ]);
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesInput, setRoyaltiesInput] = useState(ROYALTIES_INPUT_DEFAULT);
@@ -389,9 +459,10 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        const newShareSplit = 100 / (creators.length + 1);
+        const newShareSplit = 98 / creators.length;
         setCreators([
-          ...creators.map((c) => ({ ...c, share: newShareSplit })),
+          creators[0],
+          ...creators.slice(1).map((c) => ({ ...c, share: newShareSplit })),
           { address: values.addCreator, share: newShareSplit },
         ]);
         toggleCreatorField(false);
@@ -402,12 +473,14 @@ export default function RoyaltiesCreators({
       });
   };
   const removeCreator = (creatorAddress: string) => {
-    const newShareSplit = 100 / (creators.length - 1) || 100;
-    setCreators(
-      creators
+    const newShareSplit = 98 / (creators.length - 2) || 100;
+    setCreators([
+      creators[0],
+      ...creators
+        .slice(1)
         .filter((c) => c.address !== creatorAddress)
-        .map((c) => ({ ...c, share: newShareSplit }))
-    );
+        .map((c) => ({ ...c, share: newShareSplit })),
+    ]);
   };
 
   if (!userKey) return null;
@@ -446,7 +519,7 @@ export default function RoyaltiesCreators({
           {/* Display creators */}
           {creators.length < MAX_CREATOR_LIMIT && (
             <Row justify="space-between" align="middle">
-              <Paragraph style={{ fontWeight: 900 }}>Creators & royalty split</Paragraph>
+              <Paragraph style={{ fontWeight: 900 }}>Creators split</Paragraph>
               <StyledClearButton type="text" noStyle onClick={() => toggleCreatorField(true)}>
                 Add Creator
               </StyledClearButton>
