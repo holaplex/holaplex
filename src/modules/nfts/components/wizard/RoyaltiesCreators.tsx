@@ -10,6 +10,7 @@ import {
   notification,
   Radio,
   Col,
+  Modal,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -22,6 +23,7 @@ import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import PartnerWithUsModal from '@/common/components/presentational/PartnerWithUsModal';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -154,6 +156,14 @@ const StyledPercentageInput = styled(InputNumber)`
   }
 `;
 
+const LightText = styled(Paragraph)`
+  font-size: 14px;
+  cursor: pointer;
+  background: linear-gradient(143.77deg, #d24089 8.62%, #b92d44 84.54%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
 const CreatorsRow = ({
   creatorAddress,
   share,
@@ -170,9 +180,18 @@ const CreatorsRow = ({
   const ref = React.useRef(null);
   const [showPercentageInput, setShowPercentageInput] = React.useState(false);
   useOnClickOutside(ref, () => setShowPercentageInput(false));
+  const isHolaplex = creatorAddress === 'Holaplex';
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   return (
     <StyledCreatorsRow>
-      <Image height={32} width={32} src="/images/creator-standin.png" alt="creator" />
+      {isHolaplex ? (
+        // <span style={{ height: 32, width: 32 }}>👋</span>
+        <Image height={32} width={32} src="/images/hola-logo.svg" alt="holaplex-logo" />
+      ) : (
+        <Image height={32} width={32} src="/images/creator-standin.png" alt="creator" />
+      )}
       {/* TODO: Figure out how to truncate in middle of string with ellipsis instead of on the end */}
       <Paragraph
         style={{
@@ -186,18 +205,26 @@ const CreatorsRow = ({
       >
         {creatorAddress}
       </Paragraph>
-      <Image
-        className="creator-row-icon"
-        height={20}
-        width={20}
-        src={clipBoardIcon}
-        alt="copyToClipboard"
-        onClick={() => {
-          navigator.clipboard.writeText(creatorAddress);
-          openNotification();
-        }}
-      />
+      {!isHolaplex && (
+        <Image
+          className="creator-row-icon"
+          height={20}
+          width={20}
+          src={clipBoardIcon}
+          alt="copyToClipboard"
+          onClick={() => {
+            navigator.clipboard.writeText(creatorAddress);
+            openNotification();
+          }}
+        />
+      )}
       {isUser && <Paragraph style={{ opacity: 0.6, marginLeft: 6, fontSize: 14 }}>(you)</Paragraph>}
+      <span style={{ marginLeft: 'auto' }}></span>
+      {isHolaplex && (
+        <LightText onClick={() => setIsModalVisible(true)} style={{ marginRight: 5 }}>
+          Learn more
+        </LightText>
+      )}
       {showPercentageInput ? (
         <StyledPercentageInput
           defaultValue={share}
@@ -216,13 +243,36 @@ const CreatorsRow = ({
         />
       ) : (
         <Paragraph
-          onClick={() => setShowPercentageInput(true)}
-          style={{ margin: '0 5px 0 auto', fontSize: 14, cursor: 'pointer' }}
+          onClick={() => !isHolaplex && setShowPercentageInput(true)}
+          style={{ marginRight: 5, fontSize: 14, cursor: isHolaplex ? '' : 'pointer' }}
         >
           {share.toFixed(2).replace(/[.,]00$/, '')}%
         </Paragraph>
       )}
+      {isHolaplex && (
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g opacity="0.5">
+            <path
+              d="M6.33333 3.66663H1.66667C1.29848 3.66663 1 3.9651 1 4.33329V6.66663C1 7.03482 1.29848 7.33329 1.66667 7.33329H6.33333C6.70152 7.33329 7 7.03482 7 6.66663V4.33329C7 3.9651 6.70152 3.66663 6.33333 3.66663Z"
+              fill="white"
+            />
+            <path
+              d="M2.33333 3.66663V2.33329C2.33333 1.89127 2.50893 1.46734 2.82149 1.15478C3.13405 0.842221 3.55797 0.666626 4 0.666626C4.44203 0.666626 4.86595 0.842221 5.17851 1.15478C5.49107 1.46734 5.66667 1.89127 5.66667 2.33329V3.66663"
+              stroke="white"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </g>
+        </svg>
+      )}
       {/* {false ? <div>Lock</div> : <XCloseIcon />} */}
+      {isHolaplex && (
+        <PartnerWithUsModal
+          visible={isModalVisible}
+          onOk={() => setIsModalVisible(false)}
+          onCancel={() => setIsModalVisible(false)}
+        />
+      )}
     </StyledCreatorsRow>
   );
 };
@@ -242,6 +292,7 @@ export default function RoyaltiesCreators({
   isFirst = false,
 }: Props) {
   const [creators, setCreators] = useState<Array<Creator>>([
+    { address: 'Holaplex', share: 2 },
     { address: userKey ?? '', share: 100 },
   ]);
   const [showCreatorField, toggleCreatorField] = useState(false);
