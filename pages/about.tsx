@@ -3,11 +3,10 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
 import RoadmapImage from '@/assets/images/roadmap-v1.svg'
-import investorData from '@/assets/investors/investors-stub';
+import investorData from '@/assets/investors/investors-stub'
 import { List, Space, Row, Col, Typography, Card } from 'antd'
-import Link from 'next/link'
-import Button from '@/components/elements/Button'
-const { Title, Text, Paragraph } = Typography;
+
+const { Title, Paragraph } = Typography;
 
 
 const ContentCol = styled(Col)`

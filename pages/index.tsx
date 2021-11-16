@@ -1,13 +1,14 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import sv from '@/constants/styles'
-import higlightStores from '@/assets/highlight-stores/highlight-stores-stub'
-import FeaturedStore from '@/components/elements/FeaturedStore'
-import { List, Space, Row, Col, Typography } from 'antd'
+import StorePreview from '@/components/elements/StorePreview'
+import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
+import { List, Space, Row, Col, Typography, RowProps } from 'antd'
 import Button from '@/components/elements/Button'
 import { WalletContext } from '@/modules/wallet'
 
-const { Title, Text, Paragraph } = Typography;
+const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
+const { Title } = Typography;
 
 const ContentCol = styled(Col)`
   max-width: 1400px;
@@ -44,65 +45,73 @@ const Section = styled(Row)`
   margin-top: ${sv.sectionPadding}px;
 `;
 
-export default function Home() {
+const FeaturedStores = styled(Section) <RowProps>`
+  .ant-list-grid {
+    .ant-col > .ant-list-item {
+      margin-bottom: 66px;
+    }
+  }
+  .ant-typography {
+    margin: 0 0 62px 0;
+  }
+`;
+
+export async function getStaticProps() {
+  const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
+
+  return {
+    props: {
+      featuredStorefronts,
+    },
+  };
+}
+
+interface HomeProps {
+  featuredStorefronts: StorefrontFeature[];
+}
+
+export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
-  const heroStorefront = higlightStores[0];
+  const heroStorefront = featuredStorefronts[0];
 
   return (
     <Row justify="center">
       <ContentCol xs={22} md={20}>
         <Section justify="center">
           <Marketing xs={24} md={16}>
-            <HeroTitle>Find, buy, and sell NFTs from incredible artists.</HeroTitle>
-            <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
+            <HeroTitle>Find, buy, and sell NFTs from incredible artists on Solana.</HeroTitle>
+            <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs on Solana.</Pitch>
             <Space direction="horizontal" size="large">
               <Button size="large" onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </Marketing>
           <Col xs={0} md={8}>
-            <a
-              href={heroStorefront.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FeaturedStore
-                name={heroStorefront.name}
-                image={heroStorefront.imagePath}
-                twitter={heroStorefront.twitter}
-              />
-            </a>
+            <StorePreview
+              {...heroStorefront}
+            />
           </Col>
         </Section>
-
-        <Section justify="center">
+        <FeaturedStores justify="center">
           <Col>
-            <Title level={3}>Featured creators</Title>
+            <Title level={3}>Featured Creators</Title>
             <List
-              grid={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-              dataSource={higlightStores.slice(1)}
-              renderItem={(store: { url: string, imagePath: string, name: string }) => (
-                <List.Item key={store.url}>
-                  <a
-                    href={store.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <FeaturedStore
-                      name={store.name}
-                      image={store.imagePath}
-                    />
-                  </a>
+              grid={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
+              dataSource={featuredStorefronts.slice(1)}
+              renderItem={(feature) => (
+                <List.Item key={feature.storefront.subdomain}>
+                  <StorePreview
+                    {...feature}
+                  />
                 </List.Item>
               )}
             />
 
           </Col>
-        </Section>
-
+        </FeaturedStores>
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own NFT store today!</Title>
+            <Title level={3}>Launch your own Solana NFT store today!</Title>
             <Button size="large" onClick={() => connect()}>Create Your Store</Button>
           </Space>
         </Section>
