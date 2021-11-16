@@ -60,6 +60,8 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
             transaction.tags,
           )
 
+          console.log(tags);
+
           const edge = {
             cursor: cursor,
             storefront: {
@@ -71,9 +73,9 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                 titleFont: tags["holaplex:theme:font:title"],
                 textFont: tags["holaplex:theme:font:text"],
                 banner: {
-                  url: tags["holaplex:theme:banner:url"],
-                  name: tags["holaplex:theme:banner:name"],
-                  type: tags["holaplex:theme:banner:type"]
+                  url: tags["holaplex:theme:banner:url"] || null,
+                  name: tags["holaplex:theme:banner:name"] || null,
+                  type: tags["holaplex:theme:banner:type"] || null,
                 },
                 logo: {
                   url: tags["holaplex:theme:logo:url"],

@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
+import { drop } from 'ramda'
 import sv from '@/constants/styles'
-import StorePreview from '@/components/elements/StorePreview'
+import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
 import { List, Space, Row, Col, Typography, RowProps } from 'antd'
 import Button from '@/components/elements/Button'
@@ -72,7 +73,7 @@ interface HomeProps {
 
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
-
+  
   const heroStorefront = featuredStorefronts[0];
 
   return (
@@ -86,18 +87,20 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               <Button size="large" onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </Marketing>
-          <Col xs={0} md={8}>
-            <StorePreview
-              {...heroStorefront}
-            />
-          </Col>
+          {heroStorefront && (
+            <Col xs={0} md={8}>
+              <StorePreview
+                {...heroStorefront}
+              />
+            </Col>
+          )}
         </Section>
         <FeaturedStores justify="center">
           <Col>
             <Title level={3}>Featured Creators</Title>
             <List
               grid={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
-              dataSource={featuredStorefronts.slice(1)}
+              dataSource={drop<StorefrontFeature>(1, featuredStorefronts)}
               renderItem={(feature) => (
                 <List.Item key={feature.storefront.subdomain}>
                   <StorePreview
