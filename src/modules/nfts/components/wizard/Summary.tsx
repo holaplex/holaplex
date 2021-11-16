@@ -1,18 +1,19 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
-import { Divider, FormInstance, PageHeader, Row, Space, Typography } from 'antd';
-import React, { useEffect } from 'react';
+import { FormInstance, PageHeader, Row, Space, Typography } from 'antd';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import { NFTAttribute, MintDispatch, NFTFormValue } from 'pages/nfts/new';
+import { NFTAttribute, MintDispatch, NFTFormValue, UploadedFilePin } from 'pages/nfts/new';
+import { Spinner } from '@/common/components/elements/Spinner';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   dispatch: MintDispatch;
   form: FormInstance;
   formValues: NFTFormValue[] | null;
-  uploadMetaData: (files: any) => Promise<void>;
+  setNFTValues: (filePins: UploadedFilePin[]) => void;
 }
 
 const Grid = styled.div`
@@ -112,8 +113,10 @@ export default function Summary({
   dispatch,
   formValues,
   goToNamedStep,
-  uploadMetaData,
+  setNFTValues,
 }: Props) {
+  const [isUploading, setIsUploading] = useState(false);
+
   // TODO: Can extract this to top level component
   const upload = async () => {
     console.log('uploading images', images);
@@ -121,15 +124,21 @@ export default function Summary({
 
     images.forEach((i) => body.append(i.name, i, i.name));
 
-    const resp = await fetch('/api/ipfs/upload', {
-      method: 'POST',
-      body,
-    });
+    setIsUploading(true);
+    try {
+      const resp = await fetch('/api/ipfs/upload', {
+        method: 'POST',
+        body,
+      });
 
-    const uploadedFilePins = await resp.json();
-    dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-    await uploadMetaData(uploadedFilePins.files);
-    nextStep!();
+      const uploadedFilePins = await resp.json();
+      console.log('uploadedFilePins', uploadedFilePins);
+      dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
+      setNFTValues(uploadedFilePins.files);
+      nextStep!();
+    } catch {
+      setIsUploading(false);
+    }
   };
 
   if (!formValues) return null;
@@ -137,8 +146,14 @@ export default function Summary({
   return (
     <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
       <Header>Do these look right?</Header>
-      <Button onClick={upload} type="primary">
+      <Button
+        onClick={upload}
+        type="primary"
+        style={{ display: 'flex', alignItems: 'center' }}
+        disabled={isUploading}
+      >
         Looks good
+        {isUploading && <Spinner style={{ marginLeft: 8, marginTop: 5 }} height={24} width={24} />}
       </Button>
 
       <Row style={{ marginTop: 78 }}>

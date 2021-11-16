@@ -27,7 +27,7 @@ const StyledLayout = styled(Layout)`
   overflow: hidden;
 `;
 
-interface UploadedFile {
+export interface UploadedFilePin {
   name: string;
   uri: string;
   type: string;
@@ -45,18 +45,12 @@ export interface NFTFormValue {
   properties: { creators: Array<Creator>; maxSupply: number };
 }
 
-export type FileOrString = MetadataFile | string;
+export type FileOrString = UploadedFilePin | string;
 
 export type NFTAttribute = {
   trait_type: string;
   value: string | number;
 };
-
-export interface MetadataFile {
-  name: string;
-  uri: string;
-  type: string;
-}
 
 export enum MintStatus {
   FAILED,
@@ -73,10 +67,7 @@ export interface NFTValue {
   properties: {
     files?: FileOrString[];
     maxSupply: number;
-    creators?: {
-      address: string;
-      shares: number;
-    }[];
+    creators?: Creator[];
   };
 }
 
@@ -84,10 +75,9 @@ export type MintDispatch = (action: MintAction) => void;
 
 interface State {
   images: Array<File>;
-  uploadedFiles: Array<UploadedFile>;
+  uploadedFiles: Array<UploadedFilePin>;
   formValues: NFTFormValue[] | null;
   nftValues: NFTValue[];
-  metadataFiles: MetadataFile[];
 }
 
 export interface MintAction {
@@ -97,16 +87,8 @@ export interface MintAction {
     | 'ADD_IMAGE'
     | 'UPLOAD_FILES'
     | 'SET_FORM_VALUES'
-    | 'SET_NFT_VALUES'
-    | 'SET_META_DATA_LINKS';
-  payload:
-    | File[]
-    | File
-    | String
-    | Array<UploadedFile>
-    | NFTFormValue[]
-    | NFTValue[]
-    | MetadataFile[];
+    | 'SET_NFT_VALUES';
+  payload: File[] | File | String | Array<UploadedFilePin> | NFTFormValue[] | NFTValue[];
 }
 
 const initialState: State = {
@@ -114,7 +96,6 @@ const initialState: State = {
   uploadedFiles: [],
   formValues: null,
   nftValues: [],
-  metadataFiles: [],
 };
 
 function reducer(state: State, action: MintAction) {
@@ -129,13 +110,11 @@ function reducer(state: State, action: MintAction) {
     case 'ADD_IMAGE':
       return { ...state, images: [...state.images, action.payload as File] };
     case 'UPLOAD_FILES':
-      return { ...state, uploadedFiles: action.payload as Array<UploadedFile> };
+      return { ...state, uploadedFiles: action.payload as Array<UploadedFilePin> };
     case 'SET_FORM_VALUES':
       return { ...state, formValues: action.payload as NFTFormValue[] };
-    case 'SET_NFT_VALUES': // can we combine this with with SET_META_DATA_LINKS?
+    case 'SET_NFT_VALUES':
       return { ...state, nftValues: action.payload as NFTValue[] };
-    case 'SET_META_DATA_LINKS':
-      return { ...state, metadataFiles: action.payload as MetadataFile[] };
     default:
       throw new Error('No valid action for state');
   }
@@ -146,8 +125,8 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form] = useForm();
-  const { images } = state;
   const { connect, wallet, solana } = useContext(WalletContext);
+  const { images, formValues } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = React.useState(false);
 
@@ -156,19 +135,21 @@ export default function BulkUploadWizard() {
     connect({ redirect: '/nfts/new' });
   }
 
-  // TODO: type this and extract to helper file
-  const buildMetaData = (values: any, uploadedFiles: any) => {
+  const transformToMetaDataJson = (nftValue: NFTValue) => {
+    // TODO: What do we need to do to transform to right structure?
+    return nftValue;
+  };
+  const transformFormVals = (values: NFTFormValue[], filePins: UploadedFilePin[]): NFTValue[] => {
     // TODO: type this properly
-    return values.map((v: any, i: number) => {
-      const file = uploadedFiles[i]; //  we are assuming everything is in order, should we use a key check?
-
+    return values.map((v, i: number) => {
+      const filePin = filePins[i];
       return {
         name: v.name,
         description: v.description,
         symbol: '', // TODO: What do we feed this? v.symbol?
         seller_fee_basis_points: v.seller_fee_basis_points,
-        image: file.uri,
-        files: [{ uri: file.uri, type: file.type }],
+        image: filePin.uri,
+        files: [{ uri: filePin.uri, type: filePin.type }],
         attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
           if (!isNil(a?.trait_type)) {
             result.push({ trait_type: a.trait_type, value: a.value });
@@ -185,42 +166,34 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
   };
 
-  const uploadMetaData = async (files: any) => {
-    const { formValues, metadataFiles } = state;
-    if (!files?.length) {
-      throw new Error('No files uploaded');
+  const setNFTValues = (filePins: UploadedFilePin[]) => {
+    if (!filePins?.length || !formValues?.length) {
+      throw new Error('Either filePins or formValues are not set');
     }
 
     console.log('formValues are ', formValues);
-    const builtMetaData = buildMetaData(formValues, files);
+    const nftVals = transformFormVals(formValues, filePins);
 
-    console.log('builtMetaData', builtMetaData);
+    console.log('nftVals', nftVals);
 
-    // TODO: type this
-    // Do we need to do a Promise.all here?
-    const promises = builtMetaData.map(async (m: any, i: number) => {
-      const metaData = new File([JSON.stringify(m)], `metadata-${i}`); // TODO: what to name this?
-      const metaDataFileForm = new FormData();
-      metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
-      return await fetch('/api/ipfs/upload', {
-        body: metaDataFileForm,
-        method: 'POST',
-      });
+    dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
+  };
+
+  const uploadMetaData = async (nftValue: NFTValue) => {
+    const metaDataJson = transformToMetaDataJson(nftValue);
+    const metaData = new File([JSON.stringify(metaDataJson)], 'metadata');
+    const metaDataFileForm = new FormData();
+    metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
+    const resp = await fetch('/api/ipfs/upload', {
+      body: metaDataFileForm,
+      method: 'POST',
     });
 
-    dispatch({ type: 'SET_NFT_VALUES', payload: builtMetaData });
+    const json = await resp.json(); // TODO: Type this
 
-    Promise.all(promises).then((responses) => {
-      const jsonPromises = responses.map(async (resp: any) => await resp.json());
+    const payload: UploadedFilePin = json.files[0];
 
-      Promise.all(jsonPromises).then((json) => {
-        const payload = json.map((j) => j.files[0]);
-        console.log('payload is ', payload);
-        dispatch({ type: 'SET_META_DATA_LINKS', payload });
-      });
-    });
-
-    return Promise.resolve();
+    return Promise.resolve(payload);
   };
 
   const updateNFTValue = (value: NFTValue, index: number) => {
@@ -316,7 +289,7 @@ export default function BulkUploadWizard() {
             dispatch={dispatch}
             form={form}
             formValues={state.formValues}
-            uploadMetaData={uploadMetaData}
+            setNFTValues={setNFTValues}
           />
           <PriceSummary images={images} connection={connection} hashKey="priceSummary" />
           {images.map((_, index) => (
@@ -325,7 +298,7 @@ export default function BulkUploadWizard() {
               images={images}
               wallet={solana}
               connection={connection}
-              metaDataFile={state.metadataFiles[index]}
+              uploadMetaData={uploadMetaData}
               nftValues={state.nftValues}
               updateNFTValue={updateNFTValue}
               index={index}

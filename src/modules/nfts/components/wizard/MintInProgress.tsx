@@ -11,7 +11,7 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
 import { Connection } from '@solana/web3.js';
 import { actions } from '@metaplex/js';
-import { MetadataFile, MintStatus, NFTValue } from 'pages/nfts/new';
+import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { WalletContext } from '@/modules/wallet';
@@ -23,6 +23,8 @@ const APPROVAL_FAILED_CODE = 4001;
 enum TransactionStep {
   SENDING_FAILED,
   APPROVAL_FAILED,
+  META_DATA_UPLOAD_FAILED,
+  META_DATA_UPLOADING,
   APPROVING,
   SENDING,
   FINALIZING,
@@ -33,10 +35,10 @@ interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   wallet: Solana;
   connection: Connection;
-  metaDataFile: MetadataFile;
   nftValues: NFTValue[];
   index: number;
   updateNFTValue: (value: NFTValue, index: number) => void;
+  uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
 }
 
 const Grid = styled.div`
@@ -99,10 +101,10 @@ export default function MintInProgress({
   images,
   nextStep,
   isActive,
-  metaDataFile,
   nftValues,
   wallet,
   updateNFTValue,
+  uploadMetaData,
   connection,
   index,
 }: Props) {
@@ -128,14 +130,35 @@ export default function MintInProgress({
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
+  const attemptMetaDataUpload = () => {};
+
   const attemptMint = useCallback(async () => {
+    if (!nftValue) {
+      throw new Error('No NFT Value, something went wrong');
+    }
+
+    setTransactionStep(TransactionStep.APPROVING);
+    // TODO: I would split into two functions for metadata upload and mint and then useState to set metadata
+    let metaData: UploadedFilePin | null = null;
+
+    try {
+      setTransactionStep(TransactionStep.META_DATA_UPLOADING);
+      metaData = await uploadMetaData(nftValue);
+    } catch (err) {
+      setTransactionStep(TransactionStep.META_DATA_UPLOAD_FAILED);
+    }
+
+    if (!metaData) {
+      throw new Error('No Meta Data, something went wrong');
+    }
+
     setTransactionStep(TransactionStep.APPROVING);
 
     try {
       const mintResp = await mintNFT({
         connection,
         wallet,
-        uri: metaDataFile.uri,
+        uri: metaData.uri,
         maxSupply: nftValue.properties.maxSupply,
       });
       setTransactionStep(TransactionStep.FINALIZING);
@@ -150,17 +173,17 @@ export default function MintInProgress({
         setTransactionStep(TransactionStep.SENDING_FAILED);
       }
     }
-  }, [metaDataFile, nftValue, handleNext, connection, wallet]);
+  }, [nftValue, handleNext, uploadMetaData, connection, wallet]);
 
   useEffect(() => {
     if (showErrors) {
       return;
     }
 
-    if (isActive && metaDataFile && nftValue) {
+    if (isActive && nftValue) {
       attemptMint();
     }
-  }, [isActive, showErrors, metaDataFile, nftValue, attemptMint, index]);
+  }, [isActive, showErrors, nftValue, attemptMint, index]);
 
   if (!nftValue) {
     return null;
@@ -179,6 +202,12 @@ export default function MintInProgress({
           </Row>
           <Row style={{ marginTop: 37 }}>
             <Col style={{ minWidth: 237 }}>
+              <MintStep
+                text="Uploading metadata"
+                isActive={transactionStep === TransactionStep.META_DATA_UPLOADING}
+                isDone={transactionStep > TransactionStep.META_DATA_UPLOADING}
+                failed={transactionStep === TransactionStep.META_DATA_UPLOAD_FAILED}
+              />
               <MintStep
                 text="Approving transaction"
                 isActive={transactionStep === TransactionStep.APPROVING}

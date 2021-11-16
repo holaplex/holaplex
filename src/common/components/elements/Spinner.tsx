@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-const StyledSpinner = styled.svg`
+const StyledSpinner = styled.svg<{ width?: number; height?: number }>`
   animation: rotate 2.5s linear infinite;
   z-index: 2;
-  width: 32px;
-  height: 32px;
+  ${({ width, height }) => `width: ${width}px; height: ${height}px;`}
 
   & .path {
     stroke: hsl(210, 70, 75);
@@ -35,12 +34,17 @@ const StyledSpinner = styled.svg`
   }
 `;
 
-export const Spinner = () => {
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  height?: number;
+  width?: number;
+}
+
+export const Spinner = ({ width = 32, height = 32, ...restOfProps }: Props) => {
   return (
-    <div>
+    <div {...restOfProps}>
       <StyledSpinner
-        width="32"
-        height="32"
+        width={width}
+        height={height}
         viewBox="0 0 32 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
