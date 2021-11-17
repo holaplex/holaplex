@@ -25,7 +25,7 @@ import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
-import PartnerWithUsModalContent from '@/common/components/presentational/PartnerWithUsModalContent';
+import FeesModalContent from '@/common/components/presentational/FeesModalContent';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 
@@ -141,7 +141,7 @@ export const StyledClearButton = styled(Button)`
 // TODO: Style notification
 const openNotification = () => {
   notification.open({
-    message: 'Key copied to clipboard!',
+    message: 'Address copied to clipboard!',
   });
 };
 
@@ -166,13 +166,7 @@ const LightText = styled(Paragraph)`
   -webkit-text-fill-color: transparent;
 `;
 
-const StyledSVG = styled.svg.attrs({
-  version: '1.1',
-  xmlns: 'http://www.w3.org/2000/svg',
-  xmlnsXlink: 'http://www.w3.org/1999/xlink',
-})``;
-
-const StyledCloseIcon = styled(StyledSVG)`
+const StyledCloseIcon = styled.svg`
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -182,12 +176,29 @@ const StyledCloseIcon = styled(StyledSVG)`
   }
 `;
 
-const HolaLink = styled(Paragraph)`
-  cursor: pointer;
-  background: linear-gradient(143.77deg, #d24089 8.62%, #b92d44 84.54%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
+const RemoveCreatorIcon = (props: { onClick: () => void }) => (
+  <StyledCloseIcon
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    onClick={props.onClick}
+  >
+    <path
+      d="M18 6L6 18"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M6 6L18 18"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </StyledCloseIcon>
+);
 
 const CreatorsRow = ({
   creatorAddress,
@@ -292,22 +303,7 @@ const CreatorsRow = ({
           </g>
         </svg>
       ) : (
-        <StyledCloseIcon viewBox="0 0 24 24" onClick={() => removeCreator(creatorAddress)}>
-          <path
-            d="M18 6L6 18"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M6 6L18 18"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </StyledCloseIcon>
+        <RemoveCreatorIcon onClick={() => removeCreator(creatorAddress)} />
       )}
       {isHolaplex && (
         <Modal
@@ -337,10 +333,10 @@ const CreatorsRow = ({
           bodyStyle={{
             borderRadius: '10px',
             background: '#1a1a1a',
-            padding: '114px 67px',
+            padding: '114px 67px 47px 67px',
           }}
         >
-          <PartnerWithUsModalContent />
+          <FeesModalContent />
         </Modal>
       )}
     </StyledCreatorsRow>
