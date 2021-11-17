@@ -205,7 +205,7 @@ const CreatorsRow = ({
   const ref = React.useRef(null);
   const [showPercentageInput, setShowPercentageInput] = React.useState(false);
   useOnClickOutside(ref, () => setShowPercentageInput(false));
-  const isHolaplex = creatorAddress === 'Holaplex';
+  const isHolaplex = creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_PUBKEY;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -229,7 +229,7 @@ const CreatorsRow = ({
         }}
       >
         {isHolaplex
-          ? creatorAddress
+          ? 'Holaplex'
           : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
       </Paragraph>
       {!isHolaplex && (
@@ -362,7 +362,7 @@ export default function RoyaltiesCreators({
   isFirst = false,
 }: Props) {
   const [creators, setCreators] = useState<Array<Creator>>([
-    { address: 'Holaplex', share: 2 },
+    { address: process.env.NEXT_PUBLIC_HOLAPLEX_PUBKEY ?? '', share: 2 },
     { address: userKey ?? '', share: 98 },
   ]);
   const [showCreatorField, toggleCreatorField] = useState(false);
