@@ -186,7 +186,7 @@ export const submitCallback = ({
         pubkey: solana?.publicKey.toBase58() ?? '',
       }     
       
-      if (banner.url) {
+      if (banner?.url) {
         storefront.theme.banner = banner
       }
       
