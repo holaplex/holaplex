@@ -181,7 +181,7 @@ export default function InfoScreen({
                 { max: 20, message: 'NFT names can not be longer than 20 charachters' },
                 {
                   message:
-                    'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the lenght of the name of your NFT.',
+                    'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
                   async validator(rule, value) {
                     if (Buffer.from(value).length > 28) {
                       throw new Error();
