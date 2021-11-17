@@ -9,6 +9,10 @@ import { UploadFile } from 'antd/lib/upload/interface';
 const { Dragger } = Upload;
 
 export const MAX_IMAGES = 10;
+// For reference https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
+export const NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING =
+  'image/jpeg,image/png,image/gif,image/svg+xml';
+
 const StyledLayout = styled(Layout)`
   display: flex;
   align-items: center;
@@ -65,7 +69,7 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
     maxCount: MAX_IMAGES, // doesn't actually seem to do anything, hence the checkes in other places
     fileList,
     multiple: true,
-    accept: 'image/jpeg,image/png,image/gif',
+    accept: NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
     showUploadList: false,
     style: {
       background: 'rgba(255,255,255,0.1)',
@@ -93,7 +97,7 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
     },
     beforeUpload: (file, list) => {
       const isUniqueFile = images.every((i) => i.name !== file.name);
-      if (isUniqueFile && images.length < 11) {
+      if (isUniqueFile) {
         dispatch({ type: 'ADD_IMAGE', payload: file });
       }
       return false;

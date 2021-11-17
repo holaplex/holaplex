@@ -1,5 +1,5 @@
 import Button from '@/common/components/elements/Button';
-import { PageHeader, Upload } from 'antd';
+import { PageHeader, Upload, Space } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -7,7 +7,10 @@ import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
-import { MAX_IMAGES } from '@/modules/nfts/components/wizard/Upload';
+import {
+  MAX_IMAGES,
+  NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
+} from '@/modules/nfts/components/wizard/Upload';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 const Header = styled(PageHeader)`
@@ -46,26 +49,28 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
 
   return (
     <NavContainer previousStep={previousStep} goToStep={goToStep}>
-      <Header>Do these look right?</Header>
-      <NFTPreviewGrid removeImage={removeImage} images={images} width={5}>
-        {images.length < MAX_IMAGES && (
-          <Upload
-            showUploadList={false}
-            beforeUpload={(f) =>
-              images.length < 11 &&
-              images.every((i) => i.name !== f.name) &&
-              dispatch({ type: 'ADD_IMAGE', payload: f })
-            }
-          >
-            <AddNFTButton>
-              <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
-            </AddNFTButton>
-          </Upload>
-        )}
-      </NFTPreviewGrid>
-      <Button type="primary" size="large" onClick={nextStep}>
-        Looks good
-      </Button>
+      <Space direction="vertical" size={80} align="center">
+        <Header>Do these look right?</Header>
+        <NFTPreviewGrid removeImage={removeImage} images={images} width={5}>
+          {images.length < MAX_IMAGES && (
+            <Upload
+              accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
+              showUploadList={false}
+              beforeUpload={(f) =>
+                images.every((i) => i.name !== f.name) && // is unique name
+                dispatch({ type: 'ADD_IMAGE', payload: f })
+              }
+            >
+              <AddNFTButton>
+                <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
+              </AddNFTButton>
+            </Upload>
+          )}
+        </NFTPreviewGrid>
+        <Button type="primary" size="large" onClick={nextStep}>
+          Looks good
+        </Button>
+      </Space>
     </NavContainer>
   );
 }

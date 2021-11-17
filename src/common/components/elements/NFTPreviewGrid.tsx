@@ -3,6 +3,7 @@ import Image from 'next/image';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { MintStatus, NFTValue } from 'pages/nfts/new';
+import { Image as AntImage } from 'antd';
 
 const CheckWrapper = styled.div`
   position: relative;
@@ -16,7 +17,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   height: 120px;
   width: 120px;
   border-radius: 4px;
-  padding: 4px;
+
   ${({ isCurrent }) => (isCurrent ? 'border: 2px solid #d24089;;' : null)}
   ${({ isFinished }) => (isFinished ? 'opacity: 0.5;' : null)}
 `;
@@ -73,6 +74,10 @@ const getOverlayStatus = (index: number, nftValues?: NFTValue[]) => {
   );
 };
 
+const StyledAntDImage = styled(AntImage)`
+  object-fit: cover;
+`;
+
 export const NFTPreviewGrid = ({
   images,
   index = -1,
@@ -88,26 +93,26 @@ export const NFTPreviewGrid = ({
         <ImageOverlay key={image.name} isFinished={i < index} isCurrent={i === index}>
           {removeImage ? (
             <ImageContainer key={image.name}>
-              <Image
+              <StyledAntDImage
                 width={120}
                 height={120}
                 src={URL.createObjectURL(image)}
-                objectFit="cover"
                 alt={image.name}
-                unoptimized={true}
+                // objectFit="cover"
+                // unoptimized={true}
               />
               <StyledRemoveNFT onClick={() => removeImage(image.name)}>
                 <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
               </StyledRemoveNFT>
             </ImageContainer>
           ) : (
-            <Image
-              width={120}
-              height={120}
+            <StyledAntDImage
+              width={116}
+              height={116}
               src={URL.createObjectURL(image)}
-              objectFit="cover"
               alt={image.name}
-              unoptimized={true}
+              // unoptimized={true}
+              // objectFit="cover"
             />
           )}
           {i < index && getOverlayStatus(i, nftValues)}
