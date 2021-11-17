@@ -58,10 +58,12 @@ const SummaryItem = ({
   value,
   image,
   showRoyaltyPercentage,
+  showCreatorCount,
 }: {
   value: NFTFormValue;
   image: File;
   showRoyaltyPercentage: boolean;
+  showCreatorCount: boolean;
 }) => {
   if (!image) {
     throw new Error('Image is required');
@@ -102,6 +104,12 @@ const SummaryItem = ({
           </Attribute>
         ) : null
       )}
+      {showCreatorCount && (
+        <Attribute>
+          <Paragraph style={{ width: 110 }}>Creators:</Paragraph>
+          <Paragraph>{value.properties.creators.length - 1}</Paragraph>
+        </Attribute>
+      )}
     </StyledSummaryItem>
   );
 };
@@ -114,9 +122,10 @@ export default function Summary({
   formValues,
   goToNamedStep,
   setNFTValues,
+  form,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
-
+  console.log('form fields', form.getFieldsValue(true));
   // TODO: Can extract this to top level component
   const upload = async () => {
     console.log('uploading images', images);
@@ -166,8 +175,15 @@ export default function Summary({
                   value={fv}
                   image={images[index]}
                   showRoyaltyPercentage={formValues.some((nft1) =>
+                    // if one or more NFTs have a different royalty percentage it makes sense to show it in the summary
                     formValues.some(
                       (nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points
+                    )
+                  )}
+                  showCreatorCount={formValues.some((nft1) =>
+                    // if one or more NFTs have a different number of creators(other than seller and holaplex) it makes sense to show it in the summary.
+                    formValues.some(
+                      (nft2) => nft1.properties.creators.length !== nft2.properties.creators.length
                     )
                   )}
                 />

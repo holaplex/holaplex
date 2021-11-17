@@ -700,7 +700,7 @@ export default function RoyaltiesCreators({
               )}
 
               <Button type="primary" onClick={isFirst ? applyToAll : next}>
-                {isFirst ? 'Apply to All' : 'Next'}
+                {isFirst && images.length > 1 ? 'Apply to All' : 'Next'}
               </Button>
             </Space>
           </Row>

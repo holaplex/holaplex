@@ -102,7 +102,7 @@ export default function InfoScreen({
 
   const values = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = values[`nft-${index - 1}`];
-  console.log('previousNFT', previousNFT);
+
   const handleNext = () => {
     setErrorList([]);
     form
@@ -171,7 +171,10 @@ export default function InfoScreen({
               name={[nftNumber, 'name']}
               initialValue={images[index]?.name || ''}
               label="Name"
-              rules={[{ required: true, message: 'Name is required' }]}
+              rules={[
+                { required: true, message: 'Name is required' },
+                { max: 75, message: 'NFT name can be no more than 75 characters' },
+              ]}
             >
               <Input placeholder="required" autoFocus />
             </Form.Item>
