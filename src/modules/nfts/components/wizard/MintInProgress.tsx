@@ -1,8 +1,7 @@
-import { Divider, Form, Row, Col, Space, Button } from 'antd';
+import { Divider, Row, Col, Space, Button } from 'antd';
 import React, { useCallback, useContext, useEffect } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
-import styled from 'styled-components';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import Paragraph from 'antd/lib/typography/Paragraph';
@@ -19,6 +18,7 @@ import { WalletContext } from '@/modules/wallet';
 const { mintNFT } = actions;
 
 const APPROVAL_FAILED_CODE = 4001;
+const REQUESTED_METHOD_NOT_AUTHORIZED_CODE = 4100;
 
 enum TransactionStep {
   SENDING_FAILED,
@@ -40,18 +40,6 @@ interface Props extends Partial<StepWizardChildProps> {
   updateNFTValue: (value: NFTValue, index: number) => void;
   uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
 }
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 16px;
-  row-gap: 16px;
-  grid-template-rows: 100px 100px 100px 100px 100px;
-`;
-
-const StyledDivider = styled(Divider)`
-  background-color: rgba(255, 255, 255, 0.1);
-`;
 
 const MintStep = ({
   text,
@@ -137,6 +125,10 @@ export default function MintInProgress({
       throw new Error('No NFT Value, something went wrong');
     }
 
+    if (nftValue.mintStatus === MintStatus.SUCCESS) {
+      return; // Don't accidentally mint
+    }
+
     setTransactionStep(TransactionStep.APPROVING);
     // TODO: I would split into two functions for metadata upload and mint and then useState to set metadata
     let metaData: UploadedFilePin | null = null;
@@ -162,6 +154,7 @@ export default function MintInProgress({
         maxSupply: nftValue.properties.maxSupply,
       });
       setTransactionStep(TransactionStep.FINALIZING);
+      console.log('transaction id is', mintResp.txId);
       await connection.confirmTransaction(mintResp.txId);
       setTransactionStep(TransactionStep.SUCCESS);
       handleNext();
@@ -257,7 +250,10 @@ export default function MintInProgress({
           )}
         </Col>
 
-        <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
+        <Divider
+          type="vertical"
+          style={{ margin: '0 46px', height: 500, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+        />
         <NFTPreviewGrid index={index} images={images} nftValues={nftValues} />
       </Row>
     </NavContainer>

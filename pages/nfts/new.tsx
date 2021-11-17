@@ -61,6 +61,7 @@ export interface NFTValue {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
+  collection?: string;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
 
@@ -148,7 +149,8 @@ export default function BulkUploadWizard() {
       return {
         name: v.name,
         description: v.description,
-        symbol: '', // TODO: What do we feed this? v.symbol?
+        symbol: '',
+        collection: v.collection,
         seller_fee_basis_points: v.seller_fee_basis_points,
         image: filePin.uri,
         files: [{ uri: filePin.uri, type: filePin.type }],
