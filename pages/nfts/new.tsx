@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { useContext, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/modules/nfts/components/wizard/Upload';
@@ -128,15 +128,16 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form] = useForm();
-  const { connect, wallet, solana } = useContext(WalletContext);
+  const { connect, solana, wallet } = useContext(WalletContext);
   const { images, formValues } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = React.useState(false);
 
-  // TODO: do we even need `wallet` if we have `solana`?
-  if (!wallet || !solana) {
-    connect({ redirect: '/nfts/new' });
-  }
+  useEffect(() => {
+    if (!wallet) {
+      connect({ redirect: '/nfts/new' });
+    }
+  }, [wallet, connect]);
 
   const transformToMetaDataJson = (nftValue: NFTValue) => {
     // TODO: What do we need to do to transform to right structure?
@@ -218,7 +219,7 @@ export default function BulkUploadWizard() {
     }
   }
 
-  if (!wallet || !solana) {
+  if (!solana || !wallet) {
     return null;
   }
 
