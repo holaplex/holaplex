@@ -52,8 +52,9 @@ export default function PriceSummary({
   const [totalSolCost, setTotalSolCost] = useState(images.length * SOL_COST_PER_NFT);
   const [totalInUSD, setTotalInUSD] = useState(0.0);
   const { wallet } = useContext(WalletContext);
-  const [solBalanceInLamports, setSolBalance] = useState(0);
-  const hasEnoughSol = solBalanceInLamports >= totalSolCost * SOL_COST_PER_NFT;
+  const [solBalanceInLamports, setSolBalance] = useState(-1);
+  const hasEnoughSol =
+    (solBalanceInLamports === -1 || solBalanceInLamports) >= totalSolCost * SOL_COST_PER_NFT;
 
   useEffect(() => {
     if (wallet) {
@@ -125,7 +126,7 @@ export default function PriceSummary({
               </Button>
             </ButtonFormItem>
           </Row>
-          DEBUG for Sol balance : {solBalanceInLamports}
+          DEBUG for Sol balance (in Lamports) : {solBalanceInLamports}
         </Col>
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
         <NFTPreviewGrid images={images} />

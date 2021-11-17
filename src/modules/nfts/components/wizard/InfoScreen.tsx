@@ -132,7 +132,12 @@ export default function InfoScreen({
           }[];
         }) => {
           console.log('errorInfo', errorInfo);
-          setErrorList(errorInfo.errorFields.map((ef) => ef?.errors).flat());
+          setErrorList(
+            errorInfo.errorFields // only handle attribute errors
+              .filter((ef) => ef.name.includes('attributes'))
+              .map((ef) => ef?.errors)
+              .flat()
+          );
         }
       );
   };
@@ -169,11 +174,20 @@ export default function InfoScreen({
           <Form.Item name={`nft-${0}`}>
             <Form.Item
               name={[nftNumber, 'name']}
-              initialValue={images[index]?.name || ''}
+              initialValue={images[index]?.name?.substring(0, 20) || ''}
               label="Name"
               rules={[
                 { required: true, message: 'Name is required' },
-                { max: 75, message: 'NFT name can be no more than 75 characters' },
+                { max: 20, message: 'NFT names can not be longer than 20 charachters' },
+                {
+                  message:
+                    'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the lenght of the name of your NFT.',
+                  async validator(rule, value) {
+                    if (Buffer.from(value).length > 28) {
+                      throw new Error();
+                    }
+                  },
+                },
               ]}
             >
               <Input placeholder="required" autoFocus />

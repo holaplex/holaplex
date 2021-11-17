@@ -57,8 +57,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
               showUploadList={false}
               beforeUpload={(f) =>
-                images.length < 11 &&
-                images.every((i) => i.name !== f.name) &&
+                images.every((i) => i.name !== f.name) && // is unique name
                 dispatch({ type: 'ADD_IMAGE', payload: f })
               }
             >
