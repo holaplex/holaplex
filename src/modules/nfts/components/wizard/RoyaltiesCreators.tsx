@@ -28,6 +28,7 @@ import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import FeesModalContent from '@/common/components/presentational/FeesModalContent';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
+const MAX_SUPPLY_ONE_OF_ONE = 0;
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
@@ -637,7 +638,7 @@ export default function RoyaltiesCreators({
                 onChange={({ target: { value } }) => {
                   setEditionsSelection(value);
                   if (value === 'one') {
-                    setMaxSupply(1);
+                    setMaxSupply(MAX_SUPPLY_ONE_OF_ONE);
                   }
                 }}
                 value={editionsSelection}
