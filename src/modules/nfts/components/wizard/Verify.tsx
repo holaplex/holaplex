@@ -56,10 +56,7 @@ export default function Verify({ previousStep, nextStep, dispatch, goToStep, ima
             <Upload
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
               showUploadList={false}
-              beforeUpload={(f) =>
-                images.every((i) => i.name !== f.name) && // is unique name
-                dispatch({ type: 'ADD_IMAGE', payload: f })
-              }
+              beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
             >
               <AddNFTButton>
                 <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
