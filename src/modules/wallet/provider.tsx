@@ -51,7 +51,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     }
   }
 
-  const connect = ({ redirect }: { redirect: string }) => {
+  const connect = (props: { redirect?: string }) => {
     if (isNil(solana)) {
       toast(() => (
         <>
@@ -71,11 +71,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           return arweaveSDK.using(arweave).storefront.find('solana:pubkey', wallet.pubkey);
         })
         .then((storefront: any) => {
-          if (redirect) {
-            if (redirect === '') {
+          if (props.redirect) {
+            if (props.redirect === '') {
               return;
             }
-            return router.push(redirect);
+            return router.push(props.redirect);
           }
 
           if (storefront) {

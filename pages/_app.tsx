@@ -7,12 +7,12 @@ import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { Layout, Col, Row } from 'antd';
-import sv from '@/constants/styles';
 import { isNil } from 'ramda';
 import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
+import { AppHeader } from '@/common/components/elements/AppHeader';
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
@@ -22,11 +22,6 @@ const AppContent = styled(Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-`;
-
-const AppHeader = styled(Header)`
-  ${sv.flexRow};
-  margin: 0 0 40px 0;
 `;
 
 const AppFooter = styled(Row)`
