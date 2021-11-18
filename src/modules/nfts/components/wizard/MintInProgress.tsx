@@ -8,26 +8,29 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import EmptySpinnerIcon from '@/common/assets/images/empty-spinner.svg';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
-import { Connection } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { actions } from '@metaplex/js';
 import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { WalletContext } from '@/modules/wallet';
+import { holaSignMetadata, signMetaDataStatus } from '@/modules/storefront/approve-nft';
 
 const { mintNFT } = actions;
 
 const APPROVAL_FAILED_CODE = 4001;
-const REQUESTED_METHOD_NOT_AUTHORIZED_CODE = 4100;
+const META_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 
 enum TransactionStep {
   SENDING_FAILED,
   APPROVAL_FAILED,
   META_DATA_UPLOAD_FAILED,
+  SIGNING_FAILED,
   META_DATA_UPLOADING,
   APPROVING,
   SENDING,
   FINALIZING,
+  SIGNING,
   SUCCESS,
 }
 
@@ -54,6 +57,7 @@ const MintStep = ({
 }) => {
   let icon;
 
+  // TODO: This might be better off as a switch and isActive, isDone, failed combined into a `status` prop
   if (isDone) {
     icon = <Image width={32} height={32} src={GreenCheckIcon} alt="green-check" />;
   } else if (isActive) {
@@ -99,14 +103,11 @@ export default function MintInProgress({
   const [transactionStep, setTransactionStep] = React.useState(TransactionStep.APPROVING);
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
-    transactionStep === TransactionStep.APPROVAL_FAILED;
+    transactionStep === TransactionStep.APPROVAL_FAILED ||
+    transactionStep === TransactionStep.SIGNING_FAILED;
 
   const { connect } = useContext(WalletContext);
   const nftValue = nftValues[index];
-
-  if (!wallet) {
-    // connect({ redirect: '/nfts/new' });
-  }
 
   const handleNext = useCallback(() => {
     const updatedValue = showErrors
@@ -118,9 +119,85 @@ export default function MintInProgress({
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
-  const attemptMetaDataUpload = () => {};
+  const attemptMint = useCallback(
+    async (metaData: UploadedFilePin) => {
+      if (!metaData) {
+        throw new Error('No Meta Data, something went wrong');
+      }
 
-  const attemptMint = useCallback(async () => {
+      setTransactionStep(TransactionStep.APPROVING);
+
+      let mintResp = null;
+
+      setTimeout(() => {});
+      try {
+        console.count('attempting mint');
+
+        // const timeout = setTimeout(() => {
+        //   console.log('this fired because we took too long');
+        // }, 90000);
+        // TODO: Sometimes this hangs, maybe we need to retry after 90 seconds or so?
+        mintResp = await mintNFT({
+          connection,
+          wallet,
+          uri: metaData.uri,
+          maxSupply: nftValue.properties.maxSupply,
+        });
+        // clearTimeout(timeout);
+        setTransactionStep(TransactionStep.FINALIZING);
+        console.log('mintResp', mintResp);
+        console.log('transaction id is', mintResp.txId);
+        await connection.confirmTransaction(mintResp.txId);
+        setTransactionStep(TransactionStep.SUCCESS);
+      } catch (err) {
+        console.log('mintNFT err', err);
+        if (err?.code === APPROVAL_FAILED_CODE) {
+          setTransactionStep(TransactionStep.APPROVAL_FAILED);
+        } else {
+          setTransactionStep(TransactionStep.SENDING_FAILED);
+        }
+
+        return;
+      }
+
+      if (!mintResp) {
+        throw new Error('No Mint Response, something went wrong');
+      }
+
+      setTransactionStep(TransactionStep.SIGNING);
+
+      try {
+        if (!process.env.NEXT_PUBLIC_SOLANA_ENDPOINT) {
+          throw new Error('No Solana Endpoint');
+        }
+        const metaProgramId = new PublicKey(META_PROGRAM_ID);
+        const { metadata } = mintResp;
+
+        await holaSignMetadata({
+          solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
+          metadata,
+          metaProgramId,
+          onProgress: (status: signMetaDataStatus) => {
+            console.log('progress status: ', status);
+          },
+          onComplete: () => {
+            console.log('signing complete');
+            setTransactionStep(TransactionStep.SUCCESS);
+            handleNext();
+          },
+          onError: (msg) => {
+            throw new Error(msg);
+          },
+        });
+      } catch (err) {
+        console.log('signing err', err);
+        setTransactionStep(TransactionStep.SIGNING_FAILED);
+      }
+    },
+    [nftValue, handleNext, connection, wallet]
+  );
+
+  const attemptMetaDataUpload = useCallback(async () => {
     if (!nftValue) {
       throw new Error('No NFT Value, something went wrong');
     }
@@ -130,43 +207,17 @@ export default function MintInProgress({
     }
 
     setTransactionStep(TransactionStep.APPROVING);
-    // TODO: I would split into two functions for metadata upload and mint and then useState to set metadata
     let metaData: UploadedFilePin | null = null;
 
     try {
       setTransactionStep(TransactionStep.META_DATA_UPLOADING);
       metaData = await uploadMetaData(nftValue);
+
+      attemptMint(metaData);
     } catch (err) {
       setTransactionStep(TransactionStep.META_DATA_UPLOAD_FAILED);
     }
-
-    if (!metaData) {
-      throw new Error('No Meta Data, something went wrong');
-    }
-
-    setTransactionStep(TransactionStep.APPROVING);
-
-    try {
-      const mintResp = await mintNFT({
-        connection,
-        wallet,
-        uri: metaData.uri,
-        maxSupply: nftValue.properties.maxSupply,
-      });
-      setTransactionStep(TransactionStep.FINALIZING);
-      console.log('transaction id is', mintResp.txId);
-      await connection.confirmTransaction(mintResp.txId);
-      setTransactionStep(TransactionStep.SUCCESS);
-      handleNext();
-    } catch (err) {
-      console.log('mintNFT err', err);
-      if (err?.code === APPROVAL_FAILED_CODE) {
-        setTransactionStep(TransactionStep.APPROVAL_FAILED);
-      } else {
-        setTransactionStep(TransactionStep.SENDING_FAILED);
-      }
-    }
-  }, [nftValue, handleNext, uploadMetaData, connection, wallet]);
+  }, [attemptMint, nftValue, uploadMetaData, setTransactionStep]);
 
   useEffect(() => {
     if (showErrors) {
@@ -174,9 +225,9 @@ export default function MintInProgress({
     }
 
     if (isActive && nftValue) {
-      attemptMint();
+      attemptMetaDataUpload();
     }
-  }, [isActive, showErrors, nftValue, attemptMint, index]);
+  }, [isActive, showErrors, nftValue, attemptMetaDataUpload, index]);
 
   if (!nftValue) {
     return null;
@@ -216,6 +267,11 @@ export default function MintInProgress({
               <MintStep
                 text="Waiting for final confirmation"
                 isActive={transactionStep === TransactionStep.FINALIZING}
+                isDone={transactionStep > TransactionStep.FINALIZING}
+              />
+              <MintStep
+                text="Signing Holaplex as co-creator"
+                isActive={transactionStep === TransactionStep.SIGNING}
                 isDone={transactionStep === TransactionStep.SUCCESS}
               />
             </Col>
