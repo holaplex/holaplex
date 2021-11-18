@@ -135,7 +135,7 @@ export default function BulkUploadWizard() {
 
   useEffect(() => {
     if (!wallet) {
-      connect({ redirect: '/nfts/new' });
+      connect('/nfts/new');
     }
   }, [wallet, connect]);
 
