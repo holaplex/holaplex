@@ -169,7 +169,6 @@ export default function MintInProgress({
 
       setTransactionStep(TransactionStep.APPROVING);
 
-      console.log('are we getting this far');
       try {
         const mintResp = await mintNFT({
           connection,
@@ -208,7 +207,6 @@ export default function MintInProgress({
     let metaData: UploadedFilePin | null = null;
 
     try {
-      console.log('are we getting this far?');
       metaData = await uploadMetaData(nftValue);
 
       attemptMint(metaData);

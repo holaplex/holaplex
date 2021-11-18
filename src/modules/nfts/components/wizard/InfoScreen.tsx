@@ -155,114 +155,114 @@ export default function InfoScreen({
     >
       <Row>
         <FormWrapper>
-          <Form.Item name={`nft-${0}`}>
-            <Form.Item
-              name={[nftNumber, 'name']}
-              initialValue={images[index]?.name?.substring(0, 20) || ''}
-              label="Name"
+          {/* <Form.Item> */}
+          <Form.Item
+            name={[nftNumber, 'name']}
+            initialValue={images[index]?.name?.substring(0, 20) || ''}
+            label="Name"
+            rules={[
+              { required: true, message: 'Name is required' },
+              { max: 20, message: 'NFT names can not be longer than 20 charachters' },
+              {
+                message:
+                  'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
+                async validator(rule, value) {
+                  if (Buffer.from(value).length > 28) {
+                    throw new Error();
+                  }
+                },
+              },
+            ]}
+          >
+            <Input placeholder="required" autoFocus />
+          </Form.Item>
+          <Form.Item
+            name={[nftNumber, 'description']}
+            label="Description"
+            initialValue={previousNFT ? previousNFT.description : ''}
+          >
+            <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
+          </Form.Item>
+          <Form.Item
+            name={[nftNumber, 'collection']}
+            label="Collection"
+            initialValue={previousNFT ? previousNFT.collection : ''}
+          >
+            <Input placeholder="e.g. Stylish Studs (optional)" />
+          </Form.Item>
+          <Form.Item label="Attributes">
+            <Form.List
+              name={[nftNumber, 'attributes']}
+              initialValue={
+                previousNFT
+                  ? previousNFT?.attributes.map((a) => ({
+                      trait_type: a.trait_type,
+                      value: undefined,
+                    }))
+                  : [{ trait_type: undefined, value: undefined }]
+              }
               rules={[
-                { required: true, message: 'Name is required' },
-                { max: 20, message: 'NFT names can not be longer than 20 charachters' },
                 {
-                  message:
-                    'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
-                  async validator(rule, value) {
-                    if (Buffer.from(value).length > 28) {
+                  message: 'All attributes must have defined trait types',
+                  async validator(rule, value: NFTAttribute[]) {
+                    if (value.length === 1) return;
+                    if (value.some((a, i) => !a?.trait_type)) {
+                      throw new Error();
+                    }
+                  },
+                },
+                {
+                  message: 'All attributes must be unique',
+                  async validator(rule, value: NFTAttribute[]) {
+                    const traitTypes = value.map((a) => a?.trait_type);
+                    const indexOfDuplicate = traitTypes.findIndex(
+                      (a, i) => traitTypes.indexOf(a) !== i
+                    );
+                    if (indexOfDuplicate !== -1) {
+                      throw new Error();
+                    }
+                  },
+                },
+                {
+                  message: 'All attributes with a trait type must have a value',
+                  async validator(rule, value: NFTAttribute[]) {
+                    if (value.some((a, i) => a?.trait_type && !a?.value)) {
                       throw new Error();
                     }
                   },
                 },
               ]}
             >
-              <Input placeholder="required" autoFocus />
-            </Form.Item>
-            <Form.Item
-              name={[nftNumber, 'description']}
-              label="Description"
-              initialValue={previousNFT ? previousNFT.description : ''}
-            >
-              <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
-            </Form.Item>
-            <Form.Item
-              name={[nftNumber, 'collection']}
-              label="Collection"
-              initialValue={previousNFT ? previousNFT.collection : ''}
-            >
-              <Input placeholder="e.g. Stylish Studs (optional)" />
-            </Form.Item>
-            <Form.Item label="Attributes">
-              <Form.List
-                name={[nftNumber, 'attributes']}
-                initialValue={
-                  previousNFT
-                    ? previousNFT?.attributes.map((a) => ({
-                        trait_type: a.trait_type,
-                        value: undefined,
-                      }))
-                    : [{ trait_type: undefined, value: undefined }]
-                }
-                rules={[
-                  {
-                    message: 'All attributes must have defined trait types',
-                    async validator(rule, value: NFTAttribute[]) {
-                      if (value.length === 1) return;
-                      if (value.some((a, i) => !a?.trait_type)) {
-                        throw new Error();
-                      }
-                    },
-                  },
-                  {
-                    message: 'All attributes must be unique',
-                    async validator(rule, value: NFTAttribute[]) {
-                      const traitTypes = value.map((a) => a?.trait_type);
-                      const indexOfDuplicate = traitTypes.findIndex(
-                        (a, i) => traitTypes.indexOf(a) !== i
-                      );
-                      if (indexOfDuplicate !== -1) {
-                        throw new Error();
-                      }
-                    },
-                  },
-                  {
-                    message: 'All attributes with a trait type must have a value',
-                    async validator(rule, value: NFTAttribute[]) {
-                      if (value.some((a, i) => a?.trait_type && !a?.value)) {
-                        throw new Error();
-                      }
-                    },
-                  },
-                ]}
-              >
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map((field) => (
-                      <AttributeRow
-                        key={field.key}
-                        remove={remove}
-                        fieldsLength={fields.length}
-                        field={field}
-                      />
-                    ))}
-                    {errorList.map((error, j) => (
-                      <div key={j}>
-                        <Text type="danger">{error}</Text>
-                      </div>
-                    ))}
-                    {fields.length < 10 && (
-                      <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
-                        Add Attribute
-                      </StyledClearButton>
-                    )}
-                  </>
-                )}
-              </Form.List>
-            </Form.Item>
-            <ButtonFormItem style={{ marginTop: 42 }}>
-              <Button type="primary" onClick={handleNext}>
-                Next
-              </Button>
-            </ButtonFormItem>
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map((field) => (
+                    <AttributeRow
+                      key={field.key}
+                      remove={remove}
+                      fieldsLength={fields.length}
+                      field={field}
+                    />
+                  ))}
+                  {errorList.map((error, j) => (
+                    <div key={j}>
+                      <Text type="danger">{error}</Text>
+                    </div>
+                  ))}
+                  {fields.length < 10 && (
+                    <StyledClearButton onClick={() => add()} type="default" noStyle={true}>
+                      Add Attribute
+                    </StyledClearButton>
+                  )}
+                </>
+              )}
+            </Form.List>
           </Form.Item>
+          <ButtonFormItem style={{ marginTop: 42 }}>
+            <Button type="primary" onClick={handleNext}>
+              Next
+            </Button>
+          </ButtonFormItem>
+          {/* </Form.Item> */}
         </FormWrapper>
         <StyledDivider type="vertical" />
         <NFTPreviewGrid images={images} index={index} width={2} />

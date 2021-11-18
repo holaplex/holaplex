@@ -66,7 +66,7 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
 
   const draggerProps: DraggerProps = {
     name: 'file',
-    maxCount: MAX_IMAGES, // doesn't actually seem to do anything, hence the checkes in other places
+    maxCount: MAX_IMAGES, // doesn't actually seem to do anything, hence the checks in other places
     fileList,
     multiple: true,
     accept: NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
@@ -91,8 +91,8 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
         console.log(`${info.file.name} file upload failed.`);
       }
       if (count === info.fileList.length) {
-        nextStep!();
         setFileList([]); // reset local File upload state
+        nextStep!();
       }
     },
     beforeUpload: (file, list) => {
@@ -115,24 +115,6 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
             Browse Files
           </Button>
         </StyledSpace>
-        {/* <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            margin: '0 auto',
-            padding: '40px 0',
-            width: '100%',
-            maxWidth: '856px',
-          }}
-        >
-          <Copy>Drag up to 10 pngs, jpegs, or gifs here.</Copy>
-          <Copy transparent>or</Copy>
-          <Button type="primary" size="large">
-            Browse Files
-          </Button>
-        </div> */}
       </Dragger>
     </StyledLayout>
   );

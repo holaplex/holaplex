@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { Button } from 'antd';
 import { equals } from 'ramda';
 
-const StyledButton = styled(Button)<{ noStyle?: boolean }>`
+const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ noStyle?: boolean }>`
   font-weight: 500;
   color: #000;
   &:hover,
