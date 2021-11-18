@@ -243,14 +243,6 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} images={images} hashKey="upload" />
           <Verify images={images} dispatch={dispatch} hashKey="verify" />
-
-          <OffRampScreen
-            hashKey="success"
-            images={images}
-            clearForm={clearForm}
-            storefront={storefront}
-            nftValues={state.nftValues}
-          />
           {
             images.map((image, index) => (
               <InfoScreen

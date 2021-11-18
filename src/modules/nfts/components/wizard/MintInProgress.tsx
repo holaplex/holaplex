@@ -32,11 +32,11 @@ enum TransactionStep {
   SENDING_FAILED,
   APPROVAL_FAILED,
   META_DATA_UPLOAD_FAILED,
-  SIGNING_FAILED,
   META_DATA_UPLOADING,
   APPROVING,
   SENDING,
   FINALIZING,
+  SIGNING_FAILED,
   SIGNING,
   SUCCESS,
 }
@@ -107,7 +107,7 @@ export default function MintInProgress({
   connection,
   index,
 }: Props) {
-  const [transactionStep, setTransactionStep] = React.useState(TransactionStep.APPROVING);
+  const [transactionStep, setTransactionStep] = React.useState(TransactionStep.META_DATA_UPLOADING);
   const [mintResp, setMintResp] = React.useState<MintNFTResponse | null>(null);
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
@@ -148,8 +148,7 @@ export default function MintInProgress({
         },
         onComplete: () => {
           console.log('signing complete');
-          // setTransactionStep(TransactionStep.SUCCESS);
-          throw new Error('Signing Complete');
+          setTransactionStep(TransactionStep.SUCCESS);
           handleNext();
         },
         onError: (msg) => {
@@ -170,6 +169,7 @@ export default function MintInProgress({
 
       setTransactionStep(TransactionStep.APPROVING);
 
+      console.log('are we getting this far');
       try {
         const mintResp = await mintNFT({
           connection,
@@ -205,11 +205,10 @@ export default function MintInProgress({
       return; // Don't accidentally mint
     }
 
-    setTransactionStep(TransactionStep.APPROVING);
     let metaData: UploadedFilePin | null = null;
 
     try {
-      setTransactionStep(TransactionStep.META_DATA_UPLOADING);
+      console.log('are we getting this far?');
       metaData = await uploadMetaData(nftValue);
 
       attemptMint(metaData);
@@ -284,6 +283,7 @@ export default function MintInProgress({
                 text="Signing Holaplex as co-creator"
                 isActive={transactionStep === TransactionStep.SIGNING}
                 isDone={transactionStep === TransactionStep.SUCCESS}
+                failed={transactionStep === TransactionStep.SENDING_FAILED}
               />
             </Col>
           </Row>

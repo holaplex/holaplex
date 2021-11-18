@@ -58,9 +58,11 @@ export default function OffRampScreen({
   storefront,
 }: Props) {
   const router = useRouter();
-  const successfulMints = 1;
-  // const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
+  const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
 
+  const titleTxt = successfulMints
+    ? `🎉 You’ve minted ${successfulMints} NFT${successfulMints > 1 ? 's' : ''}!`
+    : `You've minted ${0} NFTs`;
   const storefrontMintCopy = `${
     successfulMints > 1 ? 'They are' : 'It is'
   } available in your wallet. Now you can
@@ -68,11 +70,11 @@ export default function OffRampScreen({
 
   const noStorefrontCopy =
     'On your Holaplex store you’ll be able to list and sell your NFTs. Setting up a store only takes 5 min and is totally free!';
-  const mintCopy = storefront ? storefrontMintCopy : noStorefrontCopy;
+  const mintCopy = successfulMints ? (storefront ? storefrontMintCopy : noStorefrontCopy) : '';
 
   const headerCopy = storefront
     ? `${
-        successfulMints > 0
+        successfulMints
           ? `Congratulations! You've minted ${successfulMints} NFT${
               successfulMints > 1 ? 's.' : '.'
             }`
@@ -82,7 +84,7 @@ export default function OffRampScreen({
 
   return (
     <NavContainer
-      title={`🎉 You’ve minted ${successfulMints} NFT${successfulMints > 1 ? 's' : ''}!`}
+      title={titleTxt}
       goToStep={goToStep}
       clearForm={clearForm}
       altClearText="Mint more NFTs"
@@ -90,43 +92,54 @@ export default function OffRampScreen({
       <Row>
         <Wrapper>
           <Header>{headerCopy}</Header>
-          {successfulMints > 0 && (
-            <>
-              <Paragraph
-                style={{
-                  color: '#fff',
-                  opacity: 0.6,
-                  fontSize: 14,
-                  fontWeight: 400,
-                }}
+          <>
+            <Paragraph
+              style={{
+                color: '#fff',
+                opacity: 0.6,
+                fontSize: 14,
+                fontWeight: 400,
+              }}
+            >
+              {mintCopy}
+            </Paragraph>
+
+            {successfulMints ? (
+              <>
+                {storefront ? (
+                  <Button
+                    type="primary"
+                    onClick={() => router.push('/storefront/edit')}
+                    style={{ height: 'fit-content', marginTop: 38 }}
+                  >
+                    List on your Holaplex store
+                    <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                      {storefront.subdomain}.holaplex.com
+                    </Paragraph>
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={() => router.push('/storefront/new')}>
+                    Create your Free Store
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Button
+                type="primary"
+                onClick={() => goToStep!(1)}
+                style={{ height: 'fit-content', marginTop: 38 }}
               >
-                {mintCopy}
-              </Paragraph>
-              {storefront ? (
-                <Button
-                  type="primary"
-                  onClick={() => console.log('go to holoplex store')}
-                  style={{ height: 'fit-content', marginTop: 38 }}
-                >
-                  List on your Holaplex store
-                  <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                    {storefront.subdomain}.holaplex.com
-                  </Paragraph>
-                </Button>
-              ) : (
-                <Button type="primary" onClick={() => router.push('/storefront/new')}>
-                  Create your Free Store
-                </Button>
-              )}
-            </>
-          )}
+                Start Over
+              </Button>
+            )}
+          </>
         </Wrapper>
         <StyledDivider type="vertical" />
-        {/* <NFTPreviewGrid
+        <NFTPreviewGrid
           index={images.length} // trigger all NFT statuses for grid
           images={images}
           nftValues={nftValues}
-        /> */}
+        />
       </Row>
     </NavContainer>
   );
