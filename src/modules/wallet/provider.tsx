@@ -1,6 +1,7 @@
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { Solana } from '@/modules/solana/types';
+import { Storefront } from '@/modules/storefront/types';
 import walletSDK from '@/modules/wallet/client';
 import { Wallet } from '@/modules/wallet/types';
 import { useRouter } from 'next/router';
@@ -13,6 +14,7 @@ type WalletProviderProps = {
   wallet?: Wallet;
   solana?: Solana;
   children: (props: WalletContextProps) => React.ReactElement;
+  storefront?: Storefront;
 };
 
 const upsertWallet = async (pubkey: string) => {
@@ -32,6 +34,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [initializing, setInitialization] = useState(true);
   const [wallet, setWallet] = useState<Wallet>();
   const [solana, setSolana] = useState<Solana>();
+  const [storefront, setStorefront] = useState<Storefront>();
 
   if (typeof window === 'object') {
     if (window.solana && window.solana?.connect) {
@@ -71,6 +74,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           return arweaveSDK.using(arweave).storefront.find('solana:pubkey', wallet.pubkey);
         })
         .then((storefront: any) => {
+          setStorefront(storefront);
           if (props.redirect) {
             if (props.redirect === '') {
               return;
@@ -103,6 +107,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         wallet,
         solana,
         connect,
+        storefront,
       }}
     >
       {children({
@@ -111,6 +116,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         wallet,
         solana,
         connect,
+        storefront,
       })}
     </WalletContext.Provider>
   );

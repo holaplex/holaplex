@@ -139,7 +139,6 @@ export default function Summary({
       });
 
       const uploadedFilePins = await resp.json();
-      console.log('uploadedFilePins', uploadedFilePins);
       dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
       setNFTValues(uploadedFilePins.files);
       nextStep!();

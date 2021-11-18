@@ -128,7 +128,7 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form] = useForm();
-  const { connect, solana, wallet } = useContext(WalletContext);
+  const { connect, solana, wallet, storefront } = useContext(WalletContext);
   const { images, formValues } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = React.useState(false);
@@ -243,6 +243,14 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} images={images} hashKey="upload" />
           <Verify images={images} dispatch={dispatch} hashKey="verify" />
+
+          <OffRampScreen
+            hashKey="success"
+            images={images}
+            clearForm={clearForm}
+            storefront={storefront}
+            nftValues={state.nftValues}
+          />
           {
             images.map((image, index) => (
               <InfoScreen
@@ -313,6 +321,7 @@ export default function BulkUploadWizard() {
             images={images}
             clearForm={clearForm}
             nftValues={state.nftValues}
+            storefront={storefront}
           />
         </StepWizard>
       </StyledLayout>

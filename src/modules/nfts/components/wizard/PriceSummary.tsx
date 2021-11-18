@@ -92,7 +92,7 @@ export default function PriceSummary({
             <Col style={{ width: '100%' }}>
               <Row justify="space-between">
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                  Network fee x{images.length}
+                  Estimated network fee x{images.length}
                 </Paragraph>
                 <Paragraph style={{ fontSize: 14 }}>◎ {SOL_COST_PER_NFT}</Paragraph>
               </Row>

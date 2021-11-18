@@ -4,13 +4,16 @@ import { StepWizardChildProps } from 'react-step-wizard';
 import { Divider, PageHeader, Row } from 'antd';
 import { MintStatus, NFTValue } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { Storefront } from '@/modules/storefront/types';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Button from '@/common/components/elements/Button';
+import router, { useRouter } from 'next/router';
 
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   clearForm: () => void;
   nftValues: NFTValue[];
+  storefront?: Storefront;
 }
 
 const StyledDivider = styled(Divider)`
@@ -47,8 +50,35 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function OffRampScreen({ goToStep, clearForm, images, nftValues }: Props) {
-  const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
+export default function OffRampScreen({
+  goToStep,
+  clearForm,
+  images,
+  nftValues,
+  storefront,
+}: Props) {
+  const router = useRouter();
+  const successfulMints = 1;
+  // const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
+
+  const storefrontMintCopy = `${
+    successfulMints > 1 ? 'They are' : 'It is'
+  } available in your wallet. Now you can
+  list ${successfulMints > 1 ? 'them' : 'it'} on your Holaplex store.`;
+
+  const noStorefrontCopy =
+    'On your Holaplex store you’ll be able to list and sell your NFTs. Setting up a store only takes 5 min and is totally free!';
+  const mintCopy = storefront ? storefrontMintCopy : noStorefrontCopy;
+
+  const headerCopy = storefront
+    ? `${
+        successfulMints > 0
+          ? `Congratulations! You've minted ${successfulMints} NFT${
+              successfulMints > 1 ? 's.' : '.'
+            }`
+          : 'No NFTs minted.'
+      }`
+    : 'Let’s set up your free Holaplex store';
 
   return (
     <NavContainer
@@ -59,13 +89,7 @@ export default function OffRampScreen({ goToStep, clearForm, images, nftValues }
     >
       <Row>
         <Wrapper>
-          <Header>
-            {successfulMints > 0
-              ? `Congratulations! You've minted ${successfulMints} NFT${
-                  successfulMints > 1 ? 's.' : '.'
-                }`
-              : 'No NFTs minted.'}
-          </Header>
+          <Header>{headerCopy}</Header>
           {successfulMints > 0 && (
             <>
               <Paragraph
@@ -76,21 +100,33 @@ export default function OffRampScreen({ goToStep, clearForm, images, nftValues }
                   fontWeight: 400,
                 }}
               >
-                {successfulMints > 1 ? 'They are' : 'It is'} available in your wallet. Now you can
-                list {successfulMints > 1 ? 'them' : 'it'} on your Holaplex store.
+                {mintCopy}
               </Paragraph>
-              <Button type="primary" onClick={() => console.log('go to holoplex store')}>
-                List on your Holaplex store
-              </Button>
+              {storefront ? (
+                <Button
+                  type="primary"
+                  onClick={() => console.log('go to holoplex store')}
+                  style={{ height: 'fit-content', marginTop: 38 }}
+                >
+                  List on your Holaplex store
+                  <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+                    {storefront.subdomain}.holaplex.com
+                  </Paragraph>
+                </Button>
+              ) : (
+                <Button type="primary" onClick={() => router.push('/storefront/new')}>
+                  Create your Free Store
+                </Button>
+              )}
             </>
           )}
         </Wrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid
+        {/* <NFTPreviewGrid
           index={images.length} // trigger all NFT statuses for grid
           images={images}
           nftValues={nftValues}
-        />
+        /> */}
       </Row>
     </NavContainer>
   );

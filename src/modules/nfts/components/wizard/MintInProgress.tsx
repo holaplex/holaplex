@@ -18,6 +18,13 @@ import { holaSignMetadata, signMetaDataStatus } from '@/modules/storefront/appro
 
 const { mintNFT } = actions;
 
+interface MintNFTResponse {
+  txId: string;
+  mint: PublicKey;
+  metadata: PublicKey;
+  edition: PublicKey;
+}
+
 const APPROVAL_FAILED_CODE = 4001;
 const META_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 
@@ -101,6 +108,7 @@ export default function MintInProgress({
   index,
 }: Props) {
   const [transactionStep, setTransactionStep] = React.useState(TransactionStep.APPROVING);
+  const [mintResp, setMintResp] = React.useState<MintNFTResponse | null>(null);
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
     transactionStep === TransactionStep.APPROVAL_FAILED ||
@@ -119,6 +127,41 @@ export default function MintInProgress({
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
+  const attemptHolaplexSign = useCallback(async () => {
+    if (!mintResp) {
+      throw new Error('No Mint Response, something went wrong');
+    }
+
+    try {
+      if (!process.env.NEXT_PUBLIC_SOLANA_ENDPOINT) {
+        throw new Error('No Solana Endpoint');
+      }
+      const metaProgramId = new PublicKey(META_PROGRAM_ID);
+      const { metadata } = mintResp;
+
+      await holaSignMetadata({
+        solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
+        metadata,
+        metaProgramId,
+        onProgress: (status: signMetaDataStatus) => {
+          console.log('progress status: ', status);
+        },
+        onComplete: () => {
+          console.log('signing complete');
+          // setTransactionStep(TransactionStep.SUCCESS);
+          throw new Error('Signing Complete');
+          handleNext();
+        },
+        onError: (msg) => {
+          throw new Error(msg);
+        },
+      });
+    } catch (err) {
+      console.log('signing err', err);
+      setTransactionStep(TransactionStep.SIGNING_FAILED);
+    }
+  }, [setTransactionStep, mintResp, handleNext]);
+
   const attemptMint = useCallback(
     async (metaData: UploadedFilePin) => {
       if (!metaData) {
@@ -127,17 +170,14 @@ export default function MintInProgress({
 
       setTransactionStep(TransactionStep.APPROVING);
 
-      let mintResp = null;
-
-      setTimeout(() => {});
       try {
-        mintResp = await mintNFT({
+        const mintResp = await mintNFT({
           connection,
           wallet,
           uri: metaData.uri,
           maxSupply: nftValue.properties.maxSupply,
         });
-        // clearTimeout(timeout);
+        setMintResp(mintResp);
         setTransactionStep(TransactionStep.FINALIZING);
         await connection.confirmTransaction(mintResp.txId);
         setTransactionStep(TransactionStep.SUCCESS);
@@ -151,41 +191,9 @@ export default function MintInProgress({
         return;
       }
 
-      if (!mintResp) {
-        throw new Error('No Mint Response, something went wrong');
-      }
-
       setTransactionStep(TransactionStep.SIGNING);
-
-      try {
-        if (!process.env.NEXT_PUBLIC_SOLANA_ENDPOINT) {
-          throw new Error('No Solana Endpoint');
-        }
-        const metaProgramId = new PublicKey(META_PROGRAM_ID);
-        const { metadata } = mintResp;
-
-        await holaSignMetadata({
-          solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
-          metadata,
-          metaProgramId,
-          onProgress: (status: signMetaDataStatus) => {
-            console.log('progress status: ', status);
-          },
-          onComplete: () => {
-            console.log('signing complete');
-            setTransactionStep(TransactionStep.SUCCESS);
-            handleNext();
-          },
-          onError: (msg) => {
-            throw new Error(msg);
-          },
-        });
-      } catch (err) {
-        console.log('signing err', err);
-        setTransactionStep(TransactionStep.SIGNING_FAILED);
-      }
     },
-    [nftValue, handleNext, connection, wallet]
+    [nftValue, connection, wallet]
   );
 
   const attemptMetaDataUpload = useCallback(async () => {
@@ -216,9 +224,21 @@ export default function MintInProgress({
     }
 
     if (isActive && nftValue) {
-      attemptMetaDataUpload();
+      if (transactionStep === TransactionStep.META_DATA_UPLOADING) {
+        attemptMetaDataUpload();
+      } else if (transactionStep === TransactionStep.SIGNING) {
+        attemptHolaplexSign();
+      }
     }
-  }, [isActive, showErrors, nftValue, attemptMetaDataUpload, index]);
+  }, [
+    isActive,
+    showErrors,
+    nftValue,
+    transactionStep,
+    attemptHolaplexSign,
+    attemptMetaDataUpload,
+    index,
+  ]);
 
   if (!nftValue) {
     return null;
@@ -277,17 +297,25 @@ export default function MintInProgress({
               </Row>
               <Row>
                 <Space size={8}>
-                  <Button
-                    type="default"
-                    onClick={handleNext}
-                    style={{ background: 'rgba(53, 53, 53, 1)' }}
-                  >
-                    Skip
-                  </Button>
+                  {transactionStep !== TransactionStep.SIGNING_FAILED && (
+                    <Button
+                      type="default"
+                      onClick={handleNext}
+                      style={{ background: 'rgba(53, 53, 53, 1)' }}
+                    >
+                      Skip
+                    </Button>
+                  )}
 
                   <Button
                     type="primary"
-                    onClick={() => setTransactionStep(TransactionStep.APPROVING)}
+                    onClick={() =>
+                      setTransactionStep(
+                        transactionStep === TransactionStep.SIGNING_FAILED
+                          ? TransactionStep.SIGNING
+                          : TransactionStep.APPROVING
+                      )
+                    }
                   >
                     Try Again
                   </Button>
