@@ -6,15 +6,32 @@ import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import styled from 'styled-components';
-import { Layout } from 'antd';
+import { Layout, Col, Row } from 'antd';
+import sv from '@/constants/styles';
 import { isNil } from 'ramda';
 import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
-import { Content } from 'antd/lib/layout/layout';
-import { AppHeader } from '@/components/elements/AppHeader';
+import SocialLinks from '@/components/elements/SocialLinks';
 
 const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+
+const { Header, Content } = Layout;
+
+const AppContent = styled(Content)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const AppHeader = styled(Header)`
+  ${sv.flexRow};
+  margin: 0 0 40px 0;
+`;
+
+const AppFooter = styled(Row)`
+  padding: 60px 50px 30px;
+`;
 
 const AppLayout = styled(Layout)`
   overflow-y: auto;
@@ -64,11 +81,39 @@ function MyApp({ Component, pageProps }: AppProps) {
               return (
                 <AppLayout>
                   <AppHeader />
-                  <Content>
+                  <AppContent>
                     <Loading loading={verifying || searching}>
-                      <Component {...pageProps} track={track} />
+                      <>
+                        <Component {...pageProps} track={track} />
+                        <AppFooter justify="center">
+                          <Col span={24}>
+                            <Row>
+                              <Col xs={24} md={8}>
+                                <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
+                              </Col>
+                              <Col xs={0} md={8}>
+                                <Row justify="center">
+                                  Made with &#10084; on &#160;
+                                  <a
+                                    href="https://www.metaplex.com"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    Metaplex
+                                  </a>
+                                </Row>
+                              </Col>
+                              <Col xs={0} md={8}>
+                                <Row justify="end">
+                                  <SocialLinks />
+                                </Row>
+                              </Col>
+                            </Row>
+                          </Col>
+                        </AppFooter>
+                      </>
                     </Loading>
-                  </Content>
+                  </AppContent>
                 </AppLayout>
               );
             }}

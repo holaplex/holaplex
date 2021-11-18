@@ -118,6 +118,9 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
           textFont: { type: 'string' },
           titleFont: { type: 'string' },
         },
+        optionalProperties: {
+          banner: arweaveFile,
+        }
       },
     },
   });

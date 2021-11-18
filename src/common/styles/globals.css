@@ -78,7 +78,8 @@ textarea {
 }
 
 body {
-  background: #000000;
+  background: #000;
+  background-repeat: no-repeat;
 }
 
 a {
