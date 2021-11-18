@@ -8,17 +8,18 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import EmptySpinnerIcon from '@/common/assets/images/empty-spinner.svg';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
-import { Connection } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { actions } from '@metaplex/js';
 import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { WalletContext } from '@/modules/wallet';
-import { holaSignMetadata } from '@/modules/storefront/approve-nft';
+import { holaSignMetadata, signMetaDataStatus } from '@/modules/storefront/approve-nft';
 
 const { mintNFT } = actions;
 
 const APPROVAL_FAILED_CODE = 4001;
+const META_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 
 enum TransactionStep {
   SENDING_FAILED,
@@ -148,7 +149,6 @@ export default function MintInProgress({
         console.log('transaction id is', mintResp.txId);
         await connection.confirmTransaction(mintResp.txId);
         setTransactionStep(TransactionStep.SUCCESS);
-        handleNext();
       } catch (err) {
         console.log('mintNFT err', err);
         if (err?.code === APPROVAL_FAILED_CODE) {
@@ -160,28 +160,35 @@ export default function MintInProgress({
         return;
       }
 
-      setTransactionStep(TransactionStep.SIGNING);
-
       if (!mintResp) {
         throw new Error('No Mint Response, something went wrong');
       }
 
-      const metaProgramID = '';
+      setTransactionStep(TransactionStep.SIGNING);
+
       try {
         if (!process.env.NEXT_PUBLIC_SOLANA_ENDPOINT) {
           throw new Error('No Solana Endpoint');
         }
-
+        const metaProgramId = new PublicKey(META_PROGRAM_ID);
         const { metadata } = mintResp;
 
-        // await holaSignMetadata({
-        //   solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
-        //   metadata,
-        //   metaProgramId,
-        // });
-        // setTransactionStep(TransactionStep.SUCCESS);
-        console.log('successsssss');
-        // handleNext();
+        await holaSignMetadata({
+          solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
+          metadata,
+          metaProgramId,
+          onProgress: (status: signMetaDataStatus) => {
+            console.log('progress status: ', status);
+          },
+          onComplete: () => {
+            console.log('signing complete');
+            setTransactionStep(TransactionStep.SUCCESS);
+            handleNext();
+          },
+          onError: (msg) => {
+            throw new Error(msg);
+          },
+        });
       } catch (err) {
         console.log('signing err', err);
         setTransactionStep(TransactionStep.SIGNING_FAILED);
