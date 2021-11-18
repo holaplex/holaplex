@@ -125,10 +125,8 @@ export default function Summary({
   form,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
-  console.log('form fields', form.getFieldsValue(true));
   // TODO: Can extract this to top level component
   const upload = async () => {
-    console.log('uploading images', images);
     const body = new FormData();
 
     images.forEach((i) => body.append(i.name, i, i.name));

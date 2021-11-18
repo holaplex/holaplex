@@ -89,17 +89,6 @@ export default function InfoScreen({
   const nftNumber = `nft-${index}`;
   const nftNumberList = images.map((_, i) => `nft-${i}`);
   const [errorList, setErrorList] = useState<string[]>([]);
-  // useEffect(() => {
-  //   if (isActive) {
-  //     // const current = form.getFieldValue(nftNumber);
-  //     // current.imageName = currentImage.name;
-  //     // console.log('CURRENT IMAGE IS ', currentImage.name);
-  //     // console.log('DEBUG CURRENT IS', current);
-  //     // console.log('nftnumber is ', nftNumber);
-  //     // form.setFieldsValue({ nftNumber: current });
-  //   }
-  // }, [isActive]);
-
   const values = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = values[`nft-${index - 1}`];
 
@@ -111,15 +100,10 @@ export default function InfoScreen({
         [nftNumber, 'attributes'],
       ])
       .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
-        console.log('validate all fields');
         if (isLast) {
           const values2 = form.getFieldsValue(nftNumberList) as FormValues;
-          console.log('VALUES2', {
-            values,
-            values2,
-          });
+
           const arrayValues = Object.values(values2).filter((v) => v !== undefined);
-          console.log('info screen', { arrayValues, values2 });
           dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
         }
         nextStep!();

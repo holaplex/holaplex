@@ -176,10 +176,7 @@ export default function BulkUploadWizard() {
       throw new Error('Either filePins or formValues are not set');
     }
 
-    console.log('formValues are ', formValues);
     const nftVals = transformFormVals(formValues, filePins);
-
-    console.log('nftVals', nftVals);
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
   };

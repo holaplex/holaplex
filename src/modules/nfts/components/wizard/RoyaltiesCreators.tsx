@@ -396,10 +396,8 @@ export default function RoyaltiesCreators({
             if (!creators.length || !maxSupply || !royaltiesInput) {
               throw new Error('No creators or max supply or royalties input');
             }
-            console.log('creators are', creators);
             formValue.properties = { creators, maxSupply };
             formValue.seller_fee_basis_points = royaltiesInput;
-            console.log('formValue is', formValue);
             return formValue;
           });
           dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
@@ -418,7 +416,6 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
-        console.log('validate royalties and creators', { formValues, currentNFTFormValue, index });
         if (!creators.length || !maxSupply || !royaltiesInput) {
           throw new Error('No creators or max supply or royalties input');
         }

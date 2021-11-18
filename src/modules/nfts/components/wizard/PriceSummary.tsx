@@ -126,7 +126,6 @@ export default function PriceSummary({
               </Button>
             </ButtonFormItem>
           </Row>
-          DEBUG for Sol balance (in Lamports) : {solBalanceInLamports}
         </Col>
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
         <NFTPreviewGrid images={images} />

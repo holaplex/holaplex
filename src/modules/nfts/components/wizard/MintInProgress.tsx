@@ -131,12 +131,6 @@ export default function MintInProgress({
 
       setTimeout(() => {});
       try {
-        console.count('attempting mint');
-
-        // const timeout = setTimeout(() => {
-        //   console.log('this fired because we took too long');
-        // }, 90000);
-        // TODO: Sometimes this hangs, maybe we need to retry after 90 seconds or so?
         mintResp = await mintNFT({
           connection,
           wallet,
@@ -145,12 +139,9 @@ export default function MintInProgress({
         });
         // clearTimeout(timeout);
         setTransactionStep(TransactionStep.FINALIZING);
-        console.log('mintResp', mintResp);
-        console.log('transaction id is', mintResp.txId);
         await connection.confirmTransaction(mintResp.txId);
         setTransactionStep(TransactionStep.SUCCESS);
       } catch (err) {
-        console.log('mintNFT err', err);
         if (err?.code === APPROVAL_FAILED_CODE) {
           setTransactionStep(TransactionStep.APPROVAL_FAILED);
         } else {
