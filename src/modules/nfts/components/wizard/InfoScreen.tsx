@@ -89,8 +89,8 @@ export default function InfoScreen({
   const nftNumber = `nft-${index}`;
   const nftNumberList = images.map((_, i) => `nft-${i}`);
   const [errorList, setErrorList] = useState<string[]>([]);
-  const values = form.getFieldsValue(nftNumberList) as FormValues;
-  const previousNFT: NFTFormValue | undefined = values[`nft-${index - 1}`];
+  const nftList = form.getFieldsValue(nftNumberList) as FormValues;
+  const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const handleNext = () => {
     setErrorList([]);

@@ -229,11 +229,10 @@ export default function BulkUploadWizard() {
       requiredMark={false}
       layout="vertical"
       onKeyDown={handleKeyDown}
-      initialValues={{ royaltiesPercentage: 10 }}
     >
       <StyledLayout>
         <StepWizard
-          isHashEnabled={false} // does not work properly with the dynamically rendered Images
+          isHashEnabled={false} // I don't think this will work unless we take the upload part out of the wizzard and generate all steps based on the uploaded images
           isLazyMount={true}
           transitions={{
             enterLeft: undefined,
@@ -247,7 +246,6 @@ export default function BulkUploadWizard() {
           {
             images.map((image, index) => (
               <InfoScreen
-                hashKey={'info-' + index}
                 images={images}
                 index={index}
                 currentImage={image}
@@ -262,12 +260,12 @@ export default function BulkUploadWizard() {
           <RoyaltiesCreators
             images={images}
             form={form}
-            hashKey="royalties-0"
             userKey={wallet.pubkey}
             formValues={state.formValues}
             dispatch={dispatch}
             isFirst={true}
             setDoEachRoyaltyInd={setDoEachRoyaltyInd}
+            doEachRoyaltyInd={doEachRoyaltyInd}
             index={0}
           />
           {doEachRoyaltyInd &&
@@ -276,13 +274,13 @@ export default function BulkUploadWizard() {
               .map((_, index) => (
                 <RoyaltiesCreators
                   images={images}
-                  hashKey={'royalties-' + index}
                   form={form}
                   userKey={wallet.pubkey}
                   formValues={state.formValues}
                   dispatch={dispatch}
-                  key={index}
+                  key={index + 1}
                   index={index + 1}
+                  setDoEachRoyaltyInd={setDoEachRoyaltyInd}
                   doEachRoyaltyInd={doEachRoyaltyInd}
                 />
               ))}
