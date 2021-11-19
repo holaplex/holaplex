@@ -1,5 +1,5 @@
 import { Form, Layout } from 'antd';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import StepWizard from 'react-step-wizard';
 import Upload from '@/modules/nfts/components/wizard/Upload';
@@ -149,7 +149,7 @@ export default function BulkUploadWizard() {
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
   const { images, formValues } = state;
 
-  const [doEachRoyaltyInd, setDoEachRoyaltyInd] = React.useState(false);
+  const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
 
   useEffect(() => {
     if (!wallet) {
