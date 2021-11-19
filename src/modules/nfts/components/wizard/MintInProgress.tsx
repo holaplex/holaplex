@@ -1,5 +1,5 @@
 import { Divider, Row, Col, Space, Button } from 'antd';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
@@ -13,8 +13,7 @@ import { actions } from '@metaplex/js';
 import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
-import { WalletContext } from '@/modules/wallet';
-import { holaSignMetadata, SignMetaDataStatus } from '@/modules/storefront/approve-nft';
+import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import styled from 'styled-components';
 
 const { mintNFT } = actions;
@@ -28,7 +27,7 @@ interface MintNFTResponse {
 
 const StyledDivider = styled(Divider)`
   margin: 0 46px;
-  height: 500;
+  height: 500px;
   background-color: rgba(255, 255, 255, 0.1);
 `;
 
@@ -121,7 +120,6 @@ export default function MintInProgress({
     transactionStep === TransactionStep.APPROVAL_FAILED ||
     transactionStep === TransactionStep.SIGNING_FAILED;
 
-  const { connect } = useContext(WalletContext);
   const nftValue = nftValues[index];
 
   const showNavigation = showErrors;
@@ -152,11 +150,7 @@ export default function MintInProgress({
         solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
         metadata,
         metaProgramId,
-        onProgress: (status: SignMetaDataStatus) => {
-          console.log('progress status: ', status);
-        },
         onComplete: () => {
-          console.log('signing complete');
           setTransactionStep(TransactionStep.SUCCESS);
           handleNext();
         },
@@ -291,7 +285,7 @@ export default function MintInProgress({
                 text="Signing Holaplex as co-creator"
                 isActive={transactionStep === TransactionStep.SIGNING}
                 isDone={transactionStep === TransactionStep.SUCCESS}
-                failed={transactionStep === TransactionStep.SENDING_FAILED}
+                failed={transactionStep === TransactionStep.SIGNING_FAILED}
               />
             </Col>
           </Row>

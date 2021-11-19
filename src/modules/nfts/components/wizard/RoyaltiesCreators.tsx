@@ -5,7 +5,6 @@ import {
   Form,
   FormInstance,
   Space,
-  Layout,
   InputNumber,
   Row,
   notification,
@@ -341,6 +340,10 @@ const CreatorsRow = ({
   );
 };
 
+if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
+  throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
+}
+
 const HOLAPLEX_CREATOR = Object.freeze({
   address: process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY ?? '',
   share: 2,
@@ -356,7 +359,6 @@ export default function RoyaltiesCreators({
   userKey,
   formValues,
   setDoEachRoyaltyInd,
-  doEachRoyaltyInd,
   index,
   isFirst = false,
 }: Props) {
@@ -427,7 +429,6 @@ export default function RoyaltiesCreators({
       });
   };
 
-  // TODO: DRY this up
   const next = () => {
     if (showErrors) return;
     form.validateFields(['royaltiesPercentage']).then(() => {

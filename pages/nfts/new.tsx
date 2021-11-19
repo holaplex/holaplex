@@ -190,7 +190,6 @@ export default function BulkUploadWizard() {
   };
 
   const setNFTValues = (filePins: UploadedFilePin[]) => {
-    console.log('formvalues are', formValues);
     if (!filePins?.length || !formValues?.length) {
       throw new Error('Either filePins or formValues are not set');
     }
