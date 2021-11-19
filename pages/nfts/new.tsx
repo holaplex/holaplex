@@ -99,16 +99,11 @@ const initialState: State = {
   nftValues: [],
 };
 
-function getFinalFile(file: File, numberOfDuplicates: number) {
-  // if there is a duplicate of file, add it as file_1 etc.
-  return numberOfDuplicates > 0
-    ? (() => {
-        const fileNameParts = file.name.split('.');
-        const extension = fileNameParts.pop();
-        const finalName = fileNameParts.join('.') + '_' + numberOfDuplicates + '.' + extension;
-        return new File([file], finalName, { type: file.type });
-      })()
-    : file;
+function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
+  const fileNameParts = file.name.split('.');
+  const extension = fileNameParts.pop();
+  const finalName = fileNameParts.join('.') + '_' + numberOfDuplicates + '.' + extension;
+  return new File([file], finalName, { type: file.type });
 }
 
 function reducer(state: State, action: MintAction) {
@@ -122,12 +117,15 @@ function reducer(state: State, action: MintAction) {
       };
     case 'ADD_IMAGE':
       const file = action.payload as File;
-      const nrOfDuplicates = state.images.filter((i) => i.name === file.name).length;
+      const numberOfDuplicates = state.images.filter((i) => i.name === file.name).length;
 
       return state.images.length < 10
         ? {
             ...state,
-            images: [...state.images, getFinalFile(file, nrOfDuplicates)],
+            images: [
+              ...state.images,
+              numberOfDuplicates > 0 ? getFinalFileWithUpdatedName(file, numberOfDuplicates) : file,
+            ],
           }
         : state;
     case 'UPLOAD_FILES':
