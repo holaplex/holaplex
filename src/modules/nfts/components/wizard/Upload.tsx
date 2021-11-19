@@ -96,10 +96,8 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
       }
     },
     beforeUpload: (file, list) => {
-      const isUniqueFile = images.every((i) => i.name !== file.name);
-      if (isUniqueFile) {
-        dispatch({ type: 'ADD_IMAGE', payload: file });
-      }
+      dispatch({ type: 'ADD_IMAGE', payload: file });
+
       return false;
     },
   };

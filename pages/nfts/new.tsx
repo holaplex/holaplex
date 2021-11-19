@@ -101,6 +101,13 @@ const initialState = (): State => {
   };
 };
 
+function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
+  const fileNameParts = file.name.split('.');
+  const extension = fileNameParts.pop();
+  const finalName = fileNameParts.join('.') + '_' + numberOfDuplicates + '.' + extension;
+  return new File([file], finalName, { type: file.type });
+}
+
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
     case 'SET_IMAGES':
@@ -111,9 +118,18 @@ function reducer(state: State, action: MintAction) {
         images: state.images.filter((i) => i.name !== (action.payload as String)),
       };
     case 'ADD_IMAGE':
+      const file = action.payload as File;
+      const numberOfDuplicates = state.images.filter((i) => i.name === file.name).length;
+
       return state.images.length < 10
-        ? { ...state, images: [...state.images, action.payload as File] }
-        : state; // since the dispactch is async(?) it did not reliably limit number of files from the Upload component.
+        ? {
+            ...state,
+            images: [
+              ...state.images,
+              numberOfDuplicates > 0 ? getFinalFileWithUpdatedName(file, numberOfDuplicates) : file,
+            ],
+          }
+        : state;
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFilePin> };
     case 'SET_FORM_VALUES':
