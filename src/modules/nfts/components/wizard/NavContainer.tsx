@@ -44,6 +44,7 @@ interface Props extends Partial<StepWizardChildProps> {
   title?: string;
   clearForm?: () => void;
   altClearText?: string;
+  showNavigation?: boolean;
 }
 
 export default function NavContainer({
@@ -53,30 +54,33 @@ export default function NavContainer({
   title,
   clearForm,
   altClearText,
+  showNavigation = true,
 }: Props) {
   return (
     <StyledLayout>
-      {previousStep && (
+      {showNavigation && previousStep && (
         <GoBack onClick={previousStep}>
           <Image width={24} height={24} src={ArrowLeft} alt="arrow-left" />
         </GoBack>
       )}
 
-      <XClose
-        onClick={() => {
-          clearForm && clearForm();
-          goToStep!(1);
-        }}
-        style={{ fontStyle: 'normal' }}
-      >
-        {altClearText ? (
-          <AltClearTextLink noStyle type="text">
-            {altClearText}
-          </AltClearTextLink>
-        ) : (
-          <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
-        )}
-      </XClose>
+      {showNavigation && (
+        <XClose
+          onClick={() => {
+            clearForm && clearForm();
+            goToStep!(1);
+          }}
+          style={{ fontStyle: 'normal' }}
+        >
+          {altClearText ? (
+            <AltClearTextLink noStyle type="text">
+              {altClearText}
+            </AltClearTextLink>
+          ) : (
+            <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
+          )}
+        </XClose>
+      )}
 
       {title && <Header>{title}</Header>}
       {children}

@@ -117,6 +117,8 @@ export default function MintInProgress({
   const { connect } = useContext(WalletContext);
   const nftValue = nftValues[index];
 
+  const showNavigation = showErrors;
+
   const handleNext = useCallback(() => {
     const updatedValue = showErrors
       ? { ...nftValue, mintStatus: MintStatus.FAILED }
@@ -246,6 +248,7 @@ export default function MintInProgress({
       title={`Minting ${index + 1} of ${images.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
+      showNavigation={showNavigation}
     >
       <Row>
         <Col style={{ marginRight: 224 }}>
