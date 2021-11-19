@@ -45,7 +45,6 @@ NEXT_PUBLIC_ARWEAVE_PROTOCOL=http
 NEXT_PUBLIC_SOLANA_ENDPOINT="https://holaplex.rpcpool.com/"
 # devnet (comment out when you want to use real solana)
 NEXT_PUBLIC_SOLANA_ENDPOINT="http://api.devnet.solana.com"
-NEXT_PUBLIC_HOLAPLEX_PUBKEY="DfZttquvPUKnZdFqsvXk8oLuaF9VywZ9VWmymbxVJQTT" // for development
 
 NFT_STORAGE_API_KEY="" # got to https://nft.storage and create an account, and get an API key.
 ```

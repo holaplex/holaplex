@@ -1,6 +1,6 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { FormInstance, PageHeader, Row, Space, Typography } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -147,6 +147,26 @@ export default function Summary({
     }
   };
 
+  // if one or more NFTs have a different royalty percentage it makes sense to show it in the summary
+  const showRoyaltyPercentage = useMemo(() => {
+    return (
+      formValues?.some((nft1) =>
+        formValues.some((nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points)
+      ) ?? false
+    );
+  }, [formValues]);
+
+  // if one or more NFTs have a different number of creators(other than seller and holaplex) it makes sense to show it in the summary.
+  const showCreatorCount = useMemo(
+    () =>
+      formValues?.some((nft1) =>
+        formValues.some(
+          (nft2) => nft1.properties.creators.length !== nft2.properties.creators.length
+        )
+      ) ?? false,
+    [formValues]
+  );
+
   if (!formValues) return null;
 
   return (
@@ -171,18 +191,8 @@ export default function Summary({
                   key={fv.name}
                   value={fv}
                   image={images[index]}
-                  showRoyaltyPercentage={formValues.some((nft1) =>
-                    // if one or more NFTs have a different royalty percentage it makes sense to show it in the summary
-                    formValues.some(
-                      (nft2) => nft1.seller_fee_basis_points !== nft2.seller_fee_basis_points
-                    )
-                  )}
-                  showCreatorCount={formValues.some((nft1) =>
-                    // if one or more NFTs have a different number of creators(other than seller and holaplex) it makes sense to show it in the summary.
-                    formValues.some(
-                      (nft2) => nft1.properties.creators.length !== nft2.properties.creators.length
-                    )
-                  )}
+                  showRoyaltyPercentage={showRoyaltyPercentage}
+                  showCreatorCount={showCreatorCount}
                 />
               )
           )}

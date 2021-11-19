@@ -78,7 +78,7 @@ export default function NavContainer({
         )}
       </XClose>
 
-      {title ? <Header>{title}</Header> : null}
+      {title && <Header>{title}</Header>}
       {children}
     </StyledLayout>
   );
