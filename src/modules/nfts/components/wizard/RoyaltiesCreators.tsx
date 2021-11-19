@@ -23,6 +23,7 @@ import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator, FormValues } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import FeesModalContent from '@/common/components/presentational/FeesModalContent';
+import { isNil } from 'ramda';
 
 const ROYALTIES_INPUT_DEFAULT = 10;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
@@ -411,8 +412,8 @@ export default function RoyaltiesCreators({
 
         if (formValues) {
           const newFormValues = formValues.map((formValue) => {
-            if (!creators.length || !maxSupply || !royaltiesInput) {
-              throw new Error('No creators or max supply or royalties input');
+            if (!creators.length || isNil(maxSupply) || !royaltiesInput) {
+              throw new Error('No creators, maxSupply, or royalties input');
             }
             formValue.properties = { creators, maxSupply };
             formValue.seller_fee_basis_points = royaltiesInput;
@@ -434,8 +435,8 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
-        if (!creators.length || !maxSupply || !royaltiesInput) {
-          throw new Error('No creators or max supply or royalties input');
+        if (!creators.length || isNil(maxSupply) || !royaltiesInput) {
+          throw new Error('No creators, maxSupply, or royalties input');
         }
 
         currentNFTFormValue.properties = { creators, maxSupply };
