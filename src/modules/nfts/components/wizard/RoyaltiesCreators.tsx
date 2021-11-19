@@ -23,7 +23,7 @@ import Button from '@/common/components/elements/Button';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
-import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator } from 'pages/nfts/new';
+import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator, FormValues } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import FeesModalContent from '@/common/components/presentational/FeesModalContent';
 
@@ -37,7 +37,7 @@ interface Props extends Partial<StepWizardChildProps> {
   formValues: NFTFormValue[] | null;
   isFirst?: boolean;
   index: number;
-  setDoEachRoyaltyInd?: React.Dispatch<React.SetStateAction<boolean>>;
+  setDoEachRoyaltyInd: React.Dispatch<React.SetStateAction<boolean>>;
   doEachRoyaltyInd?: boolean;
 }
 
@@ -132,9 +132,13 @@ export const StyledClearButton = styled(Button)`
   height: fit-content;
   margin-bottom: 1em;
 
-  &:hover,
   &:focus {
     background: transparent;
+    color: #b92d44;
+  }
+  &:hover {
+    background: transparent;
+    color: white;
   }
 `;
 
@@ -362,12 +366,18 @@ export default function RoyaltiesCreators({
   index,
   isFirst = false,
 }: Props) {
-  const [creators, setCreators] = useState<Array<Creator>>([
-    HOLAPLEX_CREATOR,
-    { address: userKey ?? '', share: 98 },
-  ]);
+  const nftList = form.getFieldsValue(images.map((_, i) => `nft-${i}`)) as FormValues;
+  const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
+
+  const [creators, setCreators] = useState<Array<Creator>>(
+    previousNFT
+      ? previousNFT.properties.creators
+      : [HOLAPLEX_CREATOR, { address: userKey ?? '', share: 98 }]
+  );
   const [showCreatorField, toggleCreatorField] = useState(false);
-  const [royaltiesInput, setRoyaltiesInput] = useState(ROYALTIES_INPUT_DEFAULT);
+  const [royaltiesInput, setRoyaltiesInput] = useState(
+    previousNFT ? previousNFT.seller_fee_basis_points : ROYALTIES_INPUT_DEFAULT
+  );
   const [totalRoyaltyShares, setTotalRoyaltiesShare] = useState<number>(0);
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [editionsSelection, setEditionsSelection] = useState('one');
@@ -379,11 +389,18 @@ export default function RoyaltiesCreators({
       return totalShares + creator.share;
     }, 0);
 
+    setShowErrors(false);
+    if (total !== 100 || creators.filter((creator) => creator.share === 0).length > 0) {
+      setShowErrors(true);
+    }
+
     setTotalRoyaltiesShare(total);
   }, [creators]);
 
   // TODO: DRY this up
   const applyToAll = () => {
+    if (showErrors) return;
+
     const zeroedRoyalties = creators.filter((creator) => creator.share === 0);
 
     if (totalRoyaltyShares === 0 || totalRoyaltyShares > 100 || zeroedRoyalties.length > 0) {
@@ -394,7 +411,7 @@ export default function RoyaltiesCreators({
     form
       .validateFields(['royaltiesPercentage', 'numOfEditions'])
       .then(() => {
-        if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(false);
+        setDoEachRoyaltyInd(false);
 
         if (formValues) {
           const newFormValues = formValues.map((formValue) => {
@@ -418,6 +435,7 @@ export default function RoyaltiesCreators({
 
   // TODO: DRY this up
   const next = () => {
+    if (showErrors) return;
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
@@ -443,11 +461,12 @@ export default function RoyaltiesCreators({
 
   const updateCreator = (address: string, share: number) => {
     const creatorIndex = creators.findIndex((creator) => creator.address === address);
-    setCreators([
+    const creatorsAfterUpdate = [
       ...creators.slice(0, creatorIndex),
       { address, share },
       ...creators.slice(creatorIndex + 1),
-    ]);
+    ];
+    setCreators(creatorsAfterUpdate);
   };
 
   const addCreator = () => {
@@ -469,6 +488,7 @@ export default function RoyaltiesCreators({
       .catch((err) => {
         console.log('err is ', err);
       });
+    setShowErrors(false);
   };
   const removeCreator = (creatorAddress: string) => {
     const newShareSplit = 98 / (creators.length - 2) || 100;
@@ -479,6 +499,7 @@ export default function RoyaltiesCreators({
         .filter((c) => c.address !== creatorAddress)
         .map((c) => ({ ...c, share: newShareSplit })),
     ]);
+    setShowErrors(false);
   };
 
   if (!userKey) return null;
@@ -603,6 +624,7 @@ export default function RoyaltiesCreators({
             <Row style={{ marginTop: 7 }}>
               <Paragraph style={{ color: 'red', fontSize: 14 }}>
                 Percentages must equal up to 100 and not be 0
+                {/* Add a Reset button here? To reset percentages to equal split? */}
               </Paragraph>
             </Row>
           )}
@@ -689,7 +711,7 @@ export default function RoyaltiesCreators({
                   type="text"
                   noStyle
                   onClick={() => {
-                    if (setDoEachRoyaltyInd) setDoEachRoyaltyInd(true);
+                    setDoEachRoyaltyInd(true);
                     next();
                   }}
                 >
