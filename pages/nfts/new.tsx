@@ -109,9 +109,26 @@ function reducer(state: State, action: MintAction) {
         images: state.images.filter((i) => i.name !== (action.payload as String)),
       };
     case 'ADD_IMAGE':
+      const file = action.payload as File;
+      const nrOfDuplicates = state.images.filter((i) => i.name === file.name).length;
+
       return state.images.length < 10
-        ? { ...state, images: [...state.images, action.payload as File] }
-        : state; // since the dispactch is async(?) it did not reliably limit number of files from the Upload component.
+        ? {
+            ...state,
+            images: [
+              ...state.images,
+              nrOfDuplicates > 0
+                ? (() => {
+                    const fileNameParts = file.name.split('.');
+                    const extension = fileNameParts.pop();
+                    const finalName =
+                      fileNameParts.join('.') + '_' + nrOfDuplicates + '.' + extension;
+                    return new File([file], finalName, { type: file.type });
+                  })()
+                : file,
+            ],
+          }
+        : state;
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFilePin> };
     case 'SET_FORM_VALUES':
