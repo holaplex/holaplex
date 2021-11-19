@@ -556,9 +556,6 @@ export default function RoyaltiesCreators({
                 style={{ width: '100%' }}
                 rules={[
                   { required: true, message: 'Please enter a value' },
-                  { max: 44 },
-                  // need to handle someone pasting in a string longer than 44 char. Right now the input just caps it at 44 without showing anything
-                  { min: 44, message: 'Must be at least 44 characters long' },
                   {
                     message: 'All creator hashes must be unique',
                     async validator(rule, value: string) {
