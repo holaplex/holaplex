@@ -377,7 +377,7 @@ export default function RoyaltiesCreators({
   const [totalRoyaltyShares, setTotalRoyaltiesShare] = useState<number>(0);
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [editionsSelection, setEditionsSelection] = useState('one');
-  const [maxSupply, setMaxSupply] = useState<number>(1);
+  const [maxSupply, setMaxSupply] = useState<number>(0);
 
   useEffect(() => {
     // When creators changes, sum up all the shares.
