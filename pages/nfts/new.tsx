@@ -99,6 +99,18 @@ const initialState: State = {
   nftValues: [],
 };
 
+function getFinalFile(file: File, numberOfDuplicates: number) {
+  // if there is a duplicate of file, add it as file_1 etc.
+  return numberOfDuplicates > 0
+    ? (() => {
+        const fileNameParts = file.name.split('.');
+        const extension = fileNameParts.pop();
+        const finalName = fileNameParts.join('.') + '_' + numberOfDuplicates + '.' + extension;
+        return new File([file], finalName, { type: file.type });
+      })()
+    : file;
+}
+
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
     case 'SET_IMAGES':
@@ -115,18 +127,7 @@ function reducer(state: State, action: MintAction) {
       return state.images.length < 10
         ? {
             ...state,
-            images: [
-              ...state.images,
-              nrOfDuplicates > 0
-                ? (() => {
-                    const fileNameParts = file.name.split('.');
-                    const extension = fileNameParts.pop();
-                    const finalName =
-                      fileNameParts.join('.') + '_' + nrOfDuplicates + '.' + extension;
-                    return new File([file], finalName, { type: file.type });
-                  })()
-                : file,
-            ],
+            images: [...state.images, getFinalFile(file, nrOfDuplicates)],
           }
         : state;
     case 'UPLOAD_FILES':
