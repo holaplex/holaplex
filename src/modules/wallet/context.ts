@@ -1,4 +1,5 @@
 import { Solana } from '@/modules/solana/types';
+import { Storefront } from '@/modules/storefront/types';
 import React from 'react';
 import { Wallet } from './types';
 
@@ -13,6 +14,7 @@ export type WalletContextProps = {
   initializing: boolean;
   solana?: Solana;
   connect: (params?: any) => any;
+  storefront?: Storefront;
 };
 
 export const WalletContext = React.createContext<WalletContextProps>({
