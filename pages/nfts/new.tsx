@@ -229,7 +229,6 @@ export default function BulkUploadWizard() {
       requiredMark={false}
       layout="vertical"
       onKeyDown={handleKeyDown}
-      initialValues={{ royaltiesPercentage: 10 }}
     >
       <StyledLayout>
         <StepWizard

@@ -448,9 +448,6 @@ export default function RoyaltiesCreators({
 
         const formValuesCopy = [...formValues];
         formValuesCopy[index] = { ...currentNFTFormValue };
-
-        setRoyaltiesInput(ROYALTIES_INPUT_DEFAULT);
-        form.setFieldsValue({ royaltiesPercentage: ROYALTIES_INPUT_DEFAULT });
       } else {
         throw new Error('No form values found');
       }
@@ -523,7 +520,7 @@ export default function RoyaltiesCreators({
                   message: 'Percentage must be between 1 and 100',
                 },
               ]}
-              // initialValue={royaltiesInput}
+              initialValue={royaltiesInput}
             >
               <InputNumber<number>
                 min={1}
