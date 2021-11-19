@@ -13,16 +13,14 @@ import {
   Col,
   Modal,
 } from 'antd';
-const { Header, Content } = Layout;
 import Paragraph from 'antd/lib/typography/Paragraph';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator, FormValues } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import FeesModalContent from '@/common/components/presentational/FeesModalContent';
@@ -218,8 +216,8 @@ const CreatorsRow = ({
   updateCreator: (address: string, share: number) => void;
   removeCreator: (address: string) => void;
 }) => {
-  const ref = React.useRef(null);
-  const [showPercentageInput, setShowPercentageInput] = React.useState(false);
+  const ref = useRef(null);
+  const [showPercentageInput, setShowPercentageInput] = useState(false);
   useOnClickOutside(ref, () => setShowPercentageInput(false));
   const isHolaplex = creatorAddress === process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY;
 
@@ -228,20 +226,15 @@ const CreatorsRow = ({
   return (
     <StyledCreatorsRow>
       {isHolaplex ? (
-        // <span style={{ height: 32, width: 32 }}>👋</span>
         <Image height={32} width={32} src="/images/hola-logo.svg" alt="holaplex-logo" />
       ) : (
         <Image height={32} width={32} src="/images/creator-standin.png" alt="creator" />
       )}
-      {/* TODO: Figure out how to truncate in middle of string with ellipsis instead of on the end */}
       <Paragraph
         style={{
           margin: '0 14px 0 6px',
           maxWidth: 90,
           fontSize: 14,
-          // overflow: 'hidden',
-          // textOverflow: 'ellipsis',
-          // whiteSpace: 'nowrap',
         }}
       >
         {isHolaplex

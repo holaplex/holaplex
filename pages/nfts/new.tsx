@@ -92,11 +92,13 @@ export interface MintAction {
   payload: File[] | File | String | Array<UploadedFilePin> | NFTFormValue[] | NFTValue[];
 }
 
-const initialState: State = {
-  images: [],
-  uploadedFiles: [],
-  formValues: null,
-  nftValues: [],
+const initialState = (): State => {
+  return {
+    images: [],
+    uploadedFiles: [],
+    formValues: null,
+    nftValues: [],
+  };
 };
 
 function reducer(state: State, action: MintAction) {
@@ -126,7 +128,7 @@ function reducer(state: State, action: MintAction) {
 const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
 
 export default function BulkUploadWizard() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
   const { images, formValues } = state;

@@ -1,5 +1,5 @@
 import { Divider, Row, Col, Space, Button } from 'antd';
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
@@ -14,7 +14,8 @@ import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { WalletContext } from '@/modules/wallet';
-import { holaSignMetadata, signMetaDataStatus } from '@/modules/storefront/approve-nft';
+import { holaSignMetadata, SignMetaDataStatus } from '@/modules/storefront/approve-nft';
+import styled from 'styled-components';
 
 const { mintNFT } = actions;
 
@@ -24,6 +25,12 @@ interface MintNFTResponse {
   metadata: PublicKey;
   edition: PublicKey;
 }
+
+const StyledDivider = styled(Divider)`
+  margin: 0 46px;
+  height: 500;
+  background-color: rgba(255, 255, 255, 0.1);
+`;
 
 const APPROVAL_FAILED_CODE = 4001;
 const META_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
@@ -107,8 +114,8 @@ export default function MintInProgress({
   connection,
   index,
 }: Props) {
-  const [transactionStep, setTransactionStep] = React.useState(TransactionStep.META_DATA_UPLOADING);
-  const [mintResp, setMintResp] = React.useState<MintNFTResponse | null>(null);
+  const [transactionStep, setTransactionStep] = useState(TransactionStep.META_DATA_UPLOADING);
+  const [mintResp, setMintResp] = useState<MintNFTResponse | null>(null);
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
     transactionStep === TransactionStep.APPROVAL_FAILED ||
@@ -145,7 +152,7 @@ export default function MintInProgress({
         solanaEndpoint: process.env.NEXT_PUBLIC_SOLANA_ENDPOINT,
         metadata,
         metaProgramId,
-        onProgress: (status: signMetaDataStatus) => {
+        onProgress: (status: SignMetaDataStatus) => {
           console.log('progress status: ', status);
         },
         onComplete: () => {
@@ -326,10 +333,7 @@ export default function MintInProgress({
           )}
         </Col>
 
-        <Divider
-          type="vertical"
-          style={{ margin: '0 46px', height: 500, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-        />
+        <StyledDivider type="vertical" />
         <NFTPreviewGrid index={index} images={images} nftValues={nftValues} />
       </Row>
     </NavContainer>

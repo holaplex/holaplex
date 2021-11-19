@@ -6,7 +6,7 @@ export interface SignMetaParams {
   metaProgramId: string;
 }
 
-export type signMetaDataStatus = 'setup' | 'signing' | 'signed' | 'failed';
+export type SignMetaDataStatus = 'setup' | 'signing' | 'signed' | 'failed';
 export const holaSignMetadata = async ({
   solanaEndpoint,
   metadata,
@@ -18,7 +18,7 @@ export const holaSignMetadata = async ({
   solanaEndpoint: string;
   metadata: PublicKey;
   metaProgramId: PublicKey;
-  onProgress?: (status: signMetaDataStatus) => void;
+  onProgress?: (status: SignMetaDataStatus) => void;
   onComplete?: () => void;
   onError?: (msg: string) => void;
 }) => {
