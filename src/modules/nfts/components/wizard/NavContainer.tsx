@@ -67,8 +67,13 @@ export default function NavContainer({
       {showNavigation && (
         <XClose
           onClick={() => {
-            clearForm && clearForm();
-            goToStep!(1);
+            if (
+              altClearText ||
+              window.confirm('Are you sure you want cancel? This will reset all of your progress.')
+            ) {
+              clearForm && clearForm();
+              goToStep!(1);
+            }
           }}
           style={{ fontStyle: 'normal' }}
         >
