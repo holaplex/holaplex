@@ -852,6 +852,23 @@
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.2.0.tgz#f3933a44e365864f4dad5db94158106d511e8131"
   integrity sha512-sqKVVVOe5ivCaXDWivIJYVSaEgdQK9ul7a4Kity5Iw7u9+wBAPbX1RMSnLLmp7O4Vzj0WOWwMAJsTL00xwaNug==
 
+"@holaplex/js@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@holaplex/js/-/js-4.3.2.tgz#c5ebbf42104a8935106186d5cf46d19dabbe2cda"
+  integrity sha512-Xzax0+7N00FcfkaSra+vZZkOG6HYw81AV6YZEEEbzgWv+pR7X+d+dtL9jENRvg3TTAjJ2b3RSd6NlJ+mhptv5Q==
+  dependencies:
+    "@solana/spl-token" "^0.1.8"
+    "@solana/web3.js" "^1.30.2"
+    "@types/bs58" "^4.0.1"
+    async-retry "^1.3.3"
+    axios "^0.21.4"
+    bn.js "^5.2.0"
+    borsh "^0.4.0"
+    bs58 "^4.0.1"
+    buffer "^6.0.3"
+    crypto-hash "^1.3.0"
+    form-data "^4.0.0"
+
 "@icons/material@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
