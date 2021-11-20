@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&family=Inter&family=Urbanist&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Nunito+Sans:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&family=Inter&family=Urbanist&display=swap');
 
 a {
   cursor: pointer;
@@ -38,7 +38,6 @@ a {
 
 .font-family-noto-serif {
   font-family: 'Noto Serif', serif;
-
 }
 
 .font-family-domine {
@@ -52,18 +51,28 @@ button {
   margin: 0;
 }
 
-html, body, #__next, .ant-layout {
+html,
+body,
+#__next,
+.ant-layout {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin-bottom: 0.25em;
+  color: #ffffff;
   font-weight: 800;
   line-height: 1.25em;
-  letter-spacing: .2;
+  letter-spacing: 0.2;
 }
 
-input, textarea {
+input,
+textarea {
   text-align: inherit;
   border: none;
 }
@@ -96,7 +105,7 @@ a {
 }
 
 .Toastify__toast--default a {
-  color:#B92D44;
+  color: #b92d44;
 }
 
 .Toastify__toast--default a:hover {

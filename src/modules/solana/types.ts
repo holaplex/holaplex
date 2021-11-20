@@ -17,5 +17,6 @@ export interface Solana {
   publicKey: PublicKey;
   connect: (options?: SolanaConnectOptions) => Promise<any>;
   signTransaction: (tx: Transaction) => Promise<Transaction>;
+  signAllTransactions(txs: Transaction[]): Promise<Transaction[]>;
   signMessage: (input: ArrayBuffer, enc: string) => Promise<Signature>;
 }

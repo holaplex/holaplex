@@ -1,92 +1,67 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import type { AppProps } from 'next/app'
-import 'react-toastify/dist/ReactToastify.css'
-import '@/styles/globals.css'
-import { useRouter } from 'next/router'
-import { ToastContainer } from 'react-toastify'
-import Head from 'next/head'
-import styled from 'styled-components'
-import Link from 'next/link'
-import { Layout, Space, Col, Row } from 'antd'
-import sv from '@/constants/styles'
-import { isNil } from 'ramda'
-import Loading from '@/components/elements/Loading'
-import { WalletProvider } from '@/modules/wallet'
-import { StorefrontProvider } from '@/modules/storefront'
-import SocialLinks from '@/components/elements/SocialLinks'
-import useWindowDimensions from '@/hooks/useWindowDimensions'
+import React, { useEffect } from 'react';
+import type { AppProps } from 'next/app';
+import 'react-toastify/dist/ReactToastify.css';
+import '@/styles/globals.css';
+import { useRouter } from 'next/router';
+import { ToastContainer } from 'react-toastify';
+import Head from 'next/head';
+import styled from 'styled-components';
+import { Layout, Col, Row } from 'antd';
+import { isNil } from 'ramda';
+import Loading from '@/components/elements/Loading';
+import { WalletProvider } from '@/modules/wallet';
+import { StorefrontProvider } from '@/modules/storefront';
+import SocialLinks from '@/components/elements/SocialLinks';
+import { AppHeader } from '@/common/components/elements/AppHeader';
 
-const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
-const { Header, Content } = Layout
-
-const HeaderTitle = styled.div`
-  font-size: 24px;
-  line-height: 2px;
-  font-weight: 900;
-  margin-right: auto;
-  a {
-    color: ${sv.colors.buttonText};
-    &:hover {
-      color: ${sv.colors.buttonText}
-    }
-  }
-`
+const { Header, Content } = Layout;
 
 const AppContent = styled(Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
-const AppHeader = styled(Header)`
-  ${sv.flexRow};
-  margin: 0 0 40px 0;
-`
 
 const AppFooter = styled(Row)`
   padding: 60px 50px 30px;
 `;
 
-const HeaderLinkWrapper = styled.div<{ active: boolean; }>`
-  color: ${sv.colors.buttonText};
-  ${({ active }) => active && `text-decoration: underline;`}
-`
-
 const AppLayout = styled(Layout)`
   overflow-y: auto;
-`
+`;
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter()
-  const windowDimensions = useWindowDimensions();
+  const router = useRouter();
 
   const track = (category: string, action: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
-      return
+      return;
     }
 
-    window.gtag('event', action, { event_category: category })
-  }
+    window.gtag('event', action, { event_category: category });
+  };
 
   const onRouteChanged = (path: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
-      return
+      return;
     }
 
-    window.gtag("config", GOOGLE_ANALYTICS_ID, { page_path: path })
-  }
+    window.gtag('config', GOOGLE_ANALYTICS_ID, { page_path: path });
+  };
 
   useEffect(() => {
     if (!process.browser || !GOOGLE_ANALYTICS_ID) {
-      return
+      return;
     }
 
-    router.events.on('routeChangeComplete', onRouteChanged)
+    router.events.on('routeChangeComplete', onRouteChanged);
 
     return () => {
-      router.events.off('routeChangeComplete', onRouteChanged)
-    }
-  }, [router.events])
+      router.events.off('routeChangeComplete', onRouteChanged);
+    };
+  }, [router.events]);
 
   return (
     <>
@@ -100,64 +75,30 @@ function MyApp({ Component, pageProps }: AppProps) {
             {({ searching }) => {
               return (
                 <AppLayout>
-                  <AppHeader>
-                    <HeaderTitle>
-                      {windowDimensions.width > 550 ? (
-                        <Link href="/" passHref>
-                          👋 Holaplex
-                        </Link>
-                      ) : (
-                        <Link href="/" passHref>
-                          👋
-                        </Link>
-                      )}
-                    </HeaderTitle>
-                    <Space size="large">
-                      <HeaderLinkWrapper active={router.pathname == "/about"}>
-                        <Link href="/about" passHref >
-                          About
-                        </Link>
-                      </HeaderLinkWrapper>
-                      <HeaderLinkWrapper active={false}>
-                        <a
-                          href="https://holaplex-support.zendesk.com/hc/en-us"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          FAQ
-                        </a>
-                      </HeaderLinkWrapper>
-                      {windowDimensions.width > 550 && <SocialLinks />}
-                    </Space>
-                  </AppHeader>
+                  <AppHeader />
                   <AppContent>
                     <Loading loading={verifying || searching}>
                       <>
-                        <Component
-                          {...pageProps}
-                          track={track}
-                        />
+                        <Component {...pageProps} track={track} />
                         <AppFooter justify="center">
                           <Col span={24}>
                             <Row>
-                              <Col
-                                xs={24}
-                                md={8}
-                              >
+                              <Col xs={24} md={8}>
                                 <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
                               </Col>
-                              <Col
-                                xs={0}
-                                md={8}
-                              >
+                              <Col xs={0} md={8}>
                                 <Row justify="center">
-                                  Made with &#10084; on &#160;<a href="https://www.metaplex.com" target="_blank" rel="noreferrer">Metaplex</a>
+                                  Made with &#10084; on &#160;
+                                  <a
+                                    href="https://www.metaplex.com"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    Metaplex
+                                  </a>
                                 </Row>
                               </Col>
-                              <Col
-                                xs={0}
-                                md={8}
-                              >
+                              <Col xs={0} md={8}>
                                 <Row justify="end">
                                   <SocialLinks />
                                 </Row>
@@ -169,13 +110,13 @@ function MyApp({ Component, pageProps }: AppProps) {
                     </Loading>
                   </AppContent>
                 </AppLayout>
-              )
+              );
             }}
           </StorefrontProvider>
         )}
       </WalletProvider>
     </>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;
