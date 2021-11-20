@@ -74,6 +74,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
           return arweaveSDK.using(arweave).storefront.find('solana:pubkey', wallet.pubkey);
         })
         .then((storefront: any) => {
+          setStorefront(storefront);
           if (redirect) {
             if (redirect === '') {
               return;
