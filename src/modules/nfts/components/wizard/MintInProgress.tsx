@@ -9,12 +9,13 @@ import EmptySpinnerIcon from '@/common/assets/images/empty-spinner.svg';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { actions } from '@metaplex/js';
+import { actions } from '@holaplex/js';
 import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import styled from 'styled-components';
+import BN from 'bn.js';
 
 const { mintNFT } = actions;
 
@@ -173,11 +174,12 @@ export default function MintInProgress({
       setTransactionStep(TransactionStep.APPROVING);
 
       try {
+        const maxSupply = new BN(nftValue.properties.maxSupply);
         const mintResp = await mintNFT({
           connection,
           wallet,
           uri: metaData.uri,
-          maxSupply: nftValue.properties.maxSupply,
+          maxSupply,
         });
         setMintResp(mintResp);
         setTransactionStep(TransactionStep.FINALIZING);
