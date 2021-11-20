@@ -147,6 +147,7 @@ export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
+
   const { images, formValues } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
