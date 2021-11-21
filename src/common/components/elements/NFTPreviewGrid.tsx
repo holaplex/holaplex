@@ -4,6 +4,7 @@ import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { MintStatus, NFTValue } from 'pages/nfts/new';
 import { Image as AntImage } from 'antd';
+import { isAudio, isImage, isVideo } from '@/modules/utils/files';
 
 const CheckWrapper = styled.div`
   position: relative;
@@ -30,7 +31,7 @@ const StyledRemoveNFT = styled.div`
   cursor: pointer;
 `;
 
-const ImageContainer = styled.div`
+const FilePreviewContainer = styled.div`
   position: relative;
 
   &:hover {
@@ -77,6 +78,28 @@ const getOverlayStatus = (index: number, nftValues?: NFTValue[]) => {
 const StyledAntDImage = styled(AntImage)`
   object-fit: cover;
 `;
+const getFilePreview = (file: File) => {
+  if (isAudio(file)) {
+    return 'audio';
+  }
+
+  if (isVideo(file)) {
+    return 'video';
+  }
+
+  if (isImage(file)) {
+    return (
+      <StyledAntDImage
+        width={120}
+        height={120}
+        src={URL.createObjectURL(file)}
+        alt={file.name}
+        // objectFit="cover"
+        // unoptimized={true}
+      />
+    );
+  }
+};
 
 export const NFTPreviewGrid = ({
   files,
@@ -92,28 +115,14 @@ export const NFTPreviewGrid = ({
       {files.map((file, i) => (
         <ImageOverlay key={file.name} isFinished={i < index} isCurrent={i === index}>
           {removeFile ? (
-            <ImageContainer key={file.name}>
-              <StyledAntDImage
-                width={120}
-                height={120}
-                src={URL.createObjectURL(file)}
-                alt={file.name}
-                // objectFit="cover"
-                // unoptimized={true}
-              />
+            <FilePreviewContainer key={file.name}>
+              {getFilePreview(file)}
               <StyledRemoveNFT onClick={() => removeFile(file.name)}>
                 <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
               </StyledRemoveNFT>
-            </ImageContainer>
+            </FilePreviewContainer>
           ) : (
-            <StyledAntDImage
-              width={116}
-              height={116}
-              src={URL.createObjectURL(file)}
-              alt={file.name}
-              // unoptimized={true}
-              // objectFit="cover"
-            />
+            getFilePreview(file)
           )}
           {i < index && getOverlayStatus(i, nftValues)}
         </ImageOverlay>

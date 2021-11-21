@@ -154,7 +154,7 @@ export default function BulkUploadWizard() {
 
   useEffect(() => {
     if (!wallet) {
-      connect('/nfts/new');
+      // connect('/nfts/new');
     }
   }, [wallet, connect]);
 
@@ -235,9 +235,9 @@ export default function BulkUploadWizard() {
     }
   }
 
-  if (!solana || !wallet) {
-    return null;
-  }
+  // if (!solana || !wallet) {
+  //   return null;
+  // }
 
   return (
     <Form
@@ -261,7 +261,7 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} files={files} hashKey="upload" />
           <Verify files={files} dispatch={dispatch} hashKey="verify" />
-          {
+          {/* {
             files.map((file, index) => (
               <InfoScreen
                 files={files}
@@ -331,7 +331,7 @@ export default function BulkUploadWizard() {
             clearForm={clearForm}
             nftValues={state.nftValues}
             storefront={storefront}
-          />
+          /> */}
         </StepWizard>
       </StyledLayout>
     </Form>

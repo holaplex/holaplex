@@ -11,8 +11,8 @@ const { Dragger } = Upload;
 export const MAX_FILES = 10;
 // For reference https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
 export const NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING =
-  'image/jpeg,image/png,image/gif,image/svg+xml,video/mp4,video/mov';
-// audio/mp3,audio/wave,audio/flac,.glb
+  'image/jpeg,image/png,image/gif,image/svg+xml,video/mp4,video/mov,audio/mp3,audio/wave,audio/flac';
+//,model/glb
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -108,10 +108,13 @@ export default function UploadStep({ nextStep, dispatch, files }: Props) {
       <Header>Add images or videos to create NFTs</Header>
       <Dragger {...draggerProps}>
         <StyledSpace direction="vertical" size={24}>
-          <Copy>Drag up to 10 files here.</Copy>
-          <Copy transparent style={{ fontSize: 14 }}>
-            Supported file types: jpg, png, gif, mp4, mov
-          </Copy>
+          <Space direction="vertical">
+            <Copy>Drag up to 10 files here.</Copy>
+            <Copy transparent style={{ fontSize: 14 }}>
+              Supported file types: jpg, png, gif, mp4, mov, mp3, wave, flac
+            </Copy>
+          </Space>
+
           <Copy transparent>or</Copy>
           <Button type="primary" size="large">
             Browse Files
