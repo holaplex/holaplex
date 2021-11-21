@@ -13,11 +13,11 @@ import Text from 'antd/lib/typography/Text';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   index: number;
   form: FormInstance;
   clearForm: () => void;
-  currentImage: File;
+  currentFile: File;
   isLast: boolean;
   dispatch: MintDispatch;
 }
@@ -75,7 +75,7 @@ const ButtonFormItem = styled(Form.Item)`
 export default function InfoScreen({
   previousStep,
   goToStep,
-  images,
+  files,
   index,
   nextStep,
   form,
@@ -83,11 +83,11 @@ export default function InfoScreen({
   clearForm,
   isLast,
   dispatch,
-  currentImage,
+  currentFile,
 }: Props) {
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
-  const nftNumberList = images.map((_, i) => `nft-${i}`);
+  const nftNumberList = files.map((_, i) => `nft-${i}`);
   const [errorList, setErrorList] = useState<string[]>([]);
   const nftList = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
@@ -148,7 +148,7 @@ export default function InfoScreen({
 
   return isActive ? (
     <NavContainer
-      title={`Info for #${index + 1} of ${images.length}`}
+      title={`Info for #${index + 1} of ${files.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
       clearForm={clearForm}
@@ -158,7 +158,7 @@ export default function InfoScreen({
           {/* <Form.Item> */}
           <Form.Item
             name={[nftNumber, 'name']}
-            initialValue={images[index]?.name?.substring(0, 20) || ''}
+            initialValue={files[index]?.name?.substring(0, 20) || ''}
             label="Name"
             rules={[
               { required: true, message: 'Name is required' },
@@ -265,7 +265,7 @@ export default function InfoScreen({
           {/* </Form.Item> */}
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid images={images} index={index} width={2} />
+        <NFTPreviewGrid files={files} index={index} width={2} />
       </Row>
     </NavContainer>
   ) : null;

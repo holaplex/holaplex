@@ -29,7 +29,7 @@ const ROYALTIES_INPUT_DEFAULT = 10;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   form: FormInstance;
   userKey?: string;
   dispatch: MintDispatch;
@@ -353,7 +353,7 @@ const HOLAPLEX_CREATOR = Object.freeze({
 export default function RoyaltiesCreators({
   previousStep,
   goToStep,
-  images,
+  files,
   dispatch,
   nextStep,
   form,
@@ -363,7 +363,7 @@ export default function RoyaltiesCreators({
   index,
   isFirst = false,
 }: Props) {
-  const nftList = form.getFieldsValue(images.map((_, i) => `nft-${i}`)) as FormValues;
+  const nftList = form.getFieldsValue(files.map((_, i) => `nft-${i}`)) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const [creators, setCreators] = useState<Array<Creator>>(
@@ -696,7 +696,7 @@ export default function RoyaltiesCreators({
 
           <Row justify="end">
             <Space>
-              {images.length > 1 && isFirst && (
+              {files.length > 1 && isFirst && (
                 <StyledClearButton
                   type="text"
                   noStyle
@@ -710,13 +710,13 @@ export default function RoyaltiesCreators({
               )}
 
               <Button type="primary" onClick={isFirst ? applyToAll : next}>
-                {isFirst && images.length > 1 ? 'Apply to All' : 'Next'}
+                {isFirst && files.length > 1 ? 'Apply to All' : 'Next'}
               </Button>
             </Space>
           </Row>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid images={images} index={index} width={2} />
+        <NFTPreviewGrid files={files} index={index} width={2} />
       </Row>
     </NavContainer>
   );

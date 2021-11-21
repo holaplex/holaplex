@@ -50,10 +50,10 @@ const Grid = styled.div`
 `;
 
 interface Props {
-  images: Array<File>;
+  files: Array<File>;
   index?: number;
   width?: number;
-  removeImage?: (id: string) => void;
+  removeFile?: (id: string) => void;
   children?: any;
   isMintStep?: boolean;
   nftValues?: NFTValue[];
@@ -79,29 +79,29 @@ const StyledAntDImage = styled(AntImage)`
 `;
 
 export const NFTPreviewGrid = ({
-  images,
+  files,
   index = -1,
   width = 2,
-  removeImage,
+  removeFile,
   children,
   isMintStep,
   nftValues,
 }: Props) => {
   return (
     <Grid width={width}>
-      {images.map((image, i) => (
-        <ImageOverlay key={image.name} isFinished={i < index} isCurrent={i === index}>
-          {removeImage ? (
-            <ImageContainer key={image.name}>
+      {files.map((file, i) => (
+        <ImageOverlay key={file.name} isFinished={i < index} isCurrent={i === index}>
+          {removeFile ? (
+            <ImageContainer key={file.name}>
               <StyledAntDImage
                 width={120}
                 height={120}
-                src={URL.createObjectURL(image)}
-                alt={image.name}
+                src={URL.createObjectURL(file)}
+                alt={file.name}
                 // objectFit="cover"
                 // unoptimized={true}
               />
-              <StyledRemoveNFT onClick={() => removeImage(image.name)}>
+              <StyledRemoveNFT onClick={() => removeFile(file.name)}>
                 <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
               </StyledRemoveNFT>
             </ImageContainer>
@@ -109,8 +109,8 @@ export const NFTPreviewGrid = ({
             <StyledAntDImage
               width={116}
               height={116}
-              src={URL.createObjectURL(image)}
-              alt={image.name}
+              src={URL.createObjectURL(file)}
+              alt={file.name}
               // unoptimized={true}
               // objectFit="cover"
             />

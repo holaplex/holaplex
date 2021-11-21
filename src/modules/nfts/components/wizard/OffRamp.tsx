@@ -10,7 +10,7 @@ import Button from '@/common/components/elements/Button';
 import router, { useRouter } from 'next/router';
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   clearForm: () => void;
   nftValues: NFTValue[];
   storefront?: Storefront;
@@ -53,7 +53,7 @@ const Wrapper = styled.div`
 export default function OffRampScreen({
   goToStep,
   clearForm,
-  images,
+  files,
   nftValues,
   storefront,
 }: Props) {
@@ -136,8 +136,8 @@ export default function OffRampScreen({
         </Wrapper>
         <StyledDivider type="vertical" />
         <NFTPreviewGrid
-          index={images.length} // trigger all NFT statuses for grid
-          images={images}
+          index={files.length} // trigger all NFT statuses for grid
+          files={files}
           nftValues={nftValues}
         />
       </Row>

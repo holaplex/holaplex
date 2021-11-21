@@ -49,7 +49,7 @@ enum TransactionStep {
 }
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   wallet: Solana;
   connection: Connection;
   nftValues: NFTValue[];
@@ -104,7 +104,7 @@ const MintStep = ({
 export default function MintInProgress({
   previousStep,
   goToStep,
-  images,
+  files,
   nextStep,
   isActive,
   nftValues,
@@ -248,7 +248,7 @@ export default function MintInProgress({
 
   return (
     <NavContainer
-      title={`Minting ${index + 1} of ${images.length}`}
+      title={`Minting ${index + 1} of ${files.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
       showNavigation={showNavigation}
@@ -330,7 +330,7 @@ export default function MintInProgress({
         </Col>
 
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid index={index} images={images} nftValues={nftValues} />
+        <NFTPreviewGrid index={index} files={files} nftValues={nftValues} />
       </Row>
     </NavContainer>
   );

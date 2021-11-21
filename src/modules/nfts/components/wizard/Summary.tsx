@@ -9,7 +9,7 @@ import { NFTAttribute, MintDispatch, NFTFormValue, UploadedFilePin } from 'pages
 import { Spinner } from '@/common/components/elements/Spinner';
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   dispatch: MintDispatch;
   form: FormInstance;
   formValues: NFTFormValue[] | null;
@@ -56,17 +56,17 @@ const Attribute = styled(Space)`
 `;
 const SummaryItem = ({
   value,
-  image,
+  file,
   showRoyaltyPercentage,
   showCreatorCount,
 }: {
   value: NFTFormValue;
-  image: File;
+  file: File;
   showRoyaltyPercentage: boolean;
   showCreatorCount: boolean;
 }) => {
-  if (!image) {
-    throw new Error('Image is required');
+  if (!file) {
+    throw new Error('file is required');
   }
 
   return (
@@ -74,11 +74,11 @@ const SummaryItem = ({
       <Image
         width={245}
         height={245}
-        src={URL.createObjectURL(image)}
+        src={URL.createObjectURL(file)}
         objectFit="cover"
-        alt={image.name}
+        alt={file.name}
         unoptimized={true}
-        key={image.name}
+        key={file.name}
       />
       <Title level={4} style={{ marginBottom: 3 }}>
         {value.name}
@@ -116,7 +116,7 @@ const SummaryItem = ({
 export default function Summary({
   previousStep,
   goToStep,
-  images,
+  files,
   nextStep,
   dispatch,
   formValues,
@@ -129,7 +129,7 @@ export default function Summary({
   const upload = async () => {
     const body = new FormData();
 
-    images.forEach((i) => body.append(i.name, i, i.name));
+    files.forEach((i) => body.append(i.name, i, i.name));
 
     setIsUploading(true);
     try {
@@ -186,11 +186,11 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              images[index] && (
+              files[index] && (
                 <SummaryItem
                   key={fv.name}
                   value={fv}
-                  image={images[index]}
+                  file={files[index]}
                   showRoyaltyPercentage={showRoyaltyPercentage}
                   showCreatorCount={showCreatorCount}
                 />

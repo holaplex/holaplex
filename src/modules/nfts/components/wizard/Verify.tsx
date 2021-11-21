@@ -8,7 +8,7 @@ import { StepWizardChildProps } from 'react-step-wizard';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
 import {
-  MAX_IMAGES,
+  MAX_FILES,
   NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
 } from '@/modules/nfts/components/wizard/Upload';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
@@ -38,25 +38,25 @@ const AddNFTButton = styled.button`
 `;
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   dispatch: MintDispatch;
 }
 
-export default function Verify({ previousStep, nextStep, dispatch, goToStep, images }: Props) {
-  const removeImage = (imageName: string) => {
-    dispatch({ type: 'DELETE_IMAGE', payload: imageName });
+export default function Verify({ previousStep, nextStep, dispatch, goToStep, files }: Props) {
+  const removeFile = (fileName: string) => {
+    dispatch({ type: 'DELETE_FILE', payload: fileName });
   };
 
   return (
     <NavContainer previousStep={previousStep} goToStep={goToStep}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
-        <NFTPreviewGrid removeImage={removeImage} images={images} width={5}>
-          {images.length < MAX_IMAGES && (
+        <NFTPreviewGrid removeFile={removeFile} files={files} width={5}>
+          {files.length < MAX_FILES && (
             <Upload
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
               showUploadList={false}
-              beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
+              beforeUpload={(f) => dispatch({ type: 'ADD_FILE', payload: f })}
             >
               <AddNFTButton>
                 <Image width={24} height={24} src={XCloseIcon} alt="x-close" />

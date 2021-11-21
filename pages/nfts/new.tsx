@@ -75,7 +75,7 @@ export interface NFTValue {
 export type MintDispatch = (action: MintAction) => void;
 
 interface State {
-  images: Array<File>;
+  files: Array<File>;
   uploadedFiles: Array<UploadedFilePin>;
   formValues: NFTFormValue[] | null;
   nftValues: NFTValue[];
@@ -83,9 +83,9 @@ interface State {
 
 export interface MintAction {
   type:
-    | 'SET_IMAGES'
-    | 'DELETE_IMAGE'
-    | 'ADD_IMAGE'
+    | 'SET_FILES'
+    | 'DELETE_FILE'
+    | 'ADD_FILE'
     | 'UPLOAD_FILES'
     | 'SET_FORM_VALUES'
     | 'SET_NFT_VALUES';
@@ -94,7 +94,7 @@ export interface MintAction {
 
 const initialState = (): State => {
   return {
-    images: [],
+    files: [],
     uploadedFiles: [],
     formValues: null,
     nftValues: [],
@@ -110,22 +110,22 @@ function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
 
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
-    case 'SET_IMAGES':
-      return { ...state, images: action.payload as File[] };
-    case 'DELETE_IMAGE':
+    case 'SET_FILES':
+      return { ...state, files: action.payload as File[] };
+    case 'DELETE_FILE':
       return {
         ...state,
-        images: state.images.filter((i) => i.name !== (action.payload as String)),
+        files: state.files.filter((i) => i.name !== (action.payload as String)),
       };
-    case 'ADD_IMAGE':
+    case 'ADD_FILE':
       const file = action.payload as File;
-      const numberOfDuplicates = state.images.filter((i) => i.name === file.name).length;
+      const numberOfDuplicates = state.files.filter((i) => i.name === file.name).length;
 
-      return state.images.length < 10
+      return state.files.length < 10
         ? {
             ...state,
-            images: [
-              ...state.images,
+            files: [
+              ...state.files,
               numberOfDuplicates > 0 ? getFinalFileWithUpdatedName(file, numberOfDuplicates) : file,
             ],
           }
@@ -148,7 +148,7 @@ export default function BulkUploadWizard() {
   const [form] = useForm();
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
 
-  const { images, formValues } = state;
+  const { files, formValues } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
 
@@ -224,7 +224,7 @@ export default function BulkUploadWizard() {
   };
 
   const clearForm = () => {
-    dispatch({ type: 'SET_IMAGES', payload: [] });
+    dispatch({ type: 'SET_FILES', payload: [] });
     form.resetFields();
   };
 
@@ -259,24 +259,24 @@ export default function BulkUploadWizard() {
             exitLeft: undefined,
           }}
         >
-          <Upload dispatch={dispatch} images={images} hashKey="upload" />
-          <Verify images={images} dispatch={dispatch} hashKey="verify" />
+          <Upload dispatch={dispatch} files={files} hashKey="upload" />
+          <Verify files={files} dispatch={dispatch} hashKey="verify" />
           {
-            images.map((image, index) => (
+            files.map((file, index) => (
               <InfoScreen
-                images={images}
+                files={files}
                 index={index}
-                currentImage={image}
+                currentFile={file}
                 key={index}
                 form={form}
                 clearForm={clearForm}
-                isLast={index === images.length - 1}
+                isLast={index === files.length - 1}
                 dispatch={dispatch}
               />
             )) as any // Very annoying TS error here only solved by any
           }
           <RoyaltiesCreators
-            images={images}
+            files={files}
             form={form}
             userKey={wallet.pubkey}
             formValues={state.formValues}
@@ -287,11 +287,11 @@ export default function BulkUploadWizard() {
             index={0}
           />
           {doEachRoyaltyInd &&
-            images
+            files
               .slice(1)
               .map((_, index) => (
                 <RoyaltiesCreators
-                  images={images}
+                  files={files}
                   form={form}
                   userKey={wallet.pubkey}
                   formValues={state.formValues}
@@ -303,18 +303,18 @@ export default function BulkUploadWizard() {
                 />
               ))}
           <Summary
-            images={images}
+            files={files}
             hashKey="summary"
             dispatch={dispatch}
             form={form}
             formValues={state.formValues}
             setNFTValues={setNFTValues}
           />
-          <PriceSummary images={images} connection={connection} hashKey="priceSummary" />
-          {images.map((_, index) => (
+          <PriceSummary files={files} connection={connection} hashKey="priceSummary" />
+          {files.map((_, index) => (
             <MintInProgress
               key={index}
-              images={images}
+              files={files}
               wallet={solana}
               connection={connection}
               uploadMetaData={uploadMetaData}
@@ -327,7 +327,7 @@ export default function BulkUploadWizard() {
 
           <OffRampScreen
             hashKey="success"
-            images={images}
+            files={files}
             clearForm={clearForm}
             nftValues={state.nftValues}
             storefront={storefront}

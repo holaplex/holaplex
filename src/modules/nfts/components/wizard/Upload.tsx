@@ -8,10 +8,11 @@ import { DraggerProps } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 const { Dragger } = Upload;
 
-export const MAX_IMAGES = 10;
+export const MAX_FILES = 10;
 // For reference https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
 export const NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING =
-  'image/jpeg,image/png,image/gif,image/svg+xml';
+  'image/jpeg,image/png,image/gif,image/svg+xml,video/mp4,video/mov';
+// audio/mp3,audio/wave,audio/flac,.glb
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -56,17 +57,17 @@ const StyledSpace = styled(Space)`
 
 interface Props extends Partial<StepWizardChildProps> {
   dispatch: MintDispatch;
-  images: Array<File>;
+  files: Array<File>;
 }
 
-export default function UploadStep({ nextStep, dispatch, images }: Props) {
+export default function UploadStep({ nextStep, dispatch, files }: Props) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   let count = 0;
 
   const draggerProps: DraggerProps = {
     name: 'file',
-    maxCount: MAX_IMAGES, // doesn't actually seem to do anything, hence the checks in other places
+    maxCount: MAX_FILES, // doesn't actually seem to do anything, hence the checks in other places
     fileList,
     multiple: true,
     accept: NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
@@ -96,7 +97,7 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
       }
     },
     beforeUpload: (file, list) => {
-      dispatch({ type: 'ADD_IMAGE', payload: file });
+      dispatch({ type: 'ADD_FILE', payload: file });
 
       return false;
     },
@@ -104,10 +105,13 @@ export default function UploadStep({ nextStep, dispatch, images }: Props) {
 
   return (
     <StyledLayout>
-      <Header>Add images to create NFTs</Header>
+      <Header>Add images or videos to create NFTs</Header>
       <Dragger {...draggerProps}>
         <StyledSpace direction="vertical" size={24}>
-          <Copy>Drag up to 10 pngs, jpegs, or gifs here.</Copy>
+          <Copy>Drag up to 10 files here.</Copy>
+          <Copy transparent style={{ fontSize: 14 }}>
+            Supported file types: jpg, png, gif, mp4, mov
+          </Copy>
           <Copy transparent>or</Copy>
           <Button type="primary" size="large">
             Browse Files
