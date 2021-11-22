@@ -380,14 +380,23 @@ export default function RoyaltiesCreators({
   const [editionsSelection, setEditionsSelection] = useState('one');
   const [maxSupply, setMaxSupply] = useState<number>(MAX_SUPPLY_ONE_OF_ONE);
   const royaltiesPercentage = royaltiesBasisPoints / 100;
+  const royaltiesRef = useRef(royaltiesBasisPoints);
+
   useEffect(() => {
     if (formValues) {
       const currentNFTFormValue = formValues[index];
-      if (currentNFTFormValue) {
+      if (currentNFTFormValue && currentNFTFormValue.seller_fee_basis_points) {
+        form.setFieldsValue({
+          royaltiesPercentage: currentNFTFormValue.seller_fee_basis_points / 100,
+        });
         setRoyaltiesBasisPoints(currentNFTFormValue.seller_fee_basis_points);
       }
+    } else {
+      form.setFieldsValue({ royaltiesPercentage: royaltiesRef.current / 100 });
+      setRoyaltiesBasisPoints(royaltiesRef.current);
     }
-  }, [formValues, index]);
+  }, [formValues, form, index]);
+
   useEffect(() => {
     // When creators changes, sum up all the shares.
     const total = creators.reduce((totalShares, creator) => {
@@ -413,6 +422,7 @@ export default function RoyaltiesCreators({
       return;
     }
 
+    // TODO: Refactor not to use useState with formValues
     form
       .validateFields(['royaltiesPercentage', 'numOfEditions'])
       .then(() => {
@@ -443,6 +453,7 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
+
         if (!creators.length || isNil(maxSupply) || !royaltiesBasisPoints) {
           throw new Error('No creators, maxSupply, or royalties input');
         }
