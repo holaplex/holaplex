@@ -384,10 +384,15 @@ export default function RoyaltiesCreators({
     if (formValues) {
       const currentNFTFormValue = formValues[index];
       if (currentNFTFormValue && currentNFTFormValue.seller_fee_basis_points) {
-        setRoyaltiesBasisPoints(currentNFTFormValue.seller_fee_basis_points);
+        form.setFieldsValue({
+          royaltiesPercentage: currentNFTFormValue.seller_fee_basis_points / 100,
+        });
+      } else {
+        form.setFieldsValue({ royaltiesPercentage });
       }
     }
-  }, [formValues, index]);
+  }, [formValues, royaltiesPercentage, form, index]);
+
   useEffect(() => {
     // When creators changes, sum up all the shares.
     const total = creators.reduce((totalShares, creator) => {
@@ -413,6 +418,7 @@ export default function RoyaltiesCreators({
       return;
     }
 
+    // TODO: Refactor not to use useState with formValues
     form
       .validateFields(['royaltiesPercentage', 'numOfEditions'])
       .then(() => {
