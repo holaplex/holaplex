@@ -93,7 +93,7 @@ const SummaryItem = ({
       {showRoyaltyPercentage && (
         <Attribute>
           <Paragraph style={{ width: 110 }}>Royalty:</Paragraph>
-          <Paragraph>{value.seller_fee_basis_points}</Paragraph>
+          <Paragraph>{value.seller_fee_basis_points / 100}%</Paragraph>
         </Attribute>
       )}
       {value.attributes?.map((attribute: NFTAttribute, index: number) =>
