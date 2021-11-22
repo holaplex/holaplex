@@ -158,12 +158,7 @@ export default function BulkUploadWizard() {
     }
   }, [wallet, connect]);
 
-  const transformToMetaDataJson = (nftValue: NFTValue) => {
-    // TODO: What do we need to do to transform to right structure?
-    return nftValue;
-  };
   const transformFormVals = (values: NFTFormValue[], filePins: UploadedFilePin[]): NFTValue[] => {
-    // TODO: type this properly
     return values.map((v, i: number) => {
       const filePin = filePins[i];
       return {
@@ -201,8 +196,7 @@ export default function BulkUploadWizard() {
   };
 
   const uploadMetaData = async (nftValue: NFTValue) => {
-    const metaDataJson = transformToMetaDataJson(nftValue);
-    const metaData = new File([JSON.stringify(metaDataJson)], 'metadata');
+    const metaData = new File([JSON.stringify(nftValue)], 'metadata');
     const metaDataFileForm = new FormData();
     metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
     const resp = await fetch('/api/ipfs/upload', {
