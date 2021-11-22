@@ -40,15 +40,29 @@ const AddNFTButton = styled.button`
 interface Props extends Partial<StepWizardChildProps> {
   images: Array<File>;
   dispatch: MintDispatch;
+  clearForm: () => void;
 }
 
-export default function Verify({ previousStep, nextStep, dispatch, goToStep, images }: Props) {
+export default function Verify({
+  previousStep,
+  nextStep,
+  dispatch,
+  goToStep,
+  images,
+  currentStep,
+  clearForm,
+}: Props) {
   const removeImage = (imageName: string) => {
     dispatch({ type: 'DELETE_IMAGE', payload: imageName });
   };
 
+  const handlePrevious = () => {
+    clearForm();
+    previousStep!();
+  };
+
   return (
-    <NavContainer previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer previousStep={handlePrevious} goToStep={goToStep}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
         <NFTPreviewGrid removeImage={removeImage} images={images} width={5}>
