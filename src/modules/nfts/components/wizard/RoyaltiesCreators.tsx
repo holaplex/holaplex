@@ -380,6 +380,8 @@ export default function RoyaltiesCreators({
   const [editionsSelection, setEditionsSelection] = useState('one');
   const [maxSupply, setMaxSupply] = useState<number>(MAX_SUPPLY_ONE_OF_ONE);
   const royaltiesPercentage = royaltiesBasisPoints / 100;
+  const royaltiesRef = useRef(royaltiesBasisPoints);
+
   useEffect(() => {
     if (formValues) {
       const currentNFTFormValue = formValues[index];
@@ -387,11 +389,13 @@ export default function RoyaltiesCreators({
         form.setFieldsValue({
           royaltiesPercentage: currentNFTFormValue.seller_fee_basis_points / 100,
         });
-      } else {
-        form.setFieldsValue({ royaltiesPercentage });
+        setRoyaltiesBasisPoints(currentNFTFormValue.seller_fee_basis_points);
       }
+    } else {
+      form.setFieldsValue({ royaltiesPercentage: royaltiesRef.current / 100 });
+      setRoyaltiesBasisPoints(royaltiesRef.current);
     }
-  }, [formValues, royaltiesPercentage, form, index]);
+  }, [formValues, form, index]);
 
   useEffect(() => {
     // When creators changes, sum up all the shares.
