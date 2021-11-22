@@ -383,7 +383,7 @@ export default function RoyaltiesCreators({
   useEffect(() => {
     if (formValues) {
       const currentNFTFormValue = formValues[index];
-      if (currentNFTFormValue) {
+      if (currentNFTFormValue && currentNFTFormValue.seller_fee_basis_points) {
         setRoyaltiesBasisPoints(currentNFTFormValue.seller_fee_basis_points);
       }
     }
@@ -443,6 +443,7 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
+
         if (!creators.length || isNil(maxSupply) || !royaltiesBasisPoints) {
           throw new Error('No creators, maxSupply, or royalties input');
         }
