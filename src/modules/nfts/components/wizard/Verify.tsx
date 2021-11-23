@@ -10,6 +10,7 @@ import { MintDispatch } from 'pages/nfts/new';
 import {
   MAX_FILES,
   NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
+  MAX_FILE_SIZE,
 } from '@/modules/nfts/components/wizard/Upload';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 
@@ -69,7 +70,18 @@ export default function Verify({
             <Upload
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
               showUploadList={false}
-              beforeUpload={(f) => dispatch({ type: 'ADD_FILE', payload: f })}
+              beforeUpload={(f) => {
+                const { size, name } = f;
+                if (size && size > MAX_FILE_SIZE) {
+                  window.alert(
+                    `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
+                      0
+                    )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
+                  );
+                  return;
+                }
+                dispatch({ type: 'ADD_FILE', payload: f });
+              }}
             >
               <AddNFTButton>
                 <Image width={24} height={24} src={XCloseIcon} alt="x-close" />

@@ -253,7 +253,7 @@ export default function BulkUploadWizard() {
             exitLeft: undefined,
           }}
         >
-          <Upload dispatch={dispatch} files={files} hashKey="upload" />
+          <Upload dispatch={dispatch} files={files} hashKey="upload" clearForm={clearForm} />
           <Verify files={files} dispatch={dispatch} clearForm={clearForm} hashKey="verify" />
           {/* {
             files.map((file, index) => (

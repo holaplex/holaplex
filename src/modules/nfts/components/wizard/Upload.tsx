@@ -9,6 +9,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 const { Dragger } = Upload;
 
 export const MAX_FILES = 10;
+export const MAX_FILE_SIZE = 100000000;
 // For reference https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
 export const NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING =
   'image/jpeg,image/png,image/gif,image/svg+xml,video/mp4,video/mov,audio/mp3,audio/wave,audio/flac';
@@ -58,12 +59,20 @@ const StyledSpace = styled(Space)`
 interface Props extends Partial<StepWizardChildProps> {
   dispatch: MintDispatch;
   files: Array<File>;
+  clearForm: () => void;
 }
 
-export default function UploadStep({ nextStep, dispatch, files }: Props) {
+export default function UploadStep({ nextStep, dispatch, files, clearForm }: Props) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileTooBig, setFileTooBig] = useState(false);
 
   let count = 0;
+
+  const resetAll = () => {
+    setFileList([]);
+    setFileTooBig(false);
+    clearForm();
+  };
 
   const draggerProps: DraggerProps = {
     name: 'file',
@@ -82,7 +91,19 @@ export default function UploadStep({ nextStep, dispatch, files }: Props) {
     onChange(info) {
       count++;
       console.log('on change', count, info.fileList.length);
-      const { status } = info.file;
+      const { status, size, name } = info.file;
+
+      console.log('file is ', info.file);
+      if (size && size > MAX_FILE_SIZE) {
+        window.alert(
+          `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
+            0
+          )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
+        );
+        resetAll();
+        return;
+      }
+
       if (status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -91,6 +112,7 @@ export default function UploadStep({ nextStep, dispatch, files }: Props) {
       } else if (status === 'error') {
         console.log(`${info.file.name} file upload failed.`);
       }
+
       if (count === info.fileList.length) {
         setFileList([]); // reset local File upload state
         nextStep!();
