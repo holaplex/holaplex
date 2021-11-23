@@ -44,6 +44,10 @@ const Metadata = styled(Col)`
   }
 `;
 
+const StyledAvatar = styled(Avatar)`
+  background: #222222;
+`;
+
 type StorePreviewProps = {
   storefront: Storefront;
   metadata: string[];
@@ -55,7 +59,7 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
   return (
     <PreviewCard>
       <Card.Meta
-        avatar={<Avatar size="large" src={<Image preview={false} src={storefront.theme.logo.url} />} />}
+        avatar={<StyledAvatar size="large" src={<Image preview={false} src={storefront.theme.logo.url} />} />}
         title={storefront.meta.title}
         description={<a href={`https://${domain}`} rel="nofollow noreferrer" target="_blank">{domain}</a>}
       />
