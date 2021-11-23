@@ -25,7 +25,7 @@ import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import FeesModalContent from '@/common/components/presentational/FeesModalContent';
 import { isNil } from 'ramda';
 
-const ROYALTIES_INPUT_DEFAULT = 10;
+const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
 
 interface Props extends Partial<StepWizardChildProps> {
@@ -372,13 +372,30 @@ export default function RoyaltiesCreators({
       : [HOLAPLEX_CREATOR, { address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
-  const [royaltiesInput, setRoyaltiesInput] = useState(
+  const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
     previousNFT ? previousNFT.seller_fee_basis_points : ROYALTIES_INPUT_DEFAULT
   );
   const [totalRoyaltyShares, setTotalRoyaltiesShare] = useState<number>(0);
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [editionsSelection, setEditionsSelection] = useState('one');
   const [maxSupply, setMaxSupply] = useState<number>(MAX_SUPPLY_ONE_OF_ONE);
+  const royaltiesPercentage = royaltiesBasisPoints / 100;
+  const royaltiesRef = useRef(royaltiesBasisPoints);
+
+  useEffect(() => {
+    if (formValues) {
+      const currentNFTFormValue = formValues[index];
+      if (currentNFTFormValue && currentNFTFormValue.seller_fee_basis_points) {
+        form.setFieldsValue({
+          royaltiesPercentage: currentNFTFormValue.seller_fee_basis_points / 100,
+        });
+        setRoyaltiesBasisPoints(currentNFTFormValue.seller_fee_basis_points);
+      }
+    } else {
+      form.setFieldsValue({ royaltiesPercentage: royaltiesRef.current / 100 });
+      setRoyaltiesBasisPoints(royaltiesRef.current);
+    }
+  }, [formValues, form, index]);
 
   useEffect(() => {
     // When creators changes, sum up all the shares.
@@ -405,6 +422,7 @@ export default function RoyaltiesCreators({
       return;
     }
 
+    // TODO: Refactor not to use useState with formValues
     form
       .validateFields(['royaltiesPercentage', 'numOfEditions'])
       .then(() => {
@@ -412,11 +430,11 @@ export default function RoyaltiesCreators({
 
         if (formValues) {
           const newFormValues = formValues.map((formValue) => {
-            if (!creators.length || isNil(maxSupply) || !royaltiesInput) {
+            if (!creators.length || isNil(maxSupply) || !royaltiesBasisPoints) {
               throw new Error('No creators, maxSupply, or royalties input');
             }
             formValue.properties = { creators, maxSupply };
-            formValue.seller_fee_basis_points = royaltiesInput;
+            formValue.seller_fee_basis_points = royaltiesBasisPoints;
             return formValue;
           });
           dispatch({ type: 'SET_FORM_VALUES', payload: [...newFormValues] });
@@ -435,12 +453,13 @@ export default function RoyaltiesCreators({
     form.validateFields(['royaltiesPercentage']).then(() => {
       if (formValues) {
         const currentNFTFormValue = formValues[index];
-        if (!creators.length || isNil(maxSupply) || !royaltiesInput) {
+
+        if (!creators.length || isNil(maxSupply) || !royaltiesBasisPoints) {
           throw new Error('No creators, maxSupply, or royalties input');
         }
 
         currentNFTFormValue.properties = { creators, maxSupply };
-        currentNFTFormValue.seller_fee_basis_points = royaltiesInput;
+        currentNFTFormValue.seller_fee_basis_points = royaltiesBasisPoints;
 
         const formValuesCopy = [...formValues];
         formValuesCopy[index] = { ...currentNFTFormValue };
@@ -516,7 +535,7 @@ export default function RoyaltiesCreators({
                   message: 'Percentage must be between 1 and 100',
                 },
               ]}
-              initialValue={royaltiesInput}
+              initialValue={royaltiesPercentage}
             >
               <InputNumber<number>
                 min={1}
@@ -524,7 +543,7 @@ export default function RoyaltiesCreators({
                 formatter={(value) => `${value}%`}
                 parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
                 style={{ borderRadius: 4, minWidth: 103 }}
-                onChange={(val: number) => setRoyaltiesInput(val)}
+                onChange={(val: number) => setRoyaltiesBasisPoints(val * 100)}
               />
             </Form.Item>
           </Form.Item>
