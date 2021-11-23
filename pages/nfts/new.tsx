@@ -38,6 +38,7 @@ export type FormValues = { [key: string]: NFTFormValue };
 export interface NFTFormValue {
   name: string;
   imageName: string;
+  coverImageFile?: File;
   description: string;
   collection: string;
   attributes: Array<NFTAttribute>;
@@ -154,30 +155,69 @@ export default function BulkUploadWizard() {
 
   useEffect(() => {
     if (!wallet) {
-      // connect('/nfts/new');
+      connect('/nfts/new');
     }
   }, [wallet, connect]);
 
-  const transformFormVals = (values: NFTFormValue[], filePins: UploadedFilePin[]): NFTValue[] => {
-    return values.map((v, i: number) => {
-      const filePin = filePins[i];
-      return {
-        name: v.name,
-        description: v.description,
-        symbol: '',
-        collection: v.collection,
-        seller_fee_basis_points: v.seller_fee_basis_points,
-        image: filePin.uri,
-        files: [{ uri: filePin.uri, type: filePin.type }],
-        attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
-          if (!isNil(a?.trait_type)) {
-            result.push({ trait_type: a.trait_type, value: a.value });
-          }
-          return result;
-        }, []),
-        properties: v.properties,
-      };
-    });
+  const uploadCoverImage = async (file: File) => {
+    const body = new FormData();
+    body.append(file.name, file, file.name);
+
+    try {
+      const resp = await fetch('/api/ipfs/upload', {
+        method: 'POST',
+        body,
+      });
+      const json = await resp.json();
+      if (json) {
+        return json.files[0];
+      }
+    } catch (e) {
+      console.error('Could not upload file', e);
+      throw new Error(e);
+    }
+  };
+
+  const transformFormVals = async (values: NFTFormValue[], filePins: UploadedFilePin[]) => {
+    const resp = await Promise.all(
+      values.map(async (v, i: number) => {
+        const filePin = filePins[i];
+
+        let coverImageFile: UploadedFilePin | undefined;
+        if (v.coverImageFile) {
+          coverImageFile = await uploadCoverImage(v.coverImageFile);
+          console.log('coverImageFile is', coverImageFile);
+        }
+
+        const files = [{ uri: filePin.uri, type: filePin.type }];
+
+        let image = filePin.uri;
+        if (coverImageFile) {
+          files.push({ uri: coverImageFile.uri, type: coverImageFile.type });
+          image = coverImageFile.uri;
+        }
+
+        return {
+          name: v.name,
+          description: v.description,
+          symbol: '',
+          collection: v.collection,
+          seller_fee_basis_points: v.seller_fee_basis_points,
+          image,
+          files,
+          attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
+            if (!isNil(a?.trait_type)) {
+              result.push({ trait_type: a.trait_type, value: a.value });
+            }
+            return result;
+          }, []),
+          properties: v.properties,
+        };
+      })
+    );
+
+    console.log('resp is ', resp);
+    return resp;
   };
 
   const onFinish = (values: FormValues) => {
@@ -185,12 +225,14 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
   };
 
-  const setNFTValues = (filePins: UploadedFilePin[]) => {
+  const setNFTValues = async (filePins: UploadedFilePin[]) => {
     if (!filePins?.length || !formValues?.length) {
       throw new Error('Either filePins or formValues are not set');
     }
 
-    const nftVals = transformFormVals(formValues, filePins);
+    const nftVals = await transformFormVals(formValues, filePins);
+
+    console.log('nft vals are', nftVals);
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
   };
@@ -229,9 +271,9 @@ export default function BulkUploadWizard() {
     }
   }
 
-  // if (!solana || !wallet) {
-  //   return null;
-  // }
+  if (!wallet || !solana) {
+    return null;
+  }
 
   return (
     <Form
@@ -255,10 +297,8 @@ export default function BulkUploadWizard() {
         >
           <Upload dispatch={dispatch} files={files} hashKey="upload" clearForm={clearForm} />
           <Verify files={files} dispatch={dispatch} clearForm={clearForm} hashKey="verify" />
-          {/* {
-            files.map((file, index) => (
           {
-            images.map((image, index) => (
+            files.map((file, index) => (
               <InfoScreen
                 files={files}
                 index={index}
@@ -320,14 +360,13 @@ export default function BulkUploadWizard() {
               hashKey="mint"
             />
           ))}
-
           <OffRampScreen
             hashKey="success"
             files={files}
             clearForm={clearForm}
             nftValues={state.nftValues}
             storefront={storefront}
-          /> */}
+          />
         </StepWizard>
       </StyledLayout>
     </Form>

@@ -1,6 +1,6 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Row } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { Divider, Input, Form, FormInstance, Row, Upload } from 'antd';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
@@ -11,6 +11,9 @@ import { FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import Text from 'antd/lib/typography/Text';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { isAudio, isVideo } from '@/modules/utils/files';
+
+const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
 
 interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
@@ -91,14 +94,21 @@ export default function InfoScreen({
   const [errorList, setErrorList] = useState<string[]>([]);
   const nftList = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
+  const showCoverUpload = isVideo(currentFile) || isAudio(currentFile);
 
   const handleNext = () => {
+    const fieldsToValidate = [
+      [nftNumber, 'name'],
+      [nftNumber, 'attributes'],
+    ];
+
+    if (showCoverUpload) {
+      fieldsToValidate.push([nftNumber, 'coverImageFile']);
+    }
+
     setErrorList([]);
     form
-      .validateFields([
-        [nftNumber, 'name'],
-        [nftNumber, 'attributes'],
-      ])
+      .validateFields(fieldsToValidate)
       .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
         if (isLast) {
           const values2 = form.getFieldsValue(nftNumberList) as FormValues;
@@ -115,7 +125,7 @@ export default function InfoScreen({
             errors: string[];
           }[];
         }) => {
-          console.log('errorInfo', errorInfo);
+          console.error('errorInfo', errorInfo);
           setErrorList(
             errorInfo.errorFields // only handle attribute errors
               .filter((ef) => ef.name.includes('attributes'))
@@ -146,7 +156,22 @@ export default function InfoScreen({
     </Input.Group>
   );
 
-  return isActive ? (
+  const getCoverImage = (e: any) => {
+    console.log('e is ', e);
+    if (e.file && e.file.originFileObj) {
+      return e.file.originFileObj;
+    }
+    if (Array.isArray(e)) {
+      return e[0];
+    }
+    return e && e.fileList;
+  };
+
+  if (!isActive) {
+    return null;
+  }
+
+  return (
     <NavContainer
       title={`Info for #${index + 1} of ${files.length}`}
       previousStep={previousStep}
@@ -155,7 +180,6 @@ export default function InfoScreen({
     >
       <Row>
         <FormWrapper>
-          {/* <Form.Item> */}
           <Form.Item
             name={[nftNumber, 'name']}
             initialValue={files[index]?.name?.substring(0, 20) || ''}
@@ -176,6 +200,17 @@ export default function InfoScreen({
           >
             <Input placeholder="required" autoFocus />
           </Form.Item>
+          {showCoverUpload && (
+            <Form.Item
+              name={[nftNumber, 'coverImageFile']}
+              getValueFromEvent={getCoverImage}
+              rules={[{ required: true, message: 'Cover image is required' }]}
+            >
+              <Upload accept={ACCEPTED_IMAGE_FILES} maxCount={1} showUploadList={true}>
+                <Button>Upload Cover Image</Button>
+              </Upload>
+            </Form.Item>
+          )}
           <Form.Item
             name={[nftNumber, 'description']}
             label="Description"
@@ -262,11 +297,10 @@ export default function InfoScreen({
               Next
             </Button>
           </ButtonFormItem>
-          {/* </Form.Item> */}
         </FormWrapper>
         <StyledDivider type="vertical" />
         <NFTPreviewGrid files={files} index={index} width={2} />
       </Row>
     </NavContainer>
-  ) : null;
+  );
 }
