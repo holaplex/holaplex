@@ -108,7 +108,7 @@ export interface AntdFile {
 
 export type FileInput = (ArweaveFile & { file?: undefined }) | AntdFile;
 
-export const popFile = (f: FileInput): (ArweaveFile & { file?: undefined }) => {
+export const popFile = (f: FileInput): ArweaveFile & { file?: undefined } => {
   if (has<'response'>('response', f)) {
     return f.response;
   } else {
@@ -170,13 +170,12 @@ export const submitCallback = ({
       const logo = popFile(theme.logo[0]);
       const banner = popFile(theme.banner[0]);
       const favicon = popFile(meta.favicon[0]);
-      
 
       const storefront: Storefront = {
         theme: {
           ...(theme as StorefrontTheme<unknown>),
           logo,
-          banner: undefined
+          banner: undefined,
         },
         meta: {
           ...(meta as PageMetaData<unknown>),
@@ -184,12 +183,12 @@ export const submitCallback = ({
         },
         subdomain,
         pubkey: solana?.publicKey.toBase58() ?? '',
-      }     
-      
+      };
+
       if (banner?.url) {
-        storefront.theme.banner = banner
+        storefront.theme.banner = banner;
       }
-      
+
       await putStorefront({
         solana,
         storefront,

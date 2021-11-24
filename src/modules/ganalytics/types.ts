@@ -1,1 +1,1 @@
-export type GoogleTracker = (..._: any[]) => void 
+export type GoogleTracker = (..._: any[]) => void;

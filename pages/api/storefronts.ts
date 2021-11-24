@@ -62,7 +62,7 @@ const postArweaveStorefront = async (storefront: Storefront) => {
     tx.addTag('holaplex:theme:banner:name', storefront.theme.banner.name);
     tx.addTag('holaplex:theme:banner:type', storefront.theme.banner.type);
   }
-  
+
   await arweave.transactions.sign(tx, jwk);
 
   if (!arweaveClient.wallet.canAfford(address, tx.data.byteLength)) {

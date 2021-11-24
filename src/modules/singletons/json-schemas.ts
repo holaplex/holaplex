@@ -120,7 +120,7 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
         },
         optionalProperties: {
           banner: arweaveFile,
-        }
+        },
       },
     },
   });
