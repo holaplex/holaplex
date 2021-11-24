@@ -167,28 +167,16 @@ export default function New({ track }: StorefrontEditorProps) {
             )}
           </Upload>
         </Form.Item>
-        <Form.Item
-          name={['theme', 'backgroundColor']}
-          label="Background"
-        >
+        <Form.Item name={['theme', 'backgroundColor']} label="Background">
           <ColorPicker />
         </Form.Item>
-        <Form.Item
-          name={['theme', 'primaryColor']}
-          label="Buttons &amp; Links"
-        >
+        <Form.Item name={['theme', 'primaryColor']} label="Buttons &amp; Links">
           <ColorPicker />
         </Form.Item>
-        <Form.Item
-          name={['theme', 'titleFont']}
-          label="Title Font"
-        >
+        <Form.Item name={['theme', 'titleFont']} label="Title Font">
           <FontSelect />
         </Form.Item>
-        <Form.Item
-          name={['theme', 'textFont']}
-          label="Main Text Font"
-        >
+        <Form.Item name={['theme', 'textFont']} label="Main Text Font">
           <FontSelect />
         </Form.Item>
       </Col>

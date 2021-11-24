@@ -1,7 +1,19 @@
- import Arweave from 'arweave';
+import Arweave from 'arweave';
 import { ArweaveTransaction, AreweaveTagFilter } from './types';
-import { Storefront } from '@/modules/storefront/types'
-import { isEmpty, isNil, map, reduce, concat, pipe, last, prop, uniqBy, view, lensPath } from 'ramda'
+import { Storefront } from '@/modules/storefront/types';
+import {
+  isEmpty,
+  isNil,
+  map,
+  reduce,
+  concat,
+  pipe,
+  last,
+  prop,
+  uniqBy,
+  view,
+  lensPath,
+} from 'ramda';
 
 export interface StorefrontEdge {
   cursor: string;
@@ -20,12 +32,12 @@ interface ArweaveResponseTransformer {
 
 interface ArweaveObjectInteraction {
   find: (tag: string, value: string) => Promise<Storefront | null>;
-  upsert: (storefront: Storefront, css: string) => Promise<Storefront>
-  list: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<StorefrontEdge[]>
+  upsert: (storefront: Storefront, css: string) => Promise<Storefront>;
+  list: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<StorefrontEdge[]>;
 }
 
 interface ArweaveWalletHelpers {
-  canAfford: (address: string, bytes: number) => Promise<boolean>
+  canAfford: (address: string, bytes: number) => Promise<boolean>;
 }
 
 export interface ArweaveScope {
@@ -37,97 +49,100 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
   return {
     json: response.json,
     storefronts: async () => {
-      const { data: { transactions: { pageInfo: { hasNextPage }, edges }}} = await response.json()
+      const {
+        data: {
+          transactions: {
+            pageInfo: { hasNextPage },
+            edges,
+          },
+        },
+      } = await response.json();
 
       if (isEmpty(edges)) {
         return {
           hasNextPage: false,
-          edges: []
-        }
+          edges: [],
+        };
       }
 
       const storefronts = reduce(
         (acc: StorefrontEdge[], { cursor, node }: any) => {
-          const transaction = node as ArweaveTransaction
+          const transaction = node as ArweaveTransaction;
 
           const tags = reduce(
             (acc: any, { name, value }) => {
-              acc[name] = value || null
+              acc[name] = value || null;
 
-              return acc
+              return acc;
             },
             {},
-            transaction.tags,
-          )
+            transaction.tags
+          );
 
           const edge = {
             cursor: cursor,
             storefront: {
-              pubkey: tags["solana:pubkey"],
-              subdomain: tags["holaplex:metadata:subdomain"],
+              pubkey: tags['solana:pubkey'],
+              subdomain: tags['holaplex:metadata:subdomain'],
               theme: {
-                primaryColor: tags["holaplex:theme:color:primary"],
-                backgroundColor: tags["holaplex:theme:color:background"],
-                titleFont: tags["holaplex:theme:font:title"],
-                textFont: tags["holaplex:theme:font:text"],
+                primaryColor: tags['holaplex:theme:color:primary'],
+                backgroundColor: tags['holaplex:theme:color:background'],
+                titleFont: tags['holaplex:theme:font:title'],
+                textFont: tags['holaplex:theme:font:text'],
                 banner: {
-                  url: tags["holaplex:theme:banner:url"] || null,
-                  name: tags["holaplex:theme:banner:name"] || null,
-                  type: tags["holaplex:theme:banner:type"] || null,
+                  url: tags['holaplex:theme:banner:url'] || null,
+                  name: tags['holaplex:theme:banner:name'] || null,
+                  type: tags['holaplex:theme:banner:type'] || null,
                 },
                 logo: {
-                  url: tags["holaplex:theme:logo:url"],
-                  name: tags["holaplex:theme:logo:name"],
-                  type: tags["holaplex:theme:logo:type"]
-                }
+                  url: tags['holaplex:theme:logo:url'],
+                  name: tags['holaplex:theme:logo:name'],
+                  type: tags['holaplex:theme:logo:type'],
+                },
               },
               meta: {
-                description: tags["holaplex:metadata:page:description"],
-                title: tags["holaplex:metadata:page:title"],
+                description: tags['holaplex:metadata:page:description'],
+                title: tags['holaplex:metadata:page:title'],
                 favicon: {
-                  url: tags["holaplex:metadata:favicon:url"],
-                  name: tags["holaplex:metadata:favicon:name"],
-                  type: tags["holaplex:metadata:favicon:type"]
-                }
-              }
-            }
-          }
+                  url: tags['holaplex:metadata:favicon:url'],
+                  name: tags['holaplex:metadata:favicon:name'],
+                  type: tags['holaplex:metadata:favicon:type'],
+                },
+              },
+            },
+          };
 
           if (edge.storefront.subdomain) {
-            return [...acc, edge]
+            return [...acc, edge];
           }
 
-          return acc
+          return acc;
         },
         [],
         edges
-      )
+      );
 
-      return { hasNextPage, edges: storefronts }
-
-    }
-  } as ArweaveResponseTransformer
-}
-
+      return { hasNextPage, edges: storefronts };
+    },
+  } as ArweaveResponseTransformer;
+};
 
 const query = async (arweave: Arweave, query: string, variables: object): Promise<any> => {
-  const { api } = arweave.getConfig()
+  const { api } = arweave.getConfig();
 
-  const response = await fetch(
-    `${api.protocol}://${api.host}:${api.port}/graphql`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables,
-      })
-    })
+  const response = await fetch(`${api.protocol}://${api.host}:${api.port}/graphql`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  });
 
-  return transformer(response)
-}
+  return transformer(response);
+};
 
 const using = (arweave: Arweave): ArweaveScope => ({
   wallet: {
@@ -135,16 +150,16 @@ const using = (arweave: Arweave): ArweaveScope => ({
       const balance = await arweave.wallets.getBalance(address);
 
       const cost = await arweave.transactions.getPrice(bytes);
-  
+
       return arweave.ar.isGreaterThan(balance, cost);
-    }
+    },
   },
   storefront: {
-    list: async (tags = [], batch = 1000, start = "") => {
+    list: async (tags = [], batch = 1000, start = '') => {
       let after = start;
       let next = true;
       let storefronts = [] as StorefrontEdge[];
-      
+
       while (next) {
         const response = await query(
           arweave,
@@ -171,19 +186,19 @@ const using = (arweave: Arweave): ArweaveScope => ({
           {
             after,
             first: batch,
-            tags: [{ name: "Arweave-App", values: ["holaplex"]}, ...tags] 
-          },
-        )
+            tags: [{ name: 'Arweave-App', values: ['holaplex'] }, ...tags],
+          }
+        );
 
-        const { hasNextPage, edges } = await response.storefronts()
+        const { hasNextPage, edges } = await response.storefronts();
 
-        storefronts = concat(storefronts, edges)
+        storefronts = concat(storefronts, edges);
         //@ts-ignore
-        after = pipe(last, prop('cursor'))(edges)
-        next = hasNextPage
+        after = pipe(last, prop('cursor'))(edges);
+        next = hasNextPage;
       }
 
-      return uniqBy(view(lensPath(['storefront', 'pubkey'])), storefronts)
+      return uniqBy(view(lensPath(['storefront', 'pubkey'])), storefronts);
     },
     find: async (name: string, value: string): Promise<Storefront | null> => {
       const response = await query(
@@ -209,53 +224,53 @@ const using = (arweave: Arweave): ArweaveScope => ({
           }
         }`,
         { name, value }
-      )
+      );
 
-      const { edges } = await response.storefronts()
+      const { edges } = await response.storefronts();
 
       if (isEmpty(edges)) {
-        return null
+        return null;
       }
 
-      return edges[0].storefront
+      return edges[0].storefront;
     },
     upsert: async (storefront: Storefront, css: string): Promise<Storefront> => {
-      const transaction = await arweave.createTransaction({ data: css })
+      const transaction = await arweave.createTransaction({ data: css });
 
-      transaction.addTag("Content-Type", "text/css")
-      transaction.addTag("solana:pubkey", storefront.pubkey)
-      transaction.addTag("holaplex:metadata:subdomain", storefront.subdomain)
-      transaction.addTag("holaplex:metadata:favicon:url", storefront.meta.favicon.url)
-      transaction.addTag("holaplex:metadata:favicon:name", storefront.meta.favicon.name)
-      transaction.addTag("holaplex:metadata:favicon:type", storefront.meta.favicon.type)
-      transaction.addTag("holaplex:metadata:page:title", storefront.meta.title)
-      transaction.addTag("holaplex:metadata:page:description", storefront.meta.description)
-      transaction.addTag("holaplex:theme:logo:url", storefront.theme.logo.url)
-      transaction.addTag("holaplex:theme:logo:name", storefront.theme.logo.name)
-      transaction.addTag("holaplex:theme:logo:type", storefront.theme.logo.type)
-      transaction.addTag("holaplex:theme:color:primary", storefront.theme.primaryColor)
-      transaction.addTag("holaplex:theme:color:background", storefront.theme.backgroundColor)
-      transaction.addTag("holaplex:theme:font:title", storefront.theme.titleFont)
-      transaction.addTag("holaplex:theme:font:text", storefront.theme.textFont)
-      transaction.addTag("Arweave-App", "holaplex")
+      transaction.addTag('Content-Type', 'text/css');
+      transaction.addTag('solana:pubkey', storefront.pubkey);
+      transaction.addTag('holaplex:metadata:subdomain', storefront.subdomain);
+      transaction.addTag('holaplex:metadata:favicon:url', storefront.meta.favicon.url);
+      transaction.addTag('holaplex:metadata:favicon:name', storefront.meta.favicon.name);
+      transaction.addTag('holaplex:metadata:favicon:type', storefront.meta.favicon.type);
+      transaction.addTag('holaplex:metadata:page:title', storefront.meta.title);
+      transaction.addTag('holaplex:metadata:page:description', storefront.meta.description);
+      transaction.addTag('holaplex:theme:logo:url', storefront.theme.logo.url);
+      transaction.addTag('holaplex:theme:logo:name', storefront.theme.logo.name);
+      transaction.addTag('holaplex:theme:logo:type', storefront.theme.logo.type);
+      transaction.addTag('holaplex:theme:color:primary', storefront.theme.primaryColor);
+      transaction.addTag('holaplex:theme:color:background', storefront.theme.backgroundColor);
+      transaction.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
+      transaction.addTag('holaplex:theme:font:text', storefront.theme.textFont);
+      transaction.addTag('Arweave-App', 'holaplex');
 
       if (storefront.theme.banner) {
-        transaction.addTag("holaplex:theme:banner:url", storefront.theme.banner.url)
-        transaction.addTag("holaplex:theme:banner:name", storefront.theme.banner.name)
-        transaction.addTag("holaplex:theme:banner:type", storefront.theme.banner.type)
+        transaction.addTag('holaplex:theme:banner:url', storefront.theme.banner.url);
+        transaction.addTag('holaplex:theme:banner:name', storefront.theme.banner.name);
+        transaction.addTag('holaplex:theme:banner:type', storefront.theme.banner.type);
       }
 
-      await arweave.transactions.sign(transaction)
+      await arweave.transactions.sign(transaction);
 
-      await arweave.transactions.post(transaction)
+      await arweave.transactions.post(transaction);
 
-      return storefront
-    }
-  }
-})
+      return storefront;
+    },
+  },
+});
 
 const client = {
   using,
-}
+};
 
-export default client
+export default client;
