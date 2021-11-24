@@ -29,8 +29,8 @@ const AddNFTButton = styled.button`
   width: 120px;
   height: 120px;
   background: #1a1a1a;
+  border: none;
   border-radius: 4px;
-  border-color: #1a1a1a;
   cursor: pointer;
 
   img {
