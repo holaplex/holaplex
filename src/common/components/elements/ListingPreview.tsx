@@ -3,23 +3,24 @@ import { Skeleton, Card, Row, Image } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
+import { DemoStorefront } from '@/common/constants/demoContent';
 
-export interface TestStorefront {
+interface Metadata {
   [key: string]: any;
 }
 
+// TODO: Refactor this into the interface from the Notion Tech specs document (discovery)
 export interface Listing {
   auctionId: string;
   title: string;
+  metadata?: Metadata[];
   previewImageURL: string;
   createdAt: string; // ISO Date
   auctionEndTime?: string; // ISO Date
   storefrontSubdomain: string;
   storefront?: Storefront;
-  testStoreFront?: TestStorefront;
-
+  demoStoreFront?: DemoStorefront;
   ownerAddress: string;
-  // use arweave client sdk.storefront.list solana:pubkey
 }
 
 const ListingPreviewContainer = styled(Card)`
@@ -70,6 +71,7 @@ const ListingTitle = styled.h3`
 `;
 
 function calculateTimeLeft(endTime: string) {
+  // this is surprisingly performant
   let now = DateTime.local();
   let end = DateTime.fromISO(endTime);
 
@@ -87,7 +89,7 @@ function Countdown(props: { endTime: string }) {
     return () => clearTimeout(timer);
   });
 
-  return <span>{timeLeft.toFormat('hh:mm:ss')}</span>; // msToTime(msDurationToEndTime);
+  return <span>{timeLeft.toFormat('hh:mm:ss')}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
@@ -96,9 +98,10 @@ function AuctionCountdown(props: { endTime: string }) {
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
 
   if (lessThanADay) {
+    // only return the "expensive" Countdown component if required
     return <Countdown endTime={props.endTime} />;
   } else {
-    // TOD: Cleanup
+    // TODO: Cleanup
     const timeLeft = calculateTimeLeft(props.endTime);
     const daysLeft = timeLeft.days;
     console.log('auction ', timeLeft);
@@ -113,6 +116,7 @@ function AuctionCountdown(props: { endTime: string }) {
   }
 }
 
+// adds the active loading animation to the antd skeleton image
 const StyledSkeletonImage = styled(Skeleton.Image)`
   background: linear-gradient(
     90deg,
@@ -125,6 +129,7 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   border-radius: 8px;
 `;
 
+// Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 function SkeletonListing() {
   return (
     <ListingPreviewContainer>
@@ -144,10 +149,12 @@ function SkeletonListing() {
 }
 
 export function ListingPreview(props: Listing) {
-  const storefront = props.testStoreFront; // props.storefront
+  const storefront = props.demoStoreFront; // props.storefront
   const domain = `${storefront?.subdomain}.holaplex.com`;
+  // TODO: Finish preview functionality
   const [showArtPreview, setShowArtPreview] = useState(false);
 
+  // TODO: revert to adding loading animation for image and title in the real listing
   return !props.auctionId ? (
     <SkeletonListing />
   ) : (

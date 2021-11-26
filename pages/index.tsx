@@ -7,15 +7,9 @@ import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featur
 import { List, Space, Row, Col, Typography, RowProps, ListProps } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
-import {
-  Listing,
-  ListingPreview,
-  TestStorefront,
-} from '@/common/components/elements/ListingPreview';
+import { Listing, ListingPreview } from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
-
-import listingsAndStorefronts from 'fixtures/demo-listings-and-storefronts.json';
-const { storefronts, listings } = listingsAndStorefronts;
+import { allDemoStorefronts, demoListings, demoStorefronts } from '@/common/constants/demoContent';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -88,87 +82,18 @@ interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
 }
 
-const F = {
-  name: 'arweave file',
-  type: 'f',
-  url: '',
-};
-
-const demoStorefrontFeatures = {
-  boogle: {
-    metadata: [
-      'https://bafkreiadugayzqlaxsmnwfhvbfgnebezuhg7wqibdbt3rbf44mxw5f6e6y.ipfs.dweb.link',
-      'https://bafkreihuzg4bjl3k4h3idi2rgpzgn6vkt463jexd5kslhuazsdgt4mack4.ipfs.dweb.link',
-    ],
-    storefront: {
-      meta: {
-        description:
-          'The BOOGLE are a proud faction of ghosts, combining the ancient lore of the Bogle man with the cheeky charm of Casper the friendly ghost.',
-        favicon: {
-          url: 'https://arweave.net:443/3UGRJwonS4LWicl5RbU9Kqs4a27AA_k0y-98-EoH2G0',
-          name: 'logo-holaplex.jpg',
-          type: 'image/jpeg',
-        },
-        title: 'BOOGLE',
-      },
-
-      pubkey: 'J2AQypFpiKeDnp8feiVDptnyjcEsb4noPudcjGmnp6XB',
-      subdomain: 'boogle',
-      theme: {
-        backgroundColor: '#2e3c4a',
-        banner: {
-          name: null,
-          type: null,
-          url: null,
-        },
-        logo: {
-          name: 'logo-holaplex.jpg',
-          type: 'image/jpeg',
-          url: 'https://arweave.net:443/4egsFzPXqnX0KlSBFKiNMxB_KZDSSlvdoBTj2MqSY4s',
-        },
-        primaryColor: '#e3dcdc',
-        textFont: 'Roboto',
-        titleFont: 'Roboto',
-      },
-    },
-  },
-};
-
-const allStorefronts: { [subdomain: string]: TestStorefront } = {
-  kristianeboe: {
-    theme: {
-      banner: F,
-      primaryColor: '#FFF',
-      backgroundColor: '#000',
-      textFont: 'Lato',
-      titleFont: 'Lato',
-      logo: F,
-    },
-    meta: {
-      title: 'Non fungible 🍪s',
-      description: 'hehehe',
-      favicon: F,
-    },
-    subdomain: 'kristianeboe',
-    pubkey: 'NnXxp3aUTbD3bxWnXSR95zsiav54XDAWkespqJP1obh',
-  },
-};
-
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
   const heroStorefront = featuredStorefronts[0];
-  console.log('hero storefront', heroStorefront);
 
   const [allListings, setAllListings] = useState<Listing[]>(Array(8).fill({}));
   const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(4).fill({}));
 
-  // const featuredListings = allListings.filter((l) => l.previewImageURL).slice(0, 4);
-  // const remainingListings = allListings.slice(4);
   function combineListingsWithStorefronts(listingArray: Listing[]): Listing[] {
     return listingArray.map((l) => ({
       ...l,
-      testStoreFront: allStorefronts[l.storefrontSubdomain],
+      demoStoreFront: allDemoStorefronts[l.storefrontSubdomain],
     }));
   }
   useEffect(() => {
@@ -205,18 +130,18 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     });
 
     new Promise<Listing[]>((resolve) =>
-      setTimeout(() => resolve(listings as any), 3000 + Math.random() * 20000)
+      setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 20000)
     ).then((als) => {
       const listingsWithStorefronts = combineListingsWithStorefronts(als);
       setAllListings(listingsWithStorefronts);
     });
 
-    // TOOD: Add promise to simulate different call to fetch storefronts and a stiching function to insert meta into the listings
-    // new Promise<Storefront[]>((resolve) =>
-    //   setTimeout(() => resolve(listings), 3000 + Math.random() * 20000)
+    // TOOD: Add promise to simulate different call to fetch metadata for each nft and a stiching function to insert it into the listing
+    // new Promise<ListingMeta[]>((resolve) =>
+    //   setTimeout(() => resolve(meta), 3000 + Math.random() * 20000)
     // ).then((als) => {
-    //   const listingsWithStorefronts = combineListingsWithStorefronts(als);
-    //   setAllListings(listingsWithStorefronts);
+    //   const listingsWithMeta = combineListingsWithMeta(als);
+    //   setAllListings(listingsWithMeta);
     // });
   }, []);
 
@@ -236,16 +161,15 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               </Button>
             </Space>
           </Marketing>
-          <Col sm={0} md={8}>
+          <Col xs={0} md={8}>
             <FeaturedListingCarousel featuredListings={featuredListings} />
           </Col>
         </Section>
 
         <SectionTitle level={3}>Featured stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
-          dataSource={featuredStorefronts.slice(0, 5)}
-          // dataSource={drop<StorefrontFeature>(1, featuredStorefronts)}
+          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4, gutter: 16 }}
+          dataSource={featuredStorefronts.slice(0, 3)}
           renderItem={(feature) => (
             // @ts-ignore
             <List.Item key={feature.storefront.subdomain}>
@@ -258,12 +182,12 @@ export default function Home({ featuredStorefronts }: HomeProps) {
         <SectionTitle level={3}>Current listings</SectionTitle>
         <List
           grid={{
-            xs: 1,
+            xs: 2,
             sm: 2,
             md: 3,
-            lg: 3,
+            lg: 4,
             xl: 4,
-            xxl: 4, // could even consider 5 for xxl
+            xxl: 5, // could even consider 5 for xxl
             gutter: 24,
           }}
           dataSource={allListings}

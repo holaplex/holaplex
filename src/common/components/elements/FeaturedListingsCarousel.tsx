@@ -3,9 +3,7 @@ import { Listing, ListingPreview } from './ListingPreview';
 
 export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) {
   return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 500 }}
-    >
+    <div style={{ maxWidth: 500 }}>
       <div
         style={{
           position: 'relative',
