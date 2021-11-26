@@ -168,7 +168,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <SectionTitle level={3}>Featured stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4, gutter: 16 }}
+          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
           dataSource={featuredStorefronts.slice(0, 3)}
           renderItem={(feature) => (
             // @ts-ignore
