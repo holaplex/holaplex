@@ -1,21 +1,31 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { drop } from 'ramda';
 import sv from '@/constants/styles';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import { List, Space, Row, Col, Typography, RowProps } from 'antd';
+import { List, Space, Row, Col, Typography, RowProps, ListProps } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
-import { Listing, ListingPreview } from '@/common/components/elements/ListingPreview';
-import { Storefront } from '@/modules/storefront/types';
+import {
+  Listing,
+  ListingPreview,
+  TestStorefront,
+} from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
+
+import listingsAndStorefronts from 'fixtures/demo-listings-and-storefronts.json';
+const { storefronts, listings } = listingsAndStorefronts;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
 
 const ContentCol = styled(Col)`
   max-width: 1400px;
+`;
+
+const SectionTitle = styled(Title)`
+  margin-bottom: 62px !important;
 `;
 
 const HeroTitle = styled.h1`
@@ -31,6 +41,7 @@ const HeroTitle = styled.h1`
 
 const Marketing = styled(Col)`
   padding-right: 48px;
+  padding-bottom: 48px;
   display: flex;
   flex-direction: column;
 `;
@@ -48,7 +59,11 @@ const Section = styled(Row)`
   margin-top: ${sv.sectionPadding}px;
 `;
 
-const FeaturedStores = styled(Section)<RowProps>`
+const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
+  .ant-list-item {
+    margin-bottom: 66px !important;
+  }
+
   .ant-list-grid {
     .ant-col > .ant-list-item {
       margin-bottom: 66px;
@@ -57,12 +72,7 @@ const FeaturedStores = styled(Section)<RowProps>`
       line-height: 20px;
     }
   }
-  .ant-typography {
-    margin: 0 0 62px 0;
-  }
 `;
-
-const StyledSection = FeaturedStores;
 
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
@@ -84,7 +94,47 @@ const F = {
   url: '',
 };
 
-const storefronts: { [subdomain: string]: Storefront } = {
+const demoStorefrontFeatures = {
+  boogle: {
+    metadata: [
+      'https://bafkreiadugayzqlaxsmnwfhvbfgnebezuhg7wqibdbt3rbf44mxw5f6e6y.ipfs.dweb.link',
+      'https://bafkreihuzg4bjl3k4h3idi2rgpzgn6vkt463jexd5kslhuazsdgt4mack4.ipfs.dweb.link',
+    ],
+    storefront: {
+      meta: {
+        description:
+          'The BOOGLE are a proud faction of ghosts, combining the ancient lore of the Bogle man with the cheeky charm of Casper the friendly ghost.',
+        favicon: {
+          url: 'https://arweave.net:443/3UGRJwonS4LWicl5RbU9Kqs4a27AA_k0y-98-EoH2G0',
+          name: 'logo-holaplex.jpg',
+          type: 'image/jpeg',
+        },
+        title: 'BOOGLE',
+      },
+
+      pubkey: 'J2AQypFpiKeDnp8feiVDptnyjcEsb4noPudcjGmnp6XB',
+      subdomain: 'boogle',
+      theme: {
+        backgroundColor: '#2e3c4a',
+        banner: {
+          name: null,
+          type: null,
+          url: null,
+        },
+        logo: {
+          name: 'logo-holaplex.jpg',
+          type: 'image/jpeg',
+          url: 'https://arweave.net:443/4egsFzPXqnX0KlSBFKiNMxB_KZDSSlvdoBTj2MqSY4s',
+        },
+        primaryColor: '#e3dcdc',
+        textFont: 'Roboto',
+        titleFont: 'Roboto',
+      },
+    },
+  },
+};
+
+const allStorefronts: { [subdomain: string]: TestStorefront } = {
   kristianeboe: {
     theme: {
       banner: F,
@@ -104,80 +154,77 @@ const storefronts: { [subdomain: string]: Storefront } = {
   },
 };
 
-const listings: Listing[] = [
-  {
-    auctionId: 'aaaa',
-    title: 'White 🦈',
-    previewImageURL:
-      'https://images.unsplash.com/photo-1620206343767-7da98185edd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1867&q=80',
-    createdAt: new Date(2021, 9, 1).getTime(),
-    storefront: storefronts['kristianeboe'],
-  },
-  {
-    auctionId: 'aaab',
-    title: 'Yggdrasil',
-    auctionEndTime: new Date(2021, 10, 24, 23).getTime(),
-    previewImageURL:
-      'https://images.unsplash.com/photo-1635601036415-16b9a77b70a2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
-    createdAt: new Date(2021, 10, 2).getTime(),
-    storefront: storefronts['kristianeboe'],
-  },
-  {
-    loading: true,
-    auctionId: 'aaac',
-    title: 'Blank',
-    previewImageURL: '',
-    createdAt: new Date(2021, 8, 3).getTime(),
-  },
-  {
-    auctionId: 'baaa',
-    title: 'NFT 1',
-    previewImageURL:
-      'https://images.unsplash.com/photo-1637008336770-b95d637fd5fa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1528&q=80',
-    auctionEndTime: new Date(2021, 10, 24, 19).getTime(),
-    createdAt: new Date(2021, 9, 1).getTime(),
-    storefront: storefronts['kristianeboe'],
-  },
-
-  {
-    loading: true,
-    auctionId: 'baac',
-    title: 'Blank',
-    previewImageURL: '',
-    createdAt: new Date(2021, 8, 3).getTime(),
-  },
-  {
-    auctionId: 'baaafalc',
-    title: 'Millennium Falcon',
-    previewImageURL:
-      'https://images.unsplash.com/photo-1587336735677-0f2a3efdcc5d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1712&q=80',
-    auctionEndTime: new Date(2021, 10, 22, 19).getTime(),
-    createdAt: new Date(2021, 9, 1).getTime(),
-    storefront: storefronts['kristianeboe'],
-  },
-
-  {
-    loading: true,
-    auctionId: 'baac',
-    title: 'Blank',
-    previewImageURL: '',
-    createdAt: new Date(2021, 8, 3).getTime(),
-  },
-];
-
-const featuredListings = listings.filter((l) => l.previewImageURL).slice(0, 4);
-const remainingListings = listings.slice(4);
-
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
   const heroStorefront = featuredStorefronts[0];
+  console.log('hero storefront', heroStorefront);
+
+  const [allListings, setAllListings] = useState<Listing[]>(Array(8).fill({}));
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(4).fill({}));
+
+  // const featuredListings = allListings.filter((l) => l.previewImageURL).slice(0, 4);
+  // const remainingListings = allListings.slice(4);
+  function combineListingsWithStorefronts(listingArray: Listing[]): Listing[] {
+    return listingArray.map((l) => ({
+      ...l,
+      testStoreFront: allStorefronts[l.storefrontSubdomain],
+    }));
+  }
+  useEffect(() => {
+    // hack to mock api loading speeds, making them extra slow for now to test loadings states
+    new Promise<Listing[]>((resolve) =>
+      setTimeout(
+        () =>
+          resolve([
+            {
+              auctionId: 'aaaa',
+              title: 'White 🦈',
+              previewImageURL:
+                'https://images.unsplash.com/photo-1620206343767-7da98185edd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1867&q=80',
+              createdAt: '2021-09-30T22:00:00.000Z',
+              storefrontSubdomain: 'kristianeboe',
+              ownerAddress: 'kristianeboe',
+            },
+            {
+              auctionId: 'aaab',
+              title: 'Yggdrasil',
+              auctionEndTime: '2021-10-26T21:00:00.000Z',
+              previewImageURL:
+                'https://images.unsplash.com/photo-1635601036415-16b9a77b70a2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
+              createdAt: '2021-09-30T22:00:00.000Z',
+              storefrontSubdomain: 'kristianeboe',
+              ownerAddress: 'kristianeboe',
+            },
+          ]),
+        1500 + Math.random() * 10000
+      )
+    ).then((fls: Listing[]) => {
+      const listingsWithStorefronts = combineListingsWithStorefronts(fls);
+      setFeaturedListings(listingsWithStorefronts);
+    });
+
+    new Promise<Listing[]>((resolve) =>
+      setTimeout(() => resolve(listings as any), 3000 + Math.random() * 20000)
+    ).then((als) => {
+      const listingsWithStorefronts = combineListingsWithStorefronts(als);
+      setAllListings(listingsWithStorefronts);
+    });
+
+    // TOOD: Add promise to simulate different call to fetch storefronts and a stiching function to insert meta into the listings
+    // new Promise<Storefront[]>((resolve) =>
+    //   setTimeout(() => resolve(listings), 3000 + Math.random() * 20000)
+    // ).then((als) => {
+    //   const listingsWithStorefronts = combineListingsWithStorefronts(als);
+    //   setAllListings(listingsWithStorefronts);
+    // });
+  }, []);
 
   return (
     <Row justify="center">
       <ContentCol xs={22} md={20}>
-        <Section justify="start">
-          <Marketing xs={24} md={16}>
+        <Section>
+          <Marketing xs={22} md={16}>
             <HeroTitle>Find, buy, and sell NFTs from incredible artists on Solana.</HeroTitle>
             <Pitch>
               Our mission is to empower creators and collectors by building a suite of integrated
@@ -189,52 +236,44 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               </Button>
             </Space>
           </Marketing>
-          {heroStorefront && (
-            <Col xs={0} md={8}>
-              {/* <StorePreview {...heroStorefront} /> */}
-
-              <FeaturedListingCarousel featuredListings={featuredListings} />
-            </Col>
-          )}
+          <Col sm={0} md={8}>
+            <FeaturedListingCarousel featuredListings={featuredListings} />
+          </Col>
         </Section>
 
-        <StyledSection>
-          <Col>
-            <Title level={3}>Current listings</Title>
-            <List
-              grid={{
-                xs: 1,
-                sm: 2,
-                md: 3,
-                lg: 3,
-                xl: 4,
-                xxl: 4, // could even consider 5 for xxl
-                gutter: 24,
-              }}
-              dataSource={listings.concat(listings)}
-              renderItem={(feature) => (
-                <List.Item key={feature.auctionId}>
-                  <ListingPreview {...feature} />
-                </List.Item>
-              )}
-            />
-          </Col>
-        </StyledSection>
+        <SectionTitle level={3}>Featured stores</SectionTitle>
+        <FeaturedStores
+          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
+          dataSource={featuredStorefronts.slice(0, 5)}
+          // dataSource={drop<StorefrontFeature>(1, featuredStorefronts)}
+          renderItem={(feature) => (
+            // @ts-ignore
+            <List.Item key={feature.storefront.subdomain}>
+              {/* @ts-ignore */}
+              <StorePreview {...feature} />
+            </List.Item>
+          )}
+        />
 
-        <StyledSection justify="center">
-          <Col>
-            <Title level={3}>Featured Creators</Title>
-            <List
-              grid={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
-              dataSource={drop<StorefrontFeature>(1, featuredStorefronts)}
-              renderItem={(feature) => (
-                <List.Item key={feature.storefront.subdomain}>
-                  <StorePreview {...feature} />
-                </List.Item>
-              )}
-            />
-          </Col>
-        </StyledSection>
+        <SectionTitle level={3}>Current listings</SectionTitle>
+        <List
+          grid={{
+            xs: 1,
+            sm: 2,
+            md: 3,
+            lg: 3,
+            xl: 4,
+            xxl: 4, // could even consider 5 for xxl
+            gutter: 24,
+          }}
+          dataSource={allListings}
+          renderItem={(feature) => (
+            <List.Item key={feature.auctionId}>
+              <ListingPreview {...feature} />
+            </List.Item>
+          )}
+        />
+
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>

@@ -3,7 +3,9 @@ import { Listing, ListingPreview } from './ListingPreview';
 
 export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 500 }}
+    >
       <div
         style={{
           position: 'relative',
@@ -22,7 +24,6 @@ export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) 
         >
           Featured listings
         </span>
-        {/* <span>Navigation</span> */}
       </div>
       <Carousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
         {props.featuredListings.map((listing) => (
@@ -35,13 +36,16 @@ export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) 
             position: absolute;
             top: 0 !important;
             right: 0 !important;
-            margin-top: -16px !important;
+            margin-top: -24px !important;
             margin-right: 0px !important;
 
             justify-content: flex-end !important;
           }
           .carousel-dots > li > button {
             opacity: 1 !important;
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            border-radius: 100%;
           }
 
           .slick-active > button {

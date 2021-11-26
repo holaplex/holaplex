@@ -1,0 +1,87 @@
+{
+  "storefronts": [
+    {
+      "subdomain": "boogle",
+      "metadata": [
+        "https://bafkreiadugayzqlaxsmnwfhvbfgnebezuhg7wqibdbt3rbf44mxw5f6e6y.ipfs.dweb.link",
+        "https://bafkreihuzg4bjl3k4h3idi2rgpzgn6vkt463jexd5kslhuazsdgt4mack4.ipfs.dweb.link"
+      ]
+    },
+    {
+      "subdomain": "pinkskull",
+      "metadata": [
+        "https://bafybeifgdy5nshjfwnh3wklfjatikqiau5p7uwkmrpvbpozignqouppb4u.ipfs.dweb.link",
+        "https://www.arweave.net/LcwJE0Hymq5QprYafZtYw7_Cs3I04FgKub3zALuzdbY"
+      ]
+    },
+    {
+      "subdomain": "kristianeboe",
+      "metadata": [
+        "https://bafybeifgdy5nshjfwnh3wklfjatikqiau5p7uwkmrpvbpozignqouppb4u.ipfs.dweb.link",
+        "https://www.arweave.net/LcwJE0Hymq5QprYafZtYw7_Cs3I04FgKub3zALuzdbY"
+      ]
+    },
+    {
+      "subdomain": "crixtoveredwin",
+      "metadata": [
+        "https://www.arweave.net/C1uYXmQ_VANx4yRiin5kUA4yByV1O19Rsi3PY_osngY",
+        "https://bafybeigucogt3bqsd75t6uxnhefzz5kpfg76o6gb6qusxgawqv4t5iux2m.ipfs.dweb.link"
+      ]
+    }
+  ],
+  "listings": [
+    {
+      "auctionId": "aaaa",
+      "title": "White 🦈",
+      "previewImageURL": "https://images.unsplash.com/photo-1620206343767-7da98185edd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1867&q=80",
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": "kristianeboe"
+    },
+    {
+      "auctionId": "aaab",
+      "title": "Yggdrasil",
+      "auctionEndTime": "2021-11-25T00:00:00.000Z",
+      "previewImageURL": "https://images.unsplash.com/photo-1635601036415-16b9a77b70a2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80",
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": "kristianeboe"
+    },
+    {
+      "loading": true,
+      "auctionId": "aaac",
+      "title": "Blank",
+      "previewImageURL": "",
+      "createdAt": "2021-09-30T22:00:00.000Z"
+    },
+    {
+      "auctionId": "baaa",
+      "title": "NFT 1",
+      "previewImageURL": "https://images.unsplash.com/photo-1637008336770-b95d637fd5fa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1528&q=80",
+      "auctionEndTime": "2021-11-25T22:00:00.000Z",
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": "kristianeboe"
+    },
+
+    {
+      "loading": true,
+      "title": "Music 1",
+      "previewImageURL": "",
+      "createdAt": "2021-09-30T22:00:00.000Z"
+    },
+    {
+      "auctionId": "baaafalc",
+      "title": "Millennium Falcon",
+      "previewImageURL": "https://images.unsplash.com/photo-1587336735677-0f2a3efdcc5d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1712&q=80",
+      "auctionEndTime": "2021-11-26T21:00:00.000Z",
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": "kristianeboe"
+    },
+
+    {
+      "loading": true,
+      "auctionId": "baac",
+      "title": "Blank",
+      "previewImageURL": "",
+      "createdAt": "2021-09-30T22:00:00.000Z"
+    }
+  ]
+}
