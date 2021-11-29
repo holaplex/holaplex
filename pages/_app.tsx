@@ -14,7 +14,7 @@ import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 
-const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const GOOGLE_ANALYTICS_ID = 'asdf'; //  process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
 const { Header, Content } = Layout;
 
@@ -40,7 +40,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       return;
     }
 
-    window.gtag('event', action, { event_category: category });
+    window.gtag('event', action, {
+      event_category: category,
+      send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
+    });
   };
 
   const onRouteChanged = (path: string) => {

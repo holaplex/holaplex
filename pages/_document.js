@@ -5,7 +5,7 @@ export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
-    const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+    const googleAnalyticsId = 'asdfasdf'; //  process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
     try {
       ctx.renderPage = () =>
@@ -48,6 +48,7 @@ export default class MyDocument extends Document {
                     }
                     gtag('js', new Date());
                     gtag('config', '${this.props.googleAnalyticsId}');
+                    gtag('config', 'G-HLNC4C2YKN')
                 `,
                 }}
               />

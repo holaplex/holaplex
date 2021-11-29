@@ -7,7 +7,9 @@ import Verify from '@/modules/nfts/components/wizard/Verify';
 import InfoScreen from '@/modules/nfts/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
 import Summary from '@/modules/nfts/components/wizard/Summary';
-import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreators';
+import RoyaltiesCreators, {
+  HOLAPLEX_CREATOR_OBJECT,
+} from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import { WalletContext } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';

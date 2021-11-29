@@ -345,7 +345,7 @@ if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
   throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
 }
 
-const HOLAPLEX_CREATOR = Object.freeze({
+export const HOLAPLEX_CREATOR_OBJECT = Object.freeze({
   address: process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY ?? '',
   share: 2,
 });
@@ -369,7 +369,7 @@ export default function RoyaltiesCreators({
   const [creators, setCreators] = useState<Array<Creator>>(
     previousNFT
       ? previousNFT.properties.creators
-      : [HOLAPLEX_CREATOR, { address: userKey ?? '', share: 98 }]
+      : [HOLAPLEX_CREATOR_OBJECT, { address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
