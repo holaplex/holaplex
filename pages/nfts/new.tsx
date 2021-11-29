@@ -17,7 +17,7 @@ import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
 
-export const MAX_CREATOR_LIMIT = 5;
+export const MAX_CREATOR_LIMIT = 4;
 
 export interface Creator {
   address: string;
