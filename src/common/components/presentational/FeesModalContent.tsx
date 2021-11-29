@@ -6,7 +6,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import styled from 'styled-components';
 
 const { Title } = Typography;
-const HolaLink = styled.span`
+const HolaLink = styled.a`
   cursor: pointer;
   background: linear-gradient(143.77deg, #d24089 8.62%, #b92d44 84.54%);
   -webkit-background-clip: text;
@@ -144,7 +144,14 @@ export default function FeesModalContent() {
       <Content>
         <Paragraph style={{ fontSize: '18px', opacity: 0.6, marginBottom: 75 }}>
           Holaplex will receive 2% of the royalties on NFTs minted on our platform.
-          <HolaLink> Learn More</HolaLink>
+          <HolaLink
+            href="https://holaplex.notion.site/Holaplex-s-Revenue-Model-a9969744446041709f6ddfef2b2760f0"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {' '}
+            Learn More
+          </HolaLink>
         </Paragraph>
       </Content>
 

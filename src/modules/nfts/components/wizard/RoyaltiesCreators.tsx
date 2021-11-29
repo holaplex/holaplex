@@ -584,7 +584,7 @@ export default function RoyaltiesCreators({
                   {
                     message: 'You can only add 4 creators',
                     async validator(rule, value: string) {
-                      if (creators.length === 4) {
+                      if (creators.length === MAX_CREATOR_LIMIT) {
                         throw new Error();
                       }
                     },
