@@ -31,57 +31,61 @@
   ],
   "listings": [
     {
-      "auctionId": "aaaa",
+      "address": "aaaa",
       "title": "White 🦈",
       "previewImageURL": "https://images.unsplash.com/photo-1620206343767-7da98185edd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1867&q=80",
       "createdAt": "2021-09-30T22:00:00.000Z",
       "storefrontSubdomain": "kristianeboe"
     },
     {
-      "auctionId": "aaab",
+      "address": "aaab",
       "title": "Yggdrasil",
-      "auctionEndTime": "2021-11-25T00:00:00.000Z",
+      "endsAt": "2021-11-25T00:00:00.000Z",
       "previewImageURL": "https://images.unsplash.com/photo-1635601036415-16b9a77b70a2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80",
       "createdAt": "2021-09-30T22:00:00.000Z",
       "storefrontSubdomain": "kristianeboe"
     },
     {
       "loading": true,
-      "auctionId": "aaac",
+      "address": "aaac",
       "title": "Blank",
       "previewImageURL": "",
-      "createdAt": "2021-09-30T22:00:00.000Z"
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": ""
     },
     {
-      "auctionId": "baaa",
+      "address": "baaa",
       "title": "NFT 1",
       "previewImageURL": "https://images.unsplash.com/photo-1637008336770-b95d637fd5fa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1528&q=80",
-      "auctionEndTime": "2021-11-25T22:00:00.000Z",
+      "endsAt": "2021-11-25T22:00:00.000Z",
       "createdAt": "2021-09-30T22:00:00.000Z",
       "storefrontSubdomain": "kristianeboe"
     },
 
     {
+      "address": "",
       "loading": true,
       "title": "Music 1",
       "previewImageURL": "",
-      "createdAt": "2021-09-30T22:00:00.000Z"
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": ""
     },
     {
-      "auctionId": "baaafalc",
+      "address": "baaafalc",
       "title": "Millennium Falcon",
       "previewImageURL": "https://images.unsplash.com/photo-1587336735677-0f2a3efdcc5d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1712&q=80",
-      "auctionEndTime": "2021-11-26T21:00:00.000Z",
+      "endsAt": "2021-11-26T21:00:00.000Z",
       "createdAt": "2021-09-30T22:00:00.000Z",
       "storefrontSubdomain": "kristianeboe"
     },
 
     {
       "loading": true,
-      "auctionId": "baac",
+      "address": "baac",
       "title": "Blank",
       "previewImageURL": "",
-      "createdAt": "2021-09-30T22:00:00.000Z"
+      "createdAt": "2021-09-30T22:00:00.000Z",
+      "storefrontSubdomain": ""
     }
   ]
 }

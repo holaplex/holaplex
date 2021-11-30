@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useReducer } from 'react';
 import styled from 'styled-components';
 import { drop } from 'ramda';
 import sv from '@/constants/styles';
@@ -9,7 +9,14 @@ import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { Listing, ListingPreview } from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
-import { allDemoStorefronts, demoListings, demoStorefronts } from '@/common/constants/demoContent';
+import {
+  allDemoStorefronts,
+  demoFeaturedListings,
+  demoListings,
+  demoStorefronts,
+  generateListingShell,
+} from '@/common/constants/demoContent';
+import { ListingsSortAndFilter } from '@/common/components/elements/ListingsSortAndFilter';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -82,12 +89,117 @@ interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
 }
 
+export interface DiscoveryToolState {
+  sortBy: string;
+  filters: string[];
+  listings: Listing[];
+  listingsOnDisplay: Listing[];
+  filter: string;
+}
+
+type Action = {
+  type: string;
+  payload?: string | Listing[];
+};
+
+export type DiscoveryToolAction =
+  | {
+      type: 'SET_LISTINGS';
+      payload: Listing[];
+    }
+  | {
+      type: 'SET_STOREFRONTS';
+      // payload
+    }
+  | { type: 'RESET_FILTERS' }
+  | { type: 'SORT_BY_ENDING_SOONEST' }
+  | { type: 'SORT_BY_RECENTLY_LISTED' }
+  | { type: 'FILTER_BY_ACTIVE_AUCTIONS' }
+  | { type: 'FILTER_BY_BUY_NOW' }
+  | { type: 'ADD_FILTER'; payload: string }
+  | { type: 'TOGGLE_FILTER'; payload: string }
+  | { type: 'REMOVE_FILTER'; payload: string };
+
+const initialState = (): DiscoveryToolState => {
+  return {
+    filter: 'SHOW_ALL',
+    sortBy: 'ENDING_SOONEST',
+    listings: Array(8)
+      .fill(null)
+      .map((_, i) => generateListingShell(i.toString())),
+    listingsOnDisplay: Array(8)
+      .fill(null)
+      .map((_, i) => generateListingShell(i.toString())),
+    filters: ['SHOW_ALL'],
+  };
+};
+
+function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
+  switch (action.type) {
+    case 'SET_LISTINGS':
+      return {
+        ...state,
+        listings: action.payload,
+        listingsOnDisplay: action.payload,
+      };
+    case 'RESET_FILTERS':
+      return {
+        ...state,
+        filter: 'SHOW_ALL',
+        filters: initialState().filters,
+        listingsOnDisplay: state.listings,
+      };
+    case 'ADD_FILTER':
+      return {
+        ...state,
+        filters: [...state.filters, action.payload],
+      };
+    case 'REMOVE_FILTER':
+      return {
+        ...state,
+        filters: state.filters.filter((f) => f !== action.payload),
+      };
+    case 'FILTER_BY_BUY_NOW':
+      return {
+        ...state,
+        filter: 'BUY_NOW',
+        listingsOnDisplay: state.listings.filter((l) => !l.endsAt),
+      };
+    case 'FILTER_BY_ACTIVE_AUCTIONS':
+      return {
+        ...state,
+        filter: 'BUY_NOW',
+        listingsOnDisplay: state.listings.filter((l) => l.endsAt),
+      };
+    case 'SORT_BY_RECENTLY_LISTED':
+      return {
+        ...state,
+        sortBy: 'RECENTLY_LISTED',
+        listings: state.listings.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+        listingsOnDisplay: state.listings.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+      };
+    case 'SORT_BY_ENDING_SOONEST':
+      return {
+        ...state,
+        sortBy: 'ENDING_SOONEST',
+        listings: state.listings.sort((a, b) => a.endsAt?.localeCompare(b.endsAt || '') || -1),
+        listingsOnDisplay: state.listings.sort(
+          (a, b) => a.endsAt?.localeCompare(b.endsAt || '') || -1
+        ),
+      };
+    default:
+      throw new Error('Not a valid action for state');
+  }
+}
+
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
+  const [state, dispatch] = useReducer(reducer, initialState());
+  console.log(state);
   const heroStorefront = featuredStorefronts[0];
 
-  const [allListings, setAllListings] = useState<Listing[]>(Array(8).fill({}));
+  // const [allListings, setAllListings] = useState<Listing[]>(Array(8).fill({}));
   const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(4).fill({}));
 
   function combineListingsWithStorefronts(listingArray: Listing[]): Listing[] {
@@ -99,31 +211,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
   useEffect(() => {
     // hack to mock api loading speeds, making them extra slow for now to test loadings states
     new Promise<Listing[]>((resolve) =>
-      setTimeout(
-        () =>
-          resolve([
-            {
-              auctionId: 'aaaa',
-              title: 'White 🦈',
-              previewImageURL:
-                'https://images.unsplash.com/photo-1620206343767-7da98185edd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1867&q=80',
-              createdAt: '2021-09-30T22:00:00.000Z',
-              storefrontSubdomain: 'kristianeboe',
-              ownerAddress: 'kristianeboe',
-            },
-            {
-              auctionId: 'aaab',
-              title: 'Yggdrasil',
-              auctionEndTime: '2021-10-26T21:00:00.000Z',
-              previewImageURL:
-                'https://images.unsplash.com/photo-1635601036415-16b9a77b70a2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
-              createdAt: '2021-09-30T22:00:00.000Z',
-              storefrontSubdomain: 'kristianeboe',
-              ownerAddress: 'kristianeboe',
-            },
-          ]),
-        1500 + Math.random() * 10000
-      )
+      setTimeout(() => resolve(demoFeaturedListings), 1500 + Math.random() * 10000)
     ).then((fls: Listing[]) => {
       const listingsWithStorefronts = combineListingsWithStorefronts(fls);
       setFeaturedListings(listingsWithStorefronts);
@@ -133,7 +221,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 20000)
     ).then((als) => {
       const listingsWithStorefronts = combineListingsWithStorefronts(als);
-      setAllListings(listingsWithStorefronts);
+      dispatch({ type: 'SET_LISTINGS', payload: listingsWithStorefronts });
     });
 
     // TOOD: Add promise to simulate different call to fetch metadata for each nft and a stiching function to insert it into the listing
@@ -179,7 +267,10 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           )}
         />
 
-        <SectionTitle level={3}>Current listings</SectionTitle>
+        <Row justify="space-between" align="middle">
+          <Title level={3}>Current listings</Title>
+          <ListingsSortAndFilter state={state} dispatch={dispatch} />
+        </Row>
         <List
           grid={{
             xs: 2,
@@ -190,9 +281,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             xxl: 5, // could even consider 5 for xxl
             gutter: 24,
           }}
-          dataSource={allListings}
+          dataSource={state.listingsOnDisplay}
           renderItem={(feature) => (
-            <List.Item key={feature.auctionId}>
+            <List.Item key={feature.address}>
               <ListingPreview {...feature} />
             </List.Item>
           )}

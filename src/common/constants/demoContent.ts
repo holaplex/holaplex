@@ -1,6 +1,41 @@
 import listingsAndStorefronts from 'fixtures/demo-listings-and-storefronts.json';
+import { Listing } from '../components/elements/ListingPreview';
 
-export const demoListings = listingsAndStorefronts.listings;
+export function generateListingShell(id: string): Listing {
+  return {
+    address: id,
+    metadata: [
+      {
+        name: '',
+        description: '',
+        creators: [],
+        uri: '',
+      },
+    ],
+    storefrontSubdomain: '',
+    ownerAddress: '',
+    createdAt: new Date().toISOString(),
+    bids: [],
+  };
+}
+
+const allListings: Listing[] & { [key: string]: any } = listingsAndStorefronts.listings.map(
+  (l) => ({
+    ...l,
+    metadata: [
+      {
+        name: l.title,
+        description: '',
+        uri: l.previewImageURL,
+        creators: [],
+      },
+    ],
+    bids: [],
+    ownerAddress: '',
+  })
+);
+export const demoListings = allListings.slice(2);
+export const demoFeaturedListings = allListings.slice(0, 2);
 
 export const demoStorefronts = listingsAndStorefronts.storefronts;
 
