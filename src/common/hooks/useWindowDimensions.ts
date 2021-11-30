@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from 'react';
 
 function getWindowDimensions() {
   let dimensions = { width: 0, height: 0 };
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     dimensions.width = window.innerWidth;
     dimensions.height = window.innerHeight;
   }
@@ -10,9 +10,7 @@ function getWindowDimensions() {
 }
 
 export default function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(() =>
-    getWindowDimensions()
-  );
+  const [windowDimensions, setWindowDimensions] = useState(() => getWindowDimensions());
 
   useEffect(() => {
     function handleResize() {
@@ -20,8 +18,8 @@ export default function useWindowDimensions() {
     }
     // Call handlerResize once to initialize `windowDimensions`.
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return useMemo(() => windowDimensions, [windowDimensions]);

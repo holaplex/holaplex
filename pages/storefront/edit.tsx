@@ -124,7 +124,7 @@ export default function Edit({ track }: StorefrontEditorProps) {
   const buttontextColor = getTextColor(values.theme.primaryColor);
   return (
     <Row justify="center" align="middle">
-      <Col xs={21} lg={18} xl={16} xxl={14}>  
+      <Col xs={21} lg={18} xl={16} xxl={14}>
         <Form
           form={form}
           fields={fields}
@@ -152,11 +152,12 @@ export default function Edit({ track }: StorefrontEditorProps) {
                     rules={[{ required: false, message: 'Upload your Banner.' }]}
                   >
                     <Upload>
-                      {(isEmpty(values.theme.banner) || !ifElse(
-                            has('response'),
-                            view(lensPath(['response', 'url'])),
-                            prop('url')
-                          )(values.theme.banner[0])) && (
+                      {(isEmpty(values.theme.banner) ||
+                        !ifElse(
+                          has('response'),
+                          view(lensPath(['response', 'url'])),
+                          prop('url')
+                        )(values.theme.banner[0])) && (
                         <Button block type="primary" size="middle" icon={<UploadOutlined />}>
                           Upload Banner
                         </Button>
@@ -176,35 +177,23 @@ export default function Edit({ track }: StorefrontEditorProps) {
                       )}
                     </Upload>
                   </Form.Item>
-                  <Form.Item
-                    name={['theme', 'backgroundColor']}
-                    label="Background"
-                  >
+                  <Form.Item name={['theme', 'backgroundColor']} label="Background">
                     <ColorPicker />
                   </Form.Item>
-                  <Form.Item
-                    name={['theme', 'primaryColor']}
-                    label="Buttons &amp; Links"
-                  >
+                  <Form.Item name={['theme', 'primaryColor']} label="Buttons &amp; Links">
                     <ColorPicker />
                   </Form.Item>
-                  <Form.Item
-                    name={['theme', 'titleFont']}
-                    label="Title Font"
-                  >
+                  <Form.Item name={['theme', 'titleFont']} label="Title Font">
                     <FontSelect />
                   </Form.Item>
-                  <Form.Item
-                    name={['theme', 'textFont']}
-                    label="Main Text Font"
-                  >
+                  <Form.Item name={['theme', 'textFont']} label="Main Text Font">
                     <FontSelect />
                   </Form.Item>
                 </Col>
                 <PrevCol sm={24} md={11} lg={10}>
                   <PrevCard bgColor={values.theme.backgroundColor}>
                     <Space direction="vertical">
-                    {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
+                      {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
                         <UploadedBanner
                           src={ifElse(
                             has('response'),
@@ -229,8 +218,9 @@ export default function Edit({ track }: StorefrontEditorProps) {
                         Little Title
                       </PrevTitle>
                       <PrevText color={textColor} fontFamily={values.theme.textFont}>
-                        Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle.
-                        Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.
+                        Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo
+                        shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle,
+                        arcu.
                       </PrevText>
                       <PreviewLink color={values.theme.primaryColor}>Link to things</PreviewLink>
                       <PreviewButton
@@ -293,7 +283,13 @@ export default function Edit({ track }: StorefrontEditorProps) {
             </TabPane>
           </Tabs>
           <Row justify="end">
-            <Button type="primary" htmlType="submit" size="large" disabled={submitting} loading={submitting}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              disabled={submitting}
+              loading={submitting}
+            >
               Update
             </Button>
           </Row>

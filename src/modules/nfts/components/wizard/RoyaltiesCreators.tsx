@@ -345,7 +345,7 @@ if (!process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY) {
   throw new Error('NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY is not defined');
 }
 
-const HOLAPLEX_CREATOR = Object.freeze({
+export const HOLAPLEX_CREATOR_OBJECT = Object.freeze({
   address: process.env.NEXT_PUBLIC_HOLAPLEX_HOLDER_PUBKEY ?? '',
   share: 2,
 });
@@ -367,9 +367,7 @@ export default function RoyaltiesCreators({
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const [creators, setCreators] = useState<Array<Creator>>(
-    previousNFT
-      ? previousNFT.properties.creators
-      : [HOLAPLEX_CREATOR, { address: userKey ?? '', share: 98 }]
+    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
@@ -404,7 +402,7 @@ export default function RoyaltiesCreators({
     }, 0);
 
     setShowErrors(false);
-    if (total !== 100 || creators.filter((creator) => creator.share === 0).length > 0) {
+    if (total !== 98 || creators.filter((creator) => creator.share === 0).length > 0) {
       setShowErrors(true);
     }
 
@@ -417,7 +415,7 @@ export default function RoyaltiesCreators({
 
     const zeroedRoyalties = creators.filter((creator) => creator.share === 0);
 
-    if (totalRoyaltyShares === 0 || totalRoyaltyShares > 100 || zeroedRoyalties.length > 0) {
+    if (totalRoyaltyShares === 0 || totalRoyaltyShares > 98 || zeroedRoyalties.length > 0) {
       setShowErrors(true);
       return;
     }
@@ -488,10 +486,10 @@ export default function RoyaltiesCreators({
         if (creators.length >= MAX_CREATOR_LIMIT) {
           throw new Error('Max level of creators reached');
         }
-        const newShareSplit = 98 / creators.length;
+        const newShareSplit = 98 / (creators.length + 1);
+
         setCreators([
-          creators[0],
-          ...creators.slice(1).map((c) => ({ ...c, share: newShareSplit })),
+          ...creators.map((c) => ({ ...c, share: newShareSplit })),
           { address: values.addCreator, share: newShareSplit },
         ]);
         toggleCreatorField(false);
@@ -502,12 +500,12 @@ export default function RoyaltiesCreators({
       });
     setShowErrors(false);
   };
+
   const removeCreator = (creatorAddress: string) => {
-    const newShareSplit = 98 / (creators.length - 2) || 100;
+    const newShareSplit = 98 / (creators.length - 1);
+
     setCreators([
-      creators[0],
       ...creators
-        .slice(1)
         .filter((c) => c.address !== creatorAddress)
         .map((c) => ({ ...c, share: newShareSplit })),
     ]);
@@ -557,6 +555,13 @@ export default function RoyaltiesCreators({
             </Row>
           )}
           <Row>
+            <CreatorsRow
+              creatorAddress={HOLAPLEX_CREATOR_OBJECT.address}
+              share={HOLAPLEX_CREATOR_OBJECT.share}
+              isUser={false}
+              updateCreator={updateCreator}
+              removeCreator={removeCreator}
+            />
             {creators.map((creator) => (
               <CreatorsRow
                 creatorAddress={creator.address}
@@ -576,6 +581,14 @@ export default function RoyaltiesCreators({
                 style={{ width: '100%' }}
                 rules={[
                   { required: true, message: 'Please enter a value' },
+                  {
+                    message: 'You can only add 4 creators',
+                    async validator(rule, value: string) {
+                      if (creators.length === MAX_CREATOR_LIMIT) {
+                        throw new Error();
+                      }
+                    },
+                  },
                   {
                     message: 'All creator hashes must be unique',
                     async validator(rule, value: string) {
