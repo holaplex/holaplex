@@ -1,13 +1,12 @@
-import React, { useContext } from 'react'
-import Image from 'next/image'
-import styled from 'styled-components'
-import sv from '@/constants/styles'
-import RoadmapImage from '@/assets/images/roadmap-v1.svg'
-import investorData from '@/assets/investors/investors-stub'
-import { List, Space, Row, Col, Typography, Card } from 'antd'
+import React, { useContext } from 'react';
+import Image from 'next/image';
+import styled from 'styled-components';
+import sv from '@/constants/styles';
+import RoadmapImage from '@/assets/images/roadmap-v1.svg';
+import investorData from '@/assets/investors/investors-stub';
+import { List, Space, Row, Col, Typography, Card } from 'antd';
 
 const { Title, Paragraph } = Typography;
-
 
 const ContentCol = styled(Col)`
   max-width: 1400px;
@@ -47,29 +46,29 @@ const Pitch = styled.h2`
     text-align: left;
     padding: 0 ${sv.appPadding}px;
   }
-`
-
+`;
 
 const LightText = styled(Paragraph)`
-  color: rgba(255,255,255,.6);
+  color: rgba(255, 255, 255, 0.6);
   a {
-    color: rgba(255,255,255,1);
+    color: rgba(255, 255, 255, 1);
     text-decoration: underline;
     &:hover {
-      color: rgba(255,255,255,.6);
+      color: rgba(255, 255, 255, 0.6);
       text-decoration: underline;
     }
   }
 `;
 
 const LightTitle = styled(Title)`
-  &.ant-typography, &.ant-typography {
+  &.ant-typography,
+  &.ant-typography {
     color: #ffffff;
   }
 `;
 
 const Community = styled(Row)`
-  margin-top: ${sv.sectionPadding*2}px;
+  margin-top: ${sv.sectionPadding * 2}px;
   @media screen and (max-width: 550px) {
     margin-top: ${sv.sectionPadding}px;
     padding: 0 ${sv.appPadding}px;
@@ -85,7 +84,7 @@ const Stat = styled(Col)`
 
 type StatTitleProps = {
   textColor: string;
-}
+};
 const StatTitle = styled.h1`
   background: ${({ textColor }: StatTitleProps) => textColor};
   font-size: 5vw;
@@ -101,7 +100,7 @@ const StatTitle = styled.h1`
 `;
 
 const BackedBy = styled(Row)`
-  margin: ${sv.sectionPadding*2}px 0;
+  margin: ${sv.sectionPadding * 2}px 0;
 `;
 
 const Investors = styled.div`
@@ -112,7 +111,7 @@ const Investors = styled.div`
 `;
 
 const Investor = styled.div`
-  margin: ${sv.grid*4}px;
+  margin: ${sv.grid * 4}px;
   position: relative;
   height: 60px;
   display: flex;
@@ -129,14 +128,16 @@ const LogoContainer = styled.a`
 `;
 
 export default function About() {
-
   return (
     <>
       <Row justify="center">
         <ContentCol xs={22} md={20}>
           <Space direction="vertical" align="center" size="large">
             <HeroTitle>Building the best NFT ecosystem on the blockchain.</HeroTitle>
-            <Pitch>Our mission is to empower creators and collectors by building a suite of integrated tools to mint, discover, and sell NFTs.</Pitch>
+            <Pitch>
+              Our mission is to empower creators and collectors by building a suite of integrated
+              tools to mint, discover, and sell NFTs.
+            </Pitch>
           </Space>
         </ContentCol>
       </Row>
@@ -154,8 +155,16 @@ export default function About() {
           <Row>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
               <LightTitle level={2}>We exist for our community of creators.</LightTitle>
-              <LightText>The rapid rise of NFTs has allowed creators to build communities and monetize their work in  innovative ways. So much talent has come into this space but there are barriers preventing some from joining. Using the tools needed to mint and sell NFTs is non-trivial even for experienced developers.</LightText>
-              <LightText>Holaplex is committed to building tools that will allow creators and collectors to join the NFT community easily and safely.</LightText>
+              <LightText>
+                The rapid rise of NFTs has allowed creators to build communities and monetize their
+                work in innovative ways. So much talent has come into this space but there are
+                barriers preventing some from joining. Using the tools needed to mint and sell NFTs
+                is non-trivial even for experienced developers.
+              </LightText>
+              <LightText>
+                Holaplex is committed to building tools that will allow creators and collectors to
+                join the NFT community easily and safely.
+              </LightText>
             </Col>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
               <Stats>
@@ -192,15 +201,16 @@ export default function About() {
             <List
               grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
               dataSource={investorData}
-              renderItem={(investor: { url: string, logo: string, name: string }) => (
+              renderItem={(investor: { url: string; logo: string; name: string }) => (
                 <List.Item key={investor.url}>
                   <Investor>
-                    <LogoContainer
-                      href={investor.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Image layout="fill" objectFit="contain" src={investor.logo} alt={investor.name} />
+                    <LogoContainer href={investor.url} target="_blank" rel="noreferrer">
+                      <Image
+                        layout="fill"
+                        objectFit="contain"
+                        src={investor.logo}
+                        alt={investor.name}
+                      />
                     </LogoContainer>
                   </Investor>
                 </List.Item>
@@ -209,7 +219,6 @@ export default function About() {
           </Investors>
         </ContentCol>
       </BackedBy>
-
     </>
-  )
+  );
 }

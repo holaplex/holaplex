@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import { Avatar, Card, Image, Row, Col } from 'antd';
 import { Storefront } from '@/modules/storefront/types';
 
@@ -18,15 +18,14 @@ const PreviewCard = styled(Card)`
     left: -40px;
     margin: 0 0 0 50%;
     border: 2px solid white;
-
   }
-`
+`;
 
 const Metadata = styled(Col)`
   position: relative;
   overflow: hidden;
   &:after {
-    content: "";
+    content: '';
     display: block;
     padding-bottom: 100%;
   }
@@ -51,7 +50,7 @@ const StyledAvatar = styled(Avatar)`
 type StorePreviewProps = {
   storefront: Storefront;
   metadata: string[];
-}
+};
 
 export default function StorePreview({ storefront, metadata }: StorePreviewProps) {
   const domain = `${storefront.subdomain}.holaplex.com`;
@@ -59,12 +58,25 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
   return (
     <PreviewCard>
       <Card.Meta
-        avatar={<StyledAvatar size="large" src={<Image preview={false} src={storefront.theme.logo.url} />} />}
+        avatar={
+          <StyledAvatar
+            size="large"
+            src={<Image preview={false} src={storefront.theme.logo.url} />}
+          />
+        }
         title={storefront.meta.title}
-        description={<a href={`https://${domain}`} rel="nofollow noreferrer" target="_blank">{domain}</a>}
+        description={
+          <a href={`https://${domain}`} rel="nofollow noreferrer" target="_blank">
+            {domain}
+          </a>
+        }
       />
       <Row justify="space-between">
-        {metadata.map((url) => (<Metadata span={11} key={url}><Image src={url} /></Metadata>))}
+        {metadata.map((url) => (
+          <Metadata span={11} key={url}>
+            <Image src={url} />
+          </Metadata>
+        ))}
       </Row>
     </PreviewCard>
   );

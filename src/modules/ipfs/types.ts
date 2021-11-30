@@ -3,4 +3,4 @@ export type PinFileResponse = {
   name?: string;
   type?: string;
   error?: string;
-}
+};

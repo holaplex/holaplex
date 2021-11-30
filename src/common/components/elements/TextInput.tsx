@@ -1,4 +1,4 @@
-// @ts-nocheck 
+// @ts-nocheck
 import React from 'react';
 import sv from '@/constants/styles';
 import styled from 'styled-components';
@@ -8,7 +8,7 @@ const Container = styled.div`
   ${sv.inputField};
 `;
 
-const Input = styled.input<{ hasRightText: boolean}>`
+const Input = styled.input<{ hasRightText: boolean }>`
   flex: 1;
   width: 100%;
   background: none;
@@ -18,7 +18,7 @@ const Input = styled.input<{ hasRightText: boolean}>`
   margin: 0;
   color: ${sv.colors.text};
   height: 100%;
-  text-align: ${props => props.hasRightText ? 'right' : 'left'};
+  text-align: ${(props) => (props.hasRightText ? 'right' : 'left')};
   ::placeholder {
     color: ${sv.colors.cellDark};
   }
@@ -30,23 +30,32 @@ const StyledLabel = styled(Label)`
 
 const RootDomain = styled.div`
   margin-right: auto;
-  font-size: ${sv.grid*3}px;
+  font-size: ${sv.grid * 3}px;
   color: ${sv.colors.subtleText};
 `;
 
 type Props = {
-  label?: string,
-  rootDomain?: string,
-  value?: string,
-  className?: string,
-  placeholder?: string,
-  onChange?: Function,
-  meta?: object,
-  autoFocus?: boolean,
-}
+  label?: string;
+  rootDomain?: string;
+  value?: string;
+  className?: string;
+  placeholder?: string;
+  onChange?: Function;
+  meta?: object;
+  autoFocus?: boolean;
+};
 
-const TextInput = ({ rootDomain, label, value, onChange, placeholder, className, meta, autoFocus }: Props) => {
-  const hasRightText = rootDomain || label
+const TextInput = ({
+  rootDomain,
+  label,
+  value,
+  onChange,
+  placeholder,
+  className,
+  meta,
+  autoFocus,
+}: Props) => {
+  const hasRightText = rootDomain || label;
   return (
     <Container className={className}>
       {label && <StyledLabel noMargin>{label}</StyledLabel>}
@@ -59,7 +68,7 @@ const TextInput = ({ rootDomain, label, value, onChange, placeholder, className,
       />
       {rootDomain && <RootDomain>{rootDomain}</RootDomain>}
     </Container>
-  )
-}
+  );
+};
 
 export default TextInput;
