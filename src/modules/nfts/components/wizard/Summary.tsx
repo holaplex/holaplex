@@ -107,7 +107,7 @@ const SummaryItem = ({
       {showCreatorCount && (
         <Attribute>
           <Paragraph style={{ width: 110 }}>Creators:</Paragraph>
-          <Paragraph>{value.properties.creators.length - 1}</Paragraph>
+          <Paragraph>{value.properties.creators.length}</Paragraph>
         </Attribute>
       )}
     </StyledSummaryItem>
