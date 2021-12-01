@@ -58,6 +58,15 @@ export default function OffRampScreen({
   storefront,
 }: Props) {
   const router = useRouter();
+
+  const herokuEnv = process.env.HEROKU_ENV;
+  const envDomain = herokuEnv === 'production' ? 'com' : 'dev';
+  let listingUrl = '';
+
+  if (storefront) {
+    listingUrl = `https://${storefront.subdomain}.holaplex.${envDomain}/#/auction/create/0`;
+  }
+
   const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
 
   const titleTxt = successfulMints
@@ -109,7 +118,7 @@ export default function OffRampScreen({
                 {storefront ? (
                   <Button
                     type="primary"
-                    onClick={() => router.push('/storefront/edit')}
+                    onClick={() => router.push(listingUrl)}
                     style={{ height: 'fit-content', marginTop: 38 }}
                   >
                     List on your Holaplex store
