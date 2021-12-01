@@ -12,6 +12,7 @@ import {
   Col,
   Modal,
 } from 'antd';
+import { toast } from 'react-toastify';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -141,13 +142,6 @@ export const StyledClearButton = styled(Button)`
   }
 `;
 
-// TODO: Style notification
-const openNotification = () => {
-  notification.open({
-    message: 'Address copied to clipboard!',
-  });
-};
-
 const StyledPercentageInput = styled(InputNumber)`
   margin: 0 23px 0 auto;
   font-size: 14px;
@@ -250,7 +244,7 @@ const CreatorsRow = ({
           alt="copyToClipboard"
           onClick={() => {
             navigator.clipboard.writeText(creatorAddress);
-            openNotification();
+            toast('Address copied to clipboard!');
           }}
         />
       )}
