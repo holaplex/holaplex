@@ -251,8 +251,8 @@ export default function Edit({ track }: StorefrontEditorProps) {
                 <Input autoFocus suffix=".holaplex.com" />
               </DomainFormItem>
             </TabPane>
-            <TabPane tab="Metadata" key="metadata">
-              <Title level={2}>Change page meta data.</Title>
+            <TabPane tab="Store info" key="metadata">
+              <Title level={2}>Tell us about your store.</Title>
               <Form.Item
                 label="Favicon"
                 name={['meta', 'favicon']}
