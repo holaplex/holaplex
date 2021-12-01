@@ -59,11 +59,16 @@ export enum MintStatus {
   SUCCESS,
 }
 
+export interface Collection {
+  name: string;
+  family: string;
+}
+
 export interface NFTValue {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
-  collection?: string;
+  collection?: Collection;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
 
@@ -167,7 +172,10 @@ export default function BulkUploadWizard() {
         name: v.name,
         description: v.description,
         symbol: '',
-        collection: v.collection,
+        collection: {
+          name: v.collection,
+          family: '',
+        },
         seller_fee_basis_points: v.seller_fee_basis_points,
         image: filePin.uri,
         files: [{ uri: filePin.uri, type: filePin.type }],
