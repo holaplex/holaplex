@@ -4,7 +4,7 @@ import { drop } from 'ramda';
 import sv from '@/constants/styles';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import { List, Space, Row, Col, Typography, RowProps, ListProps } from 'antd';
+import { List, Space, Row, Col, Typography, RowProps, ListProps, Image } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { Listing, ListingPreview } from '@/common/components/elements/ListingPreview';
@@ -271,6 +271,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           <Title level={3}>Current listings</Title>
           <ListingsSortAndFilter state={state} dispatch={dispatch} />
         </Row>
+
         <List
           grid={{
             xs: 2,
@@ -288,6 +289,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </List.Item>
           )}
         />
+        {/* <Image.PreviewGroup>
+        </Image.PreviewGroup> */}
 
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
