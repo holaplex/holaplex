@@ -23,7 +23,7 @@ import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
 import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator, FormValues } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
-import FeesModalContent from '@/common/components/presentational/FeesModalContent';
+import CommunityFundInfo from '@/common/components/presentational/CommunityFundInfo';
 import { isNil } from 'ramda';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
@@ -328,7 +328,7 @@ const CreatorsRow = ({
             padding: '114px 67px 47px 67px',
           }}
         >
-          <FeesModalContent />
+          <CommunityFundInfo />
         </Modal>
       )}
     </StyledCreatorsRow>

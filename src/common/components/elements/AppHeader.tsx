@@ -5,6 +5,8 @@ import { Layout, Space } from 'antd';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
+import { WalletContext } from '@/modules/wallet';
+import { useContext } from 'react';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -34,6 +36,7 @@ const HeaderLinkWrapper = styled.div<{ active: boolean }>`
 export function AppHeader() {
   const windowDimensions = useWindowDimensions();
   const router = useRouter();
+  const { connect } = useContext(WalletContext);
 
   return (
     <StyledHeader>
@@ -48,7 +51,18 @@ export function AppHeader() {
           </Link>
         )}
       </HeaderTitle>
-      <Space size="large">
+      <Space size="large" wrap>
+        {windowDimensions.width >= 778 && (
+          <HeaderLinkWrapper
+            onClick={() => connect()}
+            active={router.pathname == '/storefront/edit'}
+          >
+            <Link href="/storefront/edit" passHref>
+              Edit store
+            </Link>
+          </HeaderLinkWrapper>
+        )}
+
         <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
           <Link href="/nfts/new" passHref>
             Mint NFTs
