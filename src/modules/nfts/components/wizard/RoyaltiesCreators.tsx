@@ -238,7 +238,7 @@ const CreatorsRow = ({
         }}
       >
         {isHolaplex
-          ? 'Holaplex'
+          ? 'Holaplex Community Fund'
           : creatorAddress.slice(0, 4) + '...' + creatorAddress.slice(creatorAddress.length - 4)}
       </Paragraph>
       {!isHolaplex && (
