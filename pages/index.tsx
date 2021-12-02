@@ -289,8 +289,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </List.Item>
           )}
         />
-        {/* <Image.PreviewGroup>
-        </Image.PreviewGroup> */}
 
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
