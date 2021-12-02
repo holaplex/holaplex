@@ -233,7 +233,7 @@ const CreatorsRow = ({
       <Paragraph
         style={{
           margin: '0 14px 0 6px',
-          maxWidth: 90,
+          maxWidth: 200,
           fontSize: 14,
         }}
       >
