@@ -59,13 +59,7 @@ export default function OffRampScreen({
 }: Props) {
   const router = useRouter();
 
-  const herokuEnv = process.env.HEROKU_ENV;
-  const envDomain = herokuEnv === 'production' ? 'com' : 'dev';
-  let listingUrl = '';
-
-  if (storefront) {
-    listingUrl = `https://${storefront.subdomain}.holaplex.${envDomain}/#/auction/create/0`;
-  }
+  const listingUrl = storefront ? `https://${storefront.subdomain}.holaplex.com/owned` : '';
 
   const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
 
