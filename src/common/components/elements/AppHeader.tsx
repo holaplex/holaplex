@@ -51,7 +51,7 @@ export function AppHeader() {
           </Link>
         )}
       </HeaderTitle>
-      <Space size="large" wrap>
+      <Space size="large">
         {windowDimensions.width >= 778 && (
           <HeaderLinkWrapper
             onClick={() => connect()}
