@@ -52,6 +52,10 @@ export default function Verify({
   files,
   clearForm,
 }: Props) {
+  const handleNext = () => {
+    dispatch({ type: 'SET_COVER_IMAGES', payload: files }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
+    nextStep!();
+  };
   const removeFile = (fileName: string) => {
     dispatch({ type: 'DELETE_FILE', payload: fileName });
   };
@@ -89,7 +93,7 @@ export default function Verify({
             </Upload>
           )}
         </NFTPreviewGrid>
-        <Button type="primary" size="large" onClick={nextStep}>
+        <Button type="primary" size="large" onClick={handleNext}>
           Looks good
         </Button>
       </Space>

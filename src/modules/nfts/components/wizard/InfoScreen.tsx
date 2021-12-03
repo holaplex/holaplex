@@ -17,6 +17,7 @@ const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
 
 interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
+  coverImages: Array<File>;
   index: number;
   form: FormInstance;
   clearForm: () => void;
@@ -84,6 +85,7 @@ export default function InfoScreen({
   form,
   isActive,
   clearForm,
+  coverImages,
   isLast,
   dispatch,
   currentFile,
@@ -158,13 +160,17 @@ export default function InfoScreen({
 
   const getCoverImage = (e: any) => {
     console.log('e is ', e);
+    let file;
     if (e.file && e.file.originFileObj) {
-      return e.file.originFileObj;
+      file = e.file.originFileObj;
+    } else if (Array.isArray(e)) {
+      file = e[0];
+    } else {
+      file = e;
     }
-    if (Array.isArray(e)) {
-      return e[0];
-    }
-    return e && e.fileList;
+
+    dispatch({ type: 'INSERT_COVER_IMAGE', payload: { file, index } });
+    return file;
   };
 
   if (!isActive) {
@@ -306,7 +312,7 @@ export default function InfoScreen({
           </ButtonFormItem>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid files={files} index={index} width={2} />
+        <NFTPreviewGrid files={coverImages} index={index} width={2} />
       </Row>
     </NavContainer>
   );

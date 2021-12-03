@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
+//@ts-ignore
+import FeatherIcon from 'feather-icons-react';
 import { MintStatus, NFTValue } from 'pages/nfts/new';
 import { Image as AntImage } from 'antd';
 import { isAudio, isImage, isVideo } from '@/modules/utils/files';
@@ -17,10 +19,21 @@ const CheckWrapper = styled.div`
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   height: 120px;
   width: 120px;
-  border-radius: 4px;
+  display: flex;
+  justify-content: center;
 
-  ${({ isCurrent }) => (isCurrent ? 'border: 2px solid #d24089;;' : null)}
-  ${({ isFinished }) => (isFinished ? 'opacity: 0.5;' : null)}
+  ${({ isFinished }) => isFinished && 'opacity: 0.5;'}
+
+  ${({ isCurrent }) =>
+    isCurrent &&
+    `
+      
+      .ant-image-img {
+        border: 2px solid #d24089; 
+        border-radius: 4px;
+      }
+      
+    `}
 `;
 
 const StyledRemoveNFT = styled.div`
@@ -33,6 +46,8 @@ const StyledRemoveNFT = styled.div`
 
 const FilePreviewContainer = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
 
   &:hover {
     ${StyledRemoveNFT} {
@@ -78,20 +93,19 @@ const getOverlayStatus = (index: number, nftValues?: NFTValue[]) => {
 const StyledAntDImage = styled(AntImage)`
   object-fit: cover;
 `;
+
 const getFilePreview = (file: File) => {
   if (isAudio(file)) {
-    return 'audio';
+    return <FeatherIcon icon="image" />;
   }
 
   if (isVideo(file)) {
-    return 'video';
+    return <FeatherIcon icon="video" />;
   }
 
   if (isImage(file)) {
     return (
       <StyledAntDImage
-        width={120}
-        height={120}
         src={URL.createObjectURL(file)}
         alt={file.name}
         // objectFit="cover"
@@ -107,7 +121,6 @@ export const NFTPreviewGrid = ({
   width = 2,
   removeFile,
   children,
-  isMintStep,
   nftValues,
 }: Props) => {
   return (

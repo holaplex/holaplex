@@ -86,6 +86,7 @@ export type MintDispatch = (action: MintAction) => void;
 interface State {
   files: Array<File>;
   uploadedFiles: Array<UploadedFilePin>;
+  coverImages: File[];
   formValues: NFTFormValue[] | null;
   nftValues: NFTValue[];
 }
@@ -96,15 +97,25 @@ export interface MintAction {
     | 'DELETE_FILE'
     | 'ADD_FILE'
     | 'UPLOAD_FILES'
+    | 'INSERT_COVER_IMAGE'
+    | 'SET_COVER_IMAGES'
     | 'SET_FORM_VALUES'
     | 'SET_NFT_VALUES';
-  payload: File[] | File | String | Array<UploadedFilePin> | NFTFormValue[] | NFTValue[];
+  payload:
+    | File[]
+    | File
+    | String
+    | Array<UploadedFilePin>
+    | NFTFormValue[]
+    | NFTValue[]
+    | { file: File; index: number };
 }
 
 const initialState = (): State => {
   return {
     files: [],
     uploadedFiles: [],
+    coverImages: [],
     formValues: null,
     nftValues: [],
   };
@@ -126,7 +137,7 @@ function reducer(state: State, action: MintAction) {
         ...state,
         files: state.files.filter((i) => i.name !== (action.payload as String)),
       };
-    case 'ADD_FILE':
+    case 'ADD_FILE': {
       const file = action.payload as File;
       const numberOfDuplicates = state.files.filter((i) => i.name === file.name).length;
 
@@ -139,6 +150,19 @@ function reducer(state: State, action: MintAction) {
             ],
           }
         : state;
+    }
+    case 'SET_COVER_IMAGES':
+      return { ...state, coverImages: action.payload as File[] };
+    case 'INSERT_COVER_IMAGE': {
+      const { file, index } = action.payload as { file: File; index: number };
+      const copy = [...state.coverImages];
+      copy[index] = file;
+      return {
+        ...state,
+        coverImages: copy,
+      };
+    }
+
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFilePin> };
     case 'SET_FORM_VALUES':
@@ -157,7 +181,7 @@ export default function BulkUploadWizard() {
   const [form] = useForm();
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
 
-  const { files, formValues } = state;
+  const { files, formValues, coverImages } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
 
@@ -323,6 +347,7 @@ export default function BulkUploadWizard() {
             files.map((file, index) => (
               <InfoScreen
                 files={files}
+                coverImages={coverImages}
                 index={index}
                 currentFile={file}
                 key={index}
