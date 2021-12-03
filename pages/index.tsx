@@ -307,7 +307,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <SectionTitle level={3}>Featured stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4, gutter: 16 }}
           dataSource={featuredStorefronts.slice(0, 4)}
           renderItem={(feature) => (
             // @ts-ignore
@@ -339,6 +339,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
         <List
           pagination={{
             // position: 'top',
+            pageSize: 8,
             defaultCurrent: 1,
             showSizeChanger: false,
             style: {
@@ -352,7 +353,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             md: 3,
             lg: 4,
             xl: 4,
-            xxl: 5, // could even consider 5 for xxl
+            xxl: 4, // could even consider 5 for xxl
             gutter: 24,
           }}
           dataSource={state.listingsOnDisplay}
