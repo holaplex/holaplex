@@ -1,43 +1,61 @@
-import listingsAndStorefronts from 'fixtures/demo-listings-and-storefronts.json';
+// import listingsAndStorefronts from 'fixtures/demo-listings-and-storefronts.json';
+import listingsRPC from 'fixtures/listings.json';
 import { Listing } from '../components/elements/ListingPreview';
 
 export function generateListingShell(id: string): Listing {
+  const now = new Date().toISOString();
+  const nextWeek = new Date(now).toISOString();
+
   return {
     address: id,
-    metadata: [
+    ended: false,
+    items: [
       {
+        address: '',
         name: '',
-        description: '',
-        creators: [],
         uri: '',
       },
     ],
-    storefrontSubdomain: '',
-    ownerAddress: '',
-    createdAt: new Date().toISOString(),
-    bids: [],
+    created_at: now,
+    ends_at: nextWeek,
+    subdomain: '',
+    storeTitle: '',
   };
 }
 
-const allListings: Listing[] & { [key: string]: any } = listingsAndStorefronts.listings.map(
-  (l) => ({
-    ...l,
-    metadata: [
-      {
-        name: l.title,
-        description: '',
-        uri: l.previewImageURL,
-        creators: [],
-      },
-    ],
-    bids: [],
-    ownerAddress: '',
-  })
-);
-export const demoListings = allListings.slice(2);
-export const demoFeaturedListings = allListings.slice(0, 2);
+// const allListings: Listing[] & { [key: string]: any } = listingsAndStorefronts.listings.map(
+//   (l) => ({
+//     ...l,
+//     metadata: [
+//       {
+//         name: l.title,
+//         description: '',
+//         uri: l.previewImageURL,
+//         creators: [],
+//       },
+//     ],
+//     bids: [],
+//     ownerAddress: '',
+//   })
+// );
 
-export const demoStorefronts = listingsAndStorefronts.storefronts;
+const allListings: Listing[] = listingsRPC.result;
+const hotListings = allListings.sort((a, b) => {
+  if (!a.last_bid || !b.last_bid) return -1;
+  return b.last_bid - a.last_bid;
+});
+// price high - low
+// .sort((a, b) => {
+//   if (a.ended) return -1;
+//   const aPrice = a.price_floor || a.instant_sale_price || 0;
+//   const bPrice = b.price_floor || b.instant_sale_price || 0;
+//   return aPrice - bPrice;
+// });
+
+export const demoFeaturedListings = hotListings.slice(0, 4);
+export const demoListings = hotListings.slice(4);
+
+// export const demoStorefronts = listingsAndStorefronts.storefronts;
 
 export interface DemoStorefront {
   [key: string]: any;

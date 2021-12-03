@@ -7,16 +7,22 @@ import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featur
 import { List, Space, Row, Col, Typography, RowProps, ListProps, Image } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
-import { Listing, ListingPreview } from '@/common/components/elements/ListingPreview';
+import {
+  Listing,
+  ListingPreview,
+  SkeletonListing,
+} from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
 import {
   allDemoStorefronts,
   demoFeaturedListings,
   demoListings,
-  demoStorefronts,
   generateListingShell,
 } from '@/common/constants/demoContent';
-import { ListingsSortAndFilter } from '@/common/components/elements/ListingsSortAndFilter';
+import {
+  DiscoveryRadioDropdown,
+  ListingsSortAndFilter,
+} from '@/common/components/elements/ListingsSortAndFilter';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -90,11 +96,11 @@ interface HomeProps {
 }
 
 export interface DiscoveryToolState {
-  sortBy: string;
-  filters: string[];
   listings: Listing[];
+  featuredListings: Listing[];
   listingsOnDisplay: Listing[];
-  filter: string;
+  filter: FilterActions;
+  sortBy: SortingActions;
 }
 
 type Action = {
@@ -102,35 +108,72 @@ type Action = {
   payload?: string | Listing[];
 };
 
+const sortingValues = [
+  'SORT_BY_RECENT_BID',
+  'SORT_BY_PRICE_HIGH_TO_LOW',
+  'SORT_BY_PRICE_LOW_TO_HIGH',
+  'SORT_BY_ENDING_SOONEST',
+  'SORT_BY_RECENTLY_LISTED',
+] as const;
+
+type SortingActions = typeof sortingValues[number];
+export type SortingOption = { value: SortingActions; label: string };
+const sortingOptions: SortingOption[] = [
+  { value: 'SORT_BY_RECENT_BID', label: 'Recent bids' },
+  { value: 'SORT_BY_PRICE_HIGH_TO_LOW', label: 'Expensive' },
+  { value: 'SORT_BY_PRICE_LOW_TO_HIGH', label: 'Cheap' },
+  { value: 'SORT_BY_ENDING_SOONEST', label: 'Ending soonest' },
+  { value: 'SORT_BY_RECENTLY_LISTED', label: 'Recent listings' },
+];
+
+// type SortingValues2 = typeof (sortingOptions.map(o => o.value))[number];
+// const v: SortingValues2 = 'SORT_BY_PRICE_HIGH_TO_LOW'
+
+const filterValues = [
+  'FILTER_BY_SHOW_ALL',
+  'FILTER_BY_ACTIVE_AUCTIONS',
+  'FILTER_BY_BUY_NOW',
+] as const;
+
+type FilterActions = typeof filterValues[number];
+export type FilterOption = { value: FilterActions; label: string };
+const filterOptions: FilterOption[] = [
+  { value: 'FILTER_BY_SHOW_ALL', label: 'Show all' },
+  { value: 'FILTER_BY_ACTIVE_AUCTIONS', label: 'Active auctions' },
+  { value: 'FILTER_BY_BUY_NOW', label: 'Buy now' },
+];
+
 export type DiscoveryToolAction =
   | {
       type: 'SET_LISTINGS';
       payload: Listing[];
     }
   | {
+      type: 'SET_FEATURED_LISTINGS';
+      payload: Listing[];
+    }
+  | {
       type: 'SET_STOREFRONTS';
       // payload
     }
-  | { type: 'RESET_FILTERS' }
-  | { type: 'SORT_BY_ENDING_SOONEST' }
-  | { type: 'SORT_BY_RECENTLY_LISTED' }
-  | { type: 'FILTER_BY_ACTIVE_AUCTIONS' }
-  | { type: 'FILTER_BY_BUY_NOW' }
-  | { type: 'ADD_FILTER'; payload: string }
-  | { type: 'TOGGLE_FILTER'; payload: string }
-  | { type: 'REMOVE_FILTER'; payload: string };
+  | {
+      type: SortingActions;
+    }
+  | { type: FilterActions };
 
 const initialState = (): DiscoveryToolState => {
   return {
-    filter: 'SHOW_ALL',
-    sortBy: 'ENDING_SOONEST',
     listings: Array(8)
+      .fill(null)
+      .map((_, i) => generateListingShell(i.toString())),
+    featuredListings: Array(3)
       .fill(null)
       .map((_, i) => generateListingShell(i.toString())),
     listingsOnDisplay: Array(8)
       .fill(null)
       .map((_, i) => generateListingShell(i.toString())),
-    filters: ['SHOW_ALL'],
+    filter: 'FILTER_BY_SHOW_ALL',
+    sortBy: 'SORT_BY_PRICE_HIGH_TO_LOW',
   };
 };
 
@@ -142,50 +185,71 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
         listings: action.payload,
         listingsOnDisplay: action.payload,
       };
-    case 'RESET_FILTERS':
+    case 'SET_FEATURED_LISTINGS':
       return {
         ...state,
-        filter: 'SHOW_ALL',
-        filters: initialState().filters,
+        featuredListings: action.payload,
+      };
+    case 'FILTER_BY_SHOW_ALL':
+      return {
+        ...state,
+        filter: 'FILTER_BY_SHOW_ALL',
         listingsOnDisplay: state.listings,
-      };
-    case 'ADD_FILTER':
-      return {
-        ...state,
-        filters: [...state.filters, action.payload],
-      };
-    case 'REMOVE_FILTER':
-      return {
-        ...state,
-        filters: state.filters.filter((f) => f !== action.payload),
       };
     case 'FILTER_BY_BUY_NOW':
       return {
         ...state,
-        filter: 'BUY_NOW',
-        listingsOnDisplay: state.listings.filter((l) => !l.endsAt),
+        filter: 'FILTER_BY_BUY_NOW',
+        listingsOnDisplay: state.listings.filter((l) => !l.ends_at),
       };
     case 'FILTER_BY_ACTIVE_AUCTIONS':
       return {
         ...state,
-        filter: 'BUY_NOW',
-        listingsOnDisplay: state.listings.filter((l) => l.endsAt),
+        filter: 'FILTER_BY_ACTIVE_AUCTIONS',
+        listingsOnDisplay: state.listings.filter((l) => l.ends_at),
       };
     case 'SORT_BY_RECENTLY_LISTED':
       return {
         ...state,
-        sortBy: 'RECENTLY_LISTED',
-        listings: state.listings.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
-        listingsOnDisplay: state.listings.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+        sortBy: 'SORT_BY_RECENTLY_LISTED',
+        listingsOnDisplay: state.listings.sort((a, b) => a.created_at.localeCompare(b.created_at)),
+      };
+    case 'SORT_BY_RECENT_BID':
+      return {
+        ...state,
+        sortBy: 'SORT_BY_RECENT_BID',
+        listingsOnDisplay: state.listings.sort((a, b) => {
+          if (!a.last_bid || !b.last_bid) return -1;
+          return b.last_bid - a.last_bid;
+        }),
       };
     case 'SORT_BY_ENDING_SOONEST':
       return {
         ...state,
-        sortBy: 'ENDING_SOONEST',
-        listings: state.listings.sort((a, b) => a.endsAt?.localeCompare(b.endsAt || '') || -1),
+        sortBy: 'SORT_BY_ENDING_SOONEST',
         listingsOnDisplay: state.listings.sort(
-          (a, b) => a.endsAt?.localeCompare(b.endsAt || '') || -1
+          (a, b) => a.ends_at?.localeCompare(b.ends_at || '') || -1
         ),
+      };
+    case 'SORT_BY_PRICE_HIGH_TO_LOW':
+      return {
+        ...state,
+        sortBy: 'SORT_BY_PRICE_HIGH_TO_LOW',
+        listingsOnDisplay: state.listings.sort((a, b) => {
+          const aPrice = a.price_floor || a.instant_sale_price || 0;
+          const bPrice = b.price_floor || b.instant_sale_price || 0;
+          return aPrice - bPrice;
+        }),
+      };
+    case 'SORT_BY_PRICE_LOW_TO_HIGH':
+      return {
+        ...state,
+        sortBy: 'SORT_BY_PRICE_LOW_TO_HIGH',
+        listingsOnDisplay: state.listings.sort((a, b) => {
+          const aPrice = a.price_floor || a.instant_sale_price || 0;
+          const bPrice = b.price_floor || b.instant_sale_price || 0;
+          return bPrice - aPrice;
+        }),
       };
     default:
       throw new Error('Not a valid action for state');
@@ -195,33 +259,28 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
+  // @ts-ignore
   const [state, dispatch] = useReducer(reducer, initialState());
   console.log(state);
   const heroStorefront = featuredStorefronts[0];
 
   // const [allListings, setAllListings] = useState<Listing[]>(Array(8).fill({}));
-  const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(4).fill({}));
+  // const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(4).fill({}));
 
-  function combineListingsWithStorefronts(listingArray: Listing[]): Listing[] {
-    return listingArray.map((l) => ({
-      ...l,
-      demoStoreFront: allDemoStorefronts[l.storefrontSubdomain],
-    }));
-  }
   useEffect(() => {
     // hack to mock api loading speeds, making them extra slow for now to test loadings states
     new Promise<Listing[]>((resolve) =>
-      setTimeout(() => resolve(demoFeaturedListings), 1500 + Math.random() * 10000)
+      setTimeout(() => resolve(demoFeaturedListings), 1500 + Math.random() * 5000)
     ).then((fls: Listing[]) => {
-      const listingsWithStorefronts = combineListingsWithStorefronts(fls);
-      setFeaturedListings(listingsWithStorefronts);
+      // @ts-ignore
+      dispatch({ type: 'SET_FEATURED_LISTINGS', payload: fls });
     });
 
     new Promise<Listing[]>((resolve) =>
-      setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 20000)
+      setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 10000)
     ).then((als) => {
-      const listingsWithStorefronts = combineListingsWithStorefronts(als);
-      dispatch({ type: 'SET_LISTINGS', payload: listingsWithStorefronts });
+      // @ts-ignore
+      dispatch({ type: 'SET_LISTINGS', payload: als });
     });
 
     // TOOD: Add promise to simulate different call to fetch metadata for each nft and a stiching function to insert it into the listing
@@ -250,14 +309,14 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </Space>
           </Marketing>
           <Col xs={0} md={8}>
-            <FeaturedListingCarousel featuredListings={featuredListings} />
+            <FeaturedListingCarousel featuredListings={state.featuredListings} />
           </Col>
         </Section>
 
         <SectionTitle level={3}>Featured stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
-          dataSource={featuredStorefronts.slice(0, 3)}
+          grid={{ xs: 1, sm: 1, md: 2, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+          dataSource={featuredStorefronts.slice(0, 4)}
           renderItem={(feature) => (
             // @ts-ignore
             <List.Item key={feature.storefront.subdomain}>
@@ -269,10 +328,38 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <Row justify="space-between" align="middle">
           <Title level={3}>Current listings</Title>
-          <ListingsSortAndFilter state={state} dispatch={dispatch} />
+          {/* <ListingsSortAndFilter
+            state={state}
+            dispatch={dispatch}
+            sortingOptions={sortingOptions}
+            filterOptions={filterOptions}
+          /> */}
+          <Space direction="horizontal">
+            <DiscoveryRadioDropdown
+              label="Filter"
+              value={state.filter}
+              options={filterOptions}
+              dispatch={dispatch}
+            />
+            <DiscoveryRadioDropdown
+              label="Sort"
+              value={state.sortBy}
+              options={sortingOptions}
+              dispatch={dispatch}
+            />
+          </Space>
         </Row>
 
         <List
+          pagination={{
+            // position: 'top',
+            defaultCurrent: 1,
+            showSizeChanger: false,
+            style: {
+              margin: '24px auto',
+              textAlign: 'center',
+            },
+          }}
           grid={{
             xs: 2,
             sm: 2,
@@ -283,9 +370,11 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             gutter: 24,
           }}
           dataSource={state.listingsOnDisplay}
-          renderItem={(feature) => (
-            <List.Item key={feature.address}>
-              <ListingPreview {...feature} />
+          renderItem={(listing, i) => (
+            // @ts-ignore
+            <List.Item key={listing?.address || i}>
+              {/* @ts-ignore */}
+              {!listing.subdomain ? <SkeletonListing /> : <ListingPreview {...listing} />}
             </List.Item>
           )}
         />
