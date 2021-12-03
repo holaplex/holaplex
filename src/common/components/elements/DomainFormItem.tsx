@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { Form } from 'antd'
+import styled from 'styled-components';
+import { Form } from 'antd';
 
 const DomainFormItem = styled(Form.Item)`
   text-align: right;
@@ -17,13 +17,14 @@ const DomainFormItem = styled(Form.Item)`
     text-align: left;
   }
 
-  &.ant-form-item-has-error :not(.ant-input-disabled).ant-input:focus, 
-  &.ant-form-item-has-error :not(.ant-input-affix-wrapper-disabled).ant-input-affix-wrapper:focus, 
-  &.ant-form-item-has-error :not(.ant-input-disabled).ant-input-focused, 
-  &.ant-form-item-has-error :not(.ant-input-affix-wrapper-disabled).ant-input-affix-wrapper-focused {
+  &.ant-form-item-has-error :not(.ant-input-disabled).ant-input:focus,
+  &.ant-form-item-has-error :not(.ant-input-affix-wrapper-disabled).ant-input-affix-wrapper:focus,
+  &.ant-form-item-has-error :not(.ant-input-disabled).ant-input-focused,
+  &.ant-form-item-has-error
+    :not(.ant-input-affix-wrapper-disabled).ant-input-affix-wrapper-focused {
     border: none;
     box-shadow: none;
   }
 `;
 
-export default DomainFormItem
+export default DomainFormItem;

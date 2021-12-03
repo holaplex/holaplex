@@ -1,18 +1,18 @@
-import { Wallet } from '@/modules/wallet/types'
+import { Wallet } from '@/modules/wallet/types';
 
-const find = async (pubkey: string):Promise<Wallet | null> =>  {
-  const response = await fetch(`/api/wallets/${pubkey}`)
+const find = async (pubkey: string): Promise<Wallet | null> => {
+  const response = await fetch(`/api/wallets/${pubkey}`);
 
   if (!response.ok) {
-    return null
+    return null;
   }
 
-  const json = await response.json()
+  const json = await response.json();
 
-  return json
-}
+  return json;
+};
 
-const create = async (pubkey: string):Promise<Wallet | null> =>  {
+const create = async (pubkey: string): Promise<Wallet | null> => {
   try {
     const response = await fetch('/api/wallets', {
       headers: {
@@ -21,20 +21,20 @@ const create = async (pubkey: string):Promise<Wallet | null> =>  {
       method: 'POST',
       body: JSON.stringify({
         pubkey,
-      })
-    })
+      }),
+    });
 
-    const json = await response.json()
+    const json = await response.json();
 
-    return json
+    return json;
   } catch (e) {
-    throw e
+    throw e;
   }
-}
+};
 
 const client = {
   find,
-  create
-}
+  create,
+};
 
-export default client
+export default client;

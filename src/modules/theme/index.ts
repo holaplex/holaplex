@@ -1,35 +1,44 @@
-import { StorefrontTheme } from "@/modules/storefront/types";
+import { StorefrontTheme } from '@/modules/storefront/types';
 // @ts-ignore
 import { rgba } from 'polished';
 // @ts-ignore
-import Color from 'color'
-import { pipe, map, replace, join } from 'ramda'
-import text from "@/common/constants/text";
+import Color from 'color';
+import { pipe, map, replace, join } from 'ramda';
+import text from '@/common/constants/text';
 
-const joinFonts = pipe(map(replace(/\s+/g, '+')), join("&family="))
+const joinFonts = pipe(map(replace(/\s+/g, '+')), join('&family='));
 
-export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont, logo }: StorefrontTheme): string {
-  let contrastBackgroundColor = new Color(backgroundColor).darken(.1).hex()
-  let lesserContrastBackgroundColor =  new Color(backgroundColor).darken(.05).hex()
-  let textColor = '#000000'
-  let subtleTextColor = rgba('#000000', .6)
-  let buttonTextColor = '#000000'
-  let primaryHoverColor = new Color(primaryColor).darken(.2).hex()
-  let boxShadow = '0 0 16px rgba(0,0,0,.3)'
+export function stylesheet({
+  backgroundColor,
+  primaryColor,
+  textFont,
+  titleFont,
+  logo,
+}: StorefrontTheme): string {
+  let contrastBackgroundColor = new Color(backgroundColor).darken(0.1).hex();
+  let lesserContrastBackgroundColor = new Color(backgroundColor).darken(0.05).hex();
+  let textColor = '#000000';
+  let subtleTextColor = rgba('#000000', 0.6);
+  let buttonTextColor = '#000000';
+  let primaryHoverColor = new Color(primaryColor).darken(0.2).hex();
+  let boxShadow = '0 0 16px rgba(0,0,0,.3)';
 
   if (new Color(backgroundColor).isDark()) {
-    contrastBackgroundColor = new Color(backgroundColor).lighten(.2).hex()
-    lesserContrastBackgroundColor = new Color(backgroundColor).lighten(.1).hex()
-    textColor = '#FFFFFF'
-    subtleTextColor = rgba('#FFFFFF', .6)
-    boxShadow = '0 0 16px rgba(0,0,0,.8)'
+    contrastBackgroundColor = new Color(backgroundColor).lighten(0.2).hex();
+    lesserContrastBackgroundColor = new Color(backgroundColor).lighten(0.1).hex();
+    textColor = '#FFFFFF';
+    subtleTextColor = rgba('#FFFFFF', 0.6);
+    boxShadow = '0 0 16px rgba(0,0,0,.8)';
   }
 
   if (new Color(primaryColor).isDark()) {
-    buttonTextColor = '#FFFFFF'
+    buttonTextColor = '#FFFFFF';
   }
 
-  const themeCss = `@import url('https://fonts.googleapis.com/css2?family=${joinFonts([titleFont, textFont])}&display=swap');
+  const themeCss = `@import url('https://fonts.googleapis.com/css2?family=${joinFonts([
+    titleFont,
+    textFont,
+  ])}&display=swap');
   *, #root {
     font-family: '${textFont}', sans-serif;
   }
@@ -505,7 +514,7 @@ export function stylesheet({ backgroundColor, primaryColor, textFont, titleFont,
     font-family: '${titleFont}', sans-serif;
     color: ${textColor};
   }
-  `
+  `;
 
-  return themeCss
+  return themeCss;
 }

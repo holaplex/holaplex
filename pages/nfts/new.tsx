@@ -7,7 +7,9 @@ import Verify from '@/modules/nfts/components/wizard/Verify';
 import InfoScreen from '@/modules/nfts/components/wizard/InfoScreen';
 import { useForm } from 'antd/lib/form/Form';
 import Summary from '@/modules/nfts/components/wizard/Summary';
-import RoyaltiesCreators from '@/modules/nfts/components/wizard/RoyaltiesCreators';
+import RoyaltiesCreators, {
+  HOLAPLEX_CREATOR_OBJECT,
+} from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import { WalletContext } from '@/modules/wallet';
 import PriceSummary from '@/modules/nfts/components/wizard/PriceSummary';
 import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
@@ -15,7 +17,7 @@ import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
 
-export const MAX_CREATOR_LIMIT = 5;
+export const MAX_CREATOR_LIMIT = 4;
 
 export interface Creator {
   address: string;
@@ -40,7 +42,8 @@ export interface NFTFormValue {
   imageName: string;
   coverImageFile?: File;
   description: string;
-  collection: string;
+  collectionName: string;
+  collectionFamily: string;
   attributes: Array<NFTAttribute>;
   seller_fee_basis_points: number;
   properties: { creators: Array<Creator>; maxSupply: number };
@@ -58,11 +61,16 @@ export enum MintStatus {
   SUCCESS,
 }
 
+export interface Collection {
+  name: string;
+  family: string;
+}
+
 export interface NFTValue {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
-  collection?: string;
+  collection?: Collection;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
 
@@ -201,7 +209,10 @@ export default function BulkUploadWizard() {
           name: v.name,
           description: v.description,
           symbol: '',
-          collection: v.collection,
+          collection: {
+            name: v.collectionName,
+            family: v.collectionFamily,
+          },
           seller_fee_basis_points: v.seller_fee_basis_points,
           image,
           files,
@@ -238,7 +249,18 @@ export default function BulkUploadWizard() {
   };
 
   const uploadMetaData = async (nftValue: NFTValue) => {
-    const metaData = new File([JSON.stringify(nftValue)], 'metadata');
+    const creators = nftValue.properties.creators as Creator[];
+    const creatorArrayWithHolaplexLast = [...creators, HOLAPLEX_CREATOR_OBJECT];
+
+    const nftWithHolaplexAsLastCreator: NFTValue = {
+      ...nftValue,
+      properties: {
+        ...nftValue.properties,
+        creators: creatorArrayWithHolaplexLast,
+      },
+    };
+
+    const metaData = new File([JSON.stringify(nftWithHolaplexAsLastCreator)], 'metadata');
     const metaDataFileForm = new FormData();
     metaDataFileForm.append(`file[${metaData.name}]`, metaData, metaData.name);
     const resp = await fetch('/api/ipfs/upload', {
