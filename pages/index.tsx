@@ -19,10 +19,7 @@ import {
   demoListings,
   generateListingShell,
 } from '@/common/constants/demoContent';
-import {
-  DiscoveryRadioDropdown,
-  ListingsSortAndFilter,
-} from '@/common/components/elements/ListingsSortAndFilter';
+import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -173,7 +170,7 @@ const initialState = (): DiscoveryToolState => {
       .fill(null)
       .map((_, i) => generateListingShell(i.toString())),
     filter: 'FILTER_BY_SHOW_ALL',
-    sortBy: 'SORT_BY_PRICE_HIGH_TO_LOW',
+    sortBy: 'SORT_BY_RECENTLY_LISTED',
   };
 };
 
@@ -220,7 +217,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
         sortBy: 'SORT_BY_RECENT_BID',
         listingsOnDisplay: state.listings.sort((a, b) => {
           if (!a.last_bid || !b.last_bid) return -1;
-          return b.last_bid - a.last_bid;
+          return a.last_bid - b.last_bid;
         }),
       };
     case 'SORT_BY_ENDING_SOONEST':
@@ -238,7 +235,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
         listingsOnDisplay: state.listings.sort((a, b) => {
           const aPrice = a.price_floor || a.instant_sale_price || 0;
           const bPrice = b.price_floor || b.instant_sale_price || 0;
-          return aPrice - bPrice;
+          return bPrice - aPrice;
         }),
       };
     case 'SORT_BY_PRICE_LOW_TO_HIGH':
@@ -248,7 +245,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
         listingsOnDisplay: state.listings.sort((a, b) => {
           const aPrice = a.price_floor || a.instant_sale_price || 0;
           const bPrice = b.price_floor || b.instant_sale_price || 0;
-          return bPrice - aPrice;
+          return aPrice - bPrice;
         }),
       };
     default:
@@ -261,11 +258,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
   // @ts-ignore
   const [state, dispatch] = useReducer(reducer, initialState());
-  console.log(state);
-  const heroStorefront = featuredStorefronts[0];
-
-  // const [allListings, setAllListings] = useState<Listing[]>(Array(8).fill({}));
-  // const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(4).fill({}));
 
   useEffect(() => {
     // hack to mock api loading speeds, making them extra slow for now to test loadings states
@@ -328,12 +320,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <Row justify="space-between" align="middle">
           <Title level={3}>Current listings</Title>
-          {/* <ListingsSortAndFilter
-            state={state}
-            dispatch={dispatch}
-            sortingOptions={sortingOptions}
-            filterOptions={filterOptions}
-          /> */}
           <Space direction="horizontal">
             <DiscoveryRadioDropdown
               label="Filter"

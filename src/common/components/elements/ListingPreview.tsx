@@ -218,7 +218,7 @@ export function ListingPreview(listing: Listing) {
     if (nftMetadata?.uri) {
       fetchNFTDataFromIPFS();
     }
-  }, []);
+  }, [nftMetadata]);
 
   // shows up to 4 decimals, but removes pointless 0s
   const displayPrice = Number(
@@ -268,7 +268,7 @@ export function ListingPreview(listing: Listing) {
       <style jsx>
         {`
           .truncate {
-            width: 8rem;
+            width: 10rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;

@@ -40,10 +40,13 @@ export function generateListingShell(id: string): Listing {
 // );
 
 const allListings: Listing[] = listingsRPC.result;
-const hotListings = allListings.sort((a, b) => {
-  if (!a.last_bid || !b.last_bid) return -1;
-  return b.last_bid - a.last_bid;
-});
+const hotListings = allListings
+  .filter((l) => !l.ended)
+  .sort((a, b) => a.created_at.localeCompare(b.created_at));
+// .sort((a, b) => {
+//   if (!a.last_bid || !b.last_bid) return -1;
+//   return a.last_bid - b.last_bid;
+// });
 // price high - low
 // .sort((a, b) => {
 //   if (a.ended) return -1;
