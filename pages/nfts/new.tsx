@@ -41,7 +41,8 @@ export interface NFTFormValue {
   name: string;
   imageName: string;
   description: string;
-  collection: string;
+  collectionName: string;
+  collectionFamily: string;
   attributes: Array<NFTAttribute>;
   seller_fee_basis_points: number;
   properties: { creators: Array<Creator>; maxSupply: number };
@@ -173,8 +174,8 @@ export default function BulkUploadWizard() {
         description: v.description,
         symbol: '',
         collection: {
-          name: v.collection,
-          family: '',
+          name: v.collectionName,
+          family: v.collectionFamily,
         },
         seller_fee_basis_points: v.seller_fee_basis_points,
         image: filePin.uri,

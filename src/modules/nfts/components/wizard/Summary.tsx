@@ -83,7 +83,14 @@ const SummaryItem = ({
       <Title level={4} style={{ marginBottom: 3 }}>
         {value.name}
       </Title>
-      {value.collection && <Paragraph style={{ marginBottom: 18 }}>{value.collection}</Paragraph>}
+      {value.collectionName && (
+        <Paragraph style={{ marginBottom: 5, fontWeight: 'bold' }}>
+          {value.collectionName}
+        </Paragraph>
+      )}
+      {value.collectionFamily && (
+        <Paragraph style={{ marginBottom: 18 }}>{value.collectionFamily}</Paragraph>
+      )}
       <Paragraph
         ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
         style={{ opacity: '60%', color: '#fff' }}
