@@ -49,7 +49,6 @@ export default function Verify({
   dispatch,
   goToStep,
   images,
-  currentStep,
   clearForm,
 }: Props) {
   const removeImage = (imageName: string) => {
