@@ -367,7 +367,9 @@ export default function RoyaltiesCreators({
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const [creators, setCreators] = useState<Array<Creator>>(
-    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }]
+    previousNFT
+      ? previousNFT.properties.creators
+      : [HOLAPLEX_CREATOR_OBJECT, { address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
