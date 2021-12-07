@@ -51,7 +51,7 @@ export function DiscoveryRadioDropdown({
       }
     >
       <StyledDropdownTrigger>
-        <Space direction="horizontal" size="small">
+        <Space direction="horizontal" size="small" align="center">
           <span className="label">{label}:</span>
           <span className="value">{options.find((o) => o.value === value)?.label}</span>
           <DownOutlined />

@@ -20,6 +20,7 @@ import {
   generateListingShell,
 } from '@/common/constants/demoContent';
 import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
+import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -260,28 +261,29 @@ export default function Home({ featuredStorefronts }: HomeProps) {
   const [state, dispatch] = useReducer(reducer, initialState());
 
   useEffect(() => {
-    // hack to mock api loading speeds, making them extra slow for now to test loadings states
-    new Promise<Listing[]>((resolve) =>
-      setTimeout(() => resolve(demoFeaturedListings), 1500 + Math.random() * 5000)
-    ).then((fls: Listing[]) => {
-      // @ts-ignore
-      dispatch({ type: 'SET_FEATURED_LISTINGS', payload: fls });
-    });
+    console.log('about to call rpc');
+    async function getListings() {
+      // new Promise<Listing[]>((resolve) =>
+      //   setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 10000)
+      // ).then((als) => {
+      //   // @ts-ignore
+      //   dispatch({ type: 'SET_LISTINGS', payload: als });
+      // });
 
-    new Promise<Listing[]>((resolve) =>
-      setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 10000)
-    ).then((als) => {
-      // @ts-ignore
-      dispatch({ type: 'SET_LISTINGS', payload: als });
-    });
+      const allListings = await callMetaplexIndexerRPC('getListings');
+      console.log('fetched', allListings.length, 'from rpc');
+      const hotListings = allListings
+        .filter((l) => !l.ended)
+        .sort((a, b) => a.created_at.localeCompare(b.created_at));
+      const featuredListings = hotListings.splice(0, 4);
 
-    // TOOD: Add promise to simulate different call to fetch metadata for each nft and a stiching function to insert it into the listing
-    // new Promise<ListingMeta[]>((resolve) =>
-    //   setTimeout(() => resolve(meta), 3000 + Math.random() * 20000)
-    // ).then((als) => {
-    //   const listingsWithMeta = combineListingsWithMeta(als);
-    //   setAllListings(listingsWithMeta);
-    // });
+      // @ts-ignore
+      dispatch({ type: 'SET_LISTINGS', payload: hotListings });
+      // @ts-ignore
+      dispatch({ type: 'SET_FEATURED_LISTINGS', payload: featuredListings });
+    }
+
+    getListings();
   }, []);
 
   return (
