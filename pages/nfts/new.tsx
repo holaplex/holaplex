@@ -16,6 +16,7 @@ import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
+import { getFinalFileWithUpdatedName } from '@/modules/utils/files';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -66,6 +67,12 @@ export interface Collection {
   family: string;
 }
 
+export interface FilePreview {
+  type: 'audio' | 'video' | 'image' | 'webgl';
+  coverImage: File;
+  file: File;
+}
+
 export interface NFTValue {
   name: string;
   description: string;
@@ -86,7 +93,7 @@ export type MintDispatch = (action: MintAction) => void;
 interface State {
   files: Array<File>;
   uploadedFiles: Array<UploadedFilePin>;
-  coverImages: File[];
+  filePreviews: Array<FilePreview>;
   formValues: NFTFormValue[] | null;
   nftValues: NFTValue[];
 }
@@ -97,13 +104,14 @@ export interface MintAction {
     | 'DELETE_FILE'
     | 'ADD_FILE'
     | 'UPLOAD_FILES'
-    | 'INSERT_COVER_IMAGE'
-    | 'SET_COVER_IMAGES'
+    | 'INSERT_FILE_PREVIEW'
+    | 'SET_FILE_PREVIEWS'
     | 'SET_FORM_VALUES'
     | 'SET_NFT_VALUES';
   payload:
     | File[]
     | File
+    | FilePreview[]
     | String
     | Array<UploadedFilePin>
     | NFTFormValue[]
@@ -115,18 +123,11 @@ const initialState = (): State => {
   return {
     files: [],
     uploadedFiles: [],
-    coverImages: [],
+    filePreviews: [],
     formValues: null,
     nftValues: [],
   };
 };
-
-function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
-  const fileNameParts = file.name.split('.');
-  const extension = fileNameParts.pop();
-  const finalName = fileNameParts.join('.') + '_' + numberOfDuplicates + '.' + extension;
-  return new File([file], finalName, { type: file.type });
-}
 
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
@@ -151,11 +152,11 @@ function reducer(state: State, action: MintAction) {
           }
         : state;
     }
-    case 'SET_COVER_IMAGES':
+    case 'SET_FILE_PREVIEWS':
       return { ...state, coverImages: action.payload as File[] };
-    case 'INSERT_COVER_IMAGE': {
+    case 'INSERT_FILE_PREVIEW': {
       const { file, index } = action.payload as { file: File; index: number };
-      const copy = [...state.coverImages];
+      const copy = [...state.filePreviews];
       copy[index] = file;
       return {
         ...state,
@@ -251,7 +252,6 @@ export default function BulkUploadWizard() {
       })
     );
 
-    console.log('resp is ', resp);
     return resp;
   };
 
@@ -266,8 +266,6 @@ export default function BulkUploadWizard() {
     }
 
     const nftVals = await transformFormVals(formValues, filePins);
-
-    console.log('nft vals are', nftVals);
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
   };

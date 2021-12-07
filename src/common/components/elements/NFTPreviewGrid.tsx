@@ -65,16 +65,6 @@ const Grid = styled.div`
   max-height: 500px;
 `;
 
-interface Props {
-  files: Array<File>;
-  index?: number;
-  width?: number;
-  removeFile?: (id: string) => void;
-  children?: any;
-  isMintStep?: boolean;
-  nftValues?: NFTValue[];
-}
-
 const getOverlayStatus = (index: number, nftValues?: NFTValue[]) => {
   const nftValue = nftValues && nftValues[index];
   const showFailedOverlay = nftValue && nftValue.mintStatus === MintStatus.FAILED;
@@ -114,6 +104,16 @@ const getFilePreview = (file: File) => {
     );
   }
 };
+
+interface Props {
+  files: Array<File>;
+  index?: number;
+  width?: number;
+  removeFile?: (id: string) => void;
+  children?: any;
+  isMintStep?: boolean;
+  nftValues?: NFTValue[];
+}
 
 export const NFTPreviewGrid = ({
   files,

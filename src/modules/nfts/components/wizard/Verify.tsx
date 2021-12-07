@@ -13,6 +13,7 @@ import {
   MAX_FILE_SIZE,
 } from '@/modules/nfts/components/wizard/Upload';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { VerifyFileUpload } from '@/common/components/elements/VerifyFileUpload';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -69,7 +70,7 @@ export default function Verify({
     <NavContainer previousStep={handlePrevious} goToStep={goToStep}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
-        <NFTPreviewGrid removeFile={removeFile} files={files} width={5}>
+        <VerifyFileUpload removeFile={removeFile} files={files} width={5}>
           {files.length < MAX_FILES && (
             <Upload
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
@@ -92,7 +93,7 @@ export default function Verify({
               </AddNFTButton>
             </Upload>
           )}
-        </NFTPreviewGrid>
+        </VerifyFileUpload>
         <Button type="primary" size="large" onClick={handleNext}>
           Looks good
         </Button>
