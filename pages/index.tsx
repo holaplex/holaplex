@@ -21,6 +21,7 @@ import {
 } from '@/common/constants/demoContent';
 import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
+import { useRouter } from 'next/router';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -57,7 +58,6 @@ const Pitch = styled.h2`
   letter-spacing: 0.2px;
   font-weight: 300;
   margin: 32px 0 40px 0;
-  color: rgba(253, 253, 253, 0.6);
 `;
 
 const Section = styled(Row)`
@@ -98,6 +98,8 @@ export interface DiscoveryToolState {
   featuredListings: Listing[];
   listingsOnDisplay: Listing[];
   filter: FilterActions;
+  // sort: keyof typeof sortFns;
+  filters: (keyof typeof filterFns)[];
   sortBy: SortingActions;
 }
 
@@ -157,7 +159,15 @@ export type DiscoveryToolAction =
   | {
       type: SortingActions;
     }
-  | { type: FilterActions };
+  | { type: FilterActions }
+  | {
+      type: 'FILTER';
+      payload: (keyof typeof filterFns)[];
+    }
+  | {
+      type: 'SORT';
+      payload: keyof typeof sortFns;
+    };
 
 const initialState = (): DiscoveryToolState => {
   return {
@@ -170,9 +180,38 @@ const initialState = (): DiscoveryToolState => {
     listingsOnDisplay: Array(8)
       .fill(null)
       .map((_, i) => generateListingShell(i.toString())),
+    filters: [],
     filter: 'FILTER_BY_SHOW_ALL',
     sortBy: 'SORT_BY_RECENTLY_LISTED',
   };
+};
+
+// : {
+//   [fnName: string]: (l:Listing) => boolean
+// }
+const filterFns = {
+  buy_now: (l: Listing) => !l.ends_at,
+  active_auctions: (l: Listing) => !!l.ends_at,
+};
+
+const sortFns = {
+  SORT_BY_RECENTLY_LISTED: (a: Listing, b: Listing) => a.created_at.localeCompare(b.created_at),
+  SORT_BY_RECENT_BID: (a: Listing, b: Listing) => {
+    if (!a.last_bid || !b.last_bid) return -1;
+    return a.last_bid - b.last_bid;
+  },
+  SORT_BY_PRICE_HIGH_TO_LOW: (a: Listing, b: Listing) => {
+    const aPrice = a.price_floor || a.instant_sale_price || 0;
+    const bPrice = b.price_floor || b.instant_sale_price || 0;
+    return bPrice - aPrice;
+  },
+  SORT_BY_PRICE_LOW_TO_HIGH: (a: Listing, b: Listing) => {
+    const aPrice = a.price_floor || a.instant_sale_price || 0;
+    const bPrice = b.price_floor || b.instant_sale_price || 0;
+    return aPrice - bPrice;
+  },
+  SORT_BY_ENDING_SOONEST: (a: Listing, b: Listing) =>
+    a.ends_at?.localeCompare(b.ends_at || '') || -1,
 };
 
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
@@ -181,7 +220,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
       return {
         ...state,
         listings: action.payload,
-        listingsOnDisplay: action.payload,
+        listingsOnDisplay: action.payload.sort(sortFns[state.sortBy]),
       };
     case 'SET_FEATURED_LISTINGS':
       return {
@@ -192,62 +231,49 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
       return {
         ...state,
         filter: 'FILTER_BY_SHOW_ALL',
-        listingsOnDisplay: state.listings,
+        listingsOnDisplay: state.listings.sort(sortFns[state.sortBy]),
       };
     case 'FILTER_BY_BUY_NOW':
       return {
         ...state,
         filter: 'FILTER_BY_BUY_NOW',
-        listingsOnDisplay: state.listings.filter((l) => !l.ends_at),
+        listingsOnDisplay: state.listings.filter((l) => !l.ends_at).sort(sortFns[state.sortBy]),
       };
     case 'FILTER_BY_ACTIVE_AUCTIONS':
       return {
         ...state,
         filter: 'FILTER_BY_ACTIVE_AUCTIONS',
-        listingsOnDisplay: state.listings.filter((l) => l.ends_at),
+        listingsOnDisplay: state.listings.filter((l) => l.ends_at).sort(sortFns[state.sortBy]),
       };
     case 'SORT_BY_RECENTLY_LISTED':
       return {
         ...state,
         sortBy: 'SORT_BY_RECENTLY_LISTED',
-        listingsOnDisplay: state.listings.sort((a, b) => a.created_at.localeCompare(b.created_at)),
+        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_RECENTLY_LISTED),
       };
     case 'SORT_BY_RECENT_BID':
       return {
         ...state,
         sortBy: 'SORT_BY_RECENT_BID',
-        listingsOnDisplay: state.listings.sort((a, b) => {
-          if (!a.last_bid || !b.last_bid) return -1;
-          return a.last_bid - b.last_bid;
-        }),
+        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_RECENT_BID),
       };
     case 'SORT_BY_ENDING_SOONEST':
       return {
         ...state,
         sortBy: 'SORT_BY_ENDING_SOONEST',
-        listingsOnDisplay: state.listings.sort(
-          (a, b) => a.ends_at?.localeCompare(b.ends_at || '') || -1
-        ),
+        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_ENDING_SOONEST),
       };
     case 'SORT_BY_PRICE_HIGH_TO_LOW':
       return {
         ...state,
         sortBy: 'SORT_BY_PRICE_HIGH_TO_LOW',
-        listingsOnDisplay: state.listings.sort((a, b) => {
-          const aPrice = a.price_floor || a.instant_sale_price || 0;
-          const bPrice = b.price_floor || b.instant_sale_price || 0;
-          return bPrice - aPrice;
-        }),
+        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_PRICE_HIGH_TO_LOW),
       };
     case 'SORT_BY_PRICE_LOW_TO_HIGH':
       return {
         ...state,
         sortBy: 'SORT_BY_PRICE_LOW_TO_HIGH',
-        listingsOnDisplay: state.listings.sort((a, b) => {
-          const aPrice = a.price_floor || a.instant_sale_price || 0;
-          const bPrice = b.price_floor || b.instant_sale_price || 0;
-          return aPrice - bPrice;
-        }),
+        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_PRICE_LOW_TO_HIGH),
       };
     default:
       throw new Error('Not a valid action for state');
@@ -256,6 +282,21 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
 
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
+  const router = useRouter();
+
+  //?search=hello&filters=active_auctions,&sort_by=ending_soonest
+  const defaultSearch = router.query.search || '';
+  // @ts-ignore
+  const defaultFilters = router.query['filters[]'] || router.query.filters?.split(',') || [];
+  const defaultFilters2 = router.query.filters2 || [];
+  const defaultSort = router.query.sort || 'recent_listings';
+
+  console.log({
+    defaultSearch,
+    defaultFilters,
+    defaultFilters2,
+    defaultSort,
+  });
 
   // @ts-ignore
   const [state, dispatch] = useReducer(reducer, initialState());
@@ -272,9 +313,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
       const allListings = await callMetaplexIndexerRPC('getListings');
       console.log('fetched', allListings.length, 'from rpc');
-      const hotListings = allListings
-        .filter((l) => !l.ended)
-        .sort((a, b) => a.created_at.localeCompare(b.created_at));
+      const hotListings = allListings.sort((a, b) => a.created_at.localeCompare(b.created_at));
       const featuredListings = hotListings.splice(0, 4);
 
       // @ts-ignore
@@ -309,7 +348,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <SectionTitle level={3}>Featured stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 4, gutter: 16 }}
+          grid={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 16 }}
           dataSource={featuredStorefronts.slice(0, 4)}
           renderItem={(feature) => (
             // @ts-ignore
@@ -350,10 +389,10 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             },
           }}
           grid={{
-            xs: 2,
+            xs: 1,
             sm: 2,
             md: 3,
-            lg: 4,
+            lg: 3,
             xl: 4,
             xxl: 4, // could even consider 5 for xxl
             gutter: 24,

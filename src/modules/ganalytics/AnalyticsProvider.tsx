@@ -1,8 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
+import { WalletContext } from '@/modules/wallet';
+import { Listing } from '@/common/components/elements/ListingPreview';
 
 export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || 'G-HLNC4C2YKN';
+
+type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
+type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
 
 interface AnalyticsUserProperties {
   // user dimensions
@@ -22,17 +27,19 @@ const AnalyticsContext = React.createContext<{
   track: (action: string, attributes: { [key: string]: any }) => void;
 } | null>(null);
 
-const gtag = window.gtag;
-
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
-  const { publicKey } = useWallet();
+  // @ts-ignore
+  let gtag: any;
   let solPrice = 0;
 
-  // user pubkey / id
-  const pubkey = publicKey?.toBase58() || '';
   //   const endpointName = ENDPOINTS.find((e) => e.endpoint === endpoint)?.name;
+  const { wallet } = useContext(WalletContext);
+  const pubkey = wallet?.pubkey || '';
+  // const pubkey = publicKey?.toBase58() || '';
   useEffect(() => {
+    gtag = window?.gtag;
     // const isStoreOwner = ownerAddress === publicKey?.toBase58();
+    // user pubkey / id
 
     setUserProperties({
       user_id: pubkey,
@@ -103,6 +110,59 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
             value,
           }),
       ...otherAttributes,
+    });
+  }
+
+  // used to track listings as ecommerce items
+  function trackEcommerce(action: GoogleEcommerceEvent, listings: Listing[]) {
+    gtag('event', action, {
+      currency: 'USD',
+      value: 7.77,
+      // sol_value:
+      // items: listings.map(l => ({
+      //     item_id: "SKU_12345",
+      //      item_name: "Stan and Friends Tee",
+      //      affiliation: "Google Store",
+      //      coupon: "SUMMER_FUN",
+      //      currency: "USD",
+      //      discount: 2.22,
+      //      index: 5,
+      //      item_brand: "Google",
+      //      item_category: "Apparel",
+      //      item_category2: "Adult",
+      //      item_category3: "Shirts",
+      //      item_category4: "Crew",
+      //      item_category5: "Short sleeve",
+      //      item_list_id: "related_products",
+      //      item_list_name: "Related Products",
+      //      item_variant: "green",
+      //      location_id: "L_12345",
+      //      price: 9.99,
+      //      quantity: 1
+      // }))
+      // [
+      //   {
+      //     item_id: "SKU_12345",
+      //     item_name: "Stan and Friends Tee",
+      //     affiliation: "Google Store",
+      //     coupon: "SUMMER_FUN",
+      //     currency: "USD",
+      //     discount: 2.22,
+      //     index: 5,
+      //     item_brand: "Google",
+      //     item_category: "Apparel",
+      //     item_category2: "Adult",
+      //     item_category3: "Shirts",
+      //     item_category4: "Crew",
+      //     item_category5: "Short sleeve",
+      //     item_list_id: "related_products",
+      //     item_list_name: "Related Products",
+      //     item_variant: "green",
+      //     location_id: "L_12345",
+      //     price: 9.99,
+      //     quantity: 1
+      //   }
+      // ]
     });
   }
 

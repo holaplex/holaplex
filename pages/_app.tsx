@@ -13,6 +13,7 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
+import { AnalyticsProvider } from '@/modules/ganalytics/AnalyticsProvider';
 
 const GOOGLE_ANALYTICS_ID = 'asdf'; //  process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
@@ -35,22 +36,22 @@ const AppLayout = styled(Layout)`
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  const track = (category: string, action: string) => {
-    if (isNil(GOOGLE_ANALYTICS_ID)) {
-      return;
-    }
+  // const track = (category: string, action: string) => {
+  //   if (isNil(GOOGLE_ANALYTICS_ID)) {
+  //     return;
+  //   }
 
-    window.gtag('event', action, {
-      event_category: category,
-      send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
-    });
-  };
+  //   window.gtag('event', action, {
+  //     event_category: category,
+  //     send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
+  //   });
+  // };
 
   const onRouteChanged = (path: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
       return;
     }
-
+    // keeping this for now to power old GA endpoint. The new one tracks pageviews automatically
     window.gtag('config', GOOGLE_ANALYTICS_ID, { page_path: path });
   };
 
@@ -77,42 +78,44 @@ function MyApp({ Component, pageProps }: AppProps) {
           <StorefrontProvider wallet={wallet}>
             {({ searching }) => {
               return (
-                <AppLayout>
-                  <AppHeader />
-                  <AppContent>
-                    <Loading loading={verifying || searching}>
-                      <>
-                        <Component {...pageProps} track={track} />
-                        <AppFooter justify="center">
-                          <Col span={24}>
-                            <Row>
-                              <Col xs={24} md={8}>
-                                <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
-                              </Col>
-                              <Col xs={0} md={8}>
-                                <Row justify="center">
-                                  Made with &#10084; on &#160;
-                                  <a
-                                    href="https://www.metaplex.com"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    Metaplex
-                                  </a>
-                                </Row>
-                              </Col>
-                              <Col xs={0} md={8}>
-                                <Row justify="end">
-                                  <SocialLinks />
-                                </Row>
-                              </Col>
-                            </Row>
-                          </Col>
-                        </AppFooter>
-                      </>
-                    </Loading>
-                  </AppContent>
-                </AppLayout>
+                <AnalyticsProvider>
+                  <AppLayout>
+                    <AppHeader />
+                    <AppContent>
+                      <Loading loading={verifying || searching}>
+                        <>
+                          <Component {...pageProps} />
+                          <AppFooter justify="center">
+                            <Col span={24}>
+                              <Row>
+                                <Col xs={24} md={8}>
+                                  <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
+                                </Col>
+                                <Col xs={0} md={8}>
+                                  <Row justify="center">
+                                    Made with &#10084; on &#160;
+                                    <a
+                                      href="https://www.metaplex.com"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      Metaplex
+                                    </a>
+                                  </Row>
+                                </Col>
+                                <Col xs={0} md={8}>
+                                  <Row justify="end">
+                                    <SocialLinks />
+                                  </Row>
+                                </Col>
+                              </Row>
+                            </Col>
+                          </AppFooter>
+                        </>
+                      </Loading>
+                    </AppContent>
+                  </AppLayout>
+                </AnalyticsProvider>
               );
             }}
           </StorefrontProvider>
