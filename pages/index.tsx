@@ -22,6 +22,8 @@ import {
 import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';
+import { CurrentListings } from '@/common/components/elements/CurrentListings';
+import { CurrentListingsVirtualized } from '@/common/components/elements/CurrentListingsVirtualized';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
@@ -67,6 +69,10 @@ const Section = styled(Row)`
 const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
   .ant-list-item {
     margin-bottom: 66px !important;
+
+    .ant-card {
+      border-radius: 8px !important;
+    }
   }
 
   .ant-list-grid {
@@ -177,9 +183,10 @@ const initialState = (): DiscoveryToolState => {
     featuredListings: Array(3)
       .fill(null)
       .map((_, i) => generateListingShell(i.toString())),
-    listingsOnDisplay: Array(8)
-      .fill(null)
-      .map((_, i) => generateListingShell(i.toString())),
+    listingsOnDisplay: [],
+    // Array(8)
+    //   .fill(null)
+    //   .map((_, i) => generateListingShell(i.toString())),
     filters: [],
     filter: 'FILTER_BY_SHOW_ALL',
     sortBy: 'SORT_BY_RECENTLY_LISTED',
@@ -348,7 +355,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <SectionTitle level={3}>Featured stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 16 }}
+          grid={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
           dataSource={featuredStorefronts.slice(0, 4)}
           renderItem={(feature) => (
             // @ts-ignore
@@ -379,7 +386,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
         <List
           pagination={{
-            // position: 'top',
+            //     // position: 'top',
             pageSize: 8,
             defaultCurrent: 1,
             showSizeChanger: false,
@@ -390,7 +397,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           }}
           grid={{
             xs: 1,
-            sm: 2,
+            sm: 1,
             md: 3,
             lg: 3,
             xl: 4,
@@ -407,6 +414,26 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           )}
         />
 
+        <div
+          id="scrollableDiv"
+          style={{
+            height: 1200,
+            overflow: 'auto',
+            // padding: '0 16px',
+            width: '100vw',
+            marginLeft: 'calc(-50vw + 50%)',
+            padding: '0 calc((100vw - 1400px)/2)',
+          }}
+        >
+          <CurrentListings
+            filters={state.filters}
+            sortBy={state.sortBy}
+            listings={state.listingsOnDisplay}
+          />
+        </div>
+        {/* <CurrentListingsVirtualized listings={state.listingsOnDisplay} /> */}
+
+        {/* CTA */}
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>

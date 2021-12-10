@@ -100,7 +100,6 @@ const Square = styled(Row)`
   }
 
   .ant-image-mask {
-    cursor: auto !important;
     background: rgba(0, 0, 0, 0) !important;
   }
 `;
@@ -116,12 +115,11 @@ const NFTPreview = styled(Image)`
 const ListingTitle = styled(Title)`
   margin-bottom: 4px !important;
   font-size: 18px !important;
+  flex-grow: 1;
   width: 12rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 
   + h3 {
+    flex-shrink: 0;
     font-size: 18px;
   }
 `;
@@ -129,8 +127,7 @@ const ListingTitle = styled(Title)`
 const ListingSubTitle = styled(Text)`
   font-size: 14px;
   opacity: 0.6;
-
-  width: 10rem;
+  width: 8rem;
 
   + span {
     font-size: 14px;
@@ -157,7 +154,7 @@ function Countdown(props: { endTime: string }) {
     return () => clearTimeout(timer);
   });
 
-  const format = timeLeft.toFormat('dd:hh:mm:ss');
+  const format = timeLeft.toFormat('hh:mm:ss');
 
   return <span>{format}</span>;
 }
@@ -167,32 +164,18 @@ function AuctionCountdown(props: { endTime: string }) {
   const timeDiffMs = new Date(props.endTime).getTime() - Date.now();
 
   if (timeDiffMs < 0) return <span></span>;
-  // Ended at {props.endTime}
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
-  return <Countdown endTime={props.endTime} />;
-
   if (lessThanADay) {
     // only return the "expensive" Countdown component if required
     return <Countdown endTime={props.endTime} />;
   } else {
-    // TODO: Cleanup
-    const timeLeft = calculateTimeLeft(props.endTime);
-    const daysLeft = timeLeft.days;
-    console.log('auction duration', {
-      timeDiffMs,
-      t,
-      timeLeft,
-      endTime: props.endTime,
-      dt: new Date(props.endTime),
-      daysLeft,
-      format: timeLeft.toFormat('dd:hh:mm:ss'),
-    });
+    const timeLeft = calculateTimeLeft(props.endTime).toFormat('dd:hh:mm:ss');
+
+    const daysLeft2 = Number(timeLeft.slice(0, 2));
 
     return (
       <span>
-        {/* {'in ' + timeLeft.days + ' day'}
-        {timeLeft.days > 1 && 's'} */}
-        {timeLeft.toFormat('dd:hh:mm:ss')}
+        Ends in {daysLeft2} day{daysLeft2 > 1 && 's'}
       </span>
     );
   }
@@ -258,11 +241,11 @@ export function ListingPreview(listing: Listing) {
       const res = await fetch(nftMetadata.uri);
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
-        console.log('listing + nft', {
-          a_name: nftJson.name,
-          ...listing,
-          nft: nftJson,
-        });
+        // console.log('listing + nft', {
+        //   a_name: nftJson.name,
+        //   ...listing,
+        //   nft: nftJson,
+        // });
         setNFT(nftJson);
         // listing.nftMetadata = nft;
       }
@@ -349,11 +332,11 @@ export function ListingPreview(listing: Listing) {
             />
           )}
         </Square>
-        <Row justify="space-between" align="middle">
+        <Row justify="space-between" align="middle" wrap={false}>
           <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
             {nftMetadata?.name}
           </ListingTitle>
-          <h3>◎ {displayPrice}</h3>
+          <h3>◎{displayPrice}</h3>
         </Row>
         <Row justify="space-between">
           <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>

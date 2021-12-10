@@ -5,6 +5,7 @@ import staticListings from 'fixtures/listings.json';
 function initialListingFilter(listing: Listing) {
   if (
     listing.ended || // past listings
+    (listing.ends_at && new Date(listing.ends_at).getTime() < Date.now()) || // auctions that ended, but .ended flag not flipped
     (!listing.ends_at && listing.last_bid) || // remove instant buys that have ended
     (listing.ends_at && new Date(listing.ends_at).getTime() - Date.now() > 86400000 * 31) || // listings more than 31 days in the future
     (listing?.price_floor || 0) * 0.000000001 > 2000
@@ -20,7 +21,8 @@ export async function callMetaplexIndexerRPC(
   params: string[] = []
 ): Promise<Listing[]> {
   try {
-    const res = await fetch('http://localhost:4000', {
+    const indexerURL = 'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
+    const res = await fetch(indexerURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
