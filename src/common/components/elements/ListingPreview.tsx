@@ -196,6 +196,11 @@ const CustomImageMask = styled.div`
   cursor: pointer;
 `;
 
+const captureCid = /https:\/\/(.*).ipfs.dweb.*$/
+const maybeCDN = (uri: string) => (
+  uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IPFS_CDN_HOST}/$1`)
+)
+
 export function ListingPreview(listing: Listing) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/#/auction/${listing.address}`;
 
@@ -207,11 +212,9 @@ export function ListingPreview(listing: Listing) {
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
-      console.log('fetching nft data for', nftMetadata?.name, nftMetadata.uri);
-      const res = await fetch(nftMetadata.uri);
+      const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
         const nftJson = await res.json();
-        console.log('nftJson', nftJson);
         setNFT(nftJson);
       }
     }
@@ -235,7 +238,7 @@ export function ListingPreview(listing: Listing) {
           <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
         ) : (
           <NFTPreview
-            src={nft?.image}
+            src={maybeCDN(nft?.image)}
             preview={{
               visible: showArtPreview,
               mask: (
