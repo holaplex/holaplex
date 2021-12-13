@@ -28,11 +28,13 @@ const StyledDropdownTrigger = styled.div`
 export function DiscoveryRadioDropdown({
   label,
   value,
+  action,
   options,
   dispatch,
 }: {
   label: string;
-  value: string;
+  action: 'FILTER' | 'SORT';
+  value: string | string[];
   options: (SortingOption | FilterOption)[];
   dispatch: React.Dispatch<DiscoveryToolAction>;
 }) {
@@ -40,7 +42,10 @@ export function DiscoveryRadioDropdown({
     <Dropdown
       overlay={
         <Menu>
-          <Radio.Group onChange={(e) => dispatch({ type: e.target.value })} value={value}>
+          <Radio.Group
+            onChange={(e) => dispatch({ type: action, payload: e.target.value })}
+            value={value}
+          >
             {options.map((o) => (
               <Menu.Item key={o.value}>
                 <Radio value={o.value}>{o.label}</Radio>

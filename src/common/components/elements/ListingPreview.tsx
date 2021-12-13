@@ -65,9 +65,9 @@ export interface Listing {
   // ownerAddress: string; // not sure why this is not in the notion spec, but I'm sure Kyle mentioned it
 }
 
+// width: 100%;
+// height: 100%;
 const ListingPreviewContainer = styled(Card)`
-  width: 100%;
-  height: 100%;
   margin-bottom: 96px;
 
   background: black !important;
@@ -119,6 +119,8 @@ const ListingTitle = styled(Title)`
   width: 12rem;
 
   + h3 {
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
     font-size: 18px;
   }
@@ -226,6 +228,12 @@ const CustomImageMask = styled.div`
   cursor: pointer;
 `;
 
+const captureCid = /https:\/\/(.*).ipfs.dweb.*$/;
+const maybeCDN = (uri: string) => {
+  const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IPFS_CDN_HOST}/$1`);
+  return cdnURI ?? uri;
+};
+
 export function ListingPreview(listing: Listing) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/#/auction/${listing.address}`;
 
@@ -237,17 +245,16 @@ export function ListingPreview(listing: Listing) {
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
-      // console.log('fetching nft data for', nftMetadata?.name, nftMetadata.uri);
-      const res = await fetch(nftMetadata.uri);
+      // console.log('fetching', {
+      //   host: process.env.NEXT_PUBLIC_IPFS_CDN_HOST,
+      //   uri: nftMetadata.uri,
+      //   cdn: maybeCDN(nftMetadata.uri),
+      // });
+      const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
-        const nftJson: NFTMetadata = await res.json();
-        // console.log('listing + nft', {
-        //   a_name: nftJson.name,
-        //   ...listing,
-        //   nft: nftJson,
-        // });
+        const nftJson = await res.json();
         setNFT(nftJson);
-        // listing.nftMetadata = nft;
+        // console.log(nftJson);
       }
     }
     if (nftMetadata?.uri) {
@@ -258,7 +265,11 @@ export function ListingPreview(listing: Listing) {
   // shows up to 4 decimals, but removes pointless 0s
   const displayPrice = Number(
     (
-      ((listing.price_floor ? listing.price_floor : listing.instant_sale_price) || 0) * 0.000000001
+      ((listing.last_bid
+        ? listing.last_bid
+        : listing.price_floor
+        ? listing.price_floor
+        : listing.instant_sale_price) || 0) * 0.000000001
     ).toFixed(2)
   );
 
@@ -271,7 +282,7 @@ export function ListingPreview(listing: Listing) {
             <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
           ) : (
             <NFTPreview
-              src={nft?.image}
+              src={maybeCDN(nft?.image)}
               preview={{
                 visible: showArtPreview,
                 mask: (

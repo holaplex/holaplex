@@ -2,13 +2,16 @@ import { Listing } from '@/common/components/elements/ListingPreview';
 import { toast } from 'react-toastify';
 import staticListings from 'fixtures/listings.json';
 
+const storeBlacklist: string[] = [];
+
 function initialListingFilter(listing: Listing) {
   if (
     listing.ended || // past listings
     (listing.ends_at && new Date(listing.ends_at).getTime() < Date.now()) || // auctions that ended, but .ended flag not flipped
     (!listing.ends_at && listing.last_bid) || // remove instant buys that have ended
     (listing.ends_at && new Date(listing.ends_at).getTime() - Date.now() > 86400000 * 31) || // listings more than 31 days in the future
-    (listing?.price_floor || 0) * 0.000000001 > 2000
+    (listing?.price_floor || 0) * 0.000000001 > 2000 ||
+    storeBlacklist.includes(listing.subdomain)
   ) {
     return false;
   }
@@ -21,7 +24,7 @@ export async function callMetaplexIndexerRPC(
   params: string[] = []
 ): Promise<Listing[]> {
   try {
-    const indexerURL = 'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
+    const indexerURL = 'http://localhost:4000'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
     const res = await fetch(indexerURL, {
       method: 'POST',
       headers: {
@@ -36,9 +39,10 @@ export async function callMetaplexIndexerRPC(
     });
 
     const json: { id: string; result: Listing[] } = await res.json();
+    console.log(method, json.result.length, 'from rpc', indexerURL);
 
     const listings = json.result.filter((l) => initialListingFilter(l));
-
+    console.log('after filters', listings.length, 'from rpc', indexerURL);
     return listings;
 
     // just catching everything below instead

@@ -7,29 +7,20 @@ import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featur
 import { List, Space, Row, Col, Typography, RowProps, ListProps, Image } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
-import {
-  Listing,
-  ListingPreview,
-  SkeletonListing,
-} from '@/common/components/elements/ListingPreview';
+import { Listing } from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
-import {
-  allDemoStorefronts,
-  demoFeaturedListings,
-  demoListings,
-  generateListingShell,
-} from '@/common/constants/demoContent';
+import { generateListingShell } from '@/common/constants/demoContent';
 import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';
 import { CurrentListings } from '@/common/components/elements/CurrentListings';
-import { CurrentListingsVirtualized } from '@/common/components/elements/CurrentListingsVirtualized';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const { Title } = Typography;
 
 const ContentCol = styled(Col)`
   max-width: 1400px;
+  overflow: auto !important;
 `;
 
 const SectionTitle = styled(Title)`
@@ -298,37 +289,33 @@ export default function Home({ featuredStorefronts }: HomeProps) {
   const defaultFilters2 = router.query.filters2 || [];
   const defaultSort = router.query.sort || 'recent_listings';
 
-  console.log({
-    defaultSearch,
-    defaultFilters,
-    defaultFilters2,
-    defaultSort,
-  });
+  // console.log({
+  //   defaultSearch,
+  //   defaultFilters,
+  //   defaultFilters2,
+  //   defaultSort,
+  // });
 
   // @ts-ignore
   const [state, dispatch] = useReducer(reducer, initialState());
 
-  useEffect(() => {
-    console.log('about to call rpc');
-    async function getListings() {
-      // new Promise<Listing[]>((resolve) =>
-      //   setTimeout(() => resolve(demoListings as any), 3000 + Math.random() * 10000)
-      // ).then((als) => {
-      //   // @ts-ignore
-      //   dispatch({ type: 'SET_LISTINGS', payload: als });
-      // });
+  const [allListings2, setAllListings] = useState<Listing[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
 
-      const allListings = await callMetaplexIndexerRPC('getListings');
-      console.log('fetched', allListings.length, 'from rpc');
+  // get all listings initially
+  useEffect(() => {
+    async function getListings() {
+      const allListings = await callMetaplexIndexerRPC('getFeaturedListings');
       const hotListings = allListings.sort((a, b) => a.created_at.localeCompare(b.created_at));
       const featuredListings = hotListings.splice(0, 4);
 
       // @ts-ignore
-      dispatch({ type: 'SET_LISTINGS', payload: hotListings });
+      // dispatch({ type: 'SET_LISTINGS', payload: hotListings });
       // @ts-ignore
-      dispatch({ type: 'SET_FEATURED_LISTINGS', payload: featuredListings });
+      // dispatch({ type: 'SET_FEATURED_LISTINGS', payload: featuredListings });
+      setFeaturedListings(featuredListings);
+      setAllListings(hotListings);
     }
-
     getListings();
   }, []);
 
@@ -349,7 +336,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </Space>
           </Marketing>
           <Col xs={0} md={8}>
-            <FeaturedListingCarousel featuredListings={state.featuredListings} />
+            <FeaturedListingCarousel featuredListings={featuredListings} />
           </Col>
         </Section>
 
@@ -366,83 +353,17 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           )}
         />
 
-        <Row justify="space-between" align="middle">
-          <Title level={3}>Current listings</Title>
-          <Space direction="horizontal">
-            <DiscoveryRadioDropdown
-              label="Filter"
-              value={state.filter}
-              options={filterOptions}
-              dispatch={dispatch}
-            />
-            <DiscoveryRadioDropdown
-              label="Sort"
-              value={state.sortBy}
-              options={sortingOptions}
-              dispatch={dispatch}
-            />
-          </Space>
-        </Row>
-
-        <List
-          pagination={{
-            //     // position: 'top',
-            pageSize: 8,
-            defaultCurrent: 1,
-            showSizeChanger: false,
-            style: {
-              margin: '24px auto',
-              textAlign: 'center',
-            },
-          }}
-          grid={{
-            xs: 1,
-            sm: 1,
-            md: 3,
-            lg: 3,
-            xl: 4,
-            xxl: 4, // could even consider 5 for xxl
-            gutter: 24,
-          }}
-          dataSource={state.listingsOnDisplay}
-          renderItem={(listing, i) => (
-            // @ts-ignore
-            <List.Item key={listing?.address || i}>
-              {/* @ts-ignore */}
-              {!listing.subdomain ? <SkeletonListing /> : <ListingPreview {...listing} />}
-            </List.Item>
-          )}
-        />
-
-        <div
-          id="scrollableDiv"
-          style={{
-            height: 1200,
-            overflow: 'auto',
-            // padding: '0 16px',
-            width: '100vw',
-            marginLeft: 'calc(-50vw + 50%)',
-            padding: '0 calc((100vw - 1400px)/2)',
-          }}
-        >
-          <CurrentListings
-            filters={state.filters}
-            sortBy={state.sortBy}
-            listings={state.listingsOnDisplay}
-          />
-        </div>
-        {/* <CurrentListingsVirtualized listings={state.listingsOnDisplay} /> */}
-
-        {/* CTA */}
-        <Section justify="center" align="middle">
-          <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button size="large" onClick={() => connect()}>
-              Create Your Store
-            </Button>
-          </Space>
-        </Section>
+        <CurrentListings />
       </ContentCol>
+      {/* CTA */}
+      <Section justify="center" align="middle">
+        <Space direction="vertical" align="center">
+          <Title level={3}>Launch your own Solana NFT store today!</Title>
+          <Button size="large" onClick={() => connect()}>
+            Create Your Store
+          </Button>
+        </Space>
+      </Section>
     </Row>
   );
 }
