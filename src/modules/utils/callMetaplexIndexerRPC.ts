@@ -4,6 +4,7 @@ import staticListings from 'fixtures/listings.json';
 
 const storeBlacklist: string[] = [];
 
+// will eventually be moved to server
 function initialListingFilter(listing: Listing) {
   if (
     listing.ended || // past listings
@@ -20,11 +21,14 @@ function initialListingFilter(listing: Listing) {
 }
 
 export async function callMetaplexIndexerRPC(
-  method: string,
+  method: 'getListings' | 'getFeaturedListings',
   params: string[] = []
 ): Promise<Listing[]> {
   try {
-    const indexerURL = 'http://localhost:4000'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
+    // just a hack while we wait for the rpc endpont
+    if (method === 'getFeaturedListings') return staticListings.result.slice(0, 4);
+
+    const indexerURL = 'https://metaplex-indexer-staging.herokuapp.com/'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
     const res = await fetch(indexerURL, {
       method: 'POST',
       headers: {
@@ -39,22 +43,16 @@ export async function callMetaplexIndexerRPC(
     });
 
     const json: { id: string; result: Listing[] } = await res.json();
-    console.log(method, json.result.length, 'from rpc', indexerURL);
+    // console.log(method, json.result.length, 'from rpc', indexerURL);
 
     const listings = json.result.filter((l) => initialListingFilter(l));
-    console.log('after filters', listings.length, 'from rpc', indexerURL);
+    // console.log('after filters', listings.length, 'from rpc', indexerURL);
     return listings;
-
-    // just catching everything below instead
-    // if (res.ok) {
-    //   const json = await res.json();
-    // }
   } catch (error) {
     console.error(error);
     toast('There was an error fetching listing data, please try again');
     const listings = staticListings.result.filter((l) => initialListingFilter(l));
 
     return listings;
-    // throw new Error('RPC error');
   }
 }

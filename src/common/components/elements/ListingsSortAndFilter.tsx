@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Button, Dropdown, Space, Menu, Checkbox, Radio } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { DiscoveryToolState, DiscoveryToolAction, SortingOption, FilterOption } from 'pages';
+import { DiscoveryToolAction, FilterOption, SortingOption } from './CurrentListings';
 
 const StyledDropdownTrigger = styled.div`
   padding: 10px 16px;
@@ -25,6 +25,7 @@ const StyledDropdownTrigger = styled.div`
   }
 `;
 
+// will need to refactor out a separate Filter component
 export function DiscoveryRadioDropdown({
   label,
   value,
@@ -47,7 +48,7 @@ export function DiscoveryRadioDropdown({
             value={value}
           >
             {options.map((o) => (
-              <Menu.Item key={o.value}>
+              <Menu.Item key={o.value as string}>
                 <Radio value={o.value}>{o.label}</Radio>
               </Menu.Item>
             ))}

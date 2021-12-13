@@ -28,7 +28,7 @@ interface Item {
 interface NFTMetadata {
   description: string;
   external_url: string;
-  image: string; // url to image
+  image: string; // url to image, often ipfs, sometimes arweave
   name: string;
   seller_fee_basis_points: number; // in thousands. Prbably need to divide by 100
   symbol: string;
@@ -43,14 +43,11 @@ interface NFTMetadata {
 }
 
 export interface Listing {
-  address: string; // assuming this is a unique uri for the auction
-  //metadata: Metadata[]; // I don't understand if this is available from the start or not. Assuming it is for now.
-
-  // previewImageURL: string;
+  address: string;
   ends_at?: string | null; // ISO Date
   created_at: string; // ISO Date
   ended: boolean;
-  last_bid?: number | null; // unix timestamp?
+  last_bid?: number | null; // lamport price of last bid (thought it was a timestamp at first)
   price_floor?: number | null;
   total_uncancelled_bids?: number | null;
   instant_sale_price?: number | null; // is often 10000000000
@@ -58,15 +55,8 @@ export interface Listing {
   storeTitle: string;
   items: Item[]; // NFT metadata, including URI to fetch more data
   nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
-  // storefrontSubdomain: string;
-  // storefront?: Storefront;
-  // bids: Bid[];
-  // demoStoreFront?: DemoStorefront; // for easier demo use
-  // ownerAddress: string; // not sure why this is not in the notion spec, but I'm sure Kyle mentioned it
 }
 
-// width: 100%;
-// height: 100%;
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
 
@@ -239,22 +229,18 @@ export function ListingPreview(listing: Listing) {
 
   const [showArtPreview, setShowArtPreview] = useState(false);
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
-  // if (!listing || !listing.subdomain || !listing.address || !listing.items)
-  //   return <SkeletonListing />;
-  // console.log(listing);
+
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
-      // console.log('fetching', {
-      //   host: process.env.NEXT_PUBLIC_IPFS_CDN_HOST,
-      //   uri: nftMetadata.uri,
-      //   cdn: maybeCDN(nftMetadata.uri),
-      // });
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
         const nftJson = await res.json();
+        console.log({
+          ...listing,
+          nftJson: nftJson,
+        });
         setNFT(nftJson);
-        // console.log(nftJson);
       }
     }
     if (nftMetadata?.uri) {
@@ -273,7 +259,6 @@ export function ListingPreview(listing: Listing) {
     ).toFixed(2)
   );
 
-  // TODO: revert to adding loading animation for image and title in the real listing
   return (
     <a href={storeHref} rel="nofollow noreferrer" target="_blank">
       <ListingPreviewContainer>
@@ -293,44 +278,7 @@ export function ListingPreview(listing: Listing) {
                       setShowArtPreview(true);
                     }}
                   >
-                    {/* <ZoomInOutlined style={{ fontSize: '1.5rem' }} /> */}
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <rect width="24" height="24" rx="4" fill="white" />
-                      <path
-                        d="M13.75 6.75H17.25V10.25"
-                        stroke="black"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M10.25 17.25H6.75V13.75"
-                        stroke="black"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M17.25 6.75L13.1667 10.8333"
-                        stroke="black"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M6.75 17.25L10.8333 13.1667"
-                        stroke="black"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <CustomExpandIcon />
                   </CustomImageMask>
                 ),
                 onVisibleChange: (visible, prevVisible) => {
@@ -359,3 +307,37 @@ export function ListingPreview(listing: Listing) {
     </a>
   );
 }
+
+const CustomExpandIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="4" fill="white" />
+    <path
+      d="M13.75 6.75H17.25V10.25"
+      stroke="black"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M10.25 17.25H6.75V13.75"
+      stroke="black"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M17.25 6.75L13.1667 10.8333"
+      stroke="black"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M6.75 17.25L10.8333 13.1667"
+      stroke="black"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

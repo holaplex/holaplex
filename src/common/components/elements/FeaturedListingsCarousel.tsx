@@ -1,6 +1,7 @@
 import { Row, Carousel } from 'antd';
 import { Listing, ListingPreview } from './ListingPreview';
 
+// still some style cleanup to do here.... :(
 export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) {
   return (
     <div style={{ maxWidth: 500 }}>

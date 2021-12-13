@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState, useReducer } from 'react';
 import styled from 'styled-components';
-import { drop } from 'ramda';
 import sv from '@/constants/styles';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import { List, Space, Row, Col, Typography, RowProps, ListProps, Image } from 'antd';
+import { List, Space, Row, Col, Typography, ListProps } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { Listing } from '@/common/components/elements/ListingPreview';
@@ -14,13 +13,12 @@ import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSor
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';
 import { CurrentListings } from '@/common/components/elements/CurrentListings';
+const { Title } = Typography;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
-const { Title } = Typography;
 
 const ContentCol = styled(Col)`
   max-width: 1400px;
-  overflow: auto !important;
 `;
 
 const SectionTitle = styled(Title)`
@@ -90,233 +88,18 @@ interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
 }
 
-export interface DiscoveryToolState {
-  listings: Listing[];
-  featuredListings: Listing[];
-  listingsOnDisplay: Listing[];
-  filter: FilterActions;
-  // sort: keyof typeof sortFns;
-  filters: (keyof typeof filterFns)[];
-  sortBy: SortingActions;
-}
-
-type Action = {
-  type: string;
-  payload?: string | Listing[];
-};
-
-const sortingValues = [
-  'SORT_BY_RECENT_BID',
-  'SORT_BY_PRICE_HIGH_TO_LOW',
-  'SORT_BY_PRICE_LOW_TO_HIGH',
-  'SORT_BY_ENDING_SOONEST',
-  'SORT_BY_RECENTLY_LISTED',
-] as const;
-
-type SortingActions = typeof sortingValues[number];
-export type SortingOption = { value: SortingActions; label: string };
-const sortingOptions: SortingOption[] = [
-  { value: 'SORT_BY_RECENT_BID', label: 'Recent bids' },
-  { value: 'SORT_BY_PRICE_HIGH_TO_LOW', label: 'Expensive' },
-  { value: 'SORT_BY_PRICE_LOW_TO_HIGH', label: 'Cheap' },
-  { value: 'SORT_BY_ENDING_SOONEST', label: 'Ending soonest' },
-  { value: 'SORT_BY_RECENTLY_LISTED', label: 'Recent listings' },
-];
-
-// type SortingValues2 = typeof (sortingOptions.map(o => o.value))[number];
-// const v: SortingValues2 = 'SORT_BY_PRICE_HIGH_TO_LOW'
-
-const filterValues = [
-  'FILTER_BY_SHOW_ALL',
-  'FILTER_BY_ACTIVE_AUCTIONS',
-  'FILTER_BY_BUY_NOW',
-] as const;
-
-type FilterActions = typeof filterValues[number];
-export type FilterOption = { value: FilterActions; label: string };
-const filterOptions: FilterOption[] = [
-  { value: 'FILTER_BY_SHOW_ALL', label: 'Show all' },
-  { value: 'FILTER_BY_ACTIVE_AUCTIONS', label: 'Active auctions' },
-  { value: 'FILTER_BY_BUY_NOW', label: 'Buy now' },
-];
-
-export type DiscoveryToolAction =
-  | {
-      type: 'SET_LISTINGS';
-      payload: Listing[];
-    }
-  | {
-      type: 'SET_FEATURED_LISTINGS';
-      payload: Listing[];
-    }
-  | {
-      type: 'SET_STOREFRONTS';
-      // payload
-    }
-  | {
-      type: SortingActions;
-    }
-  | { type: FilterActions }
-  | {
-      type: 'FILTER';
-      payload: (keyof typeof filterFns)[];
-    }
-  | {
-      type: 'SORT';
-      payload: keyof typeof sortFns;
-    };
-
-const initialState = (): DiscoveryToolState => {
-  return {
-    listings: Array(8)
-      .fill(null)
-      .map((_, i) => generateListingShell(i.toString())),
-    featuredListings: Array(3)
-      .fill(null)
-      .map((_, i) => generateListingShell(i.toString())),
-    listingsOnDisplay: [],
-    // Array(8)
-    //   .fill(null)
-    //   .map((_, i) => generateListingShell(i.toString())),
-    filters: [],
-    filter: 'FILTER_BY_SHOW_ALL',
-    sortBy: 'SORT_BY_RECENTLY_LISTED',
-  };
-};
-
-// : {
-//   [fnName: string]: (l:Listing) => boolean
-// }
-const filterFns = {
-  buy_now: (l: Listing) => !l.ends_at,
-  active_auctions: (l: Listing) => !!l.ends_at,
-};
-
-const sortFns = {
-  SORT_BY_RECENTLY_LISTED: (a: Listing, b: Listing) => a.created_at.localeCompare(b.created_at),
-  SORT_BY_RECENT_BID: (a: Listing, b: Listing) => {
-    if (!a.last_bid || !b.last_bid) return -1;
-    return a.last_bid - b.last_bid;
-  },
-  SORT_BY_PRICE_HIGH_TO_LOW: (a: Listing, b: Listing) => {
-    const aPrice = a.price_floor || a.instant_sale_price || 0;
-    const bPrice = b.price_floor || b.instant_sale_price || 0;
-    return bPrice - aPrice;
-  },
-  SORT_BY_PRICE_LOW_TO_HIGH: (a: Listing, b: Listing) => {
-    const aPrice = a.price_floor || a.instant_sale_price || 0;
-    const bPrice = b.price_floor || b.instant_sale_price || 0;
-    return aPrice - bPrice;
-  },
-  SORT_BY_ENDING_SOONEST: (a: Listing, b: Listing) =>
-    a.ends_at?.localeCompare(b.ends_at || '') || -1,
-};
-
-function reducer(state: DiscoveryToolState, action: DiscoveryToolAction) {
-  switch (action.type) {
-    case 'SET_LISTINGS':
-      return {
-        ...state,
-        listings: action.payload,
-        listingsOnDisplay: action.payload.sort(sortFns[state.sortBy]),
-      };
-    case 'SET_FEATURED_LISTINGS':
-      return {
-        ...state,
-        featuredListings: action.payload,
-      };
-    case 'FILTER_BY_SHOW_ALL':
-      return {
-        ...state,
-        filter: 'FILTER_BY_SHOW_ALL',
-        listingsOnDisplay: state.listings.sort(sortFns[state.sortBy]),
-      };
-    case 'FILTER_BY_BUY_NOW':
-      return {
-        ...state,
-        filter: 'FILTER_BY_BUY_NOW',
-        listingsOnDisplay: state.listings.filter((l) => !l.ends_at).sort(sortFns[state.sortBy]),
-      };
-    case 'FILTER_BY_ACTIVE_AUCTIONS':
-      return {
-        ...state,
-        filter: 'FILTER_BY_ACTIVE_AUCTIONS',
-        listingsOnDisplay: state.listings.filter((l) => l.ends_at).sort(sortFns[state.sortBy]),
-      };
-    case 'SORT_BY_RECENTLY_LISTED':
-      return {
-        ...state,
-        sortBy: 'SORT_BY_RECENTLY_LISTED',
-        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_RECENTLY_LISTED),
-      };
-    case 'SORT_BY_RECENT_BID':
-      return {
-        ...state,
-        sortBy: 'SORT_BY_RECENT_BID',
-        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_RECENT_BID),
-      };
-    case 'SORT_BY_ENDING_SOONEST':
-      return {
-        ...state,
-        sortBy: 'SORT_BY_ENDING_SOONEST',
-        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_ENDING_SOONEST),
-      };
-    case 'SORT_BY_PRICE_HIGH_TO_LOW':
-      return {
-        ...state,
-        sortBy: 'SORT_BY_PRICE_HIGH_TO_LOW',
-        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_PRICE_HIGH_TO_LOW),
-      };
-    case 'SORT_BY_PRICE_LOW_TO_HIGH':
-      return {
-        ...state,
-        sortBy: 'SORT_BY_PRICE_LOW_TO_HIGH',
-        listingsOnDisplay: state.listingsOnDisplay.sort(sortFns.SORT_BY_PRICE_LOW_TO_HIGH),
-      };
-    default:
-      throw new Error('Not a valid action for state');
-  }
-}
-
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
-  const router = useRouter();
 
-  //?search=hello&filters=active_auctions,&sort_by=ending_soonest
-  const defaultSearch = router.query.search || '';
-  // @ts-ignore
-  const defaultFilters = router.query['filters[]'] || router.query.filters?.split(',') || [];
-  const defaultFilters2 = router.query.filters2 || [];
-  const defaultSort = router.query.sort || 'recent_listings';
-
-  // console.log({
-  //   defaultSearch,
-  //   defaultFilters,
-  //   defaultFilters2,
-  //   defaultSort,
-  // });
-
-  // @ts-ignore
-  const [state, dispatch] = useReducer(reducer, initialState());
-
-  const [allListings2, setAllListings] = useState<Listing[]>([]);
   const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
 
-  // get all listings initially
   useEffect(() => {
-    async function getListings() {
-      const allListings = await callMetaplexIndexerRPC('getFeaturedListings');
-      const hotListings = allListings.sort((a, b) => a.created_at.localeCompare(b.created_at));
-      const featuredListings = hotListings.splice(0, 4);
-
-      // @ts-ignore
-      // dispatch({ type: 'SET_LISTINGS', payload: hotListings });
-      // @ts-ignore
-      // dispatch({ type: 'SET_FEATURED_LISTINGS', payload: featuredListings });
+    async function getFeaturedListings() {
+      const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
       setFeaturedListings(featuredListings);
-      setAllListings(hotListings);
     }
-    getListings();
+
+    getFeaturedListings();
   }, []);
 
   return (

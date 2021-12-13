@@ -1,21 +1,30 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { List, message, Avatar, Skeleton, Divider, Row, Space, Typography } from 'antd';
+import { List, Row, Space, Typography } from 'antd';
 import { Listing, ListingPreview, SkeletonListing } from './ListingPreview';
 import { generateListingShell } from '@/common/constants/demoContent';
 import { DiscoveryRadioDropdown } from './ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 const { Title } = Typography;
 
-const pageSize = 8;
+const pageSize = 12;
 
-type SortByAction = keyof typeof sortByFns;
-type FilterAction = keyof typeof filterFns;
+const FilterValues = ['SHOW_ALL', 'BUY_NOW', 'ACTIVE_AUCTIONS'] as const;
+type FilterAction = typeof FilterValues[number]; // keyof typeof filterFns;
+
+const SortByValues = [
+  'RECENTLY_LISTED',
+  'RECENT_BID',
+  'PRICE_HIGH_TO_LOW',
+  'PRICE_LOW_TO_HIGH',
+  'ENDING_SOONEST',
+] as const;
+type SortByAction = typeof SortByValues[number]; // keyof typeof sortByFns;
 
 export interface DiscoveryToolState {
-  listings: Listing[];
+  allListings: Listing[];
   filteredListings: Listing[];
   listingsOnDisplay: Listing[];
   cursor: number;
@@ -23,50 +32,54 @@ export interface DiscoveryToolState {
   sortBy: SortByAction; //  SortingActions;
 }
 
-const sortByFns = {
-  SORT_BY_RECENTLY_LISTED: (a: Listing, b: Listing) => a.created_at.localeCompare(b.created_at),
-  SORT_BY_RECENT_BID: (a: Listing, b: Listing) => {
+export type FilterOption = { value: FilterAction[]; label: string };
+const filterOptions: FilterOption[] = [
+  { value: ['SHOW_ALL'], label: 'Show all' },
+  { value: ['ACTIVE_AUCTIONS'], label: 'Active auctions' },
+  { value: ['BUY_NOW'], label: 'Buy now' },
+];
+
+const filterFns: {
+  [fnName in FilterAction]: (l: Listing) => boolean;
+} = {
+  SHOW_ALL: (l) => true,
+  BUY_NOW: (l) => !l.ends_at,
+  ACTIVE_AUCTIONS: (l) => !!l.ends_at,
+};
+
+const sortByFns: {
+  [fnName in SortByAction]: (a: Listing, b: Listing) => number;
+} = {
+  RECENTLY_LISTED: (a, b) => a.created_at.localeCompare(b.created_at),
+  RECENT_BID: (a, b) => {
     if (!a.last_bid || !b.last_bid) return -1;
     return a.last_bid - b.last_bid;
   },
-  SORT_BY_PRICE_HIGH_TO_LOW: (a: Listing, b: Listing) => {
+  PRICE_HIGH_TO_LOW: (a, b) => {
     const aPrice = a.price_floor || a.instant_sale_price || 0;
     const bPrice = b.price_floor || b.instant_sale_price || 0;
     return bPrice - aPrice;
   },
-  SORT_BY_PRICE_LOW_TO_HIGH: (a: Listing, b: Listing) => {
+  PRICE_LOW_TO_HIGH: (a, b) => {
     const aPrice = a.price_floor || a.instant_sale_price || 0;
     const bPrice = b.price_floor || b.instant_sale_price || 0;
     return aPrice - bPrice;
   },
-  SORT_BY_ENDING_SOONEST: (a: Listing, b: Listing) =>
-    a.ends_at?.localeCompare(b.ends_at || '') || -1,
+  ENDING_SOONEST: (a, b) => a.ends_at?.localeCompare(b.ends_at || '') || -1,
 };
+
 export type SortingOption = { value: SortByAction; label: string };
 const sortingOptions: SortingOption[] = [
-  { value: 'SORT_BY_RECENT_BID', label: 'Recent bids' },
-  { value: 'SORT_BY_PRICE_HIGH_TO_LOW', label: 'Expensive' },
-  { value: 'SORT_BY_PRICE_LOW_TO_HIGH', label: 'Cheap' },
-  { value: 'SORT_BY_ENDING_SOONEST', label: 'Ending soonest' },
-  { value: 'SORT_BY_RECENTLY_LISTED', label: 'Recent listings' },
+  { value: 'RECENT_BID', label: 'Recent bids' },
+  { value: 'PRICE_HIGH_TO_LOW', label: 'Expensive' },
+  { value: 'PRICE_LOW_TO_HIGH', label: 'Cheap' },
+  { value: 'ENDING_SOONEST', label: 'Ending soonest' },
+  { value: 'RECENTLY_LISTED', label: 'Recent listings' },
 ];
-
-export type FilterOption = { value: FilterAction[]; label: string };
-const filterOptions: FilterOption[] = [
-  { value: ['FILTER_BY_SHOW_ALL'], label: 'Show all' },
-  { value: ['FILTER_BY_ACTIVE_AUCTIONS'], label: 'Active auctions' },
-  { value: ['FILTER_BY_BUY_NOW'], label: 'Buy now' },
-];
-
-const filterFns = {
-  FILTER_BY_SHOW_ALL: (l: Listing) => true,
-  FILTER_BY_BUY_NOW: (l: Listing) => !l.ends_at,
-  FILTER_BY_ACTIVE_AUCTIONS: (l: Listing) => !!l.ends_at,
-};
 
 export type DiscoveryToolAction =
   | {
-      type: 'SET_LISTINGS';
+      type: 'INITIALIZE_LISTINGS';
       payload: Listing[];
     }
   | {
@@ -82,36 +95,32 @@ export type DiscoveryToolAction =
     };
 
 const initialState = (options?: {
-  listings?: Listing[];
   filters?: FilterAction[];
   sortBy?: SortByAction;
 }): DiscoveryToolState => {
+  const listingShells = Array(8)
+    .fill(null)
+    .map((_, i) => generateListingShell(i.toString()));
   return {
-    listings: Array(8)
-      .fill(null)
-      .map((_, i) => generateListingShell(i.toString())),
-    filteredListings: Array(8)
-      .fill(null)
-      .map((_, i) => generateListingShell(i.toString())),
-    listingsOnDisplay: Array(8)
-      .fill(null)
-      .map((_, i) => generateListingShell(i.toString())),
+    allListings: listingShells,
+    filteredListings: listingShells,
+    listingsOnDisplay: listingShells,
     cursor: 0,
     // Array(8)
     //   .fill(null)
     //   .map((_, i) => generateListingShell(i.toString())),
     filters: options?.filters || [],
-    sortBy: options?.sortBy || 'SORT_BY_RECENTLY_LISTED',
+    sortBy: options?.sortBy || 'RECENTLY_LISTED',
   };
 };
 
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
   console.log(action.type, { prevState: state });
   switch (action.type) {
-    case 'SET_LISTINGS':
+    case 'INITIALIZE_LISTINGS':
       return {
         ...state,
-        listings: action.payload,
+        allListings: action.payload,
         filteredListings: action.payload.sort(sortByFns[state.sortBy]),
         listingsOnDisplay: [],
       };
@@ -127,13 +136,14 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
         ],
       };
     case 'FILTER':
-      const filteredListings = state.listings
+      const filteredListings = state.allListings
         .filter((listing) => action.payload.every((filter) => filterFns[filter](listing)))
         .sort(sortByFns[state.sortBy]);
+
       return {
         ...state,
         cursor: 0,
-        filters: [...new Set(state.filters.concat(action.payload))],
+        filters: [...new Set(state.filters.concat(action.payload))], // de-duped filters
         filteredListings: filteredListings,
         listingsOnDisplay: filteredListings.slice(0, pageSize),
       };
@@ -150,77 +160,50 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       throw new Error('Not a valid action for state');
   }
 }
-// props: { sortBy: string; filters: string[]; listings: Listing[] }
-export function CurrentListings(props: { allListings?: Listing[] }) {
+
+export function CurrentListings() {
   const router = useRouter();
-
-  //?search=hello&filters=active_auctions,&sort_by=ending_soonest
-  const defaultSearch = router.query.search || '';
-  // @ts-ignore
-  const defaultFilters = router.query['filters[]'] || router.query.filters?.split(',') || [];
-  const defaultFilters2 = router.query.filters2 || [];
-  const defaultSort = router.query.sort || 'recent_listings';
-
-  // console.log({
-  //   defaultSearch,
-  //   defaultFilters,
-  //   defaultFilters2,
-  //   defaultSort,
-  // });
-
   const [loading, setLoading] = useState(false);
-  // const [allListings, setAllListings] = useState<Listing[]>([]);
-  // const [filteredListings, setfilteredListings] = useState<Listing[]>([]);
-  // const [listingsOnDisplay, setlistingsOnDisplay] = useState<Listing[]>([]);
 
-  const [cursor, setCursor] = useState(0);
+  //Example query ?search=hello&filters=active_auctions,&sort_by=ending_soonest
+  const queryFilters: string[] =
+    (router.query['filters[]'] as string[]) || (router.query.filters as string)?.split(',') || [];
+  const querySortBy = (router.query.sort as string) || 'recent_listings';
+
+  const querySearch = router.query.search || '';
+
+  const validFilters = queryFilters
+    .map((qf) => qf.toUpperCase())
+    .filter((qf) => FilterValues.includes(qf as any)) as FilterAction[];
+
+  const validSortBy = (
+    SortByValues.includes(querySortBy.toUpperCase() as any)
+      ? querySortBy.toUpperCase()
+      : 'RECENTLY_LISTED'
+  ) as SortByAction;
 
   const [state, dispatch] = useReducer(
     reducer,
     initialState({
-      filters: defaultFilters,
-      // listings: props.allListings,
+      filters: validFilters,
+      sortBy: validSortBy,
     })
   );
 
-  //   dispatch({ type: 'SET_LISTINGS', payload: props.allListings });
-
   const loadMoreData = () => {
-    console.log('load more data', {
-      loading,
-      state,
-      props,
-    });
     if (loading) {
       return;
     }
     setLoading(true);
     dispatch({ type: 'LOAD_MORE_LISTINGS' });
     setLoading(false);
-
-    // new Promise((resolve) =>
-    //   setTimeout(() => resolve(state.filteredListings.slice(cursor, cursor + pageSize)), 500)
-    // )
-    // fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
-    //   .then((res) => res.json())
-    // @ts-ignore
-    // .then((additionalListings: Listing[]) => {
-    //   setlistingsOnDisplay([...listingsOnDisplay, ...additionalListings]);
-    //   setCursor(cursor + pageSize);
-    //   setLoading(false);
-    // })
-    // .catch((e) => {
-    //   console.error(e);
-    //   setLoading(false);
-    // });
   };
 
+  // get all listings initially
   useEffect(() => {
     async function getListings() {
       const allListings = await callMetaplexIndexerRPC('getListings');
-      const hotListings = allListings.sort((a, b) => a.created_at.localeCompare(b.created_at));
-      const featuredListings = hotListings.splice(0, 4);
-      dispatch({ type: 'SET_LISTINGS', payload: hotListings });
+      dispatch({ type: 'INITIALIZE_LISTINGS', payload: allListings });
 
       loadMoreData();
     }
@@ -228,30 +211,24 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
     getListings();
   }, []);
 
+  const hasNextPage = state.listingsOnDisplay.length < state.filteredListings.length;
   const [sentryRef] = useInfiniteScroll({
     loading,
-    hasNextPage: state.listingsOnDisplay.length < state.filteredListings.length,
+    hasNextPage,
     onLoadMore: () => dispatch({ type: 'LOAD_MORE_LISTINGS' }),
     // When there is an error, we stop infinite loading.
     // It can be reactivated by setting "error" state as undefined.
-    disabled: false, //  !!error,
+    // disabled: false || !!error, //  !!error,
+
     // `rootMargin` is passed to `IntersectionObserver`.
     // We can use it to trigger 'onLoadMore' when the sentry comes near to become
     // visible, instead of becoming fully visible on the screen.
     rootMargin: '0px 0px 400px 0px',
   });
 
-  // console.log('disco state', {
-  //   dataLength: state.listingsOnDisplay.length,
-  //   next: loadMoreData,
-  //   fll: state.filteredListings.length,
-  //   lldl: state.listingsOnDisplay.length,
-  //   hasMore: state.listingsOnDisplay.length < state.filteredListings.length,
-  // });
-
   return (
     <>
-      <Row justify="space-between" align="middle">
+      <Row justify="space-between" align="middle" style={{ marginBottom: 30 }}>
         <Title level={3}>Current listings</Title>
         <Space direction="horizontal">
           <DiscoveryRadioDropdown
@@ -278,7 +255,7 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
           md: 3,
           lg: 3,
           xl: 4,
-          xxl: 4, // could even consider 5 for xxl
+          xxl: 4,
           gutter: 24,
         }}
         dataSource={state.listingsOnDisplay}
@@ -289,6 +266,8 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
         )}
       />
       <div ref={sentryRef}></div>
+      {/* Perpetual loading state at the bottom */}
+      {/* Could probaly render it conditionally by looking at hasNextPage */}
       <List
         grid={{
           xs: 1,
@@ -296,7 +275,7 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
           md: 3,
           lg: 3,
           xl: 4,
-          xxl: 4, // could even consider 5 for xxl
+          xxl: 4,
           gutter: 24,
         }}
         dataSource={Array(4).fill({})}
