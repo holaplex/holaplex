@@ -26,7 +26,15 @@ export async function callMetaplexIndexerRPC(
 ): Promise<Listing[]> {
   try {
     // just a hack while we wait for the rpc endpont
-    if (method === 'getFeaturedListings') return staticListings.result.slice(0, 4);
+    if (method === 'getFeaturedListings')
+      return (
+        staticListings.result
+          .filter((l) => initialListingFilter(l) && l.total_uncancelled_bids)
+          // @ts-ignore
+          .sort((a, b) => b.total_uncancelled_bids - a.total_uncancelled_bids)
+          .slice(0, 4)
+          .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      );
 
     const indexerURL = 'https://metaplex-indexer-staging.herokuapp.com/'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
     const res = await fetch(indexerURL, {

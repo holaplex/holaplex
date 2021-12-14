@@ -128,7 +128,7 @@ const ListingSubTitle = styled(Text)`
 
 function calculateTimeLeft(endTime: string) {
   // this is surprisingly performant
-  let now = DateTime.local();
+  let now = DateTime.utc();
   let end = DateTime.fromJSDate(new Date(endTime)); // DateTime.fromISO(endTime);
 
   return Duration.fromObject(end.diff(now).toObject());
@@ -255,11 +255,12 @@ export function ListingPreview(listing: Listing) {
     async function fetchNFTDataFromIPFS() {
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
-        const nftJson = await res.json();
-        // console.log({
-        //   ...listing,
-        //   nftJson: nftJson,
-        // });
+        const nftJson: NFTMetadata = await res.json();
+        console.log({
+          name: nftJson.name,
+          ...listing,
+          nftJson: nftJson,
+        });
         setNFT(nftJson);
       }
     }

@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { List, Row, Space, Typography } from 'antd';
 import { Listing, ListingPreview, SkeletonListing, generateListingShell } from './ListingPreview';
-import { DiscoveryRadioDropdown } from './ListingsSortAndFilter';
+import {
+  DiscoveryFilterDropdown,
+  DiscoveryFiltersAndSortBy,
+  DiscoveryRadioDropdown,
+} from './ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { NextRouter, useRouter } from 'next/router';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
@@ -10,17 +14,18 @@ const { Title } = Typography;
 
 const pageSize = 12;
 
-const FilterValues = ['SHOW_ALL', 'BUY_NOW', 'ACTIVE_AUCTIONS'] as const;
-type FilterAction = typeof FilterValues[number]; // keyof typeof filterFns;
+const FilterValues = ['SHOW_ALL', 'BUY_NOW', 'ACTIVE_AUCTIONS', 'HAS_1+_BIDS'] as const;
+export type FilterAction = typeof FilterValues[number]; // keyof typeof filterFns;
+
+export const SortByAuctionValues = ['RECENT_BID', 'ENDING_SOONEST'];
 
 const SortByValues = [
   'RECENTLY_LISTED',
-  'RECENT_BID',
   'PRICE_HIGH_TO_LOW',
   'PRICE_LOW_TO_HIGH',
-  'ENDING_SOONEST',
+  ...SortByAuctionValues,
 ] as const;
-type SortByAction = typeof SortByValues[number]; // keyof typeof sortByFns;
+export type SortByAction = typeof SortByValues[number]; // keyof typeof sortByFns;
 
 export interface DiscoveryToolState {
   allListings: Listing[];
@@ -31,11 +36,12 @@ export interface DiscoveryToolState {
   sortBy: SortByAction; //  SortingActions;
 }
 
-export type FilterOption = { value: FilterAction[]; label: string };
+export type FilterOption = { value: FilterAction; label: string };
 const filterOptions: FilterOption[] = [
-  { value: ['SHOW_ALL'], label: 'Show all' },
-  { value: ['ACTIVE_AUCTIONS'], label: 'Active auctions' },
-  { value: ['BUY_NOW'], label: 'Buy now' },
+  { value: 'SHOW_ALL', label: 'Show all' },
+  { value: 'ACTIVE_AUCTIONS', label: 'Active auctions' },
+  { value: 'BUY_NOW', label: 'Buy now' },
+  { value: 'HAS_1+_BIDS', label: 'Has bids' },
 ];
 
 const filterFns: {
@@ -44,6 +50,7 @@ const filterFns: {
   SHOW_ALL: (l) => true,
   BUY_NOW: (l) => !l.ends_at,
   ACTIVE_AUCTIONS: (l) => !!l.ends_at,
+  'HAS_1+_BIDS': (l) => !!l.ends_at && !!l.total_uncancelled_bids, // !!l.total_uncancelled_bids is true if it exists and is not 0
 };
 
 const sortByFns: {
@@ -64,7 +71,8 @@ const sortByFns: {
     const bPrice = b.price_floor || b.instant_sale_price || 0;
     return aPrice - bPrice;
   },
-  ENDING_SOONEST: (a, b) => a.ends_at?.localeCompare(b.ends_at || '') || -1,
+  ENDING_SOONEST: (a, b) =>
+    b.ends_at && a.ends_at ? a.ends_at.localeCompare(b.ends_at) || -1 : -1,
 };
 
 export type SortingOption = { value: SortByAction; label: string };
@@ -86,11 +94,11 @@ export type DiscoveryToolAction =
     }
   | {
       type: 'FILTER';
-      payload: (keyof typeof filterFns)[];
+      payload: FilterAction;
     }
   | {
       type: 'SORT';
-      payload: keyof typeof sortByFns;
+      payload: SortByAction;
     };
 
 const initialState = (options?: {
@@ -108,13 +116,13 @@ const initialState = (options?: {
     // Array(8)
     //   .fill(null)
     //   .map((_, i) => generateListingShell(i.toString())),
-    filters: options?.filters || [],
+    filters: options?.filters || ['SHOW_ALL'],
     sortBy: options?.sortBy || 'RECENTLY_LISTED',
   };
 };
 
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
-  console.log(action.type, { prevState: state });
+  console.log(action.type, { action, prevState: state });
   switch (action.type) {
     case 'INITIALIZE_LISTINGS':
       return {
@@ -135,14 +143,26 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
         ],
       };
     case 'FILTER':
+      const incomingFilter = action.payload;
+      let filters: FilterAction[];
+      if (incomingFilter === 'SHOW_ALL') {
+        filters = [incomingFilter];
+      } else {
+        filters = (
+          state.filters.includes(incomingFilter)
+            ? state.filters.filter((f) => f !== incomingFilter)
+            : state.filters.concat([incomingFilter])
+        ).filter((f) => f !== 'SHOW_ALL');
+      }
+
       const filteredListings = state.allListings
-        .filter((listing) => action.payload.every((filter) => filterFns[filter](listing)))
+        .filter((listing) => filters.some((filter) => filterFns[filter](listing)))
         .sort(sortByFns[state.sortBy]);
 
       return {
         ...state,
         cursor: 0,
-        filters: [...new Set(state.filters.concat(action.payload))], // de-duped filters
+        filters,
         filteredListings: filteredListings,
         listingsOnDisplay: filteredListings.slice(0, pageSize),
       };
@@ -184,7 +204,7 @@ export function CurrentListings() {
   const [state, dispatch] = useReducer(
     reducer,
     initialState({
-      filters: validFilters,
+      filters: validFilters.length ? validFilters : ['SHOW_ALL'],
       sortBy: validSortBy,
     })
   );
@@ -228,11 +248,15 @@ export function CurrentListings() {
   return (
     <>
       <Row justify="space-between" align="middle" style={{ marginBottom: 30 }}>
-        <Title level={3}>Current listings</Title>
-        <Space direction="horizontal">
-          <DiscoveryRadioDropdown
+        <Title level={3}>
+          Current listings ({state.filteredListings.length}) (
+          {state.filteredListings.length -
+            new Set(state.filteredListings.map((l) => l.address)).size}{' '}
+          duplicates){' '}
+        </Title>
+        {/* <Space direction="horizontal">
+          <DiscoveryFilterDropdown
             label="Filter"
-            action="FILTER"
             value={state.filters}
             options={filterOptions}
             dispatch={dispatch}
@@ -244,7 +268,14 @@ export function CurrentListings() {
             options={sortingOptions}
             dispatch={dispatch}
           />
-        </Space>
+        </Space> */}
+        <DiscoveryFiltersAndSortBy
+          sortBy={state.sortBy}
+          filters={state.filters}
+          allFilterOptions={filterOptions}
+          allSortByOptions={sortingOptions}
+          dispatch={dispatch}
+        />
       </Row>
 
       <List
