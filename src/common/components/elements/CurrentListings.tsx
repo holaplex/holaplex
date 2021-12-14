@@ -20,6 +20,7 @@ export type FilterAction = typeof FilterValues[number]; // keyof typeof filterFn
 export const SortByAuctionValues = ['RECENT_BID', 'ENDING_SOONEST'];
 
 const SortByValues = [
+  'MOST_BIDS',
   'RECENTLY_LISTED',
   'PRICE_HIGH_TO_LOW',
   'PRICE_LOW_TO_HIGH',
@@ -56,6 +57,7 @@ const filterFns: {
 const sortByFns: {
   [fnName in SortByAction]: (a: Listing, b: Listing) => number;
 } = {
+  MOST_BIDS: (a, b) => (b.total_uncancelled_bids || 0) - (a.total_uncancelled_bids || 0),
   RECENTLY_LISTED: (a, b) => a.created_at.localeCompare(b.created_at),
   RECENT_BID: (a, b) => {
     if (!a.last_bid || !b.last_bid) return -1;
@@ -77,11 +79,12 @@ const sortByFns: {
 
 export type SortingOption = { value: SortByAction; label: string };
 const sortingOptions: SortingOption[] = [
-  { value: 'RECENT_BID', label: 'Recent bids' },
+  { value: 'RECENTLY_LISTED', label: 'Recent listings' },
   { value: 'PRICE_HIGH_TO_LOW', label: 'Expensive' },
   { value: 'PRICE_LOW_TO_HIGH', label: 'Cheap' },
+  { value: 'RECENT_BID', label: 'Recent bids' },
+  { value: 'MOST_BIDS', label: 'Most bids' },
   { value: 'ENDING_SOONEST', label: 'Ending soonest' },
-  { value: 'RECENTLY_LISTED', label: 'Recent listings' },
 ];
 
 export type DiscoveryToolAction =

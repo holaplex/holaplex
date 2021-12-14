@@ -136,16 +136,16 @@ export default function Home({ featuredStorefronts }: HomeProps) {
         />
 
         <CurrentListings />
+        {/* CTA */}
+        <Section justify="center" align="middle">
+          <Space direction="vertical" align="center">
+            <Title level={3}>Launch your own Solana NFT store today!</Title>
+            <Button size="large" onClick={() => connect()}>
+              Create Your Store
+            </Button>
+          </Space>
+        </Section>
       </ContentCol>
-      {/* CTA */}
-      <Section justify="center" align="middle">
-        <Space direction="vertical" align="center">
-          <Title level={3}>Launch your own Solana NFT store today!</Title>
-          <Button size="large" onClick={() => connect()}>
-            Create Your Store
-          </Button>
-        </Space>
-      </Section>
     </Row>
   );
 }
