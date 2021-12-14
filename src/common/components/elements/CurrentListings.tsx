@@ -17,10 +17,9 @@ const pageSize = 12;
 const FilterValues = ['SHOW_ALL', 'BUY_NOW', 'ACTIVE_AUCTIONS', 'HAS_1+_BIDS'] as const;
 export type FilterAction = typeof FilterValues[number]; // keyof typeof filterFns;
 
-export const SortByAuctionValues = ['RECENT_BID', 'ENDING_SOONEST'];
+export const SortByAuctionValues = ['RECENT_BID', 'ENDING_SOONEST', 'MOST_BIDS'] as const;
 
 const SortByValues = [
-  'MOST_BIDS',
   'RECENTLY_LISTED',
   'PRICE_HIGH_TO_LOW',
   'PRICE_LOW_TO_HIGH',
@@ -119,8 +118,8 @@ const initialState = (options?: {
     // Array(8)
     //   .fill(null)
     //   .map((_, i) => generateListingShell(i.toString())),
-    filters: options?.filters || ['SHOW_ALL'],
-    sortBy: options?.sortBy || 'RECENTLY_LISTED',
+    filters: options?.filters || ['ACTIVE_AUCTIONS'],
+    sortBy: options?.sortBy || 'MOST_BIDS',
   };
 };
 
@@ -157,6 +156,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
             : state.filters.concat([incomingFilter])
         ).filter((f) => f !== 'SHOW_ALL');
       }
+      if (!filters.length) filters = ['SHOW_ALL'];
 
       const filteredListings = state.allListings
         .filter((listing) => filters.some((filter) => filterFns[filter](listing)))
@@ -190,7 +190,7 @@ export function CurrentListings() {
   //Example query ?search=hello&filters=active_auctions,&sort_by=ending_soonest
   const queryFilters: string[] =
     (router.query['filters[]'] as string[]) || (router.query.filters as string)?.split(',') || [];
-  const querySortBy = (router.query.sort as string) || 'recently_listed';
+  const querySortBy = (router.query.sort as string) || 'most_bids';
 
   const querySearch = router.query.search || '';
 
@@ -201,13 +201,13 @@ export function CurrentListings() {
   const validSortBy = (
     SortByValues.includes(querySortBy.toUpperCase() as any)
       ? querySortBy.toUpperCase()
-      : 'RECENTLY_LISTED'
+      : 'MOST_BIDS'
   ) as SortByAction;
 
   const [state, dispatch] = useReducer(
     reducer,
     initialState({
-      filters: validFilters.length ? validFilters : ['SHOW_ALL'],
+      filters: validFilters.length ? validFilters : ['ACTIVE_AUCTIONS'],
       sortBy: validSortBy,
     })
   );

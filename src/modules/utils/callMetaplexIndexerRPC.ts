@@ -2,7 +2,7 @@ import { Listing } from '@/common/components/elements/ListingPreview';
 import { toast } from 'react-toastify';
 import staticListings from 'fixtures/listings.json';
 
-const storeBlacklist: string[] = [];
+const storeBlacklist: string[] = ['xperienceproject'];
 
 // will eventually be moved to server
 function initialListingFilter(listing: Listing) {

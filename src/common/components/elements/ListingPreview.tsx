@@ -63,6 +63,10 @@ const ListingPreviewContainer = styled(Card)`
   > .ant-card-body {
     padding: 0;
   }
+
+  .no_bids {
+    opacity: 0.6;
+  }
 `;
 
 const Square = styled(Row)`
@@ -269,7 +273,7 @@ export function ListingPreview(listing: Listing) {
     }
   }, [nftMetadata]);
 
-  // shows up to 4 decimals, but removes pointless 0s
+  // shows up to 2 decimals, but removes pointless 0s
   const displayPrice = Number(
     (
       ((listing.last_bid
@@ -316,7 +320,9 @@ export function ListingPreview(listing: Listing) {
           <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
             {nftMetadata?.name}
           </ListingTitle>
-          <h3>◎{displayPrice}</h3>
+          <h3 className={listing.ends_at && !listing.total_uncancelled_bids ? 'no_bids' : ''}>
+            ◎{displayPrice}
+          </h3>
         </Row>
         <Row justify="space-between">
           <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>

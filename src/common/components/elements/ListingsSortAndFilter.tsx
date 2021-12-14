@@ -104,7 +104,7 @@ export function DiscoverySortByDropdown(props: {
             {props.options.map((o) => (
               <Menu.Item
                 key={o.value as string}
-                disabled={props.onlyBuyNow && SortByAuctionValues.includes(o.value)}
+                disabled={props.onlyBuyNow && SortByAuctionValues.includes(o.value as any)}
               >
                 <Radio value={o.value}>{o.label}</Radio>
               </Menu.Item>
@@ -221,7 +221,7 @@ export function DiscoveryFiltersAndSortBy(props: {
 }) {
   const onlyBuyNow = props.filters.length === 1 && props.filters[0] === 'BUY_NOW';
   const filteredSortingOptions = props.allSortByOptions.filter(
-    (so) => !(onlyBuyNow && SortByAuctionValues.includes(so.value))
+    (so) => !(onlyBuyNow && SortByAuctionValues.includes(so.value as any))
   );
   return (
     <Space direction="horizontal">
