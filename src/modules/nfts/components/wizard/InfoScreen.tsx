@@ -7,24 +7,13 @@ import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
-import { FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts/new';
+import { FilePreview, FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts/new';
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import Text from 'antd/lib/typography/Text';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { isAudio, isVideo } from '@/modules/utils/files';
 
 const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
-
-interface Props extends Partial<StepWizardChildProps> {
-  files: Array<File>;
-  coverImages: Array<File>;
-  index: number;
-  form: FormInstance;
-  clearForm: () => void;
-  currentFile: File;
-  isLast: boolean;
-  dispatch: MintDispatch;
-}
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -76,6 +65,17 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  index: number;
+  form: FormInstance;
+  clearForm: () => void;
+  currentFile: File;
+  isLast: boolean;
+  dispatch: MintDispatch;
+}
+
 export default function InfoScreen({
   previousStep,
   goToStep,
@@ -85,7 +85,7 @@ export default function InfoScreen({
   form,
   isActive,
   clearForm,
-  coverImages,
+  filePreviews,
   isLast,
   dispatch,
   currentFile,
@@ -160,17 +160,17 @@ export default function InfoScreen({
 
   const getCoverImage = (e: any) => {
     console.log('e is ', e);
-    let file;
+    let coverImage;
     if (e.file && e.file.originFileObj) {
-      file = e.file.originFileObj;
+      coverImage = e.file.originFileObj;
     } else if (Array.isArray(e)) {
-      file = e[0];
+      coverImage = e[0];
     } else {
-      file = e;
+      coverImage = e;
     }
 
-    dispatch({ type: 'INSERT_COVER_IMAGE', payload: { file, index } });
-    return file;
+    // dispatch({ type: 'INSERT_COVER_IMAGE', payload: { coverImage, file: currentFile, index } });
+    return coverImage;
   };
 
   if (!isActive) {
@@ -196,7 +196,7 @@ export default function InfoScreen({
               {
                 message:
                   'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
-                async validator(rule, value) {
+                async validator(_, value) {
                   if (Buffer.from(value).length > 28) {
                     throw new Error();
                   }
@@ -252,7 +252,7 @@ export default function InfoScreen({
               rules={[
                 {
                   message: 'All attributes must have defined trait types',
-                  async validator(rule, value: NFTAttribute[]) {
+                  async validator(_, value: NFTAttribute[]) {
                     if (value.length === 1) return;
                     if (value.some((a, i) => !a?.trait_type)) {
                       throw new Error();
@@ -312,7 +312,7 @@ export default function InfoScreen({
           </ButtonFormItem>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid files={coverImages} index={index} width={2} />
+        <NFTPreviewGrid files={filePreviews} index={index} width={2} />
       </Row>
     </NavContainer>
   );

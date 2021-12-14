@@ -6,8 +6,6 @@ import { isAudio, isImage, isVideo } from '@/modules/utils/files';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import React, { useRef, useState } from 'react';
-import { VideoArtContent } from '@/common/components/elements/VideoArtContent';
-import { F } from 'ramda';
 
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   height: 120px;

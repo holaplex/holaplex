@@ -153,14 +153,14 @@ function reducer(state: State, action: MintAction) {
         : state;
     }
     case 'SET_FILE_PREVIEWS':
-      return { ...state, coverImages: action.payload as File[] };
+      return { ...state, filePreviews: action.payload as FilePreview[] };
     case 'INSERT_FILE_PREVIEW': {
-      const { file, index } = action.payload as { file: File; index: number };
+      const { file, index, type, coverImage } = action.payload as FilePreview & { index: number };
       const copy = [...state.filePreviews];
-      copy[index] = file;
+      copy[index] = { file, type, coverImage };
       return {
         ...state,
-        coverImages: copy,
+        filePreviews: copy,
       };
     }
 
@@ -182,7 +182,7 @@ export default function BulkUploadWizard() {
   const [form] = useForm();
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
 
-  const { files, formValues, coverImages } = state;
+  const { files, formValues, filePreviews } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
 
@@ -345,7 +345,7 @@ export default function BulkUploadWizard() {
             files.map((file, index) => (
               <InfoScreen
                 files={files}
-                coverImages={coverImages}
+                filePreviews={filePreviews}
                 index={index}
                 currentFile={file}
                 key={index}
