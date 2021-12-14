@@ -1,5 +1,5 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
-import { FormInstance, PageHeader, Row, Space, Typography } from 'antd';
+import { FormInstance, PageHeader, Row, Space, Typography, notification } from 'antd';
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -127,18 +127,18 @@ export default function Summary({
   nextStep,
   dispatch,
   formValues,
-  goToNamedStep,
   setNFTValues,
-  form,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
-  // TODO: Can extract this to top level component
+  const [uploadFailed, setUploadFailed] = useState(false);
+
   const upload = async () => {
     const body = new FormData();
 
     images.forEach((i) => body.append(i.name, i, i.name));
 
     setIsUploading(true);
+    setUploadFailed(false);
     try {
       const resp = await fetch('/api/ipfs/upload', {
         method: 'POST',
@@ -150,6 +150,8 @@ export default function Summary({
       setNFTValues(uploadedFilePins.files);
       nextStep!();
     } catch {
+      notification.error({ message: 'Upload of assets to IPFS failed, please try again' });
+      setUploadFailed(true);
       setIsUploading(false);
     }
   };
@@ -185,7 +187,7 @@ export default function Summary({
         style={{ display: 'flex', alignItems: 'center' }}
         disabled={isUploading}
       >
-        Looks good
+        {uploadFailed ? 'Retry' : 'Looks good'}
         {isUploading && <Spinner style={{ marginLeft: 8, marginTop: 5 }} height={24} width={24} />}
       </Button>
 
