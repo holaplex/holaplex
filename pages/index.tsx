@@ -6,9 +6,8 @@ import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featur
 import { List, Space, Row, Col, Typography, ListProps } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
-import { Listing } from '@/common/components/elements/ListingPreview';
+import { generateListingShell, Listing } from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
-import { generateListingShell } from '@/common/constants/demoContent';
 import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';

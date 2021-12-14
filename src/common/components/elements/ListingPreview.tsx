@@ -3,7 +3,6 @@ import { Skeleton, Card, Row, Image, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
-import { DemoStorefront } from '@/common/constants/demoContent';
 import { ZoomInOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 
@@ -186,6 +185,27 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   border-radius: 8px;
 `;
 
+export function generateListingShell(id: string): Listing {
+  const now = new Date().toISOString();
+  const nextWeek = new Date(now).toISOString();
+
+  return {
+    address: id,
+    ended: false,
+    items: [
+      {
+        address: '',
+        name: '',
+        uri: '',
+      },
+    ],
+    created_at: now,
+    ends_at: nextWeek,
+    subdomain: '',
+    storeTitle: '',
+  };
+}
+
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
@@ -236,10 +256,10 @@ export function ListingPreview(listing: Listing) {
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
         const nftJson = await res.json();
-        console.log({
-          ...listing,
-          nftJson: nftJson,
-        });
+        // console.log({
+        //   ...listing,
+        //   nftJson: nftJson,
+        // });
         setNFT(nftJson);
       }
     }

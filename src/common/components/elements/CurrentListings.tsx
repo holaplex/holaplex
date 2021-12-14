@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { List, Row, Space, Typography } from 'antd';
-import { Listing, ListingPreview, SkeletonListing } from './ListingPreview';
-import { generateListingShell } from '@/common/constants/demoContent';
+import { Listing, ListingPreview, SkeletonListing, generateListingShell } from './ListingPreview';
 import { DiscoveryRadioDropdown } from './ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { NextRouter, useRouter } from 'next/router';
@@ -126,7 +125,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       };
     case 'LOAD_MORE_LISTINGS':
       const newCursor = state.cursor + pageSize;
-      console.log('loading from', state.cursor, 'to', newCursor);
+
       return {
         ...state,
         cursor: newCursor, // nr of items
@@ -168,7 +167,7 @@ export function CurrentListings() {
   //Example query ?search=hello&filters=active_auctions,&sort_by=ending_soonest
   const queryFilters: string[] =
     (router.query['filters[]'] as string[]) || (router.query.filters as string)?.split(',') || [];
-  const querySortBy = (router.query.sort as string) || 'recent_listings';
+  const querySortBy = (router.query.sort as string) || 'recently_listed';
 
   const querySearch = router.query.search || '';
 
