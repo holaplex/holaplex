@@ -16,10 +16,6 @@ import useWindowDimensions from '@/hooks/useWindowDimensions';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 
-const ContentCol = styled(Col)`
-  max-width: 1400px;
-`;
-
 const SectionTitle = styled(Title)`
   margin-bottom: 62px !important;
 `;
@@ -80,7 +76,7 @@ const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
 
 const CenteredContentCol = styled.div`
   margin: 0 auto;
-  width: 1360px;
+  width: calc(1400px + 3rem);
   max-width: 100vw;
   padding: 0 1.5rem;
 `;
@@ -106,6 +102,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
   const windowDimensions = useWindowDimensions();
 
+  const buttonSize = () => (windowDimensions.width > 800 ? 'large' : 'medium');
+
   useEffect(() => {
     async function getFeaturedListings() {
       const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
@@ -126,10 +124,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               tools to mint, discover, and sell NFTs on Solana.
             </Pitch>
             <Space direction="horizontal" size="large">
-              <Button
-                size={windowDimensions.width > 600 ? 'large' : 'medium'}
-                onClick={() => connect()}
-              >
+              <Button size={buttonSize()} onClick={() => connect()}>
                 Create Your Store
               </Button>
             </Space>
@@ -139,9 +134,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           </Col>
         </Section>
 
-        <SectionTitle level={3}>Featured stores</SectionTitle>
+        <SectionTitle level={3}>Featured Stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+          grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
           dataSource={featuredStorefronts.slice(0, 4)}
           renderItem={(feature) => (
             // @ts-ignore
@@ -157,7 +152,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button size="large" onClick={() => connect()}>
+            <Button size={buttonSize()} onClick={() => connect()}>
               Create Your Store
             </Button>
           </Space>

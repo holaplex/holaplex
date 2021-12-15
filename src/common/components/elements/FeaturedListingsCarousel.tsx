@@ -14,7 +14,7 @@ export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) 
           marginBottom: '0.5rem',
         }}
       >
-        <Text strong>Featured listings</Text>
+        <Text strong>Featured Listings</Text>
       </div>
       <Carousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
         {props.featuredListings.map((listing) => (

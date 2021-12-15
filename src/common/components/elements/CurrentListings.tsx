@@ -143,12 +143,12 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       const listings = new Set([
         ...state.listingsOnDisplay,
         ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
-      ])
+      ]);
 
       return {
         ...state,
         cursor: newCursor,
-        listingsOnDisplay: Array.from(listings)
+        listingsOnDisplay: Array.from(listings),
       };
     case 'FILTER':
       const incomingFilter = action.payload;
@@ -306,7 +306,7 @@ export function CurrentListings() {
       <List
         grid={{
           xs: 1,
-          sm: 1,
+          sm: 2,
           md: 3,
           lg: 3,
           xl: 4,
@@ -327,7 +327,7 @@ export function CurrentListings() {
         <List
           grid={{
             xs: 1,
-            sm: 1,
+            sm: 2,
             md: 3,
             lg: 3,
             xl: 4,
