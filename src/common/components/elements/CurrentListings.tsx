@@ -274,7 +274,7 @@ export function CurrentListings() {
         }}
       >
         <Title level={3}>
-          Current listings ({state.filteredAndSortedListings.length})
+          Current Listings ({state.filteredAndSortedListings.length})
           {/* ({state.filteredAndSortedListings.length -
               new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
             duplicates){' '} */}
@@ -306,7 +306,7 @@ export function CurrentListings() {
       <List
         grid={{
           xs: 1,
-          sm: 1,
+          sm: 2,
           md: 3,
           lg: 3,
           xl: 4,
@@ -327,7 +327,7 @@ export function CurrentListings() {
         <List
           grid={{
             xs: 1,
-            sm: 1,
+            sm: 2,
             md: 3,
             lg: 3,
             xl: 4,

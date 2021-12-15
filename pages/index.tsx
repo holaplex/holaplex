@@ -16,10 +16,6 @@ import useWindowDimensions from '@/hooks/useWindowDimensions';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 
-const ContentCol = styled(Col)`
-  max-width: 1400px;
-`;
-
 const SectionTitle = styled(Title)`
   margin-bottom: 62px !important;
 `;
@@ -139,9 +135,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           </Col>
         </Section>
 
-        <SectionTitle level={3}>Featured stores</SectionTitle>
+        <SectionTitle level={3}>Featured Stores</SectionTitle>
         <FeaturedStores
-          grid={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+          grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
           dataSource={featuredStorefronts.slice(0, 4)}
           renderItem={(feature) => (
             // @ts-ignore
