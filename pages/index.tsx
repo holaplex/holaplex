@@ -78,6 +78,10 @@ const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
   }
 `;
 
+const CenteredContentCol = styled(ContentCol)`
+  margin: 0 auto;
+`;
+
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
 
@@ -109,8 +113,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
   }, []);
 
   return (
-    <Row justify="center">
-      <ContentCol xs={22} md={20}>
+    <Row>
+      <CenteredContentCol xs={22} md={20}>
         <Section>
           <Marketing xs={22} md={16}>
             <HeroTitle>Find, buy, and sell NFTs from incredible artists on Solana.</HeroTitle>
@@ -155,7 +159,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </Button>
           </Space>
         </Section>
-      </ContentCol>
+      </CenteredContentCol>
     </Row>
   );
 }
