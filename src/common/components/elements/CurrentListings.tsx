@@ -126,7 +126,6 @@ function filterAndSortListings(listings: Listing[], filters: FilterAction[], sor
 }
 
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
-  console.log(action.type, { action, prevState: state });
   switch (action.type) {
     case 'INITIALIZE_LISTINGS':
       return {
@@ -141,14 +140,15 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       };
     case 'LOAD_MORE_LISTINGS':
       const newCursor = state.cursor + pageSize;
+      const listings = new Set([
+        ...state.listingsOnDisplay,
+        ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
+      ])
 
       return {
         ...state,
         cursor: newCursor,
-        listingsOnDisplay: [
-          ...state.listingsOnDisplay,
-          ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
-        ],
+        listingsOnDisplay: Array.from(listings)
       };
     case 'FILTER':
       const incomingFilter = action.payload;
@@ -274,7 +274,7 @@ export function CurrentListings() {
         }}
       >
         <Title level={3}>
-          Current listings ({state.filteredAndSortedListings.length})
+          Current Listings
           {/* ({state.filteredAndSortedListings.length -
               new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
             duplicates){' '} */}
