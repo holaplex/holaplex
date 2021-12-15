@@ -262,19 +262,24 @@ export function CurrentListings() {
 
   return (
     <div id="current-listings" ref={CurrentListingsRef} style={{ position: 'relative' }}>
-      <Affix>
-        <Row
-          justify="space-between"
-          align="middle"
-          style={{ marginBottom: 30, background: 'black' }}
-        >
-          <Title level={3}>
-            Current listings ({state.filteredAndSortedListings.length})
-            {/* ({state.filteredAndSortedListings.length -
+      <Row
+        justify="space-between"
+        align="middle"
+        style={{
+          marginBottom: 30,
+          background: 'black',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+        }}
+      >
+        <Title level={3}>
+          Current listings ({state.filteredAndSortedListings.length})
+          {/* ({state.filteredAndSortedListings.length -
               new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
             duplicates){' '} */}
-          </Title>
-          {/* <Space direction="horizontal">
+        </Title>
+        {/* <Space direction="horizontal">
           <DiscoveryFilterDropdown
             label="Filter"
             value={state.filters}
@@ -289,15 +294,14 @@ export function CurrentListings() {
             dispatch={dispatch}
           />
         </Space> */}
-          <DiscoveryFiltersAndSortBy
-            sortBy={state.sortBy}
-            filters={state.filters}
-            allFilterOptions={filterOptions}
-            allSortByOptions={sortingOptions}
-            dispatch={dispatch}
-          />
-        </Row>
-      </Affix>
+        <DiscoveryFiltersAndSortBy
+          sortBy={state.sortBy}
+          filters={state.filters}
+          allFilterOptions={filterOptions}
+          allSortByOptions={sortingOptions}
+          dispatch={dispatch}
+        />
+      </Row>
 
       <List
         grid={{
