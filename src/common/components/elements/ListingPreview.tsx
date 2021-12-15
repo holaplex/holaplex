@@ -285,11 +285,6 @@ export function ListingPreview(listing: Listing) {
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
-        console.log({
-          name: nftJson.name,
-          ...listing,
-          nftJson: nftJson,
-        });
         setNFT(nftJson);
       }
     }
