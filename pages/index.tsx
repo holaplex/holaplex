@@ -76,7 +76,7 @@ const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
 
 const CenteredContentCol = styled.div`
   margin: 0 auto;
-  width: 1360px;
+  width: calc(1400px + 3rem);
   max-width: 100vw;
   padding: 0 1.5rem;
 `;
@@ -102,6 +102,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
   const windowDimensions = useWindowDimensions();
 
+  const buttonSize = () => (windowDimensions.width > 800 ? 'large' : 'medium');
+
   useEffect(() => {
     async function getFeaturedListings() {
       const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
@@ -122,10 +124,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               tools to mint, discover, and sell NFTs on Solana.
             </Pitch>
             <Space direction="horizontal" size="large">
-              <Button
-                size={windowDimensions.width > 600 ? 'large' : 'medium'}
-                onClick={() => connect()}
-              >
+              <Button size={buttonSize()} onClick={() => connect()}>
                 Create Your Store
               </Button>
             </Space>
@@ -153,7 +152,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button size="large" onClick={() => connect()}>
+            <Button size={buttonSize()} onClick={() => connect()}>
               Create Your Store
             </Button>
           </Space>
