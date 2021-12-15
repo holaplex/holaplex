@@ -36,7 +36,7 @@ export async function callMetaplexIndexerRPC(
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
       );
 
-    const indexerURL = 'http://localhost:4000'; //'https://metaplex-indexer-staging.herokuapp.com/'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
+    const indexerURL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
     const res = await fetch(indexerURL, {
       method: 'POST',
       headers: {
