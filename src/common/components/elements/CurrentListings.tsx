@@ -301,23 +301,28 @@ export function CurrentListings() {
       <div ref={sentryRef}></div>
       {/* Perpetual loading state at the bottom */}
       {/* Could probaly render it conditionally by looking at hasNextPage */}
-      <List
-        grid={{
-          xs: 1,
-          sm: 1,
-          md: 3,
-          lg: 3,
-          xl: 4,
-          xxl: 4,
-          gutter: 24,
-        }}
-        dataSource={Array(4).fill({})}
-        renderItem={(_, i) => (
-          <List.Item key={i}>
-            <SkeletonListing />
-          </List.Item>
-        )}
-      />
+      {hasNextPage ? (
+        <List
+          grid={{
+            xs: 1,
+            sm: 1,
+            md: 3,
+            lg: 3,
+            xl: 4,
+            xxl: 4,
+            gutter: 24,
+          }}
+          dataSource={Array(4).fill({})}
+          renderItem={(_, i) => (
+            <List.Item key={i}>
+              <SkeletonListing />
+            </List.Item>
+          )}
+        />
+      ) : (
+        <div>All done for now 🎉</div>
+        // Back to top?
+      )}
     </>
   );
 }

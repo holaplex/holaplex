@@ -58,13 +58,11 @@ export function DiscoveryFilterDropdown(props: {
       overlay={
         <Menu onClick={handleMenuClick}>
           {props.options.map((o) => (
-            <Menu.Item key={o.value}>
-              <Checkbox
-                checked={props.value.includes(o.value)}
-                onChange={(e) => props.dispatch({ type: 'FILTER', payload: o.value })}
-              >
-                {o.label}
-              </Checkbox>
+            <Menu.Item
+              key={o.value}
+              onClick={(e) => props.dispatch({ type: 'FILTER', payload: o.value })}
+            >
+              <Checkbox checked={props.value.includes(o.value)}>{o.label}</Checkbox>
             </Menu.Item>
           ))}
         </Menu>

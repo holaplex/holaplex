@@ -1,5 +1,6 @@
-import { Row, Carousel } from 'antd';
+import { Row, Carousel, Typography } from 'antd';
 import { Listing, ListingPreview } from './ListingPreview';
+const { Text } = Typography;
 
 // still some style cleanup to do here.... :(
 export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) {
@@ -10,19 +11,10 @@ export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) 
           position: 'relative',
           display: 'flex',
           justifyContent: 'space-between',
-          marginBottom: '1rem',
+          marginBottom: '0.5rem',
         }}
       >
-        <span
-          style={{
-            color: 'white',
-            opacity: 0.6,
-            fontSize: 14,
-            fontWeight: 400,
-          }}
-        >
-          Featured listings
-        </span>
+        <Text strong>Featured listings</Text>
       </div>
       <Carousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
         {props.featuredListings.map((listing) => (
