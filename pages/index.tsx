@@ -80,6 +80,7 @@ const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
 
 const CenteredContentCol = styled.div`
   margin: 0 auto;
+  width: 1360px;
   max-width: 100vw;
   padding: 0 1.5rem;
 `;
