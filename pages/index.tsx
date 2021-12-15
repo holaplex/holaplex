@@ -12,6 +12,7 @@ import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';
 import { CurrentListings } from '@/common/components/elements/CurrentListings';
 const { Title } = Typography;
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 
@@ -25,32 +26,37 @@ const SectionTitle = styled(Title)`
 
 const HeroTitle = styled.h1`
   font-weight: 800;
-  font-size: 68px;
+  font-size: calc(3vw + 1rem);
   line-height: auto;
   @media screen and (max-width: 550px) {
-    font-size: 48px;
     line-height: auto;
     text-align: left;
   }
 `;
 
 const Marketing = styled(Col)`
-  padding-right: 48px;
-  padding-bottom: 48px;
+  padding-right: 5rem;
+  padding-bottom: calc(2vh + 3rem);
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 900px) {
+    padding-right: 2.5rem;
+  }
+  @media screen and (max-width: 768px) {
+    padding-right: 0;
+  }
 `;
 
 const Pitch = styled.h2`
-  font-size: 24px;
-  line-height: 28px;
+  font-size: calc(0.35vw + 0.35vh + 1rem);
+  line-height: 1.4;
   letter-spacing: 0.2px;
   font-weight: 300;
-  margin: 32px 0 40px 0;
+  margin: calc(1.5vw + 0.5rem) 0 calc(2vw + 1.5rem);
 `;
 
 const Section = styled(Row)`
-  margin-top: ${sv.sectionPadding}px;
+  margin-top: calc(5vw + 2vh + 1rem);
 `;
 
 const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
@@ -91,6 +97,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
   const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
 
+  const windowDimensions = useWindowDimensions();
+
   useEffect(() => {
     async function getFeaturedListings() {
       const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
@@ -111,7 +119,10 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               tools to mint, discover, and sell NFTs on Solana.
             </Pitch>
             <Space direction="horizontal" size="large">
-              <Button size="large" onClick={() => connect()}>
+              <Button
+                size={windowDimensions.width > 600 ? 'large' : 'medium'}
+                onClick={() => connect()}
+              >
                 Create Your Store
               </Button>
             </Space>
