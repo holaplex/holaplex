@@ -32,8 +32,13 @@ export const UploadedLogo = styled.img`
   height: 48px;
   width: 48px;
 `;
+
 export const UploadedBanner = styled.img`
   width: 100%;
+  aspect-ratio: 5 / 1;
+  object-fit: cover;
+  object-position: center top;
+  margin-bottom: 1rem;
 `;
 
 export const PreviewLink = styled.div`
