@@ -59,12 +59,15 @@ export function DiscoveryFilterDropdown(props: {
         <Menu onClick={handleMenuClick}>
           {props.options.map((o) => (
             <Menu.Item key={o.value}>
-              <div
-                style={{ width: '100%' }}
-                onClick={(e) => props.dispatch({ type: 'FILTER', payload: o.value })}
+              <Checkbox
+                style={{
+                  width: '100%',
+                }}
+                checked={props.value.includes(o.value)}
+                onChange={() => props.dispatch({ type: 'FILTER', payload: o.value })}
               >
-                <Checkbox checked={props.value.includes(o.value)}>{o.label}</Checkbox>
-              </div>
+                {o.label}
+              </Checkbox>
             </Menu.Item>
           ))}
         </Menu>
@@ -106,7 +109,14 @@ export function DiscoverySortByDropdown(props: {
                 key={o.value as string}
                 disabled={props.onlyBuyNow && SortByAuctionValues.includes(o.value as any)}
               >
-                <Radio value={o.value}>{o.label}</Radio>
+                <Radio
+                  style={{
+                    width: '100%',
+                  }}
+                  value={o.value}
+                >
+                  {o.label}
+                </Radio>
               </Menu.Item>
             ))}
           </Radio.Group>

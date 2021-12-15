@@ -278,9 +278,9 @@ export function ListingPreview(listing: Listing) {
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
-  let isDev = false;
+  const isDev = window.location.host.includes('localhost');
+
   useEffect(() => {
-    if (window.location.host.includes('localhost')) isDev = true;
     async function fetchNFTDataFromIPFS() {
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
@@ -337,7 +337,7 @@ export function ListingPreview(listing: Listing) {
             {nftMetadata?.name}
           </ListingTitle>
           <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-            ◎{displayPrice} {isDev && <span>({listing.totalUncancelledBids})</span>}
+            ◎{displayPrice}
           </h3>
         </Row>
         <Row justify="space-between">
@@ -346,6 +346,16 @@ export function ListingPreview(listing: Listing) {
           </ListingSubTitle>
           {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
         </Row>
+        {isDev && (
+          <Row justify="space-between">
+            <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
+              Listed {listing.createdAt.slice(5, 16)}
+            </ListingSubTitle>
+            <span>
+              Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
+            </span>
+          </Row>
+        )}
       </ListingPreviewContainer>
     </a>
   );

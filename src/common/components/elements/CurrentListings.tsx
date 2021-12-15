@@ -59,10 +59,10 @@ const sortByFns: {
   [fnName in SortByAction]: (a: Listing, b: Listing) => number;
 } = {
   MOST_BIDS: (a, b) => (b.totalUncancelledBids || 0) - (a.totalUncancelledBids || 0), // If many auctions only have 1 bid
-  RECENTLY_LISTED: (a, b) => a.createdAt.localeCompare(b.createdAt),
+  RECENTLY_LISTED: (a, b) => b.createdAt.localeCompare(a.createdAt),
   RECENT_BID: (a, b) => {
     if (!a.lastBidTime) return 1;
-    return b.lastBidTime ? a.lastBidTime.localeCompare(b.lastBidTime) : -1;
+    return b.lastBidTime ? b.lastBidTime.localeCompare(a.lastBidTime) : -1;
   },
   PRICE_HIGH_TO_LOW: (a, b) => getListingPrice(b) - getListingPrice(a),
   PRICE_LOW_TO_HIGH: (a, b) => getListingPrice(a) - getListingPrice(b),
@@ -70,8 +70,6 @@ const sortByFns: {
     if (!a.endsAt) return 1;
     return b.endsAt ? a.endsAt.localeCompare(b.endsAt) : -1;
   },
-  // something is off with the logic here, but I this produces a decent result for now
-  // !a.ends_at ? 1 : a.ends_at && b.ends_at ? a.ends_at.localeCompare(b.ends_at) : 1,
 };
 
 export type SortingOption = { value: SortByAction; label: string };
@@ -264,15 +262,19 @@ export function CurrentListings() {
 
   return (
     <div id="current-listings" ref={CurrentListingsRef} style={{ position: 'relative' }}>
-      {/* <Affix target={() => CurrentListingsRef} offsetTop={10}> */}
-      <Row justify="space-between" align="middle" style={{ marginBottom: 30, background: 'black' }}>
-        <Title level={3}>
-          Current listings ({state.filteredAndSortedListings.length}) (
-          {state.filteredAndSortedListings.length -
-            new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
-          duplicates){' '}
-        </Title>
-        {/* <Space direction="horizontal">
+      <Affix>
+        <Row
+          justify="space-between"
+          align="middle"
+          style={{ marginBottom: 30, background: 'black' }}
+        >
+          <Title level={3}>
+            Current listings ({state.filteredAndSortedListings.length})
+            {/* ({state.filteredAndSortedListings.length -
+              new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
+            duplicates){' '} */}
+          </Title>
+          {/* <Space direction="horizontal">
           <DiscoveryFilterDropdown
             label="Filter"
             value={state.filters}
@@ -287,15 +289,15 @@ export function CurrentListings() {
             dispatch={dispatch}
           />
         </Space> */}
-        <DiscoveryFiltersAndSortBy
-          sortBy={state.sortBy}
-          filters={state.filters}
-          allFilterOptions={filterOptions}
-          allSortByOptions={sortingOptions}
-          dispatch={dispatch}
-        />
-      </Row>
-      {/* </Affix> */}
+          <DiscoveryFiltersAndSortBy
+            sortBy={state.sortBy}
+            filters={state.filters}
+            allFilterOptions={filterOptions}
+            allSortByOptions={sortingOptions}
+            dispatch={dispatch}
+          />
+        </Row>
+      </Affix>
 
       <List
         grid={{
