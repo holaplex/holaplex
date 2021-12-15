@@ -40,10 +40,10 @@ export interface DiscoveryToolState {
 
 export type FilterOption = { value: FilterAction; label: string };
 const filterOptions: FilterOption[] = [
-  { value: 'SHOW_ALL', label: 'Show all' },
-  { value: 'ACTIVE_AUCTIONS', label: 'Active auctions' },
-  { value: 'BUY_NOW', label: 'Buy now' },
-  { value: 'HAS_1+_BIDS', label: 'Has bids' },
+  { value: 'SHOW_ALL', label: 'Show All' },
+  { value: 'ACTIVE_AUCTIONS', label: 'Auctions' },
+  { value: 'BUY_NOW', label: 'Buy Mow' },
+  { value: 'HAS_1+_BIDS', label: 'Has Bids' },
 ];
 
 const filterFns: {
@@ -74,12 +74,12 @@ const sortByFns: {
 
 export type SortingOption = { value: SortByAction; label: string };
 const sortingOptions: SortingOption[] = [
-  { value: 'RECENTLY_LISTED', label: 'Recent listings' },
-  { value: 'PRICE_HIGH_TO_LOW', label: 'Expensive' },
-  { value: 'PRICE_LOW_TO_HIGH', label: 'Cheap' },
-  { value: 'RECENT_BID', label: 'Recent bids' },
-  { value: 'MOST_BIDS', label: 'Most bids' },
-  { value: 'ENDING_SOONEST', label: 'Ending soonest' },
+  { value: 'RECENTLY_LISTED', label: 'Recent Listings' },
+  { value: 'PRICE_HIGH_TO_LOW', label: 'Highest Price' },
+  { value: 'PRICE_LOW_TO_HIGH', label: 'Lowest Price' },
+  { value: 'RECENT_BID', label: 'Recent Bids' },
+  { value: 'MOST_BIDS', label: 'Most Bids' },
+  { value: 'ENDING_SOONEST', label: 'Ending Soon' },
 ];
 
 export type DiscoveryToolAction =
