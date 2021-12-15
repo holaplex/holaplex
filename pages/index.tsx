@@ -8,7 +8,6 @@ import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { generateListingShell, Listing } from '@/common/components/elements/ListingPreview';
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
-import { DiscoveryRadioDropdown } from '@/common/components/elements/ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';
 import { CurrentListings } from '@/common/components/elements/CurrentListings';

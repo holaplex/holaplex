@@ -20,7 +20,7 @@ interface Bid {
 }
 
 interface Item {
-  address: string;
+  metadataAddress: string;
   name: string;
   uri: string;
 }
@@ -43,18 +43,20 @@ interface NFTMetadata {
 }
 
 export interface Listing {
-  address: string;
-  ends_at?: string | null; // ISO Date
-  created_at: string; // ISO Date
+  createdAt: string; // ISO(ish) Date "2021-12-01 03:59:45"
   ended: boolean;
-  last_bid?: number | null; // lamport price of last bid (thought it was a timestamp at first)
-  price_floor?: number | null;
-  total_uncancelled_bids?: number | null;
-  instant_sale_price?: number | null; // is often 10000000000
-  subdomain: string;
-  storeTitle: string;
+  endsAt: string | null; // ISO(ish) Date
+  highestBid: number | null;
+  instantSalePrice?: number | null; // is often 10000000000
   items: Item[]; // NFT metadata, including URI to fetch more data
-  nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
+  lastBidTime: string | null; // ISO(ish) Date
+  listingAddress: string; // uuid of listing
+  priceFloor: number | null;
+  storeTitle: string;
+  subdomain: string;
+  totalUncancelledBids?: number | null;
+  // would neeed to store listings in an object to make this performant in state management. Better to just reload it pr mount for now.
+  // nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
 }
 
 const ListingPreviewContainer = styled(Card)`
@@ -134,7 +136,7 @@ const ListingSubTitle = styled(Text)`
 function calculateTimeLeft(endTime: string) {
   // this is surprisingly performant
   let now = DateTime.utc();
-  let end = DateTime.fromJSDate(new Date(endTime)); // DateTime.fromISO(endTime);
+  let end = DateTime.fromJSDate(new Date(endTime)).toUTC(); // DateTime.fromISO(endTime);
 
   return Duration.fromObject(end.diff(now).toObject());
 }
@@ -150,13 +152,14 @@ function Countdown(props: { endTime: string }) {
     return () => clearTimeout(timer);
   });
 
-  const format = timeLeft.toFormat('hh:mm:ss');
+  // nasty hotfix TODO: Fix
+  const format = timeLeft.plus({ hours: 1 }).toFormat('hh:mm:ss');
 
   return <span>{format}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
-  const t = DateTime.fromFormat(props.endTime, 'YYYY-MM-DD HH:mm:SS').toMillis();
+  //const t = DateTime.fromFormat(props.endTime, 'YYYY-MM-DD HH:mm:SS').toMillis();
   const timeDiffMs = new Date(props.endTime).getTime() - Date.now();
 
   if (timeDiffMs < 0) return <span></span>;
@@ -199,17 +202,22 @@ export function generateListingShell(id: string): Listing {
   const nextWeek = new Date(now).toISOString();
 
   return {
-    address: id,
+    listingAddress: id,
+    highestBid: 0,
+    lastBidTime: null,
+    priceFloor: 0,
+    instantSalePrice: 0,
+    totalUncancelledBids: 0,
     ended: false,
     items: [
       {
-        address: '',
+        metadataAddress: '',
         name: '',
         uri: '',
       },
     ],
-    created_at: now,
-    ends_at: nextWeek,
+    createdAt: now,
+    endsAt: nextWeek,
     subdomain: '',
     storeTitle: '',
   };
@@ -253,14 +261,26 @@ const maybeCDN = (uri: string) => {
   return cdnURI ?? uri;
 };
 
+export function getListingPrice(listing: Listing) {
+  return (
+    (listing.highestBid
+      ? listing.highestBid
+      : listing.priceFloor
+      ? listing.priceFloor
+      : listing.instantSalePrice) || 0
+  );
+}
+
 export function ListingPreview(listing: Listing) {
-  const storeHref = `https://${listing?.subdomain}.holaplex.com/#/auction/${listing.address}`;
+  const storeHref = `https://${listing?.subdomain}.holaplex.com/#/auction/${listing.listingAddress}`;
 
   const [showArtPreview, setShowArtPreview] = useState(false);
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
+  let isDev = false;
   useEffect(() => {
+    if (window.location.host.includes('localhost')) isDev = true;
     async function fetchNFTDataFromIPFS() {
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
@@ -279,16 +299,7 @@ export function ListingPreview(listing: Listing) {
   }, [nftMetadata]);
 
   // shows up to 2 decimals, but removes pointless 0s
-  const displayPrice = Number(
-    (
-      ((listing.last_bid
-        ? listing.last_bid
-        : listing.price_floor
-        ? listing.price_floor
-        : listing.instant_sale_price) || 0) * 0.000000001
-    ).toFixed(2)
-  );
-
+  const displayPrice = Number((getListingPrice(listing) * 0.000000001).toFixed(2));
   return (
     <a href={storeHref} rel="nofollow noreferrer" target="_blank">
       <ListingPreviewContainer>
@@ -325,15 +336,15 @@ export function ListingPreview(listing: Listing) {
           <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
             {nftMetadata?.name}
           </ListingTitle>
-          <h3 className={listing.ends_at && !listing.total_uncancelled_bids ? 'no_bids' : ''}>
-            ◎{displayPrice}
+          <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
+            ◎{displayPrice} {isDev && <span>({listing.totalUncancelledBids})</span>}
           </h3>
         </Row>
         <Row justify="space-between">
           <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
             {listing.storeTitle}
           </ListingSubTitle>
-          {listing.ends_at ? <AuctionCountdown endTime={listing.ends_at} /> : <span>Buy now</span>}
+          {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
         </Row>
       </ListingPreviewContainer>
     </a>

@@ -8,10 +8,10 @@ const storeBlacklist: string[] = ['xperienceproject'];
 function initialListingFilter(listing: Listing) {
   if (
     listing.ended || // past listings
-    (listing.ends_at && new Date(listing.ends_at).getTime() < Date.now()) || // auctions that ended, but .ended flag not flipped
-    (!listing.ends_at && listing.last_bid) || // remove instant buys that have ended
-    (listing.ends_at && new Date(listing.ends_at).getTime() - Date.now() > 86400000 * 31) || // listings more than 31 days in the future
-    (listing?.price_floor || 0) * 0.000000001 > 2000 ||
+    (listing.endsAt && new Date(listing.endsAt).getTime() < Date.now()) || // auctions that ended, but .ended flag not flipped
+    (!listing.endsAt && listing.lastBidTime) || // remove instant buys that have ended
+    (listing.endsAt && new Date(listing.endsAt).getTime() - Date.now() > 86400000 * 31) || // listings more than 31 days in the future
+    (listing?.priceFloor || 0) * 0.000000001 > 2000 ||
     storeBlacklist.includes(listing.subdomain)
   ) {
     return false;
@@ -29,14 +29,14 @@ export async function callMetaplexIndexerRPC(
     if (method === 'getFeaturedListings')
       return (
         staticListings.result
-          .filter((l) => initialListingFilter(l) && l.total_uncancelled_bids)
+          .filter((l) => initialListingFilter(l) && l.totalUncancelledBids)
           // @ts-ignore
-          .sort((a, b) => b.total_uncancelled_bids - a.total_uncancelled_bids)
+          .sort((a, b) => b.totalUncancelledBids - a.totalUncancelledBids)
           .slice(0, 4)
-          .sort((a, b) => b.created_at.localeCompare(a.created_at))
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
       );
 
-    const indexerURL = 'https://metaplex-indexer-staging.herokuapp.com/'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
+    const indexerURL = 'http://localhost:4000'; //'https://metaplex-indexer-staging.herokuapp.com/'; //  'https://metaplex-indexer-staging.herokuapp.com/' || 'http://localhost:4000';
     const res = await fetch(indexerURL, {
       method: 'POST',
       headers: {

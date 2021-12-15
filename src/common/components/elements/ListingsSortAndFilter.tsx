@@ -58,11 +58,13 @@ export function DiscoveryFilterDropdown(props: {
       overlay={
         <Menu onClick={handleMenuClick}>
           {props.options.map((o) => (
-            <Menu.Item
-              key={o.value}
-              onClick={(e) => props.dispatch({ type: 'FILTER', payload: o.value })}
-            >
-              <Checkbox checked={props.value.includes(o.value)}>{o.label}</Checkbox>
+            <Menu.Item key={o.value}>
+              <div
+                style={{ width: '100%' }}
+                onClick={(e) => props.dispatch({ type: 'FILTER', payload: o.value })}
+              >
+                <Checkbox checked={props.value.includes(o.value)}>{o.label}</Checkbox>
+              </div>
             </Menu.Item>
           ))}
         </Menu>
@@ -122,94 +124,6 @@ export function DiscoverySortByDropdown(props: {
   );
 }
 
-// will need to refactor out a separate Filter component
-export function DiscoveryRadioDropdown({
-  label,
-  value,
-  action,
-  options,
-  dispatch,
-}: {
-  label: string;
-  action: 'FILTER' | 'SORT';
-  value: string | string[];
-  options: (SortingOption | FilterOption)[];
-  dispatch: React.Dispatch<DiscoveryToolAction>;
-}) {
-  return (
-    <Dropdown
-      overlay={
-        <Menu>
-          <Radio.Group
-            onChange={(e) => dispatch({ type: action, payload: e.target.value })}
-            value={value}
-          >
-            {options.map((o) => (
-              <Menu.Item key={o.value as string}>
-                <Radio value={o.value}>{o.label}</Radio>
-              </Menu.Item>
-            ))}
-          </Radio.Group>
-        </Menu>
-      }
-    >
-      <StyledDropdownTrigger>
-        <Space direction="horizontal" size="small" align="center">
-          <span className="label">{label}:</span>
-          <span className="value">{options.find((o) => o.value === value)?.label}</span>
-          <DownOutlined />
-        </Space>
-      </StyledDropdownTrigger>
-    </Dropdown>
-  );
-}
-
-function SortMenu({
-  value,
-  dispatch,
-  sortingOptions,
-}: {
-  value: string;
-  dispatch: React.Dispatch<DiscoveryToolAction>;
-  sortingOptions: SortingOption[];
-}) {
-  return (
-    <Menu>
-      <Radio.Group onChange={(e) => dispatch({ type: e.target.value })} value={value}>
-        {sortingOptions.map((so) => (
-          <Menu.Item key={so.value}>
-            <Radio value={so.value}>{so.label}</Radio>
-          </Menu.Item>
-        ))}
-      </Radio.Group>
-    </Menu>
-  );
-}
-
-export function DiscoverySortDropdown({
-  sortBy,
-  sortingOptions,
-  dispatch,
-}: {
-  sortBy: string;
-  sortingOptions: SortingOption[];
-  dispatch: React.Dispatch<DiscoveryToolAction>;
-}) {
-  return (
-    <Dropdown
-      overlay={<SortMenu value={sortBy} sortingOptions={sortingOptions} dispatch={dispatch} />}
-    >
-      <StyledDropdownTrigger>
-        <Space direction="horizontal" size="small">
-          <span className="label">Sort by:</span>
-          <span className="value">{sortBy}</span>
-          <DownOutlined />
-        </Space>
-      </StyledDropdownTrigger>
-    </Dropdown>
-  );
-}
-
 export function DiscoveryFiltersAndSortBy(props: {
   filters: FilterAction[];
   sortBy: SortByAction;
@@ -218,9 +132,10 @@ export function DiscoveryFiltersAndSortBy(props: {
   dispatch: React.Dispatch<DiscoveryToolAction>;
 }) {
   const onlyBuyNow = props.filters.length === 1 && props.filters[0] === 'BUY_NOW';
-  const filteredSortingOptions = props.allSortByOptions.filter(
-    (so) => !(onlyBuyNow && SortByAuctionValues.includes(so.value as any))
-  );
+  // const filteredSortingOptions = props.allSortByOptions.filter(
+  //   (so) => !(onlyBuyNow && SortByAuctionValues.includes(so.value as any))
+  // );
+
   return (
     <Space direction="horizontal">
       <DiscoveryFilterDropdown
@@ -232,7 +147,7 @@ export function DiscoveryFiltersAndSortBy(props: {
       <DiscoverySortByDropdown
         label="Sort"
         value={props.sortBy}
-        options={filteredSortingOptions}
+        options={props.allSortByOptions}
         dispatch={props.dispatch}
         onlyBuyNow={onlyBuyNow}
       />

@@ -18,7 +18,7 @@ export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) 
       </div>
       <Carousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
         {props.featuredListings.map((listing) => (
-          <ListingPreview key={listing.address} {...listing} />
+          <ListingPreview key={listing.listingAddress} {...listing} />
         ))}
       </Carousel>
       <style global jsx>

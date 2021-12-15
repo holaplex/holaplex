@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import { List, Row, Space, Typography } from 'antd';
-import { Listing, ListingPreview, SkeletonListing, generateListingShell } from './ListingPreview';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
+import { Affix, BackTop, Button, List, Row, Space, Typography } from 'antd';
 import {
-  DiscoveryFilterDropdown,
-  DiscoveryFiltersAndSortBy,
-  DiscoveryRadioDropdown,
-} from './ListingsSortAndFilter';
+  Listing,
+  ListingPreview,
+  SkeletonListing,
+  generateListingShell,
+  getListingPrice,
+} from './ListingPreview';
+import { DiscoveryFiltersAndSortBy } from './ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { NextRouter, useRouter } from 'next/router';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
@@ -29,7 +31,7 @@ export type SortByAction = typeof SortByValues[number]; // keyof typeof sortByFn
 
 export interface DiscoveryToolState {
   allListings: Listing[];
-  filteredListings: Listing[];
+  filteredAndSortedListings: Listing[];
   listingsOnDisplay: Listing[];
   cursor: number;
   filters: FilterAction[];
@@ -48,32 +50,28 @@ const filterFns: {
   [fnName in FilterAction]: (l: Listing) => boolean;
 } = {
   SHOW_ALL: (l) => true,
-  BUY_NOW: (l) => !l.ends_at,
-  ACTIVE_AUCTIONS: (l) => !!l.ends_at,
-  'HAS_1+_BIDS': (l) => !!l.ends_at && !!l.total_uncancelled_bids, // !!l.total_uncancelled_bids is true if it exists and is not 0
+  BUY_NOW: (l) => !l.endsAt,
+  ACTIVE_AUCTIONS: (l) => !!l.endsAt,
+  'HAS_1+_BIDS': (l) => !!l.endsAt && !!l.totalUncancelledBids, // !!l.total_uncancelled_bids is true if it exists and is not 0
 };
 
 const sortByFns: {
   [fnName in SortByAction]: (a: Listing, b: Listing) => number;
 } = {
-  MOST_BIDS: (a, b) => (b.total_uncancelled_bids || 0) - (a.total_uncancelled_bids || 0),
-  RECENTLY_LISTED: (a, b) => a.created_at.localeCompare(b.created_at),
+  MOST_BIDS: (a, b) => (b.totalUncancelledBids || 0) - (a.totalUncancelledBids || 0), // If many auctions only have 1 bid
+  RECENTLY_LISTED: (a, b) => a.createdAt.localeCompare(b.createdAt),
   RECENT_BID: (a, b) => {
-    if (!a.last_bid || !b.last_bid) return -1;
-    return a.last_bid - b.last_bid;
+    if (!a.lastBidTime) return 1;
+    return b.lastBidTime ? a.lastBidTime.localeCompare(b.lastBidTime) : -1;
   },
-  PRICE_HIGH_TO_LOW: (a, b) => {
-    const aPrice = a.price_floor || a.instant_sale_price || 0;
-    const bPrice = b.price_floor || b.instant_sale_price || 0;
-    return bPrice - aPrice;
+  PRICE_HIGH_TO_LOW: (a, b) => getListingPrice(b) - getListingPrice(a),
+  PRICE_LOW_TO_HIGH: (a, b) => getListingPrice(a) - getListingPrice(b),
+  ENDING_SOONEST: (a, b) => {
+    if (!a.endsAt) return 1;
+    return b.endsAt ? a.endsAt.localeCompare(b.endsAt) : -1;
   },
-  PRICE_LOW_TO_HIGH: (a, b) => {
-    const aPrice = a.price_floor || a.instant_sale_price || 0;
-    const bPrice = b.price_floor || b.instant_sale_price || 0;
-    return aPrice - bPrice;
-  },
-  ENDING_SOONEST: (a, b) =>
-    b.ends_at && a.ends_at ? a.ends_at.localeCompare(b.ends_at) || -1 : -1,
+  // something is off with the logic here, but I this produces a decent result for now
+  // !a.ends_at ? 1 : a.ends_at && b.ends_at ? a.ends_at.localeCompare(b.ends_at) : 1,
 };
 
 export type SortingOption = { value: SortByAction; label: string };
@@ -112,7 +110,7 @@ const initialState = (options?: {
     .map((_, i) => generateListingShell(i.toString()));
   return {
     allListings: listingShells,
-    filteredListings: listingShells,
+    filteredAndSortedListings: listingShells,
     listingsOnDisplay: listingShells,
     cursor: 0,
     // Array(8)
@@ -123,6 +121,12 @@ const initialState = (options?: {
   };
 };
 
+function filterAndSortListings(listings: Listing[], filters: FilterAction[], sortBy: SortByAction) {
+  return listings
+    .filter((listing) => filters.some((filter) => filterFns[filter](listing)))
+    .sort(sortByFns[sortBy]);
+}
+
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
   console.log(action.type, { action, prevState: state });
   switch (action.type) {
@@ -130,7 +134,11 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       return {
         ...state,
         allListings: action.payload,
-        filteredListings: action.payload.sort(sortByFns[state.sortBy]),
+        filteredAndSortedListings: filterAndSortListings(
+          action.payload,
+          state.filters,
+          state.sortBy
+        ),
         listingsOnDisplay: [],
       };
     case 'LOAD_MORE_LISTINGS':
@@ -138,10 +146,10 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
 
       return {
         ...state,
-        cursor: newCursor, // nr of items
+        cursor: newCursor,
         listingsOnDisplay: [
           ...state.listingsOnDisplay,
-          ...state.filteredListings.slice(state.cursor, newCursor),
+          ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
         ],
       };
     case 'FILTER':
@@ -158,24 +166,28 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       }
       if (!filters.length) filters = ['SHOW_ALL'];
 
-      const filteredListings = state.allListings
-        .filter((listing) => filters.some((filter) => filterFns[filter](listing)))
-        .sort(sortByFns[state.sortBy]);
+      const onlyBuyNow = filters.length === 1 && filters[0] === 'BUY_NOW';
+      const sortBy =
+        // @ts-ignore
+        onlyBuyNow && SortByAuctionValues.includes(state.sortBy) ? 'RECENTLY_LISTED' : state.sortBy;
+
+      const filteredAndSortedListings = filterAndSortListings(state.allListings, filters, sortBy);
 
       return {
         ...state,
         cursor: 0,
         filters,
-        filteredListings: filteredListings,
-        listingsOnDisplay: filteredListings.slice(0, pageSize),
+        sortBy,
+        filteredAndSortedListings: filteredAndSortedListings,
+        listingsOnDisplay: filteredAndSortedListings.slice(0, pageSize),
       };
     case 'SORT':
-      const sortedListings = state.filteredListings.sort(sortByFns[action.payload]);
+      const sortedListings = state.filteredAndSortedListings.sort(sortByFns[action.payload]);
       return {
         ...state,
         cursor: 0,
         sortBy: action.payload,
-        filteredListings: sortedListings,
+        filteredAndSortedListings: sortedListings,
         listingsOnDisplay: sortedListings.slice(0, pageSize),
       };
     default:
@@ -233,7 +245,7 @@ export function CurrentListings() {
     getListings();
   }, []);
 
-  const hasNextPage = state.listingsOnDisplay.length < state.filteredListings.length;
+  const hasNextPage = state.listingsOnDisplay.length < state.filteredAndSortedListings.length;
   const [sentryRef] = useInfiniteScroll({
     loading,
     hasNextPage,
@@ -247,14 +259,17 @@ export function CurrentListings() {
     // visible, instead of becoming fully visible on the screen.
     rootMargin: '0px 0px 400px 0px',
   });
+  // const [container, setContainer] = useState<HTMLDivElement | Window>(window);
+  const CurrentListingsRef = useRef<HTMLDivElement>(null);
 
   return (
-    <>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 30 }}>
+    <div id="current-listings" ref={CurrentListingsRef} style={{ position: 'relative' }}>
+      {/* <Affix target={() => CurrentListingsRef} offsetTop={10}> */}
+      <Row justify="space-between" align="middle" style={{ marginBottom: 30, background: 'black' }}>
         <Title level={3}>
-          Current listings ({state.filteredListings.length}) (
-          {state.filteredListings.length -
-            new Set(state.filteredListings.map((l) => l.address)).size}{' '}
+          Current listings ({state.filteredAndSortedListings.length}) (
+          {state.filteredAndSortedListings.length -
+            new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
           duplicates){' '}
         </Title>
         {/* <Space direction="horizontal">
@@ -280,6 +295,7 @@ export function CurrentListings() {
           dispatch={dispatch}
         />
       </Row>
+      {/* </Affix> */}
 
       <List
         grid={{
@@ -293,7 +309,7 @@ export function CurrentListings() {
         }}
         dataSource={state.listingsOnDisplay}
         renderItem={(listing, i) => (
-          <List.Item key={listing?.address || i}>
+          <List.Item key={listing?.listingAddress || i}>
             {!listing.subdomain ? <SkeletonListing /> : <ListingPreview {...listing} />}
           </List.Item>
         )}
@@ -323,6 +339,8 @@ export function CurrentListings() {
         <div>All done for now 🎉</div>
         // Back to top?
       )}
-    </>
+      {/* <Button style={{ position: 'sticky', bottom: 10, right: 25 }}>Back to top</Button> */}
+      {/* <BackTop target={() => CurrentListingsRef.current} /> */}
+    </div>
   );
 }
