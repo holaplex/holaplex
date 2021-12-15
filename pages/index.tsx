@@ -114,7 +114,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
   return (
     <Row>
-      <CenteredContentCol xs={22} md={20}>
+      <CenteredContentCol>
         <Section>
           <Marketing xs={22} md={16}>
             <HeroTitle>Find, buy, and sell NFTs from incredible artists on Solana.</HeroTitle>
