@@ -68,8 +68,8 @@ export interface Collection {
 }
 
 export interface FilePreview {
-  type: 'audio' | 'video' | 'image' | 'webgl';
-  coverImage: File;
+  type: string;
+  coverImage: File | null;
   file: File;
 }
 
@@ -112,10 +112,12 @@ export interface MintAction {
     | File[]
     | File
     | FilePreview[]
+    | FilePreview
     | String
     | Array<UploadedFilePin>
     | NFTFormValue[]
     | NFTValue[]
+    | { filePreview: FilePreview; index: number }
     | { file: File; index: number };
 }
 
@@ -155,9 +157,9 @@ function reducer(state: State, action: MintAction) {
     case 'SET_FILE_PREVIEWS':
       return { ...state, filePreviews: action.payload as FilePreview[] };
     case 'INSERT_FILE_PREVIEW': {
-      const { file, index, type, coverImage } = action.payload as FilePreview & { index: number };
+      const { filePreview, index } = action.payload as { filePreview: FilePreview; index: number };
       const copy = [...state.filePreviews];
-      copy[index] = { file, type, coverImage };
+      copy[index] = { ...filePreview };
       return {
         ...state,
         filePreviews: copy,

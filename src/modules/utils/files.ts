@@ -1,10 +1,12 @@
-export const isImage = (file: File) => file.type.startsWith('image/');
+import { FilePreview } from 'pages/nfts/new';
 
-export const isVideo = (file: File) => file.type.startsWith('video/');
+export const isImage = (file: File | FilePreview) => file.type.startsWith('image/');
 
-export const isAudio = (file: File) => file.type.startsWith('audio/');
+export const isVideo = (file: File | FilePreview) => file.type.startsWith('video/');
 
-export const is3D = (file: File) => file.type.startsWith('model/');
+export const isAudio = (file: File | FilePreview) => file.type.startsWith('audio/');
+
+export const is3D = (file: File | FilePreview) => file.type.startsWith('model/');
 
 export function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
   const fileNameParts = file.name.split('.');

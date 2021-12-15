@@ -4,7 +4,7 @@ import GreenCheckIcon from '@/common/assets/images/green-check.svg';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { MintStatus, NFTValue } from 'pages/nfts/new';
+import { FilePreview, MintStatus, NFTValue } from 'pages/nfts/new';
 import { Image as AntImage } from 'antd';
 import { isAudio, isImage, isVideo } from '@/modules/utils/files';
 
@@ -21,6 +21,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   width: 120px;
   display: flex;
   justify-content: center;
+  align-items: center;
 
   ${({ isFinished }) => isFinished && 'opacity: 0.5;'}
 
@@ -34,26 +35,6 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
       }
       
     `}
-`;
-
-const StyledRemoveNFT = styled.div`
-  position: absolute;
-  top: -9px;
-  right: -9px;
-  display: none;
-  cursor: pointer;
-`;
-
-const FilePreviewContainer = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    ${StyledRemoveNFT} {
-      display: block;
-    }
-  }
 `;
 
 const Grid = styled.div`
@@ -84,20 +65,20 @@ const StyledAntDImage = styled(AntImage)`
   object-fit: cover;
 `;
 
-const getFilePreview = (file: File) => {
-  if (isAudio(file)) {
+const getFilePreview = (fp: FilePreview) => {
+  if (isAudio(fp)) {
     return <FeatherIcon icon="image" />;
   }
 
-  if (isVideo(file)) {
+  if (isVideo(fp)) {
     return <FeatherIcon icon="video" />;
   }
 
-  if (isImage(file)) {
+  if (isImage(fp)) {
     return (
       <StyledAntDImage
-        src={URL.createObjectURL(file)}
-        alt={file.name}
+        src={URL.createObjectURL(fp.file)}
+        alt={fp.file.name}
         // objectFit="cover"
         // unoptimized={true}
       />
@@ -106,37 +87,25 @@ const getFilePreview = (file: File) => {
 };
 
 interface Props {
-  files: Array<File>;
+  filePreviews: Array<FilePreview>;
   index?: number;
   width?: number;
-  removeFile?: (id: string) => void;
   children?: any;
-  isMintStep?: boolean;
   nftValues?: NFTValue[];
 }
 
 export const NFTPreviewGrid = ({
-  files,
+  filePreviews,
   index = -1,
   width = 2,
-  removeFile,
   children,
   nftValues,
 }: Props) => {
   return (
     <Grid width={width}>
-      {files.map((file, i) => (
-        <ImageOverlay key={file.name} isFinished={i < index} isCurrent={i === index}>
-          {removeFile ? (
-            <FilePreviewContainer key={file.name}>
-              {getFilePreview(file)}
-              <StyledRemoveNFT onClick={() => removeFile(file.name)}>
-                <Image width={24} height={24} src={RedXClose} alt="remove-nft" />
-              </StyledRemoveNFT>
-            </FilePreviewContainer>
-          ) : (
-            getFilePreview(file)
-          )}
+      {filePreviews.map((fp, i) => (
+        <ImageOverlay key={fp.file.name} isFinished={i < index} isCurrent={i === index}>
+          {getFilePreview(fp)}
           {i < index && getOverlayStatus(i, nftValues)}
         </ImageOverlay>
       ))}

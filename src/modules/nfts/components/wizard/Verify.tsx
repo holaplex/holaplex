@@ -14,6 +14,8 @@ import {
 } from '@/modules/nfts/components/wizard/Upload';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { VerifyFileUpload } from '@/common/components/elements/VerifyFileUpload';
+import { RcFile } from 'antd/lib/upload';
+import { isImage } from '@/modules/utils/files';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -54,9 +56,17 @@ export default function Verify({
   clearForm,
 }: Props) {
   const handleNext = () => {
-    dispatch({ type: 'SET_COVER_IMAGES', payload: files }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
+    console.log('file type of first is ', files[0].type);
+    const filePreviews = files.map((file) => ({
+      type: file.type,
+      file,
+      coverImage: isImage(file) ? file : null,
+    }));
+
+    dispatch({ type: 'SET_FILE_PREVIEWS', payload: filePreviews }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
     nextStep!();
   };
+
   const removeFile = (fileName: string) => {
     dispatch({ type: 'DELETE_FILE', payload: fileName });
   };
@@ -64,6 +74,19 @@ export default function Verify({
   const handlePrevious = () => {
     clearForm();
     previousStep!();
+  };
+
+  const beforeUpload = (f: RcFile) => {
+    const { size, name } = f;
+    if (size && size > MAX_FILE_SIZE) {
+      window.alert(
+        `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
+          0
+        )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
+      );
+      return;
+    }
+    dispatch({ type: 'ADD_FILE', payload: f });
   };
 
   return (
@@ -75,18 +98,7 @@ export default function Verify({
             <Upload
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
               showUploadList={false}
-              beforeUpload={(f) => {
-                const { size, name } = f;
-                if (size && size > MAX_FILE_SIZE) {
-                  window.alert(
-                    `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
-                      0
-                    )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
-                  );
-                  return;
-                }
-                dispatch({ type: 'ADD_FILE', payload: f });
-              }}
+              beforeUpload={beforeUpload}
             >
               <AddNFTButton>
                 <Image width={24} height={24} src={XCloseIcon} alt="x-close" />

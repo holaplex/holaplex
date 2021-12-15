@@ -10,7 +10,7 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { actions } from '@holaplex/js';
-import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
+import { FilePreview, MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
@@ -46,16 +46,6 @@ enum TransactionStep {
   SIGNING_FAILED,
   SIGNING,
   SUCCESS,
-}
-
-interface Props extends Partial<StepWizardChildProps> {
-  files: Array<File>;
-  wallet: Solana;
-  connection: Connection;
-  nftValues: NFTValue[];
-  index: number;
-  updateNFTValue: (value: NFTValue, index: number) => void;
-  uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
 }
 
 const MintStep = ({
@@ -101,10 +91,22 @@ const MintStep = ({
   );
 };
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  wallet: Solana;
+  connection: Connection;
+  nftValues: NFTValue[];
+  index: number;
+  updateNFTValue: (value: NFTValue, index: number) => void;
+  uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
+}
+
 export default function MintInProgress({
   previousStep,
   goToStep,
   files,
+  filePreviews,
   nextStep,
   isActive,
   nftValues,
@@ -330,7 +332,7 @@ export default function MintInProgress({
         </Col>
 
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid index={index} files={files} nftValues={nftValues} />
+        <NFTPreviewGrid filePreviews={filePreviews} nftValues={nftValues} index={index} />
       </Row>
     </NavContainer>
   );

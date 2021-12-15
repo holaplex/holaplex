@@ -10,13 +10,9 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { WalletContext } from '@/modules/wallet';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { FilePreview } from 'pages/nfts/new';
 
 const SOL_COST_PER_NFT = 0.01;
-
-interface Props extends Partial<StepWizardChildProps> {
-  files: Array<File>;
-  connection: Connection;
-}
 
 const Grid = styled.div`
   display: grid;
@@ -42,9 +38,16 @@ async function getSolRate() {
   return rates[0].rate;
 }
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  connection: Connection;
+}
+
 export default function PriceSummary({
   previousStep,
   goToStep,
+  filePreviews,
   files,
   nextStep,
   connection,
@@ -128,7 +131,7 @@ export default function PriceSummary({
           </Row>
         </Col>
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
-        <NFTPreviewGrid files={files} />
+        <NFTPreviewGrid filePreviews={filePreviews} />
       </Row>
     </NavContainer>
   );

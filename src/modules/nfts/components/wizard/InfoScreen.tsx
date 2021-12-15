@@ -169,7 +169,10 @@ export default function InfoScreen({
       coverImage = e;
     }
 
-    // dispatch({ type: 'INSERT_COVER_IMAGE', payload: { coverImage, file: currentFile, index } });
+    dispatch({
+      type: 'INSERT_FILE_PREVIEW',
+      payload: { coverImage: coverImage as File, file: currentFile, type: currentFile.type },
+    });
     return coverImage;
   };
 
@@ -312,7 +315,7 @@ export default function InfoScreen({
           </ButtonFormItem>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid files={filePreviews} index={index} width={2} />
+        <NFTPreviewGrid filePreviews={filePreviews} index={index} width={2} />
       </Row>
     </NavContainer>
   );

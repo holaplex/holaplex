@@ -742,7 +742,7 @@ export default function RoyaltiesCreators({
           </Row>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid files={files} index={index} width={2} />
+        <NFTPreviewGrid filePreviews={filePreviews} index={index} width={2} />
       </Row>
     </NavContainer>
   );
