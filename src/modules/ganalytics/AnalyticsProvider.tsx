@@ -37,6 +37,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const pubkey = wallet?.pubkey || '';
   // const pubkey = publicKey?.toBase58() || '';
   useEffect(() => {
+    return
     gtag = window?.gtag;
     // const isStoreOwner = ownerAddress === publicKey?.toBase58();
     // user pubkey / id
