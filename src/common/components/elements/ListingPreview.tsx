@@ -112,6 +112,10 @@ const ListingTitle = styled(Title)`
   margin-bottom: 4px !important;
   font-size: 18px !important;
   flex-grow: 1;
+  max-width: 75%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   /* width: 14rem; No longer needed because of flex grow, i think */
 
   + h3 {
@@ -126,6 +130,10 @@ const ListingSubTitle = styled(Text)`
   font-size: 14px;
   opacity: 0.6;
   flex-grow: 1;
+  max-width: 85%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   /* width: 14rem; No longer needed because of flex grow, i think */
 
   + span {
