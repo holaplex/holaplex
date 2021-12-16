@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import staticListings from 'fixtures/listings.json';
 
 const storeBlacklist: string[] = [
-  'xperienceproject',
+  'xperienceproject', // explicit
   'testme',
   'bwauctions',
   'nu9ve',
