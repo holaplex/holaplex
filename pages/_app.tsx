@@ -13,9 +13,11 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
-import { AnalyticsProvider } from '@/modules/ganalytics/AnalyticsProvider';
-
-const GOOGLE_ANALYTICS_ID = 'asdf'; //  process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+import {
+  AnalyticsProvider,
+  GOOGLE_ANALYTICS_OLD_ID,
+  GA4_ID,
+} from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Header, Content } = Layout;
 
@@ -36,27 +38,33 @@ const AppLayout = styled(Layout)`
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  // const track = (category: string, action: string) => {
-  //   if (isNil(GOOGLE_ANALYTICS_ID)) {
-  //     return;
-  //   }
-
-  //   window.gtag('event', action, {
-  //     event_category: category,
-  //     send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
-  //   });
-  // };
-
-  const onRouteChanged = (path: string) => {
-    if (isNil(GOOGLE_ANALYTICS_ID)) {
+  const oldTrack = (category: string, action: string) => {
+    if (isNil(GOOGLE_ANALYTICS_OLD_ID)) {
       return;
     }
-    // keeping this for now to power old GA endpoint. The new one tracks pageviews automatically
-    window.gtag('config', GOOGLE_ANALYTICS_ID, { page_path: path });
+
+    window.gtag('event', action, {
+      event_category: category,
+      send_to: [GOOGLE_ANALYTICS_OLD_ID, GA4_ID],
+    });
+  };
+
+  const onRouteChanged = (path: string) => {
+    if (isNil(GOOGLE_ANALYTICS_OLD_ID)) {
+      return;
+    }
+
+    window.gtag('config', GOOGLE_ANALYTICS_OLD_ID, { page_path: path });
+
+    // will look into this pageview tracking later
+    if (isNil(GA4_ID)) {
+      return;
+    }
+    window.gtag('event', 'page_view', { page_path: path, send_to: [GA4_ID] });
   };
 
   useEffect(() => {
-    if (!process.browser || !GOOGLE_ANALYTICS_ID) {
+    if (!GOOGLE_ANALYTICS_OLD_ID) {
       return;
     }
 
@@ -84,7 +92,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <AppContent>
                       <Loading loading={verifying || searching}>
                         <>
-                          <Component {...pageProps} />
+                          <Component {...pageProps} track={oldTrack} />
                           <AppFooter justify="center">
                             <Col span={24}>
                               <Row>

@@ -1,9 +1,22 @@
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { Row, Carousel, Typography } from 'antd';
+import { useEffect } from 'react';
 import { Listing, ListingPreview } from './ListingPreview';
 const { Text } = Typography;
 
 // still some style cleanup to do here.... :(
 export function FeaturedListingCarousel(props: { featuredListings: Listing[] }) {
+  const { trackRecommendedEcommerceEvent, track } = useAnalytics();
+  useEffect(() => {
+    trackRecommendedEcommerceEvent('view_item_list', props.featuredListings, {
+      listId: 'featured_listings',
+    });
+
+    track('view_featured_listings', {
+      listingsInView: props.featuredListings.length,
+    });
+  }, []);
+
   return (
     <div style={{ maxWidth: 500 }}>
       <div

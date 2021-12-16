@@ -144,16 +144,13 @@ export function filterAndSortListings(
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
   switch (action.type) {
     case 'INITIALIZE_LISTINGS':
+      const filteredListings = filterAndSortListings(action.payload, state.filters, state.sortBy);
       return {
         ...state,
         allListings: action.payload,
-        filteredAndSortedListings: filterAndSortListings(
-          action.payload,
-          state.filters,
-          state.sortBy
-        ),
-        cursor: 0,
-        listingsOnDisplay: [],
+        filteredAndSortedListings: filteredListings,
+        cursor: pageSize,
+        listingsOnDisplay: filteredListings.slice(0, pageSize),
       };
     case 'LOAD_MORE_LISTINGS':
       const newCursor = state.cursor + pageSize;
@@ -265,12 +262,19 @@ export function CurrentListings(props: { allListings: Listing[] }) {
     setTimeout(() => setLoading(false), 500);
   };
 
-  const { trackRecommendedEcommerceEvent } = useAnalytics();
+  const { trackRecommendedEcommerceEvent, track } = useAnalytics();
   useEffect(() => {
     trackRecommendedEcommerceEvent('view_item_list', state.listingsOnDisplay, {
       listId: 'current_listings',
     });
-  }, []);
+
+    track('view_current_listings', {
+      filters: state.filters,
+      sortBy: state.sortBy,
+      filteredListings: state.filteredAndSortedListings.length,
+      listingsInView: state.listingsOnDisplay.length,
+    });
+  }, [state.filters, state.sortBy]);
 
   const isDev = false && process.env.NODE_ENV === 'development';
   // get all listings initially
@@ -282,7 +286,7 @@ export function CurrentListings(props: { allListings: Listing[] }) {
         : await callMetaplexIndexerRPC('getListings');
       dispatch({ type: 'INITIALIZE_LISTINGS', payload: allListings });
 
-      loadMoreData();
+      // loadMoreData(); // moved initial loading of data to INITIALIZE_LISTINGS
     }
     getListings();
   }, [props.allListings]);

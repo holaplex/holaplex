@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
 import { ZoomInOutlined } from '@ant-design/icons';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
+import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 const { Title, Text } = Typography;
 
 interface Creator {
@@ -298,12 +299,17 @@ export function ListingPreview(listing: Listing) {
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   const isDev = false && process.env.NODE_ENV === 'development';
 
+  const { track, trackRecommendedEcommerceEvent } = useAnalytics();
+
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
       const res = await fetch(maybeCDN(nftMetadata.uri));
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
+
+        // this generates a lot of events! I want to make sure it's performant before we pull this in
+        // trackRecommendedEcommerceEvent('view_item', [listing], { listId: 'current_listings' }); // no way to tell if it is featured right now
       }
     }
     if (nftMetadata?.uri) {
@@ -313,8 +319,25 @@ export function ListingPreview(listing: Listing) {
 
   // shows up to 2 decimals, but removes pointless 0s
   const displayPrice = getFormatedListingPrice(listing);
+
+  const onListingClick = (e: any) => {
+    e.preventDefault();
+    // tracking
+    trackRecommendedEcommerceEvent('select_item', [listing], { listId: 'current_listings' });
+
+    track('select_listing', {
+      ...addListingToTrackCall(listing),
+      name: nft?.name,
+      // seller fee basis points
+      // ends_at: this can change quite often, so not sure if we should track
+      // other stuff from nftJson
+    });
+
+    window.open(storeHref, '_blank', 'nofollow noreferrer');
+  };
+
   return (
-    <a href={storeHref} rel="nofollow noreferrer" target="_blank">
+    <a onClick={onListingClick} href={storeHref} rel="nofollow noreferrer" target="_blank">
       <ListingPreviewContainer>
         <Square>
           {!nft?.image ? (
