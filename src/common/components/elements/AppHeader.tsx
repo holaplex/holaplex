@@ -12,7 +12,8 @@ const HeaderTitle = styled.div`
   font-size: 24px;
   line-height: 2px;
   font-weight: 900;
-  margin-right: auto;
+  margin-right: 2rem;
+  flex-grow: 1;
   a {
     color: ${sv.colors.buttonText};
     &:hover {
@@ -25,7 +26,8 @@ const { Header } = Layout;
 
 const StyledHeader = styled(Header)`
   ${sv.flexRow};
-  margin: 0 0 40px 0;
+  margin: 5px 5px 40px;
+  padding: 1.25rem;
 `;
 
 const HeaderLinkWrapper = styled.div<{ active: boolean }>`
@@ -43,7 +45,7 @@ export function AppHeader() {
       <HeaderTitle>
         {windowDimensions.width > 550 ? (
           <Link href="/" passHref>
-            👋 Holaplex
+            👋&nbsp;&nbsp;Holaplex
           </Link>
         ) : (
           <Link href="/" passHref>
@@ -65,7 +67,7 @@ export function AppHeader() {
 
         <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
           <Link href="/nfts/new" passHref>
-            Mint NFTs
+            Mint&nbsp;NFTs
           </Link>
         </HeaderLinkWrapper>
         <HeaderLinkWrapper active={router.pathname == '/about'}>
@@ -78,7 +80,7 @@ export function AppHeader() {
             FAQ
           </a>
         </HeaderLinkWrapper>
-        {windowDimensions.width > 550 && <SocialLinks />}
+        {/* {windowDimensions.width > 700 && <SocialLinks />} */}
       </Space>
     </StyledHeader>
   );
