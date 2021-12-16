@@ -105,7 +105,11 @@ export type DiscoveryToolAction =
 
 // would have liked to use a ref, but I don't know how to access that from inside the reducer
 // scroll behaviour smooth can look cool, but it sometimes leads to extra listings being rendered because the infinte scroll hook is triggered "on the way up"
-const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
+//const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
+const scrollToTopOfListings = () =>
+  document.getElementById('current-listings')?.scrollIntoView({
+    behavior: 'smooth',
+  });
 
 const initialState = (options: {
   filters: FilterAction[];
@@ -242,19 +246,25 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
     .map((qf) => qf.toUpperCase())
     .filter((qf) => FilterValues.includes(qf as any)) as FilterAction[];
 
-  // const validSortBy = (
-  //   SortByValues.includes(querySortBy.toUpperCase() as any)
-  //     ? querySortBy.toUpperCase()
-  //     : 'RECENTLY_LISTED'
-  // ) as SortByAction;
+  const validSortBy = (
+    SortByValues.includes(querySortBy.toUpperCase() as any)
+      ? querySortBy.toUpperCase()
+      : 'MOST_BIDS'
+  ) as SortByAction;
+
+  console.log({
+    querySearch,
+    queryFilters,
+    querySortBy,
+    validFilters,
+    validSortBy,
+  });
 
   const [state, dispatch] = useReducer(
     reducer,
     initialState({
       filters: validFilters.length ? validFilters : ['ACTIVE_AUCTIONS'],
-      sortBy: (SortByValues.includes(querySortBy.toUpperCase() as any)
-        ? querySortBy.toUpperCase()
-        : 'RECENTLY_LISTED') as SortByAction,
+      sortBy: validSortBy,
     })
   );
 
