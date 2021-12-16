@@ -26,7 +26,6 @@ const StyledDropdownTrigger = styled.div`
 
   .value {
     white-space: nowrap;
-    margin-right: 4px;
   }
 
   > .label {
@@ -110,15 +109,14 @@ export function DiscoveryFilterDropdown(props: {
             </Space> */}
       <StyledDropdownTrigger>
         <span className="label">{props.label}:</span>
-        <span>
-          <span className="value">
-            {props.options
-              .filter((o) => props.value.includes(o.value))
-              .map((o) => o.label)
-              .join(', ')}
-          </span>
-          <DownOutlined />
+
+        <span className="value">
+          {props.options
+            .filter((o) => props.value.includes(o.value))
+            .map((o) => o.label)
+            .join(', ')}
         </span>
+        <DownOutlined />
       </StyledDropdownTrigger>
     </Dropdown>
   );
@@ -164,10 +162,9 @@ export function DiscoverySortByDropdown(props: {
         </Space> */}
       <StyledDropdownTrigger>
         <span className="label">{props.label}:</span>
-        <span>
-          <span className="value">{props.options.find((o) => o.value === props.value)?.label}</span>
-          <DownOutlined />
-        </span>
+
+        <span className="value">{props.options.find((o) => o.value === props.value)?.label}</span>
+        <DownOutlined />
       </StyledDropdownTrigger>
     </Dropdown>
   );

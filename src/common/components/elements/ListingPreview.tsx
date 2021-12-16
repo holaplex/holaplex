@@ -249,12 +249,19 @@ const CustomImageMask = styled.div`
   right: 0;
   bottom: 0;
   width: 25%;
-  height: 25%;
+  height: 25%; 
   margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  > svg {
+    position absolute;
+    right: 10px;
+    bottom: 10px;
+
+  }
 `;
 
 const captureCid = /https:\/\/(.*).ipfs.dweb.*$/;
