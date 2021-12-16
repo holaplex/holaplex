@@ -12,6 +12,7 @@ import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { NextRouter, useRouter } from 'next/router';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Flex } from 'antd-mobile';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Title } = Typography;
 
@@ -263,6 +264,11 @@ export function CurrentListings(props: { allListings: Listing[] }) {
     // artifical delay
     setTimeout(() => setLoading(false), 500);
   };
+
+  const { trackEcommerce } = useAnalytics();
+  // useEffect(() => {
+  //   trackEcommerce('view_item_list', state.listingsOnDisplay, )
+  // }, [])
 
   const isDev = false && process.env.NODE_ENV === 'development';
   // get all listings initially

@@ -285,6 +285,10 @@ export function getListingPrice(listing: Listing) {
   );
 }
 
+export function getFormatedListingPrice(listing: Listing) {
+  return Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+}
+
 export function ListingPreview(listing: Listing) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/#/auction/${listing.listingAddress}`;
 
@@ -308,7 +312,7 @@ export function ListingPreview(listing: Listing) {
   }, [nftMetadata]);
 
   // shows up to 2 decimals, but removes pointless 0s
-  const displayPrice = Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+  const displayPrice = getFormatedListingPrice(listing);
   return (
     <a href={storeHref} rel="nofollow noreferrer" target="_blank">
       <ListingPreviewContainer>

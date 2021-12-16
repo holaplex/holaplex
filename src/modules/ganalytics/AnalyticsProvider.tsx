@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
-import { Listing } from '@/common/components/elements/ListingPreview';
+import { getFormatedListingPrice, Listing } from '@/common/components/elements/ListingPreview';
 
 export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || 'G-HLNC4C2YKN';
 
@@ -25,6 +25,13 @@ const AnalyticsContext = React.createContext<{
   configureAnalytics: (options: CustomEventDimensions) => void;
   pageview: (path: string) => void;
   track: (action: string, attributes: { [key: string]: any }) => void;
+  trackEcommerce: (
+    action: GoogleEcommerceEvent,
+    listings: Listing[],
+    attributes: {
+      listId: 'featured' | 'current_listings';
+    }
+  ) => void;
 } | null>(null);
 
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
@@ -113,33 +120,46 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     });
   }
 
+  const listNames = {
+    featured: 'Featured listings',
+    current_listings: 'Regular',
+  };
   // used to track listings as ecommerce items
-  function trackEcommerce(action: GoogleEcommerceEvent, listings: Listing[]) {
+  function trackEcommerce(
+    action: GoogleEcommerceEvent,
+    listings: Listing[],
+    attributes: {
+      listId: 'featured' | 'current_listings';
+    }
+  ) {
+    const aggregateSolValue = listings.reduce((acc, l) => acc + getFormatedListingPrice(l), 0);
+
     gtag('event', action, {
       currency: 'USD',
-      value: 7.77,
-      // sol_value:
-      // items: listings.map(l => ({
-      //     item_id: "SKU_12345",
-      //      item_name: "Stan and Friends Tee",
-      //      affiliation: "Google Store",
-      //      coupon: "SUMMER_FUN",
-      //      currency: "USD",
-      //      discount: 2.22,
-      //      index: 5,
-      //      item_brand: "Google",
-      //      item_category: "Apparel",
-      //      item_category2: "Adult",
-      //      item_category3: "Shirts",
-      //      item_category4: "Crew",
-      //      item_category5: "Short sleeve",
-      //      item_list_id: "related_products",
-      //      item_list_name: "Related Products",
-      //      item_variant: "green",
-      //      location_id: "L_12345",
-      //      price: 9.99,
-      //      quantity: 1
-      // }))
+      value: aggregateSolValue * solPrice,
+      sol_value: aggregateSolValue,
+      items: listings.map((l, i) => ({
+        item_id: l.listingAddress,
+        item_name: l.items[0]?.name,
+        affiliation: l.subdomain,
+        // coupon: "SUMMER_FUN",
+        // currency: "USD",
+        // discount: 2.22,
+        index: i,
+        item_brand: 'Google',
+        item_category: 'Apparel',
+        item_category2: 'Adult',
+        item_category3: 'Shirts',
+        item_category4: 'Crew',
+        item_category5: 'Short sleeve',
+        item_list_id: attributes.listId,
+        item_list_name: listNames[attributes.listId],
+        item_variant: 'green',
+        // location_id: "L_12345",
+        price: getFormatedListingPrice(l),
+        currency: 'SOL',
+        // quantity: 1 we can probably include this
+      })),
       // [
       //   {
       //     item_id: "SKU_12345",
@@ -172,6 +192,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         configureAnalytics,
         track,
         pageview,
+        trackEcommerce,
       }}
     >
       {props.children}
