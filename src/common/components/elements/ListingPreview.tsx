@@ -292,7 +292,7 @@ export function ListingPreview(listing: Listing) {
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = false && process.env.NODE_ENV === 'development';
 
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {

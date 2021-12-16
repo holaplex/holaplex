@@ -59,7 +59,9 @@ const filterFns: {
 const sortByFns: {
   [fnName in SortByAction]: (a: Listing, b: Listing) => number;
 } = {
-  MOST_BIDS: (a, b) => (b.totalUncancelledBids || 0) - (a.totalUncancelledBids || 0), // If many auctions only have 1 bid
+  // Most_bids could be renamed to trending
+  MOST_BIDS: (a, b) =>
+    (b.totalUncancelledBids || 0) - (a.totalUncancelledBids || 0) || sortByFns.ENDING_SOONEST(a, b), // If many auctions only have 1 bid
   RECENTLY_LISTED: (a, b) => b.createdAt.localeCompare(a.createdAt),
   RECENT_BID: (a, b) => {
     if (!a.lastBidTime) return 1;
@@ -104,8 +106,8 @@ export type DiscoveryToolAction =
     };
 
 // would have liked to use a ref, but I don't know how to access that from inside the reducer
+// const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
 // scroll behaviour smooth can look cool, but it sometimes leads to extra listings being rendered because the infinte scroll hook is triggered "on the way up"
-//const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
 const scrollToTopOfListings = () =>
   document.getElementById('current-listings')?.scrollIntoView({
     behavior: 'smooth',
@@ -123,9 +125,6 @@ const initialState = (options: {
     filteredAndSortedListings: listingShells,
     listingsOnDisplay: listingShells,
     cursor: 0,
-    // Array(8)
-    //   .fill(null)
-    //   .map((_, i) => generateListingShell(i.toString())),
     filters: options.filters,
     sortBy: options.sortBy,
   };
@@ -142,10 +141,6 @@ export function filterAndSortListings(
 }
 
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
-  // console.log(action.type, {
-  //   action,
-  //   prevState: state,
-  // });
   switch (action.type) {
     case 'INITIALIZE_LISTINGS':
       return {
@@ -161,10 +156,6 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       };
     case 'LOAD_MORE_LISTINGS':
       const newCursor = state.cursor + pageSize;
-      // const listingsSet = new Set([
-      //   ...state.listingsOnDisplay,
-      //   ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
-      // ]);
       const listings = [
         ...state.listingsOnDisplay,
         ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
@@ -173,15 +164,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       return {
         ...state,
         cursor: newCursor,
-        listingsOnDisplay: Array.from(listings),
-        // don't remove this comment plz // Kris
-        // .map((l) => ({
-        //   ...l,
-        //   meta: {
-        //     filterdListingsLength: state.filteredAndSortedListings.length,
-        //     cursor: state.cursor + ' - ' + newCursor,
-        //   },
-        // })),
+        listingsOnDisplay: listings,
       };
     case 'FILTER':
       const incomingFilter = action.payload;
@@ -209,7 +192,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
 
       return {
         ...state,
-        cursor: 0,
+        cursor: pageSize,
         filters,
         sortBy,
         filteredAndSortedListings: filteredAndSortedListings,
@@ -221,7 +204,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
 
       return {
         ...state,
-        cursor: 0,
+        cursor: pageSize,
         sortBy: action.payload,
         filteredAndSortedListings: sortedListings,
         listingsOnDisplay: sortedListings.slice(0, pageSize),
@@ -231,7 +214,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
   }
 }
 
-export function CurrentListings(props: { allListings?: Listing[] }) {
+export function CurrentListings(props: { allListings: Listing[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -252,16 +235,18 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
       : 'MOST_BIDS'
   ) as SortByAction;
 
-  console.log({
-    querySearch,
-    queryFilters,
-    querySortBy,
-    validFilters,
-    validSortBy,
-  });
+  // turns out the query is only parsed after a few renders, and don't make it into the initial state :(
+  // will need to put it in useEffect probably
+  // console.log({
+  //   querySearch,
+  //   queryFilters,
+  //   querySortBy,
+  //   validFilters,
+  //   validSortBy,
+  // });
 
-  const [state, dispatch] = useReducer(
-    reducer,
+  // lazy load initial state, otherwise it is run on every render :O
+  const [state, dispatch] = useReducer(reducer, null, () =>
     initialState({
       filters: validFilters.length ? validFilters : ['ACTIVE_AUCTIONS'],
       sortBy: validSortBy,
@@ -269,17 +254,20 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
   );
 
   const loadMoreData = () => {
+    console.log('load more data');
     if (loading) {
       return;
     }
     setLoading(true);
     dispatch({ type: 'LOAD_MORE_LISTINGS' });
-    setLoading(false);
+    // artifical delay
+    setTimeout(() => setLoading(false), 500);
   };
 
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = false && process.env.NODE_ENV === 'development';
   // get all listings initially
   useEffect(() => {
+    if (props.allListings?.length <= 4) return;
     async function getListings() {
       const allListings = props.allListings
         ? props.allListings
@@ -295,7 +283,7 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
   const [sentryRef] = useInfiniteScroll({
     loading,
     hasNextPage,
-    onLoadMore: () => dispatch({ type: 'LOAD_MORE_LISTINGS' }),
+    onLoadMore: () => loadMoreData(),
     // When there is an error, we stop infinite loading.
     // It can be reactivated by setting "error" state as undefined.
     // disabled: false || !!error, //  !!error,
@@ -306,9 +294,14 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
     rootMargin: '0px 0px 400px 0px',
   });
 
-  const nrOfDuplicatesDetected =
-    state.filteredAndSortedListings.length -
-    new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size;
+  // will remove these soon
+  // const nrOfDuplicatesDetected =
+  //   state.filteredAndSortedListings.length -
+  //   new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size;
+
+  // const nrOfDuplicatesDetectedOnDisplay =
+  //   state.listingsOnDisplay.length -
+  //   new Set(state.listingsOnDisplay.map((l) => l.listingAddress)).size;
 
   return (
     <div id="current-listings" style={{ position: 'relative' }}>
@@ -341,13 +334,15 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
               marginBottom: 0,
             }}
           >
-            Current Listings{' '}
-            {isDev && (
+            Current Listings
+            {/* 
+            {{' '}isDev && (
               <span>
                 ({state.listingsOnDisplay.length + ' of ' + state.filteredAndSortedListings.length})
               </span>
             )}
-            {isDev && <span>({nrOfDuplicatesDetected} duplicates)</span>}
+            {isDev && <span>({nrOfDuplicatesDetected} filtered duplicates)</span>}
+            {isDev && <span>({nrOfDuplicatesDetectedOnDisplay} duplicates on display)</span>} */}
           </Title>
           {/* <Space direction="horizontal">
           <DiscoveryFilterDropdown
