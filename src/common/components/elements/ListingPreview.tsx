@@ -351,7 +351,7 @@ export function ListingPreview(listing: Listing) {
         </Square>
         <Row justify="space-between" align="middle" wrap={false}>
           <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
-            {nftMetadata?.name} Fake Long Name
+            {nftMetadata?.name}
           </ListingTitle>
           <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
             <span className="sol-icon">◎</span>
