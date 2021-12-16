@@ -154,7 +154,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               </Button>
             </Space>
           </Marketing>
-          <Col xs={0} md={8}>
+          <Col xs={24} md={8}>
             <FeaturedListingCarousel featuredListings={featuredListings} />
           </Col>
         </Section>
