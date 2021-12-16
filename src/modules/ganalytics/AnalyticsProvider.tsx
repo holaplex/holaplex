@@ -25,7 +25,7 @@ const AnalyticsContext = React.createContext<{
   configureAnalytics: (options: CustomEventDimensions) => void;
   pageview: (path: string) => void;
   track: (action: string, attributes: { [key: string]: any }) => void;
-  trackEcommerce: (
+  trackRecommendedEcommerceEvent: (
     action: GoogleEcommerceEvent,
     listings: Listing[],
     attributes: {
@@ -99,7 +99,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       label?: string;
       value?: number;
       sol_value?: number;
-      [key: string]: string | number | undefined;
+      [key: string]: string | number | any[] | undefined;
     } & Partial<CustomEventDimensions> = {}
   ) {
     if (!gtag) return;
@@ -124,8 +124,60 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     featured: 'Featured listings',
     current_listings: 'Regular',
   };
+
+  function addListingsToTrackCall(listings: Listing[], listId: string) {
+    return listings.map((l, i) => ({
+      item_id: l.listingAddress,
+      item_name: l.items[0]?.name,
+      affiliation: l.subdomain,
+      // coupon: "SUMMER_FUN",
+      // currency: "USD",
+      // discount: 2.22,
+      index: i,
+      item_brand: 'Google',
+      item_category: 'Apparel',
+      item_category2: 'Adult',
+      item_category3: 'Shirts',
+      item_category4: 'Crew',
+      item_category5: 'Short sleeve',
+      item_list_id: listId,
+      // @ts-ignore
+      item_list_name: listNames[listId],
+      item_variant: 'green',
+      // location_id: "L_12345",
+      price: getFormatedListingPrice(l),
+      currency: 'SOL',
+      // quantity: 1 we can probably include this
+    }));
+    // gtag('event', action,
+    // [
+    //   {
+    //     item_id: "SKU_12345",
+    //     item_name: "Stan and Friends Tee",
+    //     affiliation: "Google Store",
+    //     coupon: "SUMMER_FUN",
+    //     currency: "USD",
+    //     discount: 2.22,
+    //     index: 5,
+    //     item_brand: "Google",
+    //     item_category: "Apparel",
+    //     item_category2: "Adult",
+    //     item_category3: "Shirts",
+    //     item_category4: "Crew",
+    //     item_category5: "Short sleeve",
+    //     item_list_id: "related_products",
+    //     item_list_name: "Related Products",
+    //     item_variant: "green",
+    //     location_id: "L_12345",
+    //     price: 9.99,
+    //     quantity: 1
+    //   }
+    // ]
+    // });
+  }
+
   // used to track listings as ecommerce items
-  function trackEcommerce(
+  function trackRecommendedEcommerceEvent(
     action: GoogleEcommerceEvent,
     listings: Listing[],
     attributes: {
@@ -134,56 +186,27 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   ) {
     const aggregateSolValue = listings.reduce((acc, l) => acc + getFormatedListingPrice(l), 0);
 
-    gtag('event', action, {
-      currency: 'USD',
-      value: aggregateSolValue * solPrice,
-      sol_value: aggregateSolValue,
-      items: listings.map((l, i) => ({
-        item_id: l.listingAddress,
-        item_name: l.items[0]?.name,
-        affiliation: l.subdomain,
-        // coupon: "SUMMER_FUN",
-        // currency: "USD",
-        // discount: 2.22,
-        index: i,
-        item_brand: 'Google',
-        item_category: 'Apparel',
-        item_category2: 'Adult',
-        item_category3: 'Shirts',
-        item_category4: 'Crew',
-        item_category5: 'Short sleeve',
-        item_list_id: attributes.listId,
-        item_list_name: listNames[attributes.listId],
-        item_variant: 'green',
-        // location_id: "L_12345",
-        price: getFormatedListingPrice(l),
-        currency: 'SOL',
-        // quantity: 1 we can probably include this
-      })),
-      // [
-      //   {
-      //     item_id: "SKU_12345",
-      //     item_name: "Stan and Friends Tee",
-      //     affiliation: "Google Store",
-      //     coupon: "SUMMER_FUN",
-      //     currency: "USD",
-      //     discount: 2.22,
-      //     index: 5,
-      //     item_brand: "Google",
-      //     item_category: "Apparel",
-      //     item_category2: "Adult",
-      //     item_category3: "Shirts",
-      //     item_category4: "Crew",
-      //     item_category5: "Short sleeve",
-      //     item_list_id: "related_products",
-      //     item_list_name: "Related Products",
-      //     item_variant: "green",
-      //     location_id: "L_12345",
-      //     price: 9.99,
-      //     quantity: 1
-      //   }
-      // ]
-    });
+    switch (action) {
+      case 'view_item_list':
+        return track(action, {
+          item_list_id: attributes.listId,
+          item_list_name: 'Related products',
+          items: addListingsToTrackCall(listings, attributes.listId),
+        });
+      case 'view_item':
+        return track(action, {
+          currency: 'USD',
+          value: aggregateSolValue * solPrice,
+          sol_value: aggregateSolValue,
+          items: addListingsToTrackCall(listings, attributes.listId),
+        });
+      case 'select_item':
+        return track(action, {
+          item_list_id: 'related_products',
+          item_list_name: 'Related products',
+          items: addListingsToTrackCall(listings, attributes.listId),
+        });
+    }
   }
 
   return (
@@ -192,7 +215,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         configureAnalytics,
         track,
         pageview,
-        trackEcommerce,
+        trackRecommendedEcommerceEvent,
       }}
     >
       {props.children}

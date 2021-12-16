@@ -265,10 +265,12 @@ export function CurrentListings(props: { allListings: Listing[] }) {
     setTimeout(() => setLoading(false), 500);
   };
 
-  const { trackEcommerce } = useAnalytics();
-  // useEffect(() => {
-  //   trackEcommerce('view_item_list', state.listingsOnDisplay, )
-  // }, [])
+  const { trackRecommendedEcommerceEvent } = useAnalytics();
+  useEffect(() => {
+    trackRecommendedEcommerceEvent('view_item_list', state.listingsOnDisplay, {
+      listId: 'current_listings',
+    });
+  }, []);
 
   const isDev = false && process.env.NODE_ENV === 'development';
   // get all listings initially
