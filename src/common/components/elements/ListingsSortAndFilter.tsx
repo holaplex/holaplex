@@ -23,6 +23,10 @@ const StyledDropdownTrigger = styled.div`
   font-size: 12px;
   cursor: pointer;
 
+  .value {
+    white-space: nowrap;
+  }
+
   > .label {
     color: rgba(255, 255, 255, 0.6);
   }
@@ -32,6 +36,12 @@ const StyledDropdownTrigger = styled.div`
   > .anticon.anticon-down {
     color: rgba(255, 255, 255, 0.6);
   }
+`;
+
+const StyledSpace = styled(Space)`
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 export function DiscoveryFilterDropdown(props: {
@@ -105,15 +115,13 @@ export function DiscoverySortByDropdown(props: {
             value={props.value}
           >
             {props.options.map((o) => (
-              <Menu.Item
-                key={o.value as string}
-                disabled={props.onlyBuyNow && SortByAuctionValues.includes(o.value as any)}
-              >
+              <Menu.Item key={o.value as string}>
                 <Radio
                   style={{
                     width: '100%',
                   }}
                   value={o.value}
+                  disabled={props.onlyBuyNow && SortByAuctionValues.includes(o.value as any)}
                 >
                   {o.label}
                 </Radio>
@@ -147,7 +155,7 @@ export function DiscoveryFiltersAndSortBy(props: {
   // );
 
   return (
-    <Space direction="horizontal">
+    <StyledSpace direction="horizontal">
       <DiscoveryFilterDropdown
         label="Filter"
         value={props.filters}
@@ -161,6 +169,6 @@ export function DiscoveryFiltersAndSortBy(props: {
         dispatch={props.dispatch}
         onlyBuyNow={onlyBuyNow}
       />
-    </Space>
+    </StyledSpace>
   );
 }

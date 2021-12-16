@@ -11,6 +11,7 @@ import { DiscoveryFiltersAndSortBy } from './ListingsSortAndFilter';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { NextRouter, useRouter } from 'next/router';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import { Flex } from 'antd-mobile';
 
 const { Title } = Typography;
 
@@ -42,7 +43,7 @@ export type FilterOption = { value: FilterAction; label: string };
 const filterOptions: FilterOption[] = [
   { value: 'SHOW_ALL', label: 'Show All' },
   { value: 'ACTIVE_AUCTIONS', label: 'Auctions' },
-  { value: 'BUY_NOW', label: 'Buy Mow' },
+  { value: 'BUY_NOW', label: 'Buy Now' },
   { value: 'HAS_1+_BIDS', label: 'Has Bids' },
 ];
 
@@ -271,15 +272,32 @@ export function CurrentListings() {
           position: 'sticky',
           top: 0,
           zIndex: 10,
+          padding: '1rem 0',
+          // box shadow covers up listing text that otherwise sticks through
+          boxShadow: '0 0 0 2px #000',
         }}
       >
-        <Title level={3}>
-          Current Listings
-          {/* ({state.filteredAndSortedListings.length -
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}
+        >
+          <Title
+            level={3}
+            style={{
+              marginBottom: 0,
+            }}
+          >
+            Current Listings
+            {/* ({state.filteredAndSortedListings.length -
               new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
             duplicates){' '} */}
-        </Title>
-        {/* <Space direction="horizontal">
+          </Title>
+          {/* <Space direction="horizontal">
           <DiscoveryFilterDropdown
             label="Filter"
             value={state.filters}
@@ -294,13 +312,14 @@ export function CurrentListings() {
             dispatch={dispatch}
           />
         </Space> */}
-        <DiscoveryFiltersAndSortBy
-          sortBy={state.sortBy}
-          filters={state.filters}
-          allFilterOptions={filterOptions}
-          allSortByOptions={sortingOptions}
-          dispatch={dispatch}
-        />
+          <DiscoveryFiltersAndSortBy
+            sortBy={state.sortBy}
+            filters={state.filters}
+            allFilterOptions={filterOptions}
+            allSortByOptions={sortingOptions}
+            dispatch={dispatch}
+          />
+        </div>
       </Row>
 
       <List
