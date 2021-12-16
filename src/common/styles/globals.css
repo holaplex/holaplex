@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Nunito+Sans:wght@400;700;900&family=Domine&family=Merriweather&family=Noto+Serif&family=Playfair+Display&family=Roboto&family=Source+Sans+Pro&family=Work+Sans&family=Inter&family=Urbanist&display=swap');
 
+html,
+body,
+#__next,
+.ant-layout {
+  height: 100%;
+}
+
 a {
   cursor: pointer;
 }
@@ -49,13 +56,6 @@ body,
 button {
   padding: 0;
   margin: 0;
-}
-
-html,
-body,
-#__next,
-.ant-layout {
-  height: 100%;
 }
 
 h1,

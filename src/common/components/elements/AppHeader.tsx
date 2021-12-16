@@ -44,11 +44,11 @@ export function AppHeader() {
     <StyledHeader>
       <HeaderTitle>
         {windowDimensions.width > 550 ? (
-          <Link href="/" passHref>
+          <Link href="/">
             👋&nbsp;&nbsp;Holaplex
           </Link>
         ) : (
-          <Link href="/" passHref>
+          <Link href="/">
             👋
           </Link>
         )}
@@ -66,12 +66,12 @@ export function AppHeader() {
         )}
 
         <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
-          <Link href="/nfts/new" passHref>
+          <Link href="/nfts/new">
             Mint&nbsp;NFTs
           </Link>
         </HeaderLinkWrapper>
         <HeaderLinkWrapper active={router.pathname == '/about'}>
-          <Link href="/about" passHref>
+          <Link href="/about">
             About
           </Link>
         </HeaderLinkWrapper>

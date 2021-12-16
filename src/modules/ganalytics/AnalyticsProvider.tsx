@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
-import { Listing } from '@/common/components/elements/ListingPreview';
+import { Listing } from '@/modules/indexer';
 
 export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || 'G-HLNC4C2YKN';
 

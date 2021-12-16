@@ -1,31 +1,27 @@
-import React, { useContext, useEffect, useState, useReducer } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import sv from '@/constants/styles';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import { List, Space, Row, Col, Typography, ListProps } from 'antd';
+import { PageHeader, List, Space, Row, Col, Typography, ListProps, Carousel, Select, SelectProps } from 'antd';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
+import { take, compose, when, add, always, ifElse, filter, identity, concat, not, pipe, isNil, prop, descend, ascend, sortWith, equals } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
-import { generateListingShell, Listing } from '@/common/components/elements/ListingPreview';
-import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
-import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
-import { useRouter } from 'next/router';
-import {
-  CurrentListings,
-  filterAndSortListings,
-} from '@/common/components/elements/CurrentListings';
-const { Title } = Typography;
-import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { IndexerSDK, Listing } from '@/modules/indexer';
+import { ListingPreview, SkeletonListing } from '@/common/components/elements/ListingPreview';
+import { SelectValue } from 'antd/lib/select';
+const { Title, Text } = Typography;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
-
-const SectionTitle = styled(Title)`
-  margin-bottom: 62px !important;
-`;
+const Option = Select.Option;
 
 const HeroTitle = styled.h1`
   font-weight: 800;
+<<<<<<< HEAD
   font-size: calc(0.25vw + 0.25vh + 3rem);
+=======
+  font-size: 46px;
+>>>>>>> 1329021 (refactor(discovery): switch to single filter sort option at a time. Reset sorts when filter change. adjust show more to use count and take. featured carousel based on default filter sort.)
   line-height: auto;
   @media screen and (max-width: 1250px) {
     font-size: calc(0.25vw + 0.25vh + 2.5rem);
@@ -66,10 +62,22 @@ const Pitch = styled.h2`
 `;
 
 const Section = styled(Row)`
+<<<<<<< HEAD
   margin-top: calc(0.5vw + 0.5vh + 0.5rem);
+=======
+  margin: 65px 0 0 0;
+>>>>>>> 1329021 (refactor(discovery): switch to single filter sort option at a time. Reset sorts when filter change. adjust show more to use count and take. featured carousel based on default filter sort.)
 `;
 
-const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
+const StorefrontSection = styled(Section)`
+h3 {
+    &.ant-typography {
+      margin: 0 0 62px 0;
+    }
+  }
+`;
+
+const FeaturedStores = styled(List) <ListProps<StorefrontFeature>>`
   .ant-list-item {
     margin-bottom: 66px !important;
 
@@ -95,6 +103,149 @@ const CenteredContentCol = styled.div`
   padding: 0 1.5rem;
 `;
 
+const ListingsHeader = styled(PageHeader)`
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #000;
+  padding: 12px 0;
+  h3 {
+    &.ant-typography {
+      margin: 0;
+    }
+  }
+`;
+
+interface SelectInlineProps extends SelectProps<SelectValue> {
+  label: string;
+}
+
+const SelectInline = styled(Select) <SelectInlineProps>`
+  width: 165px;
+  font-size: 12px;
+  line-height: 12px;
+  .ant-select-selection-item {
+    &:before {
+      color: rgba(255, 255, 255, 0.6);
+      content: "${({ label }) => label}:";
+      display: block;
+      font-size: 14px;
+      color: grey;
+      display: inline-block;
+      padding: 0 12px 0 0;
+    }
+  }
+`;
+
+const HeroCarousel = styled(Carousel)`
+  .carousel-dots {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: -24px;
+    margin-right: 0px;
+    justify-content: flex-end;
+  }
+  .carousel-dots > li > button {
+    opacity: 1;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 100%;
+  }
+  .slick-dots li {
+    > button {
+      display: block;
+      width: 100%;
+      color: transparent;
+      font-size: 0;
+      background: #222;
+      border: 0;
+      border-radius: 1px;
+      outline: none;
+      cursor: pointer;
+      opacity: .3;
+  
+    }
+
+    &.slick-active {
+      > button {
+        background: white;
+        width: 24px;
+      }
+    }
+  }
+`;
+
+enum FilterOptions {
+  All = 'all',
+  Auctions = 'auctions',
+  InstantSale = 'instant_sale'
+};
+
+enum SortOptions {
+  RecentlyAdded = 'recently_added',
+  EndingSoonest = 'ending_soonest',
+  Expensive = 'expensive',
+  Cheapest = 'cheapest',
+  BidCount = 'bid_count'
+}
+
+const sortOptions = {
+  all: [
+    {
+      label: 'New',
+      key: SortOptions.RecentlyAdded,
+    },
+    {
+      label: 'Hight to Low',
+      key: SortOptions.Expensive,
+    },
+    {
+      label: 'Low to Hight',
+      key: SortOptions.Cheapest,
+    },
+  ],
+  auctions: [
+    { key: SortOptions.Expensive, label: 'Hight to Low' },
+    { key: SortOptions.Cheapest, label: 'Low to High' },
+    { key: SortOptions.EndingSoonest, label: 'Ending Soon' },
+    { key: SortOptions.RecentlyAdded, label: 'New' },
+    { key: SortOptions.BidCount, label: 'Bidders' },
+  ],
+  instant_sale: [
+    { key: SortOptions.RecentlyAdded, label: 'New' },
+    { key: SortOptions.Expensive, label: 'Hight to Low' },
+    { key: SortOptions.Cheapest, label: 'Low to High' },
+  ],
+};
+
+//@ts-ignore
+const isAuction = pipe(prop('instantSalePrice'), isNil);
+
+const currentListingPrice = ifElse(
+  isAuction,
+  ifElse(
+    pipe(prop('totalUncancelledBids'), equals(0)),
+    prop('priceFloor'),
+    prop('highestBid'),
+  ),
+  prop('instantSalePrice'),
+)
+
+const filters = {
+  [FilterOptions.Auctions]: isAuction,
+  [FilterOptions.InstantSale]: pipe(isAuction, not),
+  [FilterOptions.All]: pipe(always(true)),
+}
+
+const sorts = {
+  [SortOptions.EndingSoonest]: [ascend(prop('endsAt')), descend(currentListingPrice)],
+  [SortOptions.RecentlyAdded]: [descend(prop('createdAt')), descend(currentListingPrice)],
+  [SortOptions.Expensive]: [descend(prop('highestBid')), descend(currentListingPrice)],
+  [SortOptions.Cheapest]: [ascend(currentListingPrice), ascend(prop('endsAt'))],
+  [SortOptions.BidCount]: [descend(prop('totalUncancelledBids'))]
+}
+
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
 
@@ -111,43 +262,84 @@ interface HomeProps {
 
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
+  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [seeing, setSeeListings] = useState<Listing[]>([]);
+  const [show, setShow] = useState(16);
+  const [filterBy, setFilterBy] = useState<FilterOptions>(FilterOptions.Auctions);
+  const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Expensive);
+  const [hasMoreListings, setHasMoreListings] = useState(true);
+  const listingsTopRef = useRef<HTMLInputElement>(null);
 
-  const [featuredListings, setFeaturedListings] = useState<Listing[]>(
-    Array(4)
-      .fill(null)
-      .map((_, i) => generateListingShell(i + ''))
-  );
-  const [allListings, setAllListings] = useState<Listing[]>(
-    Array(4)
-      .fill(null)
-      .map((_, i) => generateListingShell(i + ''))
-  );
+  const scrollToListingTop = () => {
+    if (!listingsTopRef || !listingsTopRef.current) {
+      return;
+    };
 
-  const windowDimensions = useWindowDimensions();
+    listingsTopRef.current.scrollIntoView();
+  };
 
+<<<<<<< HEAD
   const buttonSize = () => (windowDimensions.width > 1000 ? 'large' : 'medium');
+=======
+  const loadMoreListings = () => {
+    const total = seeing.length;
+
+    const next = compose(
+      when(next => next > seeing.length, always(seeing.length)),
+      add(8),
+    )(show);
+
+    setShow(next);
+    setHasMoreListings(total > next);
+  }
+
+  const [sentryRef] = useInfiniteScroll({
+    loading,
+    hasNextPage: hasMoreListings,
+    onLoadMore: loadMoreListings,
+  });
+>>>>>>> 1329021 (refactor(discovery): switch to single filter sort option at a time. Reset sorts when filter change. adjust show more to use count and take. featured carousel based on default filter sort.)
 
   useEffect(() => {
-    // async function getFeaturedListings() {
-    //   const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
-    //   setFeaturedListings(featuredListings);
-    // }
-
-    // getFeaturedListings();
     async function getListings() {
-      const allListings = await callMetaplexIndexerRPC('getListings');
-      // dispatch({ type: 'INITIALIZE_LISTINGS', payload: allListings });
+      const listings = await IndexerSDK.getListings();
 
-      // loadMoreData();
-      const trendingListings = filterAndSortListings(allListings, [], 'MOST_BIDS');
-      const featuredListings = trendingListings.slice(0, 4);
+      setListings(listings);
+      setSeeListings(
+        //@ts-ignore
+        compose(
+          // @ts-ignore
+          filter(filters[filterBy]),
+          // @ts-ignore
+          sortWith(sorts[sortBy])
+          // @ts-ignore
+        )(listings),
+      );
 
-      setFeaturedListings(featuredListings);
-      const currentListings = trendingListings; // spliced above
-      setAllListings(currentListings);
+      setLoading(false);
     }
+
     getListings();
   }, []);
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
+    setSeeListings(
+      //@ts-ignore
+      compose(
+        // @ts-ignore
+        filter(filters[filterBy]),
+        // @ts-ignore
+        sortWith(sorts[sortBy])
+        // @ts-ignore
+      )(listings),
+    );
+    setShow(8);
+  }, [filterBy, sortBy]);
 
   return (
     <Row>
@@ -159,37 +351,131 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               Tools built by creators, for creators, owned by creators.
             </Pitch>
             <Space direction="horizontal" size="large">
-              <Button size={buttonSize()} onClick={() => connect()}>
+              <Button onClick={() => connect()}>
                 Create Your Store
               </Button>
             </Space>
           </Marketing>
           <Col xs={24} md={8}>
-            <div style={{ marginBottom: '-2rem' }}>
-              <FeaturedListingCarousel featuredListings={featuredListings} />
-            </div>
+            <Text strong>Featured Listings</Text>
+            {loading ? (
+              <SkeletonListing />
+            ) : (
+              <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
+                {listings.slice(0, 5).map((listing) => (
+                  <ListingPreview key={listing.listingAddress} {...listing} />
+                ))}
+              </HeroCarousel>
+            )}
           </Col>
         </Section>
+        <StorefrontSection>
+          <Col xs={24}>
+            <Title level={3}>Featured Creators</Title>
+            <FeaturedStores
+              grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+              dataSource={featuredStorefronts.slice(0, 4)}
+              renderItem={(feature) => (
+                // @ts-ignore
+                <List.Item key={feature.storefront.subdomain}>
+                  {/* @ts-ignore */}
+                  <StorePreview {...feature} />
+                </List.Item>
+              )}
+            />
+          </Col>
+        </StorefrontSection>
+        <Section>
+          <Col xs={24}>
+            <div ref={listingsTopRef} />
+            <ListingsHeader
+              ghost={false}
+              title={<Title level={3}>Current Listings</Title>}
+              extra={[
+                <Space key="options" direction="horizontal">
+                  <SelectInline
+                    value={filterBy}
+                    label="Filter"
+                    onChange={(next) => {
+                      const filter = next as FilterOptions;
+                      setFilterBy(filter);
+                      setSortBy(sortOptions[filter][0].key);
+                      scrollToListingTop();
+                    }}
+                  >
+                    <Option value={FilterOptions.All}>All Listings</Option>
+                    <Option value={FilterOptions.Auctions}>Auctions</Option>
+                    <Option value={FilterOptions.InstantSale}>Buy Now</Option>
+                  </SelectInline>
+                  <SelectInline
+                    label="Sort"
+                    value={sortBy}
+                    onChange={(next) => {
+                      const sort = next as SortOptions;
 
-        <SectionTitle level={3}>Featured Stores</SectionTitle>
-        <FeaturedStores
-          grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-          dataSource={featuredStorefronts.slice(0, 4)}
-          renderItem={(feature) => (
-            // @ts-ignore
-            <List.Item key={feature.storefront.subdomain}>
-              {/* @ts-ignore */}
-              <StorePreview {...feature} />
-            </List.Item>
-          )}
-        />
-
-        <CurrentListings allListings={allListings} />
-        {/* CTA */}
+                      setSortBy(sort);
+                      scrollToListingTop();
+                    }}
+                  >
+                    {sortOptions[filterBy].map(({ label, key }) => {
+                      return <Option key={key} value={key}>{label}</Option>
+                    })}
+                  </SelectInline>
+                </Space>
+              ]}
+            />
+            <List
+              grid={{
+                xs: 1,
+                sm: 2,
+                md: 3,
+                lg: 3,
+                xl: 4,
+                xxl: 4,
+                gutter: 24,
+              }}
+              dataSource={concat(
+                take(show, seeing),
+                ifElse(
+                  identity,
+                  always([
+                    { listtingAddress: 'a'},
+                    { listtingAddress: 'b'},
+                    { listtingAddress: 'c'},
+                    { listtingAddress: 'd'},
+                  ]),
+                  always([]),
+                )(hasMoreListings)
+              )}
+              renderItem={(listing: Listing) => (
+                <List.Item key={listing?.listingAddress}>
+                  <ListingPreview {...listing} />
+                </List.Item>
+              )}
+            />
+            {hasMoreListings && (
+              <Row ref={sentryRef} gutter={24}>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+              </Row>
+            )}
+            
+          </Col>
+        </Section>
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button size={buttonSize()} onClick={() => connect()}>
+            <Button onClick={() => connect()}>
               Create Your Store
             </Button>
           </Space>
