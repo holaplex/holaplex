@@ -8,6 +8,12 @@ const storeBlacklist: string[] = [
   'bwauctions',
   'nu9ve',
   'sublimemantis',
+  'max-test',
+  'max-test-2',
+  'max-test-4',
+  'max-test-5',
+  'mysubdomain',
+  '123123123',
 ];
 
 // will eventually be moved to server
