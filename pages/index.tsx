@@ -154,10 +154,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       <CenteredContentCol>
         <Section>
           <Marketing xs={22} md={16}>
-            <HeroTitle>Find, buy, and sell NFTs from incredible artists on Solana.</HeroTitle>
+            <HeroTitle>Discover, explore, and collect NFTs from incredible creators on Solana</HeroTitle>
             <Pitch>
-              Our mission is to empower creators and collectors by building a suite of integrated
-              tools to mint, discover, and sell NFTs on Solana.
+              Tools built by creators, for creators, owned by creators.
             </Pitch>
             <Space direction="horizontal" size="large">
               <Button size={buttonSize()} onClick={() => connect()}>
