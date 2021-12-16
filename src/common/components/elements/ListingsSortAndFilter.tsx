@@ -24,10 +24,6 @@ const StyledDropdownTrigger = styled.div`
   cursor: pointer;
   width: 145px;
 
-  .value {
-    white-space: nowrap;
-  }
-
   > .label {
     color: rgba(255, 255, 255, 0.6);
   }

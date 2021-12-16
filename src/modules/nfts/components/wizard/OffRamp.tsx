@@ -58,6 +58,9 @@ export default function OffRampScreen({
   storefront,
 }: Props) {
   const router = useRouter();
+
+  const listingUrl = storefront ? `https://${storefront.subdomain}.holaplex.com/owned` : '';
+
   const successfulMints = nftValues.filter((nft) => nft.mintStatus === MintStatus.SUCCESS).length;
 
   const titleTxt = successfulMints
@@ -109,7 +112,7 @@ export default function OffRampScreen({
                 {storefront ? (
                   <Button
                     type="primary"
-                    onClick={() => router.push('/storefront/edit')}
+                    onClick={() => router.push(listingUrl)}
                     style={{ height: 'fit-content', marginTop: 38 }}
                   >
                     List on your Holaplex store

@@ -45,6 +45,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     window.gtag('event', action, {
       event_category: category,
+
       send_to: [GOOGLE_ANALYTICS_OLD_ID, GA4_ID],
     });
   };
