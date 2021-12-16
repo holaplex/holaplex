@@ -261,6 +261,12 @@ const maybeCDN = (uri: string) => {
   return cdnURI ?? uri;
 };
 
+const maybeImageCDN = (uri: string) => {
+  const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/$1`);
+  return cdnURI ?? uri;
+
+}
+
 export function getListingPrice(listing: Listing) {
   return (
     (listing.highestBid
@@ -303,7 +309,7 @@ export function ListingPreview(listing: Listing) {
             <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
           ) : (
             <NFTPreview
-              src={maybeCDN(nft?.image)}
+              src={maybeImageCDN(nft?.image)}
               preview={{
                 visible: showArtPreview,
                 mask: (
