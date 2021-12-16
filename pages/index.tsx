@@ -140,7 +140,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
       // loadMoreData();
       const trendingListings = filterAndSortListings(allListings, [], 'MOST_BIDS');
-      const featuredListings = trendingListings.splice(0, 4);
+      const featuredListings = trendingListings.slice(0, 4);
 
       setFeaturedListings(featuredListings);
       const currentListings = trendingListings; // spliced above
