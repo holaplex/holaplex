@@ -22,7 +22,7 @@ const StyledDropdownTrigger = styled.div`
   line-height: 25px;
   font-size: 12px;
   cursor: pointer;
-  width: 180px;
+  width: 140px;
 
   .value {
     white-space: nowrap;

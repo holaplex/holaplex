@@ -77,8 +77,11 @@ export type SortingOption = { value: SortByAction; label: string };
 const sortingOptions: SortingOption[] = [
   { value: 'RECENTLY_LISTED', label: 'New' },
   { value: 'MOST_BIDS', label: 'Trending' },
-  { value: 'PRICE_HIGH_TO_LOW', label: 'Price - High to low' },
-  { value: 'PRICE_LOW_TO_HIGH', label: 'Price - Low to high' },
+  { value: 'PRICE_HIGH_TO_LOW', label: 'High to low' },
+  // { value: 'PRICE_HIGH_TO_LOW', label: 'Price - High to low' },
+  // { value: 'PRICE_HIGH_TO_LOW', label: 'Sol - High to low' },
+  // { value: 'PRICE_HIGH_TO_LOW', label: '◎ - High to low' },
+  { value: 'PRICE_LOW_TO_HIGH', label: 'Low to high' },
   // { value: 'RECENT_BID', label: 'Recent Bids' },
   { value: 'ENDING_SOONEST', label: 'Ending soon' },
 ];
@@ -100,9 +103,13 @@ export type DiscoveryToolAction =
       payload: SortByAction;
     };
 
-const initialState = (options?: {
-  filters?: FilterAction[];
-  sortBy?: SortByAction;
+// would have liked to use a ref, but I don't know how to access that from inside the reducer
+// scroll behaviour smooth can look cool, but it sometimes leads to extra listings being rendered because the infinte scroll hook is triggered "on the way up"
+const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
+
+const initialState = (options: {
+  filters: FilterAction[];
+  sortBy: SortByAction;
 }): DiscoveryToolState => {
   const listingShells = Array(8)
     .fill(null)
@@ -115,8 +122,8 @@ const initialState = (options?: {
     // Array(8)
     //   .fill(null)
     //   .map((_, i) => generateListingShell(i.toString())),
-    filters: options?.filters || ['ACTIVE_AUCTIONS'],
-    sortBy: options?.sortBy || 'MOST_BIDS',
+    filters: options.filters,
+    sortBy: options.sortBy,
   };
 };
 
@@ -150,10 +157,14 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       };
     case 'LOAD_MORE_LISTINGS':
       const newCursor = state.cursor + pageSize;
-      const listings = new Set([
+      // const listingsSet = new Set([
+      //   ...state.listingsOnDisplay,
+      //   ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
+      // ]);
+      const listings = [
         ...state.listingsOnDisplay,
         ...state.filteredAndSortedListings.slice(state.cursor, newCursor),
-      ]);
+      ];
 
       return {
         ...state,
@@ -190,6 +201,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
         onlyBuyNow && SortByAuctionValues.includes(state.sortBy) ? 'RECENTLY_LISTED' : state.sortBy;
 
       const filteredAndSortedListings = filterAndSortListings(state.allListings, filters, sortBy);
+      scrollToTopOfListings();
 
       return {
         ...state,
@@ -201,6 +213,8 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
       };
     case 'SORT':
       const sortedListings = state.filteredAndSortedListings.sort(sortByFns[action.payload]);
+      scrollToTopOfListings();
+
       return {
         ...state,
         cursor: 0,
@@ -220,7 +234,7 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
   //Example query ?search=hello&filters=active_auctions,&sort_by=ending_soonest
   const queryFilters: string[] =
     (router.query['filters[]'] as string[]) || (router.query.filters as string)?.split(',') || [];
-  const querySortBy = (router.query.sort as string) || 'most_bids';
+  const querySortBy = (router.query.sort as string) || '';
 
   const querySearch = router.query.search || '';
 
@@ -228,17 +242,19 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
     .map((qf) => qf.toUpperCase())
     .filter((qf) => FilterValues.includes(qf as any)) as FilterAction[];
 
-  const validSortBy = (
-    SortByValues.includes(querySortBy.toUpperCase() as any)
-      ? querySortBy.toUpperCase()
-      : 'MOST_BIDS'
-  ) as SortByAction;
+  // const validSortBy = (
+  //   SortByValues.includes(querySortBy.toUpperCase() as any)
+  //     ? querySortBy.toUpperCase()
+  //     : 'RECENTLY_LISTED'
+  // ) as SortByAction;
 
   const [state, dispatch] = useReducer(
     reducer,
     initialState({
       filters: validFilters.length ? validFilters : ['ACTIVE_AUCTIONS'],
-      sortBy: validSortBy,
+      sortBy: (SortByValues.includes(querySortBy.toUpperCase() as any)
+        ? querySortBy.toUpperCase()
+        : 'RECENTLY_LISTED') as SortByAction,
     })
   );
 
@@ -315,7 +331,7 @@ export function CurrentListings(props: { allListings?: Listing[] }) {
               marginBottom: 0,
             }}
           >
-            Current Listings
+            Current Listings{' '}
             {isDev && (
               <span>
                 ({state.listingsOnDisplay.length + ' of ' + state.filteredAndSortedListings.length})
