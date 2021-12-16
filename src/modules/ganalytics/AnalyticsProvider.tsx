@@ -3,6 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
 import { getFormatedListingPrice, Listing } from '@/common/components/elements/ListingPreview';
+import { useRouter } from 'next/router';
 
 export const GOOGLE_ANALYTICS_OLD_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN'; // test id G-HLNC4C2YKN
@@ -56,14 +57,40 @@ const AnalyticsContext = React.createContext<{
 } | null>(null);
 
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
-  // @ts-ignore
-  let gtag: any;
+  let gtag: Gtag.Gtag;
   let solPrice = 0;
 
   //   const endpointName = ENDPOINTS.find((e) => e.endpoint === endpoint)?.name;
   const { wallet } = useContext(WalletContext);
+  const router = useRouter();
+
   const pubkey = wallet?.pubkey || '';
   // const pubkey = publicKey?.toBase58() || '';
+
+  // moved from _app
+  const onRouteChanged = (path: string) => {
+    if (GOOGLE_ANALYTICS_OLD_ID && gtag) {
+      gtag('config', GOOGLE_ANALYTICS_OLD_ID, { page_path: path });
+    }
+
+    // will look into this pageview tracking later
+    if (GA4_ID && gtag) {
+      window.gtag('event', 'page_view', { page_path: path, send_to: [GA4_ID] });
+    }
+  };
+
+  useEffect(() => {
+    if (!GOOGLE_ANALYTICS_OLD_ID && !GA4_ID) {
+      return;
+    }
+
+    router.events.on('routeChangeComplete', onRouteChanged);
+
+    return () => {
+      router.events.off('routeChangeComplete', onRouteChanged);
+    };
+  }, [router.events]);
+
   useEffect(() => {
     gtag = window?.gtag;
 
@@ -138,10 +165,17 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
           }),
       ...otherAttributes,
     };
-    console.log('track', action, attrs);
-    if (!gtag) return;
 
-    gtag('event', action, attrs);
+    console.log('track gtag', !!gtag);
+    if (!gtag) {
+      setTimeout(() => {
+        console.log('track timeout', !!gtag, action, attrs);
+        gtag('event', action, attrs);
+      }, 500);
+    } else {
+      console.log('track', gtag, action, attrs);
+      gtag('event', action, attrs);
+    }
   }
 
   function addListingsToTrackCall(listings: Listing[], listId: keyof typeof listNames) {

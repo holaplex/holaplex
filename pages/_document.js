@@ -1,12 +1,13 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+
+const oldGoogleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
+
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
-
-    const oldGoogleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-    const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
 
     try {
       ctx.renderPage = () =>
@@ -17,8 +18,6 @@ export default class MyDocument extends Document {
       const initialProps = await Document.getInitialProps(ctx);
       return {
         ...initialProps,
-        oldGoogleAnalyticsId,
-        ga4Id,
         styles: (
           <>
             {initialProps.styles}
@@ -35,13 +34,11 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          {(this.props.oldGoogleAnalyticsId || this.props.ga4Id) && (
+          {(oldGoogleAnalyticsId || ga4Id) && (
             <>
               <script
                 async
-                src={`https://www.googletagmanager.com/gtag/js?id=${
-                  this.props.ga4Id || this.props.oldGoogleAnalyticsId
-                }`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id || oldGoogleAnalyticsId}`}
               />
               <script
                 dangerouslySetInnerHTML={{
@@ -51,8 +48,8 @@ export default class MyDocument extends Document {
                       dataLayer.push(arguments);
                     }
                     gtag('js', new Date());
-                    gtag('config', '${this.props.oldGoogleAnalyticsId}');
-                    gtag('config', '${this.props.ga4Id}')
+                    gtag('config', '${oldGoogleAnalyticsId}');
+                    gtag('config', '${ga4Id}')
                 `,
                 }}
               />

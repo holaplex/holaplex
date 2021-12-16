@@ -321,7 +321,7 @@ export function ListingPreview(listing: Listing) {
   const displayPrice = getFormatedListingPrice(listing);
 
   const onListingClick = (e: any) => {
-    e.preventDefault();
+    // e.preventDefault();
     // tracking
     trackRecommendedEcommerceEvent('select_item', [listing], { listId: 'current_listings' });
 
@@ -333,7 +333,7 @@ export function ListingPreview(listing: Listing) {
       // other stuff from nftJson
     });
 
-    window.open(storeHref, '_blank', 'nofollow noreferrer');
+    // window.open(storeHref, '_blank', 'nofollow noreferrer');
   };
 
   return (

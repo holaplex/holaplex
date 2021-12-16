@@ -50,32 +50,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     });
   };
 
-  const onRouteChanged = (path: string) => {
-    if (isNil(GOOGLE_ANALYTICS_OLD_ID)) {
-      return;
-    }
-
-    window.gtag('config', GOOGLE_ANALYTICS_OLD_ID, { page_path: path });
-
-    // will look into this pageview tracking later
-    if (isNil(GA4_ID)) {
-      return;
-    }
-    window.gtag('event', 'page_view', { page_path: path, send_to: [GA4_ID] });
-  };
-
-  useEffect(() => {
-    if (!GOOGLE_ANALYTICS_OLD_ID) {
-      return;
-    }
-
-    router.events.on('routeChangeComplete', onRouteChanged);
-
-    return () => {
-      router.events.off('routeChangeComplete', onRouteChanged);
-    };
-  }, [router.events]);
-
   return (
     <>
       <Head>
