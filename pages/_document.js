@@ -48,6 +48,7 @@ export default class MyDocument extends Document {
                     }
                     gtag('js', new Date());
                     gtag('config', '${this.props.googleAnalyticsId}');
+                    gtag('config', 'G-HLNC4C2YKN')
                 `,
                 }}
               />
