@@ -112,6 +112,10 @@ const ListingTitle = styled(Title)`
   margin-bottom: 4px !important;
   font-size: 18px !important;
   flex-grow: 1;
+  max-width: 80%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   /* width: 14rem; No longer needed because of flex grow, i think */
 
   + h3 {
@@ -126,6 +130,10 @@ const ListingSubTitle = styled(Text)`
   font-size: 14px;
   opacity: 0.6;
   flex-grow: 1;
+  max-width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   /* width: 14rem; No longer needed because of flex grow, i think */
 
   + span {
@@ -248,8 +256,8 @@ const CustomImageMask = styled.div`
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 25%;
-  height: 25%; 
+  width: 72px;
+  height: 72px; 
   margin: auto;
   display: flex;
   align-items: center;
@@ -258,8 +266,8 @@ const CustomImageMask = styled.div`
 
   > svg {
     position absolute;
-    right: 16px;
-    bottom: 16px;
+    right: 24px;
+    bottom: 24px;
 
   }
 `;
@@ -346,7 +354,8 @@ export function ListingPreview(listing: Listing) {
             {nftMetadata?.name}
           </ListingTitle>
           <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-            ◎{displayPrice}
+            <span className="sol-icon">◎</span>
+            {displayPrice}
           </h3>
         </Row>
         <Row justify="space-between">
