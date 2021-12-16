@@ -25,8 +25,14 @@ const SectionTitle = styled(Title)`
 
 const HeroTitle = styled.h1`
   font-weight: 800;
-  font-size: calc(3vw + 1rem);
+  font-size: calc(0.25vw + 0.25vh + 3rem);
   line-height: auto;
+  @media screen and (max-width: 1250px) {
+    font-size: calc(0.25vw + 0.25vh + 2.5rem);
+  }
+  @media screen and (max-width: 1150px) {
+    font-size: calc(0.25vw + 0.25vh + 2.25rem);
+  }
   @media screen and (max-width: 550px) {
     line-height: auto;
     text-align: left;
@@ -35,9 +41,10 @@ const HeroTitle = styled.h1`
 
 const Marketing = styled(Col)`
   padding-right: 5rem;
-  padding-bottom: calc(2vh + 3rem);
   display: flex;
   flex-direction: column;
+  margin-bottom: calc(0.5vw + 0.5vh + 2rem);
+  justify-content: center;
   @media screen and (max-width: 900px) {
     padding-right: 2.5rem;
   }
@@ -51,11 +58,15 @@ const Pitch = styled.h2`
   line-height: 1.4;
   letter-spacing: 0.2px;
   font-weight: 300;
-  margin: calc(1.5vw + 0.5rem) 0 calc(2vw + 1.5rem);
+  margin: calc(0.25vw + 0.25vh + 1rem) 0 calc(0.25vw + 0.25vh + 2rem);
+
+  @media screen and (max-width: 900px) {
+    font-size: calc(0.35vw + 0.35vh + 0.85rem);
+  }
 `;
 
 const Section = styled(Row)`
-  margin-top: calc(5vw + 2vh + 1rem);
+  margin-top: calc(0.5vw + 0.5vh + 0.5rem);
 `;
 
 const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
@@ -114,7 +125,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
   const windowDimensions = useWindowDimensions();
 
-  const buttonSize = () => (windowDimensions.width > 800 ? 'large' : 'medium');
+  const buttonSize = () => (windowDimensions.width > 1000 ? 'large' : 'medium');
 
   useEffect(() => {
     // async function getFeaturedListings() {
@@ -155,7 +166,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </Space>
           </Marketing>
           <Col xs={24} md={8}>
-            <FeaturedListingCarousel featuredListings={featuredListings} />
+            <div style={{ marginBottom: '-2rem' }}>
+              <FeaturedListingCarousel featuredListings={featuredListings} />
+            </div>
           </Col>
         </Section>
 
