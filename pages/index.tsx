@@ -10,7 +10,10 @@ import { generateListingShell, Listing } from '@/common/components/elements/List
 import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
 import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
 import { useRouter } from 'next/router';
-import { CurrentListings } from '@/common/components/elements/CurrentListings';
+import {
+  CurrentListings,
+  filterAndSortListings,
+} from '@/common/components/elements/CurrentListings';
 const { Title } = Typography;
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 
@@ -98,19 +101,41 @@ interface HomeProps {
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
-  const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>(
+    Array(4)
+      .fill(null)
+      .map((_, i) => generateListingShell(i + ''))
+  );
+  const [allListings, setAllListings] = useState<Listing[]>(
+    Array(4)
+      .fill(null)
+      .map((_, i) => generateListingShell(i + ''))
+  );
 
   const windowDimensions = useWindowDimensions();
 
   const buttonSize = () => (windowDimensions.width > 800 ? 'large' : 'medium');
 
   useEffect(() => {
-    async function getFeaturedListings() {
-      const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
-      setFeaturedListings(featuredListings);
-    }
+    // async function getFeaturedListings() {
+    //   const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
+    //   setFeaturedListings(featuredListings);
+    // }
 
-    getFeaturedListings();
+    // getFeaturedListings();
+    async function getListings() {
+      const allListings = await callMetaplexIndexerRPC('getListings');
+      // dispatch({ type: 'INITIALIZE_LISTINGS', payload: allListings });
+
+      // loadMoreData();
+      const trendingListings = filterAndSortListings(allListings, [], 'MOST_BIDS');
+      const featuredListings = trendingListings.splice(0, 4);
+
+      setFeaturedListings(featuredListings);
+      const currentListings = trendingListings; // spliced above
+      setAllListings(currentListings);
+    }
+    getListings();
   }, []);
 
   return (
@@ -147,7 +172,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           )}
         />
 
-        <CurrentListings />
+        <CurrentListings allListings={allListings} />
         {/* CTA */}
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">

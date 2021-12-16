@@ -112,7 +112,7 @@ const ListingTitle = styled(Title)`
   margin-bottom: 4px !important;
   font-size: 18px !important;
   flex-grow: 1;
-  width: 12rem;
+  /* width: 14rem; No longer needed because of flex grow, i think */
 
   + h3 {
     display: flex;
@@ -125,10 +125,12 @@ const ListingTitle = styled(Title)`
 const ListingSubTitle = styled(Text)`
   font-size: 14px;
   opacity: 0.6;
-  width: 8rem;
+  flex-grow: 1;
+  /* width: 14rem; No longer needed because of flex grow, i think */
 
   + span {
     font-size: 14px;
+    flex-shrink: 0;
     opacity: 0.6;
   }
 `;
@@ -264,8 +266,7 @@ const maybeCDN = (uri: string) => {
 const maybeImageCDN = (uri: string) => {
   const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/$1`);
   return cdnURI ?? uri;
-
-}
+};
 
 export function getListingPrice(listing: Listing) {
   return (
@@ -284,7 +285,7 @@ export function ListingPreview(listing: Listing) {
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
-  const isDev = window.location.host.includes('localhost');
+  const isDev = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
@@ -348,11 +349,21 @@ export function ListingPreview(listing: Listing) {
           {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
         </Row>
         {isDev && (
-          <Row justify="space-between">
-            <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
+          <Row justify="space-between" wrap={false}>
+            <span
+              style={{
+                fontSize: 14,
+                opacity: 0.6,
+              }}
+            >
               Listed {listing.createdAt.slice(5, 16)}
-            </ListingSubTitle>
-            <span>
+            </span>
+            <span
+              style={{
+                fontSize: 14,
+                opacity: 0.6,
+              }}
+            >
               Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
             </span>
           </Row>

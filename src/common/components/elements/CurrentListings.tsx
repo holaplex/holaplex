@@ -77,8 +77,8 @@ export type SortingOption = { value: SortByAction; label: string };
 const sortingOptions: SortingOption[] = [
   { value: 'RECENTLY_LISTED', label: 'New' },
   { value: 'MOST_BIDS', label: 'Trending' },
-  { value: 'PRICE_HIGH_TO_LOW', label: 'Price: High to low' },
-  { value: 'PRICE_LOW_TO_HIGH', label: 'Price: Low to high' },
+  { value: 'PRICE_HIGH_TO_LOW', label: 'Price - High to low' },
+  { value: 'PRICE_LOW_TO_HIGH', label: 'Price - Low to high' },
   // { value: 'RECENT_BID', label: 'Recent Bids' },
   { value: 'ENDING_SOONEST', label: 'Ending soon' },
 ];
@@ -120,13 +120,21 @@ const initialState = (options?: {
   };
 };
 
-function filterAndSortListings(listings: Listing[], filters: FilterAction[], sortBy: SortByAction) {
+export function filterAndSortListings(
+  listings: Listing[],
+  filters: FilterAction[],
+  sortBy: SortByAction
+) {
   return listings
-    .filter((listing) => filters.some((filter) => filterFns[filter](listing)))
+    .filter((listing) => !filters.length || filters.some((filter) => filterFns[filter](listing)))
     .sort(sortByFns[sortBy]);
 }
 
 function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): DiscoveryToolState {
+  // console.log(action.type, {
+  //   action,
+  //   prevState: state,
+  // });
   switch (action.type) {
     case 'INITIALIZE_LISTINGS':
       return {
@@ -137,6 +145,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
           state.filters,
           state.sortBy
         ),
+        cursor: 0,
         listingsOnDisplay: [],
       };
     case 'LOAD_MORE_LISTINGS':
@@ -150,20 +159,30 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
         ...state,
         cursor: newCursor,
         listingsOnDisplay: Array.from(listings),
+        // don't remove this comment plz // Kris
+        // .map((l) => ({
+        //   ...l,
+        //   meta: {
+        //     filterdListingsLength: state.filteredAndSortedListings.length,
+        //     cursor: state.cursor + ' - ' + newCursor,
+        //   },
+        // })),
       };
     case 'FILTER':
       const incomingFilter = action.payload;
-      let filters: FilterAction[];
-      if (incomingFilter === 'SHOW_ALL') {
-        filters = [incomingFilter];
-      } else {
-        filters = (
-          state.filters.includes(incomingFilter)
-            ? state.filters.filter((f) => f !== incomingFilter)
-            : state.filters.concat([incomingFilter])
-        ).filter((f) => f !== 'SHOW_ALL');
-      }
-      if (!filters.length) filters = ['SHOW_ALL'];
+      const filters = [incomingFilter];
+      // don't remove this comment plz // Kris
+      // let filters: FilterAction[];
+      // if (incomingFilter === 'SHOW_ALL') {
+      //   filters = [incomingFilter];
+      // } else {
+      //   filters = (
+      //     state.filters.includes(incomingFilter)
+      //       ? state.filters.filter((f) => f !== incomingFilter)
+      //       : state.filters.concat([incomingFilter])
+      //   ).filter((f) => f !== 'SHOW_ALL');
+      // }
+      // if (!filters.length) filters = ['SHOW_ALL'];
 
       const onlyBuyNow = filters.length === 1 && filters[0] === 'BUY_NOW';
       const sortBy =
@@ -194,7 +213,7 @@ function reducer(state: DiscoveryToolState, action: DiscoveryToolAction): Discov
   }
 }
 
-export function CurrentListings() {
+export function CurrentListings(props: { allListings?: Listing[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -232,17 +251,19 @@ export function CurrentListings() {
     setLoading(false);
   };
 
+  const isDev = process.env.NODE_ENV === 'development';
   // get all listings initially
   useEffect(() => {
     async function getListings() {
-      const allListings = await callMetaplexIndexerRPC('getListings');
+      const allListings = props.allListings
+        ? props.allListings
+        : await callMetaplexIndexerRPC('getListings');
       dispatch({ type: 'INITIALIZE_LISTINGS', payload: allListings });
 
       loadMoreData();
     }
-
     getListings();
-  }, []);
+  }, [props.allListings]);
 
   const hasNextPage = state.listingsOnDisplay.length < state.filteredAndSortedListings.length;
   const [sentryRef] = useInfiniteScroll({
@@ -258,11 +279,13 @@ export function CurrentListings() {
     // visible, instead of becoming fully visible on the screen.
     rootMargin: '0px 0px 400px 0px',
   });
-  // const [container, setContainer] = useState<HTMLDivElement | Window>(window);
-  const CurrentListingsRef = useRef<HTMLDivElement>(null);
+
+  const nrOfDuplicatesDetected =
+    state.filteredAndSortedListings.length -
+    new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size;
 
   return (
-    <div id="current-listings" ref={CurrentListingsRef} style={{ position: 'relative' }}>
+    <div id="current-listings" style={{ position: 'relative' }}>
       <Row
         justify="space-between"
         align="middle"
@@ -293,9 +316,12 @@ export function CurrentListings() {
             }}
           >
             Current Listings
-            {/* ({state.filteredAndSortedListings.length -
-              new Set(state.filteredAndSortedListings.map((l) => l.listingAddress)).size}{' '}
-            duplicates){' '} */}
+            {isDev && (
+              <span>
+                ({state.listingsOnDisplay.length + ' of ' + state.filteredAndSortedListings.length})
+              </span>
+            )}
+            {isDev && <span>({nrOfDuplicatesDetected} duplicates)</span>}
           </Title>
           {/* <Space direction="horizontal">
           <DiscoveryFilterDropdown

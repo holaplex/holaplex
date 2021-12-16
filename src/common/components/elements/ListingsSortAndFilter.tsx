@@ -22,9 +22,11 @@ const StyledDropdownTrigger = styled.div`
   line-height: 25px;
   font-size: 12px;
   cursor: pointer;
+  width: 180px;
 
   .value {
     white-space: nowrap;
+    margin-right: 4px;
   }
 
   > .label {
@@ -64,10 +66,10 @@ export function DiscoveryFilterDropdown(props: {
   return (
     <Dropdown
       onVisibleChange={handleVisibleChange}
-      visible={dropdownVisible}
+      // visible={dropdownVisible} // not needed when radio
       overlay={
         <Menu onClick={handleMenuClick}>
-          {props.options.map((o) => (
+          {/* {props.options.map((o) => (
             <Menu.Item key={o.value}>
               <Checkbox
                 style={{
@@ -79,13 +81,36 @@ export function DiscoveryFilterDropdown(props: {
                 {o.label}
               </Checkbox>
             </Menu.Item>
-          ))}
+          ))} */}
+          <Radio.Group
+            onChange={(e) => props.dispatch({ type: 'FILTER', payload: e.target.value })}
+            value={props.value[0]}
+            style={{
+              width: '100%',
+            }}
+          >
+            {props.options.map((o) => (
+              <Menu.Item key={o.value as string}>
+                <Radio
+                  style={{
+                    fontSize: 12,
+                    width: '100%',
+                  }}
+                  value={o.value}
+                >
+                  {o.label}
+                </Radio>
+              </Menu.Item>
+            ))}
+          </Radio.Group>
         </Menu>
       }
     >
+      {/* <Space direction="horizontal" size="small" align="center">
+            </Space> */}
       <StyledDropdownTrigger>
-        <Space direction="horizontal" size="small" align="center">
-          <span className="label">{props.label}:</span>
+        <span className="label">{props.label}:</span>
+        <span>
           <span className="value">
             {props.options
               .filter((o) => props.value.includes(o.value))
@@ -93,7 +118,7 @@ export function DiscoveryFilterDropdown(props: {
               .join(', ')}
           </span>
           <DownOutlined />
-        </Space>
+        </span>
       </StyledDropdownTrigger>
     </Dropdown>
   );
@@ -113,12 +138,16 @@ export function DiscoverySortByDropdown(props: {
           <Radio.Group
             onChange={(e) => props.dispatch({ type: 'SORT', payload: e.target.value })}
             value={props.value}
+            style={{
+              width: '100%',
+            }}
           >
             {props.options.map((o) => (
               <Menu.Item key={o.value as string}>
                 <Radio
                   style={{
                     width: '100%',
+                    fontSize: 12,
                   }}
                   value={o.value}
                   disabled={props.onlyBuyNow && SortByAuctionValues.includes(o.value as any)}
@@ -131,12 +160,14 @@ export function DiscoverySortByDropdown(props: {
         </Menu>
       }
     >
+      {/* <Space direction="horizontal" size="small" align="center">
+        </Space> */}
       <StyledDropdownTrigger>
-        <Space direction="horizontal" size="small" align="center">
-          <span className="label">{props.label}:</span>
+        <span className="label">{props.label}:</span>
+        <span>
           <span className="value">{props.options.find((o) => o.value === props.value)?.label}</span>
           <DownOutlined />
-        </Space>
+        </span>
       </StyledDropdownTrigger>
     </Dropdown>
   );
@@ -150,9 +181,9 @@ export function DiscoveryFiltersAndSortBy(props: {
   dispatch: React.Dispatch<DiscoveryToolAction>;
 }) {
   const onlyBuyNow = props.filters.length === 1 && props.filters[0] === 'BUY_NOW';
-  // const filteredSortingOptions = props.allSortByOptions.filter(
-  //   (so) => !(onlyBuyNow && SortByAuctionValues.includes(so.value as any))
-  // );
+  const filteredSortingOptions = props.allSortByOptions.filter(
+    (so) => !(onlyBuyNow && SortByAuctionValues.includes(so.value as any))
+  );
 
   return (
     <StyledSpace direction="horizontal">
@@ -165,7 +196,7 @@ export function DiscoveryFiltersAndSortBy(props: {
       <DiscoverySortByDropdown
         label="Sort"
         value={props.sortBy}
-        options={props.allSortByOptions}
+        options={filteredSortingOptions}
         dispatch={props.dispatch}
         onlyBuyNow={onlyBuyNow}
       />
