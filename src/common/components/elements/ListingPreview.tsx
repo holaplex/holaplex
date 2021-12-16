@@ -112,7 +112,7 @@ const ListingTitle = styled(Title)`
   margin-bottom: 4px !important;
   font-size: 18px !important;
   flex-grow: 1;
-  max-width: 75%;
+  max-width: 80%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -130,7 +130,7 @@ const ListingSubTitle = styled(Text)`
   font-size: 14px;
   opacity: 0.6;
   flex-grow: 1;
-  max-width: 85%;
+  max-width: 70%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -351,7 +351,7 @@ export function ListingPreview(listing: Listing) {
         </Square>
         <Row justify="space-between" align="middle" wrap={false}>
           <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
-            {nftMetadata?.name}
+            {nftMetadata?.name} Fake Long Name
           </ListingTitle>
           <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
             <span className="sol-icon">◎</span>
