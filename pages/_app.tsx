@@ -15,7 +15,7 @@ import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { AnalyticsProvider } from '@/modules/ganalytics/AnalyticsProvider';
 
-const GOOGLE_ANALYTICS_ID = 'asdf'; //  process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
 const { Header, Content } = Layout;
 
@@ -36,16 +36,16 @@ const AppLayout = styled(Layout)`
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  // const track = (category: string, action: string) => {
-  //   if (isNil(GOOGLE_ANALYTICS_ID)) {
-  //     return;
-  //   }
+  const track = (category: string, action: string) => {
+    if (isNil(GOOGLE_ANALYTICS_ID)) {
+      return;
+    }
 
-  //   window.gtag('event', action, {
-  //     event_category: category,
-  //     send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
-  //   });
-  // };
+    window.gtag('event', action, {
+      event_category: category,
+      send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
+    });
+  };
 
   const onRouteChanged = (path: string) => {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
@@ -84,7 +84,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <AppContent>
                       <Loading loading={verifying || searching}>
                         <>
-                          <Component {...pageProps} />
+                          <Component {...pageProps} track={track} />
                           <AppFooter justify="center">
                             <Col span={24}>
                               <Row>
