@@ -14,6 +14,7 @@ const storeBlacklist: string[] = [
   'max-test-5',
   'mysubdomain',
   '123123123',
+  'sssss',
 ];
 
 // will eventually be moved to server
