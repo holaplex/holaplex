@@ -66,7 +66,7 @@ export function AppHeader() {
             FAQ
           </a>
         </HeaderLinkWrapper>
-        {windowDimensions.width > 700 && <SocialLinks />}
+        {/* {windowDimensions.width > 700 && <SocialLinks />} */}
       </Space>
     </StyledHeader>
   );

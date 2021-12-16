@@ -258,8 +258,8 @@ const CustomImageMask = styled.div`
 
   > svg {
     position absolute;
-    right: 10px;
-    bottom: 10px;
+    right: 16px;
+    bottom: 16px;
 
   }
 `;
