@@ -105,7 +105,11 @@ export type DiscoveryToolAction =
 
 // would have liked to use a ref, but I don't know how to access that from inside the reducer
 // scroll behaviour smooth can look cool, but it sometimes leads to extra listings being rendered because the infinte scroll hook is triggered "on the way up"
-const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
+//const scrollToTopOfListings = () => document.getElementById('current-listings')?.scrollIntoView();
+const scrollToTopOfListings = () =>
+  document.getElementById('current-listings')?.scrollIntoView({
+    behavior: 'smooth',
+  });
 
 const initialState = (options: {
   filters: FilterAction[];
