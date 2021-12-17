@@ -1,6 +1,7 @@
 import { Listing } from '@/common/components/elements/ListingPreview';
 import { toast } from 'react-toastify';
 import staticListings from 'fixtures/listings.json';
+import { DateTime } from 'luxon';
 
 const storeBlacklist: string[] = [
   'xperienceproject', // explicit
@@ -15,15 +16,19 @@ const storeBlacklist: string[] = [
   'mysubdomain',
   '123123123',
   'sssss',
+  'solanamonkeybusiness',
 ];
 
 // will eventually be moved to server
 function initialListingFilter(listing: Listing) {
   if (
     listing.ended || // past listings
-    (listing.endsAt && new Date(listing.endsAt).getTime() < Date.now()) || // auctions that ended, but .ended flag not flipped
+    (listing.endsAt &&
+      DateTime.fromFormat(listing.endsAt, 'yyyy-MM-dd hh:mm:ss').toMillis() < Date.now()) || // auctions that ended, but .ended flag not flipped
     (!listing.endsAt && listing.lastBidTime) || // remove instant buys that have ended
-    (listing.endsAt && new Date(listing.endsAt).getTime() - Date.now() > 86400000 * 31) || // listings more than 31 days in the future
+    (listing.endsAt &&
+      DateTime.fromFormat(listing.endsAt, 'yyyy-MM-dd hh:mm:ss').toMillis() - Date.now() >
+        86400000 * 31) || // listings more than 31 days in the future
     (listing?.priceFloor || 0) * 0.000000001 > 2000 ||
     storeBlacklist.includes(listing.subdomain)
   ) {
