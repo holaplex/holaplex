@@ -15,6 +15,7 @@ const storeBlacklist: string[] = [
   'mysubdomain',
   '123123123',
   'sssss',
+  'solanamonkeybusiness',
 ];
 
 // will eventually be moved to server

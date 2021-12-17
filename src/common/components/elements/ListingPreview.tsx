@@ -146,7 +146,7 @@ const ListingSubTitle = styled(Text)`
 function calculateTimeLeft(endTime: string) {
   // this is surprisingly performant
   let now = DateTime.utc();
-  let end = DateTime.fromJSDate(new Date(endTime)).toUTC(); // DateTime.fromISO(endTime);
+  let end = DateTime.fromFormat(endTime, 'yyyy-MM-dd hh:mm:ss'); // Should be UTC
 
   return Duration.fromObject(end.diff(now).toObject());
 }
@@ -170,7 +170,8 @@ function Countdown(props: { endTime: string }) {
 
 function AuctionCountdown(props: { endTime: string }) {
   //const t = DateTime.fromFormat(props.endTime, 'YYYY-MM-DD HH:mm:SS').toMillis();
-  const timeDiffMs = new Date(props.endTime).getTime() - Date.now();
+  const timeDiffMs =
+    DateTime.fromFormat(props.endTime, 'yyyy-MM-dd hh:mm:ss').toMillis() - Date.now();
 
   if (timeDiffMs < 0) return <span></span>;
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
@@ -308,8 +309,14 @@ export function ListingPreview(listing: Listing) {
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
+        // console.log({
+        //   name: nftJson.name,
+        //   ...listing,
+        //   nftJson,
+        // });
       }
     }
+
     if (nftMetadata?.uri) {
       fetchNFTDataFromIPFS();
     }
