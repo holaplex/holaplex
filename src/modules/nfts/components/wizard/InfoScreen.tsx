@@ -171,7 +171,10 @@ export default function InfoScreen({
 
     dispatch({
       type: 'INSERT_FILE_PREVIEW',
-      payload: { coverImage: coverImage as File, file: currentFile, type: currentFile.type },
+      payload: {
+        index,
+        filePreview: { coverImage: coverImage as File, file: currentFile, type: currentFile.type },
+      },
     });
     return coverImage;
   };

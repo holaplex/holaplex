@@ -7,7 +7,6 @@ import {
   Space,
   InputNumber,
   Row,
-  notification,
   Radio,
   Col,
   Modal,
@@ -21,25 +20,20 @@ import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator, FormValues } from 'pages/nfts/new';
+import {
+  MAX_CREATOR_LIMIT,
+  MintDispatch,
+  NFTFormValue,
+  Creator,
+  FormValues,
+  FilePreview,
+} from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import CommunityFundInfo from '@/common/components/presentational/CommunityFundInfo';
 import { isNil } from 'ramda';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
-
-interface Props extends Partial<StepWizardChildProps> {
-  files: Array<File>;
-  form: FormInstance;
-  userKey?: string;
-  dispatch: MintDispatch;
-  formValues: NFTFormValue[] | null;
-  isFirst?: boolean;
-  index: number;
-  setDoEachRoyaltyInd: React.Dispatch<React.SetStateAction<boolean>>;
-  doEachRoyaltyInd?: boolean;
-}
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -344,6 +338,19 @@ export const HOLAPLEX_CREATOR_OBJECT = Object.freeze({
   share: 2,
 });
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  form: FormInstance;
+  userKey?: string;
+  dispatch: MintDispatch;
+  formValues: NFTFormValue[] | null;
+  isFirst?: boolean;
+  index: number;
+  setDoEachRoyaltyInd: React.Dispatch<React.SetStateAction<boolean>>;
+  doEachRoyaltyInd?: boolean;
+}
+
 export default function RoyaltiesCreators({
   previousStep,
   goToStep,
@@ -353,6 +360,7 @@ export default function RoyaltiesCreators({
   form,
   userKey,
   formValues,
+  filePreviews,
   setDoEachRoyaltyInd,
   index,
   isFirst = false,

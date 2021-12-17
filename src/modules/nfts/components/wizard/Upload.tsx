@@ -133,7 +133,7 @@ export default function UploadStep({ nextStep, dispatch, files, clearForm }: Pro
           <Space direction="vertical">
             <Copy>Drag up to 10 files here.</Copy>
             <Copy transparent style={{ fontSize: 14 }}>
-              Supported file types: jpg, png, gif, mp4, mov, mp3, wave, flac
+              Supported file types: jpg, png, gif, mp4, mov, mp3, wav, flac
             </Copy>
           </Space>
 

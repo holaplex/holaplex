@@ -12,7 +12,6 @@ import {
   NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
   MAX_FILE_SIZE,
 } from '@/modules/nfts/components/wizard/Upload';
-import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { VerifyFileUpload } from '@/common/components/elements/VerifyFileUpload';
 import { RcFile } from 'antd/lib/upload';
 import { isImage } from '@/modules/utils/files';
@@ -56,7 +55,6 @@ export default function Verify({
   clearForm,
 }: Props) {
   const handleNext = () => {
-    console.log('file type of first is ', files[0].type);
     const filePreviews = files.map((file) => ({
       type: file.type,
       file,

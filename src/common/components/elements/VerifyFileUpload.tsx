@@ -27,6 +27,12 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
     `}
 `;
 
+const PrevSubTitle = styled.p`
+  opacity: 0.6;
+  font-size: 14px;
+  margin-top: 5px;
+`;
+
 const StyledRemoveNFT = styled.div`
   position: absolute;
   top: -9px;
@@ -62,7 +68,7 @@ const StyledAntDImage = styled(AntImage)`
   object-fit: cover;
 `;
 
-const StyledModal = styled(Modal)`
+export const StyledModal = styled(Modal)`
   justify-content: center;
   display: flex;
   width: 100%;
@@ -74,11 +80,12 @@ const StyledModal = styled(Modal)`
   }
 `;
 
-const VidAudPrevWrapper = styled.div`
+export const VidAudPrevWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   cursor: pointer;
 `;
@@ -118,6 +125,7 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
           }}
         >
           <FeatherIcon icon="headphones" />
+          <PrevSubTitle>{file.name}</PrevSubTitle>
         </VidAudPrevWrapper>
       );
     }
@@ -131,6 +139,7 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
           }}
         >
           <FeatherIcon icon="video" />
+          <PrevSubTitle>{file.name}</PrevSubTitle>
         </VidAudPrevWrapper>
       );
     }
@@ -148,10 +157,10 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
   };
   return (
     <>
-      {isModalVisible}
       <StyledModal
         visible={isModalVisible}
         onOk={handleOk}
+        onCancel={handleOk}
         closable={false}
         cancelButtonProps={{ style: { display: 'none' } }}
         keyboard={true}

@@ -5,16 +5,14 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import { NFTAttribute, MintDispatch, NFTFormValue, UploadedFilePin } from 'pages/nfts/new';
+import {
+  NFTAttribute,
+  MintDispatch,
+  NFTFormValue,
+  UploadedFilePin,
+  FilePreview,
+} from 'pages/nfts/new';
 import { Spinner } from '@/common/components/elements/Spinner';
-
-interface Props extends Partial<StepWizardChildProps> {
-  files: Array<File>;
-  dispatch: MintDispatch;
-  form: FormInstance;
-  formValues: NFTFormValue[] | null;
-  setNFTValues: (filePins: UploadedFilePin[]) => void;
-}
 
 const Grid = styled.div`
   display: grid;
@@ -56,17 +54,17 @@ const Attribute = styled(Space)`
 `;
 const SummaryItem = ({
   value,
-  file,
+  filePreview,
   showRoyaltyPercentage,
   showCreatorCount,
 }: {
   value: NFTFormValue;
-  file: File;
+  filePreview: FilePreview;
   showRoyaltyPercentage: boolean;
   showCreatorCount: boolean;
 }) => {
-  if (!file) {
-    throw new Error('file is required');
+  if (!filePreview) {
+    throw new Error('filePreview is required');
   }
 
   return (
@@ -74,11 +72,11 @@ const SummaryItem = ({
       <Image
         width={245}
         height={245}
-        src={URL.createObjectURL(file)}
+        src={URL.createObjectURL(filePreview.coverImage)}
         objectFit="cover"
-        alt={file.name}
+        alt={filePreview.file.name}
         unoptimized={true}
-        key={file.name}
+        key={filePreview.file.name}
       />
       <Title level={4} style={{ marginBottom: 3 }}>
         {value.name}
@@ -120,10 +118,21 @@ const SummaryItem = ({
     </StyledSummaryItem>
   );
 };
+
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  dispatch: MintDispatch;
+  form: FormInstance;
+  formValues: NFTFormValue[] | null;
+  setNFTValues: (filePins: UploadedFilePin[]) => void;
+}
+
 export default function Summary({
   previousStep,
   goToStep,
   files,
+  filePreviews,
   nextStep,
   dispatch,
   formValues,
@@ -193,11 +202,11 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              files[index] && (
+              filePreviews[index] && (
                 <SummaryItem
                   key={fv.name}
                   value={fv}
-                  file={files[index]}
+                  filePreview={filePreviews[index]}
                   showRoyaltyPercentage={showRoyaltyPercentage}
                   showCreatorCount={showCreatorCount}
                 />

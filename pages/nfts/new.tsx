@@ -158,6 +158,7 @@ function reducer(state: State, action: MintAction) {
       return { ...state, filePreviews: action.payload as FilePreview[] };
     case 'INSERT_FILE_PREVIEW': {
       const { filePreview, index } = action.payload as { filePreview: FilePreview; index: number };
+
       const copy = [...state.filePreviews];
       copy[index] = { ...filePreview };
       return {
@@ -360,6 +361,7 @@ export default function BulkUploadWizard() {
           }
           <RoyaltiesCreators
             files={files}
+            filePreviews={filePreviews}
             form={form}
             userKey={wallet.pubkey}
             formValues={state.formValues}
@@ -375,6 +377,7 @@ export default function BulkUploadWizard() {
               .map((_, index) => (
                 <RoyaltiesCreators
                   files={files}
+                  filePreviews={filePreviews}
                   form={form}
                   userKey={wallet.pubkey}
                   formValues={state.formValues}
@@ -387,17 +390,24 @@ export default function BulkUploadWizard() {
               ))}
           <Summary
             files={files}
+            filePreviews={filePreviews}
             hashKey="summary"
             dispatch={dispatch}
             form={form}
             formValues={state.formValues}
             setNFTValues={setNFTValues}
           />
-          <PriceSummary files={files} connection={connection} hashKey="priceSummary" />
+          <PriceSummary
+            files={files}
+            filePreviews={filePreviews}
+            connection={connection}
+            hashKey="priceSummary"
+          />
           {files.map((_, index) => (
             <MintInProgress
               key={index}
               files={files}
+              filePreviews={filePreviews}
               wallet={solana}
               connection={connection}
               uploadMetaData={uploadMetaData}
@@ -409,6 +419,7 @@ export default function BulkUploadWizard() {
           ))}
           <OffRampScreen
             hashKey="success"
+            filePreviews={filePreviews}
             files={files}
             clearForm={clearForm}
             nftValues={state.nftValues}
