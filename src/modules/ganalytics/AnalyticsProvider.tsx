@@ -43,7 +43,7 @@ export function addListingToTrackCall(listing: Listing) {
   };
 }
 
-const AnalyticsContext = React.createContext<{
+interface IAnalyticsContext {
   configureAnalytics: (options: CustomEventDimensions) => void;
   pageview: (path: string) => void;
   track: (action: string, attributes: { [key: string]: any }) => void;
@@ -54,7 +54,9 @@ const AnalyticsContext = React.createContext<{
       listId: keyof typeof listNames;
     }
   ) => void;
-} | null>(null);
+}
+
+const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
 
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
   let gtag: Gtag.Gtag;
