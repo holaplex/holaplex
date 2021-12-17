@@ -360,7 +360,7 @@ export default function RoyaltiesCreators({
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const [creators, setCreators] = useState<Array<Creator>>(
-    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }] // removing the first array item 'HOLAPLEX_CREATOR_OBJECT' for now as a hot fix to a bug preventing minting in production. @TODO -- figure out what is going on
+    previousNFT ? previousNFT.properties.creators : [{ address: userKey ?? '', share: 98 }]
   );
   const [showCreatorField, toggleCreatorField] = useState(false);
   const [royaltiesBasisPoints, setRoyaltiesBasisPoints] = useState(
