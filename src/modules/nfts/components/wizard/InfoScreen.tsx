@@ -98,6 +98,7 @@ export default function InfoScreen({
       .validateFields([
         [nftNumber, 'name'],
         [nftNumber, 'attributes'],
+        [nftNumber, 'description'],
       ])
       .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
         if (isLast) {
@@ -158,28 +159,36 @@ export default function InfoScreen({
           {/* <Form.Item> */}
           <Form.Item
             name={[nftNumber, 'name']}
-            initialValue={images[index]?.name?.substring(0, 20) || ''}
+            initialValue={images[index]?.name || ''}
             label="Name"
             rules={[
-              { required: true, message: 'Name is required' },
-              { max: 20, message: 'NFT names can not be longer than 20 charachters' },
               {
                 message:
                   'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
                 async validator(rule, value) {
-                  if (Buffer.from(value).length > 28) {
+                  if (Buffer.from(value).length > 32) {
                     throw new Error();
                   }
                 },
               },
             ]}
           >
-            <Input placeholder="required" autoFocus />
+            <Input placeholder="optional" autoFocus />
           </Form.Item>
           <Form.Item
             name={[nftNumber, 'description']}
             label="Description"
             initialValue={previousNFT ? previousNFT.description : ''}
+            rules={[
+              {
+                message: 'Max 500 characters',
+                async validator(_, value) {
+                  if (value.length > 500) {
+                    throw new Error();
+                  }
+                },
+              },
+            ]}
           >
             <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
           </Form.Item>
