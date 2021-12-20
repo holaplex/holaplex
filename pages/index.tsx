@@ -17,11 +17,7 @@ const Option = Select.Option;
 
 const HeroTitle = styled.h1`
   font-weight: 800;
-<<<<<<< HEAD
   font-size: calc(0.25vw + 0.25vh + 3rem);
-=======
-  font-size: 46px;
->>>>>>> 1329021 (refactor(discovery): switch to single filter sort option at a time. Reset sorts when filter change. adjust show more to use count and take. featured carousel based on default filter sort.)
   line-height: auto;
   @media screen and (max-width: 1250px) {
     font-size: calc(0.25vw + 0.25vh + 2.5rem);
@@ -62,11 +58,7 @@ const Pitch = styled.h2`
 `;
 
 const Section = styled(Row)`
-<<<<<<< HEAD
   margin-top: calc(0.5vw + 0.5vh + 0.5rem);
-=======
-  margin: 65px 0 0 0;
->>>>>>> 1329021 (refactor(discovery): switch to single filter sort option at a time. Reset sorts when filter change. adjust show more to use count and take. featured carousel based on default filter sort.)
 `;
 
 const StorefrontSection = styled(Section)`
@@ -279,9 +271,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     listingsTopRef.current.scrollIntoView();
   };
 
-<<<<<<< HEAD
-  const buttonSize = () => (windowDimensions.width > 1000 ? 'large' : 'medium');
-=======
   const loadMoreListings = () => {
     const total = seeing.length;
 
@@ -299,7 +288,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     hasNextPage: hasMoreListings,
     onLoadMore: loadMoreListings,
   });
->>>>>>> 1329021 (refactor(discovery): switch to single filter sort option at a time. Reset sorts when filter change. adjust show more to use count and take. featured carousel based on default filter sort.)
 
   useEffect(() => {
     async function getListings() {

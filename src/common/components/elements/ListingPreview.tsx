@@ -312,7 +312,6 @@ export function ListingPreview(listing: Listing) {
               alt={nftMetadata?.name + ' preview'}
               fallback={NFTFallbackImage}
             />
-          )}
           </Square>
           <Row justify="space-between" align="middle" wrap={false}>
             <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
@@ -322,12 +321,6 @@ export function ListingPreview(listing: Listing) {
               <span className="sol-icon">◎</span>
               {displayPrice}
             </h3>
-          </Row>
-          <Row justify="space-between">
-            <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
-              {listing.storeTitle}
-            </ListingSubTitle>
-            {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
           </Row>
           <Row justify="space-between">
             <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
