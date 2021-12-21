@@ -6,7 +6,7 @@ import RedXClose from '@/common/assets/images/red-x-close.svg';
 import FeatherIcon from 'feather-icons-react';
 import { FilePreview, MintStatus, NFTValue } from 'pages/nfts/new';
 import { Image as AntImage } from 'antd';
-import { isAudio, isImage, isVideo } from '@/modules/utils/files';
+import { is3DFilePreview, isAudio, isImage, isVideo } from '@/modules/utils/files';
 import React, { useRef, useState } from 'react';
 import { StyledModal } from '@/common/components/elements/VerifyFileUpload';
 
@@ -95,7 +95,7 @@ const PrevSvgWrapper = styled.div`
   justify-content: center;
 `;
 
-const PreviewOverlay = ({ children }) => {
+const PreviewOverlay = ({ children }: { children: React.ReactElement }) => {
   return (
     <StyledPreviewOverlay>
       <PrevSvgWrapper>
@@ -156,7 +156,7 @@ export const NFTPreviewGrid = ({
               />
             </PreviewOverlay>
           ) : (
-            <FeatherIcon icon="headphones" />
+            <FeatherIcon icon="volume-2" />
           )}
         </VidAudPrevWrapper>
       );
@@ -183,6 +183,10 @@ export const NFTPreviewGrid = ({
           )}
         </VidAudPrevWrapper>
       );
+    }
+
+    if (is3DFilePreview(fp)) {
+      return <FeatherIcon icon="box" />;
     }
 
     if (isImage(fp)) {

@@ -2,6 +2,7 @@ import Button from '@/common/components/elements/Button';
 import { PageHeader, Upload, Space } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -12,9 +13,9 @@ import {
   NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
   MAX_FILE_SIZE,
 } from '@/modules/nfts/components/wizard/Upload';
-import { VerifyFileUpload } from '@/common/components/elements/VerifyFileUpload';
 import { RcFile } from 'antd/lib/upload';
-import { isImage } from '@/modules/utils/files';
+import { is3DFile, isImage } from '@/modules/utils/files';
+import VerifyFileUpload from '@/common/components/elements/VerifyFileUpload';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -55,11 +56,18 @@ export default function Verify({
   clearForm,
 }: Props) {
   const handleNext = () => {
-    const filePreviews = files.map((file) => ({
-      type: file.type,
-      file,
-      coverImage: isImage(file) ? file : null,
-    }));
+    const filePreviews = files.map((file) => {
+      let type = file.type;
+      if (is3DFile(file)) {
+        type = 'model/glb';
+      }
+
+      return {
+        type,
+        file,
+        coverImage: isImage(file) ? file : null,
+      };
+    });
 
     dispatch({ type: 'SET_FILE_PREVIEWS', payload: filePreviews }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
     nextStep!();

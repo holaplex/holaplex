@@ -2,10 +2,13 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import RedXClose from '@/common/assets/images/red-x-close.svg';
 import { Image as AntImage, Modal } from 'antd';
-import { isAudio, isImage, isVideo } from '@/modules/utils/files';
+import { is3DFile, is3DFilePreview, isAudio, isImage, isVideo } from '@/modules/utils/files';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import React, { useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const ModelViewer = dynamic(() => import('./ModelViewer'), { ssr: false });
 
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   height: 120px;
@@ -98,10 +101,13 @@ interface Props {
   children?: any;
 }
 
-export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }: Props) => {
+const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentFile, setCurrentFile] = useState<File>();
   const vidRef = useRef<HTMLVideoElement>(null);
+
+  const showVidAudPreview = currentFile && (isVideo(currentFile) || isAudio(currentFile));
+  const show3DFilePreview = currentFile && is3DFile(currentFile);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -116,6 +122,8 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
   };
 
   const getFilePreview = (file: File) => {
+    console.log('3d file?', is3DFile(file));
+    console.log({ file });
     if (isAudio(file)) {
       return (
         <VidAudPrevWrapper
@@ -124,7 +132,7 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
             showModal();
           }}
         >
-          <FeatherIcon icon="headphones" />
+          <FeatherIcon icon="volume-2" />
           <PrevSubTitle>{file.name}</PrevSubTitle>
         </VidAudPrevWrapper>
       );
@@ -140,6 +148,20 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
         >
           <FeatherIcon icon="video" />
           <PrevSubTitle>{file.name}</PrevSubTitle>
+        </VidAudPrevWrapper>
+      );
+    }
+
+    if (is3DFile(file)) {
+      return (
+        <VidAudPrevWrapper
+          onClick={() => {
+            console.log('hello');
+            setCurrentFile(file);
+            showModal();
+          }}
+        >
+          <FeatherIcon icon="box" />;
         </VidAudPrevWrapper>
       );
     }
@@ -165,7 +187,7 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
         cancelButtonProps={{ style: { display: 'none' } }}
         keyboard={true}
       >
-        {currentFile && isModalVisible && (
+        {showVidAudPreview && currentFile && (
           <video
             className="holaplex-video-content"
             playsInline={true}
@@ -180,7 +202,28 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
             <source src={URL.createObjectURL(currentFile)} type={currentFile.type} />
           </video>
         )}
+        {show3DFilePreview && currentFile && typeof window !== 'undefined' && (
+          <>
+            <ModelViewer
+              src={URL.createObjectURL(currentFile)}
+              poster="https://cdn.glitch.com/36cb8393-65c6-408d-a538-055ada20431b%2Fposter-astronaut.png?v=1599079951717"
+              alt="A 3D model of an astronaut"
+              shadow-intensity="1"
+              camera-controls
+              auto-rotate
+              ar
+            />
+          </>
+        )}
       </StyledModal>
+      {/* <ModelViewer
+        src="./2CylinderEngine.glb"
+        alt="A 3D model of an astronaut"
+        shadow-intensity="1"
+        camera-controls
+        auto-rotate
+        ar
+      /> */}
       <Grid width={width}>
         {files.map((file, i) => (
           <ImageOverlay key={file.name} isFinished={i < index} isCurrent={i === index}>
@@ -197,3 +240,5 @@ export const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, chi
     </>
   );
 };
+
+export default VerifyFileUpload;

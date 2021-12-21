@@ -6,7 +6,10 @@ export const isVideo = (file: File | FilePreview) => file.type.startsWith('video
 
 export const isAudio = (file: File | FilePreview) => file.type.startsWith('audio/');
 
-export const is3D = (file: File | FilePreview) => file.type.startsWith('model/');
+export const is3DFilePreview = (filePreview: FilePreview) =>
+  filePreview.type.startsWith('model/glb');
+
+export const is3DFile = (file: File) => file.name.endsWith('.glb');
 
 export function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
   const fileNameParts = file.name.split('.');

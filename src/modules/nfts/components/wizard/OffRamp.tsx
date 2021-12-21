@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { Divider, PageHeader, Row } from 'antd';
-import { MintStatus, NFTValue } from 'pages/nfts/new';
+import { FilePreview, MintStatus, NFTValue } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { Storefront } from '@/modules/storefront/types';
 import Paragraph from 'antd/lib/typography/Paragraph';
