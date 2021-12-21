@@ -102,6 +102,7 @@ export default function InfoScreen({
     const fieldsToValidate = [
       [nftNumber, 'name'],
       [nftNumber, 'attributes'],
+      [nftNumber, 'description'],
     ];
 
     if (showCoverUpload) {
@@ -194,11 +195,9 @@ export default function InfoScreen({
         <FormWrapper>
           <Form.Item
             name={[nftNumber, 'name']}
-            initialValue={files[index]?.name?.substring(0, 20) || ''}
+            initialValue={files[index]?.name || ''}
             label="Name"
             rules={[
-              { required: true, message: 'Name is required' },
-              { max: 20, message: 'NFT names can not be longer than 20 charachters' },
               {
                 message:
                   'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
@@ -210,7 +209,7 @@ export default function InfoScreen({
               },
             ]}
           >
-            <Input placeholder="required" autoFocus />
+            <Input placeholder="optional" autoFocus />
           </Form.Item>
           {showCoverUpload && (
             <Form.Item
@@ -227,6 +226,16 @@ export default function InfoScreen({
             name={[nftNumber, 'description']}
             label="Description"
             initialValue={previousNFT ? previousNFT.description : ''}
+            rules={[
+              {
+                message: 'Max 500 characters',
+                async validator(_, value) {
+                  if (value.length > 500) {
+                    throw new Error();
+                  }
+                },
+              },
+            ]}
           >
             <TextArea placeholder="optional" autoSize={{ minRows: 3, maxRows: 8 }} />
           </Form.Item>

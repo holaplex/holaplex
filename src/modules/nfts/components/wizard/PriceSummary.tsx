@@ -97,7 +97,9 @@ export default function PriceSummary({
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
                   Estimated network fee x{files.length}
                 </Paragraph>
-                <Paragraph style={{ fontSize: 14 }}>◎ {SOL_COST_PER_NFT}</Paragraph>
+                <Paragraph style={{ fontSize: 14 }}>
+                  <span className="sol-icon">◎</span> {SOL_COST_PER_NFT}
+                </Paragraph>
               </Row>
             </Col>
           </Row>
@@ -106,7 +108,9 @@ export default function PriceSummary({
             <Paragraph style={{ opacity: 0.6, fontSize: 14 }}>Total:</Paragraph>
             <Col>
               <Row>
-                <Paragraph style={{ fontSize: 18, marginBottom: 0 }}>◎ {totalSolCost}</Paragraph>
+                <Paragraph style={{ fontSize: 18, marginBottom: 0 }}>
+                  <span className="sol-icon">◎</span> {totalSolCost}
+                </Paragraph>
               </Row>
               <Row justify="end">
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>

@@ -146,6 +146,7 @@ export default function MintInProgress({
       if (!process.env.NEXT_PUBLIC_SOLANA_ENDPOINT) {
         throw new Error('No Solana Endpoint');
       }
+
       const metaProgramId = new PublicKey(META_PROGRAM_ID);
       const { metadata } = mintResp;
 

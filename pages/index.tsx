@@ -1,52 +1,83 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState, useReducer } from 'react';
 import styled from 'styled-components';
-import { drop } from 'ramda';
 import sv from '@/constants/styles';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import { List, Space, Row, Col, Typography, RowProps } from 'antd';
+import { List, Space, Row, Col, Typography, ListProps } from 'antd';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
+import { generateListingShell, Listing } from '@/common/components/elements/ListingPreview';
+import { FeaturedListingCarousel } from '@/common/components/elements/FeaturedListingsCarousel';
+import { callMetaplexIndexerRPC } from '@/modules/utils/callMetaplexIndexerRPC';
+import { useRouter } from 'next/router';
+import {
+  CurrentListings,
+  filterAndSortListings,
+} from '@/common/components/elements/CurrentListings';
+const { Title } = Typography;
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
-const { Title } = Typography;
 
-const ContentCol = styled(Col)`
-  max-width: 1400px;
+const SectionTitle = styled(Title)`
+  margin-bottom: 62px !important;
 `;
 
 const HeroTitle = styled.h1`
   font-weight: 800;
-  font-size: 68px;
+  font-size: calc(0.25vw + 0.25vh + 3rem);
   line-height: auto;
+  @media screen and (max-width: 1250px) {
+    font-size: calc(0.25vw + 0.25vh + 2.5rem);
+  }
+  @media screen and (max-width: 1150px) {
+    font-size: calc(0.25vw + 0.25vh + 2.25rem);
+  }
   @media screen and (max-width: 550px) {
-    font-size: 48px;
     line-height: auto;
     text-align: left;
   }
 `;
 
 const Marketing = styled(Col)`
-  padding-right: 48px;
+  padding-right: 5rem;
   display: flex;
   flex-direction: column;
+  margin-bottom: calc(0.5vw + 0.5vh + 2rem);
   justify-content: center;
+  @media screen and (max-width: 900px) {
+    padding-right: 2.5rem;
+  }
+  @media screen and (max-width: 768px) {
+    padding-right: 0;
+  }
 `;
 
 const Pitch = styled.h2`
-  font-size: 24px;
-  line-height: 28px;
+  font-size: calc(0.35vw + 0.35vh + 1rem);
+  line-height: 1.4;
   letter-spacing: 0.2px;
   font-weight: 300;
-  margin: 32px 0 40px 0;
-  color: rgba(253, 253, 253, 0.6);
+  margin: calc(0.25vw + 0.25vh + 1rem) 0 calc(0.25vw + 0.25vh + 2rem);
+
+  @media screen and (max-width: 900px) {
+    font-size: calc(0.35vw + 0.35vh + 0.85rem);
+  }
 `;
 
 const Section = styled(Row)`
-  margin-top: ${sv.sectionPadding}px;
+  margin-top: calc(0.5vw + 0.5vh + 0.5rem);
 `;
 
-const FeaturedStores = styled(Section)<RowProps>`
+const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
+  .ant-list-item {
+    margin-bottom: 66px !important;
+
+    .ant-card {
+      border-radius: 8px !important;
+    }
+  }
+
   .ant-list-grid {
     .ant-col > .ant-list-item {
       margin-bottom: 66px;
@@ -55,9 +86,13 @@ const FeaturedStores = styled(Section)<RowProps>`
       line-height: 20px;
     }
   }
-  .ant-typography {
-    margin: 0 0 62px 0;
-  }
+`;
+
+const CenteredContentCol = styled.div`
+  margin: 0 auto;
+  width: calc(1400px + 3rem);
+  max-width: 100vw;
+  padding: 0 1.5rem;
 `;
 
 export async function getStaticProps() {
@@ -77,53 +112,89 @@ interface HomeProps {
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
 
-  const heroStorefront = featuredStorefronts[0];
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>(
+    Array(4)
+      .fill(null)
+      .map((_, i) => generateListingShell(i + ''))
+  );
+  const [allListings, setAllListings] = useState<Listing[]>(
+    Array(4)
+      .fill(null)
+      .map((_, i) => generateListingShell(i + ''))
+  );
+
+  const windowDimensions = useWindowDimensions();
+
+  const buttonSize = () => (windowDimensions.width > 1000 ? 'large' : 'medium');
+
+  useEffect(() => {
+    // async function getFeaturedListings() {
+    //   const featuredListings = await callMetaplexIndexerRPC('getFeaturedListings');
+    //   setFeaturedListings(featuredListings);
+    // }
+
+    // getFeaturedListings();
+    async function getListings() {
+      const allListings = await callMetaplexIndexerRPC('getListings');
+      // dispatch({ type: 'INITIALIZE_LISTINGS', payload: allListings });
+
+      // loadMoreData();
+      const trendingListings = filterAndSortListings(allListings, [], 'MOST_BIDS');
+      const featuredListings = trendingListings.slice(0, 4);
+
+      setFeaturedListings(featuredListings);
+      const currentListings = trendingListings; // spliced above
+      setAllListings(currentListings);
+    }
+    getListings();
+  }, []);
 
   return (
-    <Row justify="center">
-      <ContentCol xs={22} md={20}>
-        <Section justify="center">
-          <Marketing xs={24} md={16}>
-            <HeroTitle>Find, buy, and sell NFTs from incredible artists on Solana.</HeroTitle>
+    <Row>
+      <CenteredContentCol>
+        <Section>
+          <Marketing xs={22} md={16}>
+            <HeroTitle>Discover, explore, and collect NFTs from incredible creators on Solana</HeroTitle>
             <Pitch>
-              Our mission is to empower creators and collectors by building a suite of integrated
-              tools to mint, discover, and sell NFTs on Solana.
+              Tools built by creators, for creators, owned by creators.
             </Pitch>
             <Space direction="horizontal" size="large">
-              <Button size="large" onClick={() => connect()}>
+              <Button size={buttonSize()} onClick={() => connect()}>
                 Create Your Store
               </Button>
             </Space>
           </Marketing>
-          {heroStorefront && (
-            <Col xs={0} md={8}>
-              <StorePreview {...heroStorefront} />
-            </Col>
-          )}
-        </Section>
-        <FeaturedStores justify="center">
-          <Col>
-            <Title level={3}>Featured Creators</Title>
-            <List
-              grid={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3, gutter: 16 }}
-              dataSource={drop<StorefrontFeature>(1, featuredStorefronts)}
-              renderItem={(feature) => (
-                <List.Item key={feature.storefront.subdomain}>
-                  <StorePreview {...feature} />
-                </List.Item>
-              )}
-            />
+          <Col xs={24} md={8}>
+            <div style={{ marginBottom: '-2rem' }}>
+              <FeaturedListingCarousel featuredListings={featuredListings} />
+            </div>
           </Col>
-        </FeaturedStores>
+        </Section>
+
+        <SectionTitle level={3}>Featured Stores</SectionTitle>
+        <FeaturedStores
+          grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+          dataSource={featuredStorefronts.slice(0, 4)}
+          renderItem={(feature) => (
+            // @ts-ignore
+            <List.Item key={feature.storefront.subdomain}>
+              {/* @ts-ignore */}
+              <StorePreview {...feature} />
+            </List.Item>
+          )}
+        />
+
+        <CurrentListings allListings={allListings} />
+        {/* CTA */}
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button size="large" onClick={() => connect()}>
+            <Button size={buttonSize()} onClick={() => connect()}>
               Create Your Store
             </Button>
           </Space>
         </Section>
-      </ContentCol>
+      </CenteredContentCol>
     </Row>
   );
 }

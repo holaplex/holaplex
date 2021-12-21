@@ -1,0 +1,1391 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "createdAt": "2021-12-13 06:10:26",
+      "ended": false,
+      "endsAt": "2021-12-16 03:10:23",
+      "highestBid": 100000000,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "AiD4ESuRf9wGg78xvu26p7rUoDEpz7FoGUbeh37ZH5A8",
+          "name": "6ix9ine",
+          "uri": "https://bafkreihybou3222jjravin2c4ar75xcbbhhwiswdbbvh3zb4v4i6h5ngom.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": "2021-12-14 23:53:09",
+      "listingAddress": "2hXAQyuA2pwRTDGgyurWMiUe7tJfofkZNP8xrq9K2E9G",
+      "priceFloor": null,
+      "storeTitle": "Celebrity Cyborg Society",
+      "subdomain": "ccs",
+      "totalUncancelledBids": 1
+    },
+    {
+      "createdAt": "2021-12-15 05:00:10",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 1000000000,
+      "items": [
+        {
+          "metadataAddress": "5AXaPAS7GccALR6b6Sj5x9vwN4wWxtGAQXfTynC124FX",
+          "name": "Minty_Fresh",
+          "uri": "https://bafkreidcq4jktvingiionxruxhkvml225zkba7ybpjcvkhzhzphfevsgtq.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "79EeDXnd2PFNBDTdhFpdNM5JCP2xB39tNfBjq3obfe6B",
+      "priceFloor": 1000000000,
+      "storeTitle": "Protection Gear and Monsters",
+      "subdomain": "rocco-one-byte",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-04 20:03:59",
+      "ended": false,
+      "endsAt": "2021-12-21 20:03:56",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "81xAUXbnnAnKXt983tsmdTCx5fP3ihJBuqQgrGD33Uyi",
+          "name": "BTC",
+          "uri": "https://bafkreid5sjhynhhbjo6samq7r2tnwe2l5luemg5po7iby6v6jvs2gssphu.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "9p1FrJsLrcxA4UFhTauTFTSYfQ4U1zZ6W8M6bnjbrifm",
+      "priceFloor": 3000000000,
+      "storeTitle": "banksy balloons 🎈",
+      "subdomain": "banksyballoon",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-05 09:10:53",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 111000000,
+      "items": [
+        {
+          "metadataAddress": "2fGBCx1kV1CaKeKwS7HWeqkin6jyUz1KRwkMEtVBZbjo",
+          "name": "Spring Time",
+          "uri": "https://bafkreifzctijn7wuvw47wfeetri5kn24jwopggpcqa7g6vzwz42xd3kcmy.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BRq1eUFykjurigiV2xTR9WgjSmZqiU3sw3iTAYKJRcnt",
+      "priceFloor": 111000000,
+      "storeTitle": "1/1",
+      "subdomain": "life",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-06 20:59:30",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 400000000,
+      "items": [
+        {
+          "metadataAddress": "5TbGKwjeoTLReNTtij9Ef3qme3sTUs34FFLxGiACAzoa",
+          "name": "Double Astronauts",
+          "uri": "https://bafkreihnu6trq2jomajb45taeup2jjiine2n2fnozjcr7ockj7tgeqppsi.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "Gfj7CafCVmdmENRoJSezQUaDqv3N87nnyTo25pZr3SZa",
+      "priceFloor": 400000000,
+      "storeTitle": "MY Designs",
+      "subdomain": "mydesign",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-25 06:32:09",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "7C5N2kJJdfFqoEYHiJ5p3i2m4xtKnyKFJXogurHvbHfj",
+          "name": "Harlem Lowriders",
+          "uri": "https://bafkreihvuzlxuukk3n64i77maqbqbkwejh6fowruz3yqjvrs6ralbctmvq.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "GRZugiCu3iU3xFZvz7g65YSPhSuQQaedUaoXryggwLVq",
+      "priceFloor": 500000000,
+      "storeTitle": "Bgames_Photo 1/1 NFTs",
+      "subdomain": "bgames-photo",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 04:05:13",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 690000000,
+      "items": [
+        {
+          "metadataAddress": "6YdaMohwi1E5vEMkVtmyYGohKuLCqZ2TNqjPTweuTKyG",
+          "name": "Soldenza #6",
+          "uri": "https://bafkreibioouyka4hjiaigubxegtvxnmc6ygvxdt4mv5kxdwrtua2o434wq.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "AApF6rnprpp4upj1K3sz6jgk4EwAbvRCKGw3hzBGSZDT",
+      "priceFloor": 690000000,
+      "storeTitle": "Soldenza",
+      "subdomain": "soldenza",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-15 05:04:50",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 115000000000,
+      "items": [
+        {
+          "metadataAddress": "CVxDyofCsRRYwLoLWcv6sz8ZK38wKyHjP7QdKj6WS1Hu",
+          "name": "Medium Parcel #4151",
+          "uri": "https://www.arweave.net/9nFzG2zoZI36XC1SbBjhfWxC4YJP9IySoKUKb2-TY9E?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "YzcW5MXCx6iiyM1M7dfy1uUG2NJ1ZnqsGSoUAhNpDwz",
+      "priceFloor": 115000000000,
+      "storeTitle": "Somnium Space VR",
+      "subdomain": "somniumspace",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-13 03:13:51",
+      "ended": false,
+      "endsAt": "2021-12-18 03:13:49",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "65p7hBxXYZcoaWk5En7XddLdL8if2Nv61nu2vJq4qQhF",
+          "name": "Pagani Huayra",
+          "uri": "https://bafkreibaweogom7znclt2qbr7vby4rtkrulgkocyfsllyppr3livwwpsa4.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "3oVy8D6DDhv7Hvj3PQFDbacLcpt4kgKCCvtP7atjNgun",
+      "priceFloor": 550000000,
+      "storeTitle": "Rex's Hola Shop",
+      "subdomain": "rexjpg",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-12 08:53:14",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 1000000000,
+      "items": [
+        {
+          "metadataAddress": "GcJpeo5R6xxFiDyj15251UKw9grmNHWqU7pryP4zQT3v",
+          "name": "Cold metal",
+          "uri": "https://bafkreieic2j5tww4rhrdkcvkvtqxsnke5fteo4tktgfxfpqanh7uab6pam.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "3FaLr3fnQD5aNRGSmnm7a5jVBkvp9Q4WjFZF5wp4MSBu",
+      "priceFloor": 1000000000,
+      "storeTitle": "Jimmyn1c",
+      "subdomain": "jimmyn1c",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 05:31:21",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 690000000,
+      "items": [
+        {
+          "metadataAddress": "A3w4BgCiWMbLnwXhomJsCLFTwcLi64YaYJwPuBK3NmR6",
+          "name": "Soldenza #18",
+          "uri": "https://bafkreibm2fmtyr73ueukmh2dtrsabaiatolrjw4rzthyaqw4cvor2xsjku.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "AAyyX8Lg6shWzUSqw2Pksty2rLasCJ6nb5AxsQt2fDd6",
+      "priceFloor": 690000000,
+      "storeTitle": "Soldenza",
+      "subdomain": "soldenza",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-08 13:25:26",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 10000000000,
+      "items": [
+        {
+          "metadataAddress": "4bvcEwehv7jZBuFGMJL5qpVN3h6eZEKjtKAwbWPF2Psk",
+          "name": "Insoumise 2",
+          "uri": "https://arweave.net/IF8woHq1CYzcPHHvZo5p-8Ngw875A9Q11OcwEOs5cco"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "ALjHWkymhAKg9G3XFjFR3kCmEZr914WZRc6XXWo3rTJD",
+      "priceFloor": 10000000000,
+      "storeTitle": "NFT galerie",
+      "subdomain": "mintart",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-10 03:41:46",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 269000000,
+      "items": [
+        {
+          "metadataAddress": "94a6aAM3aGKQeV4AcnkPf2B84Zn2rEZbBeD3rvrhMPsY",
+          "name": "Elon Musk",
+          "uri": "https://bafkreiamt7hwpr5xxxbbbwb7wrrgnux6vjz54kvm6mmzmp3fjcgzkgugje.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "8AYYYmnFUu7eAqBZBHwLWeveHfrjCtcq6wsZqZk3fdt9",
+      "priceFloor": 269000000,
+      "storeTitle": "Multiplanetary Porpoises",
+      "subdomain": "multiplanetaryporpoises",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-29 22:15:02",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "HwVbnNSg4KXtoXRgiNhtG4QiQ8srzggCmh9riKnnWbFK",
+          "name": "SC | 3 – NW",
+          "uri": "https://bafkreifl5jkb653a3kvfdp3q4te4lltgtpkqllwlikvzrhw653ojnpohki.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "AMRRcDee3LqidooNm7b2FxzzLGYkhAPtoxDQwV9Qmg7y",
+      "priceFloor": 500000000,
+      "storeTitle": "Sam Cook",
+      "subdomain": "samcook",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-06 02:48:12",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 222000000,
+      "items": [
+        {
+          "metadataAddress": "7FRGgeVvZKsNErCoDht3QGQSSR9NvB4CUhtUQonCu6Rr",
+          "name": "rose 06",
+          "uri": "https://bafkreibuhljxw6vk4kkiea7p4n7xd6tkuhnwbbbcauiaweuzqwjq2ela34.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BpYbuahbW1znFsXSY9GVqYPzE38hGkmFi4rbc4KtrhhH",
+      "priceFloor": 222000000,
+      "storeTitle": "NFTs by rylee",
+      "subdomain": "rylee",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-23 00:48:45",
+      "ended": false,
+      "endsAt": "2021-12-23 00:48:44",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "mnYzZ5RzzwAJy1uRAvkDXAFEttt1WjC8VMPyMu6wq8X",
+          "name": "Ed",
+          "uri": "https://arweave.net/HtYCUWZyVJ4sPysAwQN-x_NCefle46_DBV0m5GgLAXA"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "9dt1E9zPdSnp6sZ63FmUfrSxPAhQSAxZxUvQhGGEPU5d",
+      "priceFloor": 500000000,
+      "storeTitle": "awmsters",
+      "subdomain": "awmsters",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-14 13:10:56",
+      "ended": false,
+      "endsAt": "2021-12-16 04:10:50",
+      "highestBid": 100000000,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "AkGZXjyLHrMWQZ8pny2xQQstDWiFYnzq2X6scmJEjLV4",
+          "name": "Stream 2021-12-13 #5",
+          "uri": "https://bafkreih4xocnwk3p4hrzr6pyk5zndmoslmllyhnh5vp6hak4ntyi4r5qvq.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": "2021-12-14 14:06:02",
+      "listingAddress": "CNg2FedfGBVvyP7iXntLFY7wTKwCrEEYoD6RhrxAuQBc",
+      "priceFloor": 10000000,
+      "storeTitle": "josephtaylor.art",
+      "subdomain": "josephtaylor",
+      "totalUncancelledBids": 1
+    },
+    {
+      "createdAt": "2021-11-24 01:30:35",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 100000000,
+      "items": [
+        {
+          "metadataAddress": "AhTFvGXFetHPMGpWgVVxddVSJyPEUzDs6SaaZdJ9rV7N",
+          "name": "Sitting Doll",
+          "uri": "https://bafkreigqu4h37uuee46jsrd3dj4sma7zsk573idzuzioo5zv3j777v4x4i.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "5gqF1YQguhUCeXM2vHYzDszRmDNcNVSnWdkiBtDEk2aP",
+      "priceFloor": 100000000,
+      "storeTitle": "Puppet",
+      "subdomain": "mymind",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-12 20:55:23",
+      "ended": false,
+      "endsAt": "2021-12-15 20:55:20",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "CeD7Usa4dFFfDbHnqoR7KDYWN8gTCmi6cwVyThFYAZsK",
+          "name": "Uncanny Alien #156",
+          "uri": "https://bafkreienud3tegr5ovgezllggwusfgo5gfr2pgdtemrpemmr3j3m7zd76a.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "H4Fp3xgyxZkfksPJbfG321oj9YsZTzktWvXzxfacZPGx",
+      "priceFloor": 250000000,
+      "storeTitle": "Solana Uncanny Alien",
+      "subdomain": "uncannyalien",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-07 13:17:53",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 2000000000,
+      "items": [
+        {
+          "metadataAddress": "6mUnABXC1yzM4zvkbR2fqD9mdcdCimuFvunFWoB1zq8z",
+          "name": "PITBULL SUGARSKULL #1",
+          "uri": "https://bafkreih7tdzgt4re5hgmnvaog4c6oojcqhozv7iibvdqv4yg7xuj7fntbe.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "4T2QrsyZLz2TkKnyXJe6TLFxSwYC7DvLK8QvnsWNbp7A",
+      "priceFloor": 2000000000,
+      "storeTitle": "Marz Art",
+      "subdomain": "marzart",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-04 19:52:06",
+      "ended": false,
+      "endsAt": "2021-12-21 19:52:05",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "C32C5hpnLSn2Ufh4tYhULY5K4C2zXRBikwoM8pfaFAa3",
+          "name": "Namecoin",
+          "uri": "https://bafkreidvqw7vqotn6576d26dfy266spwz6izfjwhr35xphra7inqbxc56e.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "Hge5YHLCu5hJFvkfVMWJ3ddfuR5LQF8UVPiJEKkkMQfj",
+      "priceFloor": 3000000000,
+      "storeTitle": "banksy balloons 🎈",
+      "subdomain": "banksyballoon",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-01 05:12:20",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "9VDZpoLSya8cq3X1bq3fAUCEXC319avc6PpJHvydmR4Z",
+          "name": "LR 013",
+          "uri": "https://bafkreiaolcenrbytg7snqrpz4q2njrestubfdafnq5xxot346c6tgnasyy.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "7SWkbZoSQznqgCNTobQyEfLP8FevM6P7DXR99Dq5DCt6",
+      "priceFloor": 500000000,
+      "storeTitle": "Metaverse Art by @mbroidered",
+      "subdomain": "mbroidered",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-13 10:12:10",
+      "ended": false,
+      "endsAt": "2021-12-18 10:12:08",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "GXQK7vu4pc2t7FAgwaVXCWr36CNdmTTcEFtfpjEfE1hd",
+          "name": "Re-Reverence #039",
+          "uri": "https://bafkreie6wvxwlmdkikfdo5k3f3wshrmcdkxbfmaolgodslqnfttvtlm4iy.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "o8CHt3ZNRY4uVfd5TTnrbuVJtYT6DPAiZU6U5VsF1rS",
+      "priceFloor": 200000000,
+      "storeTitle": "Re-Reverence",
+      "subdomain": "128",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-15 02:09:09",
+      "ended": false,
+      "endsAt": "2021-12-16 02:09:05",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "7PntLgDoThKB8Uv6VAcDiXVTRKrAUFZbakZmkSL6qyG3",
+          "name": "JJ #13",
+          "uri": "https://bafkreihyt7wakima5uuvryuflerjw2tubnrqq4luesmdw2gwu4w47kqmgy.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "Gdig1f2CtRUdQXD7xgvbrKrzdHWgC4TV8tZ84PrkUYKp",
+      "priceFloor": 500000000,
+      "storeTitle": "James Johnson Studios",
+      "subdomain": "jamesjstudios",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-21 11:25:22",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 400000000,
+      "items": [
+        {
+          "metadataAddress": "3qRUp9m7Q3KDNuHcxQttiwMgVEiFdT7i4hfMX3yvgKwo",
+          "name": "Vulture",
+          "uri": "https://bafkreidinhx7lq7d46dxukbv47i6n7dmnpg6lqejnlnat2uk3wdcfndd7a.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "FGcgGCMNBLVY8eT4xX8asfSrg8XvJv3nBGYwVnVWoTWT",
+      "priceFloor": 400000000,
+      "storeTitle": "CryptoVulture",
+      "subdomain": "cryptovulture",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-11 01:23:55",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 100000000,
+      "items": [
+        {
+          "metadataAddress": "FpR8ggBEfuccTuicECGbdvnttsrverD3vPNtH6rXjcs4",
+          "name": "Helping Hand - Purple Heart",
+          "uri": "https://bafkreibjwrgpsyr6qh4gukxqyudlz4ow6smukq7a7yq3iu6erlpd4xbn4u.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "CjaCfEp5eFD1MJWT29imym3Rj2LvZPq14F8RJbsq9nL9",
+      "priceFloor": 100000000,
+      "storeTitle": "Helping Hand",
+      "subdomain": "helpinghand",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-01 05:16:59",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "2V8SG2M6JjRk6qXqKcYwEcDHyUVcXNQj9cPoipJaceZ3",
+          "name": "LR 014",
+          "uri": "https://bafkreihhwm5elz7iqotwgh5yknbp5xxudg3ryvrfmsdq2zeor2uhjj2bum.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "FguvDDZNVS3d4V8CLBfYMzcsTBgHLfuZmHWYuJsEaJha",
+      "priceFloor": 500000000,
+      "storeTitle": "Metaverse Art by @mbroidered",
+      "subdomain": "mbroidered",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-13 23:47:08",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "ocVnshyd9zv6BDa2vTat3uUT5RgW13g27NB8tzG7Uz4",
+          "name": "MythBoar #6",
+          "uri": "https://bafkreibnjxtbmhz6rhc2pys6kosauo63ipg4eml5px3k3iinkmssrw2w7a.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "AvZ6ydbthNFtmznRCc8BPpGGYJJVff5Ajx1ySo8NXBWh",
+      "priceFloor": 500000000,
+      "storeTitle": "CryptoBoars",
+      "subdomain": "cryptoboars",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 17:21:06",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 690000000,
+      "items": [
+        {
+          "metadataAddress": "CsMcAPAGzpM39qs5visNe2uxuyUUtaqoNpkF4VciEYRo",
+          "name": "Soldenza #50",
+          "uri": "https://bafkreiaohxe3mi5uewypmu3a6il5qm2ff7t7lujaxzkfaqnmp4mt7dhvzq.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "3WnuZigWPMEYuLSqjUEh6ZNhonnu5wTi4WojvEXbUJws",
+      "priceFloor": 690000000,
+      "storeTitle": "Soldenza",
+      "subdomain": "soldenza",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-12 20:02:07",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 3000000000,
+      "items": [
+        {
+          "metadataAddress": "5L6k5tFiuLz1tfn4wuyTZWBiufp9ffqDhQP41ui5YuKg",
+          "name": "Noirus the Proud",
+          "uri": "https://bafkreihbjiwpiwzejlbdvpcwhshutx33bwp6lfmmdo4fqbf5ank4l7wxam.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "FtxeX11rWExBmheKXEc5qBmYzRfddiA4AhLV2CaZJ7pk",
+      "priceFloor": 3000000000,
+      "storeTitle": "kutlayus",
+      "subdomain": "kutlayus",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-13 04:02:24",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 100000000,
+      "items": [
+        {
+          "metadataAddress": "3smG8g6zykNcLDNiFFnmDqkwprs5MkfDsYZRT381PSzk",
+          "name": "Cured Pork Belly",
+          "uri": "https://bafkreigb3titia3okwfjgzg57lwhxa4kvvne4fxzb2raybjfjttrrbvy2a.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BRPixPDyH4izeZuGKwAU8gyB5QW4o1yHy6ANXb2mFFtH",
+      "priceFloor": 100000000,
+      "storeTitle": "Unlearning Assimilation",
+      "subdomain": "chinatown",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 16:23:39",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 690000000,
+      "items": [
+        {
+          "metadataAddress": "954v98t5Ra7Cr9X2iVz6FmHdUuDXdKniMa2vxj5knyM8",
+          "name": "Soldenza #36",
+          "uri": "https://bafkreiaqyvx7dcntoc7mcy34d72wghiiid22zbvxgfmddzfubufm6x46dq.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "2tDbMQHT4BqYcZNKHsCTpcGuQk4RSQAuqVCQ7PvY8qzJ",
+      "priceFloor": 690000000,
+      "storeTitle": "Soldenza",
+      "subdomain": "soldenza",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-01 15:11:52",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 5000000000,
+      "items": [
+        {
+          "metadataAddress": "Gt4QjfCdYGEQXwP3u1xNW8q8YFX4QfN3zhkG9P7jgPUZ",
+          "name": "Solaknight #178",
+          "uri": "https://arweave.net/EWnCOya0Xle2g8TiG_CdFb4J20H3oYUDqEk9vSI2ra4"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "69RfssEEp4U5Fd67zHhdmAU1rqT4qAS6rHyUgGhfph4H",
+      "priceFloor": 5000000000,
+      "storeTitle": "Solaknights",
+      "subdomain": "solaknights",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-06 07:41:57",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 3000000000,
+      "items": [
+        {
+          "metadataAddress": "EbDTmt8aMyYhhSXnAAqR7xhYjBtYnCNPabL18BC5Wi3A",
+          "name": "Demoiselles d´Avignon",
+          "uri": "https://arweave.net/RS_2RXdKXwBZelMxaNfcLd8Hn9Qh7K23flgI1SQ_5wE"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "2pkB3syaeV7PPhyZ8UVYEEwbKEALQqPi3eSNiyd8M678",
+      "priceFloor": 3000000000,
+      "storeTitle": "Xperience Project",
+      "subdomain": "xperienceproject",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-31 16:04:15",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 200000000,
+      "items": [
+        {
+          "metadataAddress": "B8KbmTQ9QZ4CLJ6KBaXAMorz1qkeggE5PbgAqAMw2rL3",
+          "name": "smoking pumpkin",
+          "uri": "https://arweave.net/QiMcrYBWGQsC5wIg6_-FRdRTkcuiadikRAzDar0BI0Y"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "7d8V4FYH73NxxHt7kTHePdRz64eo6QSiePBPQYCiooyX",
+      "priceFloor": 200000000,
+      "storeTitle": "franklinity",
+      "subdomain": "franklinity",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-20 07:09:23",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 750000000,
+      "items": [
+        {
+          "metadataAddress": "DgNv3NVKyh2ygoy1Bqrdhd55UxSWQSS7s5MfycGPw5qM",
+          "name": "Green Grape Kush",
+          "uri": "https://bafkreiaicurzcmycyl7gn6rp47sg32jsjwecymbvq3rlc44lcpt7gimytq.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "AwEuoaLC3VJpw2XXEYwwJTZHiYK1uiHVEfQwQ4bAS2LZ",
+      "priceFloor": 750000000,
+      "storeTitle": "Swankys Playhouse",
+      "subdomain": "swanky",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-12 07:47:39",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 200000000,
+      "items": [
+        {
+          "metadataAddress": "Bj2pz5CqVUdBLFwA8W9W2UNDUxupiG1mYQh7iYnAzTSa",
+          "name": "Galaxy poop",
+          "uri": "https://bafkreiczyomrrmgagcxdxeiw7ynoroqkkx7vsokgbpklwvisfo7kef6gvu.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BdDUvVBivsNx7YdsXtZq8rVCn2769XgDwkFtMm2GqmYp",
+      "priceFloor": 200000000,
+      "storeTitle": "Galaxdust",
+      "subdomain": "galaxydust",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-15 02:22:13",
+      "ended": false,
+      "endsAt": "2021-12-16 02:22:12",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "EXbZ6nBvbGRJSpCLgGSLPLmCLPjXXes289kTMXmaJWzC",
+          "name": "JJ #25",
+          "uri": "https://bafkreicqhr2j3koabum7xrqbyz64wt4543sf6nqfm27qb5miz3s5d6pu5i.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "DZ5UVKwQb1sQnWD7uEX9iDQ27fXMuvXr5hTUSNfsruqy",
+      "priceFloor": 500000000,
+      "storeTitle": "James Johnson Studios",
+      "subdomain": "jamesjstudios",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-04 22:09:16",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 3500000000,
+      "items": [
+        {
+          "metadataAddress": "mYz5T5FWL9D1Do5pdiXDXGScD7M1L333HhhMBociMde",
+          "name": "Owl",
+          "uri": "https://bafkreibv7pxff3vmigl7blpl35lq6aigs425mtl5hxqu5i6gngsoz7khk4.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "FVQbRQL2UpojdfL8wyQPha1tN7iXGok1Rueo1RSUk8Tv",
+      "priceFloor": 3500000000,
+      "storeTitle": "Romesh Phoenix",
+      "subdomain": "romeshphoenix",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-02 22:18:34",
+      "ended": false,
+      "endsAt": "2022-01-01 22:18:28",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "BEpghqWF8LnPPjo7CQXAE4ZKQArfaU7nS988zrdWqpV3",
+          "name": "Bitcoin Brady ",
+          "uri": "https://bafkreiebi4lerafaliyt7nbyigz5an5npfy43rknjt4t2na2jbaox6ckz4.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "HGzn54Lw21xWFoKTk1aoazaxVaS31CD1tn1V2Yosaxap",
+      "priceFloor": 1000000000,
+      "storeTitle": "Crypto Heroes",
+      "subdomain": "offcialcryptoheroverse",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-29 07:06:42",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "CADX7BYsnFgL5gpeA8vir67w24c1iNwTJLWGv4J4z7Dg",
+          "name": "SC | 1 – SW",
+          "uri": "https://bafkreihiwe43knjhjua4hwymhb5tthsc35w2wuh34t4xwju3fraockoty4.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "AKbtVhu7cQPZ63gjF8X1R6cX12EWopx9iXA8RbKvixoA",
+      "priceFloor": 500000000,
+      "storeTitle": "Sam Cook",
+      "subdomain": "samcook",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-29 21:06:58",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 250000000,
+      "items": [
+        {
+          "metadataAddress": "6X4a5oATS9SmTP6sXduvZxdfv2WQsyKwDw8H7f7Fy2Zy",
+          "name": "Solana Cryptopiggies #15",
+          "uri": "https://arweave.net/SMn67bca0LSOrt-rpqAlhrj_qCcOgdhJlwxFSIsprEY"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "5jdW71Knvv2Ax5eCJdvMzs7ZoXYjJ5W7BcGwbnM6WwFj",
+      "priceFloor": 250000000,
+      "storeTitle": "Cryptopiggies",
+      "subdomain": "cryptopiggies",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-06 02:27:09",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 400000000,
+      "items": [
+        {
+          "metadataAddress": "4yKK6XYCbTgra3SiNwSf3Z8L68cetmzF4DMzB48LRfQp",
+          "name": "RHINO 2",
+          "uri": "https://bafkreid5v4cm3trfjzh44lc2xbskyqkljp3qwwbf63voomdnmy7jhqm2se.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "5zTzGdE869qr4MES2RKHTXjqmafEzkheKg82fUaLPRgW",
+      "priceFloor": 400000000,
+      "storeTitle": "Radical RHINOS",
+      "subdomain": "radicalrinos",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 17:28:43",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 690000000,
+      "items": [
+        {
+          "metadataAddress": "F31U7tM8TjDeydXfFrJgQjPZedxZ1G5njztVgHtJR3GA",
+          "name": "Soldenza #52",
+          "uri": "https://bafkreibfoqlwn3wy6rfq7d7f6ukbdol4di76xt45zczxrarmxgr67h7g7m.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "2GUbDyxfhakVGRCjXACmB2ccLo8ZLEDFmBFVfwUj3TUK",
+      "priceFloor": 690000000,
+      "storeTitle": "Soldenza",
+      "subdomain": "soldenza",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-10 22:28:05",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 5000000000,
+      "items": [
+        {
+          "metadataAddress": "2FNfrXmv4jaYAPY218dwsFLwdBM4co1bcMoze7ae9mSk",
+          "name": "Ape",
+          "uri": "https://bafkreierzjzgtwaqmg7xk5c5lcntc7m2dq2dbgd2a554v37ewh7pviyfbq.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "5d3BkJFWVGydXfER5AhV6nFMWTZuf88T21Kbn3ocKt6m",
+      "priceFloor": 5000000000,
+      "storeTitle": "CATS ",
+      "subdomain": "cats",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 06:17:34",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 690000000,
+      "items": [
+        {
+          "metadataAddress": "BvevKvtpE8QbPFzs4YvVQtfsTKUVA9xSoz4wJXKqc4Qq",
+          "name": "Soldenza #24",
+          "uri": "https://bafkreifedmwlnzik6j7gunnzyivckmuztkeoqp5xk7nq2zt3dx6mytdzpa.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "ExmuyKaCSQ7QFRpkH4AGrgCK1Mbzz7GvCPstavBJpLBe",
+      "priceFloor": 690000000,
+      "storeTitle": "Soldenza",
+      "subdomain": "soldenza",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-08 23:16:48",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 10000000000,
+      "items": [
+        {
+          "metadataAddress": "ARVRV6txAc4QvxJDNfE8Tsfa8P2dvahmFVoJfxu5i4Fw",
+          "name": "GRINCH",
+          "uri": "https://bafkreih4dfg7lxro7qydho7npqfbnsyetd2w3bcznony6bdi2vqil2xnim.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "HBaeBGo7PA2eHe4tmynXqS8iAYhUrXU8UWMTfMZkvbrf",
+      "priceFloor": 10000000000,
+      "storeTitle": "ELELENI",
+      "subdomain": "eleleni",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-15 19:49:00",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 222000000,
+      "items": [
+        {
+          "metadataAddress": "GP2aQbaUrf6UT9QxqkXz4ML36XnWv8znkfoXGKKyURQD",
+          "name": "rose 04",
+          "uri": "https://bafkreihqv55wbfga4nupbhtymret7tzxphp43dztozrrgax4makny6mtpe.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "uxCiUQu384mh9pHEre3KXW4NicxdoP3qMWgKrPvHyft",
+      "priceFloor": 222000000,
+      "storeTitle": "NFTs by rylee",
+      "subdomain": "rylee",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-29 22:07:44",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 1000000000,
+      "items": [
+        {
+          "metadataAddress": "G9GhMD54egtRYQQgL2Bqkn9N4QpK41xcSTdP3fi9HhCV",
+          "name": "SC | 3 – All",
+          "uri": "https://bafkreicurpvyksfyast2hebnoomqni2g6mz54xdr4xwiizirf7zw7bhlie.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "2hdbKjWtVyCq6oWyaHgmotZ2wxqKYBw3bv8QMDHLdwAE",
+      "priceFloor": 1000000000,
+      "storeTitle": "Sam Cook",
+      "subdomain": "samcook",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-04 22:56:45",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "xC2Mw3A93r9zEHoxusTHxG53VckP1e2PMgjuCuMmxqT",
+          "name": "Ninja #002",
+          "uri": "https://bafkreiggdju3jgrzohruvkxy2xg5yaktqucyww2i2joi76qmxw3qhyb2gy.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "CSpKiCDypwdasHFRT7VNbKhaE3qG8aZdZSVDyiM75A4t",
+      "priceFloor": 500000000,
+      "storeTitle": "Solana Gang Wars",
+      "subdomain": "gang",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-16 12:18:50",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 2000000000,
+      "items": [
+        {
+          "metadataAddress": "3WYvE5rhoyWNg32fmbBV3MSFDyQEWUcectbJjL6pp72T",
+          "name": "Elsewhere Flask",
+          "uri": "https://bafkreic75dng7h2x7av4xkfsb2pjgtqtw6ynrw6lmjbr3whmajozfmnaxm.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "G6f2iRE1N8uDaiwkDVnjG4ehZxpy2bRXE7786rctwphk",
+      "priceFloor": 2000000000,
+      "storeTitle": "Catalogue Futuriste",
+      "subdomain": "cataloguefuturiste",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-05 22:26:42",
+      "ended": false,
+      "endsAt": "2021-12-15 22:26:39",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "BrTTRfbX1zTfrHUSzH8QHWhH1XcLRXisGKaPKEU19mhi",
+          "name": "SOL Dragon - $oyer",
+          "uri": "https://bafkreiewrypn6hddlgnkesvmcoj2extijdmi74bu3ti3dyvtzi2flgxyie.ipfs.dweb.link?ext=json"
+        },
+        {
+          "metadataAddress": "Akqv2NKmGNo5pG79Vo5vgQTtvewKVWFZcSXu5zoWvddZ",
+          "name": "Lil Wiz ",
+          "uri": "https://bafkreib52jfjvt6mzt5ggl65b6khldkige7ix5sy4v2vzmvjcpr3sydzfm.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "7K9TSzvEJ9tHaHSq6a7NvMvxW4TE9sgBRAJVURq3U3jo",
+      "priceFloor": 1000000000,
+      "storeTitle": "Mr.$oyer - Street & NFT Artist ",
+      "subdomain": "soyer",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-13 10:42:38",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "47CA3ttZEirHvhZW4P9LHsmnmrPv6Chy2S7ZdrPw2oPu",
+          "name": "MythBoar #1",
+          "uri": "https://bafkreiakxfipo4hnhzywfkvydrllgvrqpwsuqvxm5ntowqk2ux7u4em6mq.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "DBa8vY7LN7PhefwFXaBW8zP9fHhd222cj6968WEZWb3F",
+      "priceFloor": 500000000,
+      "storeTitle": "CryptoBoars",
+      "subdomain": "cryptoboars",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-19 15:45:52",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 300000000,
+      "items": [
+        {
+          "metadataAddress": "2eiFVv9989NzvNHCBxwawdGzdGDcHA4Tga9fTgPAGrq9",
+          "name": "The Eyes of Eden",
+          "uri": "https://bafkreidoz3vnpuvnhe3fvkh7mdjq2z34habhzrnrp5rwosmi3yoqvfgnsm.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "3gmwk5Z1qDB4Njbuyxnim6c3oaeumb4zR9SBpBPUL9Mw",
+      "priceFloor": 300000000,
+      "storeTitle": "ElizabethArt",
+      "subdomain": "raip",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-10-30 16:20:15",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 200000000,
+      "items": [
+        {
+          "metadataAddress": "EfU99T9JyN22qFHtNeaCGuFi4YJY12kDJaPDvSywLs7V",
+          "name": "alien cherries",
+          "uri": "https://bafkreied6slbykcrimrmdfllvqm36fq6644ebjbi3eolz6ef56fygrguha.ipfs.dweb.link"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "5oaRS6Tz8WjoXotUHCSc3yJyhb7EHkR1LXTVpGErK66F",
+      "priceFloor": 200000000,
+      "storeTitle": "franklinity",
+      "subdomain": "franklinity",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-13 05:59:30",
+      "ended": false,
+      "endsAt": "2021-12-21 05:59:27",
+      "highestBid": null,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "3UDudRRBDyFGyb8NFS4Y6jhH7twpR8J4w9sBsMFLfpYy",
+          "name": "Xmas Santa",
+          "uri": "https://bafkreibuk3jl4e2sxa6gxpjhecbmpvescae6qhh7npsovrl3pgjglbalyy.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "3GmJo5j5YRFRRjmmFiPWuetDGcq9fCaSrcM9gGSHYdGS",
+      "priceFloor": 200000000,
+      "storeTitle": "Metropolis",
+      "subdomain": "metropolis",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-10 22:39:17",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 7000000000,
+      "items": [
+        {
+          "metadataAddress": "32N26CqRsCF6AS3emu163A4iPAq1u6C8wbP5iPbwoXUd",
+          "name": "Morning Market at Mos Espa",
+          "uri": "https://bafkreiedynuhr566bt6jeopjcyr4mcnm5xfzrhfymtokpg44vlvcj6wh3i.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "8qaoPLof3oNCdfPnyJvU4aJbc1tjjQaqpq9xMJnyWa2m",
+      "priceFloor": 7000000000,
+      "storeTitle": "Store of Zatoichi",
+      "subdomain": "zatoichi14",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-08 16:28:25",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 1000000000,
+      "items": [
+        {
+          "metadataAddress": "FpcTL845ViNHHroEyJwkaxESkbWCJvQuHtpWsLFxwYyP",
+          "name": "PirateBoar",
+          "uri": "https://bafkreihe4z2mtufcu7v4pfjoxtfzzssr7ylndtkhspd3wfz4a2o3occbca.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "7XNQbk7ZgBwbz52bwLcbEHgKQVdj2p3swAQzoVoLG8F7",
+      "priceFloor": 1000000000,
+      "storeTitle": "CryptoBoars",
+      "subdomain": "cryptoboars",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-08 08:38:12",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 300000000,
+      "items": [
+        {
+          "metadataAddress": "BwxmdCWzmCEUKMDBUr1Y6oWa8ct9enJLJ6D9TQRpELjS",
+          "name": "alternate dimensions",
+          "uri": "https://bafkreifpezhiyaxbv7eosyuz4ap6y4mqfcgcc6ucl3mvr6pgnrsl46zd6y.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "87MUahy5c5qdyBhLtE5guPiiWJAeTDvrGtw9VXs7nqbe",
+      "priceFloor": 300000000,
+      "storeTitle": "Galaxdust",
+      "subdomain": "galaxydust",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-28 03:40:22",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 300000000,
+      "items": [
+        {
+          "metadataAddress": "5yViWcQ8wBufoMfcSsNyksSetn2zLi4JUWFqy9DZ9tf9",
+          "name": "Sailor Jupiter",
+          "uri": "https://bafkreiffdzw46vf2zmrjofyniy5yp2crg3no6pu65oiirh27q2kahkhxtu.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BFL2skTNqk9vCsc7hvjjLUyLuMC8P47L1VZnE9yDeoJ2",
+      "priceFloor": 300000000,
+      "storeTitle": "Swankys Playhouse",
+      "subdomain": "swanky",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-15 19:47:02",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 222000000,
+      "items": [
+        {
+          "metadataAddress": "9knxMT6sNSYW5qWKee5p7XAd331cqhMdwyTaD6ewpQtj",
+          "name": "rose 03",
+          "uri": "https://bafkreibkgk4ugvjqlybugzhpjzrpa6mcwtuvmgvbsdy4dkynwqepgxnc2y.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "Foae1X38iimn5oZJ8ZUxjHAA1xtKEcg3m1QjXPPfabnv",
+      "priceFloor": 222000000,
+      "storeTitle": "NFTs by rylee",
+      "subdomain": "rylee",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-15 02:01:49",
+      "ended": false,
+      "endsAt": "2021-12-16 02:01:47",
+      "highestBid": 1000000000,
+      "instantSalePrice": null,
+      "items": [
+        {
+          "metadataAddress": "9rgowi9DkHAbZfyMkcy5cyJVLPAuxcS2wCfT3PWjDjTQ",
+          "name": "JJ #7",
+          "uri": "https://bafkreifjj2wtha5k7mlnmy3scmpoitk225x3a5jn6n5v75gtz6qhei5q4m.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": "2021-12-15 02:36:46",
+      "listingAddress": "4XbzbdxArYxxhR8KgBtWCE3QvBJAFXeSjeZo6tEwq5Zy",
+      "priceFloor": 500000000,
+      "storeTitle": "James Johnson Studios",
+      "subdomain": "jamesjstudios",
+      "totalUncancelledBids": 1
+    },
+    {
+      "createdAt": "2021-11-04 11:07:28",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 80000000000,
+      "items": [
+        {
+          "metadataAddress": "E693LuCtZ98UdBc9WGWqjTyiN5xFpLe58Av28obNbeTK",
+          "name": "SMB #1000",
+          "uri": "https://bafkreiejurwssizfnjmlla4vviptt3jfmje7pwpvy6erndlgairw27sl6e.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "FKmh7crdDLvfzJBPuhXPHBbYAc63wgvXJmFAzJ3mS6eT",
+      "priceFloor": 80000000000,
+      "storeTitle": "solana monkey business V2",
+      "subdomain": "solanamonkeybusiness",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-06 19:57:31",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 500000000,
+      "items": [
+        {
+          "metadataAddress": "6Hp2QZu9oqAZF9Zj9VbZE7v24Cyudzy9N1PqXGLWeffN",
+          "name": "Bnuuy Circus Bouncy!",
+          "uri": "https://bafkreihgm3ctyfl62vxz2ln6k2tebyvsdzbuiuoe3oefw22nqgsmbgq3bm.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BYgitzcs5JmU9srrtkDy8epkRrNRbRN1sw8R9Sy7oSvx",
+      "priceFloor": 500000000,
+      "storeTitle": "Bnuuy ",
+      "subdomain": "bnuuy",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-08 17:12:06",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 1000000000,
+      "items": [
+        {
+          "metadataAddress": "2zgCu7ywZRACqnmpWmNtFGZoZyToM7xCUfCkwrZf4uE3",
+          "name": "Custom SMB ",
+          "uri": "https://bafkreigfjjn7hsmjmgl3x4bsvh7oevo2xxbvmwkmtgd5pjnolx3sycnbba.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "8Kq18mAubZWPampsA7NsKSWzdfg29TDHe8GPAJhHB43Z",
+      "priceFloor": 1000000000,
+      "storeTitle": "Epitome NFT's",
+      "subdomain": "epitomenfts",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-13 03:48:07",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 100000000,
+      "items": [
+        {
+          "metadataAddress": "Bnk2kCtEs6RyPsJcZTtWy8tqhoRMJXakjX7LxFPiT5rb",
+          "name": "Dou Dizhu",
+          "uri": "https://bafkreiaoymq3o5gt6kidzibknbczjpw26dwfzd77fqwujnqrzz32sukwym.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BRCxUtuTYv1LumHmvUCx7JpaDVKjP5dDZm9XLYS1cz4o",
+      "priceFloor": 100000000,
+      "storeTitle": "Unlearning Assimilation",
+      "subdomain": "chinatown",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-11 14:18:47",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 3000000000,
+      "items": [
+        {
+          "metadataAddress": "H7UuwXhthZkycfKFUP62V8BAG9rAr8Saq3CpQBAaUifj",
+          "name": "Mortal Kombat",
+          "uri": "https://bafkreifhrpwok5bqbati2jysmyspktoootmxqynp2c5erpzxinwn6dgnqm.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "7xTE914tDRDQcpgfxEbbZCzM5R17PWdYYKn6tjW75Rvy",
+      "priceFloor": 3000000000,
+      "storeTitle": "Brick Art",
+      "subdomain": "brickastly",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-11-29 11:38:22",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 300000000,
+      "items": [
+        {
+          "metadataAddress": "4Xs4YGUSaDhQew8xM1fgqFcpnPD1Mu76DtscNY5m3xbp",
+          "name": "4/50",
+          "uri": "https://bafkreif5je7vy47beuoi2yjpexogal34amedndrgkapyeicbvdf422m4ie.ipfs.dweb.link?ext="
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "BBNG2CAShWcKNbkFapYsg4vbcyWM7eU55LNbydMrHGfr",
+      "priceFloor": 300000000,
+      "storeTitle": "Art",
+      "subdomain": "jaime",
+      "totalUncancelledBids": 0
+    },
+    {
+      "createdAt": "2021-12-04 01:19:51",
+      "ended": false,
+      "endsAt": null,
+      "highestBid": null,
+      "instantSalePrice": 350000000,
+      "items": [
+        {
+          "metadataAddress": "7MTWRzmoSt5gpc2QfccYX9V9y3ECZbRnnSSp1TPqn4Xe",
+          "name": "Spider Man",
+          "uri": "https://bafkreiazczk7t3zt55uwu43xzl4m2ajjbuhhxyo3yzyqbtdp3egqew44km.ipfs.dweb.link?ext=json"
+        }
+      ],
+      "lastBidTime": null,
+      "listingAddress": "9q5zwZUcoJWtWKjo1PxPaY9t3GLVEUxhfSsHFbPvq28u",
+      "priceFloor": 350000000,
+      "storeTitle": "Swankys Playhouse",
+      "subdomain": "swanky",
+      "totalUncancelledBids": 0
+    }
+  ],
+  "id": 1337
+}

@@ -111,3 +111,19 @@ a {
 .Toastify__toast--default a:hover {
   opacity: 0.8;
 }
+
+/* ANT RADIO / CHECKBOX OVER-RIDES */
+.ant-radio,
+.ant-checkbox {
+  top: 0.165em !important;
+  margin-right: 4px !important;
+}
+
+input[type='radio'],
+input[type='checkbox'] {
+  box-sizing: inherit;
+}
+
+.sol-icon {
+  padding-right: 4px;
+}
