@@ -122,8 +122,6 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
   };
 
   const getFilePreview = (file: File) => {
-    console.log('3d file?', is3DFile(file));
-    console.log({ file });
     if (isAudio(file)) {
       return (
         <VidAudPrevWrapper
@@ -161,7 +159,7 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
             showModal();
           }}
         >
-          <FeatherIcon icon="box" />;
+          <FeatherIcon icon="box" />
         </VidAudPrevWrapper>
       );
     }
@@ -202,28 +200,18 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
             <source src={URL.createObjectURL(currentFile)} type={currentFile.type} />
           </video>
         )}
-        {show3DFilePreview && currentFile && typeof window !== 'undefined' && (
-          <>
-            <ModelViewer
-              src={URL.createObjectURL(currentFile)}
-              poster="https://cdn.glitch.com/36cb8393-65c6-408d-a538-055ada20431b%2Fposter-astronaut.png?v=1599079951717"
-              alt="A 3D model of an astronaut"
-              shadow-intensity="1"
-              camera-controls
-              auto-rotate
-              ar
-            />
-          </>
+        {show3DFilePreview && currentFile && (
+          <ModelViewer
+            src={URL.createObjectURL(currentFile)}
+            alt={currentFile.name}
+            shadow-intensity="1"
+            camera-controls
+            auto-rotate
+            ar
+          />
         )}
       </StyledModal>
-      {/* <ModelViewer
-        src="./2CylinderEngine.glb"
-        alt="A 3D model of an astronaut"
-        shadow-intensity="1"
-        camera-controls
-        auto-rotate
-        ar
-      /> */}
+
       <Grid width={width}>
         {files.map((file, i) => (
           <ImageOverlay key={file.name} isFinished={i < index} isCurrent={i === index}>

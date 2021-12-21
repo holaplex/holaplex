@@ -104,7 +104,7 @@ export interface MintAction {
     | 'DELETE_FILE'
     | 'ADD_FILE'
     | 'UPLOAD_FILES'
-    | 'INSERT_FILE_PREVIEW'
+    | 'INSERT_COVER_IMAGE'
     | 'SET_FILE_PREVIEWS'
     | 'SET_FORM_VALUES'
     | 'SET_NFT_VALUES';
@@ -117,7 +117,7 @@ export interface MintAction {
     | Array<UploadedFilePin>
     | NFTFormValue[]
     | NFTValue[]
-    | { filePreview: FilePreview; index: number }
+    | { coverImage: File; index: number }
     | { file: File; index: number };
 }
 
@@ -156,14 +156,16 @@ function reducer(state: State, action: MintAction) {
     }
     case 'SET_FILE_PREVIEWS':
       return { ...state, filePreviews: action.payload as FilePreview[] };
-    case 'INSERT_FILE_PREVIEW': {
-      const { filePreview, index } = action.payload as { filePreview: FilePreview; index: number };
+    case 'INSERT_COVER_IMAGE': {
+      const { coverImage, index } = action.payload as { coverImage: File; index: number };
 
-      const copy = [...state.filePreviews];
-      copy[index] = { ...filePreview };
+      const copy = { ...state.filePreviews[index], coverImage };
+      console.log({ copy });
+      const filePreviewsCopy = [...state.filePreviews];
+      filePreviewsCopy[index] = { ...copy };
       return {
         ...state,
-        filePreviews: copy,
+        filePreviews: filePreviewsCopy,
       };
     }
 

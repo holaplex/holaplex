@@ -6,22 +6,24 @@ import RedXClose from '@/common/assets/images/red-x-close.svg';
 import FeatherIcon from 'feather-icons-react';
 import { FilePreview, MintStatus, NFTValue } from 'pages/nfts/new';
 import { Image as AntImage } from 'antd';
-import { is3DFilePreview, isAudio, isImage, isVideo } from '@/modules/utils/files';
+import { is3DFile, is3DFilePreview, isAudio, isImage, isVideo } from '@/modules/utils/files';
 import React, { useRef, useState } from 'react';
 import { StyledModal } from '@/common/components/elements/VerifyFileUpload';
+import dynamic from 'next/dynamic';
+
+const ModelViewer = dynamic(() => import('./ModelViewer'), { ssr: false });
 
 const CheckWrapper = styled.div`
-  position: relative;
+  position: absolute;
   height: 24px;
   width: 24px;
-  top: -74px;
-  right: -47px;
 `;
 
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   ${({ isFinished }) => isFinished && 'opacity: 0.5;'}
 
@@ -37,7 +39,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
     `}
 `;
 
-export const VidAudPrevWrapper = styled.div`
+export const PrevWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -95,11 +97,11 @@ const PrevSvgWrapper = styled.div`
   justify-content: center;
 `;
 
-const PreviewOverlay = ({ children }: { children: React.ReactElement }) => {
+const PreviewOverlay = ({ children, icon }: { children: React.ReactElement; icon: string }) => {
   return (
     <StyledPreviewOverlay>
       <PrevSvgWrapper>
-        <FeatherIcon icon="youtube" />
+        <FeatherIcon icon={icon} />
       </PrevSvgWrapper>
 
       {children}
@@ -124,6 +126,9 @@ export const NFTPreviewGrid = ({
 }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentFile, setCurrentFile] = useState<File>();
+  const showVidAudPreview = currentFile && (isVideo(currentFile) || isAudio(currentFile));
+  const show3DFilePreview = currentFile && is3DFile(currentFile);
+
   const vidRef = useRef<HTMLVideoElement>(null);
 
   const showModal = () => {
@@ -141,14 +146,14 @@ export const NFTPreviewGrid = ({
   const getFilePreview = (fp: FilePreview) => {
     if (isAudio(fp)) {
       return (
-        <VidAudPrevWrapper
+        <PrevWrapper
           onClick={() => {
             setCurrentFile(fp.file);
             showModal();
           }}
         >
           {fp.coverImage ? (
-            <PreviewOverlay>
+            <PreviewOverlay icon="volume-2">
               <StyledAntDImage
                 src={URL.createObjectURL(fp.coverImage)}
                 alt={fp.file.name}
@@ -158,20 +163,20 @@ export const NFTPreviewGrid = ({
           ) : (
             <FeatherIcon icon="volume-2" />
           )}
-        </VidAudPrevWrapper>
+        </PrevWrapper>
       );
     }
 
     if (isVideo(fp)) {
       return (
-        <VidAudPrevWrapper
+        <PrevWrapper
           onClick={() => {
             setCurrentFile(fp.file);
             showModal();
           }}
         >
           {fp.coverImage ? (
-            <PreviewOverlay>
+            <PreviewOverlay icon="youtube">
               <StyledAntDImage
                 src={URL.createObjectURL(fp.coverImage)}
                 alt={fp.file.name}
@@ -181,12 +186,31 @@ export const NFTPreviewGrid = ({
           ) : (
             <FeatherIcon icon="youtube" />
           )}
-        </VidAudPrevWrapper>
+        </PrevWrapper>
       );
     }
 
     if (is3DFilePreview(fp)) {
-      return <FeatherIcon icon="box" />;
+      return (
+        <PrevWrapper
+          onClick={() => {
+            setCurrentFile(fp.file);
+            showModal();
+          }}
+        >
+          {fp.coverImage ? (
+            <PreviewOverlay icon="box">
+              <StyledAntDImage
+                src={URL.createObjectURL(fp.coverImage)}
+                alt={fp.file.name}
+                preview={false}
+              />
+            </PreviewOverlay>
+          ) : (
+            <FeatherIcon icon="box" />
+          )}
+        </PrevWrapper>
+      );
     }
 
     if (isImage(fp)) {
@@ -204,7 +228,7 @@ export const NFTPreviewGrid = ({
         keyboard={true}
         destroyOnClose={true}
       >
-        {currentFile && isModalVisible && (
+        {currentFile && showVidAudPreview && (
           <video
             className="holaplex-video-content"
             playsInline={true}
@@ -218,6 +242,16 @@ export const NFTPreviewGrid = ({
           >
             <source src={URL.createObjectURL(currentFile)} type={currentFile.type} />
           </video>
+        )}
+        {show3DFilePreview && currentFile && (
+          <ModelViewer
+            src={URL.createObjectURL(currentFile)}
+            alt={currentFile.name}
+            shadow-intensity="1"
+            camera-controls
+            auto-rotate
+            ar
+          />
         )}
       </StyledModal>
       <Grid width={width}>

@@ -11,7 +11,7 @@ import { FilePreview, FormValues, MintDispatch, NFTAttribute, NFTFormValue } fro
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import Text from 'antd/lib/typography/Text';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
-import { isAudio, isVideo } from '@/modules/utils/files';
+import { is3DFile, isAudio, isVideo } from '@/modules/utils/files';
 
 const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
 
@@ -96,7 +96,7 @@ export default function InfoScreen({
   const [errorList, setErrorList] = useState<string[]>([]);
   const nftList = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
-  const showCoverUpload = isVideo(currentFile) || isAudio(currentFile);
+  const showCoverUpload = isVideo(currentFile) || isAudio(currentFile) || is3DFile(currentFile);
 
   const handleNext = () => {
     const fieldsToValidate = [
@@ -170,10 +170,10 @@ export default function InfoScreen({
     }
 
     dispatch({
-      type: 'INSERT_FILE_PREVIEW',
+      type: 'INSERT_COVER_IMAGE',
       payload: {
         index,
-        filePreview: { coverImage: coverImage as File, file: currentFile, type: currentFile.type },
+        coverImage,
       },
     });
     return coverImage;
