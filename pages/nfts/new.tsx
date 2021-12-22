@@ -16,7 +16,7 @@ import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
-import { getFinalFileWithUpdatedName } from '@/modules/utils/files';
+import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '@/modules/utils/files';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -30,13 +30,18 @@ const StyledLayout = styled(Layout)`
   overflow: hidden;
 `;
 
-export interface UploadedFilePin {
-  name: string;
+interface NFTFile {
   uri: string;
   type: string;
 }
 
+export interface UploadedFilePin extends NFTFile {
+  name: string;
+}
+
 export type FormValues = { [key: string]: NFTFormValue };
+
+type NFTCategory = 'image' | 'video' | 'audio' | 'vr' | 'html';
 
 export interface NFTFormValue {
   name: string;
@@ -77,14 +82,19 @@ export interface NFTValue {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
+  symbol: string;
+  image: string;
+  files: NFTFile[];
   collection?: Collection;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
+  animation_url?: string;
 
   properties: {
     files?: FileOrString[];
     maxSupply: number;
     creators?: Creator[];
+    category: NFTCategory;
   };
 }
 
@@ -221,10 +231,16 @@ export default function BulkUploadWizard() {
       values.map(async (v, i: number) => {
         const filePin = filePins[i];
 
+        if (!filePin) {
+          throw new Error('No file pin for index ' + i);
+        }
+
+        const category: NFTCategory = detectCategoryByFileExt(filePin.name);
+        const isMultiMedia = category !== 'image';
+
         let coverImageFile: UploadedFilePin | undefined;
         if (v.coverImageFile) {
           coverImageFile = await uploadCoverImage(v.coverImageFile);
-          console.log('coverImageFile is', coverImageFile);
         }
 
         const files = [{ uri: filePin.uri, type: filePin.type }];
@@ -235,7 +251,9 @@ export default function BulkUploadWizard() {
           image = coverImageFile.uri;
         }
 
-        return {
+        const properties = { ...v.properties, category };
+
+        const res: NFTValue = {
           name: v.name,
           description: v.description,
           symbol: '',
@@ -252,8 +270,15 @@ export default function BulkUploadWizard() {
             }
             return result;
           }, []),
-          properties: v.properties,
+          properties,
         };
+
+        if (isMultiMedia) {
+          res.animation_url = filePin.uri;
+        }
+
+        console.log({ res });
+        return res;
       })
     );
 
@@ -310,6 +335,7 @@ export default function BulkUploadWizard() {
 
   const clearForm = () => {
     dispatch({ type: 'SET_FILES', payload: [] });
+    dispatch({ type: 'SET_FILE_PREVIEWS', payload: [] });
     form.resetFields();
   };
 

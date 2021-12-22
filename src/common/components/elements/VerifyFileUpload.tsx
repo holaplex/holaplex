@@ -159,6 +159,7 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
           }}
         >
           <FeatherIcon icon="box" />
+          <PrevSubTitle>{file.name}</PrevSubTitle>
         </VidAudPrevWrapper>
       );
     }
