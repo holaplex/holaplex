@@ -348,6 +348,7 @@ interface Props extends Partial<StepWizardChildProps> {
   isFirst?: boolean;
   index: number;
   setDoEachRoyaltyInd: React.Dispatch<React.SetStateAction<boolean>>;
+  clearForm: () => void;
   doEachRoyaltyInd?: boolean;
 }
 
@@ -362,6 +363,7 @@ export default function RoyaltiesCreators({
   formValues,
   filePreviews,
   setDoEachRoyaltyInd,
+  clearForm,
   index,
   isFirst = false,
 }: Props) {
@@ -517,7 +519,12 @@ export default function RoyaltiesCreators({
   if (!userKey) return null;
 
   return (
-    <NavContainer title="Royalties & Creators" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Royalties & Creators"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Row>
         <FormWrapper>
           <Form.Item label="Royalties">

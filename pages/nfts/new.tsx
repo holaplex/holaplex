@@ -398,6 +398,7 @@ export default function BulkUploadWizard() {
             setDoEachRoyaltyInd={setDoEachRoyaltyInd}
             doEachRoyaltyInd={doEachRoyaltyInd}
             index={0}
+            clearForm={clearForm}
           />
           {doEachRoyaltyInd &&
             files
@@ -414,6 +415,7 @@ export default function BulkUploadWizard() {
                   index={index + 1}
                   setDoEachRoyaltyInd={setDoEachRoyaltyInd}
                   doEachRoyaltyInd={doEachRoyaltyInd}
+                  clearForm={clearForm}
                 />
               ))}
           <Summary
@@ -424,12 +426,14 @@ export default function BulkUploadWizard() {
             form={form}
             formValues={state.formValues}
             setNFTValues={setNFTValues}
+            clearForm={clearForm}
           />
           <PriceSummary
             files={files}
             filePreviews={filePreviews}
             connection={connection}
             hashKey="priceSummary"
+            clearForm={clearForm}
           />
           {files.map((_, index) => (
             <MintInProgress
@@ -443,6 +447,7 @@ export default function BulkUploadWizard() {
               updateNFTValue={updateNFTValue}
               index={index}
               hashKey="mint"
+              clearForm={clearForm}
             />
           ))}
           <OffRampScreen

@@ -96,7 +96,7 @@ export default function Verify({
   };
 
   return (
-    <NavContainer previousStep={handlePrevious} goToStep={goToStep}>
+    <NavContainer previousStep={handlePrevious} goToStep={goToStep} clearForm={clearForm}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
         {/* Does this need children?  Can we just put it all into one component? */}

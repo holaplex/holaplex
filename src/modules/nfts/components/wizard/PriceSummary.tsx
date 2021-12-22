@@ -42,6 +42,7 @@ interface Props extends Partial<StepWizardChildProps> {
   files: Array<File>;
   filePreviews: Array<FilePreview>;
   connection: Connection;
+  clearForm: () => void;
 }
 
 export default function PriceSummary({
@@ -51,6 +52,7 @@ export default function PriceSummary({
   files,
   nextStep,
   connection,
+  clearForm,
 }: Props) {
   const [totalSolCost, setTotalSolCost] = useState(files.length * SOL_COST_PER_NFT);
   const [totalInUSD, setTotalInUSD] = useState(0.0);
@@ -85,7 +87,12 @@ export default function PriceSummary({
   }
 
   return (
-    <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Fees"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Row>
         <Col style={{ width: 360 }}>
           <Row>

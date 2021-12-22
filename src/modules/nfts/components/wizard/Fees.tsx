@@ -8,12 +8,6 @@ import Button from '@/common/components/elements/Button';
 
 import { Radio } from 'antd';
 
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  index: number;
-  form: FormInstance;
-}
-
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -54,19 +48,30 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
+interface Props extends Partial<StepWizardChildProps> {
+  images: Array<File>;
+  index: number;
+  clearForm: () => void;
+}
+
 export default function RoyaltiesCreators({
   previousStep,
   goToStep,
   images,
   nextStep,
-  form,
+  clearForm,
 }: Props) {
   const handleNext = () => {
     nextStep!();
   };
 
   return (
-    <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Fees"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Row>
         <FormWrapper>
           <Form.Item name="edition">

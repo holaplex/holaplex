@@ -100,6 +100,7 @@ interface Props extends Partial<StepWizardChildProps> {
   index: number;
   updateNFTValue: (value: NFTValue, index: number) => void;
   uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
+  clearForm: () => void;
 }
 
 export default function MintInProgress({
@@ -113,6 +114,7 @@ export default function MintInProgress({
   wallet,
   updateNFTValue,
   uploadMetaData,
+  clearForm,
   connection,
   index,
 }: Props) {
@@ -255,6 +257,7 @@ export default function MintInProgress({
       previousStep={previousStep}
       goToStep={goToStep}
       showNavigation={showNavigation}
+      clearForm={clearForm}
     >
       <Row>
         <Col style={{ marginRight: 224 }}>
