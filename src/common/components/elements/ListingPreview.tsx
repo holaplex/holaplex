@@ -144,9 +144,8 @@ const ListingSubTitle = styled(Text)`
 `;
 
 function calculateTimeLeft(endTime: string) {
-  // this is surprisingly performant
-  let now = DateTime.utc();
-  let end = DateTime.fromFormat(endTime, 'yyyy-MM-dd hh:mm:ss'); // Should be UTC
+  let now = DateTime.local();
+  let end = DateTime.fromISO(endTime);
 
   return Duration.fromObject(end.diff(now).toObject());
 }
@@ -162,16 +161,13 @@ function Countdown(props: { endTime: string }) {
     return () => clearTimeout(timer);
   });
 
-  // nasty hotfix TODO: Fix
-  const format = timeLeft.plus({ hours: 1 }).toFormat('hh:mm:ss');
+  const format = timeLeft.toFormat('hh:mm:ss');
 
   return <span>{format}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
-  //const t = DateTime.fromFormat(props.endTime, 'YYYY-MM-DD HH:mm:SS').toMillis();
-  const timeDiffMs =
-    DateTime.fromFormat(props.endTime, 'yyyy-MM-dd hh:mm:ss').toMillis() - Date.now();
+  const timeDiffMs = DateTime.fromISO(props.endTime).toMillis() - Date.now();
 
   if (timeDiffMs < 0) return <span></span>;
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
