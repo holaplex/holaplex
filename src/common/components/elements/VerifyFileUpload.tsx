@@ -154,7 +154,6 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
       return (
         <VidAudPrevWrapper
           onClick={() => {
-            console.log('hello');
             setCurrentFile(file);
             showModal();
           }}
@@ -165,14 +164,7 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
     }
 
     if (isImage(file)) {
-      return (
-        <StyledAntDImage
-          src={URL.createObjectURL(file)}
-          alt={file.name}
-          // objectFit="cover"
-          // unoptimized={true}
-        />
-      );
+      return <StyledAntDImage src={URL.createObjectURL(file)} alt={file.name} />;
     }
   };
   return (

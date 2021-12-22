@@ -39,7 +39,7 @@ const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
     `}
 `;
 
-export const PrevWrapper = styled.div`
+export const StyledPrevWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -117,6 +117,24 @@ interface Props {
   nftValues?: NFTValue[];
 }
 
+const Preview = ({ onClick, fp, icon }: { onClick: () => void; fp: FilePreview; icon: string }) => {
+  return (
+    <StyledPrevWrapper onClick={onClick}>
+      {fp.coverImage ? (
+        <PreviewOverlay icon={icon}>
+          <StyledAntDImage
+            src={URL.createObjectURL(fp.coverImage)}
+            alt={fp.file.name}
+            preview={false}
+          />
+        </PreviewOverlay>
+      ) : (
+        <FeatherIcon icon={icon} />
+      )}
+    </StyledPrevWrapper>
+  );
+};
+
 export const NFTPreviewGrid = ({
   filePreviews,
   index = -1,
@@ -143,80 +161,29 @@ export const NFTPreviewGrid = ({
     }
   };
 
+  const handlePrevClick = (fp: FilePreview) => {
+    setCurrentFile(fp.file);
+    showModal();
+  };
+
   const getFilePreview = (fp: FilePreview) => {
     if (isAudio(fp)) {
-      return (
-        <PrevWrapper
-          onClick={() => {
-            setCurrentFile(fp.file);
-            showModal();
-          }}
-        >
-          {fp.coverImage ? (
-            <PreviewOverlay icon="volume-2">
-              <StyledAntDImage
-                src={URL.createObjectURL(fp.coverImage)}
-                alt={fp.file.name}
-                preview={false}
-              />
-            </PreviewOverlay>
-          ) : (
-            <FeatherIcon icon="volume-2" />
-          )}
-        </PrevWrapper>
-      );
+      return <Preview onClick={() => handlePrevClick(fp)} fp={fp} icon="volume-2" />;
     }
 
     if (isVideo(fp)) {
-      return (
-        <PrevWrapper
-          onClick={() => {
-            setCurrentFile(fp.file);
-            showModal();
-          }}
-        >
-          {fp.coverImage ? (
-            <PreviewOverlay icon="youtube">
-              <StyledAntDImage
-                src={URL.createObjectURL(fp.coverImage)}
-                alt={fp.file.name}
-                preview={false}
-              />
-            </PreviewOverlay>
-          ) : (
-            <FeatherIcon icon="youtube" />
-          )}
-        </PrevWrapper>
-      );
+      return <Preview onClick={() => handlePrevClick(fp)} fp={fp} icon="youtube" />;
     }
 
     if (is3DFilePreview(fp)) {
-      return (
-        <PrevWrapper
-          onClick={() => {
-            setCurrentFile(fp.file);
-            showModal();
-          }}
-        >
-          {fp.coverImage ? (
-            <PreviewOverlay icon="box">
-              <StyledAntDImage
-                src={URL.createObjectURL(fp.coverImage)}
-                alt={fp.file.name}
-                preview={false}
-              />
-            </PreviewOverlay>
-          ) : (
-            <FeatherIcon icon="box" />
-          )}
-        </PrevWrapper>
-      );
+      return <Preview onClick={() => handlePrevClick(fp)} fp={fp} icon="box" />;
     }
 
     if (isImage(fp)) {
       return <StyledAntDImage src={URL.createObjectURL(fp.file)} alt={fp.file.name} />;
     }
   };
+
   return (
     <>
       <StyledModal
