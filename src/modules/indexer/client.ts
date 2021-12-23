@@ -49,7 +49,7 @@ export interface Listing {
 }
 
 export const IndexerSDK = {
-  getListings: async ():Promise<Listing[]> => {
+  getListings: async (): Promise<Listing[]> => {
     const res = await fetch(INDEXER_URL, {
       method: 'POST',
       headers: {
@@ -65,18 +65,14 @@ export const IndexerSDK = {
 
     const json = await res.json();
 
-    //@ts-ignore
-    return compose(
-      // @ts-ignore
-      sortWith([
-        // @ts-ignore
+    return sortWith(
+      [
+        //@ts-ignore   
         ascend(prop('instantSalePrice')),
-        // @ts-ignore
         descend(prop('highestBid')),
-        // @ts-ignore
         ascend(prop('endsAt'))
-      ]),
-      // @ts-ignore
-    )(json.result);
+      ],
+      json.result
+    )
   },
 };

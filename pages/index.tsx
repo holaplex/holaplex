@@ -217,7 +217,7 @@ const sortOptions: {
     { key: SortOptions.Trending, label: 'Trending' },
     { key: SortOptions.Expensive, label: 'High to low' },
     { key: SortOptions.Cheapest, label: 'Low to high' },
-    { key: SortOptions.EndingSoonest, label: 'Ending Soon' },
+    { key: SortOptions.EndingSoonest, label: 'Ending soon' },
   ],
   instant_sale: [
     { key: SortOptions.RecentlyAdded, label: 'New' },
@@ -273,10 +273,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
   const [loading, setLoading] = useState(true);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(5).fill(null).map((_, i) => generateListingShell(i)));
-  const [displayedListings, setDisplayedListings] = useState<Listing[]>(Array(show).fill(null).map((_, i) => generateListingShell(i)));
+  const [displayedListings, setDisplayedListings] = useState<Listing[]>([]);
   const [filterBy, setFilterBy] = useState<FilterOptions>(FilterOptions.Auctions);
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
-  const [hasMoreListings, setHasMoreListings] = useState(true);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
   const scrollToListingTop = () => {
@@ -284,12 +283,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       return;
     }
 
-    listingsTopRef.current.scrollIntoView(
-      // smooth, while nice, sometiems causes issues with scroll to top during new filter or sort
-      {
-        behavior: 'smooth',
-      }
-    );
+    listingsTopRef.current.scrollIntoView();
   };
 
   const loadMoreListings = () => {
@@ -297,29 +291,26 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
     const next = compose(
       when(next => next > total, always(total)),
-      add(4),
+      add(8),
     )(show);
 
     setShow(next);
-    setHasMoreListings(total > next);
   }
+
+  const hasNextPage = show < displayedListings.length;
 
   const [sentryRef] = useInfiniteScroll({
     loading,
-    hasNextPage: hasMoreListings,
+    hasNextPage,
     onLoadMore: loadMoreListings,
+    rootMargin: '0px 0px 200px 0px'
   });
 
-  function getListingsToDisplay(allListings: Listing[]): Listing[] {
+  const applyListingFilterAndSort = compose<Listing[], Listing[], Listing[]>(
+    filter(filters[filterBy]),
     //@ts-ignore
-    return compose(
-      // @ts-ignore
-      filter(filters[filterBy]),
-      // @ts-ignore
-      sortWith(sorts[sortBy])
-      // @ts-ignore
-    )(allListings)
-  }
+    sortWith(sorts[sortBy])
+  );
 
   // initial fetch and display
   useEffect(() => {
@@ -328,7 +319,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
       setAllListings(allListings);
       setFeaturedListings(allListings.slice(0, 5));
-      setDisplayedListings(getListingsToDisplay(allListings));
+      setDisplayedListings(applyListingFilterAndSort(allListings));
 
       setLoading(false);
     }
@@ -342,8 +333,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       return;
     }
 
-    setDisplayedListings(getListingsToDisplay(allListings));
-    setShow(8);
+    setDisplayedListings(applyListingFilterAndSort(allListings));
+    setShow(16);
   }, [filterBy, sortBy]);
 
   return (
@@ -406,9 +397,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                       scrollToListingTop();
                     }}
                   >
-                    <Option value={FilterOptions.All}>All Listings</Option>
+                    <Option value={FilterOptions.All}>All listings</Option>
                     <Option value={FilterOptions.Auctions}>Auctions</Option>
-                    <Option value={FilterOptions.InstantSale}>Buy Now</Option>
+                    <Option value={FilterOptions.InstantSale}>Buy now</Option>
                   </SelectInline>
                   <SelectInline
                     label="Sort"
@@ -431,49 +422,29 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                 </Space>,
               ]}
             />
-
-            <List
-              grid={{
-                xs: 1,
-                sm: 2,
-                md: 3,
-                lg: 3,
-                xl: 4,
-                xxl: 4,
-                gutter: 24,
-              }}
-              dataSource={take(show, displayedListings)}
-              renderItem={(listing: Listing) => (
-                <List.Item key={listing?.listingAddress}>
+            <Row gutter={24}>
+              {take(show, displayedListings).map((listing: Listing) => (
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
                   <ListingPreview {...listing} />
-                </List.Item>
+                </Col>
+              ))}
+              {(hasNextPage || loading) && (
+                <>
+                  <Col ref={sentryRef} xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-0">
+                    <SkeletonListing />
+                  </Col>
+                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-1">
+                    <SkeletonListing />
+                  </Col>
+                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-2">
+                    <SkeletonListing />
+                  </Col>
+                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-3">
+                    <SkeletonListing />
+                  </Col>
+                </>
               )}
-            />
-
-            {hasMoreListings && (
-              <>
-                <div ref={sentryRef}></div>
-                <List
-                  grid={{
-                    xs: 1,
-                    sm: 2,
-                    md: 3,
-                    lg: 3,
-                    xl: 4,
-                    xxl: 4,
-                    gutter: 24,
-                  }}
-                  dataSource={Array(8)
-                    .fill(null)
-                    .map((_, i) => generateListingShell(i))}
-                  renderItem={(listing: Listing) => (
-                    <List.Item key={listing?.listingAddress}>
-                      <ListingPreview {...listing} />
-                    </List.Item>
-                  )}
-                />
-              </>
-            )}
+            </Row>
           </Col>
         </Section>
         <Section justify="center" align="middle">
