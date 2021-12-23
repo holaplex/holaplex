@@ -55,7 +55,7 @@ export interface NFTFormValue {
   properties: { creators: Array<Creator>; maxSupply: number };
 }
 
-export type FileOrString = UploadedFilePin | string;
+export type FileOrString = NFTFile | string;
 
 export type NFTAttribute = {
   trait_type: string;
@@ -84,14 +84,13 @@ export interface NFTValue {
   attributes?: NFTAttribute[];
   symbol: string;
   image: string;
-  files: NFTFile[];
   collection?: Collection;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
   animation_url?: string;
 
   properties: {
-    files?: FileOrString[];
+    files: FileOrString[];
     maxSupply: number;
     creators?: Creator[];
     category: NFTCategory;
@@ -243,7 +242,7 @@ export default function BulkUploadWizard() {
           coverImageFile = await uploadCoverImage(v.coverImageFile);
         }
 
-        const files = [{ uri: filePin.uri, type: filePin.type }];
+        const files = [{ uri: filePin.uri, type: filePin.type }] as FileOrString[];
 
         let image = filePin.uri;
         if (coverImageFile) {
@@ -251,19 +250,18 @@ export default function BulkUploadWizard() {
           image = coverImageFile.uri;
         }
 
-        const properties = { ...v.properties, category };
+        const properties = { ...v.properties, category, files };
 
         const res: NFTValue = {
           name: v.name,
           description: v.description,
           symbol: '',
+          seller_fee_basis_points: v.seller_fee_basis_points,
+          image,
           collection: {
             name: v.collectionName,
             family: v.collectionFamily,
           },
-          seller_fee_basis_points: v.seller_fee_basis_points,
-          image,
-          files,
           attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
             if (!isNil(a?.trait_type)) {
               result.push({ trait_type: a.trait_type, value: a.value });
@@ -277,7 +275,6 @@ export default function BulkUploadWizard() {
           res.animation_url = filePin.uri;
         }
 
-        console.log({ res });
         return res;
       })
     );
