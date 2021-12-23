@@ -2,12 +2,11 @@ import React, { useRef } from 'react';
 import { Skeleton, Card, Row, Image, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useInViewport } from 'react-in-viewport';
 import { DateTime, Duration } from 'luxon';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
+import { useInView } from 'react-intersection-observer';
 const { Title, Text } = Typography;
-
 
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
@@ -50,8 +49,8 @@ const Square = styled(Row)`
   }
 `;
 
-const NFTPreview = styled(Image) <{ show: boolean; }>`
-  display: ${({ show }) => show ? 'block' : 'none'};
+const NFTPreview = styled(Image)<{ show: boolean }>`
+  display: ${({ show }) => (show ? 'block' : 'none')};
   object-fit: cover;
   border-radius: 8px;
   width: 100%;
@@ -155,12 +154,12 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   }
 `;
 
-export function generateListingShell(id: string): Listing {
+export function generateListingShell(id: number): Listing {
   const now = new Date().toISOString();
   const nextWeek = new Date(now).toISOString();
 
   return {
-    listingAddress: id,
+    listingAddress: id + '',
     highestBid: 0,
     lastBidTime: null,
     priceFloor: 0,
@@ -192,7 +191,8 @@ export function SkeletonListing() {
         <Skeleton.Button size="small" active />
         <Skeleton.Button size="small" active />
       </Row>
-      <Row justify="space-between">
+      {/* Without this height: 22 there is an annoying height difference between Skeleton and real listing */}
+      <Row justify="space-between" style={{ height: 22 }}>
         <Skeleton.Button size="small" active />
         <Skeleton.Button size="small" active />
       </Row>
@@ -236,20 +236,19 @@ export function getListingPrice(listing: Listing) {
     (listing.highestBid
       ? listing.highestBid
       : listing.priceFloor
-        ? listing.priceFloor
-        : listing.instantSalePrice) || 0
+      ? listing.priceFloor
+      : listing.instantSalePrice) || 0
   );
 }
 
 export function ListingPreview(listing: Listing) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
 
-  const cardRef = useRef(null);
-  const {
-    inViewport,
-  } = useInViewport(
-    cardRef,
-  );
+  // const cardRef = useRef(null);
+  // const { inViewport } = useInViewport(cardRef);
+  const [cardRef, inView] = useInView({
+    threshold: 0,
+  });
 
   const [showArtPreview, setShowArtPreview] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -270,7 +269,6 @@ export function ListingPreview(listing: Listing) {
     }
     if (!nftMetadata?.uri) {
       return;
-
     }
 
     fetchNFTDataFromIPFS();
@@ -279,7 +277,8 @@ export function ListingPreview(listing: Listing) {
   // shows up to 2 decimals, but removes pointless 0s
   const displayPrice = Number((getListingPrice(listing) * 0.000000001).toFixed(2));
 
-  if (loading) {
+  // no subdomain means it's a shell/skeleton
+  if (loading || !listing.subdomain) {
     return <SkeletonListing />;
   }
 
@@ -289,8 +288,8 @@ export function ListingPreview(listing: Listing) {
         <ListingPreviewContainer>
           <Square>
             <NFTPreview
-              show={inViewport}
-              src={maybeImageCDN((nft?.image || ''))}
+              show={inView}
+              src={maybeImageCDN(nft?.image || '')}
               preview={{
                 visible: showArtPreview,
                 mask: (

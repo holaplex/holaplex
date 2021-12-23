@@ -4,11 +4,11 @@ import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
 import { PageHeader, List, Space, Row, Col, Typography, ListProps, Carousel, Select, SelectProps } from 'antd';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { take, compose, when, add, always, ifElse, filter, identity, concat, not, pipe, isNil, prop, descend, ascend, sortWith, equals, map, range } from 'ramda';
+import { take, compose, when, add, always, ifElse, filter, identity, concat, not, pipe, is, isNil, prop, descend, ascend, sortWith, equals, map, range } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
-import { ListingPreview, SkeletonListing } from '@/common/components/elements/ListingPreview';
+import { generateListingShell, ListingPreview, SkeletonListing } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
 const { Title, Text } = Typography;
 
@@ -138,12 +138,14 @@ const HeroCarousel = styled(Carousel)`
     margin-right: 0px;
     justify-content: flex-end;
   }
+
   .carousel-dots > li > button {
     opacity: 1;
     padding-top: 5px;
     padding-bottom: 5px;
     border-radius: 100%;
   }
+  
   .slick-dots li {
     > button {
       display: block;
@@ -155,8 +157,7 @@ const HeroCarousel = styled(Carousel)`
       border-radius: 1px;
       outline: none;
       cursor: pointer;
-      opacity: .3;
-  
+      opacity: 1;
     }
 
     &.slick-active {
@@ -179,40 +180,47 @@ enum SortOptions {
   EndingSoonest = 'ending_soonest',
   Expensive = 'expensive',
   Cheapest = 'cheapest',
-  BidCount = 'bid_count'
+  BidCount = 'bid_count',
+  Trending = 'trending'
 }
 
-const sortOptions = {
+const sortOptions: {
+  [key in FilterOptions]: {
+    label: string;
+    key: SortOptions
+  }[]
+} = {
   all: [
     {
       label: 'New',
       key: SortOptions.RecentlyAdded,
     },
     {
-      label: 'Hight to Low',
+      label: 'High to low',
       key: SortOptions.Expensive,
     },
     {
-      label: 'Low to Hight',
+      label: 'Low to high',
       key: SortOptions.Cheapest,
     },
   ],
   auctions: [
-    { key: SortOptions.Expensive, label: 'Hight to Low' },
-    { key: SortOptions.Cheapest, label: 'Low to High' },
+    { key: SortOptions.Expensive, label: 'High to low' },
+    { key: SortOptions.Cheapest, label: 'Low to high' },
     { key: SortOptions.EndingSoonest, label: 'Ending Soon' },
     { key: SortOptions.RecentlyAdded, label: 'New' },
     { key: SortOptions.BidCount, label: 'Bidders' },
+    { key: SortOptions.Trending, label: 'Trending' },
   ],
   instant_sale: [
     { key: SortOptions.RecentlyAdded, label: 'New' },
-    { key: SortOptions.Expensive, label: 'Hight to Low' },
-    { key: SortOptions.Cheapest, label: 'Low to High' },
+    { key: SortOptions.Expensive, label: 'High to low' },
+    { key: SortOptions.Cheapest, label: 'Low to high' },
   ],
 };
 
-//@ts-ignore
-const isAuction = pipe(prop('instantSalePrice'), isNil);
+// @ts-ignore
+const isAuction = pipe(prop('endsAt'), is(String));
 
 const currentListingPrice = ifElse(
   isAuction,
@@ -235,7 +243,8 @@ const sorts = {
   [SortOptions.RecentlyAdded]: [descend(prop('createdAt')), descend(currentListingPrice)],
   [SortOptions.Expensive]: [descend(prop('highestBid')), descend(currentListingPrice)],
   [SortOptions.Cheapest]: [ascend(currentListingPrice), ascend(prop('endsAt'))],
-  [SortOptions.BidCount]: [descend(prop('totalUncancelledBids'))]
+  [SortOptions.BidCount]: [descend(prop('totalUncancelledBids'))],
+  [SortOptions.Trending]: [descend(prop('totalUncancelledBids')), ascend(prop('endsAt'))]
 }
 
 export async function getStaticProps() {
@@ -254,28 +263,34 @@ interface HomeProps {
 
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
-  const [loading, setLoading] = useState(true);
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [seeing, setSeeListings] = useState<Listing[]>([]);
   const [show, setShow] = useState(16);
+  const [loading, setLoading] = useState(true);
+  const [allListings, setAllListings] = useState<Listing[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(5).fill(null).map((_, i) => generateListingShell(i)));
+  const [displayedListings, setDisplayedListings] = useState<Listing[]>(Array(show).fill(null).map((_, i) => generateListingShell(i)));
   const [filterBy, setFilterBy] = useState<FilterOptions>(FilterOptions.Auctions);
-  const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Expensive);
+  const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const [hasMoreListings, setHasMoreListings] = useState(true);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
   const scrollToListingTop = () => {
     if (!listingsTopRef || !listingsTopRef.current) {
       return;
-    };
+    }
 
-    listingsTopRef.current.scrollIntoView();
+    listingsTopRef.current.scrollIntoView(
+      // smooth, while nice, sometiems causes issues with scroll to top during new filter or sort
+      {
+        behavior: 'smooth',
+      }
+    );
   };
 
   const loadMoreListings = () => {
-    const total = seeing.length;
+    const total = displayedListings.length;
 
     const next = compose(
-      when(next => next > seeing.length, always(seeing.length)),
+      when(next => next > total, always(total)),
       add(4),
     )(show);
 
@@ -289,21 +304,25 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     onLoadMore: loadMoreListings,
   });
 
+  function getListingsToDisplay(allListings: Listing[]): Listing[] {
+    //@ts-ignore
+    return compose(
+      // @ts-ignore
+       filter(filters[filterBy]),
+       // @ts-ignore
+       sortWith(sorts[sortBy])
+       // @ts-ignore
+     )(allListings)
+   }
+
+  // initial fetch and display
   useEffect(() => {
     async function getListings() {
-      const listings = await IndexerSDK.getListings();
+      const allListings = await IndexerSDK.getListings();
 
-      setListings(listings);
-      setSeeListings(
-        //@ts-ignore
-        compose(
-          // @ts-ignore
-          filter(filters[filterBy]),
-          // @ts-ignore
-          sortWith(sorts[sortBy])
-          // @ts-ignore
-        )(listings),
-      );
+      setAllListings(allListings);
+      setFeaturedListings(allListings.slice(0, 5));
+      setDisplayedListings(getListingsToDisplay(allListings));
 
       setLoading(false);
     }
@@ -311,21 +330,13 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     getListings();
   }, []);
 
+  // update display on new filter or sort
   useEffect(() => {
     if (loading) {
       return;
     }
 
-    setSeeListings(
-      //@ts-ignore
-      compose(
-        // @ts-ignore
-        filter(filters[filterBy]),
-        // @ts-ignore
-        sortWith(sorts[sortBy])
-        // @ts-ignore
-      )(listings),
-    );
+    setDisplayedListings(getListingsToDisplay(allListings));
     setShow(8);
   }, [filterBy, sortBy]);
 
@@ -334,27 +345,26 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       <CenteredContentCol>
         <Section>
           <Marketing xs={22} md={16}>
-            <HeroTitle>Discover, explore, and collect NFTs from incredible creators on Solana</HeroTitle>
-            <Pitch>
-              Tools built by creators, for creators, owned by creators.
-            </Pitch>
+            <HeroTitle>
+              Discover, explore, and collect NFTs from incredible creators on Solana
+            </HeroTitle>
+            <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
-              <Button onClick={() => connect()}>
-                Create Your Store
-              </Button>
+              <Button onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </Marketing>
           <Col xs={24} md={8}>
             <Text strong>Featured Listings</Text>
-            {loading ? (
-              <SkeletonListing />
-            ) : (
-              <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
-                {listings.slice(0, 5).map((listing) => (
-                  <ListingPreview key={listing.listingAddress} {...listing} />
-                ))}
-              </HeroCarousel>
-            )}
+            <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
+              {featuredListings.map((listing) => (
+                <ListingPreview key={listing.listingAddress} {...listing} />
+              ))}
+              {/* {loading
+                ? Array(5).fill(<SkeletonListing />)
+                : featuredListings.map((listing) => (
+                    <ListingPreview key={listing.listingAddress} {...listing} />
+                  ))} */}
+            </HeroCarousel>
           </Col>
         </Section>
         <StorefrontSection>
@@ -384,10 +394,13 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                   <SelectInline
                     value={filterBy}
                     label="Filter"
-                    onChange={(next) => {
-                      const filter = next as FilterOptions;
+                    onChange={(nextFilter) => {
+                      const filter = nextFilter as FilterOptions;
                       setFilterBy(filter);
-                      setSortBy(sortOptions[filter][0].key);
+                      // only reset sortBy if it does not work in the new filter
+                      if (!sortOptions[filter].find((s) => s.key === sortBy)) {
+                        setSortBy(sortOptions[filter][0].key);
+                      }
                       scrollToListingTop();
                     }}
                   >
@@ -398,20 +411,25 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                   <SelectInline
                     label="Sort"
                     value={sortBy}
-                    onChange={(next) => {
-                      const sort = next as SortOptions;
+                    onChange={(nextSortBy) => {
+                      const sortBy = nextSortBy as SortOptions;
 
-                      setSortBy(sort);
+                      setSortBy(sortBy);
                       scrollToListingTop();
                     }}
                   >
                     {sortOptions[filterBy].map(({ label, key }) => {
-                      return <Option key={key} value={key}>{label}</Option>
+                      return (
+                        <Option key={key} value={key}>
+                          {label}
+                        </Option>
+                      );
                     })}
                   </SelectInline>
-                </Space>
+                </Space>,
               ]}
             />
+
             <List
               grid={{
                 xs: 1,
@@ -422,50 +440,44 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                 xxl: 4,
                 gutter: 24,
               }}
-              dataSource={take(show, seeing)}
+              dataSource={take(show, displayedListings)}
               renderItem={(listing: Listing) => (
                 <List.Item key={listing?.listingAddress}>
                   <ListingPreview {...listing} />
                 </List.Item>
               )}
             />
+
             {hasMoreListings && (
-              <Row ref={sentryRef} gutter={24}>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                  <SkeletonListing />
-                </Col>
-              </Row>
+              <>
+                <div ref={sentryRef}></div>
+                <List
+                  grid={{
+                    xs: 1,
+                    sm: 2,
+                    md: 3,
+                    lg: 3,
+                    xl: 4,
+                    xxl: 4,
+                    gutter: 24,
+                  }}
+                  dataSource={Array(8)
+                    .fill(null)
+                    .map((_, i) => generateListingShell(i))}
+                  renderItem={(listing: Listing) => (
+                    <List.Item key={listing?.listingAddress}>
+                      <ListingPreview {...listing} />
+                    </List.Item>
+                  )}
+                />
+              </>
             )}
-            
           </Col>
         </Section>
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>
-              Create Your Store
-            </Button>
+            <Button onClick={() => connect()}>Create Your Store</Button>
           </Space>
         </Section>
       </CenteredContentCol>
