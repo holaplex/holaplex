@@ -7,6 +7,10 @@ import BugsnagPluginReact from '@bugsnag/plugin-react';
 
 import { Listing } from '@/modules/indexer';
 import { useRouter } from 'next/router';
+import {
+  getFormatedListingPrice,
+  lamportToSolIsh,
+} from '@/common/components/elements/ListingPreview';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
@@ -33,7 +37,7 @@ interface TrackingAttributes extends CustomEventDimensions {
   category?: string;
   label?: string;
   value?: number;
-  [key: string]: string | number | any[] | undefined;
+  [key: string]: string | number | boolean | any[] | null | undefined;
 }
 
 export const ga4Event = (
@@ -179,61 +183,44 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       ...otherAttributes,
     };
 
+    console.log('track', action, attrs);
+
     // ga4
     ga4Event(action, attrs);
   }
 
   // used to track listings as ecommerce items
-  function trackEcommerce(action: GoogleEcommerceEvent, listings: Listing[]) {
-    gtag('event', action, {
-      currency: 'USD',
-      value: 7.77,
-      // sol_value:
-      // items: listings.map(l => ({
-      //     item_id: "SKU_12345",
-      //      item_name: "Stan and Friends Tee",
-      //      affiliation: "Google Store",
-      //      coupon: "SUMMER_FUN",
-      //      currency: "USD",
-      //      discount: 2.22,
-      //      index: 5,
-      //      item_brand: "Google",
-      //      item_category: "Apparel",
-      //      item_category2: "Adult",
-      //      item_category3: "Shirts",
-      //      item_category4: "Crew",
-      //      item_category5: "Short sleeve",
-      //      item_list_id: "related_products",
-      //      item_list_name: "Related Products",
-      //      item_variant: "green",
-      //      location_id: "L_12345",
-      //      price: 9.99,
-      //      quantity: 1
-      // }))
-      // [
-      //   {
-      //     item_id: "SKU_12345",
-      //     item_name: "Stan and Friends Tee",
-      //     affiliation: "Google Store",
-      //     coupon: "SUMMER_FUN",
-      //     currency: "USD",
-      //     discount: 2.22,
-      //     index: 5,
-      //     item_brand: "Google",
-      //     item_category: "Apparel",
-      //     item_category2: "Adult",
-      //     item_category3: "Shirts",
-      //     item_category4: "Crew",
-      //     item_category5: "Short sleeve",
-      //     item_list_id: "related_products",
-      //     item_list_name: "Related Products",
-      //     item_variant: "green",
-      //     location_id: "L_12345",
-      //     price: 9.99,
-      //     quantity: 1
-      //   }
-      // ]
-    });
+  function trackRecommendedEcommerceEvent(
+    action: GoogleEcommerceEvent,
+    listings: Listing[],
+    attributes: {
+      listId: keyof typeof listNames;
+    }
+  ) {
+    // https://support.google.com/analytics/answer/9267735
+    const aggregateSolValue = listings.reduce((acc, l) => acc + getFormatedListingPrice(l), 0);
+
+    switch (action) {
+      case 'view_item_list':
+        return track(action, {
+          item_list_id: attributes.listId,
+          item_list_name: listNames[attributes.listId],
+          items: addListingsToTrackCall(listings, attributes.listId),
+        });
+      case 'view_item':
+        return track(action, {
+          currency: 'USD',
+          value: aggregateSolValue * solPrice,
+          sol_value: aggregateSolValue,
+          items: addListingsToTrackCall(listings, attributes.listId),
+        });
+      case 'select_item':
+        return track(action, {
+          item_list_id: attributes.listId,
+          item_list_name: listNames[attributes.listId],
+          items: addListingsToTrackCall(listings, attributes.listId),
+        });
+    }
   }
 
   return (
@@ -253,4 +240,63 @@ export function useAnalytics() {
     throw new Error('useAnalytics must be used within an AnalyticsProvider');
   }
   return context;
+}
+
+const listNames = {
+  featuredListings: 'Featured listings',
+  currentListings: 'Current listings',
+};
+
+// static function to augment track event
+export function addListingToTrackCall(listing: Listing) {
+  return {
+    listing_address: listing.listingAddress,
+    created_at: listing.createdAt,
+    ended: listing.ended,
+    highest_bid: lamportToSolIsh(listing.highestBid),
+    last_bid_time: listing.lastBidTime,
+    price: getFormatedListingPrice(listing),
+    is_buy_now: !listing.endsAt,
+    is_auction: !!listing.endsAt,
+    listing_category: !listing.endsAt ? 'buy_now' : 'auction',
+    subdomain: listing.subdomain,
+  };
+}
+
+function addListingsToTrackCall(listings: Listing[], listId: keyof typeof listNames) {
+  return listings.map((l, i) => ({
+    item_id: l.listingAddress,
+    item_name: l.items[0]?.name,
+    affiliation: l.subdomain,
+    index: i,
+    item_list_id: listId,
+    item_list_name: listNames[listId],
+    ...addListingToTrackCall(l),
+  }));
+  // original google recommened event for comparison
+  // gtag('event', action,
+  // [
+  //   {
+  //     item_id: "SKU_12345",
+  //     item_name: "Stan and Friends Tee",
+  //     affiliation: "Google Store",
+  //     coupon: "SUMMER_FUN",
+  //     currency: "USD",
+  //     discount: 2.22,
+  //     index: 5,
+  //     item_brand: "Google",
+  //     item_category: "Apparel",
+  //     item_category2: "Adult",
+  //     item_category3: "Shirts",
+  //     item_category4: "Crew",
+  //     item_category5: "Short sleeve",
+  //     item_list_id: "related_products",
+  //     item_list_name: "Related Products",
+  //     item_variant: "green",
+  //     location_id: "L_12345",
+  //     price: 9.99,
+  //     quantity: 1
+  //   }
+  // ]
+  // });
 }

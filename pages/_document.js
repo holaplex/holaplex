@@ -49,8 +49,8 @@ export default class MyDocument extends Document {
                     }
                     gtag('js', new Date());
                     gtag('config', '${OLD_GOOGLE_ANALYTICS_ID}');
-                    gtag('config',  '${GA4_ID}')
-                `,
+                    `,
+                  // gtag('config',  '${GA4_ID}')
                 }}
               />
             </>
