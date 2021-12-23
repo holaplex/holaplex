@@ -1,22 +1,6 @@
 import { compose, filter, sortWith, prop, pipe, descend, not, ascend, contains } from 'ramda';
 
 const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
-const STOREFRONT_BLAKCK_LIST = [
-  'xperienceproject',
-  'testme',
-  'bwauctions',
-  'nu9ve',
-  'sublimemantis',
-  'max-test',
-  'max-test-2',
-  'max-test-4',
-  'max-test-5',
-  'mysubdomain',
-  '123123123',
-  'sssss',
-  'solanamonkeybusiness',
-  'karoltesting'
-];
 
 export interface Creator {
   address: string;
@@ -84,10 +68,6 @@ export const IndexerSDK = {
     //@ts-ignore
     return compose(
       // @ts-ignore
-      filter(
-        // @ts-ignore
-        pipe(prop('subdomain'), (subdomain: string) => not(contains(subdomain, STOREFRONT_BLAKCK_LIST)))
-      ),
       sortWith([
         // @ts-ignore
         ascend(prop('instantSalePrice')),

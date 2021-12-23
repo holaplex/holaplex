@@ -4,7 +4,7 @@ import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
 import { PageHeader, List, Space, Row, Col, Typography, ListProps, Carousel, Select, SelectProps } from 'antd';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { take, compose, when, add, always, ifElse, filter, identity, concat, not, pipe, isNil, prop, descend, ascend, sortWith, equals } from 'ramda';
+import { take, compose, when, add, always, ifElse, filter, identity, concat, not, pipe, isNil, prop, descend, ascend, sortWith, equals, map, range } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
@@ -276,7 +276,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
 
     const next = compose(
       when(next => next > seeing.length, always(seeing.length)),
-      add(8),
+      add(4),
     )(show);
 
     setShow(next);
@@ -422,19 +422,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                 xxl: 4,
                 gutter: 24,
               }}
-              dataSource={concat(
-                take(show, seeing),
-                ifElse(
-                  identity,
-                  always([
-                    { listtingAddress: 'a'},
-                    { listtingAddress: 'b'},
-                    { listtingAddress: 'c'},
-                    { listtingAddress: 'd'},
-                  ]),
-                  always([]),
-                )(hasMoreListings)
-              )}
+              dataSource={take(show, seeing)}
               renderItem={(listing: Listing) => (
                 <List.Item key={listing?.listingAddress}>
                   <ListingPreview {...listing} />
@@ -443,6 +431,18 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             />
             {hasMoreListings && (
               <Row ref={sentryRef} gutter={24}>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
+                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                  <SkeletonListing />
+                </Col>
                 <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
                   <SkeletonListing />
                 </Col>
