@@ -51,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (isNil(GOOGLE_ANALYTICS_ID)) {
       return;
     }
-    // keeping this for now to power old GA endpoint. The new one tracks pageviews automatically
+
     window.gtag('config', GOOGLE_ANALYTICS_ID, { page_path: path });
   };
 

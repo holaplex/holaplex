@@ -1,11 +1,11 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+import { OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '../src/modules/ganalytics/AnalyticsProvider';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
-    const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
     try {
       ctx.renderPage = () =>
@@ -16,7 +16,6 @@ export default class MyDocument extends Document {
       const initialProps = await Document.getInitialProps(ctx);
       return {
         ...initialProps,
-        googleAnalyticsId,
         styles: (
           <>
             {initialProps.styles}
@@ -33,11 +32,13 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          {this.props.googleAnalyticsId && (
+          {(OLD_GOOGLE_ANALYTICS_ID || GA4_ID) && (
             <>
               <script
                 async
-                src={`https://www.googletagmanager.com/gtag/js?id=${this.props.googleAnalyticsId}`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${
+                  GA4_ID || OLD_GOOGLE_ANALYTICS_ID
+                }`}
               />
               <script
                 dangerouslySetInnerHTML={{
@@ -47,8 +48,8 @@ export default class MyDocument extends Document {
                       dataLayer.push(arguments);
                     }
                     gtag('js', new Date());
-                    gtag('config', '${this.props.googleAnalyticsId}');
-                    gtag('config', 'G-HLNC4C2YKN')
+                    gtag('config', '${OLD_GOOGLE_ANALYTICS_ID}');
+                    gtag('config',  '${GA4_ID}')
                 `,
                 }}
               />

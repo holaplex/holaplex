@@ -4,7 +4,8 @@ import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
 import { Listing } from '@/modules/indexer';
 
-export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || 'G-HLNC4C2YKN';
+export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
 
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
@@ -37,7 +38,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const pubkey = wallet?.pubkey || '';
   // const pubkey = publicKey?.toBase58() || '';
   useEffect(() => {
-    return
+    return;
     gtag = window?.gtag;
     // const isStoreOwner = ownerAddress === publicKey?.toBase58();
     // user pubkey / id
@@ -71,7 +72,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
   function configureAnalytics(options: Partial<CustomEventDimensions>) {
     if (!gtag) return;
-    gtag('config', GOOGLE_ANALYTICS_ID, {
+    gtag('config', GA4_ID, {
       ...options,
       send_page_view: false,
     });
