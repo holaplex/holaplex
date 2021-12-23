@@ -4,16 +4,17 @@ import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
 import { PageHeader, List, Space, Row, Col, Typography, ListProps, Carousel, Select, SelectProps } from 'antd';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { take, compose, when, add, always, ifElse, filter, identity, concat, not, pipe, is, isNil, prop, descend, ascend, sortWith, equals, map, range } from 'ramda';
+import { take, compose, when, add, always, ifElse, filter, concat, not, pipe, is, isNil, prop, descend, ascend, sortWith, equals, map, range } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import { generateListingShell, ListingPreview, SkeletonListing } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
+
 const { Title, Text } = Typography;
+const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
-const Option = Select.Option;
 
 const HeroTitle = styled.h1`
   font-weight: 800;
@@ -169,6 +170,12 @@ const HeroCarousel = styled(Carousel)`
   }
 `;
 
+const HeroCol = styled(Col)`
+  .ant-typography {
+    display: block;
+    margin: 0 0 0.5rem 0;
+  }
+`;
 enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
@@ -195,6 +202,7 @@ const sortOptions: {
       label: 'New',
       key: SortOptions.RecentlyAdded,
     },
+    { key: SortOptions.Trending, label: 'Trending' },
     {
       label: 'High to low',
       key: SortOptions.Expensive,
@@ -205,12 +213,11 @@ const sortOptions: {
     },
   ],
   auctions: [
+    { key: SortOptions.RecentlyAdded, label: 'New' },
+    { key: SortOptions.Trending, label: 'Trending' },
     { key: SortOptions.Expensive, label: 'High to low' },
     { key: SortOptions.Cheapest, label: 'Low to high' },
     { key: SortOptions.EndingSoonest, label: 'Ending Soon' },
-    { key: SortOptions.RecentlyAdded, label: 'New' },
-    { key: SortOptions.BidCount, label: 'Bidders' },
-    { key: SortOptions.Trending, label: 'Trending' },
   ],
   instant_sale: [
     { key: SortOptions.RecentlyAdded, label: 'New' },
@@ -243,7 +250,6 @@ const sorts = {
   [SortOptions.RecentlyAdded]: [descend(prop('createdAt')), descend(currentListingPrice)],
   [SortOptions.Expensive]: [descend(prop('highestBid')), descend(currentListingPrice)],
   [SortOptions.Cheapest]: [ascend(currentListingPrice), ascend(prop('endsAt'))],
-  [SortOptions.BidCount]: [descend(prop('totalUncancelledBids'))],
   [SortOptions.Trending]: [descend(prop('totalUncancelledBids')), ascend(prop('endsAt'))]
 }
 
@@ -304,16 +310,16 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     onLoadMore: loadMoreListings,
   });
 
-  function getListingsToDisplay(allListings: Listing[]): Listing[] {
+  function getListingsToDisplay(allListings: Listing[]): Listing[] {
     //@ts-ignore
     return compose(
       // @ts-ignore
-       filter(filters[filterBy]),
-       // @ts-ignore
-       sortWith(sorts[sortBy])
-       // @ts-ignore
-     )(allListings)
-   }
+      filter(filters[filterBy]),
+      // @ts-ignore
+      sortWith(sorts[sortBy])
+      // @ts-ignore
+    )(allListings)
+  }
 
   // initial fetch and display
   useEffect(() => {
@@ -353,19 +359,14 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               <Button onClick={() => connect()}>Create Your Store</Button>
             </Space>
           </Marketing>
-          <Col xs={24} md={8}>
+          <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
               {featuredListings.map((listing) => (
                 <ListingPreview key={listing.listingAddress} {...listing} />
               ))}
-              {/* {loading
-                ? Array(5).fill(<SkeletonListing />)
-                : featuredListings.map((listing) => (
-                    <ListingPreview key={listing.listingAddress} {...listing} />
-                  ))} */}
             </HeroCarousel>
-          </Col>
+          </HeroCol>
         </Section>
         <StorefrontSection>
           <Col xs={24}>
@@ -392,6 +393,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               extra={[
                 <Space key="options" direction="horizontal">
                   <SelectInline
+                    dropdownClassName="select-inline-dropdown"
                     value={filterBy}
                     label="Filter"
                     onChange={(nextFilter) => {
@@ -410,6 +412,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                   </SelectInline>
                   <SelectInline
                     label="Sort"
+                    dropdownClassName="select-inline-dropdown"
                     value={sortBy}
                     onChange={(nextSortBy) => {
                       const sortBy = nextSortBy as SortOptions;
@@ -418,13 +421,12 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                       scrollToListingTop();
                     }}
                   >
-                    {sortOptions[filterBy].map(({ label, key }) => {
-                      return (
+                    {sortOptions[filterBy]
+                      .map(({ label, key }) => (
                         <Option key={key} value={key}>
                           {label}
                         </Option>
-                      );
-                    })}
+                      ))}
                   </SelectInline>
                 </Space>,
               ]}
