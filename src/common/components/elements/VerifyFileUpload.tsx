@@ -97,6 +97,7 @@ export const VidAudPrevWrapper = styled.div`
   align-items: center;
   padding: 5px;
   cursor: pointer;
+  text-align: center;
 `;
 
 interface Props {
