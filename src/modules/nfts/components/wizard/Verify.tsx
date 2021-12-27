@@ -2,16 +2,20 @@ import Button from '@/common/components/elements/Button';
 import { PageHeader, Upload, Space } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { StepWizardChildProps } from 'react-step-wizard';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { MintDispatch } from 'pages/nfts/new';
 import {
-  MAX_IMAGES,
+  MAX_FILES,
   NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING,
+  MAX_FILE_SIZE,
 } from '@/modules/nfts/components/wizard/Upload';
-import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { RcFile } from 'antd/lib/upload';
+import { is3DFile, isImage } from '@/modules/utils/files';
+import VerifyFileUpload from '@/common/components/elements/VerifyFileUpload';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -28,8 +32,8 @@ const AddNFTButton = styled.button`
   width: 120px;
   height: 120px;
   background: #1a1a1a;
+  border: none;
   border-radius: 4px;
-  border-color: #1a1a1a;
   cursor: pointer;
 
   img {
@@ -38,7 +42,7 @@ const AddNFTButton = styled.button`
 `;
 
 interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
+  files: Array<File>;
   dispatch: MintDispatch;
   clearForm: () => void;
 }
@@ -48,11 +52,29 @@ export default function Verify({
   nextStep,
   dispatch,
   goToStep,
-  images,
+  files,
   clearForm,
 }: Props) {
-  const removeImage = (imageName: string) => {
-    dispatch({ type: 'DELETE_IMAGE', payload: imageName });
+  const handleNext = () => {
+    const filePreviews = files.map((file) => {
+      let type = file.type;
+      if (is3DFile(file)) {
+        type = 'model/glb';
+      }
+
+      return {
+        type,
+        file,
+        coverImage: isImage(file) ? file : null,
+      };
+    });
+
+    dispatch({ type: 'SET_FILE_PREVIEWS', payload: filePreviews }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
+    nextStep!();
+  };
+
+  const removeFile = (fileName: string) => {
+    dispatch({ type: 'DELETE_FILE', payload: fileName });
   };
 
   const handlePrevious = () => {
@@ -60,24 +82,38 @@ export default function Verify({
     previousStep!();
   };
 
+  const beforeUpload = (f: RcFile) => {
+    const { size, name } = f;
+    if (size && size > MAX_FILE_SIZE) {
+      window.alert(
+        `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
+          0
+        )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
+      );
+      return;
+    }
+    dispatch({ type: 'ADD_FILE', payload: f });
+  };
+
   return (
-    <NavContainer previousStep={handlePrevious} goToStep={goToStep}>
+    <NavContainer previousStep={handlePrevious} goToStep={goToStep} clearForm={clearForm}>
       <Space direction="vertical" size={80} align="center">
         <Header>Do these look right?</Header>
-        <NFTPreviewGrid removeImage={removeImage} images={images} width={5}>
-          {images.length < MAX_IMAGES && (
+        {/* Does this need children?  Can we just put it all into one component? */}
+        <VerifyFileUpload removeFile={removeFile} files={files} width={5}>
+          {files.length < MAX_FILES && (
             <Upload
               accept={NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING}
               showUploadList={false}
-              beforeUpload={(f) => dispatch({ type: 'ADD_IMAGE', payload: f })}
+              beforeUpload={beforeUpload}
             >
               <AddNFTButton>
                 <Image width={24} height={24} src={XCloseIcon} alt="x-close" />
               </AddNFTButton>
             </Upload>
           )}
-        </NFTPreviewGrid>
-        <Button type="primary" size="large" onClick={nextStep}>
+        </VerifyFileUpload>
+        <Button type="primary" size="large" onClick={handleNext}>
           Looks good
         </Button>
       </Space>

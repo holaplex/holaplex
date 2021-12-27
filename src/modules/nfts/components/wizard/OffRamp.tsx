@@ -2,19 +2,12 @@ import styled from 'styled-components';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { StepWizardChildProps } from 'react-step-wizard';
 import { Divider, PageHeader, Row } from 'antd';
-import { MintStatus, NFTValue } from 'pages/nfts/new';
+import { FilePreview, MintStatus, NFTValue } from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { Storefront } from '@/modules/storefront/types';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Button from '@/common/components/elements/Button';
-import router, { useRouter } from 'next/router';
-
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  clearForm: () => void;
-  nftValues: NFTValue[];
-  storefront?: Storefront;
-}
+import { useRouter } from 'next/router';
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -50,10 +43,19 @@ const Wrapper = styled.div`
   }
 `;
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  clearForm: () => void;
+  nftValues: NFTValue[];
+  storefront?: Storefront;
+}
+
 export default function OffRampScreen({
   goToStep,
   clearForm,
-  images,
+  files,
+  filePreviews,
   nftValues,
   storefront,
 }: Props) {
@@ -139,8 +141,8 @@ export default function OffRampScreen({
         </Wrapper>
         <StyledDivider type="vertical" />
         <NFTPreviewGrid
-          index={images.length} // trigger all NFT statuses for grid
-          images={images}
+          index={files.length} // trigger all NFT statuses for grid
+          filePreviews={filePreviews}
           nftValues={nftValues}
         />
       </Row>

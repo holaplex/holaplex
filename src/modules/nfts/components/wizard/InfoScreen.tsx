@@ -1,26 +1,19 @@
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
-import { Divider, Input, Form, FormInstance, Row } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { Divider, Input, Form, FormInstance, Row, Upload } from 'antd';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import XCloseIcon from '@/common/assets/images/x-close.svg';
 import { FormListFieldData } from 'antd/lib/form/FormList';
-import { FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts/new';
+import { FilePreview, FormValues, MintDispatch, NFTAttribute, NFTFormValue } from 'pages/nfts/new';
 import { StyledClearButton } from '@/modules/nfts/components/wizard/RoyaltiesCreators';
 import Text from 'antd/lib/typography/Text';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { is3DFile, isAudio, isVideo } from '@/modules/utils/files';
 
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  index: number;
-  form: FormInstance;
-  clearForm: () => void;
-  currentImage: File;
-  isLast: boolean;
-  dispatch: MintDispatch;
-}
+const ACCEPTED_IMAGE_FILES = 'image/.jpg,image/.jpeg,image/.png';
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -72,34 +65,53 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  index: number;
+  form: FormInstance;
+  clearForm: () => void;
+  currentFile: File;
+  isLast: boolean;
+  dispatch: MintDispatch;
+}
+
 export default function InfoScreen({
   previousStep,
   goToStep,
-  images,
+  files,
   index,
   nextStep,
   form,
   isActive,
   clearForm,
+  filePreviews,
   isLast,
   dispatch,
-  currentImage,
+  currentFile,
 }: Props) {
   const { TextArea } = Input;
   const nftNumber = `nft-${index}`;
-  const nftNumberList = images.map((_, i) => `nft-${i}`);
+  const nftNumberList = files.map((_, i) => `nft-${i}`);
   const [errorList, setErrorList] = useState<string[]>([]);
   const nftList = form.getFieldsValue(nftNumberList) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
+  const showCoverUpload = isVideo(currentFile) || isAudio(currentFile) || is3DFile(currentFile);
 
   const handleNext = () => {
+    const fieldsToValidate = [
+      [nftNumber, 'name'],
+      [nftNumber, 'attributes'],
+      [nftNumber, 'description'],
+    ];
+
+    if (showCoverUpload) {
+      fieldsToValidate.push([nftNumber, 'coverImageFile']);
+    }
+
     setErrorList([]);
     form
-      .validateFields([
-        [nftNumber, 'name'],
-        [nftNumber, 'attributes'],
-        [nftNumber, 'description'],
-      ])
+      .validateFields(fieldsToValidate)
       .then((v2: { [nftN: string]: { name: string; attributes: NFTAttribute[] } }) => {
         if (isLast) {
           const values2 = form.getFieldsValue(nftNumberList) as FormValues;
@@ -116,7 +128,7 @@ export default function InfoScreen({
             errors: string[];
           }[];
         }) => {
-          console.log('errorInfo', errorInfo);
+          console.error('errorInfo', errorInfo);
           setErrorList(
             errorInfo.errorFields // only handle attribute errors
               .filter((ef) => ef.name.includes('attributes'))
@@ -147,26 +159,50 @@ export default function InfoScreen({
     </Input.Group>
   );
 
-  return isActive ? (
+  const getCoverImage = (e: any) => {
+    console.log('e is ', e);
+    let coverImage;
+    if (e.file && e.file.originFileObj) {
+      coverImage = e.file.originFileObj;
+    } else if (Array.isArray(e)) {
+      coverImage = e[0];
+    } else {
+      coverImage = e;
+    }
+
+    dispatch({
+      type: 'INSERT_COVER_IMAGE',
+      payload: {
+        index,
+        coverImage,
+      },
+    });
+    return coverImage;
+  };
+
+  if (!isActive) {
+    return null;
+  }
+
+  return (
     <NavContainer
-      title={`Info for #${index + 1} of ${images.length}`}
+      title={`Info for #${index + 1} of ${files.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
       clearForm={clearForm}
     >
       <Row>
         <FormWrapper>
-          {/* <Form.Item> */}
           <Form.Item
             name={[nftNumber, 'name']}
-            initialValue={images[index]?.name || ''}
+            initialValue={files[index]?.name || ''}
             label="Name"
             rules={[
               {
                 message:
                   'The resulting Buffer length from the NFT name can not be longer than 32. Please reduce the length of the name of your NFT.',
-                async validator(rule, value) {
-                  if (Buffer.from(value).length > 32) {
+                async validator(_, value) {
+                  if (Buffer.from(value).length > 28) {
                     throw new Error();
                   }
                 },
@@ -175,6 +211,17 @@ export default function InfoScreen({
           >
             <Input placeholder="optional" autoFocus />
           </Form.Item>
+          {showCoverUpload && (
+            <Form.Item
+              name={[nftNumber, 'coverImageFile']}
+              getValueFromEvent={getCoverImage}
+              rules={[{ required: true, message: 'Cover image is required' }]}
+            >
+              <Upload accept={ACCEPTED_IMAGE_FILES} maxCount={1} showUploadList={true}>
+                <Button>Upload Cover Image</Button>
+              </Upload>
+            </Form.Item>
+          )}
           <Form.Item
             name={[nftNumber, 'description']}
             label="Description"
@@ -220,7 +267,7 @@ export default function InfoScreen({
               rules={[
                 {
                   message: 'All attributes must have defined trait types',
-                  async validator(rule, value: NFTAttribute[]) {
+                  async validator(_, value: NFTAttribute[]) {
                     if (value.length === 1) return;
                     if (value.some((a, i) => !a?.trait_type)) {
                       throw new Error();
@@ -278,11 +325,10 @@ export default function InfoScreen({
               Next
             </Button>
           </ButtonFormItem>
-          {/* </Form.Item> */}
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid images={images} index={index} width={2} />
+        <NFTPreviewGrid filePreviews={filePreviews} index={index} width={2} />
       </Row>
     </NavContainer>
-  ) : null;
+  );
 }

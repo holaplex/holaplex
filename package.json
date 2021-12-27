@@ -20,6 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.30.0",
     "@aws-sdk/types": "^3.29.0",
+    "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^2.25.0",
