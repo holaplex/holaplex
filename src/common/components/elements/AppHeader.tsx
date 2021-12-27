@@ -44,38 +44,49 @@ export function AppHeader() {
     <StyledHeader>
       <HeaderTitle>
         {windowDimensions.width > 550 ? (
-          <Link href="/" passHref>
-            👋&nbsp;&nbsp;Holaplex
+          <Link href="/">
+            <a>
+              👋&nbsp;&nbsp;Holaplex
+            </a>
           </Link>
         ) : (
-          <Link href="/" passHref>
-            👋
+          <Link href="/">
+            <a>
+              👋
+            </a>
           </Link>
         )}
       </HeaderTitle>
       <Space size="large">
         {windowDimensions.width >= 778 && (
           <HeaderLinkWrapper
+            key="edit"
             onClick={() => connect()}
             active={router.pathname == '/storefront/edit'}
           >
             <Link href="/storefront/edit" passHref>
-              Edit store
+              <a>
+                Edit store
+              </a>
             </Link>
           </HeaderLinkWrapper>
         )}
 
-        <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
+        <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
           <Link href="/nfts/new" passHref>
-            Mint&nbsp;NFTs
+            <a>
+              Mint&nbsp;NFTs
+            </a>
           </Link>
         </HeaderLinkWrapper>
-        <HeaderLinkWrapper active={router.pathname == '/about'}>
+        <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
           <Link href="/about" passHref>
-            About
+            <a>
+              About
+            </a>
           </Link>
         </HeaderLinkWrapper>
-        <HeaderLinkWrapper active={false}>
+        <HeaderLinkWrapper key="faq" active={false}>
           <a href="https://holaplex-support.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">
             FAQ
           </a>
