@@ -34,6 +34,11 @@ const PrevSubTitle = styled.p`
   opacity: 0.6;
   font-size: 14px;
   margin-top: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
+  overflow: hidden;
 `;
 
 const StyledRemoveNFT = styled.div`
@@ -90,6 +95,7 @@ export const VidAudPrevWrapper = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  padding: 5px;
   cursor: pointer;
 `;
 
