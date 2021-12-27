@@ -194,6 +194,7 @@ export const NFTPreviewGrid = ({
         cancelButtonProps={{ style: { display: 'none' } }}
         keyboard={true}
         destroyOnClose={true}
+        okButtonProps={{ type: 'primary' }}
       >
         {currentFile && showVidAudPreview && (
           <video

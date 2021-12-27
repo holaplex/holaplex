@@ -169,7 +169,6 @@ function reducer(state: State, action: MintAction) {
       const { coverImage, index } = action.payload as { coverImage: File; index: number };
 
       const copy = { ...state.filePreviews[index], coverImage };
-      console.log({ copy });
       const filePreviewsCopy = [...state.filePreviews];
       filePreviewsCopy[index] = { ...copy };
       return {

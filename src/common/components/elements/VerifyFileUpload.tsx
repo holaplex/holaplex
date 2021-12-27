@@ -184,6 +184,7 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
         closable={false}
         cancelButtonProps={{ style: { display: 'none' } }}
         keyboard={true}
+        okButtonProps={{ type: 'primary' }}
       >
         {showVidAudPreview && currentFile && (
           <video
