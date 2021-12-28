@@ -2,7 +2,6 @@ import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Space } from 'antd';
-import useWindowDimensions from '@/hooks/useWindowDimensions';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
@@ -15,9 +14,20 @@ const HeaderTitle = styled.div`
   margin-right: 2rem;
   flex-grow: 1;
   a {
+    display: flex;
     color: ${sv.colors.buttonText};
     &:hover {
       color: ${sv.colors.buttonText};
+    }
+  }
+
+  span {
+    display: none;
+  }
+
+  @media screen and (min-width: 550px) {
+    span {
+      display: block;
     }
   }
 `;
@@ -35,53 +45,55 @@ const HeaderLinkWrapper = styled.div<{ active: boolean }>`
   ${({ active }) => active && `text-decoration: underline;`}
 `;
 
+const LinkRow = styled(Space)`
+  @media screen and (max-width: 550px) {
+    .ant-space-item:nth-child(1) {
+      display: none;
+    }
+  }
+`;
+
 export function AppHeader() {
-  const windowDimensions = useWindowDimensions();
   const router = useRouter();
   const { connect } = useContext(WalletContext);
 
   return (
     <StyledHeader>
       <HeaderTitle>
-        {windowDimensions.width > 550 ? (
-          <Link href="/" passHref>
-            👋&nbsp;&nbsp;Holaplex
-          </Link>
-        ) : (
-          <Link href="/" passHref>
-            👋
-          </Link>
-        )}
+        <Link href="/" passHref>
+          <a>
+            👋&nbsp;&nbsp;<span>Holaplex</span>
+          </a>
+        </Link>
       </HeaderTitle>
-      <Space size="large">
-        {windowDimensions.width >= 778 && (
-          <HeaderLinkWrapper
-            onClick={() => connect()}
-            active={router.pathname == '/storefront/edit'}
-          >
-            <Link href="/storefront/edit" passHref>
-              Edit store
-            </Link>
-          </HeaderLinkWrapper>
-        )}
+      <LinkRow size="large">
+        <HeaderLinkWrapper
+          key="edit"
+          onClick={() => connect()}
+          active={router.pathname == '/storefront/edit'}
+        >
+          <Link href="/storefront/edit" passHref>
+            <a>Edit store</a>
+          </Link>
+        </HeaderLinkWrapper>
 
-        <HeaderLinkWrapper active={router.pathname == '/nfts/new'}>
+        <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
           <Link href="/nfts/new" passHref>
-            Mint&nbsp;NFTs
+            <a>Mint&nbsp;NFTs</a>
           </Link>
         </HeaderLinkWrapper>
-        <HeaderLinkWrapper active={router.pathname == '/about'}>
+        <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
           <Link href="/about" passHref>
-            About
+            <a>About</a>
           </Link>
         </HeaderLinkWrapper>
-        <HeaderLinkWrapper active={false}>
+        <HeaderLinkWrapper key="faq" active={false}>
           <a href="https://holaplex-support.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">
             FAQ
           </a>
         </HeaderLinkWrapper>
         {/* {windowDimensions.width > 700 && <SocialLinks />} */}
-      </Space>
+      </LinkRow>
     </StyledHeader>
   );
 }

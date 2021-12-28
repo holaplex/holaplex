@@ -10,7 +10,7 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { Spinner } from '@/common/components/elements/Spinner';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { actions } from '@holaplex/js';
-import { MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
+import { FilePreview, MintStatus, NFTValue, UploadedFilePin } from 'pages/nfts/new';
 import { Solana } from '@/modules/solana/types';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
@@ -46,16 +46,6 @@ enum TransactionStep {
   SIGNING_FAILED,
   SIGNING,
   SUCCESS,
-}
-
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  wallet: Solana;
-  connection: Connection;
-  nftValues: NFTValue[];
-  index: number;
-  updateNFTValue: (value: NFTValue, index: number) => void;
-  uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
 }
 
 const MintStep = ({
@@ -101,16 +91,30 @@ const MintStep = ({
   );
 };
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  wallet: Solana;
+  connection: Connection;
+  nftValues: NFTValue[];
+  index: number;
+  updateNFTValue: (value: NFTValue, index: number) => void;
+  uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
+  clearForm: () => void;
+}
+
 export default function MintInProgress({
   previousStep,
   goToStep,
-  images,
+  files,
+  filePreviews,
   nextStep,
   isActive,
   nftValues,
   wallet,
   updateNFTValue,
   uploadMetaData,
+  clearForm,
   connection,
   index,
 }: Props) {
@@ -249,10 +253,11 @@ export default function MintInProgress({
 
   return (
     <NavContainer
-      title={`Minting ${index + 1} of ${images.length}`}
+      title={`Minting ${index + 1} of ${files.length}`}
       previousStep={previousStep}
       goToStep={goToStep}
       showNavigation={showNavigation}
+      clearForm={clearForm}
     >
       <Row>
         <Col style={{ marginRight: 224 }}>
@@ -331,7 +336,7 @@ export default function MintInProgress({
         </Col>
 
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid index={index} images={images} nftValues={nftValues} />
+        <NFTPreviewGrid filePreviews={filePreviews} nftValues={nftValues} index={index} />
       </Row>
     </NavContainer>
   );

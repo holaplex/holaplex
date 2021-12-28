@@ -20,25 +20,20 @@ import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import useOnClickOutside from 'use-onclickoutside';
 import clipBoardIcon from '@/common/assets/images/clipboard.svg';
-import { MAX_CREATOR_LIMIT, MintDispatch, NFTFormValue, Creator, FormValues } from 'pages/nfts/new';
+import {
+  MAX_CREATOR_LIMIT,
+  MintDispatch,
+  NFTFormValue,
+  Creator,
+  FormValues,
+  FilePreview,
+} from 'pages/nfts/new';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import CommunityFundInfo from '@/common/components/presentational/CommunityFundInfo';
 import { isNil } from 'ramda';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
-
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  form: FormInstance;
-  userKey?: string;
-  dispatch: MintDispatch;
-  formValues: NFTFormValue[] | null;
-  isFirst?: boolean;
-  index: number;
-  setDoEachRoyaltyInd: React.Dispatch<React.SetStateAction<boolean>>;
-  doEachRoyaltyInd?: boolean;
-}
 
 const StyledDivider = styled(Divider)`
   background-color: rgba(255, 255, 255, 0.1);
@@ -343,20 +338,36 @@ export const HOLAPLEX_CREATOR_OBJECT = Object.freeze({
   share: 2,
 });
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  form: FormInstance;
+  userKey?: string;
+  dispatch: MintDispatch;
+  formValues: NFTFormValue[] | null;
+  isFirst?: boolean;
+  index: number;
+  setDoEachRoyaltyInd: React.Dispatch<React.SetStateAction<boolean>>;
+  clearForm: () => void;
+  doEachRoyaltyInd?: boolean;
+}
+
 export default function RoyaltiesCreators({
   previousStep,
   goToStep,
-  images,
+  files,
   dispatch,
   nextStep,
   form,
   userKey,
   formValues,
+  filePreviews,
   setDoEachRoyaltyInd,
+  clearForm,
   index,
   isFirst = false,
 }: Props) {
-  const nftList = form.getFieldsValue(images.map((_, i) => `nft-${i}`)) as FormValues;
+  const nftList = form.getFieldsValue(files.map((_, i) => `nft-${i}`)) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
   const [creators, setCreators] = useState<Array<Creator>>(
@@ -508,7 +519,12 @@ export default function RoyaltiesCreators({
   if (!userKey) return null;
 
   return (
-    <NavContainer title="Royalties & Creators" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Royalties & Creators"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Row>
         <FormWrapper>
           <Form.Item label="Royalties">
@@ -721,7 +737,7 @@ export default function RoyaltiesCreators({
 
           <Row justify="end">
             <Space>
-              {images.length > 1 && isFirst && (
+              {files.length > 1 && isFirst && (
                 <StyledClearButton
                   type="text"
                   noStyle
@@ -735,13 +751,13 @@ export default function RoyaltiesCreators({
               )}
 
               <Button type="primary" onClick={isFirst ? applyToAll : next}>
-                {isFirst && images.length > 1 ? 'Apply to All' : 'Next'}
+                {isFirst && files.length > 1 ? 'Apply to All' : 'Next'}
               </Button>
             </Space>
           </Row>
         </FormWrapper>
         <StyledDivider type="vertical" />
-        <NFTPreviewGrid images={images} index={index} width={2} />
+        <NFTPreviewGrid filePreviews={filePreviews} index={index} width={2} />
       </Row>
     </NavContainer>
   );
