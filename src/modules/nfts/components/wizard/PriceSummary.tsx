@@ -10,13 +10,9 @@ import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
 import { WalletContext } from '@/modules/wallet';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
+import { FilePreview } from 'pages/nfts/new';
 
 const SOL_COST_PER_NFT = 0.01;
-
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  connection: Connection;
-}
 
 const Grid = styled.div`
   display: grid;
@@ -42,14 +38,23 @@ async function getSolRate() {
   return rates[0].rate;
 }
 
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  connection: Connection;
+  clearForm: () => void;
+}
+
 export default function PriceSummary({
   previousStep,
   goToStep,
-  images,
+  filePreviews,
+  files,
   nextStep,
   connection,
+  clearForm,
 }: Props) {
-  const [totalSolCost, setTotalSolCost] = useState(images.length * SOL_COST_PER_NFT);
+  const [totalSolCost, setTotalSolCost] = useState(files.length * SOL_COST_PER_NFT);
   const [totalInUSD, setTotalInUSD] = useState(0.0);
   const { wallet } = useContext(WalletContext);
   const [solBalanceInLamports, setSolBalance] = useState(-1);
@@ -69,30 +74,35 @@ export default function PriceSummary({
   };
 
   useEffect(() => {
-    const total = images.length * SOL_COST_PER_NFT;
+    const total = files.length * SOL_COST_PER_NFT;
     setTotalSolCost(total);
 
     getSolRate().then((rate) => {
       setTotalInUSD(rate * total);
     });
-  }, [images, setTotalSolCost, setTotalInUSD]);
+  }, [files, setTotalSolCost, setTotalInUSD]);
 
   if (!wallet) {
     return null;
   }
 
   return (
-    <NavContainer title="Fees" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Fees"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Row>
         <Col style={{ width: 360 }}>
           <Row>
-            <Paragraph style={{ fontWeight: 900 }}>Cost to mint {images.length} NFTs</Paragraph>
+            <Paragraph style={{ fontWeight: 900 }}>Cost to mint {files.length} NFTs</Paragraph>
           </Row>
           <Row>
             <Col style={{ width: '100%' }}>
               <Row justify="space-between">
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
-                  Estimated network fee x{images.length}
+                  Estimated network fee x{files.length}
                 </Paragraph>
                 <Paragraph style={{ fontSize: 14 }}>
                   <span className="sol-icon">◎</span> {SOL_COST_PER_NFT}
@@ -126,13 +136,13 @@ export default function PriceSummary({
           <Row justify="end">
             <ButtonFormItem style={{ marginTop: 20 }}>
               <Button type="primary" onClick={handleNext} disabled={!hasEnoughSol}>
-                Mint {images.length} NFTs
+                Mint {files.length} NFTs
               </Button>
             </ButtonFormItem>
           </Row>
         </Col>
         <StyledDivider type="vertical" style={{ margin: '0 46px', height: 500 }} />
-        <NFTPreviewGrid images={images} />
+        <NFTPreviewGrid filePreviews={filePreviews} />
       </Row>
     </NavContainer>
   );

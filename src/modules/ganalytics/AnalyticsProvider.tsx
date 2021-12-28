@@ -254,6 +254,7 @@ export function addListingToTrackCall(listing: Listing) {
     created_at: listing.createdAt,
     ended: listing.ended,
     highest_bid: lamportToSolIsh(listing.highestBid),
+    nr_of_bids: listing.totalUncancelledBids,
     last_bid_time: listing.lastBidTime,
     price: getFormatedListingPrice(listing),
     is_buy_now: !listing.endsAt,

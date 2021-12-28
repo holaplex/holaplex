@@ -22,6 +22,7 @@
     "@aws-sdk/types": "^3.29.0",
     "@bugsnag/js": "^7.14.1",
     "@bugsnag/plugin-react": "^7.14.0",
+    "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^2.25.0",

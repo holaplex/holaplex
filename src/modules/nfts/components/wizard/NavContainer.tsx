@@ -42,7 +42,7 @@ const AltClearTextLink = StyledClearButton;
 interface Props extends Partial<StepWizardChildProps> {
   children?: React.ReactElement | React.ReactElement[] | boolean;
   title?: string;
-  clearForm?: () => void;
+  clearForm: () => void;
   altClearText?: string;
   showNavigation?: boolean;
 }
@@ -71,7 +71,7 @@ export default function NavContainer({
               altClearText ||
               window.confirm('Are you sure you want cancel? This will reset all of your progress.')
             ) {
-              clearForm && clearForm();
+              clearForm();
               goToStep!(1);
             }
           }}

@@ -7,6 +7,7 @@ import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
 
 const ListingPreviewContainer = styled(Card)`
@@ -50,8 +51,8 @@ const Square = styled(Row)`
   }
 `;
 
-const NFTPreview = styled(Image)<{ show: boolean }>`
-  display: ${({ show }) => (show ? 'block' : 'none')};
+const NFTPreview = styled(Image)<{ $show: boolean }>`
+  display: ${({ $show }) => ($show ? 'block' : 'none')};
   object-fit: cover;
   border-radius: 8px;
   width: 100%;
@@ -253,7 +254,18 @@ export function lamportToSolIsh(lamports: number | null) {
   return Number((lamports * 0.000000001).toFixed(2));
 }
 
-export function ListingPreview(listing: Listing) {
+export function ListingPreview({
+  listing,
+  meta,
+}: {
+  listing: Listing;
+  meta: {
+    index: number;
+    list: 'current-listings' | 'featured-listings';
+    sortBy: SortOptions;
+    filterBy: FilterOptions;
+  };
+}) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
 
   // const cardRef = useRef(null);
@@ -300,14 +312,17 @@ export function ListingPreview(listing: Listing) {
     <div
       ref={cardRef}
       onClick={() => {
-        track('Select listing', addListingToTrackCall(listing));
+        track('Select listing', {
+          ...meta,
+          ...addListingToTrackCall(listing),
+        });
       }}
     >
       <a href={storeHref} rel="nofollow noreferrer" target="_blank">
         <ListingPreviewContainer>
           <Square>
             <NFTPreview
-              show={inView}
+              $show={inView}
               src={maybeImageCDN(nft?.image || '')}
               preview={{
                 visible: showArtPreview,

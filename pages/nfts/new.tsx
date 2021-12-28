@@ -16,6 +16,7 @@ import MintInProgress from '@/modules/nfts/components/wizard/MintInProgress';
 import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
+import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '@/modules/utils/files';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -29,17 +30,23 @@ const StyledLayout = styled(Layout)`
   overflow: hidden;
 `;
 
-export interface UploadedFilePin {
-  name: string;
+interface NFTFile {
   uri: string;
   type: string;
 }
 
+export interface UploadedFilePin extends NFTFile {
+  name: string;
+}
+
 export type FormValues = { [key: string]: NFTFormValue };
+
+type NFTCategory = 'image' | 'video' | 'audio' | 'vr' | 'html';
 
 export interface NFTFormValue {
   name: string;
   imageName: string;
+  coverImageFile?: File;
   description: string;
   collectionName: string;
   collectionFamily: string;
@@ -48,7 +55,7 @@ export interface NFTFormValue {
   properties: { creators: Array<Creator>; maxSupply: number };
 }
 
-export type FileOrString = UploadedFilePin | string;
+export type FileOrString = NFTFile | string;
 
 export type NFTAttribute = {
   trait_type: string;
@@ -65,79 +72,111 @@ export interface Collection {
   family: string;
 }
 
+export interface FilePreview {
+  type: string;
+  coverImage: File | null;
+  file: File;
+}
+
 export interface NFTValue {
   name: string;
   description: string;
   attributes?: NFTAttribute[];
+  symbol: string;
+  image: string;
   collection?: Collection;
   seller_fee_basis_points: number;
   mintStatus?: MintStatus;
+  animation_url?: string;
 
   properties: {
-    files?: FileOrString[];
+    files: FileOrString[];
     maxSupply: number;
     creators?: Creator[];
+    category: NFTCategory;
   };
 }
 
 export type MintDispatch = (action: MintAction) => void;
 
 interface State {
-  images: Array<File>;
+  files: Array<File>;
   uploadedFiles: Array<UploadedFilePin>;
+  filePreviews: Array<FilePreview>;
   formValues: NFTFormValue[] | null;
   nftValues: NFTValue[];
 }
 
 export interface MintAction {
   type:
-    | 'SET_IMAGES'
-    | 'DELETE_IMAGE'
-    | 'ADD_IMAGE'
+    | 'SET_FILES'
+    | 'DELETE_FILE'
+    | 'ADD_FILE'
     | 'UPLOAD_FILES'
+    | 'INSERT_COVER_IMAGE'
+    | 'SET_FILE_PREVIEWS'
     | 'SET_FORM_VALUES'
     | 'SET_NFT_VALUES';
-  payload: File[] | File | String | Array<UploadedFilePin> | NFTFormValue[] | NFTValue[];
+  payload:
+    | File[]
+    | File
+    | FilePreview[]
+    | FilePreview
+    | String
+    | Array<UploadedFilePin>
+    | NFTFormValue[]
+    | NFTValue[]
+    | { coverImage: File; index: number }
+    | { file: File; index: number };
 }
 
 const initialState = (): State => {
   return {
-    images: [],
+    files: [],
     uploadedFiles: [],
+    filePreviews: [],
     formValues: null,
     nftValues: [],
   };
 };
 
-function getFinalFileWithUpdatedName(file: File, numberOfDuplicates: number) {
-  const fileNameParts = file.name.split('.');
-  const extension = fileNameParts.pop();
-  const finalName = fileNameParts.join('.') + '_' + numberOfDuplicates + '.' + extension;
-  return new File([file], finalName, { type: file.type });
-}
-
 function reducer(state: State, action: MintAction) {
   switch (action.type) {
-    case 'SET_IMAGES':
-      return { ...state, images: action.payload as File[] };
-    case 'DELETE_IMAGE':
+    case 'SET_FILES':
+      return { ...state, files: action.payload as File[] };
+    case 'DELETE_FILE':
       return {
         ...state,
-        images: state.images.filter((i) => i.name !== (action.payload as String)),
+        files: state.files.filter((i) => i.name !== (action.payload as String)),
       };
-    case 'ADD_IMAGE':
+    case 'ADD_FILE': {
       const file = action.payload as File;
-      const numberOfDuplicates = state.images.filter((i) => i.name === file.name).length;
+      const numberOfDuplicates = state.files.filter((i) => i.name === file.name).length;
 
-      return state.images.length < 10
+      return state.files.length < 10
         ? {
             ...state,
-            images: [
-              ...state.images,
+            files: [
+              ...state.files,
               numberOfDuplicates > 0 ? getFinalFileWithUpdatedName(file, numberOfDuplicates) : file,
             ],
           }
         : state;
+    }
+    case 'SET_FILE_PREVIEWS':
+      return { ...state, filePreviews: action.payload as FilePreview[] };
+    case 'INSERT_COVER_IMAGE': {
+      const { coverImage, index } = action.payload as { coverImage: File; index: number };
+
+      const copy = { ...state.filePreviews[index], coverImage };
+      const filePreviewsCopy = [...state.filePreviews];
+      filePreviewsCopy[index] = { ...copy };
+      return {
+        ...state,
+        filePreviews: filePreviewsCopy,
+      };
+    }
+
     case 'UPLOAD_FILES':
       return { ...state, uploadedFiles: action.payload as Array<UploadedFilePin> };
     case 'SET_FORM_VALUES':
@@ -156,7 +195,7 @@ export default function BulkUploadWizard() {
   const [form] = useForm();
   const { connect, solana, wallet, storefront } = useContext(WalletContext);
 
-  const { images, formValues } = state;
+  const { files, formValues, filePreviews } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
 
@@ -166,29 +205,80 @@ export default function BulkUploadWizard() {
     }
   }, [wallet, connect]);
 
-  const transformFormVals = (values: NFTFormValue[], filePins: UploadedFilePin[]): NFTValue[] => {
-    return values.map((v, i: number) => {
-      const filePin = filePins[i];
-      return {
-        name: v.name,
-        description: v.description,
-        symbol: '',
-        collection: {
-          name: v.collectionName,
-          family: v.collectionFamily,
-        },
-        seller_fee_basis_points: v.seller_fee_basis_points,
-        image: filePin.uri,
-        files: [{ uri: filePin.uri, type: filePin.type }],
-        attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
-          if (!isNil(a?.trait_type)) {
-            result.push({ trait_type: a.trait_type, value: a.value });
-          }
-          return result;
-        }, []),
-        properties: v.properties,
-      };
-    });
+  const uploadCoverImage = async (file: File) => {
+    const body = new FormData();
+    body.append(file.name, file, file.name);
+
+    try {
+      const resp = await fetch('/api/ipfs/upload', {
+        method: 'POST',
+        body,
+      });
+      const json = await resp.json();
+      if (json) {
+        return json.files[0];
+      }
+    } catch (e) {
+      console.error('Could not upload file', e);
+      throw new Error(e);
+    }
+  };
+
+  const transformFormVals = async (values: NFTFormValue[], filePins: UploadedFilePin[]) => {
+    const resp = await Promise.all(
+      values.map(async (v, i: number) => {
+        const filePin = filePins[i];
+
+        if (!filePin) {
+          throw new Error('No file pin for index ' + i);
+        }
+
+        const category: NFTCategory = detectCategoryByFileExt(filePin.name);
+        const isMultiMedia = category !== 'image';
+
+        let coverImageFile: UploadedFilePin | undefined;
+        if (v.coverImageFile) {
+          coverImageFile = await uploadCoverImage(v.coverImageFile);
+        }
+
+        const files = [{ uri: filePin.uri, type: filePin.type }] as FileOrString[];
+
+        let image = filePin.uri;
+        if (coverImageFile) {
+          files.push({ uri: coverImageFile.uri, type: coverImageFile.type });
+          image = coverImageFile.uri;
+        }
+
+        const properties = { ...v.properties, category, files };
+
+        const res: NFTValue = {
+          name: v.name,
+          description: v.description,
+          symbol: '',
+          seller_fee_basis_points: v.seller_fee_basis_points,
+          image,
+          collection: {
+            name: v.collectionName,
+            family: v.collectionFamily,
+          },
+          attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
+            if (!isNil(a?.trait_type)) {
+              result.push({ trait_type: a.trait_type, value: a.value });
+            }
+            return result;
+          }, []),
+          properties,
+        };
+
+        if (isMultiMedia) {
+          res.animation_url = filePin.uri;
+        }
+
+        return res;
+      })
+    );
+
+    return resp;
   };
 
   const onFinish = (values: FormValues) => {
@@ -196,12 +286,12 @@ export default function BulkUploadWizard() {
     dispatch({ type: 'SET_FORM_VALUES', payload: arrayValues });
   };
 
-  const setNFTValues = (filePins: UploadedFilePin[]) => {
+  const setNFTValues = async (filePins: UploadedFilePin[]) => {
     if (!filePins?.length || !formValues?.length) {
       throw new Error('Either filePins or formValues are not set');
     }
 
-    const nftVals = transformFormVals(formValues, filePins);
+    const nftVals = await transformFormVals(formValues, filePins);
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
   };
@@ -240,7 +330,8 @@ export default function BulkUploadWizard() {
   };
 
   const clearForm = () => {
-    dispatch({ type: 'SET_IMAGES', payload: [] });
+    dispatch({ type: 'SET_FILES', payload: [] });
+    dispatch({ type: 'SET_FILE_PREVIEWS', payload: [] });
     form.resetFields();
   };
 
@@ -251,7 +342,7 @@ export default function BulkUploadWizard() {
     }
   }
 
-  if (!solana || !wallet) {
+  if (!wallet || !solana) {
     return null;
   }
 
@@ -275,24 +366,26 @@ export default function BulkUploadWizard() {
             exitLeft: undefined,
           }}
         >
-          <Upload dispatch={dispatch} images={images} hashKey="upload" />
-          <Verify images={images} dispatch={dispatch} clearForm={clearForm} hashKey="verify" />
+          <Upload dispatch={dispatch} files={files} hashKey="upload" clearForm={clearForm} />
+          <Verify files={files} dispatch={dispatch} clearForm={clearForm} hashKey="verify" />
           {
-            images.map((image, index) => (
+            files.map((file, index) => (
               <InfoScreen
-                images={images}
+                files={files}
+                filePreviews={filePreviews}
                 index={index}
-                currentImage={image}
+                currentFile={file}
                 key={index}
                 form={form}
                 clearForm={clearForm}
-                isLast={index === images.length - 1}
+                isLast={index === files.length - 1}
                 dispatch={dispatch}
               />
             )) as any // Very annoying TS error here only solved by any
           }
           <RoyaltiesCreators
-            images={images}
+            files={files}
+            filePreviews={filePreviews}
             form={form}
             userKey={wallet.pubkey}
             formValues={state.formValues}
@@ -301,13 +394,15 @@ export default function BulkUploadWizard() {
             setDoEachRoyaltyInd={setDoEachRoyaltyInd}
             doEachRoyaltyInd={doEachRoyaltyInd}
             index={0}
+            clearForm={clearForm}
           />
           {doEachRoyaltyInd &&
-            images
+            files
               .slice(1)
               .map((_, index) => (
                 <RoyaltiesCreators
-                  images={images}
+                  files={files}
+                  filePreviews={filePreviews}
                   form={form}
                   userKey={wallet.pubkey}
                   formValues={state.formValues}
@@ -316,21 +411,31 @@ export default function BulkUploadWizard() {
                   index={index + 1}
                   setDoEachRoyaltyInd={setDoEachRoyaltyInd}
                   doEachRoyaltyInd={doEachRoyaltyInd}
+                  clearForm={clearForm}
                 />
               ))}
           <Summary
-            images={images}
+            files={files}
+            filePreviews={filePreviews}
             hashKey="summary"
             dispatch={dispatch}
             form={form}
             formValues={state.formValues}
             setNFTValues={setNFTValues}
+            clearForm={clearForm}
           />
-          <PriceSummary images={images} connection={connection} hashKey="priceSummary" />
-          {images.map((_, index) => (
+          <PriceSummary
+            files={files}
+            filePreviews={filePreviews}
+            connection={connection}
+            hashKey="priceSummary"
+            clearForm={clearForm}
+          />
+          {files.map((_, index) => (
             <MintInProgress
               key={index}
-              images={images}
+              files={files}
+              filePreviews={filePreviews}
               wallet={solana}
               connection={connection}
               uploadMetaData={uploadMetaData}
@@ -338,12 +443,13 @@ export default function BulkUploadWizard() {
               updateNFTValue={updateNFTValue}
               index={index}
               hashKey="mint"
+              clearForm={clearForm}
             />
           ))}
-
           <OffRampScreen
             hashKey="success"
-            images={images}
+            filePreviews={filePreviews}
+            files={files}
             clearForm={clearForm}
             nftValues={state.nftValues}
             storefront={storefront}
