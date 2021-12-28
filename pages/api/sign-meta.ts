@@ -5,31 +5,10 @@ import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { Buffer } from 'buffer';
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextCors from 'nextjs-cors';
+import amqplib from 'amqplib'
+import { signingQueue } from '@/modules/metadata-signing';
 
-/** Adapted from metaplex/js/packages/common/src/actions/metadata.ts */
-function signMetadata(
-  metadata: PublicKey,
-  creator: PublicKey,
-  tx: Transaction,
-  programId: PublicKey
-) {
-  const data = Buffer.from([7]);
 
-  const keys = [
-    {
-      pubkey: metadata,
-      isSigner: false,
-      isWritable: true,
-    },
-    {
-      pubkey: creator,
-      isSigner: true,
-      isWritable: false,
-    },
-  ];
-
-  tx.add(new TransactionInstruction({ keys, programId, data }));
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<object>) {
   await NextCors(req, res, {
@@ -40,7 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     switch (req.method) {
       case 'POST': {
-        const { connection, keypair, endpoint } = await singletons.solana;
         const schemas = singletons.jsonSchemas;
         const validateParams = schemas.validator(SCHEMAS.signMetaParams);
 
@@ -53,46 +31,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           );
         }
 
-        const {
-          solanaEndpoint: clientSolEndpoint,
-          metadata: metadataStr,
-          metaProgramId: metaProgramIdStr,
-        } = params;
-
-        if (!metaProgramIdStr.startsWith('meta')) {
-          throw new ApiError(400, 'Invalid program ID');
-        }
-
-        if (clientSolEndpoint !== endpoint) {
-          throw new ApiError(400, 'Mismatched Solana endpoint');
-        }
-
-        let metadata;
-        let metaProgramId;
-
+        const connection = await amqplib.connect(process.env.CLOUDAMQP_URL || '');
+        const channel = await connection.createChannel()
+        await channel.assertQueue(signingQueue,
+          {
+            durable: true,
+            autoDelete: false,
+            deadLetterExchange: 'DeadLetterExchange',
+            deadLetterRoutingKey: 'dle-key',
+        })
         try {
-          metadata = new PublicKey(metadataStr);
-          metaProgramId = new PublicKey(metaProgramIdStr);
-        } catch {
-          throw new ApiError(400, 'Invalid public keys');
+          channel.sendToQueue(
+            signingQueue,
+            Buffer.from(JSON.stringify(params))
+          )
+        } catch(error) {
+          console.error({ error }, 'error enqueing signing job')
+          throw new ApiError(500, 'Error signing please try again later \n' + error)
         }
 
-        const tx = new Transaction();
-
-        signMetadata(metadata, keypair.publicKey, tx, metaProgramId);
-
-        tx.feePayer = keypair.publicKey;
-        tx.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-
-        const signature = await connection.sendTransaction(tx, [keypair]);
-        const status = (await connection.confirmTransaction(signature)).value;
-        const err = status.err;
-
-        if (err !== null) {
-          throw new ApiError(500, 'Approval transaction failed');
-        }
-
-        return res.status(204).end();
+        return res.status(200).end();
       }
       case 'HEAD':
       case 'OPTIONS':
