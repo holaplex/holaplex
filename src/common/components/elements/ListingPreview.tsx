@@ -49,8 +49,8 @@ const Square = styled(Row)`
   }
 `;
 
-const NFTPreview = styled(Image)<{ show: boolean }>`
-  display: ${({ show }) => (show ? 'block' : 'none')};
+const NFTPreview = styled(Image)<{ $show: boolean }>`
+  display: ${({ $show }) => ($show ? 'block' : 'none')};
   object-fit: cover;
   border-radius: 8px;
   width: 100%;
@@ -288,7 +288,7 @@ export function ListingPreview(listing: Listing) {
         <ListingPreviewContainer>
           <Square>
             <NFTPreview
-              show={inView}
+              $show={inView}
               src={maybeImageCDN(nft?.image || '')}
               preview={{
                 visible: showArtPreview,
