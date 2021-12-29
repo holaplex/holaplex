@@ -45,6 +45,7 @@ import {
   SkeletonListing,
 } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
+import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -300,6 +301,7 @@ interface HomeProps {
 
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
+  const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
   const [allListings, setAllListings] = useState<Listing[]>([]);
@@ -431,8 +433,16 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                     dropdownClassName="select-inline-dropdown"
                     value={filterBy}
                     label="Filter"
-                    onChange={(nextFilter) => {
-                      const filter = nextFilter as FilterOptions;
+                    onChange={(nextFilterBy) => {
+                      const filter = nextFilterBy as FilterOptions;
+                      track('Set Filter', {
+                        event_category: 'discovery',
+                        event_label: filter,
+                        from: filterBy,
+                        to: filter,
+                        sortBy,
+                        nr_of_listings_on_display: displayedListings.length,
+                      });
                       setFilterBy(filter);
                       // only reset sortBy if it does not work in the new filter
                       if (!sortOptions[filter].find((s) => s.key === sortBy)) {
@@ -450,7 +460,15 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                     dropdownClassName="select-inline-dropdown"
                     value={sortBy}
                     onChange={(nextSortBy) => {
-                      const sortBy = nextSortBy as SortOptions;
+                      const sort = nextSortBy as SortOptions;
+                      track('Set Sort', {
+                        event_category: 'discovery',
+                        event_label: sort,
+                        from: sortBy,
+                        to: sort,
+                        filterBy,
+                        nr_of_listings_on_display: displayedListings.length,
+                      });
 
                       setSortBy(sortBy);
                       scrollToListingTop();

@@ -314,6 +314,8 @@ export function ListingPreview({
       ref={cardRef}
       onClick={() => {
         track('Select listing', {
+          event_category: 'discovery',
+          event_label: nftMetadata.name,
           ...meta,
           ...addListingToTrackCall(listing),
         });

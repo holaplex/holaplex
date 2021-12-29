@@ -33,9 +33,9 @@ interface CustomEventDimensions {
   sol_value?: number;
 }
 
-interface TrackingAttributes extends CustomEventDimensions {
-  category?: string;
-  label?: string;
+export interface TrackingAttributes extends CustomEventDimensions {
+  event_category: string;
+  event_label: string;
   value?: number;
   [key: string]: string | number | boolean | any[] | null | undefined;
 }
@@ -77,20 +77,15 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   let solPrice = 0;
 
   function initializeTracking() {
-    console.log('Initialize analytics');
     new Coingecko().getRate([Currency.SOL], Currency.USD).then((rates) => {
       const solRate = rates[0].rate;
       solPrice = solRate;
     });
 
     if (GA4_ID) {
-      const sendPageView = true;
       gtag('config', GA4_ID, {
-        send_page_view: sendPageView,
+        send_page_view: true,
       });
-      if (sendPageView) {
-        console.log('Initial google pageview');
-      }
       setTrackingInitialized(true);
     }
 
@@ -103,20 +98,12 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
           if (pubkey) {
             event.setUser(pubkey);
           }
-          if (false) {
-            // for later inspiration
-            event.addMetadata('company', {
-              name: 'Acme Co.',
-              country: 'uk',
-            });
-          }
         },
       });
     }
   }
 
   function identify() {
-    console.log(pubkey ? 'User identified' : 'No user identified');
     if (pubkey) {
       gtag('set', 'user_properties', {
         user_id: pubkey,
@@ -133,6 +120,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }
 
   function pageview(path: string) {
+    // @ts-ignore
     track('page_view', {
       page_path: path,
     });
@@ -165,11 +153,9 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }, [router.events]);
 
   function track(action: AnalyticsAction, attributes: TrackingAttributes) {
-    const { category, label, value, sol_value, ...otherAttributes } = attributes;
+    const { value, sol_value, ...otherAttributes } = attributes;
 
     const attrs = {
-      event_category: category,
-      event_label: label,
       page_location: window.location.href, // not as useful here as in Metaplex, but probably good to keep for consitency
       page_path: router.pathname,
       ...(sol_value && solPrice
@@ -183,44 +169,8 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       ...otherAttributes,
     };
 
-    console.log('track', action, attrs);
-
     // ga4
     ga4Event(action, attrs);
-  }
-
-  // used to track listings as ecommerce items
-  function trackRecommendedEcommerceEvent(
-    action: GoogleEcommerceEvent,
-    listings: Listing[],
-    attributes: {
-      listId: keyof typeof listNames;
-    }
-  ) {
-    // https://support.google.com/analytics/answer/9267735
-    const aggregateSolValue = listings.reduce((acc, l) => acc + getFormatedListingPrice(l), 0);
-
-    switch (action) {
-      case 'view_item_list':
-        return track(action, {
-          item_list_id: attributes.listId,
-          item_list_name: listNames[attributes.listId],
-          items: addListingsToTrackCall(listings, attributes.listId),
-        });
-      case 'view_item':
-        return track(action, {
-          currency: 'USD',
-          value: aggregateSolValue * solPrice,
-          sol_value: aggregateSolValue,
-          items: addListingsToTrackCall(listings, attributes.listId),
-        });
-      case 'select_item':
-        return track(action, {
-          item_list_id: attributes.listId,
-          item_list_name: listNames[attributes.listId],
-          items: addListingsToTrackCall(listings, attributes.listId),
-        });
-    }
   }
 
   return (
@@ -242,11 +192,6 @@ export function useAnalytics() {
   return context;
 }
 
-const listNames = {
-  featuredListings: 'Featured listings',
-  currentListings: 'Current listings',
-};
-
 // static function to augment track event
 export function addListingToTrackCall(listing: Listing) {
   return {
@@ -264,40 +209,14 @@ export function addListingToTrackCall(listing: Listing) {
   };
 }
 
-function addListingsToTrackCall(listings: Listing[], listId: keyof typeof listNames) {
+function addListingsToTrackCall(listings: Listing[], listId: string) {
   return listings.map((l, i) => ({
     item_id: l.listingAddress,
     item_name: l.items[0]?.name,
     affiliation: l.subdomain,
     index: i,
     item_list_id: listId,
-    item_list_name: listNames[listId],
+    item_list_name: listId,
     ...addListingToTrackCall(l),
   }));
-  // original google recommened event for comparison
-  // gtag('event', action,
-  // [
-  //   {
-  //     item_id: "SKU_12345",
-  //     item_name: "Stan and Friends Tee",
-  //     affiliation: "Google Store",
-  //     coupon: "SUMMER_FUN",
-  //     currency: "USD",
-  //     discount: 2.22,
-  //     index: 5,
-  //     item_brand: "Google",
-  //     item_category: "Apparel",
-  //     item_category2: "Adult",
-  //     item_category3: "Shirts",
-  //     item_category4: "Crew",
-  //     item_category5: "Short sleeve",
-  //     item_list_id: "related_products",
-  //     item_list_name: "Related Products",
-  //     item_variant: "green",
-  //     location_id: "L_12345",
-  //     price: 9.99,
-  //     quantity: 1
-  //   }
-  // ]
-  // });
 }
