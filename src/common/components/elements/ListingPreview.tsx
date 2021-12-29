@@ -121,13 +121,6 @@ function Countdown(props: { endTime: string }) {
 function AuctionCountdown(props: { endTime: string }) {
   const timeDiffMs = DateTime.fromISO(props.endTime).toMillis() - Date.now();
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
-  console.log('time', {
-    timeDiffMs,
-    et: props.endTime,
-    iso: DateTime.fromISO(props.endTime),
-    ms: DateTime.fromISO(props.endTime).toMillis(),
-    lessThanADay,
-  });
 
   if (lessThanADay) {
     // only return the "expensive" Countdown component if required
