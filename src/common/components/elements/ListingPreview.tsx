@@ -111,6 +111,8 @@ function Countdown(props: { endTime: string }) {
     return () => clearTimeout(timer);
   });
 
+  if (timeLeft.valueOf() < 0) return <span></span>;
+
   const format = timeLeft.toFormat('hh:mm:ss');
 
   return <span>{format}</span>;
@@ -118,9 +120,8 @@ function Countdown(props: { endTime: string }) {
 
 function AuctionCountdown(props: { endTime: string }) {
   const timeDiffMs = DateTime.fromISO(props.endTime).toMillis() - Date.now();
-
-  if (timeDiffMs < 0) return <span></span>;
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
+
   if (lessThanADay) {
     // only return the "expensive" Countdown component if required
     return <Countdown endTime={props.endTime} />;
