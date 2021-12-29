@@ -13,9 +13,7 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
-import { AnalyticsProvider } from '@/modules/ganalytics/AnalyticsProvider';
-
-const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+import { AnalyticsProvider, OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Header, Content } = Layout;
 
@@ -37,26 +35,26 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   const track = (category: string, action: string) => {
-    if (isNil(GOOGLE_ANALYTICS_ID)) {
+    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
       return;
     }
 
     window.gtag('event', action, {
       event_category: category,
-      send_to: [GOOGLE_ANALYTICS_ID, 'G-HLNC4C2YKN'],
+      send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
     });
   };
 
   const onRouteChanged = (path: string) => {
-    if (isNil(GOOGLE_ANALYTICS_ID)) {
+    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
       return;
     }
-    // keeping this for now to power old GA endpoint. The new one tracks pageviews automatically
-    window.gtag('config', GOOGLE_ANALYTICS_ID, { page_path: path });
+
+    window.gtag('config', OLD_GOOGLE_ANALYTICS_ID, { page_path: path });
   };
 
   useEffect(() => {
-    if (!process.browser || !GOOGLE_ANALYTICS_ID) {
+    if (!process.browser || !OLD_GOOGLE_ANALYTICS_ID) {
       return;
     }
 

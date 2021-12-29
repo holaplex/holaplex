@@ -2,14 +2,50 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import { PageHeader, List, Space, Row, Col, Typography, ListProps, Carousel, Select, SelectProps } from 'antd';
+import {
+  PageHeader,
+  List,
+  Space,
+  Row,
+  Col,
+  Typography,
+  ListProps,
+  Carousel,
+  Select,
+  SelectProps,
+} from 'antd';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { take, compose, when, add, always, ifElse, filter, concat, not, pipe, is, isNil, prop, descend, ascend, sortWith, equals, map, range } from 'ramda';
+import {
+  take,
+  compose,
+  when,
+  add,
+  always,
+  ifElse,
+  filter,
+  concat,
+  not,
+  pipe,
+  is,
+  isNil,
+  prop,
+  descend,
+  ascend,
+  sortWith,
+  equals,
+  map,
+  range,
+} from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
-import { generateListingShell, ListingPreview, SkeletonListing } from '@/common/components/elements/ListingPreview';
+import {
+  generateListingShell,
+  ListingPreview,
+  SkeletonListing,
+} from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
+import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -63,14 +99,14 @@ const Section = styled(Row)`
 `;
 
 const StorefrontSection = styled(Section)`
-h3 {
+  h3 {
     &.ant-typography {
       margin: 0 0 62px 0;
     }
   }
 `;
 
-const FeaturedStores = styled(List) <ListProps<StorefrontFeature>>`
+const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
   .ant-list-item {
     margin-bottom: 66px !important;
 
@@ -113,14 +149,14 @@ interface SelectInlineProps extends SelectProps<SelectValue> {
   label: string;
 }
 
-const SelectInline = styled(Select) <SelectInlineProps>`
+const SelectInline = styled(Select)<SelectInlineProps>`
   width: 165px;
   font-size: 12px;
   line-height: 12px;
   .ant-select-selection-item {
     &:before {
       color: rgba(255, 255, 255, 0.6);
-      content: "${({ label }) => label}:";
+      content: '${({ label }) => label}:';
       display: block;
       font-size: 14px;
       color: grey;
@@ -146,7 +182,7 @@ const HeroCarousel = styled(Carousel)`
     padding-bottom: 5px;
     border-radius: 100%;
   }
-  
+
   .slick-dots li {
     > button {
       display: block;
@@ -176,26 +212,26 @@ const HeroCol = styled(Col)`
     margin: 0 0 0.5rem 0;
   }
 `;
-enum FilterOptions {
+export enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
-  InstantSale = 'instant_sale'
-};
+  InstantSale = 'instant_sale',
+}
 
-enum SortOptions {
+export enum SortOptions {
   RecentlyAdded = 'recently_added',
   EndingSoonest = 'ending_soonest',
   Expensive = 'expensive',
   Cheapest = 'cheapest',
   BidCount = 'bid_count',
-  Trending = 'trending'
+  Trending = 'trending',
 }
 
 const sortOptions: {
   [key in FilterOptions]: {
     label: string;
-    key: SortOptions
-  }[]
+    key: SortOptions;
+  }[];
 } = {
   all: [
     {
@@ -231,27 +267,23 @@ const isAuction = pipe(prop('endsAt'), is(String));
 
 const currentListingPrice = ifElse(
   isAuction,
-  ifElse(
-    pipe(prop('totalUncancelledBids'), equals(0)),
-    prop('priceFloor'),
-    prop('highestBid'),
-  ),
-  prop('instantSalePrice'),
-)
+  ifElse(pipe(prop('totalUncancelledBids'), equals(0)), prop('priceFloor'), prop('highestBid')),
+  prop('instantSalePrice')
+);
 
 const filters = {
   [FilterOptions.Auctions]: isAuction,
   [FilterOptions.InstantSale]: pipe(isAuction, not),
   [FilterOptions.All]: pipe(always(true)),
-}
+};
 
 const sorts = {
   [SortOptions.EndingSoonest]: [ascend(prop('endsAt')), descend(currentListingPrice)],
   [SortOptions.RecentlyAdded]: [descend(prop('createdAt')), descend(currentListingPrice)],
   [SortOptions.Expensive]: [descend(prop('highestBid')), descend(currentListingPrice)],
   [SortOptions.Cheapest]: [ascend(currentListingPrice), ascend(prop('endsAt'))],
-  [SortOptions.Trending]: [descend(prop('totalUncancelledBids')), ascend(prop('endsAt'))]
-}
+  [SortOptions.Trending]: [descend(prop('totalUncancelledBids')), ascend(prop('endsAt'))],
+};
 
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
@@ -269,10 +301,15 @@ interface HomeProps {
 
 export default function Home({ featuredStorefronts }: HomeProps) {
   const { connect } = useContext(WalletContext);
+  const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
   const [allListings, setAllListings] = useState<Listing[]>([]);
-  const [featuredListings, setFeaturedListings] = useState<Listing[]>(Array(5).fill(null).map((_, i) => generateListingShell(i)));
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>(
+    Array(5)
+      .fill(null)
+      .map((_, i) => generateListingShell(i))
+  );
   const [displayedListings, setDisplayedListings] = useState<Listing[]>([]);
   const [filterBy, setFilterBy] = useState<FilterOptions>(FilterOptions.Auctions);
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
@@ -290,12 +327,12 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     const total = displayedListings.length;
 
     const next = compose(
-      when(next => next > total, always(total)),
-      add(8),
+      when((next) => next > total, always(total)),
+      add(8)
     )(show);
 
     setShow(next);
-  }
+  };
 
   const hasNextPage = show < displayedListings.length;
 
@@ -303,7 +340,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     loading,
     hasNextPage,
     onLoadMore: loadMoreListings,
-    rootMargin: '0px 0px 200px 0px'
+    rootMargin: '0px 0px 200px 0px',
   });
 
   const applyListingFilterAndSort = compose<Listing[], Listing[], Listing[]>(
@@ -353,8 +390,17 @@ export default function Home({ featuredStorefronts }: HomeProps) {
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
-              {featuredListings.map((listing) => (
-                <ListingPreview key={listing.listingAddress} {...listing} />
+              {featuredListings.map((listing, i) => (
+                <ListingPreview
+                  key={listing.listingAddress}
+                  listing={listing}
+                  meta={{
+                    index: i,
+                    list: 'featured-listings',
+                    sortBy: sortBy,
+                    filterBy: filterBy,
+                  }}
+                />
               ))}
             </HeroCarousel>
           </HeroCol>
@@ -387,8 +433,16 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                     dropdownClassName="select-inline-dropdown"
                     value={filterBy}
                     label="Filter"
-                    onChange={(nextFilter) => {
-                      const filter = nextFilter as FilterOptions;
+                    onChange={(nextFilterBy) => {
+                      const filter = nextFilterBy as FilterOptions;
+                      track('Set Filter', {
+                        event_category: 'discovery',
+                        event_label: filter,
+                        from: filterBy,
+                        to: filter,
+                        sortBy,
+                        nr_of_listings_on_display: displayedListings.length,
+                      });
                       setFilterBy(filter);
                       // only reset sortBy if it does not work in the new filter
                       if (!sortOptions[filter].find((s) => s.key === sortBy)) {
@@ -406,26 +460,41 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                     dropdownClassName="select-inline-dropdown"
                     value={sortBy}
                     onChange={(nextSortBy) => {
-                      const sortBy = nextSortBy as SortOptions;
+                      const sort = nextSortBy as SortOptions;
+                      track('Set Sort', {
+                        event_category: 'discovery',
+                        event_label: sort,
+                        from: sortBy,
+                        to: sort,
+                        filterBy,
+                        nr_of_listings_on_display: displayedListings.length,
+                      });
 
                       setSortBy(sortBy);
                       scrollToListingTop();
                     }}
                   >
-                    {sortOptions[filterBy]
-                      .map(({ label, key }) => (
-                        <Option key={key} value={key}>
-                          {label}
-                        </Option>
-                      ))}
+                    {sortOptions[filterBy].map(({ label, key }) => (
+                      <Option key={key} value={key}>
+                        {label}
+                      </Option>
+                    ))}
                   </SelectInline>
                 </Space>,
               ]}
             />
             <Row gutter={24}>
-              {take(show, displayedListings).map((listing: Listing) => (
+              {take(show, displayedListings).map((listing: Listing, i) => (
                 <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
-                  <ListingPreview {...listing} />
+                  <ListingPreview
+                    listing={listing}
+                    meta={{
+                      index: i,
+                      list: 'current-listings',
+                      sortBy: sortBy,
+                      filterBy: filterBy,
+                    }}
+                  />
                 </Col>
               ))}
               {(hasNextPage || loading) && (
