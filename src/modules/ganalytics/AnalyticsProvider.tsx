@@ -34,7 +34,7 @@ interface CustomEventDimensions {
 }
 
 export interface TrackingAttributes extends CustomEventDimensions {
-  event_category: string;
+  event_category: 'storefront' | 'discovery' | 'minter';
   event_label?: string;
   value?: number;
   [key: string]: string | number | boolean | any[] | null | undefined;

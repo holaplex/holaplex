@@ -444,6 +444,7 @@ export default function BulkUploadWizard() {
               index={index}
               hashKey="mint"
               clearForm={clearForm}
+              isLast={index === files.length - 1}
             />
           ))}
           <OffRampScreen

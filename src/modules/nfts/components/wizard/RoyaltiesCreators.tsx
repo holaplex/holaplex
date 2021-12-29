@@ -31,6 +31,7 @@ import {
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import CommunityFundInfo from '@/common/components/presentational/CommunityFundInfo';
 import { isNil } from 'ramda';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const ROYALTIES_INPUT_DEFAULT = 1000;
 const MAX_SUPPLY_ONE_OF_ONE = 0;
@@ -367,6 +368,8 @@ export default function RoyaltiesCreators({
   index,
   isFirst = false,
 }: Props) {
+  const { track } = useAnalytics();
+
   const nftList = form.getFieldsValue(files.map((_, i) => `nft-${i}`)) as FormValues;
   const previousNFT: NFTFormValue | undefined = nftList[`nft-${index - 1}`];
 
@@ -383,6 +386,13 @@ export default function RoyaltiesCreators({
   const [maxSupply, setMaxSupply] = useState<number>(MAX_SUPPLY_ONE_OF_ONE);
   const royaltiesPercentage = royaltiesBasisPoints / 100;
   const royaltiesRef = useRef(royaltiesBasisPoints);
+
+  useEffect(() => {
+    track('Completed Info Step', {
+      event_category: 'minter',
+      nr_of_files: filePreviews.length,
+    });
+  }, []);
 
   useEffect(() => {
     if (formValues) {
