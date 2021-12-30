@@ -423,6 +423,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             setNFTValues={setNFTValues}
             clearForm={clearForm}
+            doEachRoyaltyInd={doEachRoyaltyInd}
           />
           <PriceSummary
             files={files}

@@ -144,9 +144,9 @@ export default function MintInProgress({
     setTransactionStep(TransactionStep.APPROVING);
 
     if (isLast) {
-      track('Mint successful', {
-        event_category: 'minter',
-        items_minted: files.length,
+      track('Mint Successful', {
+        event_category: 'Minter',
+        itemsMinted: files.length,
       });
     }
     nextStep!();
@@ -324,11 +324,11 @@ export default function MintInProgress({
                     <Button
                       type="default"
                       onClick={() => {
-                        track('Skip mint item', {
-                          event_category: 'minter',
-                          failed_at_step: transactionStep,
-                          skip_at_mint_index: index + 1,
-                          total_items: filePreviews.length,
+                        track('Mint item Skipped', {
+                          event_category: 'Minter',
+                          failedAtStep: transactionStep,
+                          skipAtMintIndex: index + 1,
+                          totalItems: filePreviews.length,
                         });
                         handleNext();
                       }}
@@ -341,11 +341,11 @@ export default function MintInProgress({
                   <Button
                     type="primary"
                     onClick={() => {
-                      track('Try minting again', {
-                        event_category: 'minter',
-                        failed_at_step: transactionStep,
-                        failed_at_mint_index: index + 1,
-                        total_items: filePreviews.length,
+                      track('Mint Retry', {
+                        event_category: 'Minter',
+                        failedAtStep: transactionStep,
+                        failedAtMintIndex: index + 1,
+                        totalItems: filePreviews.length,
                       });
 
                       setTransactionStep(

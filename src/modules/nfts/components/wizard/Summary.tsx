@@ -128,6 +128,7 @@ interface Props extends Partial<StepWizardChildProps> {
   formValues: NFTFormValue[] | null;
   setNFTValues: (filePins: UploadedFilePin[]) => void;
   clearForm: () => void;
+  doEachRoyaltyInd: boolean;
 }
 
 export default function Summary({
@@ -140,6 +141,7 @@ export default function Summary({
   formValues,
   clearForm,
   setNFTValues,
+  doEachRoyaltyInd,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFailed, setUploadFailed] = useState(false);
@@ -173,12 +175,17 @@ export default function Summary({
     setIsUploading(true);
     setUploadFailed(false);
     try {
-      track('Confirmed Info and Royalties', {
-        event_category: 'minter',
-        items: formValues?.map((nft) => ({
-          nrOfCreators: nft.properties.creators.length,
-          royaltyPercentage: nft.seller_fee_basis_points,
-        })),
+      const items = formValues?.map((nft) => ({
+        nrOfCreators: nft.properties.creators.length,
+        royaltyPercentage: nft.seller_fee_basis_points,
+        hasDescription: !!nft.description,
+        hasCollection: !!nft.collectionName,
+      }));
+      track('Mint info and royalty Completed', {
+        event_category: 'Minter',
+        totalItems: items?.length,
+        doEachRoyaltyIndividually: doEachRoyaltyInd,
+        items,
       });
 
       const resp = await fetch('/api/ipfs/upload', {

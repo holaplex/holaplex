@@ -86,10 +86,10 @@ export default function PriceSummary({
   }
 
   const handleNext = () => {
-    track('Initialize minting', {
-      event_category: 'minter',
-      minter_sol_balance: solBalanceInLamports,
-      cost_to_mint: totalSolCost,
+    track('Mint price Confirmed', {
+      event_category: 'Minter',
+      userSolBalance: solBalanceInLamports,
+      costToMint: totalSolCost,
       sol_value: totalSolCost,
       hasEnoughSol,
     });
