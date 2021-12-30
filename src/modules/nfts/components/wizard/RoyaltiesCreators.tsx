@@ -388,9 +388,9 @@ export default function RoyaltiesCreators({
   const royaltiesRef = useRef(royaltiesBasisPoints);
 
   useEffect(() => {
-    track('Completed Info Step', {
-      event_category: 'minter',
-      nr_of_files: filePreviews.length,
+    track('Mint info Completed', {
+      event_category: 'Minter',
+      totalItems: filePreviews.length,
     });
   }, []);
 

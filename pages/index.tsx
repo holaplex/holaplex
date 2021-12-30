@@ -435,13 +435,13 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                     label="Filter"
                     onChange={(nextFilterBy) => {
                       const filter = nextFilterBy as FilterOptions;
-                      track('Set Filter', {
-                        event_category: 'discovery',
+                      track('Filter Update', {
+                        event_category: 'Discovery',
                         event_label: filter,
                         from: filterBy,
                         to: filter,
                         sortBy,
-                        nr_of_listings_on_display: displayedListings.length,
+                        nrOfListingsOnDisplay: displayedListings.length,
                       });
                       setFilterBy(filter);
                       // only reset sortBy if it does not work in the new filter
@@ -461,13 +461,13 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                     value={sortBy}
                     onChange={(nextSortBy) => {
                       const sort = nextSortBy as SortOptions;
-                      track('Set Sort', {
-                        event_category: 'discovery',
+                      track('Sort Update', {
+                        event_category: 'Discovery',
                         event_label: sort,
                         from: sortBy,
                         to: sort,
                         filterBy,
-                        nr_of_listings_on_display: displayedListings.length,
+                        nrOfListingsOnDisplay: displayedListings.length,
                       });
 
                       setSortBy(sortBy);

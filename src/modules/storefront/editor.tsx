@@ -197,7 +197,7 @@ export const submitCallback = ({
       onSuccess(domain);
 
       router.push('/').then(() => {
-        track(trackEvent, { event_category: 'storefront' });
+        track(trackEvent, { event_category: 'Storefront' });
       });
     } catch (e) {
       console.error(e);
