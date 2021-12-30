@@ -355,7 +355,7 @@ export function ListingPreview({
               {nftMetadata?.name}
             </ListingTitle>
             <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-              <Price size={15} price={displayPrice} />
+              <Price size={18} price={displayPrice} />
             </h3>
           </Row>
           <Row justify="space-between">

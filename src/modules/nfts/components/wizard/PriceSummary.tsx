@@ -113,7 +113,7 @@ export default function PriceSummary({
             <Paragraph style={{ opacity: 0.6, fontSize: 14 }}>Total:</Paragraph>
             <Col>
               <Row>
-                <Price size={14} price={totalSolCost} />
+                <Price size={18} price={totalSolCost} />
               </Row>
               <Row justify="end">
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
@@ -124,7 +124,7 @@ export default function PriceSummary({
           </Row>
           <Row justify="end">
             {!hasEnoughSol && (
-              <Paragraph style={{ fontSize: 14, color: '#D24040' }}>
+              <Paragraph style={{ fontSize: 18, color: '#D24040' }}>
                 Not enough SOL in this wallet.
               </Paragraph>
             )}

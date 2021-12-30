@@ -22,8 +22,8 @@ const Price = (props: PriceProps) => {
           clipRule: 'evenodd',
           strokeLinejoin: 'round',
           strokeMiterlimit: 2,
-          width: props.size,
-          height: props.size,
+          width: props.size * 0.85,
+          height: props.size * 0.85,
           marginRight: props.size / 3,
         }}
       >
@@ -36,7 +36,7 @@ const Price = (props: PriceProps) => {
           transform="translate(-10120.482 -7732.751) scale(28.2437)"
         />
       </svg>
-      <span>{props.price}</span>
+      <span style={{ fontSize: props.size + 'px' }}>{props.price}</span>
     </PriceWrapper>
   );
 };
