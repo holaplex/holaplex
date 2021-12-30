@@ -68,6 +68,7 @@
     "styled-components": "^5.3.0",
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
+    "ts-node": "^10.4.0",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
@@ -90,7 +91,6 @@
     "husky": "^7.0.2",
     "mocha": "^9.0.1",
     "nodemon": "^2.0.12",
-    "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"
   },
