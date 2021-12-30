@@ -6,6 +6,8 @@ import { DateTime, Duration } from 'luxon';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
+import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
 
 const ListingPreviewContainer = styled(Card)`
@@ -193,7 +195,9 @@ export function SkeletonListing() {
         <Skeleton.Button size="small" active />
       </Row>
       {/* Without this height: 22 there is an annoying height difference between Skeleton and real listing */}
-      <Row justify="space-between" style={{ height: 22 }}>
+      {/* style={{ height: 22 }} */}
+      {/* Well, now it worked again. Maybe it'sa  browser thing */}
+      <Row justify="space-between">
         <Skeleton.Button size="small" active />
         <Skeleton.Button size="small" active />
       </Row>
@@ -242,7 +246,27 @@ export function getListingPrice(listing: Listing) {
   );
 }
 
-export function ListingPreview(listing: Listing) {
+export function getFormatedListingPrice(listing: Listing) {
+  return Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+}
+
+export function lamportToSolIsh(lamports: number | null) {
+  if (!lamports) return null;
+  return Number((lamports * 0.000000001).toFixed(2));
+}
+
+export function ListingPreview({
+  listing,
+  meta,
+}: {
+  listing: Listing;
+  meta: {
+    index: number;
+    list: 'current-listings' | 'featured-listings';
+    sortBy: SortOptions;
+    filterBy: FilterOptions;
+  };
+}) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
 
   // const cardRef = useRef(null);
@@ -250,6 +274,8 @@ export function ListingPreview(listing: Listing) {
   const [cardRef, inView] = useInView({
     threshold: 0,
   });
+
+  const { track } = useAnalytics();
 
   const [showArtPreview, setShowArtPreview] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -276,7 +302,7 @@ export function ListingPreview(listing: Listing) {
   }, [nftMetadata?.uri]);
 
   // shows up to 2 decimals, but removes pointless 0s
-  const displayPrice = Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+  const displayPrice = getFormatedListingPrice(listing);
 
   // no subdomain means it's a shell/skeleton
   if (loading || !listing.subdomain) {
@@ -284,7 +310,17 @@ export function ListingPreview(listing: Listing) {
   }
 
   return (
-    <div ref={cardRef}>
+    <div
+      ref={cardRef}
+      onClick={() => {
+        track('Listing Selected', {
+          event_category: 'Discovery',
+          event_label: nftMetadata.name,
+          ...meta,
+          ...addListingToTrackCall(listing),
+        });
+      }}
+    >
       <a href={storeHref} rel="nofollow noreferrer" target="_blank">
         <ListingPreviewContainer>
           <Square>

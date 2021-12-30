@@ -16,6 +16,7 @@ import {
 import { RcFile } from 'antd/lib/upload';
 import { is3DFile, isImage } from '@/modules/utils/files';
 import VerifyFileUpload from '@/common/components/elements/VerifyFileUpload';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const Header = styled(PageHeader)`
   font-style: normal;
@@ -55,6 +56,8 @@ export default function Verify({
   files,
   clearForm,
 }: Props) {
+  const { track } = useAnalytics();
+
   const handleNext = () => {
     const filePreviews = files.map((file) => {
       let type = file.type;
@@ -70,6 +73,12 @@ export default function Verify({
     });
 
     dispatch({ type: 'SET_FILE_PREVIEWS', payload: filePreviews }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
+
+    track('Mint Initiated', {
+      event_category: 'Minter',
+      totalItems: filePreviews.length,
+    });
+
     nextStep!();
   };
 

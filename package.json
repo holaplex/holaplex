@@ -6,6 +6,7 @@
     "dev": "nodemon",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
+    "consumers:sign-metadata": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./tasks/consumers/sign-metadata.ts",
     "lint": "next lint",
     "db:schema:push": "prisma db push",
     "db:seed": "prisma db seed --preview-feature",
@@ -20,6 +21,8 @@
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.30.0",
     "@aws-sdk/types": "^3.29.0",
+    "@bugsnag/js": "^7.14.1",
+    "@bugsnag/plugin-react": "^7.14.0",
     "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
     "@metaplex/js": "^4.2.0",
@@ -29,7 +32,9 @@
     "@solana/wallet-adapter-react": "^0.13.1",
     "@solana/wallet-adapter-wallets": "^0.11.3",
     "@solana/web3.js": "^1.25.0",
+    "@types/amqplib": "^0.8.2",
     "ajv": "^8.6.2",
+    "amqplib": "^0.8.0",
     "antd": "^4.16.7",
     "antd-mobile": "^2.3.4",
     "arweave": "^1.10.15",
@@ -63,6 +68,7 @@
     "styled-components": "^5.3.0",
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
+    "ts-node": "^10.4.0",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
@@ -85,7 +91,6 @@
     "husky": "^7.0.2",
     "mocha": "^9.0.1",
     "nodemon": "^2.0.12",
-    "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"
   },
