@@ -11,6 +11,7 @@ import { WalletContext } from '@/modules/wallet';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { FilePreview } from 'pages/nfts/new';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const SOL_COST_PER_NFT = 0.01;
 
@@ -61,6 +62,8 @@ export default function PriceSummary({
   const hasEnoughSol =
     (solBalanceInLamports === -1 || solBalanceInLamports) >= totalSolCost * SOL_COST_PER_NFT;
 
+  const { track } = useAnalytics();
+
   useEffect(() => {
     if (wallet) {
       connection
@@ -68,10 +71,6 @@ export default function PriceSummary({
         .then((balance) => setSolBalance(balance / LAMPORTS_PER_SOL));
     }
   }, [wallet, connection]);
-
-  const handleNext = () => {
-    nextStep!();
-  };
 
   useEffect(() => {
     const total = files.length * SOL_COST_PER_NFT;
@@ -85,6 +84,17 @@ export default function PriceSummary({
   if (!wallet) {
     return null;
   }
+
+  const handleNext = () => {
+    track('Initialize minting', {
+      event_category: 'minter',
+      minter_sol_balance: solBalanceInLamports,
+      cost_to_mint: totalSolCost,
+      sol_value: totalSolCost,
+      hasEnoughSol,
+    });
+    nextStep!();
+  };
 
   return (
     <NavContainer

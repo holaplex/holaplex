@@ -5,6 +5,7 @@ import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
 import {
   FieldData,
@@ -48,8 +49,9 @@ const { TabPane } = Tabs;
 
 type TabKey = 'subdomain' | 'theme' | 'meta';
 
-export default function Edit({ track }: StorefrontEditorProps) {
+export default function Edit() {
   const [submitting, setSubmitting] = useState(false);
+  const { track } = useAnalytics();
   const router = useRouter();
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
@@ -117,7 +119,7 @@ export default function Edit({ track }: StorefrontEditorProps) {
           {e && ` (${e})`}
         </>
       ),
-    trackEvent: 'updated',
+    trackEvent: 'Storefront Updated',
   });
 
   const textColor = getTextColor(values.theme.backgroundColor);

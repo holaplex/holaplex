@@ -34,8 +34,8 @@ interface CustomEventDimensions {
 }
 
 export interface TrackingAttributes extends CustomEventDimensions {
-  event_category: string;
-  event_label: string;
+  event_category: 'storefront' | 'discovery' | 'minter';
+  event_label?: string;
   value?: number;
   [key: string]: string | number | boolean | any[] | null | undefined;
 }
@@ -59,8 +59,13 @@ export const ga4Event = (
   });
 };
 
+export type TrackingFunctionSignature = (
+  action: AnalyticsAction,
+  attributes: TrackingAttributes
+) => void;
+
 interface IAnalyticsContext {
-  track: (action: AnalyticsAction, attributes: TrackingAttributes) => void;
+  track: TrackingFunctionSignature;
 }
 
 const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
@@ -120,13 +125,10 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }
 
   function pageview(path: string) {
-    // @ts-ignore
+    // @ts-ignore // need ignore here to enforce event_category and event_label elsewhere
     track('page_view', {
       page_path: path,
     });
-    // ga4Event('page_view', {
-    //   page_path: path,
-    // });
   }
 
   // initialize (goes first no matter what)
