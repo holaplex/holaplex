@@ -341,7 +341,7 @@ export default function MintInProgress({
                   <Button
                     type="primary"
                     onClick={() => {
-                      track('Mint Retry', {
+                      track('Mint item Retried', {
                         event_category: 'Minter',
                         failedAtStep: transactionStep,
                         failedAtMintIndex: index + 1,

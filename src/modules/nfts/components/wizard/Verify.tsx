@@ -74,7 +74,7 @@ export default function Verify({
 
     dispatch({ type: 'SET_FILE_PREVIEWS', payload: filePreviews }); // Set all file types as cover images despite not all types being images, we will detect on display whether to show a placeholder or not
 
-    track('Mint Initialize', {
+    track('Mint Initiated', {
       event_category: 'Minter',
       totalItems: filePreviews.length,
     });
