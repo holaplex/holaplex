@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import SolSymbol from '@/common/components/elements/SolSymbol';
+import Price from '@/common/components/elements/Price';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { Coingecko, Currency } from '@metaplex/js';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
@@ -11,7 +11,6 @@ import { WalletContext } from '@/modules/wallet';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { FilePreview } from 'pages/nfts/new';
-import { Flex } from 'antd-mobile';
 
 const SOL_COST_PER_NFT = 0.01;
 
@@ -101,20 +100,11 @@ export default function PriceSummary({
           </Row>
           <Row>
             <Col style={{ width: '100%' }}>
-              <Row justify="space-between">
-                <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+              <Row justify="space-between" align="middle">
+                <span style={{ fontSize: 14, opacity: 0.6 }}>
                   Estimated network fee x{files.length}
-                </Paragraph>
-                <div
-                  style={{
-                    fontSize: 14,
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginTop: '-0.9rem',
-                  }}
-                >
-                  <SolSymbol size={14} /> <span>{SOL_COST_PER_NFT}</span>
-                </div>
+                </span>
+                <Price size={14} price={SOL_COST_PER_NFT} />
               </Row>
             </Col>
           </Row>
@@ -123,16 +113,7 @@ export default function PriceSummary({
             <Paragraph style={{ opacity: 0.6, fontSize: 14 }}>Total:</Paragraph>
             <Col>
               <Row>
-                <div
-                  style={{
-                    fontSize: 18,
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginTop: '-0.25rem',
-                  }}
-                >
-                  <SolSymbol size={18} /> {totalSolCost}
-                </div>
+                <Price size={14} price={totalSolCost} />
               </Row>
               <Row justify="end">
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
