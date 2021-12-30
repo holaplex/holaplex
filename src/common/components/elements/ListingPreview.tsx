@@ -9,6 +9,7 @@ import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
+import SolSymbol from './SolSymbol';
 
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
@@ -354,7 +355,7 @@ export function ListingPreview({
               {nftMetadata?.name}
             </ListingTitle>
             <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-              <span className="sol-icon">◎</span>
+              <SolSymbol size={15} />
               {displayPrice}
             </h3>
           </Row>
