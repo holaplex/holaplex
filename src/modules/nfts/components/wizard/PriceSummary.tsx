@@ -124,7 +124,7 @@ export default function PriceSummary({
           </Row>
           <Row justify="end">
             {!hasEnoughSol && (
-              <Paragraph style={{ fontSize: 18, color: '#D24040' }}>
+              <Paragraph style={{ fontSize: 14, color: '#D24040' }}>
                 Not enough SOL in this wallet.
               </Paragraph>
             )}
