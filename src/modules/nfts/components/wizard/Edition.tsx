@@ -7,12 +7,6 @@ import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
 import { Radio } from 'antd';
 
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  index: number;
-  form: FormInstance;
-}
-
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -53,13 +47,24 @@ const ButtonFormItem = styled(Form.Item)`
   }
 `;
 
-export default function Edition({ previousStep, goToStep, images, nextStep, form }: Props) {
+interface Props extends Partial<StepWizardChildProps> {
+  images: Array<File>;
+  index: number;
+  clearForm: () => void;
+}
+
+export default function Edition({ previousStep, goToStep, images, nextStep, clearForm }: Props) {
   const handleNext = () => {
     nextStep!();
   };
 
   return (
-    <NavContainer title="Edition" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Edition"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Row>
         <FormWrapper>
           <Form.Item name="edition">

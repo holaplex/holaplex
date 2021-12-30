@@ -5,16 +5,14 @@ import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
-import { NFTAttribute, MintDispatch, NFTFormValue, UploadedFilePin } from 'pages/nfts/new';
+import {
+  NFTAttribute,
+  MintDispatch,
+  NFTFormValue,
+  UploadedFilePin,
+  FilePreview,
+} from 'pages/nfts/new';
 import { Spinner } from '@/common/components/elements/Spinner';
-
-interface Props extends Partial<StepWizardChildProps> {
-  images: Array<File>;
-  dispatch: MintDispatch;
-  form: FormInstance;
-  formValues: NFTFormValue[] | null;
-  setNFTValues: (filePins: UploadedFilePin[]) => void;
-}
 
 const Grid = styled.div`
   display: grid;
@@ -56,17 +54,17 @@ const Attribute = styled(Space)`
 `;
 const SummaryItem = ({
   value,
-  image,
+  filePreview,
   showRoyaltyPercentage,
   showCreatorCount,
 }: {
   value: NFTFormValue;
-  image: File;
+  filePreview: FilePreview;
   showRoyaltyPercentage: boolean;
   showCreatorCount: boolean;
 }) => {
-  if (!image) {
-    throw new Error('Image is required');
+  if (!filePreview) {
+    throw new Error('filePreview is required');
   }
 
   return (
@@ -74,11 +72,11 @@ const SummaryItem = ({
       <Image
         width={245}
         height={245}
-        src={URL.createObjectURL(image)}
+        src={URL.createObjectURL(filePreview.coverImage)}
         objectFit="cover"
-        alt={image.name}
+        alt={filePreview.file.name}
         unoptimized={true}
-        key={image.name}
+        key={filePreview.file.name}
       />
       <Title level={4} style={{ marginBottom: 3 }}>
         {value.name}
@@ -120,13 +118,26 @@ const SummaryItem = ({
     </StyledSummaryItem>
   );
 };
+
+interface Props extends Partial<StepWizardChildProps> {
+  files: Array<File>;
+  filePreviews: Array<FilePreview>;
+  dispatch: MintDispatch;
+  form: FormInstance;
+  formValues: NFTFormValue[] | null;
+  setNFTValues: (filePins: UploadedFilePin[]) => void;
+  clearForm: () => void;
+}
+
 export default function Summary({
   previousStep,
   goToStep,
-  images,
+  files,
+  filePreviews,
   nextStep,
   dispatch,
   formValues,
+  clearForm,
   setNFTValues,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
@@ -135,7 +146,7 @@ export default function Summary({
   const upload = async () => {
     const body = new FormData();
 
-    images.forEach((i) => body.append(i.name, i, i.name));
+    files.forEach((i) => body.append(i.name, i, i.name));
 
     setIsUploading(true);
     setUploadFailed(false);
@@ -179,7 +190,12 @@ export default function Summary({
   if (!formValues) return null;
 
   return (
-    <NavContainer title="Summary" previousStep={previousStep} goToStep={goToStep}>
+    <NavContainer
+      title="Summary"
+      previousStep={previousStep}
+      goToStep={goToStep}
+      clearForm={clearForm}
+    >
       <Header>Do these look right?</Header>
       <Button
         onClick={upload}
@@ -195,11 +211,11 @@ export default function Summary({
         <Grid>
           {formValues.map(
             (fv: NFTFormValue, index: number) =>
-              images[index] && (
+              filePreviews[index] && (
                 <SummaryItem
                   key={fv.name}
                   value={fv}
-                  image={images[index]}
+                  filePreview={filePreviews[index]}
                   showRoyaltyPercentage={showRoyaltyPercentage}
                   showCreatorCount={showCreatorCount}
                 />

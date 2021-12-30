@@ -35,7 +35,7 @@ const FontSelect = (props: Props) => {
   const { value, onChange } = props;
 
   return (
-    <StyledSelect value={value} onChange={onChange}>
+    <StyledSelect value={value} onChange={onChange} size="large">
       {availableFonts.map((font): React.ReactElement => {
         const fontId = getFontId(font);
         return (

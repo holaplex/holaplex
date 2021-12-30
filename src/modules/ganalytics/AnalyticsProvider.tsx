@@ -1,19 +1,31 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
-import { Listing } from '@/common/components/elements/ListingPreview';
+import Bugsnag from '@bugsnag/js';
+import BugsnagPluginReact from '@bugsnag/plugin-react';
 
-export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || 'G-HLNC4C2YKN';
+import { Listing } from '@/modules/indexer';
+import { useRouter } from 'next/router';
+import {
+  getFormatedListingPrice,
+  lamportToSolIsh,
+} from '@/common/components/elements/ListingPreview';
+
+export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
+const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
 
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
+type AnalyticsAction = GoogleEcommerceEvent | GoogleRecommendedEvent | string; // TODO: will remove string in future
 
 interface AnalyticsUserProperties {
   // user dimensions
   user_id: string; // google reserved
   pubkey: string; // same as user_id, but for use in custom reports
 }
+
 interface CustomEventDimensions {
   // event dimensions
   // network: string; // mainnet, devnet, etc.
@@ -21,87 +33,131 @@ interface CustomEventDimensions {
   sol_value?: number;
 }
 
-const AnalyticsContext = React.createContext<{
-  configureAnalytics: (options: CustomEventDimensions) => void;
-  pageview: (path: string) => void;
-  track: (action: string, attributes: { [key: string]: any }) => void;
-} | null>(null);
+export interface TrackingAttributes extends CustomEventDimensions {
+  event_category: string;
+  event_label: string;
+  value?: number;
+  [key: string]: string | number | boolean | any[] | null | undefined;
+}
+
+export const ga4Event = (
+  action: Gtag.EventNames | AnalyticsAction,
+  {
+    event_category,
+    event_label,
+    value,
+    page_path,
+    ...otherAttributes
+  }: Gtag.EventParams & { page_path: string; [key: string]: any }
+) => {
+  window.gtag('event', action, {
+    event_category,
+    event_label,
+    value,
+    page_path,
+    ...otherAttributes,
+  });
+};
+
+interface IAnalyticsContext {
+  track: (action: AnalyticsAction, attributes: TrackingAttributes) => void;
+}
+
+const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
 
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
-  // @ts-ignore
-  let gtag: any;
-  let solPrice = 0;
-
-  //   const endpointName = ENDPOINTS.find((e) => e.endpoint === endpoint)?.name;
+  const router = useRouter();
+  const [trackingInitialized, setTrackingInitialized] = useState(true);
+  const [trackingAccepted, setTrackingAccepted] = useState(true);
   const { wallet } = useContext(WalletContext);
   const pubkey = wallet?.pubkey || '';
   // const pubkey = publicKey?.toBase58() || '';
-  useEffect(() => {
-    return
-    gtag = window?.gtag;
-    // const isStoreOwner = ownerAddress === publicKey?.toBase58();
-    // user pubkey / id
+  // const endpointName = ENDPOINTS.find((e) => e.endpoint === endpoint)?.name;
 
-    setUserProperties({
-      user_id: pubkey,
-      pubkey: pubkey,
-    });
+  let solPrice = 0;
+
+  function initializeTracking() {
     new Coingecko().getRate([Currency.SOL], Currency.USD).then((rates) => {
       const solRate = rates[0].rate;
       solPrice = solRate;
     });
 
-    try {
-    } catch (error) {}
+    if (GA4_ID) {
+      gtag('config', GA4_ID, {
+        send_page_view: true,
+      });
+      setTrackingInitialized(true);
+    }
 
-    // initial config
-    configureAnalytics({
-      //   network: endpointName,
-    });
-  }, [
-    pubkey,
-    // endpointName
-  ]);
-
-  function setUserProperties(attributes: AnalyticsUserProperties) {
-    gtag('set', 'user_properties', {
-      ...attributes,
-    });
+    if (BUGSNAG_API_KEY) {
+      Bugsnag.start({
+        appVersion: '0.1.0', // TODO: Link to app version
+        apiKey: BUGSNAG_API_KEY,
+        plugins: [new BugsnagPluginReact()],
+        onError(event) {
+          if (pubkey) {
+            event.setUser(pubkey);
+          }
+        },
+      });
+    }
   }
 
-  function configureAnalytics(options: Partial<CustomEventDimensions>) {
-    if (!gtag) return;
-    gtag('config', GOOGLE_ANALYTICS_ID, {
-      ...options,
-      send_page_view: false,
+  function identify() {
+    if (pubkey) {
+      gtag('set', 'user_properties', {
+        user_id: pubkey,
+        pubkey: pubkey,
+      });
+    }
+  }
+
+  function resetTracking() {
+    gtag('set', 'user_properties', {
+      user_id: '',
+      pubkey: '',
     });
   }
 
   function pageview(path: string) {
-    // Use this only for virtual pageviews, regular ones we get from
-    //  GA4 Enhanced page tracking
-    if (!gtag) return;
+    // @ts-ignore
     track('page_view', {
-      path,
+      page_path: path,
     });
+    // ga4Event('page_view', {
+    //   page_path: path,
+    // });
   }
 
-  function track(
-    action: string,
-    attributes: {
-      category?: string;
-      label?: string;
-      value?: number;
-      sol_value?: number;
-      [key: string]: string | number | undefined;
-    } & Partial<CustomEventDimensions> = {}
-  ) {
-    if (!gtag) return;
-    const { category, label, sol_value, value, ...otherAttributes } = attributes;
-    gtag('event', action, {
-      event_category: category,
-      event_label: label,
+  // initialize (goes first no matter what)
+  useEffect(() => {
+    if (trackingAccepted) {
+      initializeTracking();
+    } else {
+      resetTracking();
+    }
+  }, [trackingAccepted]);
+
+  useEffect(() => {
+    identify();
+  }, [pubkey]);
+
+  // don't entiery trust google to track route changes
+  // PS: This does not conflict with the event listner in _app because it is a different function
+  useEffect(() => {
+    router.events.on('routeChangeComplete', pageview);
+
+    return () => {
+      router.events.off('routeChangeComplete', pageview);
+    };
+  }, [router.events]);
+
+  function track(action: AnalyticsAction, attributes: TrackingAttributes) {
+    const { value, sol_value, ...otherAttributes } = attributes;
+
+    const attrs = {
       page_location: window.location.href, // not as useful here as in Metaplex, but probably good to keep for consitency
+      page_path: router.pathname,
       ...(sol_value && solPrice
         ? {
             value: sol_value * solPrice, //Google Analytics likes this one in USD :)
@@ -111,68 +167,16 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
             value,
           }),
       ...otherAttributes,
-    });
-  }
+    };
 
-  // used to track listings as ecommerce items
-  function trackEcommerce(action: GoogleEcommerceEvent, listings: Listing[]) {
-    gtag('event', action, {
-      currency: 'USD',
-      value: 7.77,
-      // sol_value:
-      // items: listings.map(l => ({
-      //     item_id: "SKU_12345",
-      //      item_name: "Stan and Friends Tee",
-      //      affiliation: "Google Store",
-      //      coupon: "SUMMER_FUN",
-      //      currency: "USD",
-      //      discount: 2.22,
-      //      index: 5,
-      //      item_brand: "Google",
-      //      item_category: "Apparel",
-      //      item_category2: "Adult",
-      //      item_category3: "Shirts",
-      //      item_category4: "Crew",
-      //      item_category5: "Short sleeve",
-      //      item_list_id: "related_products",
-      //      item_list_name: "Related Products",
-      //      item_variant: "green",
-      //      location_id: "L_12345",
-      //      price: 9.99,
-      //      quantity: 1
-      // }))
-      // [
-      //   {
-      //     item_id: "SKU_12345",
-      //     item_name: "Stan and Friends Tee",
-      //     affiliation: "Google Store",
-      //     coupon: "SUMMER_FUN",
-      //     currency: "USD",
-      //     discount: 2.22,
-      //     index: 5,
-      //     item_brand: "Google",
-      //     item_category: "Apparel",
-      //     item_category2: "Adult",
-      //     item_category3: "Shirts",
-      //     item_category4: "Crew",
-      //     item_category5: "Short sleeve",
-      //     item_list_id: "related_products",
-      //     item_list_name: "Related Products",
-      //     item_variant: "green",
-      //     location_id: "L_12345",
-      //     price: 9.99,
-      //     quantity: 1
-      //   }
-      // ]
-    });
+    // ga4
+    ga4Event(action, attrs);
   }
 
   return (
     <AnalyticsContext.Provider
       value={{
-        configureAnalytics,
         track,
-        pageview,
       }}
     >
       {props.children}
@@ -186,4 +190,33 @@ export function useAnalytics() {
     throw new Error('useAnalytics must be used within an AnalyticsProvider');
   }
   return context;
+}
+
+// static function to augment track event
+export function addListingToTrackCall(listing: Listing) {
+  return {
+    listing_address: listing.listingAddress,
+    created_at: listing.createdAt,
+    ended: listing.ended,
+    highest_bid: lamportToSolIsh(listing.highestBid),
+    nr_of_bids: listing.totalUncancelledBids,
+    last_bid_time: listing.lastBidTime,
+    price: getFormatedListingPrice(listing),
+    is_buy_now: !listing.endsAt,
+    is_auction: !!listing.endsAt,
+    listing_category: !listing.endsAt ? 'buy_now' : 'auction',
+    subdomain: listing.subdomain,
+  };
+}
+
+function addListingsToTrackCall(listings: Listing[], listId: string) {
+  return listings.map((l, i) => ({
+    item_id: l.listingAddress,
+    item_name: l.items[0]?.name,
+    affiliation: l.subdomain,
+    index: i,
+    item_list_id: listId,
+    item_list_name: listId,
+    ...addListingToTrackCall(l),
+  }));
 }

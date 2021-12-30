@@ -1,63 +1,14 @@
-import { Storefront } from '@/modules/storefront/types';
+import React, { useRef } from 'react';
 import { Skeleton, Card, Row, Image, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
-import { ZoomInOutlined } from '@ant-design/icons';
+import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
+import { useInView } from 'react-intersection-observer';
+import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
-
-interface Creator {
-  address: string;
-  verified?: boolean;
-  share: number;
-}
-
-interface Bid {
-  canceled: boolean;
-  last_amount: number;
-  last_changed_at: string; // ISO Date
-}
-
-interface Item {
-  metadataAddress: string;
-  name: string;
-  uri: string;
-}
-
-interface NFTMetadata {
-  description: string;
-  external_url: string;
-  image: string; // url to image, often ipfs, sometimes arweave
-  name: string;
-  seller_fee_basis_points: number; // in thousands. Prbably need to divide by 100
-  symbol: string;
-  properties: {
-    category: 'image' | string;
-    creators: Creator[];
-    files: {
-      type: 'image/gif' | string;
-      uri: string; // arweave URI
-    }[];
-  };
-}
-
-export interface Listing {
-  createdAt: string; // ISO(ish) Date "2021-12-01 03:59:45"
-  ended: boolean;
-  endsAt: string | null; // ISO(ish) Date
-  highestBid: number | null;
-  instantSalePrice?: number | null; // is often 10000000000
-  items: Item[]; // NFT metadata, including URI to fetch more data
-  lastBidTime: string | null; // ISO(ish) Date
-  listingAddress: string; // uuid of listing
-  priceFloor: number | null;
-  storeTitle: string;
-  subdomain: string;
-  totalUncancelledBids?: number | null;
-  // would neeed to store listings in an object to make this performant in state management. Better to just reload it pr mount for now.
-  // nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
-}
 
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
@@ -100,7 +51,8 @@ const Square = styled(Row)`
   }
 `;
 
-const NFTPreview = styled(Image)`
+const NFTPreview = styled(Image)<{ $show: boolean }>`
+  display: ${({ $show }) => ($show ? 'block' : 'none')};
   object-fit: cover;
   border-radius: 8px;
   width: 100%;
@@ -144,9 +96,8 @@ const ListingSubTitle = styled(Text)`
 `;
 
 function calculateTimeLeft(endTime: string) {
-  // this is surprisingly performant
-  let now = DateTime.utc();
-  let end = DateTime.fromFormat(endTime, 'yyyy-MM-dd hh:mm:ss'); // Should be UTC
+  let now = DateTime.local();
+  let end = DateTime.fromISO(endTime);
 
   return Duration.fromObject(end.diff(now).toObject());
 }
@@ -162,19 +113,17 @@ function Countdown(props: { endTime: string }) {
     return () => clearTimeout(timer);
   });
 
-  // nasty hotfix TODO: Fix
-  const format = timeLeft.plus({ hours: 1 }).toFormat('hh:mm:ss');
+  if (timeLeft.valueOf() < 0) return <span></span>;
+
+  const format = timeLeft.toFormat('hh:mm:ss');
 
   return <span>{format}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
-  //const t = DateTime.fromFormat(props.endTime, 'YYYY-MM-DD HH:mm:SS').toMillis();
-  const timeDiffMs =
-    DateTime.fromFormat(props.endTime, 'yyyy-MM-dd hh:mm:ss').toMillis() - Date.now();
-
-  if (timeDiffMs < 0) return <span></span>;
+  const timeDiffMs = DateTime.fromISO(props.endTime).toMillis() - Date.now();
   const lessThanADay = timeDiffMs < 86400000; // one day in ms
+
   if (lessThanADay) {
     // only return the "expensive" Countdown component if required
     return <Countdown endTime={props.endTime} />;
@@ -208,12 +157,12 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   }
 `;
 
-export function generateListingShell(id: string): Listing {
+export function generateListingShell(id: number): Listing {
   const now = new Date().toISOString();
   const nextWeek = new Date(now).toISOString();
 
   return {
-    listingAddress: id,
+    listingAddress: id + '',
     highestBid: 0,
     lastBidTime: null,
     priceFloor: 0,
@@ -242,12 +191,15 @@ export function SkeletonListing() {
         <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
       </Square>
       <Row justify="space-between">
-        <Skeleton.Button size={'small'} active />
-        <Skeleton.Button size={'small'} active />
+        <Skeleton.Button size="small" active />
+        <Skeleton.Button size="small" active />
       </Row>
+      {/* Without this height: 22 there is an annoying height difference between Skeleton and real listing */}
+      {/* style={{ height: 22 }} */}
+      {/* Well, now it worked again. Maybe it'sa  browser thing */}
       <Row justify="space-between">
-        <Skeleton.Button size={'small'} active />
-        <Skeleton.Button size={'small'} active />
+        <Skeleton.Button size="small" active />
+        <Skeleton.Button size="small" active />
       </Row>
     </ListingPreviewContainer>
   );
@@ -294,10 +246,39 @@ export function getListingPrice(listing: Listing) {
   );
 }
 
-export function ListingPreview(listing: Listing) {
-  const storeHref = `https://${listing?.subdomain}.holaplex.com/#/auction/${listing.listingAddress}`;
+export function getFormatedListingPrice(listing: Listing) {
+  return Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+}
+
+export function lamportToSolIsh(lamports: number | null) {
+  if (!lamports) return null;
+  return Number((lamports * 0.000000001).toFixed(2));
+}
+
+export function ListingPreview({
+  listing,
+  meta,
+}: {
+  listing: Listing;
+  meta: {
+    index: number;
+    list: 'current-listings' | 'featured-listings';
+    sortBy: SortOptions;
+    filterBy: FilterOptions;
+  };
+}) {
+  const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
+
+  // const cardRef = useRef(null);
+  // const { inViewport } = useInViewport(cardRef);
+  const [cardRef, inView] = useInView({
+    threshold: 0,
+  });
+
+  const { track } = useAnalytics();
 
   const [showArtPreview, setShowArtPreview] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
@@ -306,33 +287,46 @@ export function ListingPreview(listing: Listing) {
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
       const res = await fetch(maybeCDN(nftMetadata.uri));
+
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
-        // console.log({
-        //   name: nftJson.name,
-        //   ...listing,
-        //   nftJson,
-        // });
+        setLoading(false);
       }
     }
-
-    if (nftMetadata?.uri) {
-      fetchNFTDataFromIPFS();
+    if (!nftMetadata?.uri) {
+      return;
     }
-  }, [nftMetadata]);
+
+    fetchNFTDataFromIPFS();
+  }, [nftMetadata?.uri]);
 
   // shows up to 2 decimals, but removes pointless 0s
-  const displayPrice = Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+  const displayPrice = getFormatedListingPrice(listing);
+
+  // no subdomain means it's a shell/skeleton
+  if (loading || !listing.subdomain) {
+    return <SkeletonListing />;
+  }
+
   return (
-    <a href={storeHref} rel="nofollow noreferrer" target="_blank">
-      <ListingPreviewContainer>
-        <Square>
-          {!nft?.image ? (
-            <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
-          ) : (
+    <div
+      ref={cardRef}
+      onClick={() => {
+        track('Select listing', {
+          event_category: 'discovery',
+          event_label: nftMetadata.name,
+          ...meta,
+          ...addListingToTrackCall(listing),
+        });
+      }}
+    >
+      <a href={storeHref} rel="nofollow noreferrer" target="_blank">
+        <ListingPreviewContainer>
+          <Square>
             <NFTPreview
-              src={maybeImageCDN(nft?.image)}
+              $show={inView}
+              src={maybeImageCDN(nft?.image || '')}
               preview={{
                 visible: showArtPreview,
                 mask: (
@@ -354,45 +348,45 @@ export function ListingPreview(listing: Listing) {
               alt={nftMetadata?.name + ' preview'}
               fallback={NFTFallbackImage}
             />
-          )}
-        </Square>
-        <Row justify="space-between" align="middle" wrap={false}>
-          <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
-            {nftMetadata?.name}
-          </ListingTitle>
-          <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-            <span className="sol-icon">◎</span>
-            {displayPrice}
-          </h3>
-        </Row>
-        <Row justify="space-between">
-          <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
-            {listing.storeTitle}
-          </ListingSubTitle>
-          {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
-        </Row>
-        {isDev && (
-          <Row justify="space-between" wrap={false}>
-            <span
-              style={{
-                fontSize: 14,
-                opacity: 0.6,
-              }}
-            >
-              Listed {listing.createdAt.slice(5, 16)}
-            </span>
-            <span
-              style={{
-                fontSize: 14,
-                opacity: 0.6,
-              }}
-            >
-              Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
-            </span>
+          </Square>
+          <Row justify="space-between" align="middle" wrap={false}>
+            <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
+              {nftMetadata?.name}
+            </ListingTitle>
+            <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
+              <span className="sol-icon">◎</span>
+              {displayPrice}
+            </h3>
           </Row>
-        )}
-      </ListingPreviewContainer>
-    </a>
+          <Row justify="space-between">
+            <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
+              {listing.storeTitle}
+            </ListingSubTitle>
+            {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
+          </Row>
+          {isDev && (
+            <Row justify="space-between" wrap={false}>
+              <span
+                style={{
+                  fontSize: 14,
+                  opacity: 0.6,
+                }}
+              >
+                Listed {listing.createdAt.slice(5, 16)}
+              </span>
+              <span
+                style={{
+                  fontSize: 14,
+                  opacity: 0.6,
+                }}
+              >
+                Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
+              </span>
+            </Row>
+          )}
+        </ListingPreviewContainer>
+      </a>
+    </div>
   );
 }
 
