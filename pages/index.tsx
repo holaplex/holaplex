@@ -470,7 +470,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
                         nrOfListingsOnDisplay: displayedListings.length,
                       });
 
-                      setSortBy(sortBy);
+                      setSortBy(sort);
                       scrollToListingTop();
                     }}
                   >
