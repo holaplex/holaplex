@@ -423,6 +423,7 @@ export default function BulkUploadWizard() {
             formValues={state.formValues}
             setNFTValues={setNFTValues}
             clearForm={clearForm}
+            doEachRoyaltyInd={doEachRoyaltyInd}
           />
           <PriceSummary
             files={files}
@@ -444,6 +445,7 @@ export default function BulkUploadWizard() {
               index={index}
               hashKey="mint"
               clearForm={clearForm}
+              isLast={index === files.length - 1}
             />
           ))}
           <OffRampScreen

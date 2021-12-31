@@ -313,8 +313,8 @@ export function ListingPreview({
     <div
       ref={cardRef}
       onClick={() => {
-        track('Select listing', {
-          event_category: 'discovery',
+        track('Listing Selected', {
+          event_category: 'Discovery',
           event_label: nftMetadata.name,
           ...meta,
           ...addListingToTrackCall(listing),

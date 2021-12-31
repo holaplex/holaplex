@@ -16,6 +16,7 @@ import { NFTPreviewGrid } from '@/common/components/elements/NFTPreviewGrid';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import styled from 'styled-components';
 import BN from 'bn.js';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const { mintNFT } = actions;
 
@@ -98,6 +99,7 @@ interface Props extends Partial<StepWizardChildProps> {
   connection: Connection;
   nftValues: NFTValue[];
   index: number;
+  isLast: boolean;
   updateNFTValue: (value: NFTValue, index: number) => void;
   uploadMetaData: (value: NFTValue) => Promise<UploadedFilePin>;
   clearForm: () => void;
@@ -117,9 +119,13 @@ export default function MintInProgress({
   clearForm,
   connection,
   index,
+  isLast,
 }: Props) {
   const [transactionStep, setTransactionStep] = useState(TransactionStep.META_DATA_UPLOADING);
   const [mintResp, setMintResp] = useState<MintNFTResponse | null>(null);
+
+  const { track } = useAnalytics();
+
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
     transactionStep === TransactionStep.APPROVAL_FAILED ||
@@ -136,6 +142,13 @@ export default function MintInProgress({
     updateNFTValue(updatedValue, index);
 
     setTransactionStep(TransactionStep.APPROVING);
+
+    if (isLast) {
+      track('Mint Successful', {
+        event_category: 'Minter',
+        itemsMinted: files.length,
+      });
+    }
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
@@ -310,7 +323,15 @@ export default function MintInProgress({
                   {transactionStep !== TransactionStep.SIGNING_FAILED && (
                     <Button
                       type="default"
-                      onClick={handleNext}
+                      onClick={() => {
+                        track('Mint item Skipped', {
+                          event_category: 'Minter',
+                          failedAtStep: transactionStep,
+                          skipAtMintIndex: index + 1,
+                          totalItems: filePreviews.length,
+                        });
+                        handleNext();
+                      }}
                       style={{ background: 'rgba(53, 53, 53, 1)' }}
                     >
                       Skip
@@ -319,13 +340,20 @@ export default function MintInProgress({
 
                   <Button
                     type="primary"
-                    onClick={() =>
+                    onClick={() => {
+                      track('Mint item Retried', {
+                        event_category: 'Minter',
+                        failedAtStep: transactionStep,
+                        failedAtMintIndex: index + 1,
+                        totalItems: filePreviews.length,
+                      });
+
                       setTransactionStep(
                         transactionStep === TransactionStep.SIGNING_FAILED
                           ? TransactionStep.SIGNING
                           : TransactionStep.APPROVING
-                      )
-                    }
+                      );
+                    }}
                   >
                     Try Again
                   </Button>

@@ -34,8 +34,8 @@ interface CustomEventDimensions {
 }
 
 export interface TrackingAttributes extends CustomEventDimensions {
-  event_category: string;
-  event_label: string;
+  event_category: 'Storefront' | 'Discovery' | 'Minter';
+  event_label?: string;
   value?: number;
   [key: string]: string | number | boolean | any[] | null | undefined;
 }
@@ -59,8 +59,13 @@ export const ga4Event = (
   });
 };
 
+export type TrackingFunctionSignature = (
+  action: AnalyticsAction,
+  attributes: TrackingAttributes
+) => void;
+
 interface IAnalyticsContext {
-  track: (action: AnalyticsAction, attributes: TrackingAttributes) => void;
+  track: TrackingFunctionSignature;
 }
 
 const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
@@ -120,13 +125,10 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }
 
   function pageview(path: string) {
-    // @ts-ignore
+    // @ts-ignore // need ignore here to enforce event_category and event_label elsewhere
     track('page_view', {
       page_path: path,
     });
-    // ga4Event('page_view', {
-    //   page_path: path,
-    // });
   }
 
   // initialize (goes first no matter what)
@@ -153,24 +155,28 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }, [router.events]);
 
   function track(action: AnalyticsAction, attributes: TrackingAttributes) {
-    const { value, sol_value, ...otherAttributes } = attributes;
+    try {
+      const { value, sol_value, ...otherAttributes } = attributes;
 
-    const attrs = {
-      page_location: window.location.href, // not as useful here as in Metaplex, but probably good to keep for consitency
-      page_path: router.pathname,
-      ...(sol_value && solPrice
-        ? {
-            value: sol_value * solPrice, //Google Analytics likes this one in USD :)
-            sol_value: sol_value,
-          }
-        : {
-            value,
-          }),
-      ...otherAttributes,
-    };
+      const attrs = {
+        page_location: window.location.href, // not as useful here as in Metaplex, but probably good to keep for consitency
+        page_path: router.pathname,
+        ...(sol_value && solPrice
+          ? {
+              value: sol_value * solPrice, //Google Analytics likes this one in USD :)
+              sol_value: sol_value,
+            }
+          : {
+              value,
+            }),
+        ...otherAttributes,
+      };
 
-    // ga4
-    ga4Event(action, attrs);
+      // ga4
+      ga4Event(action, attrs);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -195,16 +201,16 @@ export function useAnalytics() {
 // static function to augment track event
 export function addListingToTrackCall(listing: Listing) {
   return {
-    listing_address: listing.listingAddress,
-    created_at: listing.createdAt,
+    listingAddress: listing.listingAddress,
+    createdAt: listing.createdAt,
     ended: listing.ended,
-    highest_bid: lamportToSolIsh(listing.highestBid),
-    nr_of_bids: listing.totalUncancelledBids,
-    last_bid_time: listing.lastBidTime,
+    highestBid: lamportToSolIsh(listing.highestBid),
+    nrOfBids: listing.totalUncancelledBids,
+    lastBidTime: listing.lastBidTime,
     price: getFormatedListingPrice(listing),
-    is_buy_now: !listing.endsAt,
-    is_auction: !!listing.endsAt,
-    listing_category: !listing.endsAt ? 'buy_now' : 'auction',
+    isBuyNow: !listing.endsAt,
+    isAuction: !!listing.endsAt,
+    listingCategory: !listing.endsAt ? 'buy_now' : 'auction',
     subdomain: listing.subdomain,
   };
 }

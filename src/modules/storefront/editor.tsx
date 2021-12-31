@@ -9,10 +9,10 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
-import type { GoogleTracker } from '../ganalytics/types';
 import { Solana } from '../solana/types';
 import { PageMetaData, Storefront, StorefrontTheme } from './types';
 import { putStorefront } from './put-storefront';
+import { TrackingFunctionSignature } from '../ganalytics/AnalyticsProvider';
 
 export const { Text, Title, Paragraph } = Typography;
 
@@ -123,9 +123,7 @@ export const reduceFieldData = (data: FieldData[]) =>
     data
   );
 
-export interface StorefrontEditorProps {
-  track: GoogleTracker;
-}
+export interface StorefrontEditorProps {}
 
 export const validateSubdomainUniqueness = (
   ar: ArweaveScope,
@@ -151,7 +149,7 @@ export const submitCallback = ({
   onError,
   trackEvent,
 }: {
-  track: GoogleTracker;
+  track: TrackingFunctionSignature;
   router: NextRouter;
   solana: Solana | undefined;
   values: any;
@@ -199,7 +197,7 @@ export const submitCallback = ({
       onSuccess(domain);
 
       router.push('/').then(() => {
-        track('storefront', trackEvent);
+        track(trackEvent, { event_category: 'Storefront' });
       });
     } catch (e) {
       console.error(e);

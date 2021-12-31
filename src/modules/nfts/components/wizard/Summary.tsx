@@ -13,6 +13,7 @@ import {
   FilePreview,
 } from 'pages/nfts/new';
 import { Spinner } from '@/common/components/elements/Spinner';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const Grid = styled.div`
   display: grid;
@@ -127,6 +128,7 @@ interface Props extends Partial<StepWizardChildProps> {
   formValues: NFTFormValue[] | null;
   setNFTValues: (filePins: UploadedFilePin[]) => void;
   clearForm: () => void;
+  doEachRoyaltyInd: boolean;
 }
 
 export default function Summary({
@@ -139,33 +141,11 @@ export default function Summary({
   formValues,
   clearForm,
   setNFTValues,
+  doEachRoyaltyInd,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFailed, setUploadFailed] = useState(false);
-
-  const upload = async () => {
-    const body = new FormData();
-
-    files.forEach((i) => body.append(i.name, i, i.name));
-
-    setIsUploading(true);
-    setUploadFailed(false);
-    try {
-      const resp = await fetch('/api/ipfs/upload', {
-        method: 'POST',
-        body,
-      });
-
-      const uploadedFilePins = await resp.json();
-      dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
-      setNFTValues(uploadedFilePins.files);
-      nextStep!();
-    } catch {
-      notification.error({ message: 'Upload of assets to IPFS failed, please try again' });
-      setUploadFailed(true);
-      setIsUploading(false);
-    }
-  };
+  const { track } = useAnalytics();
 
   // if one or more NFTs have a different royalty percentage it makes sense to show it in the summary
   const showRoyaltyPercentage = useMemo(() => {
@@ -186,6 +166,43 @@ export default function Summary({
       ) ?? false,
     [formValues]
   );
+
+  const upload = async () => {
+    const body = new FormData();
+
+    files.forEach((i) => body.append(i.name, i, i.name));
+
+    setIsUploading(true);
+    setUploadFailed(false);
+    try {
+      const items = formValues?.map((nft) => ({
+        nrOfCreators: nft.properties.creators.length,
+        royaltyPercentage: nft.seller_fee_basis_points,
+        hasDescription: !!nft.description,
+        hasCollection: !!nft.collectionName,
+      }));
+      track('Mint info and royalty Completed', {
+        event_category: 'Minter',
+        totalItems: items?.length,
+        doEachRoyaltyIndividually: doEachRoyaltyInd,
+        items,
+      });
+
+      const resp = await fetch('/api/ipfs/upload', {
+        method: 'POST',
+        body,
+      });
+
+      const uploadedFilePins = await resp.json();
+      dispatch({ type: 'UPLOAD_FILES', payload: uploadedFilePins.files });
+      setNFTValues(uploadedFilePins.files);
+      nextStep!();
+    } catch {
+      notification.error({ message: 'Upload of assets to IPFS failed, please try again' });
+      setUploadFailed(true);
+      setIsUploading(false);
+    }
+  };
 
   if (!formValues) return null;
 
