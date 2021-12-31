@@ -50,6 +50,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           throw new ApiError(500, 'Error signing please try again later \n' + error)
         }
 
+        await channel.close()
+        await connection.close()
+
         return res.status(200).end();
       }
       case 'HEAD':
