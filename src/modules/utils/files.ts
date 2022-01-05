@@ -9,7 +9,7 @@ export const isAudio = (file: File | FilePreview) => file.type.startsWith('audio
 export const is3DFilePreview = (filePreview: FilePreview) =>
   filePreview.type.startsWith('model/glb');
 
-export const is3DFile = (file: File) => file.name.endsWith('.glb') || file.name.endsWith('.gltf');
+export const is3DFile = (file: File) => file.name.endsWith('.glb');
 
 export const detectCategoryByFileExt = (fileName: string) => {
   const extension = fileName.split('.').pop();
@@ -28,7 +28,6 @@ export const detectCategoryByFileExt = (fileName: string) => {
       case 'flac':
         return 'audio';
       case 'glb':
-      case 'gltf':
         return 'vr';
       case 'html':
         return 'html';

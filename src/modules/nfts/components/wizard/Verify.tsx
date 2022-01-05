@@ -1,5 +1,5 @@
 import Button from '@/common/components/elements/Button';
-import { PageHeader, Upload, Space } from 'antd';
+import { PageHeader, Upload, Space, notification } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
@@ -94,11 +94,12 @@ export default function Verify({
   const beforeUpload = (f: RcFile) => {
     const { size, name } = f;
     if (size && size > MAX_FILE_SIZE) {
-      window.alert(
-        `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
+      notification.error({
+        message: `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
           0
-        )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
-      );
+        )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`,
+      });
+
       return;
     }
     dispatch({ type: 'ADD_FILE', payload: f });
