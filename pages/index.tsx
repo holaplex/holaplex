@@ -53,7 +53,7 @@ const Option = Select.Option;
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 
 const HeroTitle = styled.h1`
-  font-weight: 800;
+  font-weight: 600;
   font-size: calc(0.25vw + 0.25vh + 3rem);
   line-height: auto;
   @media screen and (max-width: 1250px) {
@@ -129,14 +129,18 @@ const CenteredContentCol = styled.div`
   margin: 0 auto;
   width: calc(1400px + 3rem);
   max-width: 100vw;
-  padding: 0 1.5rem;
+  padding: 0 3rem;
+
+  @media screen and (max-width: 600px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const ListingsHeader = styled(PageHeader)`
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #000;
+  background: #070707;
   padding: 12px 0;
   h3 {
     &.ant-typography {

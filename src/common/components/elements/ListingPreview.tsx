@@ -13,7 +13,7 @@ const { Title, Text } = Typography;
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
 
-  background: black !important;
+  background: #070707 !important;
   > .ant-card-body {
     padding: 0;
   }
@@ -395,28 +395,28 @@ const CustomExpandIcon = () => (
     <rect width="24" height="24" rx="4" fill="white" />
     <path
       d="M13.75 6.75H17.25V10.25"
-      stroke="black"
+      stroke="#070707"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M10.25 17.25H6.75V13.75"
-      stroke="black"
+      stroke="#070707"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M17.25 6.75L13.1667 10.8333"
-      stroke="black"
+      stroke="#070707"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M6.75 17.25L10.8333 13.1667"
-      stroke="black"
+      stroke="#070707"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
