@@ -65,7 +65,7 @@ const StyledCreatorsRow = styled.div`
   /* justify-content: center; */
   align-items: center;
   border-radius: 25px;
-  background: #1a1a1a;
+  background: #2a2a2a;
   width: 100%;
   height: 50px;
   padding: 0 9px;
@@ -319,7 +319,7 @@ const CreatorsRow = ({
           footer={null}
           bodyStyle={{
             borderRadius: '10px',
-            background: '#1a1a1a',
+            background: '#2a2a2a',
             padding: '114px 67px 47px 67px',
           }}
         >

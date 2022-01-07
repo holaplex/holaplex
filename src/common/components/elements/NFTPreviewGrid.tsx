@@ -85,7 +85,7 @@ const StyledPreviewOverlay = styled.div`
 
 const PrevSvgWrapper = styled.div`
   position: absolute;
-  background: #070707;
+  background: #161616;
   border-radius: 15px;
   bottom: 13px;
   left: 6px;

@@ -14,7 +14,7 @@ import Price from '@/common/components/elements/Price';
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
 
-  background: #070707 !important;
+  background: #161616 !important;
   > .ant-card-body {
     padding: 0;
   }
@@ -395,28 +395,28 @@ const CustomExpandIcon = () => (
     <rect width="24" height="24" rx="4" fill="#eaeaea" />
     <path
       d="M13.75 6.75H17.25V10.25"
-      stroke="#070707"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M10.25 17.25H6.75V13.75"
-      stroke="#070707"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M17.25 6.75L13.1667 10.8333"
-      stroke="#070707"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M6.75 17.25L10.8333 13.1667"
-      stroke="#070707"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

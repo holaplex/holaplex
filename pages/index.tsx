@@ -140,7 +140,7 @@ const ListingsHeader = styled(PageHeader)`
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #070707;
+  background: #161616f9;
   padding: 12px 0;
   h3 {
     &.ant-typography {
