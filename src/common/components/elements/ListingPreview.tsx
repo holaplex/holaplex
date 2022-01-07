@@ -9,6 +9,7 @@ import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
+import Price from '@/common/components/elements/Price';
 
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
@@ -354,8 +355,7 @@ export function ListingPreview({
               {nftMetadata?.name}
             </ListingTitle>
             <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-              <span className="sol-icon">◎</span>
-              {displayPrice}
+              <Price size={18} price={displayPrice} />
             </h3>
           </Row>
           <Row justify="space-between">

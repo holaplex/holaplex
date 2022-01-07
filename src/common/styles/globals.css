@@ -129,10 +129,6 @@ input[type='checkbox'] {
   box-sizing: inherit;
 }
 
-.sol-icon {
-  padding-right: 4px;
-}
-
 .select-inline-dropdown .ant-select-item {
   font-size: 12px;
 }
