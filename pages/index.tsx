@@ -203,7 +203,7 @@ const HeroCarousel = styled(Carousel)`
 
     &.slick-active {
       > button {
-        background: white;
+        background: #eaeaea;
         width: 24px;
       }
     }

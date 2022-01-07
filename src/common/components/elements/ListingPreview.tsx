@@ -392,7 +392,7 @@ export function ListingPreview({
 
 const CustomExpandIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="4" fill="white" />
+    <rect width="24" height="24" rx="4" fill="#eaeaea" />
     <path
       d="M13.75 6.75H17.25V10.25"
       stroke="#070707"

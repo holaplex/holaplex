@@ -17,7 +17,7 @@ const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ no
   ${({ type }) =>
     equals('primary', type) &&
     css`
-      color: white;
+      color: #eaeaea;
       &:hover,
       &:active,
       &:focus {
