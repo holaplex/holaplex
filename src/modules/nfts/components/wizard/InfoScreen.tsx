@@ -40,7 +40,7 @@ const FormWrapper = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  background: #2a2a2a;
+  background: #262626;
   border-radius: 4px;
   width: 39px;
   height: 50px;

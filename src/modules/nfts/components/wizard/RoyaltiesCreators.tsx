@@ -65,7 +65,7 @@ const StyledCreatorsRow = styled.div`
   /* justify-content: center; */
   align-items: center;
   border-radius: 25px;
-  background: #2a2a2a;
+  background: #262626;
   width: 100%;
   height: 50px;
   padding: 0 9px;
@@ -133,7 +133,7 @@ export const StyledClearButton = styled(Button)`
   }
   &:hover {
     background: transparent;
-    color: #eaeaea;
+    color: #f4f4f4;
   }
 `;
 
@@ -177,14 +177,14 @@ const RemoveCreatorIcon = (props: { onClick: () => void }) => (
   >
     <path
       d="M18 6L6 18"
-      stroke="#eaeaea"
+      stroke="#f4f4f4"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M6 6L18 18"
-      stroke="#eaeaea"
+      stroke="#f4f4f4"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -279,11 +279,11 @@ const CreatorsRow = ({
           <g opacity="0.5">
             <path
               d="M6.33333 3.66663H1.66667C1.29848 3.66663 1 3.9651 1 4.33329V6.66663C1 7.03482 1.29848 7.33329 1.66667 7.33329H6.33333C6.70152 7.33329 7 7.03482 7 6.66663V4.33329C7 3.9651 6.70152 3.66663 6.33333 3.66663Z"
-              fill="#eaeaea"
+              fill="#f4f4f4"
             />
             <path
               d="M2.33333 3.66663V2.33329C2.33333 1.89127 2.50893 1.46734 2.82149 1.15478C3.13405 0.842221 3.55797 0.666626 4 0.666626C4.44203 0.666626 4.86595 0.842221 5.17851 1.15478C5.49107 1.46734 5.66667 1.89127 5.66667 2.33329V3.66663"
-              stroke="#eaeaea"
+              stroke="#f4f4f4"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -302,14 +302,14 @@ const CreatorsRow = ({
             <StyledCloseIcon viewBox="0 0 24 24">
               <path
                 d="M18 6L6 18"
-                stroke="#eaeaea"
+                stroke="#f4f4f4"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
                 d="M6 6L18 18"
-                stroke="#eaeaea"
+                stroke="#f4f4f4"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -319,7 +319,7 @@ const CreatorsRow = ({
           footer={null}
           bodyStyle={{
             borderRadius: '10px',
-            background: '#2a2a2a',
+            background: '#262626',
             padding: '114px 67px 47px 67px',
           }}
         >

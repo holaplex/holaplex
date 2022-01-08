@@ -140,8 +140,11 @@ const ListingsHeader = styled(PageHeader)`
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #161616f9;
-  padding: 12px 0;
+  background: #161616f3;
+  width: calc(100% + 60px);
+  margin-left: -30px;
+  padding: 12px 30px;
+  backdrop-filter: blur(10px);
   h3 {
     &.ant-typography {
       margin: 0;
@@ -203,7 +206,7 @@ const HeroCarousel = styled(Carousel)`
 
     &.slick-active {
       > button {
-        background: #eaeaea;
+        background: #f4f4f4;
         width: 24px;
       }
     }
@@ -430,7 +433,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             <div ref={listingsTopRef} />
             <ListingsHeader
               ghost={false}
-              title={<Title level={3}>Current Listings</Title>}
+              title={<span>Current listings</span>}
               extra={[
                 <Space key="options" direction="horizontal">
                   <SelectInline
