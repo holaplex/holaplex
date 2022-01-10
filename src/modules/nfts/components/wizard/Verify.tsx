@@ -32,7 +32,7 @@ const Header = styled(PageHeader)`
 const AddNFTButton = styled.button`
   width: 120px;
   height: 120px;
-  background: #1a1a1a;
+  background: #262626;
   border: none;
   border-radius: 4px;
   cursor: pointer;

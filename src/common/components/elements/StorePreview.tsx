@@ -17,7 +17,7 @@ const PreviewCard = styled(Card)`
     top: -40px;
     left: -40px;
     margin: 0 0 0 50%;
-    border: 2px solid white;
+    border: 2px solid #f4f4f4;
   }
 `;
 

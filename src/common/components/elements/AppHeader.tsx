@@ -10,7 +10,7 @@ import { useContext } from 'react';
 const HeaderTitle = styled.div`
   font-size: 24px;
   line-height: 2px;
-  font-weight: 900;
+  font-weight: 700;
   margin-right: 2rem;
   flex-grow: 1;
   a {
