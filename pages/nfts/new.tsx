@@ -224,61 +224,59 @@ export default function BulkUploadWizard() {
     }
   };
 
-  const transformFormVals = async (values: NFTFormValue[], filePins: UploadedFilePin[]) => {
-    const resp = await Promise.all(
-      values.map(async (v, i: number) => {
-        const filePin = filePins[i];
+  const transformFormVal = async (
+    value: NFTFormValue,
+    index: number,
+    filePins: UploadedFilePin[]
+  ) => {
+    const filePin = filePins[index];
 
-        if (!filePin) {
-          throw new Error('No file pin for index ' + i);
+    if (!filePin) {
+      throw new Error('No file pin for index ' + index);
+    }
+
+    const category: NFTCategory = detectCategoryByFileExt(filePin.name);
+    const isMultiMedia = category !== 'image';
+
+    let coverImageFile: UploadedFilePin | undefined;
+    if (value.coverImageFile) {
+      coverImageFile = await uploadCoverImage(value.coverImageFile);
+    }
+
+    const files = [{ uri: filePin.uri, type: filePin.type }] as FileOrString[];
+
+    let image = filePin.uri;
+    if (coverImageFile) {
+      files.push({ uri: coverImageFile.uri, type: coverImageFile.type });
+      image = coverImageFile.uri;
+    }
+
+    const properties = { ...value.properties, category, files };
+
+    const res: NFTValue = {
+      name: value.name,
+      description: value.description,
+      symbol: '',
+      seller_fee_basis_points: value.seller_fee_basis_points,
+      image,
+      collection: {
+        name: value.collectionName,
+        family: value.collectionFamily,
+      },
+      attributes: value.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
+        if (!isNil(a?.trait_type)) {
+          result.push({ trait_type: a.trait_type, value: a.value });
         }
+        return result;
+      }, []),
+      properties,
+    };
 
-        const category: NFTCategory = detectCategoryByFileExt(filePin.name);
-        const isMultiMedia = category !== 'image';
+    if (isMultiMedia) {
+      res.animation_url = filePin.uri;
+    }
 
-        let coverImageFile: UploadedFilePin | undefined;
-        if (v.coverImageFile) {
-          coverImageFile = await uploadCoverImage(v.coverImageFile);
-        }
-
-        const files = [{ uri: filePin.uri, type: filePin.type }] as FileOrString[];
-
-        let image = filePin.uri;
-        if (coverImageFile) {
-          files.push({ uri: coverImageFile.uri, type: coverImageFile.type });
-          image = coverImageFile.uri;
-        }
-
-        const properties = { ...v.properties, category, files };
-
-        const res: NFTValue = {
-          name: v.name,
-          description: v.description,
-          symbol: '',
-          seller_fee_basis_points: v.seller_fee_basis_points,
-          image,
-          collection: {
-            name: v.collectionName,
-            family: v.collectionFamily,
-          },
-          attributes: v.attributes.reduce((result: Array<NFTAttribute>, a: NFTAttribute) => {
-            if (!isNil(a?.trait_type)) {
-              result.push({ trait_type: a.trait_type, value: a.value });
-            }
-            return result;
-          }, []),
-          properties,
-        };
-
-        if (isMultiMedia) {
-          res.animation_url = filePin.uri;
-        }
-
-        return res;
-      })
-    );
-
-    return resp;
+    return res;
   };
 
   const onFinish = (values: FormValues) => {
@@ -291,7 +289,9 @@ export default function BulkUploadWizard() {
       throw new Error('Either filePins or formValues are not set');
     }
 
-    const nftVals = await transformFormVals(formValues, filePins);
+    const nftVals = await Promise.all(
+      formValues.map((v, i: number) => transformFormVal(v, i, filePins))
+    );
 
     dispatch({ type: 'SET_NFT_VALUES', payload: nftVals });
   };

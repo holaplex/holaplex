@@ -53,7 +53,7 @@ const Option = Select.Option;
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 
 const HeroTitle = styled.h1`
-  font-weight: 800;
+  font-weight: 600;
   font-size: calc(0.25vw + 0.25vh + 3rem);
   line-height: auto;
   @media screen and (max-width: 1250px) {
@@ -129,15 +129,22 @@ const CenteredContentCol = styled.div`
   margin: 0 auto;
   width: calc(1400px + 3rem);
   max-width: 100vw;
-  padding: 0 1.5rem;
+  padding: 0 3rem;
+
+  @media screen and (max-width: 600px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const ListingsHeader = styled(PageHeader)`
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #000;
-  padding: 12px 0;
+  background: #161616f3;
+  width: calc(100% + 60px);
+  margin-left: -30px;
+  padding: 12px 30px;
+  backdrop-filter: blur(10px);
   h3 {
     &.ant-typography {
       margin: 0;
@@ -199,7 +206,7 @@ const HeroCarousel = styled(Carousel)`
 
     &.slick-active {
       > button {
-        background: white;
+        background: #f4f4f4;
         width: 24px;
       }
     }
@@ -426,7 +433,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             <div ref={listingsTopRef} />
             <ListingsHeader
               ghost={false}
-              title={<Title level={3}>Current Listings</Title>}
+              title={<span>Current listings</span>}
               extra={[
                 <Space key="options" direction="horizontal">
                   <SelectInline

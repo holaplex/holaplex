@@ -25,7 +25,7 @@ export const PreviewButton = styled.div<{ textColor: string }>`
   display: flex;
   align-items: center;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 600;
 `;
 
 export const UploadedLogo = styled.img`

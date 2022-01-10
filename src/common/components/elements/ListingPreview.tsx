@@ -9,11 +9,12 @@ import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
+import Price from '@/common/components/elements/Price';
 
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
 
-  background: black !important;
+  background: #161616 !important;
   > .ant-card-body {
     padding: 0;
   }
@@ -354,8 +355,7 @@ export function ListingPreview({
               {nftMetadata?.name}
             </ListingTitle>
             <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-              <span className="sol-icon">◎</span>
-              {displayPrice}
+              <Price size={18} price={displayPrice} />
             </h3>
           </Row>
           <Row justify="space-between">
@@ -392,31 +392,31 @@ export function ListingPreview({
 
 const CustomExpandIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="4" fill="white" />
+    <rect width="24" height="24" rx="4" fill="#f4f4f4" />
     <path
       d="M13.75 6.75H17.25V10.25"
-      stroke="black"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M10.25 17.25H6.75V13.75"
-      stroke="black"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M17.25 6.75L13.1667 10.8333"
-      stroke="black"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M6.75 17.25L10.8333 13.1667"
-      stroke="black"
+      stroke="#161616"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

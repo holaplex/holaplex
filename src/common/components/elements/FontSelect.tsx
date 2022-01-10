@@ -5,8 +5,8 @@ import styled from 'styled-components';
 const { Option } = Select;
 
 const availableFonts = [
-  'Roboto',
   'Inter',
+  'Roboto',
   'Work Sans',
   'Montserrat',
   'Urbanist',

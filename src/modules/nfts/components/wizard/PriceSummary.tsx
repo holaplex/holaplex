@@ -1,9 +1,9 @@
 import { Divider, Form, Row, Col } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { StepWizardChildProps } from 'react-step-wizard';
 import styled from 'styled-components';
 import Button from '@/common/components/elements/Button';
+import Price from '@/common/components/elements/Price';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { Coingecko, Currency } from '@metaplex/js';
 import NavContainer from '@/modules/nfts/components/wizard/NavContainer';
@@ -110,13 +110,11 @@ export default function PriceSummary({
           </Row>
           <Row>
             <Col style={{ width: '100%' }}>
-              <Row justify="space-between">
-                <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>
+              <Row justify="space-between" align="middle">
+                <span style={{ fontSize: 14, opacity: 0.6 }}>
                   Estimated network fee x{files.length}
-                </Paragraph>
-                <Paragraph style={{ fontSize: 14 }}>
-                  <span className="sol-icon">◎</span> {SOL_COST_PER_NFT}
-                </Paragraph>
+                </span>
+                <Price size={14} price={SOL_COST_PER_NFT} />
               </Row>
             </Col>
           </Row>
@@ -125,9 +123,7 @@ export default function PriceSummary({
             <Paragraph style={{ opacity: 0.6, fontSize: 14 }}>Total:</Paragraph>
             <Col>
               <Row>
-                <Paragraph style={{ fontSize: 18, marginBottom: 0 }}>
-                  <span className="sol-icon">◎</span> {totalSolCost}
-                </Paragraph>
+                <Price size={18} price={totalSolCost} />
               </Row>
               <Row justify="end">
                 <Paragraph style={{ fontSize: 14, opacity: 0.6 }}>

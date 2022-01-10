@@ -1,5 +1,5 @@
 import Button from '@/common/components/elements/Button';
-import { Layout, PageHeader, Space, Upload, message } from 'antd';
+import { Layout, PageHeader, Space, Upload, message, notification } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { StepWizardChildProps } from 'react-step-wizard';
@@ -12,7 +12,7 @@ export const MAX_FILES = 10;
 export const MAX_FILE_SIZE = 100000000;
 // For reference https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
 export const NFT_MIME_TYPE_UPLOAD_VALIDATION_STRING =
-  'image/jpeg,image/png,image/gif,image/svg+xml,video/mp4,video/mov,audio/mp3,audio/wave,audio/flac,.glb,.gltf';
+  'image/jpeg,image/png,image/gif,image/svg+xml,video/mp4,video/mov,audio/mp3,audio/wave,audio/flac,.glb';
 
 const StyledLayout = styled(Layout)`
   display: flex;
@@ -40,7 +40,7 @@ const Copy = styled.p<{ transparent?: boolean }>`
   color: #fff;
   font-size: 20px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 27px;
   letter-spacing: 0em;
   text-align: center;
@@ -89,27 +89,16 @@ export default function UploadStep({ nextStep, dispatch, files, clearForm }: Pro
 
     onChange(info) {
       count++;
-      console.log('on change', count, info.fileList.length);
-      const { status, size, name } = info.file;
+      const { size, name } = info.file;
 
-      console.log('file is ', info.file);
       if (size && size > MAX_FILE_SIZE) {
-        window.alert(
-          `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
+        notification.error({
+          message: `The file name ${name} you are trying to upload is ${(size / 1000000).toFixed(
             0
-          )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`
-        );
+          )}MB, only files equal to or under ${MAX_FILE_SIZE / 1000000}MB are allowed`,
+        });
         resetAll();
         return;
-      }
-
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        console.log(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        console.log(`${info.file.name} file upload failed.`);
       }
 
       if (count === info.fileList.length) {

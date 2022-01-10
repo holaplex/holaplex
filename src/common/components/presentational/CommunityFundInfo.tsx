@@ -34,7 +34,7 @@ const PieChartLegendItem = (props: { text: string; children: React.ReactNode }) 
 export default function CommunityFundInfo() {
   return (
     <div>
-      <Title style={{ fontSize: 32, color: 'white' }} level={2}>
+      <Title style={{ fontSize: 32, color: '#f4f4f4' }} level={2}>
         Hola Community Fund
       </Title>
 
@@ -64,7 +64,7 @@ export default function CommunityFundInfo() {
         <div style={{ display: 'flex', alignItems: 'start', marginBottom: 20 }}>
           <InitialSaleChartSVG style={{ marginRight: 16 }} />
           <div>
-            <Title style={{ fontSize: 18, color: 'white' }} level={4}>
+            <Title style={{ fontSize: 18, color: '#f4f4f4' }} level={4}>
               Initial sale
             </Title>
 
@@ -107,7 +107,7 @@ export default function CommunityFundInfo() {
         <div style={{ display: 'flex', alignItems: 'start', marginBottom: 20 }}>
           <FutureSalesChartSVG style={{ marginRight: 16 }} />
           <div>
-            <Title style={{ fontSize: 18, color: 'white' }} level={4}>
+            <Title style={{ fontSize: 18, color: '#f4f4f4' }} level={4}>
               Future sales
             </Title>
             <Paragraph style={{ fontSize: '12px', opacity: 0.6 }}>assuming 10% royalty</Paragraph>
