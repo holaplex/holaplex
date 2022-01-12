@@ -35,6 +35,7 @@ import {
   equals,
   map,
   range,
+  propEq,
 } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
@@ -58,17 +59,9 @@ const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
     const response = await fetch(DAO_LIST_IPFS)
     const json = await response.json()
-    console.log(
-      'returning ' + json[WHICHDAO]
-    )
     return json[WHICHDAO];
   }
-    console.log(
-      'returning nothing'
-    )
-
   return []
-
 }
 
 const HeroTitle = styled.h1`
@@ -313,16 +306,19 @@ const sorts = {
 
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
+  const selectedDaoSubdomains = await DAOStoreFrontList();
 
   return {
     props: {
       featuredStorefronts,
+      selectedDaoSubdomains,
     },
   };
 }
 
 interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
+  selectedDaoSubdomains: String[];
 }
 
 const getDefaultFilter = () => {
@@ -332,7 +328,7 @@ const getDefaultFilter = () => {
   return FilterOptions.Auctions
 }
 
-export default function Home({ featuredStorefronts }: HomeProps) {
+export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
@@ -391,7 +387,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       let daoFilteredListings = allListings;
 
       if (WHICHDAO) {
-        const selectedDaoSubdomains = await DAOStoreFrontList();
         daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
       }
 
