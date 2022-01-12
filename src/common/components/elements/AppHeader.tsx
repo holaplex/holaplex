@@ -53,9 +53,11 @@ const LinkRow = styled(Space)`
   }
 `;
 
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO
 export function AppHeader() {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
+
 
   return (
     <StyledHeader>
@@ -66,7 +68,7 @@ export function AppHeader() {
           </a>
         </Link>
       </HeaderTitle>
-      <LinkRow size="large">
+      { !WHICHDAO && <LinkRow size="large">
         <HeaderLinkWrapper
           key="edit"
           onClick={() => connect()}
@@ -93,7 +95,7 @@ export function AppHeader() {
           </a>
         </HeaderLinkWrapper>
         {/* {windowDimensions.width > 700 && <SocialLinks />} */}
-      </LinkRow>
+      </LinkRow> }
     </StyledHeader>
   );
 }
