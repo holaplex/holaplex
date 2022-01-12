@@ -52,18 +52,23 @@ const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
+const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
 
-const DAOStoreFrontList = {
-  "MONKE": [
-    'drpeepee',
-    'sugarsam',
-    'voxelmonkes',
-    'lobstershack',
-    '0xbanana',
-    'lights',
-    'photo',
-    'Joesirc',
-  ]
+const DAOStoreFrontList = async () => {
+  if (WHICHDAO) {
+    const response = await fetch(DAO_LIST_IPFS)
+    const json = await response.json()
+    console.log(
+      'returning ' + json[WHICHDAO]
+    )
+    return json[WHICHDAO];
+  }
+    console.log(
+      'returning nothing'
+    )
+
+  return []
+
 }
 
 const HeroTitle = styled.h1`
@@ -386,8 +391,8 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       let daoFilteredListings = allListings;
 
       if (WHICHDAO) {
-        // @ts-ignore
-        daoFilteredListings = daoFilteredListings.filter(listing => DAOStoreFrontList[WHICHDAO].includes(listing.subdomain))
+        const selectedDaoSubdomains = await DAOStoreFrontList();
+        daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
       }
 
       setAllListings(daoFilteredListings);
