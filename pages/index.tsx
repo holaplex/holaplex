@@ -35,6 +35,7 @@ import {
   equals,
   map,
   range,
+  propEq,
 } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
@@ -51,6 +52,17 @@ const { Title, Text } = Typography;
 const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
+const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
+
+const DAOStoreFrontList = async () => {
+  if (WHICHDAO) {
+    const response = await fetch(DAO_LIST_IPFS)
+    const json = await response.json()
+    return json[WHICHDAO];
+  }
+  return []
+}
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -294,19 +306,29 @@ const sorts = {
 
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
+  const selectedDaoSubdomains = await DAOStoreFrontList();
 
   return {
     props: {
       featuredStorefronts,
+      selectedDaoSubdomains,
     },
   };
 }
 
 interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
+  selectedDaoSubdomains: String[];
 }
 
-export default function Home({ featuredStorefronts }: HomeProps) {
+const getDefaultFilter = () => {
+  if (WHICHDAO) {
+    return FilterOptions.All
+  }
+  return FilterOptions.Auctions
+}
+
+export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
@@ -318,7 +340,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       .map((_, i) => generateListingShell(i))
   );
   const [displayedListings, setDisplayedListings] = useState<Listing[]>([]);
-  const [filterBy, setFilterBy] = useState<FilterOptions>(FilterOptions.Auctions);
+  const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
@@ -356,14 +378,21 @@ export default function Home({ featuredStorefronts }: HomeProps) {
     sortWith(sorts[sortBy])
   );
 
+    
+
   // initial fetch and display
   useEffect(() => {
     async function getListings() {
       const allListings = await IndexerSDK.getListings();
+      let daoFilteredListings = allListings;
 
-      setAllListings(allListings);
-      setFeaturedListings(allListings.slice(0, 5));
-      setDisplayedListings(applyListingFilterAndSort(allListings));
+      if (WHICHDAO) {
+        daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
+      }
+
+      setAllListings(daoFilteredListings);
+      setFeaturedListings(daoFilteredListings.slice(0, 5));
+      setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
     }
@@ -412,7 +441,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </HeroCarousel>
           </HeroCol>
         </Section>
-        <StorefrontSection>
+        { !process.env.NEXT_PUBLIC_WHICHDAO && <StorefrontSection>
           <Col xs={24}>
             <Title level={3}>Featured Creators</Title>
             <FeaturedStores
@@ -427,7 +456,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               )}
             />
           </Col>
-        </StorefrontSection>
+        </StorefrontSection> }
         <Section>
           <Col xs={24}>
             <div ref={listingsTopRef} />
