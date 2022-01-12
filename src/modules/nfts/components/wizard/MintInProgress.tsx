@@ -37,9 +37,10 @@ const META_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 
 enum TransactionStep {
   SENDING_FAILED,
-  APPROVAL_FAILED,
   META_DATA_UPLOAD_FAILED,
   META_DATA_UPLOADING,
+  APPROVAL_FAILED,
+  START,
   APPROVING,
   SENDING,
   FINALIZING,
@@ -120,6 +121,7 @@ export default function MintInProgress({
 }: Props) {
   const [transactionStep, setTransactionStep] = useState(TransactionStep.META_DATA_UPLOADING);
   const [mintResp, setMintResp] = useState<MintNFTResponse | null>(null);
+  const [metaData, setMetaData] = useState<UploadedFilePin | null>(null);
   const showErrors =
     transactionStep === TransactionStep.SENDING_FAILED ||
     transactionStep === TransactionStep.APPROVAL_FAILED ||
@@ -135,7 +137,7 @@ export default function MintInProgress({
       : { ...nftValue, mintStatus: MintStatus.SUCCESS };
     updateNFTValue(updatedValue, index);
 
-    setTransactionStep(TransactionStep.APPROVING);
+    setTransactionStep(TransactionStep.META_DATA_UPLOADING); //reset to initial state
     nextStep!();
   }, [nextStep, nftValue, updateNFTValue, showErrors, index, setTransactionStep]);
 
@@ -170,40 +172,37 @@ export default function MintInProgress({
     }
   }, [setTransactionStep, mintResp, handleNext]);
 
-  const attemptMint = useCallback(
-    async (metaData: UploadedFilePin) => {
-      if (!metaData) {
-        throw new Error('No Meta Data, something went wrong');
+  const attemptMint = useCallback(async () => {
+    if (!metaData) {
+      throw new Error('No Meta Data, something went wrong');
+    }
+
+    setTransactionStep(TransactionStep.SENDING);
+
+    try {
+      const maxSupply = new BN(nftValue.properties.maxSupply);
+      const mintResp = await mintNFT({
+        connection,
+        wallet,
+        uri: metaData.uri,
+        maxSupply,
+      });
+      setMintResp(mintResp);
+      setTransactionStep(TransactionStep.FINALIZING);
+      await connection.confirmTransaction(mintResp.txId);
+      setTransactionStep(TransactionStep.SUCCESS);
+    } catch (err) {
+      if (err?.code === APPROVAL_FAILED_CODE) {
+        setTransactionStep(TransactionStep.APPROVAL_FAILED);
+      } else {
+        setTransactionStep(TransactionStep.SENDING_FAILED);
       }
 
-      setTransactionStep(TransactionStep.APPROVING);
+      return;
+    }
 
-      try {
-        const maxSupply = new BN(nftValue.properties.maxSupply);
-        const mintResp = await mintNFT({
-          connection,
-          wallet,
-          uri: metaData.uri,
-          maxSupply,
-        });
-        setMintResp(mintResp);
-        setTransactionStep(TransactionStep.FINALIZING);
-        await connection.confirmTransaction(mintResp.txId);
-        setTransactionStep(TransactionStep.SUCCESS);
-      } catch (err) {
-        if (err?.code === APPROVAL_FAILED_CODE) {
-          setTransactionStep(TransactionStep.APPROVAL_FAILED);
-        } else {
-          setTransactionStep(TransactionStep.SENDING_FAILED);
-        }
-
-        return;
-      }
-
-      setTransactionStep(TransactionStep.SIGNING);
-    },
-    [nftValue, connection, wallet]
-  );
+    setTransactionStep(TransactionStep.SIGNING);
+  }, [nftValue, connection, wallet, metaData]);
 
   const attemptMetaDataUpload = useCallback(async () => {
     if (!nftValue) {
@@ -214,16 +213,17 @@ export default function MintInProgress({
       return; // Don't accidentally mint
     }
 
-    let metaData: UploadedFilePin | null = null;
+    let metaDataUpload: UploadedFilePin | null = null;
 
     try {
-      metaData = await uploadMetaData(nftValue);
+      metaDataUpload = await uploadMetaData(nftValue);
 
-      attemptMint(metaData);
+      setMetaData(metaDataUpload);
+      setTransactionStep(TransactionStep.APPROVING);
     } catch (err) {
       setTransactionStep(TransactionStep.META_DATA_UPLOAD_FAILED);
     }
-  }, [attemptMint, nftValue, uploadMetaData, setTransactionStep]);
+  }, [nftValue, uploadMetaData, setTransactionStep]);
 
   useEffect(() => {
     if (showErrors) {
@@ -233,8 +233,11 @@ export default function MintInProgress({
     if (isActive && nftValue) {
       if (transactionStep === TransactionStep.META_DATA_UPLOADING) {
         attemptMetaDataUpload();
-      } else if (transactionStep === TransactionStep.SIGNING) {
-        attemptHolaplexSign();
+        // } else if (transactionStep === TransactionStep.SIGNING) {
+        //   attemptHolaplexSign();
+      } else if (transactionStep === TransactionStep.APPROVING) {
+        console.count('attempting mint');
+        attemptMint();
       }
     }
   }, [
@@ -245,6 +248,7 @@ export default function MintInProgress({
     attemptHolaplexSign,
     attemptMetaDataUpload,
     index,
+    attemptMint,
   ]);
 
   if (!nftValue) {
