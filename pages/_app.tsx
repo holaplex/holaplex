@@ -11,6 +11,7 @@ import { isNil } from 'ramda';
 import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
+import { MarketplaceProvider } from '@/modules/marketplace';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { AnalyticsProvider, OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '@/modules/ganalytics/AnalyticsProvider';
@@ -72,8 +73,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
-        {({ verifying, wallet }) => (
-          <StorefrontProvider wallet={wallet}>
+        {({ verifying, wallet, connect }) => (
+          <StorefrontProvider wallet={wallet} connect={connect}>
             {({ searching }) => {
               return (
                 <AnalyticsProvider>

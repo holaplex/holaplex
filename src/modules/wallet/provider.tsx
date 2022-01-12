@@ -1,20 +1,18 @@
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { Solana } from '@/modules/solana/types';
-import { Storefront } from '@/modules/storefront/types';
 import walletSDK from '@/modules/wallet/client';
 import { Wallet } from '@/modules/wallet/types';
 import { useRouter } from 'next/router';
 import { isNil } from 'ramda';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { WalletContext, WalletContextProps } from './context';
+import { WalletContext, WalletContextProps, SuccessConnectFn } from './context';
 
 type WalletProviderProps = {
   wallet?: Wallet;
   solana?: Solana;
   children: (props: WalletContextProps) => React.ReactElement;
-  storefront?: Storefront;
 };
 
 const upsertWallet = async (pubkey: string) => {
@@ -29,12 +27,10 @@ const upsertWallet = async (pubkey: string) => {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter();
-  const arweave = initArweave();
   const [verifying, setVerifying] = useState(false);
   const [initializing, setInitialization] = useState(true);
   const [wallet, setWallet] = useState<Wallet>();
   const [solana, setSolana] = useState<Solana>();
-  const [storefront, setStorefront] = useState<Storefront>();
 
   if (typeof window === 'object') {
     if (window.solana && window.solana?.connect) {
@@ -54,7 +50,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     }
   }
 
-  const connect = (redirect?: string) => {
+  const connect = (onSuccess: SuccessConnectFn) => {
     if (isNil(solana)) {
       toast(() => (
         <>
@@ -69,25 +65,12 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       const solanaPubkey = solana.publicKey.toString();
 
       upsertWallet(solanaPubkey)
-        .then((wallet) => {
+        .then((wallet: Wallet) => {
           setWallet(wallet);
-          return arweaveSDK.using(arweave).storefront.find('solana:pubkey', wallet.pubkey);
-        })
-        .then((storefront: any) => {
-          setStorefront(storefront);
-          if (redirect) {
-            if (redirect === '') {
-              return;
-            }
-            return router.push(redirect);
-          }
 
-          if (storefront) {
-            return router.push('/storefront/edit');
-          }
-
-          return router.push('/storefront/new');
+          return wallet;
         })
+        .then(onSuccess)
         .catch(() => router.push('/'))
         .finally(() => {
           setVerifying(false);
@@ -107,7 +90,6 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         wallet,
         solana,
         connect,
-        storefront,
       }}
     >
       {children({
@@ -116,7 +98,6 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         wallet,
         solana,
         connect,
-        storefront,
       })}
     </WalletContext.Provider>
   );

@@ -19,6 +19,10 @@ export interface StorefrontEdge {
   cursor: string;
   storefront: Storefront;
 }
+export interface MarketplaceEdge {
+  cursor: string;
+  markeplace: Marketplace;
+}
 
 interface StorefrontConnection {
   hasNextPage: boolean;
@@ -30,10 +34,10 @@ interface ArweaveResponseTransformer {
   json: () => Promise<any>;
 }
 
-interface ArweaveObjectInteraction {
-  find: (tag: string, value: string) => Promise<Storefront | null>;
-  upsert: (storefront: Storefront, css: string) => Promise<Storefront>;
-  list: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<StorefrontEdge[]>;
+interface ArweaveObjectInteraction<T, U> {
+  find: (tag: string, value: string) => Promise<T | null>;
+  upsert?: (record: T, css: string) => Promise<T>;
+  list?: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<U[]>;
 }
 
 interface ArweaveWalletHelpers {
@@ -41,13 +45,26 @@ interface ArweaveWalletHelpers {
 }
 
 export interface ArweaveScope {
-  storefront: ArweaveObjectInteraction;
+  storefront: ArweaveObjectInteraction<Storefront, StorefrontEdge>;
+  marketplace: ArweaveObjectInteraction<Marketplace, MarketplaceEdge>;
   wallet: ArweaveWalletHelpers;
 }
 
 const transformer = (response: Response): ArweaveResponseTransformer => {
   return {
     json: response.json,
+    marketplaces: async () => {
+      const {
+        data: {
+          transactions: {
+            pageInfo: { hasNextPage },
+            edges,
+          },
+        },
+      } = await response.json();
+      
+      
+    },
     storefronts: async () => {
       const {
         data: {
@@ -153,6 +170,38 @@ const using = (arweave: Arweave): ArweaveScope => ({
 
       return arweave.ar.isGreaterThan(balance, cost);
     },
+  },
+  marketplace: {
+    find: async (name, value) => {
+      const response = await query(
+        arweave,
+        `query GetMarketplaceByTag($name: String!, $value: String!) {
+          transactions(tags:[{ name: $name, values: [$value]}], first: 1) {
+            pageInfo {
+              hasNextPage
+            }
+            edges {
+              cursor
+              node {
+                id
+                owner {
+                  address
+                }
+                tags {
+                  name
+                  value
+                }
+              }
+            }
+          }
+        }`,
+        { name, value }
+      );
+      
+
+      return null;
+    },
+
   },
   storefront: {
     list: async (tags = [], batch = 1000, start = '') => {

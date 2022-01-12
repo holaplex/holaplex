@@ -163,6 +163,7 @@ export const submitCallback = ({
       setSubmitting(true);
 
       const { theme, meta, subdomain } = values;
+      // TODO: not always .com
       const domain = `${subdomain}.holaplex.com`;
 
       const logo = popFile(theme.logo[0]);

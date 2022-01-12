@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Layout, Space } from 'antd';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
-import { WalletContext } from '@/modules/wallet';
+import { StorefrontContext } from '@/modules/storefront';
 import { useContext } from 'react';
 
 const HeaderTitle = styled.div`
@@ -56,7 +56,7 @@ const LinkRow = styled(Space)`
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO
 export function AppHeader() {
   const router = useRouter();
-  const { connect } = useContext(WalletContext);
+  const { connectStorefront } = useContext(StorefrontContext);
 
 
   return (
@@ -71,7 +71,7 @@ export function AppHeader() {
       { !WHICHDAO && <LinkRow size="large">
         <HeaderLinkWrapper
           key="edit"
-          onClick={() => connect()}
+          onClick={() => connectStorefront()}
           active={router.pathname == '/storefront/edit'}
         >
           <Link href="/storefront/edit" passHref>

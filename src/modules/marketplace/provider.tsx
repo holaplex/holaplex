@@ -4,13 +4,13 @@ import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { isNil } from 'ramda';
 import { useRouter } from 'next/router';
-import { Storefront } from '@/modules/storefront/types';
 import { Wallet, ConnectFn } from '@/modules/wallet/types';
-import { StorefrontContext } from './context';
+import { Marketplace } from './types';
+import { MarketplaceContext } from './context';
 
 type StorefrontProviderChildrenProps = {
   searching: boolean;
-  storefront?: Storefront;
+  marketplace?: Marketplace;
 };
 
 type StorefrontProviderProps = {
@@ -19,28 +19,28 @@ type StorefrontProviderProps = {
   connect: ConnectFn;
 };
 
-export const StorefrontProvider = ({ wallet, children, connect }: StorefrontProviderProps) => {
+export const MarketplaceProvider = ({ wallet, children, connect }: StorefrontProviderProps) => {
   const [searching, setSearching] = useState(false);
-  const [storefront, setStorefront] = useState<Storefront>();
+  const [marketplace, setMarketplace] = useState<Marketplace>();
   const router = useRouter();
   const arweave = initArweave();
 
   const onSuccesConnect = async (wallet: Wallet) => {
     return arweaveSDK
       .using(arweave)
-      .storefront.find('solana:pubkey', wallet.pubkey)
-      .then((storefront: any) => {
+      .marketplace.find('solana:pubkey', wallet.pubkey)
+      .then((marketplace: any) => {
         
-        setStorefront(storefront);
-        if (storefront) {
-          return router.push('/storefront/edit');
+        setMarketplace(marketplace);
+        if (marketplace) {
+          return router.push('/marketplace/edit');
         }
 
-        return router.push('/storefront/new');
+        return router.push('/marketplace/new');
       });
     }
 
-    const connectStorefront = () => connect(onSuccesConnect);
+    const connectMarketplace = () => connect(onSuccesConnect);
 
     useEffect(() => {
       if (!process.browser || !wallet) {
@@ -51,22 +51,22 @@ export const StorefrontProvider = ({ wallet, children, connect }: StorefrontProv
 
       arweaveSDK
         .using(arweave)
-        .storefront.find('solana:pubkey', wallet.pubkey)
-        .then((storefront) => {
-          if (isNil(storefront)) {
+        .marketplace.find('solana:pubkey', wallet.pubkey)
+        .then((marketplace) => {
+          if (isNil(marketplace)) {
             setSearching(false);
 
             return;
           }
 
-          setStorefront(storefront);
+          setMarketplace(marketplace);
           setSearching(false);
         });
     }, [wallet]);
 
     return (
-      <StorefrontContext.Provider value={{ searching, storefront, connectStorefront }}>
-        {children({ searching, storefront })}
-      </StorefrontContext.Provider>
+      <MarketplaceContext.Provider value={{ searching, marketplace, connectMarketplace }}>
+        {children({ searching, marketplace })}
+      </MarketplaceContext.Provider>
     );
   };

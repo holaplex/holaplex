@@ -46,7 +46,8 @@ import {
   SkeletonListing,
 } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
-import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { StorefrontContext } from '@/modules/storefront';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -329,7 +330,7 @@ const getDefaultFilter = () => {
 }
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
-  const { connect } = useContext(WalletContext);
+  const { connectStorefront } = useContext(StorefrontContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
@@ -420,7 +421,8 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
-              <Button onClick={() => connect()}>Create Your Store</Button>
+              <Button onClick={() => connectStorefront()}>Create Your Store</Button>
+              <Button onClick={() => {}}>Create Your Marketplace</Button>
             </Space>
           </Marketing>
           <HeroCol xs={24} md={8}>
@@ -555,7 +557,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>Create Your Store</Button>
+            <Button onClick={() => connectStorefront()}>Create Your Store</Button>
           </Space>
         </Section>
       </CenteredContentCol>

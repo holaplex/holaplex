@@ -8,7 +8,6 @@ import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
-import { StorefrontContext } from '@/modules/storefront';
 import {
   FieldData,
   getTextColor,
@@ -53,19 +52,13 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet } = useContext(WalletContext);
-  const { connectStorefront } = useContext(StorefrontContext);
+  const { solana, wallet, connect } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
-    { name: ['subdomain'], value: '' },
+    { name: ['hostname'], value: '' },
     { name: ['pubkey'], value: '' },
-    { name: ['theme', 'backgroundColor'], value: '#333333' },
-    { name: ['theme', 'primaryColor'], value: '#F2C94C' },
-    { name: ['theme', 'titleFont'], value: 'Work Sans' },
-    { name: ['theme', 'textFont'], value: 'Work Sans' },
     { name: ['theme', 'logo'], value: [] },
     { name: ['theme', 'banner'], value: [] },
-    { name: ['meta', 'favicon'], value: [] },
-    { name: ['meta', 'title'], value: '' },
+    { name: ['meta', 'name'], value: '' },
     { name: ['meta', 'description'], value: '' },
   ]);
 
@@ -74,8 +67,8 @@ export default function New() {
       <Row justify="center">
         <Card>
           <Space direction="vertical">
-            <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button type="primary" block onClick={connectStorefront}>
+            <Paragraph>Connect your Solana wallet to create a marketplace.</Paragraph>
+            <Button type="primary" block onClick={connect}>
               Connect
             </Button>
           </Space>
@@ -97,29 +90,27 @@ export default function New() {
     onSuccess: (domain) =>
       toast(
         <>
-          Your storefront is ready. Visit <a href={`https://${domain}`}>{domain}</a> to finish
-          setting up your storefront.
+          Your marketplace is ready. Visit <a href={`https://${domain}`}>{domain}</a> to finish
+          setting up your marketplace.
         </>,
         { autoClose: 60000 }
       ),
     onError: (e) =>
       toast(
         <>
-          There was an issue creating your storefront. Please wait a moment and try again.
+          There was an issue creating your marketplace. Please wait a moment and try again.
           {e && ` (${e})`}
         </>
       ),
-    trackEvent: 'Storefront Created',
+    trackEvent: 'Marketplace Created',
   });
 
-  const textColor = getTextColor(values.theme.backgroundColor);
-  const buttontextColor = getTextColor(values.theme.primaryColor);
 
   const subdomain = (
     <>
       <Col>
         <Title level={2}>Let&apos;s start with your sub-domain.</Title>
-        <Paragraph>This is the address that people will use to get to your store.</Paragraph>
+        <Paragraph>This is the address that people will use to get to your marketplace.</Paragraph>
       </Col>
       <Col flex={1}>
         <DomainFormItem
@@ -133,7 +124,7 @@ export default function New() {
             { required: true, validator: subdomainUniqueness },
           ]}
         >
-          <Input autoFocus suffix=".holaplex.com" />
+          <Input autoFocus suffix=".holaplex.market" />
         </DomainFormItem>
       </Col>
     </>
@@ -141,12 +132,21 @@ export default function New() {
 
   const theme = (
     <Row justify="space-between">
-      <Col sm={24} md={12} lg={12}>
-        <Title level={2}>Next, theme your store.</Title>
-        <Paragraph>Choose a images, colors, and fonts to fit your store’s brand.</Paragraph>
+      <Col sm={24}>
+        <Title level={2}>Next, configure your marketplace.</Title>
+        <Paragraph>Choose a logo, banner, and description to fit your marketplace's brand.</Paragraph>
+        {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
+              <UploadedBanner
+                src={ifElse(
+                  has('response'),
+                  view(lensPath(['response', 'url'])),
+                  prop('url')
+                )(values.theme.banner[0])}
+              />
+            )}
         <Form.Item
           label="Hero Banner"
-          tooltip="Sits at the top of your store, 1500px wide and 500px tall works best!"
+          tooltip="Sits at the top of your marketplace, 1500px wide and 500px tall works best!"
           name={['theme', 'banner']}
           rules={[{ required: false, message: 'Upload a Hero Image' }]}
         >
@@ -158,6 +158,14 @@ export default function New() {
             )}
           </Upload>
         </Form.Item>
+        <UploadedLogo
+                src={ifElse(
+                  has('response'),
+                  view(lensPath(['response', 'url'])),
+                  prop('url')
+                )(values.theme.logo[0])}
+              />
+            
         <Form.Item
           label="Logo"
           name={['theme', 'logo']}
@@ -171,95 +179,28 @@ export default function New() {
             )}
           </Upload>
         </Form.Item>
-        <Form.Item name={['theme', 'backgroundColor']} label="Background">
-          <ColorPicker />
-        </Form.Item>
-        <Form.Item name={['theme', 'primaryColor']} label="Buttons &amp; Links">
-          <ColorPicker />
-        </Form.Item>
-        <Form.Item name={['theme', 'titleFont']} label="Title Font">
-          <FontSelect />
-        </Form.Item>
-        <Form.Item name={['theme', 'textFont']} label="Main Text Font">
-          <FontSelect />
-        </Form.Item>
       </Col>
-      <PrevCol sm={24} md={11} lg={10}>
-        <PrevCard bgColor={values.theme.backgroundColor}>
-          <Space direction="vertical">
-            {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
-              <UploadedBanner
-                src={ifElse(
-                  has('response'),
-                  view(lensPath(['response', 'url'])),
-                  prop('url')
-                )(values.theme.banner[0])}
-              />
-            )}
-            {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
-              <UploadedLogo
-                src={ifElse(
-                  has('response'),
-                  view(lensPath(['response', 'url'])),
-                  prop('url')
-                )(values.theme.logo[0])}
-              />
-            )}
-            <PrevTitle level={2} color={textColor} fontFamily={values.theme.titleFont}>
-              Big Title
-            </PrevTitle>
-            <PrevTitle level={3} color={textColor} fontFamily={values.theme.titleFont}>
-              Little Title
-            </PrevTitle>
-            <PrevText color={textColor} fontFamily={values.theme.textFont}>
-              Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo shizzle.
-              Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle, arcu.
-            </PrevText>
-            <PreviewLink color={values.theme.primaryColor}>Link to things</PreviewLink>
-            <PreviewButton
-              className="apply-font-body"
-              color={values.theme.primaryColor}
-              textColor={buttontextColor}
-            >
-              Button
-            </PreviewButton>
-          </Space>
-        </PrevCard>
-      </PrevCol>
     </Row>
   );
 
   const meta = (
     <>
-      <Title level={2}>Finally, set page meta data.</Title>
+      <Title level={2}>Finally, set marketplace title and description.</Title>
       <Paragraph>
-        Upload a favicon and set other page meta data. This information will display on social
-        platforms, such as Twitter and Facebook, when links to the store are shared.
+        This needs descriptive text. There should be something here explaining what the DAO owner should be inputing into the fields because details are important.
       </Paragraph>
+
       <Form.Item
-        label="Favicon"
-        name={['meta', 'favicon']}
-        rules={[{ required: true, message: 'Upload a favicon.' }]}
-      >
-        <Upload>
-          {isEmpty(values.meta.favicon) && (
-            <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-              Upload
-            </Button>
-          )}
-        </Upload>
-      </Form.Item>
-      <Form.Item
-        name={['meta', 'title']}
-        rules={[{ required: true, message: 'Please enter a page title.' }]}
-        label="Page Title"
+        name={['meta', 'name']}
+        rules={[{ required: true, message: 'Please enter a name for the marketplace.' }]}
+        label="Marketplace Name"
       >
         <Input autoFocus />
       </Form.Item>
       <Form.Item
         name={['meta', 'description']}
-        label="Page Description"
-        rules={[{ required: true, message: 'Please enter a page description.' }]}
+        label="Marketplace Description"
+        rules={[{ required: true, message: 'Please enter a description for the marketplace.' }]}
       >
         <Input.TextArea />
       </Form.Item>
