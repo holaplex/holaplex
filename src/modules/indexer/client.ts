@@ -1,4 +1,4 @@
-import { compose, filter, sortWith, prop, pipe, descend, not, ascend, includes, when, isNil, always } from 'ramda';
+import { compose, filter, sortWith, prop, pipe, descend, not, ascend, contains } from 'ramda';
 
 const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
 
@@ -49,7 +49,7 @@ export interface Listing {
 }
 
 export const IndexerSDK = {
-  getListings: async ({ approved }: { approved: string[] | undefined }): Promise<Listing[]> => {
+  getListings: async (): Promise<Listing[]> => {
     const res = await fetch(INDEXER_URL, {
       method: 'POST',
       headers: {
@@ -65,20 +65,14 @@ export const IndexerSDK = {
 
     const json = await res.json();
 
-    return compose<any, Listing[]>(
-      sortWith<Listing>(
-        [
-          ascend<any>(prop('instantSalePrice')),
-          descend(prop('highestBid')),
-          ascend(prop('endsAt'))
-        ]
-      ),
-      when<Listing, any>(
-        always(not(isNil(approved))),
-        //@ts-ignore
-        filter(pipe(prop('subdomain'), (subdomain) => includes(subdomain, approved)))
-      )
-    // @ts-ignore
-    )(json.result);
+    return sortWith(
+      [
+        //@ts-ignore   
+        ascend(prop('instantSalePrice')),
+        descend(prop('highestBid')),
+        ascend(prop('endsAt'))
+      ],
+      json.result
+    )
   },
 };
