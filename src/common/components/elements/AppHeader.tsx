@@ -64,7 +64,7 @@ export function AppHeader() {
     <StyledHeader>
       <HeaderTitle>
         <Link href="/" passHref>
-          <Image height={30} width={352} src="/images/logo.png" alt="holaplex-logo" />
+          <Image height={30} width={352} src="/images/Logo.png" alt="holaplex-logo" />
         </Link>
       </HeaderTitle>
       { !WHICHDAO && <LinkRow size="large">
