@@ -162,13 +162,14 @@ export const submitCallback = ({
     try {
       setSubmitting(true);
 
-      const { theme, meta, subdomain, crossmint } = values;
+      const { theme, meta, subdomain, integrations } = values;
       const domain = `${subdomain}.holaplex.com`;
 
       const logo = popFile(theme.logo[0]);
       const banner = popFile(theme.banner[0]);
       const favicon = popFile(meta.favicon[0]);
 
+      // debugger;
       const storefront: Storefront = {
         theme: {
           ...(theme as StorefrontTheme<unknown>),
@@ -181,7 +182,7 @@ export const submitCallback = ({
         },
         subdomain,
         pubkey: solana?.publicKey.toBase58() ?? '',
-        crossmint,
+        integrations,
       };
 
       if (banner?.url) {

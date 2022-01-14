@@ -80,8 +80,8 @@ export default function Edit() {
     { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
     {
-      name: ['crossmint'],
-      value: storefront?.crossmint ?? uuidv4(),
+      name: ['integrations', 'crossmintClientId'],
+      value: storefront?.integrations?.crossmintClientId ?? uuidv4(),
     },
   ]);
 
