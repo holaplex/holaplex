@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
-import StorefrontsSDK from '@/modules/storefront/client';
 import {
   PageHeader,
   List,
@@ -24,14 +23,19 @@ import {
   always,
   ifElse,
   filter,
+  concat,
   not,
   pipe,
   is,
+  isNil,
   prop,
   descend,
   ascend,
   sortWith,
   equals,
+  map,
+  range,
+  propEq,
 } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
@@ -42,30 +46,23 @@ import {
   SkeletonListing,
 } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
 
-export enum FilterOptions {
-  All = 'all',
-  Auctions = 'auctions',
-  InstantSale = 'instant_sale',
-}
-
-export enum SortOptions {
-  RecentlyAdded = 'recently_added',
-  EndingSoonest = 'ending_soonest',
-  Expensive = 'expensive',
-  Cheapest = 'cheapest',
-  BidCount = 'bid_count',
-  Trending = 'trending',
-}
-
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
+const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
 
-const DISCOVERY_DEFAULT_FILTER_BY = process.env.NEXT_PUBLIC_DISCOVERY_DEFAULT_FILTER_BY || FilterOptions.Auctions;
-const DISCOVERY_APPROVED_SUBDOMAINS_URL = process.env.DISCOVERY_APPROVED_SUBDOMAINS_URL;
+const DAOStoreFrontList = async () => {
+  if (WHICHDAO) {
+    const response = await fetch(DAO_LIST_IPFS)
+    const json = await response.json()
+    return json[WHICHDAO];
+  }
+  return []
+}
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -234,6 +231,20 @@ const HeroCol = styled(Col)`
     margin: 0 0 0.5rem 0;
   }
 `;
+export enum FilterOptions {
+  All = 'all',
+  Auctions = 'auctions',
+  InstantSale = 'instant_sale',
+}
+
+export enum SortOptions {
+  RecentlyAdded = 'recently_added',
+  EndingSoonest = 'ending_soonest',
+  Expensive = 'expensive',
+  Cheapest = 'cheapest',
+  BidCount = 'bid_count',
+  Trending = 'trending',
+}
 
 const sortOptions: {
   [key in FilterOptions]: {
@@ -295,22 +306,29 @@ const sorts = {
 
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
-  const approvedSubdomains = await StorefrontsSDK.getApprovedSubdomains(DISCOVERY_APPROVED_SUBDOMAINS_URL);
+  const selectedDaoSubdomains = await DAOStoreFrontList();
 
   return {
     props: {
       featuredStorefronts,
-      approvedSubdomains,
+      selectedDaoSubdomains,
     },
   };
 }
 
 interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
-  approvedSubdomains: string[];
+  selectedDaoSubdomains: String[];
 }
 
-export default function Home({ featuredStorefronts, approvedSubdomains }: HomeProps) {
+const getDefaultFilter = () => {
+  if (WHICHDAO) {
+    return FilterOptions.All
+  }
+  return FilterOptions.Auctions
+}
+
+export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
@@ -322,7 +340,7 @@ export default function Home({ featuredStorefronts, approvedSubdomains }: HomePr
       .map((_, i) => generateListingShell(i))
   );
   const [displayedListings, setDisplayedListings] = useState<Listing[]>([]);
-  const [filterBy, setFilterBy] = useState<FilterOptions>(DISCOVERY_DEFAULT_FILTER_BY as FilterOptions);
+  const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
@@ -365,12 +383,16 @@ export default function Home({ featuredStorefronts, approvedSubdomains }: HomePr
   // initial fetch and display
   useEffect(() => {
     async function getListings() {
-      const allListings = await IndexerSDK.getListings({ approved: approvedSubdomains });
-    
+      const allListings = await IndexerSDK.getListings();
+      let daoFilteredListings = allListings;
 
-      setAllListings(allListings);
-      setFeaturedListings(allListings.slice(0, 5));
-      setDisplayedListings(applyListingFilterAndSort(allListings));
+      if (WHICHDAO) {
+        daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
+      }
+
+      setAllListings(daoFilteredListings);
+      setFeaturedListings(daoFilteredListings.slice(0, 5));
+      setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
     }
