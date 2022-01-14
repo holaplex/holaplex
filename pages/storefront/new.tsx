@@ -44,6 +44,7 @@ import {
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
@@ -65,6 +66,7 @@ export default function New() {
     { name: ['meta', 'favicon'], value: [] },
     { name: ['meta', 'title'], value: '' },
     { name: ['meta', 'description'], value: '' },
+    { name: ['crossmint'], value: uuidv4() },
   ]);
 
   if (isNil(solana) || isNil(wallet)) {

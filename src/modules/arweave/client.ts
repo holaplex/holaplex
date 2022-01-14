@@ -109,6 +109,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                   type: tags['holaplex:metadata:favicon:type'],
                 },
               },
+              crossmint: tags['crossmint:clientId'] || null,
             },
           };
 
@@ -252,6 +253,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag('holaplex:theme:color:background', storefront.theme.backgroundColor);
       transaction.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
       transaction.addTag('holaplex:theme:font:text', storefront.theme.textFont);
+      transaction.addTag('crossmint:clientId', storefront.crossmint);
       transaction.addTag('Arweave-App', 'holaplex');
 
       if (storefront.theme.banner) {

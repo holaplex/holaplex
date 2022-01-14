@@ -66,9 +66,10 @@
     "react-step-wizard": "^5.3.9",
     "react-toastify": "^7.0.4",
     "styled-components": "^5.3.0",
+    "ts-node": "^10.4.0",
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
-    "ts-node": "^10.4.0",
+    "uuid": "^8.3.2",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
@@ -83,6 +84,7 @@
     "@types/react": "17.0.11",
     "@types/spark-md5": "^3.0.2",
     "@types/styled-components": "^5.1.10",
+    "@types/uuid": "^8.3.4",
     "arconnect": "^0.2.9",
     "babel-plugin-import": "^1.13.3",
     "chai": "^4.3.4",

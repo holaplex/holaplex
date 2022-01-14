@@ -20,4 +20,5 @@ export interface Storefront<F = ArweaveFile> {
   meta: PageMetaData<F>;
   subdomain: string;
   pubkey: string;
+  crossmint: string;
 }
