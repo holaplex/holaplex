@@ -6,6 +6,7 @@ import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import { useContext } from 'react';
+import Image from 'next/image';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -63,9 +64,7 @@ export function AppHeader() {
     <StyledHeader>
       <HeaderTitle>
         <Link href="/" passHref>
-          <a>
-            👋&nbsp;&nbsp;<span>Holaplex</span>
-          </a>
+          <Image height={30} width={352} src="/images/logo.png" alt="holaplex-logo" />
         </Link>
       </HeaderTitle>
       { !WHICHDAO && <LinkRow size="large">

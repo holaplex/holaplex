@@ -416,12 +416,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section>
           <Marketing xs={22} md={16}>
             <HeroTitle>
-              Discover, explore, and collect NFTs from incredible creators on Solana
+            Reject humanity and return to monke art
             </HeroTitle>
-            <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
-            <Space direction="horizontal" size="large">
-              <Button onClick={() => connect()}>Create Your Store</Button>
-            </Space>
+            <Pitch>Monke.ART is an exclusive storefront for monke artists from the MonkeDAO to showcase their work. We believe supporting creators and 1/1 artists is an important step in helping to grow the Solana ecosystem, and this storefront gives top talent the exposure they deserve to succeed.</Pitch>
           </Marketing>
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
@@ -551,12 +548,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               )}
             </Row>
           </Col>
-        </Section>
-        <Section justify="center" align="middle">
-          <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>Create Your Store</Button>
-          </Space>
         </Section>
       </CenteredContentCol>
     </Row>

@@ -87,7 +87,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             <Col span={24}>
                               <Row>
                                 <Col xs={24} md={8}>
-                                  <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
+                                  <a href="mailto:hello@monkedao.io">hello@monkedao.io</a>
                                 </Col>
                                 <Col xs={0} md={8}>
                                   <Row justify="center">
