@@ -2,10 +2,10 @@ import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Space } from 'antd';
-import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
+import Button from '@/common/components/elements/Button';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -53,7 +53,7 @@ const LinkRow = styled(Space)`
   }
 `;
 
-export function AppHeader() {
+export function AppHeader({ setShowMintModal }: { setShowMintModal: (show: boolean) => void }) {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
 
@@ -77,10 +77,10 @@ export function AppHeader() {
           </Link>
         </HeaderLinkWrapper>
 
-        <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
-          <Link href="/nfts/new" passHref>
-            <a>Mint&nbsp;NFTs</a>
-          </Link>
+        <HeaderLinkWrapper key="mint-nfts" active={false}>
+          <Button onClick={() => setShowMintModal(true)} type="text" noStyle>
+            Mint&nbsp;NFTs
+          </Button>
         </HeaderLinkWrapper>
         <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
           <Link href="/about" passHref>

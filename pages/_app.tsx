@@ -13,7 +13,12 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
-import { AnalyticsProvider, OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '@/modules/ganalytics/AnalyticsProvider';
+import {
+  AnalyticsProvider,
+  OLD_GOOGLE_ANALYTICS_ID,
+  GA4_ID,
+} from '@/modules/ganalytics/AnalyticsProvider';
+import MintModal from '@/common/components/elements/MintModal';
 
 const { Header, Content } = Layout;
 
@@ -33,6 +38,7 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const [showMintModal, setShowMintModal] = React.useState(false);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -78,8 +84,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               return (
                 <AnalyticsProvider>
                   <AppLayout>
-                    <AppHeader />
+                    <AppHeader setShowMintModal={setShowMintModal} />
                     <AppContent>
+                      <MintModal show={showMintModal} onClose={() => setShowMintModal(false)} />
                       <Loading loading={verifying || searching}>
                         <>
                           <Component {...pageProps} track={track} />
@@ -111,6 +118,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                           </AppFooter>
                         </>
                       </Loading>
+                      {showMintModal && <MintModal />}
                     </AppContent>
                   </AppLayout>
                 </AnalyticsProvider>

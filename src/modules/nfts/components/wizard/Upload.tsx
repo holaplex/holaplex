@@ -3,7 +3,6 @@ import { Layout, PageHeader, Space, Upload, message, notification } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { StepWizardChildProps } from 'react-step-wizard';
-import { MintDispatch } from 'pages/nfts/new';
 import { DraggerProps } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 const { Dragger } = Upload;
@@ -113,6 +112,7 @@ export default function UploadStep({ nextStep, dispatch, files, clearForm }: Pro
     },
   };
 
+  console.log('is this running?');
   return (
     <StyledLayout>
       <Header>Add images or videos to create NFTs</Header>
