@@ -13,12 +13,13 @@ import {
   Col,
   Radio,
 } from 'antd';
+import 'antd/lib/input-number/style/index.css';
 import styled from 'styled-components';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { WalletContext } from '@/modules/wallet';
 const { Paragraph } = Typography;
 import dynamic from 'next/dynamic';
-import { BulkMinter as TBulkMinter } from '@holaplex/ui';
+// import { BulkMinter as TBulkMinter } from 'holaplex-ui';
 import { Connection } from '@solana/web3.js';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useRouter } from 'next/router';
@@ -27,9 +28,9 @@ const { Dragger } = Upload;
 const { Item } = Form;
 const { Group } = Radio;
 
-const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
-  ssr: false,
-}) as typeof TBulkMinter;
+// const BulkMinter = dynamic(() => import('holaplex-ui').then((mod) => mod.BulkMinter), {
+//   ssr: false,
+// }) as typeof TBulkMinter;
 
 type MintModalProps = {
   show: boolean;
@@ -52,6 +53,7 @@ const StyledModal = styled(Modal)`
     overflow-y: scroll;
     margin: 0;
     top: 0;
+    background-color: #000;
   }
 
   .ant-modal-wrap {
@@ -97,7 +99,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
       maskStyle={{ overflowX: 'hidden' }}
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
-      <BulkMinter
+      {/* <BulkMinter
         wallet={wallet}
         connect={connect}
         solana={solana}
@@ -106,7 +108,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}
         onClose={onClose}
-      />
+      /> */}
     </StyledModal>
   );
 };

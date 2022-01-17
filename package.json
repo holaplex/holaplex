@@ -25,7 +25,6 @@
     "@bugsnag/plugin-react": "^7.14.0",
     "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
-    "@holaplex/ui": "file:.yalc/@holaplex/ui",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
@@ -91,6 +90,8 @@
     "eslint-config-next": "11.0.1",
     "husky": "^7.0.2",
     "mocha": "^9.0.1",
+    "next-compose-plugins": "^2.2.1",
+    "next-with-less": "^2.0.4",
     "nodemon": "^2.0.12",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"

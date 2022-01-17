@@ -1,7 +1,7 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Layout, Space } from 'antd';
+import { InputNumber, Layout, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { useContext } from 'react';
@@ -78,6 +78,7 @@ export function AppHeader({ setShowMintModal }: { setShowMintModal: (show: boole
         </HeaderLinkWrapper>
 
         <HeaderLinkWrapper key="mint-nfts" active={false}>
+          <InputNumber<number> min={1} max={100} placeholder="1-100" />
           <Button onClick={() => setShowMintModal(true)} type="text" noStyle>
             Mint&nbsp;NFTs
           </Button>
