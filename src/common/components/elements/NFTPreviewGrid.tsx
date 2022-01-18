@@ -11,7 +11,7 @@ import React, { useRef, useState } from 'react';
 import { StyledModal } from '@/common/components/elements/VerifyFileUpload';
 import dynamic from 'next/dynamic';
 
-const ModelViewer = dynamic(() => import('./ModelViewer'), { ssr: false });
+// const ModelViewer = dynamic(() => import('./ModelViewer'), { ssr: false });
 
 const CheckWrapper = styled.div`
   position: absolute;
@@ -211,7 +211,7 @@ export const NFTPreviewGrid = ({
             <source src={URL.createObjectURL(currentFile)} type={currentFile.type} />
           </video>
         )}
-        {show3DFilePreview && currentFile && (
+        {/* {show3DFilePreview && currentFile && (
           <ModelViewer
             src={URL.createObjectURL(currentFile)}
             alt={currentFile.name}
@@ -220,7 +220,7 @@ export const NFTPreviewGrid = ({
             auto-rotate
             ar
           />
-        )}
+        )} */}
       </StyledModal>
       <Grid width={width}>
         {filePreviews.map((fp, i) => (

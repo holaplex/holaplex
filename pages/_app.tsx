@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import type { AppProps } from 'next/app';
+// import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.css';
 import { useRouter } from 'next/router';
@@ -19,6 +19,7 @@ import {
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
 import MintModal from '@/common/components/elements/MintModal';
+import '../src/test.less';
 
 const { Header, Content } = Layout;
 
@@ -36,7 +37,7 @@ const AppLayout = styled(Layout)`
   overflow-y: auto;
 `;
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const [showMintModal, setShowMintModal] = React.useState(false);
 

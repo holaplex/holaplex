@@ -8,7 +8,7 @@ import FeatherIcon from 'feather-icons-react';
 import React, { useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 
-const ModelViewer = dynamic(() => import('./ModelViewer'), { ssr: false });
+// const ModelViewer = dynamic(() => import('./ModelViewer'), { ssr: false });
 
 const ImageOverlay = styled.div<{ isFinished?: boolean; isCurrent?: boolean }>`
   height: 120px;
@@ -202,14 +202,14 @@ const VerifyFileUpload = ({ files, index = -1, width = 2, removeFile, children }
           </video>
         )}
         {show3DFilePreview && currentFile && (
-          <ModelViewer
-            src={URL.createObjectURL(currentFile)}
-            alt={currentFile.name}
-            shadow-intensity="1"
-            camera-controls
-            auto-rotate
-            ar
-          />
+          // <ModelViewer
+          //   src={URL.createObjectURL(currentFile)}
+          //   alt={currentFile.name}
+          //   shadow-intensity="1"
+          //   camera-controls
+          //   auto-rotate
+          //   ar
+          // />
         )}
       </StyledModal>
 
