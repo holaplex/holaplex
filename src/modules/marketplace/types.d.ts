@@ -7,7 +7,7 @@ export interface MarketplaceCollection<F = ArweaveFile> {
 }
 
 export interface MarketplaceMetaData {
-  title: string;
+  name: string;
   description: string;
 }
 
@@ -16,11 +16,15 @@ export interface MarketplaceTheme<F = ArweaveFile> {
   banner: F;
 }
 
+export interface MarketplaceAddress {
+  auctionHouse: string;
+  owner: string;
+}
+
 export interface Marketplace<F = ArweaveFile> {
-  auctionHouseAddress: string;
-  ownerAddress: string;
-  hostname: string;
+  address: MarketplaceAddress;
+  subdomain: string;
   meta: MarketplaceMetaData;
   theme: MarketplaceTheme;
-  collections: MarketplaceCollection[];
+  creators: string[];
 }

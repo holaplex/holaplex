@@ -27,6 +27,7 @@
     "@holaplex/js": "^4.3.2",
     "@metaplex/js": "^4.11.3",
     "@prisma/client": "^2.25.0",
+    "@project-serum/anchor": "^0.20.1",
     "@samuelmeuli/font-manager": "^1.4.0",
     "@solana/wallet-adapter-base": "^0.9.2",
     "@solana/wallet-adapter-react": "^0.15.2",

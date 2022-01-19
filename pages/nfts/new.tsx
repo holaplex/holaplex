@@ -17,6 +17,8 @@ import { isNil } from 'ramda';
 import OffRampScreen from '@/modules/nfts/components/wizard/OffRamp';
 import { Connection } from '@solana/web3.js';
 import { detectCategoryByFileExt, getFinalFileWithUpdatedName } from '@/modules/utils/files';
+import { StorefrontContext } from '@/modules/storefront';
+import router, { useRouter } from 'next/router';
 
 export const MAX_CREATOR_LIMIT = 4;
 
@@ -193,17 +195,23 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 export default function BulkUploadWizard() {
   const [state, dispatch] = useReducer(reducer, initialState());
   const [form] = useForm();
-  const { connect, solana, wallet, storefront } = useContext(WalletContext);
+  const router = useRouter();
+  const { storefront } = useContext(StorefrontContext);
+  const { connect, solana, wallet } = useContext(WalletContext);
 
   const { files, formValues, filePreviews } = state;
 
   const [doEachRoyaltyInd, setDoEachRoyaltyInd] = useState(false);
 
   useEffect(() => {
+    const onConnect = async () => {
+      router.push('/nfts/new');
+    };
+
     if (!wallet) {
-      connect('/nfts/new');
+      connect(onConnect);
     }
-  }, [wallet, connect]);
+  }, [wallet, connect, router]);
 
   const uploadCoverImage = async (file: File) => {
     const body = new FormData();

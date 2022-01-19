@@ -127,7 +127,7 @@ export interface StorefrontEditorProps {}
 
 export const validateSubdomainUniqueness = (
   ar: ArweaveScope,
-  allowPubkey?: string
+  allowPubkey?: string,
 ): ((rule: RuleObject, subdomain: string | null | undefined) => Promise<void>) => {
   return async (_, subdomain) => {
     const storefront = await ar.storefront.find('holaplex:metadata:subdomain', subdomain ?? '');

@@ -7,4 +7,4 @@ export type StorefrontContextProps = {
   connectStorefront: () => void;
 };
 
-export const StorefrontContext = React.createContext<StorefrontContextProps>({ searching: false });
+export const StorefrontContext = React.createContext<StorefrontContextProps>({ searching: false, connectStorefront: () => {} });

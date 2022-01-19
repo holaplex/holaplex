@@ -26,43 +26,12 @@ export const MarketplaceProvider = ({ wallet, children, connect }: StorefrontPro
   const arweave = initArweave();
 
   const onSuccesConnect = async (wallet: Wallet) => {
-    return arweaveSDK
-      .using(arweave)
-      .marketplace.find('solana:pubkey', wallet.pubkey)
-      .then((marketplace: any) => {
-        
-        setMarketplace(marketplace);
-        if (marketplace) {
-          return router.push('/marketplace/edit');
-        }
+        router.push('/marketplace/new');
 
-        return router.push('/marketplace/new');
-      });
+        return Promise.resolve();
     }
 
     const connectMarketplace = () => connect(onSuccesConnect);
-
-    useEffect(() => {
-      if (!process.browser || !wallet) {
-        return;
-      }
-
-      setSearching(true);
-
-      arweaveSDK
-        .using(arweave)
-        .marketplace.find('solana:pubkey', wallet.pubkey)
-        .then((marketplace) => {
-          if (isNil(marketplace)) {
-            setSearching(false);
-
-            return;
-          }
-
-          setMarketplace(marketplace);
-          setSearching(false);
-        });
-    }, [wallet]);
 
     return (
       <MarketplaceContext.Provider value={{ searching, marketplace, connectMarketplace }}>

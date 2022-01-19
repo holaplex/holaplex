@@ -1,40 +1,32 @@
+import { programs } from '@metaplex/js';
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
-import FontSelect from '@/common/components/elements/FontSelect';
-import Upload from '@/common/components/elements/Upload';
 import Button from '@/components/elements/Button';
-import ColorPicker from '@/components/elements/ColorPicker';
+import Upload from '@/components/elements/Upload';
 import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
+import { Marketplace } from '@/modules/marketplace'
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import MarketplaceSDK from '@/modules/marketplace/client';
+import { UserOutlined } from '@ant-design/icons'
 import {
   FieldData,
-  getTextColor,
   Paragraph,
-  PrevCard,
-  PrevCol,
-  PreviewButton,
-  PreviewLink,
-  PrevText,
-  PrevTitle,
   reduceFieldData,
-  StorefrontEditorProps,
-  submitCallback,
   Title,
   UploadedLogo,
   UploadedBanner,
   validateSubdomainUniqueness,
+  popFile,
 } from '@/modules/storefront/editor';
+import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
-import { UploadOutlined } from '@ant-design/icons';
-import { Card, Col, Form, Input, Row, Space } from 'antd';
-import { useRouter } from 'next/router';
+import { NATIVE_MINT } from '@solana/spl-token';
+import { Avatar, Card, Col, Form, Input, Slider, Row, Space, Typography, InputNumber } from 'antd';
 import {
   findIndex,
   has,
   ifElse,
-  isEmpty,
   isNil,
   lensPath,
   prop,
@@ -42,24 +34,50 @@ import {
   update,
   view,
 } from 'ramda';
-import React, { useContext, useState } from 'react';
+import { useConnection } from '@solana/wallet-adapter-react';
+import React, { useContext, useState, useEffect } from 'react';
+import { createAuctionHouse } from '@/modules/auction-house/transactions/CreateAuctionHouse';
+import { AuctionHouseAccount } from '@/modules/auction-house/AuctionHouseAccount';
+import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 
+const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === "true";
+
+const { metaplex: { Store, SetStoreV2, StoreConfig } } = programs;
+
+export async function getServerSideProps() {
+  if(MARKETPLACE_ENABLED) {
+    return {
+      props: {},
+    };
+  }
+
+  return {
+    redirect: {
+      permanent: false,
+      destination: "/"
+    }
+  }
+}
+
 export default function New() {
-  const [submitting, setSubmitting] = useState(false);
-  const { track } = useAnalytics();
   const router = useRouter();
+  const { connection } = useConnection();
+  const [submitting, setSubmitting] = useState(false);
   const arweave = initArweave();
+  const [pendingAddress, setPendingAddress] = useState<string>();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
   const { solana, wallet, connect } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
-    { name: ['hostname'], value: '' },
-    { name: ['pubkey'], value: '' },
+    { name: ['subdomain'], value: '' },
+    { name: ['address', 'owner'], value: '' },
     { name: ['theme', 'logo'], value: [] },
     { name: ['theme', 'banner'], value: [] },
     { name: ['meta', 'name'], value: '' },
     { name: ['meta', 'description'], value: '' },
+    { name: ['creators'], value: [] },
+    { name: ['sellerFeeBasisPoints'], value: 10000 }
   ]);
 
   if (isNil(solana) || isNil(wallet)) {
@@ -79,37 +97,94 @@ export default function New() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
+  const onSubmit = async (): Promise<void> => {
+    const {
+      theme,
+      meta,
+      subdomain,
+      creators,
+      sellerFeeBasisPoints,
+    } = values;
 
-  const onSubmit = submitCallback({
-    track,
-    router,
-    solana,
-    values,
-    setSubmitting,
-    onSuccess: (domain) =>
-      toast(
-        <>
-          Your marketplace is ready. Visit <a href={`https://${domain}`}>{domain}</a> to finish
-          setting up your marketplace.
-        </>,
-        { autoClose: 60000 }
-      ),
-    onError: (e) =>
-      toast(
-        <>
-          There was an issue creating your marketplace. Please wait a moment and try again.
-          {e && ` (${e})`}
-        </>
-      ),
-    trackEvent: 'Marketplace Created',
-  });
+    setSubmitting(true);
 
+    const logo = popFile(theme.logo[0]);
+    const banner = popFile(theme.banner[0]);
+    const domain = `${subdomain}.holaplex.market`;
+
+    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(solana.publicKey, NATIVE_MINT);
+
+    const input = {
+      meta,
+      theme: {
+        logo,
+        banner,
+      },
+      subdomain,
+      address: {
+        owner: wallet.pubkey,
+        auctionHouse: auctionHousPubkey.toBase58(),
+      },
+      creators: creators.map(({ address }: any) => address),
+    } as Marketplace;
+
+    const { txt } = await MarketplaceSDK.uploadManifest(input, solana);
+
+    const auctionHouseCreateInstruction = await createAuctionHouse({
+      connection,
+      wallet: solana,
+      sellerFeeBasisPoints,
+    });
+    const storePubkey = await Store.getPDA(solana.publicKey);
+
+    const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
+    const createStoreV2Instruction = new SetStoreV2(
+      { 
+        feePayer: solana.publicKey
+      },
+      { 
+        admin: solana.publicKey,
+        store: storePubkey,
+        config: storeConfigPubkey,
+        isPublic: false,
+        settingsUri: `https://arweave.net/${txt}`,
+      },
+    );
+
+    const transaction = new Transaction();
+
+    transaction
+      .add(auctionHouseCreateInstruction)
+      .add(createStoreV2Instruction);
+
+    transaction.feePayer = solana.publicKey;
+    transaction.recentBlockhash = (
+      await connection.getRecentBlockhash()
+    ).blockhash;
+
+    const signedTransaction = await solana.signTransaction(transaction);
+
+    const txtID = await connection.sendRawTransaction(signedTransaction.serialize());
+  
+    await connection.confirmTransaction(txtID);
+
+    router.push('/');
+
+    toast(
+      <>
+        Your marketplace is ready. Visit <a href={`https://${domain}`}>{domain}</a>.
+      </>,
+      { autoClose: 60000 }
+    )
+
+    setSubmitting(false);
+  }
 
   const subdomain = (
     <>
       <Col>
-        <Title level={2}>Let&apos;s start with your sub-domain.</Title>
+        <Title level={2}>Let&apos;s start with your domain.</Title>
         <Paragraph>This is the address that people will use to get to your marketplace.</Paragraph>
       </Col>
       <Col flex={1}>
@@ -130,66 +205,52 @@ export default function New() {
     </>
   );
 
-  const theme = (
-    <Row justify="space-between">
-      <Col sm={24}>
-        <Title level={2}>Next, configure your marketplace.</Title>
-        <Paragraph>Choose a logo, banner, and description to fit your marketplace's brand.</Paragraph>
-        {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
-              <UploadedBanner
-                src={ifElse(
-                  has('response'),
-                  view(lensPath(['response', 'url'])),
-                  prop('url')
-                )(values.theme.banner[0])}
-              />
-            )}
-        <Form.Item
-          label="Hero Banner"
-          tooltip="Sits at the top of your marketplace, 1500px wide and 500px tall works best!"
-          name={['theme', 'banner']}
-          rules={[{ required: false, message: 'Upload a Hero Image' }]}
-        >
-          <Upload>
-            {isEmpty(values.theme.banner) && (
-              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload Banner
-              </Button>
-            )}
-          </Upload>
-        </Form.Item>
+  const details = (
+    <Col span={24}>
+      <Title level={2}>Customize your marketplace</Title>
+      {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
+        <UploadedBanner
+          src={ifElse(
+            has('response'),
+            view(lensPath(['response', 'url'])),
+            prop('url')
+          )(values.theme.banner[0])}
+        />
+      )}
+      <Form.Item
+        label="Hero Banner"
+        tooltip="Sits at the top of your marketplace, 1500px wide and 500px tall works best!"
+        name={['theme', 'banner']}
+        rules={[{ required: true, message: 'Upload a Hero Image' }]}
+      >
+        <Upload dragger>
+          <>
+            <p className="ant-upload-text">Upload banner image</p>
+            <p className="ant-upload-hint">1500px x 375px JPEG, PNG or GIF - max file size 2mb</p>
+          </>
+        </Upload>
+      </Form.Item>
+      {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
         <UploadedLogo
-                src={ifElse(
-                  has('response'),
-                  view(lensPath(['response', 'url'])),
-                  prop('url')
-                )(values.theme.logo[0])}
-              />
-            
-        <Form.Item
-          label="Logo"
-          name={['theme', 'logo']}
-          rules={[{ required: true, message: 'Upload a logo.' }]}
-        >
-          <Upload>
-            {isEmpty(values.theme.logo) && (
-              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload Logo
-              </Button>
-            )}
-          </Upload>
-        </Form.Item>
-      </Col>
-    </Row>
-  );
-
-  const meta = (
-    <>
-      <Title level={2}>Finally, set marketplace title and description.</Title>
-      <Paragraph>
-        This needs descriptive text. There should be something here explaining what the DAO owner should be inputing into the fields because details are important.
-      </Paragraph>
-
+          src={ifElse(
+            has('response'),
+            view(lensPath(['response', 'url'])),
+            prop('url')
+          )(values.theme.logo[0])}
+        />
+      )}
+      <Form.Item
+        label="Logo"
+        name={['theme', 'logo']}
+        rules={[{ required: true, message: 'Upload a logo.' }]}
+      >
+        <Upload dragger>
+          <>
+            <p className="ant-upload-text">Upload logo image</p>
+            <p className="ant-upload-hint">225px x 225px JPEG, PNG or GIF - max file size 1mb</p>
+          </>
+        </Upload>
+      </Form.Item>
       <Form.Item
         name={['meta', 'name']}
         rules={[{ required: true, message: 'Please enter a name for the marketplace.' }]}
@@ -204,8 +265,51 @@ export default function New() {
       >
         <Input.TextArea />
       </Form.Item>
-    </>
+      <Form.Item
+        name={['sellerFeeBasisPoints']}
+        label="Seller Fee Basis Points"
+
+      >
+        <InputNumber<number> min={0} max={100000} />
+      </Form.Item>
+    </Col>
   );
+
+  const creators = (
+    <Col xs={24}>
+      <Title level={2}>Add creators</Title>
+      <Paragraph>Choose the creators you want to feature on your market</Paragraph>
+      <Form.List name="creators">
+        {(fields, { add, remove }) => (
+          <>
+            <Space direction="vertical" size="middle">
+              {fields.map(({ key, name, ...restField }, idx) => (
+                <Space key={key} direction="horizontal" size="middle">
+                  <Avatar size={36} icon={<UserOutlined />} />
+                  <Typography.Text>{values.creators[idx].address}</Typography.Text>
+                  <Button onClick={() => remove(idx)}>Remove</Button>
+                </Space>
+              ))}
+            </Space>
+            <Input
+              autoFocus
+              type="text"
+              onChange={e => setPendingAddress(e.target.value)}
+              onPressEnter={e => {
+                e.preventDefault();
+
+                add({ address: pendingAddress });
+
+                setPendingAddress(undefined);
+              }}
+              value={pendingAddress}
+              placeholder="SOL wallet address..."
+            />
+          </>
+        )}
+      </Form.List>
+    </Col>
+  )
 
   return (
     <Row justify="center" align="middle">
@@ -219,8 +323,8 @@ export default function New() {
             if (isNil(changed)) {
               return;
             }
-
             const current = findIndex(propEq('name', changed.name), fields);
+            
             setFields(update(current, changed, fields));
           }}
           onFinish={onSubmit}
@@ -231,10 +335,8 @@ export default function New() {
               {subdomain}
             </FillSpace>
           </Row>
-          <Row justify="space-between">{theme}</Row>
-          <Row justify="space-between">
-            <Col xs={24}>{meta}</Col>
-          </Row>
+          <Row>{details}</Row>
+          <Row>{creators}</Row>
         </StepForm>
       </Col>
     </Row>

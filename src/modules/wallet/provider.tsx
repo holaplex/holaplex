@@ -7,7 +7,8 @@ import { useRouter } from 'next/router';
 import { isNil } from 'ramda';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { WalletContext, WalletContextProps, SuccessConnectFn } from './context';
+import { WalletContext, WalletContextProps } from './context';
+import { SuccessConnectFn } from './types';
 
 type WalletProviderProps = {
   wallet?: Wallet;
@@ -33,7 +34,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [solana, setSolana] = useState<Solana>();
 
   if (typeof window === 'object') {
-    if (window.solana && window.solana?.connect) {
+    if (window.solana && window.solana?.connect) {  
       if (window.solana !== solana) {
         setSolana(window.solana);
         setInitialization(false);

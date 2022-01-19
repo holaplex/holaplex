@@ -38,7 +38,6 @@ import {
   propEq,
 } from 'ramda';
 import Button from '@/components/elements/Button';
-import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import {
   generateListingShell,
@@ -48,12 +47,14 @@ import {
 import { SelectValue } from 'antd/lib/select';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
+import { MarketplaceContext } from '@/modules/marketplace';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
+const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
 
 const DAOStoreFrontList = async () => {
@@ -331,6 +332,7 @@ const getDefaultFilter = () => {
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connectStorefront } = useContext(StorefrontContext);
+  const { connectMarketplace } = useContext(MarketplaceContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
@@ -422,7 +424,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
               <Button onClick={() => connectStorefront()}>Create Your Store</Button>
-              <Button onClick={() => {}}>Create Your Marketplace</Button>
+              {MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>}
             </Space>
           </Marketing>
           <HeroCol xs={24} md={8}>
