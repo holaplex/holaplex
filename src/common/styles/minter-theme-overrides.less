@@ -1,3 +1,54 @@
+.no-style-btn {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  *[ant-click-animating-without-extra-node='true']::after {
+    display: none;
+  }
+  &:hover,
+  &:focus {
+    background: transparent;
+    color: #fff;
+    border-bottom: transparent;
+  }
+}
+
 .text-theme-color {
   color: #b92d44;
+}
+
+.ant-btn-primary {
+  color: #f4f4f4;
+  &:hover,
+  &:active,
+  &:focus {
+    color: #fff;
+    background: linear-gradient(10.77deg, rgb(210, 64, 137) 8.62%, rgb(185, 45, 68) 84.54%);
+  }
+  &[disabled],
+  &[disabled]:hover {
+    background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
+    color: #fff;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: #fff;
+      background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
+      color: #fff;
+
+      &:hover,
+      &:active,
+      &:focus {
+        background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
+      }
+    }
+  }
 }

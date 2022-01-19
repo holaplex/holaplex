@@ -7,10 +7,10 @@ import dynamic from 'next/dynamic';
 import { Connection } from '@solana/web3.js';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
-import { BulkMinter as TBulkMinter } from 'holaplex-ui';
+import { BulkMinter as TBulkMinter } from '@holaplex/ui';
 import { Wallet } from '@/modules/wallet/types';
 
-const BulkMinter = dynamic(() => import('holaplex-ui').then((mod) => mod.BulkMinter), {
+const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
 }) as typeof TBulkMinter;
 

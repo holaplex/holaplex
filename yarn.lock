@@ -995,6 +995,17 @@
     crypto-hash "^1.3.0"
     form-data "^4.0.0"
 
+"@holaplex/ui@file:.yalc/@holaplex/ui":
+  version "0.0.2"
+  dependencies:
+    "@holaplex/js" "^4.3.2"
+    antd "^4.16.7"
+    feather-icons-react "^0.4.3"
+    ramda "^0.27.2"
+    react-step-wizard "^5.3.11"
+    react-toastify "^8.1.0"
+    use-onclickoutside "^0.4.0"
+
 "@icons/material@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
@@ -3973,11 +3984,6 @@ hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.3.0:
   dependencies:
     react-is "^16.7.0"
 
-"holaplex-ui@file:.yalc/holaplex-ui":
-  version "0.0.1"
-  dependencies:
-    antd "^4.16.7"
-
 http-cache-semantics@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz#49e91c5cbf36c9b94bcfcd71c23d5249ec74e390"
@@ -5539,7 +5545,7 @@ raf@^3.1.0, raf@^3.3.2, raf@^3.4.0:
   dependencies:
     performance-now "^2.1.0"
 
-ramda@^0.27.1:
+ramda@^0.27.1, ramda@^0.27.2:
   version "0.27.2"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.27.2.tgz#84463226f7f36dc33592f6f4ed6374c48306c3f1"
   integrity sha512-SbiLPU40JuJniHexQSAgad32hfwd+DRUdwF2PlVuI5RZD0/vahUco7R8vD86J/tcEKKF9vZrUVwgtmGCqlCKyA==
@@ -6125,7 +6131,7 @@ react-refresh@0.8.3:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
 
-react-step-wizard@^5.3.9:
+react-step-wizard@^5.3.11, react-step-wizard@^5.3.9:
   version "5.3.11"
   resolved "https://registry.yarnpkg.com/react-step-wizard/-/react-step-wizard-5.3.11.tgz#a52b46db772c0340dd6f45f93716d2afcf2196e2"
   integrity sha512-TD3ocUdt4XWvisTNEiATh+cFuh1RK0LgvYqOResTIhLtFmdWnXzFVaNIZJ3qzW5Bm6yeotzZ4KAmRjmsqBXnWQ==
@@ -6134,6 +6140,13 @@ react-toastify@^7.0.4:
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-7.0.4.tgz#7d0b743f2b96f65754264ca6eae31911a82378db"
   integrity sha512-Rol7+Cn39hZp5hQ/k6CbMNE2CKYV9E5OQdC/hBLtIQU2xz7DdAm7xil4NITQTHR6zEbE5RVFbpgSwTD7xRGLeQ==
+  dependencies:
+    clsx "^1.1.1"
+
+react-toastify@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-8.1.0.tgz#acaca4e8c4415c8474562dd84a14e6f390ed7f17"
+  integrity sha512-M+Q3rTmEw/53Csr7NsV/YnldJe4c7uERcY7Tma9mvLU98QT2VhIkKwjBzzxZkJRk/oBKyUAtkyMjMgO00hx6gQ==
   dependencies:
     clsx "^1.1.1"
 
