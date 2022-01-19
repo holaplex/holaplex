@@ -6,12 +6,9 @@ import { WalletContext } from '@/modules/wallet';
 import dynamic from 'next/dynamic';
 import { Connection } from '@solana/web3.js';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
-import { useRouter } from 'next/router';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from 'holaplex-ui';
 import { Wallet } from '@/modules/wallet/types';
-import { Solana } from '@/modules/solana/types';
-import { Storefront } from '@/modules/storefront/types';
 
 const BulkMinter = dynamic(() => import('holaplex-ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -52,7 +49,7 @@ interface MintModalProps {
 const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
-  const { connect, solana, storefront } = useContext(WalletContext);
+  const { solana, storefront } = useContext(WalletContext);
 
   useEffect(() => {
     if (show) {
@@ -79,9 +76,7 @@ const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
-        wallet={wallet}
-        connect={connect}
-        solana={solana}
+        wallet={solana}
         track={track}
         connection={connection}
         storefront={storefront}
