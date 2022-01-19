@@ -9,16 +9,13 @@ import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useRouter } from 'next/router';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from 'holaplex-ui';
-// import 'holaplex-ui/lib/index.cjs.css';
+import { Wallet } from '@/modules/wallet/types';
+import { Solana } from '@/modules/solana/types';
+import { Storefront } from '@/modules/storefront/types';
 
 const BulkMinter = dynamic(() => import('holaplex-ui').then((mod) => mod.BulkMinter), {
   ssr: false,
 }) as typeof TBulkMinter;
-
-type MintModalProps = {
-  show: boolean;
-  onClose: () => void;
-};
 
 const StyledModal = styled(Modal)`
   margin: 0;
@@ -46,17 +43,16 @@ const StyledModal = styled(Modal)`
 
 const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
 
-const MintModal = ({ show, onClose }: MintModalProps) => {
-  const { connect, solana, wallet, storefront } = useContext(WalletContext);
-  const router = useRouter();
+interface MintModalProps {
+  show: boolean;
+  onClose: () => void;
+  wallet: Wallet;
+}
+
+const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
-
-  useEffect(() => {
-    if (!wallet && show) {
-      connect(router.pathname);
-    }
-  }, [wallet, connect, show, router]);
+  const { connect, solana, storefront } = useContext(WalletContext);
 
   useEffect(() => {
     if (show) {

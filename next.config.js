@@ -13,10 +13,7 @@ const lessToJS = require('less-vars-to-js');
 const fs = require('fs');
 const path = require('path');
 
-// Where your antd-custom.less file lives
-const themeVariables = lessToJS(
-  fs.readFileSync(path.resolve(__dirname, './src/ant-theme.less'), 'utf8')
-);
+
 const plugins = [
   withImages,
   [
@@ -24,7 +21,6 @@ const plugins = [
     {
       lessLoaderOptions: {
         lessOptions: {
-          modifyVars: themeVariables,
           javascriptEnabled: true,
         },
       },
@@ -39,6 +35,6 @@ const plugins = [
 // };
 
 
-module.exports = withPlugins(plugins, {reactStrictMode: true})
+module.exports = withPlugins(plugins, {reactStrictMode: false})
 
 // module.exports = plugins.reduce((conf, plug) => plug(conf), config);

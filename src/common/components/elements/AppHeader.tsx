@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { useContext } from 'react';
 import Button from '@/common/components/elements/Button';
+import { Wallet } from '@/modules/wallet/types';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -53,7 +54,13 @@ const LinkRow = styled(Space)`
   }
 `;
 
-export function AppHeader({ setShowMintModal }: { setShowMintModal: (show: boolean) => void }) {
+export function AppHeader({
+  setShowMintModal,
+  wallet,
+}: {
+  setShowMintModal: (show: boolean) => void;
+  wallet?: Wallet;
+}) {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
 
@@ -79,7 +86,16 @@ export function AppHeader({ setShowMintModal }: { setShowMintModal: (show: boole
 
         <HeaderLinkWrapper key="mint-nfts" active={false}>
           {/* <InputNumber<number> min={1} max={100} placeholder="1-100" /> */}
-          <Button onClick={() => setShowMintModal(true)} type="text" noStyle>
+          <Button
+            onClick={() => {
+              if (!wallet) {
+                connect(router.pathname);
+              }
+              setShowMintModal(true);
+            }}
+            type="text"
+            noStyle
+          >
             Mint&nbsp;NFTs
           </Button>
         </HeaderLinkWrapper>

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-// import type { AppProps } from 'next/app';
+import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
-import '@/styles/globals.css';
+import '@/styles/globals.less';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
@@ -19,9 +19,8 @@ import {
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
 import MintModal from '@/common/components/elements/MintModal';
-import '../src/test.less';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const AppContent = styled(Content)`
   display: flex;
@@ -37,7 +36,7 @@ const AppLayout = styled(Layout)`
   overflow-y: auto;
 `;
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [showMintModal, setShowMintModal] = React.useState(false);
 
@@ -85,9 +84,15 @@ function MyApp({ Component, pageProps }) {
               return (
                 <AnalyticsProvider>
                   <AppLayout>
-                    <AppHeader setShowMintModal={setShowMintModal} />
+                    <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
                     <AppContent>
-                      <MintModal show={showMintModal} onClose={() => setShowMintModal(false)} />
+                      {showMintModal && wallet && (
+                        <MintModal
+                          wallet={wallet}
+                          show={showMintModal}
+                          onClose={() => setShowMintModal(false)}
+                        />
+                      )}
                       <Loading loading={verifying || searching}>
                         <>
                           <Component {...pageProps} track={track} />
@@ -119,7 +124,6 @@ function MyApp({ Component, pageProps }) {
                           </AppFooter>
                         </>
                       </Loading>
-                      {showMintModal && <MintModal />}
                     </AppContent>
                   </AppLayout>
                 </AnalyticsProvider>
