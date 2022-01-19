@@ -54,15 +54,21 @@ const LinkRow = styled(Space)`
   }
 `;
 
-export function AppHeader({
-  setShowMintModal,
-  wallet,
-}: {
+interface Props {
   setShowMintModal: (show: boolean) => void;
   wallet?: Wallet;
-}) {
+}
+
+export function AppHeader({ setShowMintModal, wallet }: Props) {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
+
+  const mintModalClick = () => {
+    if (!wallet) {
+      connect(router.pathname);
+    }
+    setShowMintModal(true);
+  };
 
   return (
     <StyledHeader>
@@ -85,17 +91,7 @@ export function AppHeader({
         </HeaderLinkWrapper>
 
         <HeaderLinkWrapper key="mint-nfts" active={false}>
-          {/* <InputNumber<number> min={1} max={100} placeholder="1-100" /> */}
-          <Button
-            onClick={() => {
-              if (!wallet) {
-                connect(router.pathname);
-              }
-              setShowMintModal(true);
-            }}
-            type="text"
-            noStyle
-          >
+          <Button onClick={mintModalClick} type="text" noStyle>
             Mint&nbsp;NFTs
           </Button>
         </HeaderLinkWrapper>
