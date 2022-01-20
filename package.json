@@ -25,6 +25,7 @@
     "@bugsnag/plugin-react": "^7.14.0",
     "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
+    "@holaplex/ui": "^0.0.12",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
@@ -66,9 +67,9 @@
     "react-step-wizard": "^5.3.9",
     "react-toastify": "^7.0.4",
     "styled-components": "^5.3.0",
+    "ts-node": "^10.4.0",
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
-    "ts-node": "^10.4.0",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
