@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { WalletContext } from '@/modules/wallet';
 import dynamic from 'next/dynamic';
-import { Connection } from '@solana/web3.js';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
 import { Wallet } from '@/modules/wallet/types';
+import { Connection } from '@solana/web3.js';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -38,13 +38,29 @@ const StyledModal = styled(Modal)`
   }
 `;
 
-const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
-
 interface MintModalProps {
   show: boolean;
   onClose: () => void;
   wallet: Wallet;
 }
+
+const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
+// const tryVerify = async () => {
+//   console.log('hello');
+//   const txid =
+//     '3vdXjd81ikef5smsevgb1DnEwgt7LjJgr2UGhwABubcvoy7dF89p8ti4xFQor7vrQjh7jusDBj9gW3umDzM5AYrb';
+
+//   try {
+//     console.log('trying2');
+//     const verify = await connection.confirmTransaction(txid, 'confirmed');
+//     console.log({ verify });
+//     console.log('verified?');
+//   } catch (e) {
+//     console.error(e);
+//   }
+// };
+
+// tryVerify();
 
 const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
   const { track } = useAnalytics();
@@ -78,10 +94,10 @@ const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
       <BulkMinter
         wallet={solana}
         track={track}
-        connection={connection}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}
         onClose={onClose}
+        connection={connection}
       />
     </StyledModal>
   );

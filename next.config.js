@@ -16,5 +16,4 @@ const plugins = [
   ],
 ];
 
-
 module.exports = withPlugins(plugins, {reactStrictMode: false})
