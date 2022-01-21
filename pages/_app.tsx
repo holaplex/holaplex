@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import styled from 'styled-components';
-import { Layout, Col, Row } from 'antd';
+import { Layout, Row } from 'antd';
 import { isNil } from 'ramda';
 import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
@@ -18,7 +18,7 @@ import {
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const AppContent = styled(Content)`
   display: flex;
@@ -26,8 +26,8 @@ const AppContent = styled(Content)`
   justify-content: space-between;
 `;
 
-const AppFooter = styled(Row)`
-  padding: 60px 50px 30px;
+const ContentWrapper = styled.div`
+  padding-bottom: 3rem;
 `;
 
 const AppLayout = styled(Layout)`
@@ -84,7 +84,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <AppHeader />
                     <AppContent>
                       <Loading loading={verifying || searching}>
-                        <Component {...pageProps} track={track} />
+                        <ContentWrapper>
+                          <Component {...pageProps} track={track} />
+                        </ContentWrapper>
                       </Loading>
                     </AppContent>
                   </AppLayout>

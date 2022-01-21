@@ -129,7 +129,7 @@ const LogoContainer = styled.a`
 `;
 
 const SocialWrapper = styled.div`
-  margin: 2rem 0 8rem;
+  margin: 2rem 0 4rem;
 `;
 
 export default function About() {

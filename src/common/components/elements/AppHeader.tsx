@@ -2,7 +2,6 @@ import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Space } from 'antd';
-import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import { useContext } from 'react';

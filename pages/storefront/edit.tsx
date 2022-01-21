@@ -45,8 +45,8 @@ import {
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-const { TabPane } = Tabs;
 
+const { TabPane } = Tabs;
 type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
