@@ -21,7 +21,7 @@ const SocialLink = styled.a`
   opacity: 0.5;
   transition: opacity 0.2s ease;
   &:hover {
-    color: ${sv.colors.cta};
+    /* color: ${sv.colors.cta}; */
     opacity: 1;
   }
   transform: scale(1.2);
