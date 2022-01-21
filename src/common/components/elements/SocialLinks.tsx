@@ -5,6 +5,7 @@ import Image from 'next/image';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import DiscordLogo from '@/assets/images/discord-logo.svg';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const Container = styled.div`
   ${sv.flexRow};
@@ -27,9 +28,24 @@ const SocialLink = styled.a`
 `;
 
 const SocialLinks = () => {
+  const { track } = useAnalytics();
+
+  function trackSocialLink(network: 'Twitter' | 'Github' | 'Discord') {
+    track('Social link Click', {
+      event_category: 'Misc',
+      event_label: network,
+      socialNetwork: network,
+    });
+  }
+
   return (
     <Container>
-      <SocialLink href="https://twitter.com/holaplex" target="_blank" rel="noreferrer">
+      <SocialLink
+        href="https://twitter.com/holaplex"
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => trackSocialLink('Twitter')}
+      >
         <FeatherIcon icon="twitter" />
       </SocialLink>
       {/* <SocialLink
@@ -42,10 +58,20 @@ const SocialLinks = () => {
       <SocialLink href="https://www.instagram.com/holaplex.nft/" target="_blank" rel="noreferrer">
         <FeatherIcon icon="instagram" />
       </SocialLink> */}
-      <SocialLink href="https://github.com/holaplex" target="_blank" rel="noreferrer">
+      <SocialLink
+        href="https://github.com/holaplex"
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => trackSocialLink('Github')}
+      >
         <FeatherIcon icon="github" />
       </SocialLink>
-      <SocialLink href="https://discord.com/invite/TEu7Qx5ux3" target="_blank" rel="noreferrer">
+      <SocialLink
+        href="https://discord.com/invite/TEu7Qx5ux3"
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => trackSocialLink('Discord')}
+      >
         <Image width={24} height={24} src={DiscordLogo} alt="discord" />
       </SocialLink>
     </Container>
