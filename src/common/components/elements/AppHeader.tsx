@@ -53,11 +53,10 @@ const LinkRow = styled(Space)`
   }
 `;
 
-const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader() {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
-
 
   return (
     <StyledHeader>
@@ -68,34 +67,40 @@ export function AppHeader() {
           </a>
         </Link>
       </HeaderTitle>
-      { !WHICHDAO && <LinkRow size="large">
-        <HeaderLinkWrapper
-          key="edit"
-          onClick={() => connect()}
-          active={router.pathname == '/storefront/edit'}
-        >
-          <Link href="/storefront/edit" passHref>
-            <a>Edit store</a>
-          </Link>
-        </HeaderLinkWrapper>
+      {!WHICHDAO && (
+        <LinkRow size="large">
+          <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
+            <Link href="/about" passHref>
+              <a>About</a>
+            </Link>
+          </HeaderLinkWrapper>
+          <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
+            <Link href="/nfts/new" passHref>
+              <a>Mint&nbsp;NFTs</a>
+            </Link>
+          </HeaderLinkWrapper>
+          <HeaderLinkWrapper
+            key="edit"
+            onClick={() => connect()}
+            active={router.pathname == '/storefront/edit'}
+          >
+            <Link href="/storefront/edit" passHref>
+              <a>Edit store</a>
+            </Link>
+          </HeaderLinkWrapper>
 
-        <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
-          <Link href="/nfts/new" passHref>
-            <a>Mint&nbsp;NFTs</a>
-          </Link>
-        </HeaderLinkWrapper>
-        <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
-          <Link href="/about" passHref>
-            <a>About</a>
-          </Link>
-        </HeaderLinkWrapper>
-        <HeaderLinkWrapper key="faq" active={false}>
-          <a href="https://holaplex-support.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">
-            FAQ
-          </a>
-        </HeaderLinkWrapper>
-        {/* {windowDimensions.width > 700 && <SocialLinks />} */}
-      </LinkRow> }
+          <HeaderLinkWrapper key="faq" active={false}>
+            <a
+              href="https://holaplex-support.zendesk.com/hc/en-us"
+              target="_blank"
+              rel="noreferrer"
+            >
+              FAQ
+            </a>
+          </HeaderLinkWrapper>
+          {/* {windowDimensions.width > 700 && <SocialLinks />} */}
+        </LinkRow>
+      )}
     </StyledHeader>
   );
 }
