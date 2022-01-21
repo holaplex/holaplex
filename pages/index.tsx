@@ -53,16 +53,18 @@ const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
-const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
+const DAO_LIST_IPFS =
+  process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
+  'https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
-    const response = await fetch(DAO_LIST_IPFS)
-    const json = await response.json()
+    const response = await fetch(DAO_LIST_IPFS);
+    const json = await response.json();
     return json[WHICHDAO];
   }
-  return []
-}
+  return [];
+};
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -235,6 +237,7 @@ export enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
   InstantSale = 'instant_sale',
+  Secondaries = 'secondaries',
 }
 
 export enum SortOptions {
@@ -267,6 +270,21 @@ const sortOptions: {
       key: SortOptions.Cheapest,
     },
   ],
+  secondaries: [
+    {
+      label: 'New',
+      key: SortOptions.RecentlyAdded,
+    },
+    { key: SortOptions.Trending, label: 'Trending' },
+    {
+      label: 'High to low',
+      key: SortOptions.Expensive,
+    },
+    {
+      label: 'Low to high',
+      key: SortOptions.Cheapest,
+    },
+  ],
   auctions: [
     { key: SortOptions.RecentlyAdded, label: 'New' },
     { key: SortOptions.Trending, label: 'Trending' },
@@ -284,6 +302,9 @@ const sortOptions: {
 // @ts-ignore
 const isAuction = pipe(prop('endsAt'), is(String));
 
+// @ts-ignore
+const isSecondarySale = pipe(prop('primarySaleHappened'), equals(true));
+
 const currentListingPrice = ifElse(
   isAuction,
   ifElse(pipe(prop('totalUncancelledBids'), equals(0)), prop('priceFloor'), prop('highestBid')),
@@ -294,6 +315,7 @@ const filters = {
   [FilterOptions.Auctions]: isAuction,
   [FilterOptions.InstantSale]: pipe(isAuction, not),
   [FilterOptions.All]: pipe(always(true)),
+  [FilterOptions.Secondaries]: isSecondarySale,
 };
 
 const sorts = {
@@ -323,10 +345,10 @@ interface HomeProps {
 
 const getDefaultFilter = () => {
   if (WHICHDAO) {
-    return FilterOptions.All
+    return FilterOptions.All;
   }
-  return FilterOptions.Auctions
-}
+  return FilterOptions.Auctions;
+};
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
@@ -378,8 +400,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     sortWith(sorts[sortBy])
   );
 
-    
-
   // initial fetch and display
   useEffect(() => {
     async function getListings() {
@@ -387,8 +407,16 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       let daoFilteredListings = allListings;
 
       if (WHICHDAO) {
-        daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
+        daoFilteredListings = daoFilteredListings.filter((listing) =>
+          selectedDaoSubdomains.includes(listing.subdomain)
+        );
       }
+
+      // add some mock secondaries
+      daoFilteredListings = daoFilteredListings.map((l) => ({
+        ...l,
+        primarySaleHappened: Math.random() > 0.6,
+      }));
 
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
@@ -441,22 +469,24 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroCarousel>
           </HeroCol>
         </Section>
-        { !process.env.NEXT_PUBLIC_WHICHDAO && <StorefrontSection>
-          <Col xs={24}>
-            <Title level={3}>Featured Creators</Title>
-            <FeaturedStores
-              grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-              dataSource={featuredStorefronts.slice(0, 4)}
-              renderItem={(feature) => (
-                // @ts-ignore
-                <List.Item key={feature.storefront.subdomain}>
-                  {/* @ts-ignore */}
-                  <StorePreview {...feature} />
-                </List.Item>
-              )}
-            />
-          </Col>
-        </StorefrontSection> }
+        {!process.env.NEXT_PUBLIC_WHICHDAO && (
+          <StorefrontSection>
+            <Col xs={24}>
+              <Title level={3}>Featured Creators</Title>
+              <FeaturedStores
+                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+                dataSource={featuredStorefronts.slice(0, 4)}
+                renderItem={(feature) => (
+                  // @ts-ignore
+                  <List.Item key={feature.storefront.subdomain}>
+                    {/* @ts-ignore */}
+                    <StorePreview {...feature} />
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </StorefrontSection>
+        )}
         <Section>
           <Col xs={24}>
             <div ref={listingsTopRef} />
@@ -490,6 +520,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     <Option value={FilterOptions.All}>All listings</Option>
                     <Option value={FilterOptions.Auctions}>Auctions</Option>
                     <Option value={FilterOptions.InstantSale}>Buy now</Option>
+                    <Option value={FilterOptions.Secondaries}>Secondaries</Option>
                   </SelectInline>
                   <SelectInline
                     label="Sort"

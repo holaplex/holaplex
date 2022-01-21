@@ -44,6 +44,7 @@ export interface Listing {
   storeTitle: string;
   subdomain: string;
   totalUncancelledBids?: number | null;
+  primarySaleHappened: boolean;
   // would neeed to store listings in an object to make this performant in state management. Better to just reload it pr mount for now.
   // nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
 }
@@ -60,19 +61,19 @@ export const IndexerSDK = {
         method: 'getListings',
         params: [],
         id: 1337,
-      })
+      }),
     });
 
     const json = await res.json();
 
     return sortWith(
       [
-        //@ts-ignore   
+        //@ts-ignore
         ascend(prop('instantSalePrice')),
         descend(prop('highestBid')),
-        ascend(prop('endsAt'))
+        ascend(prop('endsAt')),
       ],
       json.result
-    )
+    );
   },
 };

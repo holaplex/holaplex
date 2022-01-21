@@ -212,6 +212,8 @@ export function addListingToTrackCall(listing: Listing) {
     isAuction: !!listing.endsAt,
     listingCategory: !listing.endsAt ? 'buy_now' : 'auction',
     subdomain: listing.subdomain,
+    isSecondarySale: listing.primarySaleHappened,
+    hasParticipationNFTs: listing.items.length,
   };
 }
 
