@@ -8,12 +8,14 @@ import DiscordLogo from '@/assets/images/discord-logo.svg';
 
 const Container = styled.div`
   ${sv.flexRow};
+  gap: 2.5rem;
+  margin-left: 6px;
+  flex-wrap: wrap;
 `;
 
 const SocialLink = styled.a`
   display: block;
   ${sv.flexCenter};
-  margin-left: ${sv.grid * 2}px;
   color: ${sv.colors.buttonText};
   opacity: 0.5;
   transition: opacity 0.2s ease;
@@ -21,6 +23,7 @@ const SocialLink = styled.a`
     color: ${sv.colors.cta};
     opacity: 1;
   }
+  transform: scale(1.25);
 `;
 
 const SocialLinks = () => {

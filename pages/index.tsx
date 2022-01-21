@@ -53,16 +53,18 @@ const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
-const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
+const DAO_LIST_IPFS =
+  process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
+  'https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
-    const response = await fetch(DAO_LIST_IPFS)
-    const json = await response.json()
+    const response = await fetch(DAO_LIST_IPFS);
+    const json = await response.json();
     return json[WHICHDAO];
   }
-  return []
-}
+  return [];
+};
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -323,10 +325,10 @@ interface HomeProps {
 
 const getDefaultFilter = () => {
   if (WHICHDAO) {
-    return FilterOptions.All
+    return FilterOptions.All;
   }
-  return FilterOptions.Auctions
-}
+  return FilterOptions.Auctions;
+};
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
@@ -378,8 +380,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     sortWith(sorts[sortBy])
   );
 
-    
-
   // initial fetch and display
   useEffect(() => {
     async function getListings() {
@@ -387,7 +387,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       let daoFilteredListings = allListings;
 
       if (WHICHDAO) {
-        daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
+        daoFilteredListings = daoFilteredListings.filter((listing) =>
+          selectedDaoSubdomains.includes(listing.subdomain)
+        );
       }
 
       setAllListings(daoFilteredListings);
@@ -441,22 +443,24 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroCarousel>
           </HeroCol>
         </Section>
-        { !process.env.NEXT_PUBLIC_WHICHDAO && <StorefrontSection>
-          <Col xs={24}>
-            <Title level={3}>Featured Creators</Title>
-            <FeaturedStores
-              grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-              dataSource={featuredStorefronts.slice(0, 4)}
-              renderItem={(feature) => (
-                // @ts-ignore
-                <List.Item key={feature.storefront.subdomain}>
-                  {/* @ts-ignore */}
-                  <StorePreview {...feature} />
-                </List.Item>
-              )}
-            />
-          </Col>
-        </StorefrontSection> }
+        {!process.env.NEXT_PUBLIC_WHICHDAO && (
+          <StorefrontSection>
+            <Col xs={24}>
+              <Title level={3}>Featured Creators</Title>
+              <FeaturedStores
+                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+                dataSource={featuredStorefronts.slice(0, 4)}
+                renderItem={(feature) => (
+                  // @ts-ignore
+                  <List.Item key={feature.storefront.subdomain}>
+                    {/* @ts-ignore */}
+                    <StorePreview {...feature} />
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </StorefrontSection>
+        )}
         <Section>
           <Col xs={24}>
             <div ref={listingsTopRef} />
@@ -551,12 +555,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               )}
             </Row>
           </Col>
-        </Section>
-        <Section justify="center" align="middle">
-          <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>Create Your Store</Button>
-          </Space>
         </Section>
       </CenteredContentCol>
     </Row>

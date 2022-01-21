@@ -5,6 +5,7 @@ import sv from '@/constants/styles';
 import RoadmapImage from '@/assets/images/roadmap-v1.svg';
 import investorData from '@/assets/investors/investors-stub';
 import { List, Space, Row, Col, Typography, Card } from 'antd';
+import SocialLinks from '@/common/components/elements/SocialLinks';
 
 const { Title, Paragraph } = Typography;
 
@@ -100,7 +101,7 @@ const StatTitle = styled.h1`
 `;
 
 const BackedBy = styled(Row)`
-  margin: ${sv.sectionPadding * 2}px 0;
+  margin: ${sv.sectionPadding * 2}px 0 ${sv.sectionPadding * 1.5}px;
 `;
 
 const Investors = styled.div`
@@ -127,15 +128,23 @@ const LogoContainer = styled.a`
   position: relative;
 `;
 
+const SocialWrapper = styled.div`
+  margin: 2rem 0 8rem;
+`;
+
 export default function About() {
   return (
     <>
       <Row justify="center">
         <ContentCol xs={22} md={20}>
           <Space direction="vertical" align="center" size="large">
-            <HeroTitle>Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.</HeroTitle>
+            <HeroTitle>
+              Our mission is to empower creators and collectors with a suite of tools to create,
+              market, and sell NFTs.
+            </HeroTitle>
             <Pitch>
-              Tools that are open source, owned by creators, are permissionless, and governed by the community. 
+              Tools that are open source, owned by creators, are permissionless, and governed by the
+              community.
             </Pitch>
           </Space>
         </ContentCol>
@@ -218,6 +227,14 @@ export default function About() {
           </Investors>
         </ContentCol>
       </BackedBy>
+      <Row justify="center">
+        <ContentCol xs={22} md={20}>
+          <Title level={2}>Get in touch</Title>
+          <SocialWrapper>
+            <SocialLinks />
+          </SocialWrapper>
+        </ContentCol>
+      </Row>
     </>
   );
 }

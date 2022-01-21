@@ -11,9 +11,12 @@ import { isNil } from 'ramda';
 import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
-import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
-import { AnalyticsProvider, OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '@/modules/ganalytics/AnalyticsProvider';
+import {
+  AnalyticsProvider,
+  OLD_GOOGLE_ANALYTICS_ID,
+  GA4_ID,
+} from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Header, Content } = Layout;
 
@@ -81,35 +84,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <AppHeader />
                     <AppContent>
                       <Loading loading={verifying || searching}>
-                        <>
-                          <Component {...pageProps} track={track} />
-                          <AppFooter justify="center">
-                            <Col span={24}>
-                              <Row>
-                                <Col xs={24} md={8}>
-                                  <a href="mailto:hola@holaplex.com">hola@holaplex.com</a>
-                                </Col>
-                                <Col xs={0} md={8}>
-                                  <Row justify="center">
-                                    Made with &#10084; on &#160;
-                                    <a
-                                      href="https://www.metaplex.com"
-                                      target="_blank"
-                                      rel="noreferrer"
-                                    >
-                                      Metaplex
-                                    </a>
-                                  </Row>
-                                </Col>
-                                <Col xs={0} md={8}>
-                                  <Row justify="end">
-                                    <SocialLinks />
-                                  </Row>
-                                </Col>
-                              </Row>
-                            </Col>
-                          </AppFooter>
-                        </>
+                        <Component {...pageProps} track={track} />
                       </Loading>
                     </AppContent>
                   </AppLayout>
