@@ -68,11 +68,6 @@ export function AppHeader() {
       </HeaderTitle>
       {!WHICHDAO && (
         <LinkRow size="large">
-          <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
-            <Link href="/about" passHref>
-              <a>About</a>
-            </Link>
-          </HeaderLinkWrapper>
           <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
             <Link href="/nfts/new" passHref>
               <a>Mint&nbsp;NFTs</a>
@@ -87,7 +82,11 @@ export function AppHeader() {
               <a>Edit store</a>
             </Link>
           </HeaderLinkWrapper>
-
+          <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
+            <Link href="/about" passHref>
+              <a>About</a>
+            </Link>
+          </HeaderLinkWrapper>
           <HeaderLinkWrapper key="faq" active={false}>
             <a
               href="https://holaplex-support.zendesk.com/hc/en-us"

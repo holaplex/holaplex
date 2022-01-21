@@ -8,7 +8,7 @@ import DiscordLogo from '@/assets/images/discord-logo.svg';
 
 const Container = styled.div`
   ${sv.flexRow};
-  gap: 2.5rem;
+  gap: 2rem;
   margin-left: 6px;
   flex-wrap: wrap;
 `;
@@ -23,7 +23,7 @@ const SocialLink = styled.a`
     color: ${sv.colors.cta};
     opacity: 1;
   }
-  transform: scale(1.25);
+  transform: scale(1.2);
 `;
 
 const SocialLinks = () => {
@@ -32,7 +32,7 @@ const SocialLinks = () => {
       <SocialLink href="https://twitter.com/holaplex" target="_blank" rel="noreferrer">
         <FeatherIcon icon="twitter" />
       </SocialLink>
-      <SocialLink
+      {/* <SocialLink
         href="https://www.facebook.com/Holaplex-110107494681247/"
         target="_blank"
         rel="noreferrer"
@@ -41,7 +41,7 @@ const SocialLinks = () => {
       </SocialLink>
       <SocialLink href="https://www.instagram.com/holaplex.nft/" target="_blank" rel="noreferrer">
         <FeatherIcon icon="instagram" />
-      </SocialLink>
+      </SocialLink> */}
       <SocialLink href="https://github.com/holaplex" target="_blank" rel="noreferrer">
         <FeatherIcon icon="github" />
       </SocialLink>
