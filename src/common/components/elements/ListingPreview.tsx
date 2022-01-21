@@ -269,7 +269,6 @@ export function ListingPreview({
   };
 }) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
-
   // const cardRef = useRef(null);
   // const { inViewport } = useInViewport(cardRef);
   const [cardRef, inView] = useInView({
@@ -284,6 +283,7 @@ export function ListingPreview({
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   const isDev = false && process.env.NODE_ENV === 'development';
+  // const isSecondarySale = listing.
 
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
@@ -293,6 +293,10 @@ export function ListingPreview({
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
         setLoading(false);
+        console.log(nftMetadata.name, {
+          ...listing,
+          nftJson,
+        });
       }
     }
     if (!nftMetadata?.uri) {
