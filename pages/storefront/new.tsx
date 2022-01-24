@@ -146,7 +146,7 @@ export default function New() {
         <Paragraph>Choose a images, colors, and fonts to fit your store’s brand.</Paragraph>
         <Form.Item
           label="Hero Banner"
-          tooltip="Sits at the top of your store, 1500px wide and 500px tall works best!"
+          tooltip="Sits at the top of your store, 375px wide and 500px tall works best!"
           name={['theme', 'banner']}
           rules={[{ required: false, message: 'Upload a Hero Image' }]}
         >

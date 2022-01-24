@@ -35,6 +35,7 @@ import {
   equals,
   map,
   range,
+  propEq,
 } from 'ramda';
 import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
@@ -46,11 +47,25 @@ import {
 } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
 import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import SocialLinks from '@/common/components/elements/SocialLinks';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
+const DAO_LIST_IPFS =
+  process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
+  'https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4';
+
+const DAOStoreFrontList = async () => {
+  if (WHICHDAO) {
+    const response = await fetch(DAO_LIST_IPFS);
+    const json = await response.json();
+    return json[WHICHDAO];
+  }
+  return [];
+};
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -219,6 +234,7 @@ const HeroCol = styled(Col)`
     margin: 0 0 0.5rem 0;
   }
 `;
+
 export enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
@@ -294,19 +310,29 @@ const sorts = {
 
 export async function getStaticProps() {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
+  const selectedDaoSubdomains = await DAOStoreFrontList();
 
   return {
     props: {
       featuredStorefronts,
+      selectedDaoSubdomains,
     },
   };
 }
 
 interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
+  selectedDaoSubdomains: String[];
 }
 
-export default function Home({ featuredStorefronts }: HomeProps) {
+const getDefaultFilter = () => {
+  if (WHICHDAO) {
+    return FilterOptions.All;
+  }
+  return FilterOptions.Auctions;
+};
+
+export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
@@ -318,7 +344,7 @@ export default function Home({ featuredStorefronts }: HomeProps) {
       .map((_, i) => generateListingShell(i))
   );
   const [displayedListings, setDisplayedListings] = useState<Listing[]>([]);
-  const [filterBy, setFilterBy] = useState<FilterOptions>(FilterOptions.Auctions);
+  const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
@@ -360,10 +386,17 @@ export default function Home({ featuredStorefronts }: HomeProps) {
   useEffect(() => {
     async function getListings() {
       const allListings = await IndexerSDK.getListings();
+      let daoFilteredListings = allListings;
 
-      setAllListings(allListings);
-      setFeaturedListings(allListings.slice(0, 5));
-      setDisplayedListings(applyListingFilterAndSort(allListings));
+      if (WHICHDAO) {
+        daoFilteredListings = daoFilteredListings.filter((listing) =>
+          selectedDaoSubdomains.includes(listing.subdomain)
+        );
+      }
+
+      setAllListings(daoFilteredListings);
+      setFeaturedListings(daoFilteredListings.slice(0, 5));
+      setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
     }
@@ -393,6 +426,9 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             <Space direction="horizontal" size="large">
               <Button onClick={() => connect()}>Create Your Store</Button>
             </Space>
+            <div style={{ marginTop: '2.5rem' }}>
+              <SocialLinks />
+            </div>
           </Marketing>
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
@@ -412,22 +448,24 @@ export default function Home({ featuredStorefronts }: HomeProps) {
             </HeroCarousel>
           </HeroCol>
         </Section>
-        <StorefrontSection>
-          <Col xs={24}>
-            <Title level={3}>Featured Creators</Title>
-            <FeaturedStores
-              grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-              dataSource={featuredStorefronts.slice(0, 4)}
-              renderItem={(feature) => (
-                // @ts-ignore
-                <List.Item key={feature.storefront.subdomain}>
-                  {/* @ts-ignore */}
-                  <StorePreview {...feature} />
-                </List.Item>
-              )}
-            />
-          </Col>
-        </StorefrontSection>
+        {!process.env.NEXT_PUBLIC_WHICHDAO && (
+          <StorefrontSection>
+            <Col xs={24}>
+              <Title level={3}>Featured Creators</Title>
+              <FeaturedStores
+                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+                dataSource={featuredStorefronts.slice(0, 4)}
+                renderItem={(feature) => (
+                  // @ts-ignore
+                  <List.Item key={feature.storefront.subdomain}>
+                    {/* @ts-ignore */}
+                    <StorePreview {...feature} />
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </StorefrontSection>
+        )}
         <Section>
           <Col xs={24}>
             <div ref={listingsTopRef} />
@@ -522,12 +560,6 @@ export default function Home({ featuredStorefronts }: HomeProps) {
               )}
             </Row>
           </Col>
-        </Section>
-        <Section justify="center" align="middle">
-          <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>Create Your Store</Button>
-          </Space>
         </Section>
       </CenteredContentCol>
     </Row>
