@@ -66,7 +66,7 @@ export default function New() {
     { name: ['meta', 'favicon'], value: [] },
     { name: ['meta', 'title'], value: '' },
     { name: ['meta', 'description'], value: '' },
-    { name: ['crossmint'], value: uuidv4() },
+    { name: ['integrations', 'crossmintClientId'], value: uuidv4() },
   ]);
 
   if (isNil(solana) || isNil(wallet)) {

@@ -49,7 +49,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const { TabPane } = Tabs;
 
-const { TabPane } = Tabs;
 type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
