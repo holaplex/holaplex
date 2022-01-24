@@ -169,7 +169,6 @@ export const submitCallback = ({
       const banner = popFile(theme.banner[0]);
       const favicon = popFile(meta.favicon[0]);
 
-      // debugger;
       const storefront: Storefront = {
         theme: {
           ...(theme as StorefrontTheme<unknown>),
