@@ -45,8 +45,8 @@ import {
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-const { TabPane } = Tabs;
 
+const { TabPane } = Tabs;
 type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
@@ -150,7 +150,7 @@ export default function Edit() {
                   <Form.Item
                     label="Banner"
                     name={['theme', 'banner']}
-                    tooltip="Sits at the top of your store, 1500px wide and 500px tall works best!"
+                    tooltip="Sits at the top of your store, 1500px wide and 375px tall works best!"
                     rules={[{ required: false, message: 'Upload your Banner.' }]}
                   >
                     <Upload>
