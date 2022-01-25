@@ -6,7 +6,7 @@ import { Buffer } from 'buffer';
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextCors from 'nextjs-cors';
 import amqplib from 'amqplib'
-import { signingQueue } from '@/modules/metadata-signing';
+import { signingQueue, RETRY_AFTER } from '@/modules/metadata-signing';
 
 
 
@@ -37,13 +37,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           {
             durable: true,
             autoDelete: false,
-            deadLetterExchange: 'DeadLetterExchange',
+            deadLetterExchange: 'delayedDeadLetterExchange',
             deadLetterRoutingKey: 'dle-key',
         })
         try {
           channel.sendToQueue(
             signingQueue,
-            Buffer.from(JSON.stringify(params))
+            Buffer.from(JSON.stringify(params)),
+            {
+              headers: {
+                'x-delay': RETRY_AFTER
+              }
+            }
           )
         } catch(error) {
           console.error({ error }, 'error enqueing signing job')
