@@ -59,6 +59,7 @@ interface Props {
   wallet?: Wallet;
 }
 
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
@@ -79,34 +80,39 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
           </a>
         </Link>
       </HeaderTitle>
-      <LinkRow size="large">
-        <HeaderLinkWrapper
-          key="edit"
-          onClick={() => connect()}
-          active={router.pathname == '/storefront/edit'}
-        >
-          <Link href="/storefront/edit" passHref>
-            <a>Edit store</a>
-          </Link>
-        </HeaderLinkWrapper>
-
-        <HeaderLinkWrapper key="mint-nfts" active={false}>
-          <Button onClick={mintModalClick} type="text" noStyle>
-            Mint&nbsp;NFTs
-          </Button>
-        </HeaderLinkWrapper>
-        <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
-          <Link href="/about" passHref>
-            <a>About</a>
-          </Link>
-        </HeaderLinkWrapper>
-        <HeaderLinkWrapper key="faq" active={false}>
-          <a href="https://holaplex-support.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">
-            FAQ
-          </a>
-        </HeaderLinkWrapper>
-        {/* {windowDimensions.width > 700 && <SocialLinks />} */}
-      </LinkRow>
+      {!WHICHDAO && (
+        <LinkRow size="large">
+          <HeaderLinkWrapper key="mint-nfts" active={false}>
+            <Button onClick={mintModalClick} type="text" noStyle>
+              Mint&nbsp;NFTs
+            </Button>
+          </HeaderLinkWrapper>
+          <HeaderLinkWrapper
+            key="edit"
+            onClick={() => connect()}
+            active={router.pathname == '/storefront/edit'}
+          >
+            <Link href="/storefront/edit" passHref>
+              <a>Edit store</a>
+            </Link>
+          </HeaderLinkWrapper>
+          <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
+            <Link href="/about" passHref>
+              <a>About</a>
+            </Link>
+          </HeaderLinkWrapper>
+          <HeaderLinkWrapper key="faq" active={false}>
+            <a
+              href="https://holaplex-support.zendesk.com/hc/en-us"
+              target="_blank"
+              rel="noreferrer"
+            >
+              FAQ
+            </a>
+          </HeaderLinkWrapper>
+          {/* {windowDimensions.width > 700 && <SocialLinks />} */}
+        </LinkRow>
+      )}
     </StyledHeader>
   );
 }

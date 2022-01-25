@@ -3,7 +3,7 @@ import singletons from '../../src/modules/singletons';
 import { SCHEMAS } from '../../src/modules/singletons/json-schemas';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { Buffer } from 'buffer';
-import { signingQueue } from '../../src/modules/metadata-signing'
+import { RETRY_AFTER, signingQueue } from '../../src/modules/metadata-signing'
 
 /** Adapted from metaplex/js/packages/common/src/actions/metadata.ts */
 function signMetadata(
@@ -30,38 +30,62 @@ function signMetadata(
   tx.add(new TransactionInstruction({ keys, programId, data }));
 }
 
+const MAX_RETRIES = 5
 
 async function consume() {
 
   const connection = await amqplib.connect(process.env.CLOUDAMQP_URL || '');
   const channel = await connection.createChannel()
-  const dle = await channel.assertExchange("DeadLetterExchange", "topic" , {
+  channel.assertExchange(
+    "delayedDeadLetterExchange", 
+    "x-delayed-message", {autoDelete: false, durable: true, arguments: {'x-delayed-type':  "direct"}})
+  
+    const primaryExchange = await channel.assertExchange("primaryExchange", "fanout" , {
     durable: true,
     autoDelete: false,
   })
-  const primaryExchange = await channel.assertExchange("primaryExchange", "fanout" , {
-    durable: true,
-    autoDelete: false,
-  })
-  await channel.assertQueue("deadLetterQueue",
+
+  channel.assertExchange(
+    "deadLetterExchange",
+    "topic"
+  )
+  await channel.assertQueue("retryQueue",
     {
       durable: true,
       autoDelete: false,
+      deadLetterExchange: primaryExchange.exchange,
+      deadLetterRoutingKey: 'dle-key'
     })
   await channel.assertQueue(signingQueue,
     {
       durable: true,
       autoDelete: false,
-      deadLetterExchange: 'DeadLetterExchange',
+      deadLetterExchange: 'delayedDeadLetterExchange',
       deadLetterRoutingKey: 'dle-key'
     })
   
   channel.bindQueue(
-    "deadLetterQueue",
-    dle.exchange,
+    "retryQueue",
+    "delayedDeadLetterExchange",
     "dle-key",
   );
 
+  channel.consume("retryQueue", async function(msg) {
+    if (msg !== null) {
+      const causesOfDeaths = msg.properties.headers['x-death'] || []
+      const lastDeath = causesOfDeaths[causesOfDeaths.length - 1]
+
+      if (lastDeath.count < MAX_RETRIES) {
+
+        channel.reject(msg, false);
+        return;
+
+      }
+      // this is the ultimate death, sit in the dle forever.
+      channel.publish("deadLetterExchange", "dle", msg.content)
+      channel.ack(msg, false)
+    }
+  })
   
   channel.bindQueue(signingQueue, primaryExchange.exchange, "dle-key");
   channel.consume(signingQueue, async function(msg) {
@@ -76,6 +100,7 @@ async function consume() {
         channel.reject(msg, false)
         return;
       }
+
 
 
       const { connection, keypair, endpoint } = await singletons.solana;
@@ -132,7 +157,6 @@ async function consume() {
         const err = status.err;
 
         if (err !== null) {
-          msg.properties.headers['x-first-death-reason'] = err.toString()
           channel.reject(msg, false)
           console.error('Approval transaction failed', err);
           return;
