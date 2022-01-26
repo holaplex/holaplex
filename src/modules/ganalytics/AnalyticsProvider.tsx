@@ -4,6 +4,7 @@ import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
 import Bugsnag from '@bugsnag/js';
 import BugsnagPluginReact from '@bugsnag/plugin-react';
+import splitbee from '@splitbee/web';
 
 import { Listing } from '@/modules/indexer';
 import { useRouter } from 'next/router';
@@ -15,6 +16,7 @@ import {
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
+const SPLITBEE_TOKEN = process.env.NEXT_PUBLIC_SPLITBEE_TOKEN;
 
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
@@ -106,6 +108,14 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         },
       });
     }
+    if (SPLITBEE_TOKEN) {
+      splitbee.init({
+        token: 'YOUR_TOKEN',
+        disableCookie: true,
+        scriptUrl: '/bee.js',
+        apiUrl: '/_hive',
+      });
+    }
   }
 
   function identify() {
@@ -114,14 +124,19 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         user_id: pubkey,
         pubkey: pubkey,
       });
+      splitbee.user.set({
+        pubkey: pubkey,
+      });
     }
   }
 
   function resetTracking() {
+    console.log('reset tracking');
     gtag('set', 'user_properties', {
       user_id: '',
       pubkey: '',
     });
+    splitbee.reset();
   }
 
   function pageview(path: string) {
@@ -174,6 +189,9 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
       // ga4
       ga4Event(action, attrs);
+
+      // spltibee
+      splitbee.track(action, attrs);
     } catch (error) {
       console.error(error);
     }

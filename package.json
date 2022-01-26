@@ -32,6 +32,7 @@
     "@solana/wallet-adapter-react": "^0.13.1",
     "@solana/wallet-adapter-wallets": "^0.11.3",
     "@solana/web3.js": "^1.25.0",
+    "@splitbee/web": "^0.3.0",
     "@types/amqplib": "^0.8.2",
     "ajv": "^8.6.2",
     "amqplib": "^0.8.0",
@@ -66,9 +67,9 @@
     "react-step-wizard": "^5.3.9",
     "react-toastify": "^7.0.4",
     "styled-components": "^5.3.0",
+    "ts-node": "^10.4.0",
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
-    "ts-node": "^10.4.0",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
