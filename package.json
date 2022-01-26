@@ -25,7 +25,7 @@
     "@bugsnag/plugin-react": "^7.14.0",
     "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
-    "@holaplex/ui": "^0.0.16",
+    "@holaplex/ui": "^0.0.19",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^2.25.0",
     "@samuelmeuli/font-manager": "^1.4.0",
