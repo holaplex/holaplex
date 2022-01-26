@@ -124,9 +124,11 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         user_id: pubkey,
         pubkey: pubkey,
       });
-      splitbee.user.set({
-        pubkey: pubkey,
-      });
+      if (SPLITBEE_TOKEN) {
+        splitbee.user.set({
+          pubkey: pubkey,
+        });
+      }
     }
   }
 
@@ -136,7 +138,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       user_id: '',
       pubkey: '',
     });
-    splitbee.reset();
+    if (SPLITBEE_TOKEN) splitbee.reset();
   }
 
   function pageview(path: string) {
@@ -191,7 +193,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       ga4Event(action, attrs);
 
       // spltibee
-      splitbee.track(action, attrs);
+      if (SPLITBEE_TOKEN) splitbee.track(action, attrs);
     } catch (error) {
       console.error(error);
     }
