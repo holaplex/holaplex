@@ -110,7 +110,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     }
     if (SPLITBEE_TOKEN) {
       splitbee.init({
-        token: 'YOUR_TOKEN',
+        token: SPLITBEE_TOKEN,
         disableCookie: true,
         scriptUrl: '/bee.js',
         apiUrl: '/_hive',
@@ -126,6 +126,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       });
       if (SPLITBEE_TOKEN) {
         splitbee.user.set({
+          userId: pubkey,
           pubkey: pubkey,
         });
       }
