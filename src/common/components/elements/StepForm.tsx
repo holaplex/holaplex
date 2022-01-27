@@ -33,29 +33,32 @@ const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: St
   };
 
   return (
-    <Form {...props} form={form} fields={fields} onFinish={handleSubmit}>
-      {activePage}
-      <Row justify="end">
-        <Space size="middle">
-          {page > 0 && (
-            <Button size="large" onClick={previous} disabled={submitting}>
-              Back
-            </Button>
-          )}
-          <Form.Item noStyle>
-            <Button
-              type="primary"
-              size="large"
-              htmlType="submit"
-              disabled={submitting}
-              loading={submitting}
-            >
-              {isLastPage ? 'Submit' : 'Next'}
-            </Button>
-          </Form.Item>
-        </Space>
-      </Row>
-    </Form>
+    <div className="max-width-medium">
+      <Form {...props} form={form} fields={fields} onFinish={handleSubmit}>
+        {activePage}
+        <Row justify="end">
+          <Space size="middle">
+            {page > 0 && (
+              <Button size="large" onClick={previous} disabled={submitting} shape="round">
+                Back
+              </Button>
+            )}
+            <Form.Item noStyle>
+              <Button
+                type="primary"
+                size="large"
+                htmlType="submit"
+                disabled={submitting}
+                loading={submitting}
+                shape="round"
+              >
+                {isLastPage ? 'Submit' : 'Next'}
+              </Button>
+            </Form.Item>
+          </Space>
+        </Row>
+      </Form>
+    </div>
   );
 };
 

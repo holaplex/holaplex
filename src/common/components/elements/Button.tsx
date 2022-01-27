@@ -17,33 +17,29 @@ const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ no
   ${({ type }) =>
     equals('primary', type) &&
     css`
-      color: #f4f4f4;
+      color: black;
       &:hover,
       &:active,
+      background: orange;
       &:focus {
-        color: #fff;
-        background: linear-gradient(10.77deg, rgb(210, 64, 137) 8.62%, rgb(185, 45, 68) 84.54%);
+        color: black;
+        background: white;
       }
       &[disabled],
       &[disabled]:hover {
-        background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
-        color: #fff;
+        background: white;
+        color: black;
 
         &:hover,
         &:active,
         &:focus {
-          color: #fff;
-          background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
-          color: #fff;
+          background: white;
+          color: black;
 
           &:hover,
           &:active,
           &:focus {
-            background: linear-gradient(
-              10.77deg,
-              rgb(220, 105, 163) 8.62%,
-              rgb(210, 71, 94) 84.54%
-            );
+            background: white;
           }
         }
       }

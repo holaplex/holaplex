@@ -5,10 +5,10 @@ import Upload from '@/components/elements/Upload';
 import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
-import { Marketplace } from '@/modules/marketplace'
+import { Marketplace } from '@/modules/marketplace';
 import arweaveSDK from '@/modules/arweave/client';
 import MarketplaceSDK from '@/modules/marketplace/client';
-import { UserOutlined } from '@ant-design/icons'
+import { UserOutlined } from '@ant-design/icons';
 import {
   FieldData,
   Paragraph,
@@ -23,17 +23,7 @@ import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Avatar, Card, Col, Form, Input, Slider, Row, Space, Typography, InputNumber } from 'antd';
-import {
-  findIndex,
-  has,
-  ifElse,
-  isNil,
-  lensPath,
-  prop,
-  propEq,
-  update,
-  view,
-} from 'ramda';
+import { findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
 import { useConnection } from '@solana/wallet-adapter-react';
 import React, { useContext, useState, useEffect } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house/transactions/CreateAuctionHouse';
@@ -41,12 +31,14 @@ import { AuctionHouseAccount } from '@/modules/auction-house/AuctionHouseAccount
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 
-const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === "true";
+const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
-const { metaplex: { Store, SetStoreV2, StoreConfig } } = programs;
+const {
+  metaplex: { Store, SetStoreV2, StoreConfig },
+} = programs;
 
 export async function getServerSideProps() {
-  if(MARKETPLACE_ENABLED) {
+  if (MARKETPLACE_ENABLED) {
     return {
       props: {},
     };
@@ -55,9 +47,9 @@ export async function getServerSideProps() {
   return {
     redirect: {
       permanent: false,
-      destination: "/"
-    }
-  }
+      destination: '/',
+    },
+  };
 }
 
 export default function New() {
@@ -77,7 +69,7 @@ export default function New() {
     { name: ['meta', 'name'], value: '' },
     { name: ['meta', 'description'], value: '' },
     { name: ['creators'], value: [] },
-    { name: ['sellerFeeBasisPoints'], value: 10000 }
+    { name: ['sellerFeeBasisPoints'], value: 10000 },
   ]);
 
   if (isNil(solana) || isNil(wallet)) {
@@ -86,7 +78,7 @@ export default function New() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a marketplace.</Paragraph>
-            <Button type="primary" block onClick={connect}>
+            <Button type="primary" block onClick={connect} shape="round">
               Connect
             </Button>
           </Space>
@@ -99,13 +91,7 @@ export default function New() {
 
   const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
   const onSubmit = async (): Promise<void> => {
-    const {
-      theme,
-      meta,
-      subdomain,
-      creators,
-      sellerFeeBasisPoints,
-    } = values;
+    const { theme, meta, subdomain, creators, sellerFeeBasisPoints } = values;
 
     setSubmitting(true);
 
@@ -113,7 +99,10 @@ export default function New() {
     const banner = popFile(theme.banner[0]);
     const domain = `${subdomain}.holaplex.market`;
 
-    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(solana.publicKey, NATIVE_MINT);
+    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(
+      solana.publicKey,
+      NATIVE_MINT
+    );
 
     const input = {
       meta,
@@ -140,33 +129,29 @@ export default function New() {
 
     const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
     const createStoreV2Instruction = new SetStoreV2(
-      { 
-        feePayer: solana.publicKey
+      {
+        feePayer: solana.publicKey,
       },
-      { 
+      {
         admin: solana.publicKey,
         store: storePubkey,
         config: storeConfigPubkey,
         isPublic: false,
         settingsUri: `https://arweave.net/${txt}`,
-      },
+      }
     );
 
     const transaction = new Transaction();
 
-    transaction
-      .add(auctionHouseCreateInstruction)
-      .add(createStoreV2Instruction);
+    transaction.add(auctionHouseCreateInstruction).add(createStoreV2Instruction);
 
     transaction.feePayer = solana.publicKey;
-    transaction.recentBlockhash = (
-      await connection.getRecentBlockhash()
-    ).blockhash;
+    transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
 
     const signedTransaction = await solana.signTransaction(transaction);
 
     const txtID = await connection.sendRawTransaction(signedTransaction.serialize());
-  
+
     await connection.confirmTransaction(txtID);
 
     router.push('/');
@@ -176,18 +161,19 @@ export default function New() {
         Your marketplace is ready. Visit <a href={`https://${domain}`}>{domain}</a>.
       </>,
       { autoClose: 60000 }
-    )
+    );
 
     setSubmitting(false);
-  }
+  };
 
   const subdomain = (
-    <>
-      <Col>
-        <Title level={2}>Let&apos;s start with your domain.</Title>
-        <Paragraph>This is the address that people will use to get to your marketplace.</Paragraph>
-      </Col>
-      <Col flex={1}>
+    <div>
+      <div className="main-heading">Let&apos;s start with your domain</div>
+      <div className="margin-top-4 margin-bottom-8 slightly-transparent">
+        This is the address that people will use to get to your marketplace.
+      </div>
+
+      <div className="margin-bottom-8">
         <DomainFormItem
           name="subdomain"
           rules={[
@@ -201,8 +187,8 @@ export default function New() {
         >
           <Input autoFocus suffix=".holaplex.market" />
         </DomainFormItem>
-      </Col>
-    </>
+      </div>
+    </div>
   );
 
   const details = (
@@ -265,11 +251,7 @@ export default function New() {
       >
         <Input.TextArea />
       </Form.Item>
-      <Form.Item
-        name={['sellerFeeBasisPoints']}
-        label="Seller Fee Basis Points"
-
-      >
+      <Form.Item name={['sellerFeeBasisPoints']} label="Seller Fee Basis Points">
         <InputNumber<number> min={0} max={100000} />
       </Form.Item>
     </Col>
@@ -287,15 +269,17 @@ export default function New() {
                 <Space key={key} direction="horizontal" size="middle">
                   <Avatar size={36} icon={<UserOutlined />} />
                   <Typography.Text>{values.creators[idx].address}</Typography.Text>
-                  <Button onClick={() => remove(idx)}>Remove</Button>
+                  <Button onClick={() => remove(idx)} shape="round">
+                    Remove
+                  </Button>
                 </Space>
               ))}
             </Space>
             <Input
               autoFocus
               type="text"
-              onChange={e => setPendingAddress(e.target.value)}
-              onPressEnter={e => {
+              onChange={(e) => setPendingAddress(e.target.value)}
+              onPressEnter={(e) => {
                 e.preventDefault();
 
                 add({ address: pendingAddress });
@@ -309,7 +293,9 @@ export default function New() {
         )}
       </Form.List>
     </Col>
-  )
+  );
+
+  console.log(fields);
 
   return (
     <Row justify="center" align="middle">
@@ -324,7 +310,7 @@ export default function New() {
               return;
             }
             const current = findIndex(propEq('name', changed.name), fields);
-            
+
             setFields(update(current, changed, fields));
           }}
           onFinish={onSubmit}
