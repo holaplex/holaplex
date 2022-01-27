@@ -18,6 +18,7 @@ import {
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
 import MintModal from '@/common/components/elements/MintModal';
+import { AppHeaderSettingsProvider } from '@/common/components/elements/AppHeaderSettingsProvider';
 
 const { Content } = Layout;
 
@@ -76,35 +77,37 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
       </Head>
       <ToastContainer autoClose={15000} />
-      <WalletProvider>
-        {({ verifying, wallet }) => (
-          <StorefrontProvider wallet={wallet}>
-            {({ searching }) => {
-              return (
-                <AnalyticsProvider>
-                  <AppLayout>
-                    <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
-                    <AppContent>
-                      {showMintModal && wallet && (
-                        <MintModal
-                          wallet={wallet}
-                          show={showMintModal}
-                          onClose={() => setShowMintModal(false)}
-                        />
-                      )}
-                      <Loading loading={verifying || searching}>
-                        <ContentWrapper>
-                          <Component {...pageProps} track={track} />
-                        </ContentWrapper>
-                      </Loading>
-                    </AppContent>
-                  </AppLayout>
-                </AnalyticsProvider>
-              );
-            }}
-          </StorefrontProvider>
-        )}
-      </WalletProvider>
+      <AppHeaderSettingsProvider>
+        <WalletProvider>
+          {({ verifying, wallet }) => (
+            <StorefrontProvider wallet={wallet}>
+              {({ searching }) => {
+                return (
+                  <AnalyticsProvider>
+                    <AppLayout>
+                      <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
+                      <AppContent>
+                        {showMintModal && wallet && (
+                          <MintModal
+                            wallet={wallet}
+                            show={showMintModal}
+                            onClose={() => setShowMintModal(false)}
+                          />
+                        )}
+                        <Loading loading={verifying || searching}>
+                          <ContentWrapper>
+                            <Component {...pageProps} track={track} />
+                          </ContentWrapper>
+                        </Loading>
+                      </AppContent>
+                    </AppLayout>
+                  </AnalyticsProvider>
+                );
+              }}
+            </StorefrontProvider>
+          )}
+        </WalletProvider>
+      </AppHeaderSettingsProvider>
     </>
   );
 }

@@ -1,12 +1,16 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { Layout, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
-import React, { useContext } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import Button from '@/common/components/elements/Button';
 import { Wallet } from '@/modules/wallet/types';
+import { Bell } from '../icons/Bell';
+import { ProfileImage } from './ProfileImage';
+import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -35,9 +39,16 @@ const HeaderTitle = styled.div`
 
 const { Header } = Layout;
 
-const StyledHeader = styled(Header)`
+type CustomHeaderProps = {
+  disableMarginBottom?: boolean;
+};
+
+const StyledHeader = styled(Header)<CustomHeaderProps>`
   ${sv.flexRow};
-  margin: 5px 5px 40px;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: ${(props) => (props.disableMarginBottom ? ' 0px' : '40px')};
   padding: 1.25rem;
 `;
 
@@ -60,7 +71,11 @@ interface Props {
 }
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
+
+
+
 export function AppHeader({ setShowMintModal, wallet }: Props) {
+  const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
   const { connect } = useContext(WalletContext);
 
@@ -72,7 +87,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   };
 
   return (
-    <StyledHeader>
+    <StyledHeader disableMarginBottom={disableMarginBottom}>
       <HeaderTitle>
         <Link href="/" passHref>
           <a>
@@ -110,6 +125,14 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               FAQ
             </a>
           </HeaderLinkWrapper>
+          <HeaderLinkWrapper key="activity" active={false}>
+            <Link href="/activity" passHref>
+              <a>
+                <Bell style={{ marginTop: 25 }} color="#fff" />
+              </a>
+            </Link>
+          </HeaderLinkWrapper>
+          <ProfileImage />
           {/* {windowDimensions.width > 700 && <SocialLinks />} */}
         </LinkRow>
       )}
