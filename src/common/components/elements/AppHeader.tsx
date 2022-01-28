@@ -72,8 +72,6 @@ interface Props {
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
-
-
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();

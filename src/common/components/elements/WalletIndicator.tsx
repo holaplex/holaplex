@@ -1,12 +1,17 @@
 import { ButtonReset } from '@/common/styles/ButtonReset';
 import { useWallet } from '@solana/wallet-adapter-react';
-import styled from 'styled-components';
+import { FC } from 'react';
+import styled, { css } from 'styled-components';
 import { Copy } from '../icons/Copy';
 
 const showFirstAndLastFour = (str: string, isLowerThanEight = str.length <= 8) =>
   isLowerThanEight ? str : `${str.substring(0, 4)}...${str.substring(str.length - 4)}`;
 
-export const WalletPill = () => {
+type WalletPillProps = {
+  disableBackground?: boolean;
+};
+
+export const WalletPill: FC<WalletPillProps> = ({ disableBackground }) => {
   const { publicKey } = useWallet();
 
   const handleClick = () => {
@@ -14,7 +19,7 @@ export const WalletPill = () => {
   };
 
   return (
-    <Container onClick={handleClick}>
+    <Container disableBackground={disableBackground ?? false} onClick={handleClick}>
       <WalletText>
         {publicKey ? showFirstAndLastFour(publicKey.toBase58()) : 'DISCONNECTED'}
         &nbsp;
@@ -25,10 +30,12 @@ export const WalletPill = () => {
 };
 
 export const WalletLabel = () => {
-  const { publicKey, connected } = useWallet();
+  const { publicKey, connecting, disconnecting, connected } = useWallet();
   return (
     <SmallWalletContainer>
-      <ConnectionIndicator state={connected ? 'connected' : 'disconnected'} />
+      <ConnectionIndicator
+        state={connecting || disconnecting ? 'warn' : connected ? 'connected' : 'disconnected'}
+      />
       <SmallWalletLabel>
         &nbsp;{publicKey ? showFirstAndLastFour(publicKey.toBase58()) : 'DISCONNECTED'}
       </SmallWalletLabel>
@@ -53,11 +60,16 @@ const ConnectionIndicator = styled.div<{ state: 'connected' | 'disconnected' | '
   content: '';
 `;
 
-const Container = styled.button`
+const Container = styled.button<{ disableBackground: boolean }>`
   ${ButtonReset}
-  background-color: #262626;
-  border-radius: 500px;
-  padding: 8px 12px;
+  ${({ disableBackground }) =>
+    disableBackground
+      ? css``
+      : css`
+          background-color: #262626;
+          padding: 8px 12px;
+          border-radius: 500px;
+        `}
 `;
 
 const SmallWalletContainer = styled.div`

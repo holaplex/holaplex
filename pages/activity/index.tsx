@@ -1,13 +1,13 @@
+import { ActivityContent } from '@/common/components/elements/ActivityContent';
+import Image from 'next/image';
 import { useAppHeaderSettings } from '@/common/components/elements/AppHeaderSettingsProvider';
-import { WalletLabel, WalletPill } from '@/common/components/elements/WalletIndicator';
-import { ButtonReset } from '@/common/styles/ButtonReset';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { Col, Row } from 'antd';
+import { MiniWallet } from '@/common/components/elements/MiniWallet';
+import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 
 const ActivityLanding = () => {
-  const { connected } = useWallet();
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
 
@@ -18,29 +18,28 @@ const ActivityLanding = () => {
     }
   }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
 
-  const bannerBackgroundImage = 'url(/images/gradients/gradient-5.png);';
-  const profilePictureImage = 'url(/images/gradients/gradient-3.png);';
+  const bannerBackgroundImage = 'url(/images/gradients/gradient-5.png)';
+  const profilePictureImage = '/images/gradients/gradient-3.png';
 
   return (
     <>
       <HeadingContainer>
         <Banner style={{ backgroundImage: bannerBackgroundImage }}>
           <InnerBanner>
-            <ProfilePicture style={{ backgroundImage: profilePictureImage }} />
+            <ProfilePictureContainer>
+              <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
+            </ProfilePictureContainer>
           </InnerBanner>
         </Banner>
       </HeadingContainer>
       <ContentCol>
         <Profile>
           <WalletPill />
-          <SecondaryCol>
-            <SolAmount>{connected ? '# SOL' : 'Balance'}</SolAmount>
-            <SpacedRow>
-              <WalletLabel />
-              <DisconnectText>{connected ? 'Disconnect' : 'Connect'}</DisconnectText>
-            </SpacedRow>
-          </SecondaryCol>
+          <MiniWalletContainer>
+            <MiniWallet />
+          </MiniWalletContainer>
         </Profile>
+        <ActivityContent />
       </ContentCol>
     </>
   );
@@ -51,48 +50,25 @@ export default ActivityLanding;
 const PFP_SIZE = 90;
 const BOX_SIZE = 1400;
 
-const DisconnectText = styled.button`
-  ${ButtonReset}
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  color: #ffffff;
-`;
-
-const SpacedRow = styled(Row)`
-  margin-top: 8px;
-  justify-content: space-between;
-`;
-
-const SecondaryCol = styled(Col)`
+const MiniWalletContainer = styled.div`
   margin-top: 40px;
   padding-left: 20px;
   padding-right: 20px;
 `;
 
-const SolAmount = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 24px;
-  color: #ffffff;
-`;
-
 const Profile = styled.div`
-  margin-top: 80px;
-  width: 385px;
+  margin-top: 40px;
+  min-width: 385px;
 `;
 
-const ContentCol = styled(Col)`
+const ContentCol = styled.div`
   width: 100%;
   margin-left: auto;
   margin-right: auto;
   padding-left: ${PFP_SIZE}px;
   padding-right: ${PFP_SIZE}px;
   max-width: ${BOX_SIZE}px;
+  display: flex;
 `;
 
 const HeadingContainer = styled.header`
@@ -100,19 +76,18 @@ const HeadingContainer = styled.header`
   margin-bottom: ${PFP_SIZE / 2}px;
 `;
 
-const ProfilePicture = styled.div`
-  width: ${PFP_SIZE}px;
-  height: ${PFP_SIZE}px;
-  border-radius: 50%;
-  border: 5px solid #161616;
-  background-repeat: no-repeat;
-  background-size: contain;
+const ProfilePictureContainer = styled.div`
   position: absolute;
-  bottom: -${PFP_SIZE / 2}px;
+  bottom: -${PFP_SIZE / 2 + 10}px;
   left: 90px;
   @media (min-width: ${BOX_SIZE - PFP_SIZE}) {
     left: 0px;
   }
+`;
+
+const ProfilePicture = styled(Image)`
+  border-radius: 50%;
+  border: 5px solid #161616 !important;
 `;
 
 const Banner = styled.div`
