@@ -3,6 +3,7 @@ import { Skeleton, Card, Row, Image, Typography, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
+// import Image as NextImag from 'next/image'
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
@@ -31,8 +32,6 @@ const Square = styled(Row)`
   width: 100%;
   height: 100%;
 
-  margin-bottom: 13px;
-
   &:before {
     content: '';
     display: block;
@@ -55,10 +54,11 @@ const Square = styled(Row)`
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   object-fit: cover;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   width: 100%;
   height: 100%;
-  border: solid 1px rgba(255, 255, 255, 0.1);
+  /* border: solid 1px rgba(255, 255, 255, 0.1); */
 `;
 
 const ListingTitle = styled(Title)`
@@ -118,9 +118,9 @@ function Countdown(props: { endTime: string }) {
 
   if (timeLeft.valueOf() < 0) return <span></span>;
 
-  const format = timeLeft.toFormat('hh:mm:ss');
+  const format = timeLeft.toFormat("hh'h' mm'm' ss's'");
 
-  return <span>{format}</span>;
+  return <span className="text-base text-gray-900 text-right">{format}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
@@ -136,7 +136,7 @@ function AuctionCountdown(props: { endTime: string }) {
     const daysLeft2 = Number(timeLeft.slice(0, 2));
 
     return (
-      <span>
+      <span className="text-base text-gray-900 text-right">
         Ends in {daysLeft2} day{daysLeft2 > 1 && 's'}
       </span>
     );
@@ -223,8 +223,8 @@ const CustomImageMask = styled.div`
 
   > svg {
     position absolute;
-    right: 24px;
-    bottom: 24px;
+    right: 16px;
+    bottom: 16px;
 
   }
 `;
@@ -287,6 +287,7 @@ export function ListingPreview({
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   const isDev = false && process.env.NODE_ENV === 'development';
   const isSecondarySale = listing.primarySaleHappened;
+  const isAuction = listing.endsAt;
   const hasParticipationNFTs = listing.items.length;
 
   useEffect(() => {
@@ -321,6 +322,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
+      className=""
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
@@ -330,7 +332,7 @@ export function ListingPreview({
         });
       }}
     >
-      <a href={storeHref} rel="nofollow noreferrer" target="_blank">
+      <a href={storeHref} rel="nofollow noreferrer" target="_blank" className="rounded-t-lg">
         <ListingPreviewContainer>
           <Square>
             <NFTPreview
@@ -358,7 +360,67 @@ export function ListingPreview({
               fallback={NFTFallbackImage}
             />
           </Square>
-          <Row justify="space-between" align="middle" wrap={false}>
+          <div className="px-4 py-6 border-x border-gray-800">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-white text-lg font-semibold max truncate">{nftMetadata?.name}</h3>
+              <div className="flex items-center">
+                {hasParticipationNFTs && (
+                  <Tooltip title="Participation NFT">
+                    <ParticipationNFTIcon style={{ marginLeft: '8px' }} />
+                  </Tooltip>
+                )}
+                {isSecondarySale && (
+                  <Tooltip title="Secondary listing">
+                    <SecondarySaleIcon style={{ marginLeft: '8px' }} />
+                  </Tooltip>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center">
+              {/* store favicon palceholder */}
+              <div className="w-4 h-4 bg-red-400 rounded-full mr-2"></div>
+              <h4 className="text-sm font-semibold text-gray-300 m-0">{listing.storeTitle}</h4>
+            </div>
+          </div>
+          <div
+            className={classNames(
+              ' flex justify-between rounded-b-md px-2 py-4',
+              isAuction ? 'bg-white' : 'bg-black border border-gray-800'
+            )}
+          >
+            <div>
+              <div className="text-sm font-semibold text-gray-500">Current bid</div>
+              <div className="flex items-center">
+                {/* <Price size={18} price={displayPrice} /> */}
+                <svg
+                  className="w-4 h-4 text-gray-500 mr-2"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="8" cy="8" r="7.5" stroke="#707070" />
+                  <circle cx="8" cy="8" r="3.5" stroke="#707070" />
+                </svg>
+
+                <span
+                  className={`text-base ${
+                    listing.totalUncancelledBids ? 'text-gray-900' : 'text-gray-500'
+                  }`}
+                >
+                  {displayPrice}
+                </span>
+              </div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-500 text-right">Ends in</div>
+              {listing.endsAt ? (
+                <AuctionCountdown endTime={listing.endsAt} />
+              ) : (
+                <span className="rounded-lg bg-white p-4 text-base">Buy now</span>
+              )}
+            </div>
+          </div>
+          {/* <Row justify="space-between" align="middle" wrap={false}>
             <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
               {nftMetadata?.name}
               {hasParticipationNFTs && (
@@ -381,7 +443,7 @@ export function ListingPreview({
               {listing.storeTitle}
             </ListingSubTitle>
             {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
-          </Row>
+          </Row> */}
           {isDev && (
             <Row justify="space-between" wrap={false}>
               <span
@@ -503,3 +565,7 @@ const SecondarySaleIcon = (props: any) => (
     </defs>
   </svg>
 );
+
+export function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}

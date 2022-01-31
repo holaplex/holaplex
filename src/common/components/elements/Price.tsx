@@ -5,11 +5,6 @@ type PriceProps = {
   price: number;
 };
 
-const PriceWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
 type InlineProps = {
   size: number;
 };
@@ -26,7 +21,7 @@ const StyledPriceNumber = styled.span<InlineProps>`
 
 const Price = (props: PriceProps) => {
   return (
-    <PriceWrapper>
+    <div className="flex items-center">
       <StyledSvg
         viewBox="0 0 146 146"
         xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +44,7 @@ const Price = (props: PriceProps) => {
         />
       </StyledSvg>
       <StyledPriceNumber size={props.size}>{props.price}</StyledPriceNumber>
-    </PriceWrapper>
+    </div>
   );
 };
 
