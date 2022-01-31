@@ -11,10 +11,12 @@ import {
   getFormatedListingPrice,
   lamportToSolIsh,
 } from '@/common/components/elements/ListingPreview';
+import mixpanel from 'mixpanel-browser';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
+const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
@@ -34,7 +36,7 @@ interface CustomEventDimensions {
 }
 
 export interface TrackingAttributes extends CustomEventDimensions {
-  event_category: 'Storefront' | 'Discovery' | 'Minter';
+  event_category: 'Storefront' | 'Discovery' | 'Minter' | 'Misc';
   event_label?: string;
   value?: number;
   [key: string]: string | number | boolean | any[] | null | undefined;
@@ -94,6 +96,13 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       setTrackingInitialized(true);
     }
 
+    if (MIXPANEL_TOKEN) {
+      mixpanel.init(MIXPANEL_TOKEN, {
+        debug: window.location.host.includes('localhost'),
+        disable_persistence: true,
+      });
+    }
+
     if (BUGSNAG_API_KEY) {
       Bugsnag.start({
         appVersion: '0.1.0', // TODO: Link to app version
@@ -109,10 +118,16 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }
 
   function identify() {
-    if (pubkey) {
+    if (gtag && pubkey) {
       gtag('set', 'user_properties', {
         user_id: pubkey,
         pubkey: pubkey,
+      });
+    }
+    if (MIXPANEL_TOKEN && pubkey) {
+      mixpanel.identify(pubkey);
+      mixpanel.people.set_once({
+        pubkey,
       });
     }
   }
@@ -122,6 +137,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       user_id: '',
       pubkey: '',
     });
+    mixpanel.reset();
   }
 
   function pageview(path: string) {
@@ -173,7 +189,16 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       };
 
       // ga4
-      ga4Event(action, attrs);
+      if (GA4_ID) {
+        ga4Event(action, attrs);
+      }
+
+      if (MIXPANEL_TOKEN) {
+        mixpanel.track(action, {
+          ...attrs,
+          // need to attach additional these here as Mixpanel does not support super properties without persitence
+        });
+      }
     } catch (error) {
       console.error(error);
     }

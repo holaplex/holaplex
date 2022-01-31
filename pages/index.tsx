@@ -47,6 +47,7 @@ import {
 } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
 import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import SocialLinks from '@/common/components/elements/SocialLinks';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -233,6 +234,7 @@ const HeroCol = styled(Col)`
     margin: 0 0 0.5rem 0;
   }
 `;
+
 export enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
@@ -450,6 +452,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <Space direction="horizontal" size="large">
               <Button onClick={() => connect()}>Create Your Store</Button>
             </Space>
+            <div style={{ marginTop: '2.5rem' }}>
+              <SocialLinks />
+            </div>
           </Marketing>
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
@@ -582,12 +587,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               )}
             </Row>
           </Col>
-        </Section>
-        <Section justify="center" align="middle">
-          <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>Create Your Store</Button>
-          </Space>
         </Section>
       </CenteredContentCol>
     </Row>
