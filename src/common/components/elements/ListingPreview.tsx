@@ -299,10 +299,10 @@ export function ListingPreview({
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
         setLoading(false);
-        console.log(nftMetadata.name, {
-          ...listing,
-          nftJson,
-        });
+        // console.log(nftMetadata.name, {
+        //   ...listing,
+        //   nftJson,
+        // });
       }
     }
     if (!nftMetadata?.uri) {

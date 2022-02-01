@@ -12,6 +12,8 @@ import {
   lamportToSolIsh,
 } from '@/common/components/elements/ListingPreview';
 import mixpanel from 'mixpanel-browser';
+import { useLocalStorage } from '@/common/hooks/useLocalStorage';
+import CookieBanner from '@/common/components/elements/CookieBanner';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
@@ -21,6 +23,8 @@ const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
 type AnalyticsAction = GoogleEcommerceEvent | GoogleRecommendedEvent | string; // TODO: will remove string in future
+
+export const TRACKING_ACCEPTED_LOCALSTORAGE_KEY = 'HOLAPLEX_COOKIES';
 
 interface AnalyticsUserProperties {
   // user dimensions
@@ -75,7 +79,12 @@ const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const router = useRouter();
   const [trackingInitialized, setTrackingInitialized] = useState(true);
-  const [trackingAccepted, setTrackingAccepted] = useState(true);
+  // const [trackingAccepted, setTrackingAccepted] = useState(true);
+  const [trackingAccepted, setTrackingAccepted] = useLocalStorage<boolean | undefined>(
+    TRACKING_ACCEPTED_LOCALSTORAGE_KEY,
+    undefined // mixpanel.has_opted_out_tracking() ? false : undefined
+  );
+  console.log('analytics provider render');
   const { wallet } = useContext(WalletContext);
   const pubkey = wallet?.pubkey || '';
   // const pubkey = publicKey?.toBase58() || '';
@@ -83,61 +92,14 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
   let solPrice = 0;
 
-  function initializeTracking() {
-    new Coingecko().getRate([Currency.SOL], Currency.USD).then((rates) => {
-      const solRate = rates[0].rate;
-      solPrice = solRate;
-    });
-
-    if (GA4_ID) {
-      gtag('config', GA4_ID, {
-        send_page_view: true,
-      });
-      setTrackingInitialized(true);
-    }
-
-    if (MIXPANEL_TOKEN) {
-      mixpanel.init(MIXPANEL_TOKEN, {
-        debug: window.location.host.includes('localhost'),
-        // disable_persistence: true,
-      });
-    }
-
-    if (BUGSNAG_API_KEY) {
-      Bugsnag.start({
-        appVersion: '0.1.0', // TODO: Link to app version
-        apiKey: BUGSNAG_API_KEY,
-        plugins: [new BugsnagPluginReact()],
-        onError(event) {
-          if (pubkey) {
-            event.setUser(pubkey);
-          }
-        },
-      });
-    }
-  }
-
-  function identify() {
-    if (gtag && pubkey) {
-      gtag('set', 'user_properties', {
-        user_id: pubkey,
-        pubkey: pubkey,
-      });
-    }
-    if (MIXPANEL_TOKEN && pubkey) {
-      mixpanel.identify(pubkey);
-      mixpanel.people.set_once({
-        pubkey,
-      });
-    }
-  }
-
   function resetTracking() {
-    gtag('set', 'user_properties', {
-      user_id: '',
-      pubkey: '',
-    });
-    mixpanel.reset();
+    if (trackingInitialized) {
+      gtag('set', 'user_properties', {
+        user_id: '',
+        pubkey: '',
+      });
+      mixpanel.reset();
+    }
   }
 
   function pageview(path: string) {
@@ -149,14 +111,66 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
   // initialize (goes first no matter what)
   useEffect(() => {
+    console.log('init tracking effect');
+
+    function initializeTracking() {
+      console.log('init tracking func');
+      new Coingecko().getRate([Currency.SOL], Currency.USD).then((rates) => {
+        const solRate = rates[0].rate;
+        solPrice = solRate;
+      });
+
+      if (GA4_ID) {
+        gtag('config', GA4_ID, {
+          send_page_view: true,
+        });
+      }
+
+      if (MIXPANEL_TOKEN) {
+        mixpanel.init(MIXPANEL_TOKEN, {
+          debug: window.location.host.includes('localhost'),
+          // disable_persistence: true,
+        });
+      }
+
+      if (BUGSNAG_API_KEY) {
+        Bugsnag.start({
+          appVersion: '0.1.0', // TODO: Link to app version
+          apiKey: BUGSNAG_API_KEY,
+          plugins: [new BugsnagPluginReact()],
+          onError(event) {
+            if (pubkey) {
+              event.setUser(pubkey);
+            }
+          },
+        });
+      }
+      setTrackingInitialized(true);
+    }
+
     if (trackingAccepted) {
       initializeTracking();
     } else {
-      resetTracking();
+      // resetTracking();
     }
   }, [trackingAccepted]);
 
   useEffect(() => {
+    function identify() {
+      if (gtag && pubkey) {
+        gtag('set', 'user_properties', {
+          user_id: pubkey,
+          pubkey: pubkey,
+        });
+      }
+      if (MIXPANEL_TOKEN && pubkey) {
+        mixpanel.identify(pubkey);
+        mixpanel.people.set_once({
+          pubkey,
+        });
+      }
+    }
+
     identify();
   }, [pubkey]);
 
@@ -211,6 +225,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       }}
     >
       {props.children}
+      <CookieBanner trackingAccepted={trackingAccepted} setTrackingAccepted={setTrackingAccepted} />
     </AnalyticsContext.Provider>
   );
 }
