@@ -37,7 +37,7 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [showMintModal, setShowMintModal] = React.useState(false);
+  const [showMintModal, setShowMintModal] = React.useState(true);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -69,6 +69,18 @@ function MyApp({ Component, pageProps }: AppProps) {
       router.events.off('routeChangeComplete', onRouteChanged);
     };
   }, [router.events]);
+
+  useEffect(() => {
+    console.log('query effect', {
+      query: router.query,
+      actionMint: router.query.action === 'mint',
+      showMintModal,
+    });
+    if (router.query.action === 'mint') {
+      setShowMintModal(true);
+      console.log('show mintmodal', showMintModal);
+    }
+  }, [router.query]);
 
   return (
     <>
