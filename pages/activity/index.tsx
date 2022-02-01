@@ -10,7 +10,6 @@ import { gql } from '@apollo/client';
 
 const GetWalletInformationQuery = gql`
   query getWalletInformation {
-    // TODO: Implement
   }
 `;
 
