@@ -1,5 +1,4 @@
 import React from 'react';
-import Modal, { ModalFuncProps } from 'antd/lib/modal/Modal';
 import { Typography, Layout, Space } from 'antd';
 const { Header, Content } = Layout;
 import Paragraph from 'antd/lib/typography/Paragraph';
