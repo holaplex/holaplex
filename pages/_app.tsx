@@ -13,7 +13,11 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
-import { AnalyticsProvider, OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '@/modules/ganalytics/AnalyticsProvider';
+import {
+  AnalyticsProvider,
+  OLD_GOOGLE_ANALYTICS_ID,
+  GA4_ID,
+} from '@/modules/ganalytics/AnalyticsProvider';
 
 const { Header, Content } = Layout;
 
@@ -84,30 +88,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                         <>
                           <Component {...pageProps} track={track} />
                           <AppFooter justify="center">
-                            <Col span={24}>
-                              <Row>
-                                <Col xs={24} md={8}>
-                                  <a href="mailto:hello@monkedao.io">hello@monkedao.io</a>
-                                </Col>
-                                <Col xs={0} md={8}>
-                                  <Row justify="center">
-                                    Made with &#10084; on &#160;
-                                    <a
-                                      href="https://www.metaplex.com"
-                                      target="_blank"
-                                      rel="noreferrer"
-                                    >
-                                      Metaplex
-                                    </a>
-                                  </Row>
-                                </Col>
-                                <Col xs={0} md={8}>
-                                  <Row justify="end">
-                                    <SocialLinks />
-                                  </Row>
-                                </Col>
-                              </Row>
-                            </Col>
+                            <SocialLinks />
                           </AppFooter>
                         </>
                       </Loading>

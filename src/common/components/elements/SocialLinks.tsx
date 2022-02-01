@@ -26,7 +26,7 @@ const SocialLink = styled.a`
 const SocialLinks = () => {
   return (
     <Container>
-      <SocialLink href="https://twitter.com/monkedao" target="_blank" rel="noreferrer">
+      <SocialLink href="https://twitter.com/HackerHouseSOL" target="_blank" rel="noreferrer">
         <FeatherIcon icon="twitter" />
       </SocialLink>
       <SocialLink href="https://discord.com/invite/TscZwJ7jbX" target="_blank" rel="noreferrer">

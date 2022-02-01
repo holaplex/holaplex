@@ -53,16 +53,18 @@ const Option = Select.Option;
 
 const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
-const DAO_LIST_IPFS = process.env.NEXT_PUBLIC_DAO_LIST_IPFS || "https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4";
+const DAO_LIST_IPFS =
+  process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
+  'https://ipfs.io/ipfs/bafkreic3iym323qefekrml45l2hu3tazblkv6mytpnlh774pntjbzwurvu';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
-    const response = await fetch(DAO_LIST_IPFS)
-    const json = await response.json()
+    const response = await fetch(DAO_LIST_IPFS);
+    const json = await response.json();
     return json[WHICHDAO];
   }
-  return []
-}
+  return [];
+};
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -323,10 +325,10 @@ interface HomeProps {
 
 const getDefaultFilter = () => {
   if (WHICHDAO) {
-    return FilterOptions.All
+    return FilterOptions.All;
   }
-  return FilterOptions.Auctions
-}
+  return FilterOptions.Auctions;
+};
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
   const { connect } = useContext(WalletContext);
@@ -378,8 +380,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     sortWith(sorts[sortBy])
   );
 
-    
-
   // initial fetch and display
   useEffect(() => {
     async function getListings() {
@@ -387,7 +387,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       let daoFilteredListings = allListings;
 
       if (WHICHDAO) {
-        daoFilteredListings = daoFilteredListings.filter(listing => selectedDaoSubdomains.includes(listing.subdomain))
+        daoFilteredListings = daoFilteredListings.filter((listing) =>
+          selectedDaoSubdomains.includes(listing.subdomain)
+        );
       }
 
       setAllListings(daoFilteredListings);
@@ -415,10 +417,31 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       <CenteredContentCol>
         <Section>
           <Marketing xs={22} md={16}>
-            <HeroTitle>
-            Reject humanity and return to monke art
-            </HeroTitle>
-            <Pitch>Monke.ART is an exclusive storefront for monke artists from the MonkeDAO to showcase their work. We believe supporting creators and 1/1 artists is an important step in helping to grow the Solana ecosystem, and this storefront gives top talent the exposure they deserve to succeed.</Pitch>
+            <HeroTitle>LA Hacker House</HeroTitle>
+            <h3>Feb 1–5, 2022</h3>
+            <br />
+            <p>
+              Where Solana&apos;s dreamers, builders, and supporters come together to celebrate and
+              create the projects and products we know and love.
+            </p>
+            <p>
+              What began as a getaway for developers to hunker down and buidl at Solana&apos;s
+              biggest conference has become a worldwide movement. HackerHouse can best be described
+              as a pop-up developer experience taking over major cities around the world. These
+              week-long experiences serve as unique opportunities to share, learn, and create new
+              experiences on Solana.{' '}
+            </p>
+            <p>
+              Since Breakpoint 2021 HackerHouse has grown to provide an expressive, educational
+              experience open to all. Today investors, community leaders, developers, creators, and
+              hodlers from all walks of life gather multiple times a year to learn from the best and
+              share their stories. There is no better way to get plugged into Solana at its rawest
+              point.{' '}
+            </p>
+            <p>
+              Discover the indie artists and creators creating a more vibrant and expressive
+              experience on Solana below.
+            </p>
           </Marketing>
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
@@ -438,22 +461,24 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroCarousel>
           </HeroCol>
         </Section>
-        { !process.env.NEXT_PUBLIC_WHICHDAO && <StorefrontSection>
-          <Col xs={24}>
-            <Title level={3}>Featured Creators</Title>
-            <FeaturedStores
-              grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-              dataSource={featuredStorefronts.slice(0, 4)}
-              renderItem={(feature) => (
-                // @ts-ignore
-                <List.Item key={feature.storefront.subdomain}>
-                  {/* @ts-ignore */}
-                  <StorePreview {...feature} />
-                </List.Item>
-              )}
-            />
-          </Col>
-        </StorefrontSection> }
+        {!process.env.NEXT_PUBLIC_WHICHDAO && (
+          <StorefrontSection>
+            <Col xs={24}>
+              <Title level={3}>Featured Creators</Title>
+              <FeaturedStores
+                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+                dataSource={featuredStorefronts.slice(0, 4)}
+                renderItem={(feature) => (
+                  // @ts-ignore
+                  <List.Item key={feature.storefront.subdomain}>
+                    {/* @ts-ignore */}
+                    <StorePreview {...feature} />
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </StorefrontSection>
+        )}
         <Section>
           <Col xs={24}>
             <div ref={listingsTopRef} />
