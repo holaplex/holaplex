@@ -404,17 +404,20 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     getListings();
   }, []);
 
-
   /*
-    * Scroll to top of `Current listings` section
-  */
+   * Scroll to top of `Current listings` section
+   */
   const scrollToTop = () => {
-      listingsTopRef.current.scrollIntoView(
-        {
-          behavior: 'smooth',
-        }
-      );
-  }
+    listingsTopRef?.current?.scrollIntoView({
+      behavior: 'smooth',
+    });
+    track('Current Listings Scroll to top', {
+      event_category: 'Discovery',
+      filterBy,
+      sortBy,
+      nrOfListingsOnDisplay: displayedListings.length,
+    });
+  };
 
   // update display on new filter or sort
   useEffect(() => {
@@ -445,7 +448,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
-              {featuredListings.map((listing, i: number) => (
+              {featuredListings.map((listing, i) => (
                 <ListingPreview
                   key={listing.listingAddress}
                   listing={listing}
@@ -483,14 +486,18 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <div ref={listingsTopRef} />
             <ListingsHeader
               ghost={false}
-              title={<a href="javascript:void(0)" onClick={scrollToTop} tabindex="0" role="button">Current listings</a>}
+              title={
+                <a href="javascript:void(0)" onClick={scrollToTop} tabIndex={0} role="button">
+                  Current listings
+                </a>
+              }
               extra={[
                 <Space key="options" direction="horizontal">
                   <SelectInline
                     dropdownClassName="select-inline-dropdown"
                     value={filterBy}
                     label="Filter"
-                    onChange={(nextFilterBy: any) => {
+                    onChange={(nextFilterBy) => {
                       const filter = nextFilterBy as FilterOptions;
                       track('Filter Update', {
                         event_category: 'Discovery',
