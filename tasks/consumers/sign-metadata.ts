@@ -127,9 +127,7 @@ async function consume() {
       }
 
       if (clientSolEndpoint !== endpoint) {
-        console.error('Mismatched Solana endpoint');
-        channel.reject(msg, false)
-        return;
+        console.warn('Mismatched Solana endpoint, ' + clientSolEndpoint);
       }
 
       let metadata;
