@@ -95,6 +95,8 @@
     "mocha": "^9.0.1",
     "nodemon": "^2.0.12",
     "postcss": "^8.4.5",
+    "prettier": "^2.5.1",
+    "prettier-plugin-tailwindcss": "^0.1.4",
     "tailwindcss": "^3.0.18",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"

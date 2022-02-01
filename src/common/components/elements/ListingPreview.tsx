@@ -120,7 +120,7 @@ function Countdown(props: { endTime: string }) {
 
   const format = timeLeft.toFormat("hh'h' mm'm' ss's'");
 
-  return <span className="text-base text-gray-900 text-right">{format}</span>;
+  return <span className="text-right text-base font-semibold text-gray-900">{format}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
@@ -136,8 +136,8 @@ function AuctionCountdown(props: { endTime: string }) {
     const daysLeft2 = Number(timeLeft.slice(0, 2));
 
     return (
-      <span className="text-base text-gray-900 text-right">
-        Ends in {daysLeft2} day{daysLeft2 > 1 && 's'}
+      <span className="text-right text-base font-semibold text-gray-900">
+        {daysLeft2} day{daysLeft2 > 1 && 's'}
       </span>
     );
   }
@@ -194,10 +194,11 @@ export function SkeletonListing() {
       <Square>
         <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
       </Square>
-      <Row justify="space-between">
+      <div className="flex justify-between pt-4">
         <Skeleton.Button size="small" active />
         <Skeleton.Button size="small" active />
-      </Row>
+      </div>
+
       {/* Without this height: 22 there is an annoying height difference between Skeleton and real listing */}
       {/* style={{ height: 22 }} */}
       {/* Well, now it worked again. Maybe it'sa  browser thing */}
@@ -360,9 +361,9 @@ export function ListingPreview({
               fallback={NFTFallbackImage}
             />
           </Square>
-          <div className="px-4 py-6 border-x border-gray-800">
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-white text-lg font-semibold max truncate">{nftMetadata?.name}</h3>
+          <div className="border-x border-gray-800 px-4 py-6">
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</h3>
               <div className="flex items-center">
                 {hasParticipationNFTs && (
                   <Tooltip title="Participation NFT">
@@ -378,14 +379,16 @@ export function ListingPreview({
             </div>
             <div className="flex items-center">
               {/* store favicon palceholder */}
-              <div className="w-4 h-4 bg-red-400 rounded-full mr-2"></div>
-              <h4 className="text-sm font-semibold text-gray-300 m-0">{listing.storeTitle}</h4>
+              <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div>
+              <h4 className="m-0 truncate text-sm font-semibold text-gray-300">
+                {listing.storeTitle}
+              </h4>
             </div>
           </div>
           <div
             className={classNames(
-              ' flex justify-between rounded-b-md px-2 py-4',
-              isAuction ? 'bg-white' : 'bg-black border border-gray-800'
+              'flex items-center justify-between rounded-b-md px-4 py-4',
+              isAuction ? 'bg-white' : 'border border-gray-800 bg-black'
             )}
           >
             <div>
@@ -393,7 +396,7 @@ export function ListingPreview({
               <div className="flex items-center">
                 {/* <Price size={18} price={displayPrice} /> */}
                 <svg
-                  className="w-4 h-4 text-gray-500 mr-2"
+                  className="mr-2 h-4 w-4 text-gray-500"
                   viewBox="0 0 16 16"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -403,7 +406,7 @@ export function ListingPreview({
                 </svg>
 
                 <span
-                  className={`text-base ${
+                  className={`text-base font-semibold ${
                     listing.totalUncancelledBids ? 'text-gray-900' : 'text-gray-500'
                   }`}
                 >
@@ -412,11 +415,15 @@ export function ListingPreview({
               </div>
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-500 text-right">Ends in</div>
               {listing.endsAt ? (
-                <AuctionCountdown endTime={listing.endsAt} />
+                <>
+                  <div className="text-right text-sm font-semibold text-gray-500">Ends in</div>
+                  <AuctionCountdown endTime={listing.endsAt} />
+                </>
               ) : (
-                <span className="rounded-lg bg-white p-4 text-base">Buy now</span>
+                <span className="rounded-full bg-white px-4 py-2 text-sm text-gray-900">
+                  Buy now
+                </span>
               )}
             </div>
           </div>
