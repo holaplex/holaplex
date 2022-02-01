@@ -1,12 +1,5 @@
 query activityPage($address: String!) {
   wallet(address: $address) {
-    __typename
-    profile {
-      __typename
-      handle
-      imageUrl
-      bannerUrl
-    }
     bids {
       __typename
       listingAddress

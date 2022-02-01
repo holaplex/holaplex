@@ -1,10 +1,27 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Button from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
 
 export const ActivityContent = () => {
+  const { publicKey } = useWallet();
+  const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
+  useEffect(() => {
+    if (!publicKey) return;
+    queryActivityPage({
+      variables: {
+        address: publicKey.toString(),
+      },
+    });
+  }, [publicKey, queryActivityPage]);
+
+  const hasItems = !!activityPage.data?.wallet?.bids.length;
+
+  // TODO: Implement listing.
+
   return (
     <ActivityContainer>
       <ActivityBox

@@ -132,7 +132,7 @@ export type ActivityPageQueryVariables = Exact<{
 }>;
 
 
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', profile?: { __typename: 'Profile', handle: string, imageUrl: string, bannerUrl: string } | null, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeOwner: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }> } | null }> } | null };
+export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename?: 'Wallet', bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeOwner: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }> } | null }> } | null };
 
 export type WalletProfileQueryVariables = Exact<{
   address: Scalars['String'];
@@ -145,13 +145,6 @@ export type WalletProfileQuery = { __typename?: 'QueryRoot', wallet?: { __typena
 export const ActivityPageDocument = gql`
     query activityPage($address: String!) {
   wallet(address: $address) {
-    __typename
-    profile {
-      __typename
-      handle
-      imageUrl
-      bannerUrl
-    }
     bids {
       __typename
       listingAddress
