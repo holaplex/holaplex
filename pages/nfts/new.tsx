@@ -17,7 +17,12 @@ export default function New() {
   return (
     <div>
       <Head>
-        <title>Mint NFTs | Design and Host Your Metaplex NFT Storefront</title>
+        <title>Mint NFTs | Design and Host Your Metaplex NFT Storefront | Holaplex</title>
+        <meta
+          property="description"
+          key="description"
+          content="Minting an NFT is how your digital art becomes a part of the Solana blockchain - a public ledger that is unchangeable and tamper-proof."
+        />
       </Head>
     </div>
   );

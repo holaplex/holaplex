@@ -79,7 +79,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
+        <title>Tools built by creators, for creators, owned by creators | Holaplex</title>
+        <meta
+          property="description"
+          key="description"
+          content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
+        />
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
