@@ -487,7 +487,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <ListingsHeader
               ghost={false}
               title={
-                <a href="javascript:void(0)" onClick={scrollToTop} tabIndex={0} role="button">
+                <a onClick={scrollToTop} tabIndex={0} role="button">
                   Current listings
                 </a>
               }
