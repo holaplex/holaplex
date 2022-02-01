@@ -35,6 +35,9 @@ import {
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { clusterApiUrl } from '@solana/web3.js';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { ApolloProvider } from '@apollo/client';
+import { apolloClient } from '../src/apollo';
+
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 const { Content } = Layout;
@@ -108,47 +111,49 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
       </Head>
       <ToastContainer autoClose={15000} />
-      <ConnectionProvider endpoint={endpoint}>
-        {/*
+      <ApolloProvider client={apolloClient}>
+        <ConnectionProvider endpoint={endpoint}>
+          {/*
           This competes with the other WalletProvider. We need to 
           consolidate into using the one directly from solana-wallet-adapter.
         */}
-        <WalletProviderSolana wallets={wallets} autoConnect>
-          <WalletModalProvider>
-            <AppHeaderSettingsProvider>
-              <WalletProvider>
-                {({ verifying, wallet }) => (
-                  <StorefrontProvider wallet={wallet}>
-                    {({ searching }) => {
-                      return (
-                        <AnalyticsProvider>
-                          <AppLayout>
-                            <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
-                            <AppContent>
-                              {showMintModal && wallet && (
-                                <MintModal
-                                  wallet={wallet}
-                                  show={showMintModal}
-                                  onClose={() => setShowMintModal(false)}
-                                />
-                              )}
-                              <Loading loading={verifying || searching}>
-                                <ContentWrapper>
-                                  <Component {...pageProps} track={track} />
-                                </ContentWrapper>
-                              </Loading>
-                            </AppContent>
-                          </AppLayout>
-                        </AnalyticsProvider>
-                      );
-                    }}
-                  </StorefrontProvider>
-                )}
-              </WalletProvider>
-            </AppHeaderSettingsProvider>
-          </WalletModalProvider>
-        </WalletProviderSolana>
-      </ConnectionProvider>
+          <WalletProviderSolana wallets={wallets} autoConnect>
+            <WalletModalProvider>
+              <AppHeaderSettingsProvider>
+                <WalletProvider>
+                  {({ verifying, wallet }) => (
+                    <StorefrontProvider wallet={wallet}>
+                      {({ searching }) => {
+                        return (
+                          <AnalyticsProvider>
+                            <AppLayout>
+                              <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
+                              <AppContent>
+                                {showMintModal && wallet && (
+                                  <MintModal
+                                    wallet={wallet}
+                                    show={showMintModal}
+                                    onClose={() => setShowMintModal(false)}
+                                  />
+                                )}
+                                <Loading loading={verifying || searching}>
+                                  <ContentWrapper>
+                                    <Component {...pageProps} track={track} />
+                                  </ContentWrapper>
+                                </Loading>
+                              </AppContent>
+                            </AppLayout>
+                          </AnalyticsProvider>
+                        );
+                      }}
+                    </StorefrontProvider>
+                  )}
+                </WalletProvider>
+              </AppHeaderSettingsProvider>
+            </WalletModalProvider>
+          </WalletProviderSolana>
+        </ConnectionProvider>
+      </ApolloProvider>
     </>
   );
 }

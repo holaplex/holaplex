@@ -6,6 +6,13 @@ import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { gql } from '@apollo/client';
+
+const GetWalletInformationQuery = gql`
+  query getWalletInformation {
+    // TODO: Implement
+  }
+`;
 
 const ActivityLanding = () => {
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
