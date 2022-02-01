@@ -71,18 +71,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   useEffect(() => {
-    console.log('query effect', {
-      query: router.query,
-      actionMint: router.query.action === 'mint',
-      showMintModal,
-    });
     if (router.query.action === 'mint') {
-      console.log('about to set modal to true');
       setShowMintModal(true);
     }
   }, [router.query.action, setShowMintModal]);
-
-  console.log('render show mintmodal', showMintModal);
 
   return (
     <>
