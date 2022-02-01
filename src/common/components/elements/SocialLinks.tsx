@@ -29,8 +29,11 @@ const SocialLinks = () => {
       <SocialLink href="https://twitter.com/HackerHouseSOL" target="_blank" rel="noreferrer">
         <FeatherIcon icon="twitter" />
       </SocialLink>
-      <SocialLink href="https://discord.com/invite/TscZwJ7jbX" target="_blank" rel="noreferrer">
+      {/* <SocialLink href="https://discord.com/invite/TscZwJ7jbX" target="_blank" rel="noreferrer">
         <Image width={24} height={24} src={DiscordLogo} alt="discord" />
+      </SocialLink> */}
+      <SocialLink href="https://instagram.com/HACKERHOUSE_SOL/" target="_blank" rel="noreferrer">
+        <FeatherIcon icon="instagram" />
       </SocialLink>
     </Container>
   );

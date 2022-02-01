@@ -421,10 +421,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <h3>Feb 1–5, 2022</h3>
             <br />
             <p>
-              Where Solana&apos;s dreamers, builders, and supporters come together to celebrate and
-              create the projects and products we know and love.
-            </p>
-            <p>
               What began as a getaway for developers to hunker down and buidl at Solana&apos;s
               biggest conference has become a worldwide movement. HackerHouse can best be described
               as a pop-up developer experience taking over major cities around the world. These
