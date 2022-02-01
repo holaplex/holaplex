@@ -72,7 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
+        <title>Holaplex × LA Hacker House</title>
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
