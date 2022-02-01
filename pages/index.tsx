@@ -404,6 +404,18 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     getListings();
   }, []);
 
+
+  /*
+    * Scroll to top of `Current listings` section
+  */
+  const scrollToTop = () => {
+      listingsTopRef.current.scrollIntoView(
+        {
+          behavior: 'smooth',
+        }
+      );
+  }
+
   // update display on new filter or sort
   useEffect(() => {
     if (loading) {
@@ -433,7 +445,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
-              {featuredListings.map((listing, i) => (
+              {featuredListings.map((listing, i: number) => (
                 <ListingPreview
                   key={listing.listingAddress}
                   listing={listing}
@@ -471,14 +483,14 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <div ref={listingsTopRef} />
             <ListingsHeader
               ghost={false}
-              title={<span>Current listings</span>}
+              title={<a href="javascript:void(0)" onClick={scrollToTop} tabindex="0" role="button">Current listings</a>}
               extra={[
                 <Space key="options" direction="horizontal">
                   <SelectInline
                     dropdownClassName="select-inline-dropdown"
                     value={filterBy}
                     label="Filter"
-                    onChange={(nextFilterBy) => {
+                    onChange={(nextFilterBy: any) => {
                       const filter = nextFilterBy as FilterOptions;
                       track('Filter Update', {
                         event_category: 'Discovery',
