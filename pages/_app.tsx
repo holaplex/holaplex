@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
-import '@/styles/globals.css';
+import '@/styles/globals.less';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import styled from 'styled-components';
-import { Layout, Row } from 'antd';
+import { Layout } from 'antd';
 import { isNil } from 'ramda';
 import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
@@ -17,6 +17,7 @@ import {
   OLD_GOOGLE_ANALYTICS_ID,
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
+import MintModal from '@/common/components/elements/MintModal';
 
 const { Content } = Layout;
 
@@ -36,6 +37,7 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const [showMintModal, setShowMintModal] = useState(false);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -68,10 +70,21 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
+  useEffect(() => {
+    if (router.query.action === 'mint') {
+      setShowMintModal(true);
+    }
+  }, [router.query.action, setShowMintModal]);
+
   return (
     <>
       <Head>
-        <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
+        <title>Tools built by creators, for creators, owned by creators | Holaplex</title>
+        <meta
+          property="description"
+          key="description"
+          content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
+        />
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
@@ -81,8 +94,15 @@ function MyApp({ Component, pageProps }: AppProps) {
               return (
                 <AnalyticsProvider>
                   <AppLayout>
-                    <AppHeader />
+                    <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
                     <AppContent>
+                      {showMintModal && wallet && (
+                        <MintModal
+                          wallet={wallet}
+                          show={showMintModal}
+                          onClose={() => setShowMintModal(false)}
+                        />
+                      )}
                       <Loading loading={verifying || searching}>
                         <ContentWrapper>
                           <Component {...pageProps} track={track} />

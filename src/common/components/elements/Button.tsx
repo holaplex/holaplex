@@ -62,6 +62,15 @@ const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ no
       color: inherit;
       font: inherit;
       line-height: normal;
+      *[ant-click-animating-without-extra-node='true']::after {
+        display: none;
+      }
+      &:hover,
+      &:focus {
+        background: transparent;
+        color: #fff;
+        border-bottom: transparent;
+      }
     `}
 `;
 
