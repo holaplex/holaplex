@@ -5,17 +5,23 @@ import { MiniWallet } from '@/common/components/elements/MiniWallet';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { gql } from '@apollo/client';
-
-const GetWalletInformationQuery = gql`
-  query getWalletInformation {
-  }
-`;
+import { useActivityPageLazyQuery, useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const ActivityLanding = () => {
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
+  const { publicKey } = useWallet();
+  const [activityPageQuery, activityPage] = useActivityPageLazyQuery();
+
+  useEffect(() => {
+    if (!publicKey) return;
+    activityPageQuery({
+      variables: {
+        address: publicKey.toString(),
+      },
+    });
+  }, [publicKey, activityPageQuery]);
 
   useEffect(() => {
     if (!didToggleDisableMarginBottom) {
@@ -24,8 +30,14 @@ const ActivityLanding = () => {
     }
   }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
 
-  const bannerBackgroundImage = 'url(/images/gradients/gradient-5.png)';
-  const profilePictureImage = '/images/gradients/gradient-3.png';
+  const bannerUrl = activityPage.data?.wallet?.profile?.bannerUrl;
+  const imageUrl = activityPage.data?.wallet?.profile?.imageUrl;
+  const textOverride = activityPage.data?.wallet?.profile?.handle;
+  
+  const bannerBackgroundImage = !!bannerUrl
+    ? `url(${bannerUrl})`
+    : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
+  const profilePictureImage = !!imageUrl ? `url(${imageUrl})` : '/images/gradients/gradient-3.png';
 
   return (
     <>
@@ -40,7 +52,7 @@ const ActivityLanding = () => {
       </HeadingContainer>
       <ContentCol>
         <Profile>
-          <WalletPill />
+          <WalletPill textOverride={textOverride} />
           <MiniWalletContainer>
             <MiniWallet />
           </MiniWalletContainer>

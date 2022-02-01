@@ -9,9 +9,10 @@ const showFirstAndLastFour = (str: string, isLowerThanEight = str.length <= 8) =
 
 type WalletPillProps = {
   disableBackground?: boolean;
+  textOverride?: string | null;
 };
 
-export const WalletPill: FC<WalletPillProps> = ({ disableBackground }) => {
+export const WalletPill: FC<WalletPillProps> = ({ disableBackground, textOverride }) => {
   const { publicKey } = useWallet();
 
   const handleClick = () => {
@@ -21,7 +22,7 @@ export const WalletPill: FC<WalletPillProps> = ({ disableBackground }) => {
   return (
     <Container disableBackground={disableBackground ?? false} onClick={handleClick}>
       <WalletText>
-        {publicKey ? showFirstAndLastFour(publicKey.toBase58()) : 'DISCONNECTED'}
+        {textOverride ?? (publicKey ? showFirstAndLastFour(publicKey.toBase58()) : 'DISCONNECTED')}
         &nbsp;
         <Copy />
       </WalletText>

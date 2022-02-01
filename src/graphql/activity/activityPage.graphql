@@ -1,0 +1,40 @@
+query activityPage($address: String!) {
+  wallet(address: $address) {
+    __typename
+    profile {
+      __typename
+      handle
+      imageUrl
+      bannerUrl
+    }
+    bids {
+      __typename
+      listingAddress
+      bidderAddress
+      lastBidTime
+      cancelled
+      listing {
+        address
+        storeOwner
+        ended
+        storefront {
+          __typename
+          ownerAddress
+          subdomain
+          title
+          description
+          faviconUrl
+          logoUrl
+          bannerUrl
+        }
+        nfts {
+          __typename
+          address
+          name
+          description
+          image
+        }
+      }
+    }
+  }
+}
