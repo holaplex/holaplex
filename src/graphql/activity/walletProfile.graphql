@@ -1,0 +1,11 @@
+query walletProfile($address: String!) {
+  wallet(address: $address) {
+    __typename
+    profile {
+      __typename
+      handle
+      imageUrl
+      bannerUrl
+    }
+  }
+}

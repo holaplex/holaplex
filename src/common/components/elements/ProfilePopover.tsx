@@ -4,9 +4,25 @@ import Image from 'next/image';
 import { Settings } from '../icons/Settings';
 import { WalletPill } from './WalletIndicator';
 import { MiniWallet } from './MiniWallet';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
+import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
+  const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
+  const { publicKey } = useWallet();
+  useEffect(() => {
+    if (!publicKey) return;
+    queryWalletProfile({
+      variables: {
+        address: publicKey.toString(),
+      },
+    });
+  }, [publicKey, queryWalletProfile]);
+
+  const profilePictureUrl = walletProfile.data?.wallet?.profile?.imageUrl;
+  const textOverride = walletProfile.data?.wallet?.profile?.handle;
+
   return (
     <PopoverBox ref={ref}>
       <FirstRow>
@@ -14,7 +30,7 @@ export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
           <ProfilePicture
             width={PFP_SIZE}
             height={PFP_SIZE}
-            src="/images/gradients/gradient-3.png"
+            src={profilePictureUrl ?? '/images/gradients/gradient-3.png'}
             alt="Profile Picture"
           />
         </div>
@@ -23,7 +39,7 @@ export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </FirstRow>
       <SecondRow>
-        <WalletPill disableBackground />
+        <WalletPill disableBackground textOverride={textOverride} />
       </SecondRow>
       <Divider />
       <MiniWallet />

@@ -134,6 +134,13 @@ export type ActivityPageQueryVariables = Exact<{
 
 export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', profile?: { __typename: 'Profile', handle: string, imageUrl: string, bannerUrl: string } | null, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeOwner: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }> } | null }> } | null };
 
+export type WalletProfileQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type WalletProfileQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', profile?: { __typename: 'Profile', handle: string, imageUrl: string, bannerUrl: string } | null } | null };
+
 
 export const ActivityPageDocument = gql`
     query activityPage($address: String!) {
@@ -205,3 +212,44 @@ export function useActivityPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery>;
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
 export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
+export const WalletProfileDocument = gql`
+    query walletProfile($address: String!) {
+  wallet(address: $address) {
+    __typename
+    profile {
+      __typename
+      handle
+      imageUrl
+      bannerUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useWalletProfileQuery__
+ *
+ * To run a query within a React component, call `useWalletProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWalletProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWalletProfileQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useWalletProfileQuery(baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
+      }
+export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
+        }
+export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
+export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
+export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;

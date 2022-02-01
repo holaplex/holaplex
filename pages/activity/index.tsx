@@ -5,23 +5,23 @@ import { MiniWallet } from '@/common/components/elements/MiniWallet';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useActivityPageLazyQuery, useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 const ActivityLanding = () => {
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
   const { publicKey } = useWallet();
-  const [activityPageQuery, activityPage] = useActivityPageLazyQuery();
+  const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
 
   useEffect(() => {
     if (!publicKey) return;
-    activityPageQuery({
+    queryWalletProfile({
       variables: {
         address: publicKey.toString(),
       },
     });
-  }, [publicKey, activityPageQuery]);
+  }, [publicKey, queryWalletProfile]);
 
   useEffect(() => {
     if (!didToggleDisableMarginBottom) {
@@ -30,14 +30,14 @@ const ActivityLanding = () => {
     }
   }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
 
-  const bannerUrl = activityPage.data?.wallet?.profile?.bannerUrl;
-  const imageUrl = activityPage.data?.wallet?.profile?.imageUrl;
-  const textOverride = activityPage.data?.wallet?.profile?.handle;
-  
+  const bannerUrl = walletProfile.data?.wallet?.profile?.bannerUrl;
+  const imageUrl = walletProfile.data?.wallet?.profile?.imageUrl;
+  const textOverride = walletProfile.data?.wallet?.profile?.handle;
+
   const bannerBackgroundImage = !!bannerUrl
     ? `url(${bannerUrl})`
     : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
-  const profilePictureImage = !!imageUrl ? `url(${imageUrl})` : '/images/gradients/gradient-3.png';
+  const profilePictureImage = !!imageUrl ? `url(${imageUrl})` : '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
 
   return (
     <>
