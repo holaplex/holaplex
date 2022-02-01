@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -37,7 +37,7 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [showMintModal, setShowMintModal] = React.useState(true);
+  const [showMintModal, setShowMintModal] = useState(false);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -77,10 +77,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       showMintModal,
     });
     if (router.query.action === 'mint') {
+      console.log('about to set modal to true');
       setShowMintModal(true);
-      console.log('show mintmodal', showMintModal);
     }
-  }, [router.query]);
+  }, [router.query.action, setShowMintModal]);
+
+  console.log('render show mintmodal', showMintModal);
 
   return (
     <>
