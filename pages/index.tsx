@@ -459,7 +459,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     <Row>
       <CenteredContentCol>
         <Section>
-          <Marketing xs={22} md={16}>
+          <Marketing xs={22} md={18}>
             <HeroTitle>
               Discover, explore, and collect NFTs from incredible creators on Solana
             </HeroTitle>
@@ -471,7 +471,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               <SocialLinks />
             </div>
           </Marketing>
-          <HeroCol xs={24} md={8}>
+          <HeroCol xs={24} md={6}>
             <Text strong>Featured Listings</Text>
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
               {featuredListings.map((listing, i) => (

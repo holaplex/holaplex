@@ -388,15 +388,21 @@ export function ListingPreview({
           <div
             className={classNames(
               'flex items-center justify-between rounded-b-md px-4 py-4',
-              isAuction ? 'bg-white' : 'border border-gray-800 bg-black'
+              isAuction ? 'bg-gray-800' : 'border border-gray-800 '
             )}
           >
             <div>
-              <div className="text-sm font-semibold text-gray-500">Current bid</div>
+              <div className="text-sm font-semibold text-gray-300">
+                {isAuction
+                  ? listing.totalUncancelledBids
+                    ? 'Current bid'
+                    : 'Starting bid'
+                  : 'Price'}
+              </div>
               <div className="flex items-center">
                 {/* <Price size={18} price={displayPrice} /> */}
                 <svg
-                  className="mr-2 h-4 w-4 text-gray-500"
+                  className="mr-2 h-4 w-4 text-gray-300"
                   viewBox="0 0 16 16"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -407,7 +413,7 @@ export function ListingPreview({
 
                 <span
                   className={`text-base font-semibold ${
-                    listing.totalUncancelledBids ? 'text-gray-900' : 'text-gray-500'
+                    listing.totalUncancelledBids ? 'text-gray-900' : 'text-gray-300'
                   }`}
                 >
                   {displayPrice}
@@ -417,7 +423,7 @@ export function ListingPreview({
             <div>
               {listing.endsAt ? (
                 <>
-                  <div className="text-right text-sm font-semibold text-gray-500">Ends in</div>
+                  <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
                   <AuctionCountdown endTime={listing.endsAt} />
                 </>
               ) : (
