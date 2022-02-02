@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { Layout, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
+import Button from '@/common/components/elements/Button';
+import { Wallet } from '@/modules/wallet/types';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -52,10 +54,22 @@ const LinkRow = styled(Space)`
   }
 `;
 
+interface Props {
+  setShowMintModal: (show: boolean) => void;
+  wallet?: Wallet;
+}
+
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
-export function AppHeader() {
+export function AppHeader({ setShowMintModal, wallet }: Props) {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
+
+  const mintModalClick = () => {
+    if (!wallet) {
+      connect(router.pathname);
+    }
+    setShowMintModal(true);
+  };
 
   return (
     <StyledHeader>
@@ -68,10 +82,10 @@ export function AppHeader() {
       </HeaderTitle>
       {!WHICHDAO && (
         <LinkRow size="large">
-          <HeaderLinkWrapper key="nft-new" active={router.pathname == '/nfts/new'}>
-            <Link href="/nfts/new" passHref>
-              <a>Mint&nbsp;NFTs</a>
-            </Link>
+          <HeaderLinkWrapper key="mint-nfts" active={false}>
+            <Button onClick={mintModalClick} type="text" noStyle>
+              Mint&nbsp;NFTs
+            </Button>
           </HeaderLinkWrapper>
           <HeaderLinkWrapper
             key="edit"
