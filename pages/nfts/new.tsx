@@ -10,8 +10,9 @@ export default function New() {
   useEffect(() => {
     if (!wallet) {
       connect(router.pathname);
+    } else {
+      router.push('/?action=mint');
     }
-    router.push('/?action=mint');
   }, [connect, wallet]);
 
   return (
