@@ -3,7 +3,7 @@ import { Skeleton, Card, Row, Image, Typography, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
-// import Image as NextImag from 'next/image'
+// import Image as NextImage from 'next/image';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
@@ -366,12 +366,28 @@ export function ListingPreview({
               <h3 className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</h3>
               <div className="flex items-center">
                 {hasParticipationNFTs && (
-                  <Tooltip title="Participation NFT">
+                  <Tooltip
+                    title="Participation NFT"
+                    overlayStyle={{
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: 'white',
+                      background: '#171717',
+                    }}
+                  >
                     <ParticipationNFTIcon style={{ marginLeft: '8px' }} />
                   </Tooltip>
                 )}
                 {isSecondarySale && (
-                  <Tooltip title="Secondary listing">
+                  <Tooltip
+                    title="Secondary listing"
+                    overlayStyle={{
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: 'white',
+                      background: '#171717',
+                    }}
+                  >
                     <SecondarySaleIcon style={{ marginLeft: '8px' }} />
                   </Tooltip>
                 )}
@@ -379,7 +395,13 @@ export function ListingPreview({
             </div>
             <div className="flex items-center">
               {/* store favicon palceholder */}
-              <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div>
+              {/* <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div> */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://arweave.cache.holaplex.dev/E0LYare8kKTlKkeOKFBxBu7yJqim9g8ubQNox7bjKi8"
+                className="mr-2 h-4 w-4 rounded-sm"
+                alt={'logo for ' + listing.storeTitle}
+              />
               <h4 className="m-0 truncate text-sm font-semibold text-gray-300">
                 {listing.storeTitle}
               </h4>
@@ -413,7 +435,7 @@ export function ListingPreview({
 
                 <span
                   className={`text-base font-semibold ${
-                    listing.totalUncancelledBids ? 'text-white' : 'text-gray-300'
+                    listing.totalUncancelledBids || !isAuction ? 'text-white' : 'text-gray-300'
                   }`}
                 >
                   {displayPrice}
