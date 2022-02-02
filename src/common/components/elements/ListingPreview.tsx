@@ -120,7 +120,7 @@ function Countdown(props: { endTime: string }) {
 
   const format = timeLeft.toFormat("hh'h' mm'm' ss's'");
 
-  return <span className="text-right text-base font-semibold text-gray-900">{format}</span>;
+  return <span className="text-right text-base font-semibold text-white">{format}</span>;
 }
 
 function AuctionCountdown(props: { endTime: string }) {
@@ -136,7 +136,7 @@ function AuctionCountdown(props: { endTime: string }) {
     const daysLeft2 = Number(timeLeft.slice(0, 2));
 
     return (
-      <span className="text-right text-base font-semibold text-gray-900">
+      <span className="text-right text-base font-semibold text-white">
         {daysLeft2} day{daysLeft2 > 1 && 's'}
       </span>
     );
@@ -413,7 +413,7 @@ export function ListingPreview({
 
                 <span
                   className={`text-base font-semibold ${
-                    listing.totalUncancelledBids ? 'text-gray-900' : 'text-gray-300'
+                    listing.totalUncancelledBids ? 'text-white' : 'text-gray-300'
                   }`}
                 >
                   {displayPrice}
