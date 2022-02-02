@@ -289,7 +289,7 @@ export function ListingPreview({
   const isDev = false && process.env.NODE_ENV === 'development';
   const isSecondarySale = listing.primarySaleHappened;
   const isAuction = listing.endsAt;
-  const hasParticipationNFTs = listing.items.length;
+  const hasParticipationNFTs = listing.items.length > 1;
 
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {

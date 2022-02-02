@@ -414,12 +414,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         );
       }
 
-      // add some mock secondaries
-      daoFilteredListings = daoFilteredListings.map((l) => ({
-        ...l,
-        primarySaleHappened: Math.random() > 0.6,
-      }));
-
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
