@@ -6,22 +6,25 @@ import { WalletPill } from './WalletIndicator';
 import { MiniWallet } from './MiniWallet';
 import { forwardRef, useEffect } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
-  const { publicKey } = useWallet();
+  const { connected, publicKey } = useWallet();
+  const { data: twitterHandle } = useTwitterHandle(publicKey);
+
   useEffect(() => {
-    if (!publicKey) return;
+    if (!twitterHandle) return;
     queryWalletProfile({
       variables: {
-        address: publicKey.toString(),
+        handle: twitterHandle,
       },
     });
-  }, [publicKey, queryWalletProfile]);
+  }, [queryWalletProfile, twitterHandle]);
 
-  const profilePictureUrl = walletProfile.data?.wallet?.profile?.imageUrl;
-  const textOverride = walletProfile.data?.wallet?.profile?.handle;
+  const profilePictureUrl = connected ? walletProfile.data?.profile?.profileImageUrlHighres : null;
+  const textOverride = connected ? twitterHandle : null;
 
   return (
     <PopoverBox ref={ref}>

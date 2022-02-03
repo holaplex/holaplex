@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Lamports */
+  Lamports: any;
 };
 
 /** Filter on NFT attributes */
@@ -37,6 +39,7 @@ export type Bid = {
   __typename?: 'Bid';
   bidderAddress: Scalars['String'];
   cancelled: Scalars['Boolean'];
+  lastBidAmount: Scalars['Lamports'];
   lastBidTime: Scalars['String'];
   listing?: Maybe<Listing>;
   listingAddress: Scalars['String'];
@@ -51,6 +54,7 @@ export type Creator = {
 export type Listing = {
   __typename?: 'Listing';
   address: Scalars['String'];
+  bids: Array<Bid>;
   ended: Scalars['Boolean'];
   nfts: Array<Nft>;
   storeOwner: Scalars['String'];
@@ -67,9 +71,10 @@ export type Nft = {
 
 export type Profile = {
   __typename?: 'Profile';
-  bannerUrl: Scalars['String'];
+  bannerImageUrl: Scalars['String'];
   handle: Scalars['String'];
-  imageUrl: Scalars['String'];
+  profileImageUrlHighres: Scalars['String'];
+  profileImageUrlLowres: Scalars['String'];
 };
 
 export type QueryRoot = {
@@ -77,6 +82,7 @@ export type QueryRoot = {
   creator: Creator;
   nft?: Maybe<Nft>;
   nfts: Array<Nft>;
+  profile?: Maybe<Profile>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
   wallet?: Maybe<Wallet>;
@@ -96,6 +102,11 @@ export type QueryRootNftArgs = {
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
   creators: Array<Scalars['String']>;
+};
+
+
+export type QueryRootProfileArgs = {
+  handle: Scalars['String'];
 };
 
 
@@ -124,7 +135,6 @@ export type Wallet = {
   __typename?: 'Wallet';
   address: Scalars['String'];
   bids: Array<Bid>;
-  profile?: Maybe<Profile>;
 };
 
 export type ActivityPageQueryVariables = Exact<{
@@ -132,24 +142,27 @@ export type ActivityPageQueryVariables = Exact<{
 }>;
 
 
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename?: 'Wallet', bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeOwner: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }> } | null }> } | null };
+export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeOwner: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
 
 export type WalletProfileQueryVariables = Exact<{
-  address: Scalars['String'];
+  handle: Scalars['String'];
 }>;
 
 
-export type WalletProfileQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', profile?: { __typename: 'Profile', handle: string, imageUrl: string, bannerUrl: string } | null } | null };
+export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
 
 export const ActivityPageDocument = gql`
     query activityPage($address: String!) {
   wallet(address: $address) {
+    __typename
+    address
     bids {
       __typename
       listingAddress
       bidderAddress
       lastBidTime
+      lastBidAmount
       cancelled
       listing {
         address
@@ -171,6 +184,13 @@ export const ActivityPageDocument = gql`
           name
           description
           image
+        }
+        bids {
+          bidderAddress
+          lastBidTime
+          lastBidAmount
+          cancelled
+          listingAddress
         }
       }
     }
@@ -206,15 +226,12 @@ export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
 export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
 export const WalletProfileDocument = gql`
-    query walletProfile($address: String!) {
-  wallet(address: $address) {
-    __typename
-    profile {
-      __typename
-      handle
-      imageUrl
-      bannerUrl
-    }
+    query walletProfile($handle: String!) {
+  profile(handle: $handle) {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
   }
 }
     `;
@@ -231,7 +248,7 @@ export const WalletProfileDocument = gql`
  * @example
  * const { data, loading, error } = useWalletProfileQuery({
  *   variables: {
- *      address: // value for 'address'
+ *      handle: // value for 'handle'
  *   },
  * });
  */

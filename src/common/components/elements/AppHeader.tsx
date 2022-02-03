@@ -6,11 +6,15 @@ import { Layout, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { FC, useContext, useState } from 'react';
-import Button from '@/common/components/elements/Button';
+import Button, { ButtonV2 } from '@/common/components/elements/Button';
 import { Wallet } from '@/modules/wallet/types';
 import { Bell } from '../icons/Bell';
 import { ProfileImage } from './ProfileImage';
 import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
+import { MiniConnectionButton } from './MiniWallet';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { ButtonReset } from '@/common/styles/ButtonReset';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -75,6 +79,7 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
+  const { connected, publicKey } = useWallet();
   const { connect } = useContext(WalletContext);
 
   const mintModalClick = () => {
@@ -123,13 +128,14 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               FAQ
             </a>
           </HeaderLinkWrapper>
-          <HeaderLinkWrapper key="activity" active={false}>
-            <Link href="/activity" passHref>
-              <a>
-                <Bell style={{ marginTop: 25 }} color="#fff" />
-              </a>
-            </Link>
-          </HeaderLinkWrapper>
+          {connected ? (
+            <HeaderLinkWrapper key="activity" active={false}>
+              <Link href={`/activity/${publicKey?.toBase58()}`} passHref>
+                <a>Activity</a>
+              </Link>
+            </HeaderLinkWrapper>
+          ) : null}
+          {/* <ConnectionButton /> */}
           <ProfileImage />
           {/* {windowDimensions.width > 700 && <SocialLinks />} */}
         </LinkRow>
@@ -137,3 +143,19 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
     </StyledHeader>
   );
 }
+
+const ConnectionButton = styled(WalletMultiButton)`
+  ${ButtonReset};
+  width: 88px;
+  height: 32px;
+  border-radius: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #171717;
+  background: #fff;
+`;

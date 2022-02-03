@@ -1,11 +1,8 @@
-query walletProfile($address: String!) {
-  wallet(address: $address) {
-    __typename
-    profile {
-      __typename
-      handle
-      imageUrl
-      bannerUrl
-    }
+query walletProfile($handle: String!) {
+  profile(handle: $handle) {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
   }
 }

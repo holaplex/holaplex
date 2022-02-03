@@ -1,27 +1,31 @@
 import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Image from 'next/image';
 import { useAppHeaderSettings } from '@/common/components/elements/AppHeaderSettingsProvider';
-import { MiniWallet } from '@/common/components/elements/MiniWallet';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { useRouter } from 'next/router';
+import { PublicKey } from '@solana/web3.js';
 
 const ActivityLanding = () => {
+  const router = useRouter();
+  const { wallet } = router.query;
+  const publicKey = wallet ? new PublicKey(wallet as string) : null;
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
-  const { publicKey } = useWallet();
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
+  const { data: twitterHandle } = useTwitterHandle(publicKey);
 
   useEffect(() => {
-    if (!publicKey) return;
+    if (!twitterHandle) return;
     queryWalletProfile({
       variables: {
-        address: publicKey.toString(),
+        handle: twitterHandle,
       },
     });
-  }, [publicKey, queryWalletProfile]);
+  }, [queryWalletProfile, twitterHandle]);
 
   useEffect(() => {
     if (!didToggleDisableMarginBottom) {
@@ -30,14 +34,14 @@ const ActivityLanding = () => {
     }
   }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
 
-  const bannerUrl = walletProfile.data?.wallet?.profile?.bannerUrl;
-  const imageUrl = walletProfile.data?.wallet?.profile?.imageUrl;
-  const textOverride = walletProfile.data?.wallet?.profile?.handle;
+  const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
+  const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres;
+  const textOverride = twitterHandle;
 
   const bannerBackgroundImage = !!bannerUrl
     ? `url(${bannerUrl})`
     : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
-  const profilePictureImage = !!imageUrl ? `url(${imageUrl})` : '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+  const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
 
   return (
     <>
@@ -52,12 +56,9 @@ const ActivityLanding = () => {
       </HeadingContainer>
       <ContentCol>
         <Profile>
-          <WalletPill textOverride={textOverride} />
-          <MiniWalletContainer>
-            <MiniWallet />
-          </MiniWalletContainer>
+          <WalletPill disableBackground textOverride={textOverride} />
         </Profile>
-        <ActivityContent />
+        <ActivityContent publicKey={publicKey} />
       </ContentCol>
     </>
   );
@@ -67,12 +68,6 @@ export default ActivityLanding;
 
 const PFP_SIZE = 90;
 const BOX_SIZE = 1400;
-
-const MiniWalletContainer = styled.div`
-  margin-top: 40px;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
 
 const Profile = styled.div`
   margin-top: 40px;
@@ -112,7 +107,7 @@ const Banner = styled.div`
   width: 100%;
   height: 265px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100%;
   background-attachment: fixed;
   margin-bottom: ${PFP_SIZE / 2}px;
 `;

@@ -1,20 +1,18 @@
 import { ButtonReset } from '@/common/styles/ButtonReset';
+import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
 import { Copy } from '../icons/Copy';
 
-const showFirstAndLastFour = (str: string, isLowerThanEight = str.length <= 8) =>
-  isLowerThanEight ? str : `${str.substring(0, 4)}...${str.substring(str.length - 4)}`;
-
 type WalletPillProps = {
   disableBackground?: boolean;
   textOverride?: string | null;
+  publicKey?: PublicKey | null;
 };
 
-export const WalletPill: FC<WalletPillProps> = ({ disableBackground, textOverride }) => {
-  const { publicKey } = useWallet();
-
+export const WalletPill: FC<WalletPillProps> = ({ disableBackground, textOverride, publicKey }) => {
   const handleClick = () => {
     navigator.clipboard.writeText(publicKey?.toBase58() ?? 'DISCONNECTED');
   };

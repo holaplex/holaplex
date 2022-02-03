@@ -7,21 +7,29 @@ import { ProfilePopover } from './ProfilePopover';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 
 export const ProfileImage = () => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
-  const { publicKey } = useWallet();
+
+  const { connected, publicKey } = useWallet();
+  const { data: twitterHandle } = useTwitterHandle(publicKey);
+
   useEffect(() => {
-    if (!publicKey) return;
+    if (!twitterHandle) return;
     queryWalletProfile({
       variables: {
-        address: publicKey.toString(),
+        handle: twitterHandle,
       },
     });
-  }, [publicKey, queryWalletProfile]);
+  }, [queryWalletProfile, twitterHandle]);
+
+  const profilePictureUrl = connected ? walletProfile.data?.profile?.profileImageUrlHighres : null;
+
   const [isShowingProfilePopover, setIsShowingProfilePopover] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(popoverRef, () => setIsShowingProfilePopover(false));
+  console.log({ walletProfile });
   return (
     <>
       <Popover
@@ -34,9 +42,7 @@ export const ProfileImage = () => {
           <Image
             width={40}
             height={40}
-            src={
-              walletProfile.data?.wallet?.profile?.imageUrl ?? '/images/gradients/gradient-3.png'
-            }
+            src={profilePictureUrl ?? '/images/gradients/gradient-3.png'}
             alt="Profile Image"
           />
         </ProfileImageWrapper>

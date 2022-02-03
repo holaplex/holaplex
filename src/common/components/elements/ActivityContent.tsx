@@ -1,13 +1,21 @@
 import { FC, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import Button from '@/components/elements/Button';
+import Button, { ButtonV2 } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
+import { DateTime } from 'luxon';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { showFirstAndLastFour } from '@/modules/utils/string';
 
-export const ActivityContent = () => {
-  const { publicKey } = useWallet();
+const randomBetween = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
+  const { data: twitterHandle } = useTwitterHandle(publicKey);
+
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
   useEffect(() => {
     if (!publicKey) return;
@@ -18,80 +26,149 @@ export const ActivityContent = () => {
     });
   }, [publicKey, queryActivityPage]);
 
+  const isLoading = activityPage.loading;
+
   const hasItems = !!activityPage.data?.wallet?.bids.length;
 
-  // TODO: Implement listing.
+  const bids = activityPage.data?.wallet?.bids
+    .slice()
+    .sort(
+      (a, b) =>
+        DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
+        DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
+    );
+
+  type MyBids = typeof bids;
+
+  const getEndedAuctions = (myBids: MyBids) => {
+    if (!myBids?.length) return [];
+    return myBids.map((myBid) => {
+      const latestListingBid = myBid.listing?.bids
+        .slice()
+        .sort(
+          (a, b) =>
+            DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
+            DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
+        )?.[0];
+      const didWalletWon =
+        !!myBid.listing?.ended && latestListingBid?.bidderAddress === publicKey?.toString();
+      const closedDate = latestListingBid?.lastBidTime;
+      return {
+        ...myBid,
+        // Add 1 second to these items to pop them over bids that are too close.
+        lastBidTime: DateTime.fromFormat(myBid.lastBidTime, 'yyyy-MM-dd HH:mm:ss')
+          .plus({ seconds: 1 })
+          .toFormat('yyyy-MM-dd HH:mm:ss'),
+        didWalletWon,
+        closedDate,
+      };
+    });
+  };
+
+  const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
+    if (twitterHandle) return twitterHandle;
+    if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
+    return 'Loading';
+  };
+
+  const items = hasItems
+    ? [...bids!, ...getEndedAuctions(bids!)]
+        .slice()
+        .sort(
+          (a, b) =>
+            DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
+            DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
+        )
+    : [];
 
   return (
     <ActivityContainer>
-      <ActivityBox
-        disableMarginTop
-        relatedImageUrl="/images/gradients/gradient-1.png"
-        action={<ActivityButton>Claim NFT</ActivityButton>}
-        content={
-          <ContentCol>
-            <Row>
-              <ItemText>
-                Congratulations! You won <b>BOOGLE Recovery</b> by <b>BOOGLE</b> for <b>1800 SOL</b>
-              </ItemText>
-            </Row>
-            <Row style={{ marginTop: 8 }}>
-              <TimeText>Just now</TimeText>
-            </Row>
-          </ContentCol>
-        }
-      />
-      <ActivityBox
-        relatedImageUrl="/images/gradients/gradient-2.png"
-        action={<ActivityButton>Redeem bid</ActivityButton>}
-        content={
-          <ContentCol>
-            <Row>
-              <ItemText>
-                The auction for <b>Flying Witches of Velacruz</b> by <b>Sleepr</b> has ended at{' '}
-                <b>15 SOL</b>
-              </ItemText>
-            </Row>
-            <Row style={{ marginTop: 8 }}>
-              <TimeText>2 hours ago</TimeText>
-            </Row>
-          </ContentCol>
-        }
-      />
-      <ActivityBox
-        isPFPImage
-        relatedImageUrl="/images/gradients/gradient-4.png"
-        action={<ActivityButton>View</ActivityButton>}
-        content={
-          <ContentCol>
-            <Row>
-              <ItemText>
-                You were outbid by Feik...8j01 on <b>The Firstborn</b> by <b>The Chimpions</b>
-              </ItemText>
-            </Row>
-            <Row style={{ marginTop: 8 }}>
-              <TimeText>6 hours ago</TimeText>
-            </Row>
-          </ContentCol>
-        }
-      />
-      <ActivityBox
-        isPFPImage
-        relatedImageUrl="/images/gradients/gradient-3.png"
-        action={<ActivityButton>View</ActivityButton>}
-        content={
-          <ContentCol>
-            <Row>
-              <ItemText>
-                You placed a bid of <b>5 SOL</b> on <b>The Firstborn</b> by <b>The Chimpions</b>
-              </ItemText>
-            </Row>
-            <Row style={{ marginTop: 8 }}>
-              <TimeText>8 hours ago</TimeText>
-            </Row>
-          </ContentCol>
-        }
-      />
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : hasItems ? (
+        <>
+          {items.map((bid, i) => (
+            <ActivityBox
+              key={i}
+              disableMarginTop={i === 0}
+              relatedImageUrl={
+                bid.listing?.nfts?.[0]?.image ??
+                `/images/gradients/gradient-${randomBetween(1, 8)}.png`
+              }
+              action={
+                <ButtonV2
+                  onClick={() => {
+                    window.open(
+                      `https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`,
+                      '_blank'
+                    );
+                  }}
+                >
+                  View
+                </ButtonV2>
+              }
+              content={(() => {
+                if ((bid as any).didWalletWon === true) {
+                  return (
+                    <ContentCol>
+                      <Row>
+                        <ItemText>
+                          <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
+                          <b>{bid.listing?.nfts?.[0]?.name}</b>
+                          &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
+                          <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b>
+                        </ItemText>
+                      </Row>
+                      <Row style={{ marginTop: 8 }}>
+                        <TimeText>
+                          {DateTime.fromFormat(bid.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toRelative()}
+                        </TimeText>
+                      </Row>
+                    </ContentCol>
+                  );
+                } else if ((bid as any).didWalletWon === false) {
+                  return (
+                    <ContentCol>
+                      <Row>
+                        <ItemText>
+                          <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
+                          <b>{bid.listing?.nfts?.[0]?.name}</b>
+                          &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+                        </ItemText>
+                      </Row>
+                      <Row style={{ marginTop: 8 }}>
+                        <TimeText>
+                          {DateTime.fromFormat(bid.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toRelative()}
+                        </TimeText>
+                      </Row>
+                    </ContentCol>
+                  );
+                } else {
+                  return (
+                    <ContentCol>
+                      <Row>
+                        <ItemText>
+                          <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+                          <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b> on{' '}
+                          <b>{bid.listing?.nfts?.[0]?.name}</b>
+                          &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+                        </ItemText>
+                      </Row>
+                      <Row style={{ marginTop: 8 }}>
+                        <TimeText>
+                          {DateTime.fromFormat(bid.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toRelative()}
+                        </TimeText>
+                      </Row>
+                    </ContentCol>
+                  );
+                }
+              })()}
+            />
+          ))}
+        </>
+      ) : (
+        <NoActivityBox />
+      )}
     </ActivityContainer>
   );
 };
@@ -104,6 +181,19 @@ type ActivityBoxProps = {
   disableMarginTop?: boolean;
 };
 
+const NoActivityBox: FC = () => {
+  return (
+    <ActivityBoxContainer disableMarginTop>
+      <NoActivityContainer>
+        <NoActivityTitle>No activity</NoActivityTitle>
+        <NoActivityText>
+          Activity associated with this user’s wallet will show up here
+        </NoActivityText>
+      </NoActivityContainer>
+    </ActivityBoxContainer>
+  );
+};
+
 const ActivityBox: FC<ActivityBoxProps> = ({
   relatedImageUrl,
   action,
@@ -114,13 +204,45 @@ const ActivityBox: FC<ActivityBoxProps> = ({
   return (
     <ActivityBoxContainer disableMarginTop={disableMarginTop}>
       <CenteredCol>
-        <NFTImage isPFPImage={isPFPImage} width={52} height={52} src={relatedImageUrl} />
+        <NFTImage
+          unoptimized
+          isPFPImage={isPFPImage}
+          width={52}
+          height={52}
+          src={relatedImageUrl}
+        />
       </CenteredCol>
       <ContentContainer>{content}</ContentContainer>
       <CenteredCol>{action}</CenteredCol>
     </ActivityBoxContainer>
   );
 };
+
+const NoActivityContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const NoActivityTitle = styled.span`
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  text-align: center;
+`;
+
+const NoActivityText = styled.span`
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+  color: #a8a8a8;
+  margin-top: 8px;
+  text-align: center;
+`;
 
 const ActivityContainer = styled.main`
   flex: 1;
@@ -144,20 +266,6 @@ const ContentCol = styled(CenteredCol)`
   justify-content: center;
 `;
 
-const ActivityButton = styled(Button)`
-  width: 88px;
-  height: 32px;
-  border-radius: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: #171717;
-`;
-
 const ActivityBoxContainer = styled(Row)<{ disableMarginTop: boolean }>`
   display: flex;
   flex: 1;
@@ -176,6 +284,7 @@ const ActivityBoxContainer = styled(Row)<{ disableMarginTop: boolean }>`
 `;
 
 const NFTImage = styled(Image)<{ isPFPImage: boolean }>`
+  object-fit: contain;
   ${({ isPFPImage }) =>
     isPFPImage
       ? css`

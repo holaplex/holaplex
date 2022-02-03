@@ -1,10 +1,13 @@
 query activityPage($address: String!) {
   wallet(address: $address) {
+    __typename
+    address
     bids {
       __typename
       listingAddress
       bidderAddress
       lastBidTime
+      lastBidAmount
       cancelled
       listing {
         address
@@ -26,6 +29,13 @@ query activityPage($address: String!) {
           name
           description
           image
+        }
+        bids {
+          bidderAddress
+          lastBidTime
+          lastBidAmount
+          cancelled
+          listingAddress
         }
       }
     }

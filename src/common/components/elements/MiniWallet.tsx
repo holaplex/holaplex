@@ -34,7 +34,7 @@ const SolAmount = styled.span`
   color: #ffffff;
 `;
 
-const MiniConnectionButton = styled(WalletMultiButton)`
+export const MiniConnectionButton = styled(WalletMultiButton)`
   ${ButtonReset}
   font-family: 'Inter';
   font-style: normal;
