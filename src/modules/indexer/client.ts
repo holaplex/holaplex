@@ -43,6 +43,8 @@ export interface Listing {
   priceFloor: number | null;
   storeTitle: string;
   subdomain: string;
+  logoUrl: string;
+  faviconUrl: string;
   totalUncancelledBids?: number | null;
   primarySaleHappened: boolean;
   // would neeed to store listings in an object to make this performant in state management. Better to just reload it pr mount for now.

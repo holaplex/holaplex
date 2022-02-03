@@ -153,7 +153,8 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   );
   background-size: 400% 100%;
   animation: ant-skeleton-loading 1.4s ease infinite;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
   > .ant-skeleton-image > svg {
     display: none;
@@ -173,6 +174,8 @@ export function generateListingShell(id: number): Listing {
     totalUncancelledBids: 0,
     ended: false,
     primarySaleHappened: false,
+    logoUrl: '',
+    faviconUrl: '',
     items: [
       {
         metadataAddress: '',
@@ -192,20 +195,36 @@ export function SkeletonListing() {
   return (
     <ListingPreviewContainer>
       <Square>
-        <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
+        <StyledSkeletonImage
+          style={{
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            width: '100%',
+            height: '100%',
+          }}
+        />
       </Square>
-      <div className="flex justify-between pt-4">
-        <Skeleton.Button size="small" active />
-        <Skeleton.Button size="small" active />
-      </div>
+      {/* <Skeleton active /> */}
+      {/* <div className="flex justify-between pt-4">
+        <Skeleton.Button active block />
+      </div> */}
+      {/* <div className="flex justify-between pt-4">
+        <Skeleton.Button active block style={{ height: 200 }} />
+      </div> */}
 
-      {/* Without this height: 22 there is an annoying height difference between Skeleton and real listing */}
-      {/* style={{ height: 22 }} */}
-      {/* Well, now it worked again. Maybe it'sa  browser thing */}
-      <Row justify="space-between">
-        <Skeleton.Button size="small" active />
-        <Skeleton.Button size="small" active />
-      </Row>
+      <div className="border-x border-gray-800 px-4 py-6">
+        <div className="mb-2 flex items-center justify-between">
+          <Skeleton.Button block size="large" />
+        </div>
+      </div>
+      <div
+        className={classNames(
+          'flex items-center justify-between rounded-b-md px-4 py-4',
+          'border border-gray-800 '
+        )}
+      >
+        <Skeleton.Button block size="small" />
+      </div>
     </ListingPreviewContainer>
   );
 }
@@ -324,7 +343,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className=""
+      className="rounded-t-lg shadow-black transition hover:scale-105 hover:shadow-xl"
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
@@ -334,7 +353,7 @@ export function ListingPreview({
         });
       }}
     >
-      <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="rounded-t-lg">
+      <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
         <ListingPreviewContainer>
           <Square>
             <NFTPreview
@@ -400,11 +419,11 @@ export function ListingPreview({
                 {/* <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div> */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://arweave.cache.holaplex.dev/E0LYare8kKTlKkeOKFBxBu7yJqim9g8ubQNox7bjKi8"
+                  src={listing.logoUrl}
                   className="mr-2 h-4 w-4 rounded-sm"
                   alt={'logo for ' + listing.storeTitle}
                 />
-                <h4 className="m-0 truncate text-sm font-semibold text-gray-300">
+                <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
                   {listing.storeTitle}
                 </h4>
               </div>
