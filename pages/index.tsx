@@ -55,7 +55,7 @@ const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
 const DAO_LIST_IPFS =
   process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
-  'https://ipfs.io/ipfs/bafkreic3iym323qefekrml45l2hu3tazblkv6mytpnlh774pntjbzwurvu';
+  'https://ipfs.io/ipfs/bafkreigv7gp6k5kusw6hehumszm43xllkeure3423ykzu2jpbbfdg7dlte';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
