@@ -572,8 +572,11 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <Row gutter={24}>
               <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
                 <SkeletonListing />
+              </Col>
+              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
                 <SkeletonListing />
-                <SkeletonListing />
+              </Col>
+              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
                 <SkeletonListing />
               </Col>
             </Row>

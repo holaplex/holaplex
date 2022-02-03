@@ -213,8 +213,8 @@ export function SkeletonListing() {
       </div> */}
 
       <div className="border-x border-gray-800 px-4 py-6">
-        <div className="mb-2 flex items-center justify-between">
-          <Skeleton.Button block size="large" />
+        <div className="flex items-center justify-between">
+          <Skeleton.Button active block size="large" />
         </div>
       </div>
       <div
@@ -223,7 +223,8 @@ export function SkeletonListing() {
           'border border-gray-800 '
         )}
       >
-        <Skeleton.Button block size="small" />
+        {/* <Skeleton.Button active block size="large" /> */}
+        <Skeleton.Button active />
       </div>
     </ListingPreviewContainer>
   );
@@ -415,14 +416,15 @@ export function ListingPreview({
             </div>
             <a href={storeHref} target="_blank" rel="noreferrer">
               <div className="flex items-center">
-                {/* store favicon palceholder */}
-                {/* <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div> */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={listing.logoUrl}
-                  className="mr-2 h-4 w-4 rounded-sm"
-                  alt={'logo for ' + listing.storeTitle}
-                />
+                {listing.logoUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={listing.logoUrl}
+                    className="mr-2 h-4 w-4 rounded-sm"
+                    alt={'logo for ' + listing.storeTitle}
+                  />
+                )}
+
                 <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
                   {listing.storeTitle}
                 </h4>
