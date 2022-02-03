@@ -98,7 +98,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
     if (MIXPANEL_TOKEN) {
       mixpanel.init(MIXPANEL_TOKEN, {
-        debug: window.location.host.includes('localhost'),
+        debug: window.location.host.includes('localhost') || window.location.host.includes('.dev'),
       });
     }
 
