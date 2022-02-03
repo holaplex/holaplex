@@ -10,6 +10,7 @@ import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/Analyt
 import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
 import Price from '@/common/components/elements/Price';
+import { maybeCDN, maybeImageCDN } from '@/common/utils';
 
 const ListingPreviewContainer = styled(Card)`
   margin-bottom: 96px;
@@ -226,16 +227,6 @@ const CustomImageMask = styled.div`
   }
 `;
 
-const captureCid = /https:\/\/(.*).ipfs.dweb.*$/;
-const maybeCDN = (uri: string) => {
-  const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IPFS_CDN_HOST}/$1`);
-  return cdnURI ?? uri;
-};
-
-const maybeImageCDN = (uri: string) => {
-  const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/$1`);
-  return cdnURI ?? uri;
-};
 
 export function getListingPrice(listing: Listing) {
   return (
