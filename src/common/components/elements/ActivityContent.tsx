@@ -10,6 +10,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { mq } from '@/common/styles/MediaQuery';
+import { maybeImageCDN } from '@/common/utils';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -93,7 +94,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
               key={i}
               disableMarginTop={i === 0}
               relatedImageUrl={
-                bid.listing?.nfts?.[0]?.image ??
+                maybeImageCDN(bid.listing?.nfts?.[0]?.image) ??
                 `/images/gradients/gradient-${randomBetween(1, 8)}.png`
               }
               action={
