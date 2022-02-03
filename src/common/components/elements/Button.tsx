@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 import { Button } from 'antd';
 import { equals } from 'ramda';
+import { WalletModalButton } from '@solana/wallet-adapter-react-ui';
+import { ButtonReset } from '@/common/styles/ButtonReset';
 
 const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ noStyle?: boolean }>`
   font-weight: 500;
@@ -74,7 +76,7 @@ const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ no
     `}
 `;
 
-export const ButtonV2 = styled(StyledButton)`
+const ButtonStyles = css`
   width: 88px;
   height: 32px;
   border-radius: 16px;
@@ -86,6 +88,56 @@ export const ButtonV2 = styled(StyledButton)`
   font-size: 12px;
   line-height: 16px;
   color: #171717;
+`;
+
+export const ButtonV2 = styled(StyledButton)`
+  ${ButtonStyles}
+`;
+
+export const SelectWalletButton = styled(WalletModalButton).attrs({
+  children: 'Connect',
+})`
+  ${ButtonReset};
+  width: 88px;
+  height: 32px;
+  border-radius: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #171717;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  &&:not([disabled]):hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+`;
+
+export const ConnectWalletButton = styled(WalletModalButton).attrs({
+  children: 'Connect',
+})`
+  ${ButtonReset};
+  width: 88px;
+  height: 32px;
+  border-radius: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #171717;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  &&:not([disabled]):hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
 `;
 
 export default StyledButton;

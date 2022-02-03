@@ -33,7 +33,6 @@ import {
   WalletProvider as WalletProviderSolana,
 } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { clusterApiUrl } from '@solana/web3.js';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';

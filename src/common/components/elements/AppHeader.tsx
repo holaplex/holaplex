@@ -1,20 +1,16 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
-import Image from 'next/image';
 import styled from 'styled-components';
 import { Layout, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
-import React, { FC, useContext, useState } from 'react';
-import Button, { ButtonV2 } from '@/common/components/elements/Button';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import Button, { ButtonV2, SelectWalletButton } from '@/common/components/elements/Button';
 import { Wallet } from '@/modules/wallet/types';
-import { Bell } from '../icons/Bell';
-import { ProfileImage } from './ProfileImage';
 import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
-import { MiniConnectionButton } from './MiniWallet';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { ButtonReset } from '@/common/styles/ButtonReset';
+import { WalletReadyState } from '@solana/wallet-adapter-base';
+import { ProfileImage } from './ProfileImage';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -79,8 +75,14 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, wallet: userWallet, connect: connectUserWallet } = useWallet();
   const { connect } = useContext(WalletContext);
+  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
+  const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
+  useEffect(() => {
+    if (!hasWalletTypeSelected || connected) return;
+    connectUserWallet();
+  }, [connectUserWallet, connected, hasWalletTypeSelected]);
 
   const mintModalClick = () => {
     if (!wallet) {
@@ -135,27 +137,11 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               </Link>
             </HeaderLinkWrapper>
           ) : null}
+          {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
           {/* <ConnectionButton /> */}
-          <ProfileImage />
           {/* {windowDimensions.width > 700 && <SocialLinks />} */}
         </LinkRow>
       )}
     </StyledHeader>
   );
 }
-
-const ConnectionButton = styled(WalletMultiButton)`
-  ${ButtonReset};
-  width: 88px;
-  height: 32px;
-  border-radius: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: #171717;
-  background: #fff;
-`;

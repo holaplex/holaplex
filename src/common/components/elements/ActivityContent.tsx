@@ -9,6 +9,7 @@ import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { showFirstAndLastFour } from '@/modules/utils/string';
+import { mq } from '@/common/styles/MediaQuery';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -246,7 +247,14 @@ const NoActivityText = styled.span`
 
 const ActivityContainer = styled.main`
   flex: 1;
-  margin-left: 80px;
+  margin-top: 16px;
+  ${mq('lg')} {
+    margin-top: 0px;
+    margin-left: 40px;
+  }
+  ${mq('xl')} {
+    margin-left: 80px;
+  }
 `;
 
 const ContentContainer = styled.div`

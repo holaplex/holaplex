@@ -8,6 +8,7 @@ import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useRouter } from 'next/router';
 import { PublicKey } from '@solana/web3.js';
+import { mq } from '@/common/styles/MediaQuery';
 
 const ActivityLanding = () => {
   const router = useRouter();
@@ -46,19 +47,20 @@ const ActivityLanding = () => {
   return (
     <>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: bannerBackgroundImage }}>
-          <InnerBanner>
-            <ProfilePictureContainer>
-              <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
-            </ProfilePictureContainer>
-          </InnerBanner>
-        </Banner>
+        <Banner style={{ backgroundImage: bannerBackgroundImage }} />
       </HeadingContainer>
       <ContentCol>
         <Profile>
-          <WalletPill disableBackground textOverride={textOverride} />
+          <ProfilePictureContainer>
+            <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
+          </ProfilePictureContainer>
+          <WalletPillContainer>
+            <WalletPill disableBackground textOverride={textOverride} />
+          </WalletPillContainer>
         </Profile>
-        <ActivityContent publicKey={publicKey} />
+        <ActivityContentWrapper>
+          <ActivityContent publicKey={publicKey} />
+        </ActivityContentWrapper>
       </ContentCol>
     </>
   );
@@ -69,30 +71,52 @@ export default ActivityLanding;
 const PFP_SIZE = 90;
 const BOX_SIZE = 1400;
 
+const WalletPillContainer = styled.div`
+  margin-top: 80px;
+`;
+
 const Profile = styled.div`
-  margin-top: 40px;
-  min-width: 385px;
+  padding-left: calc(20px + 0.5rem);
+  min-width: 348px;
+  position: relative;
+  ${mq('md')} {
+    padding-left: calc(${PFP_SIZE}px + 0.5rem);
+  }
+`;
+
+const ActivityContentWrapper = styled.section`
+  margin-top: ${PFP_SIZE / 2}px;
 `;
 
 const ContentCol = styled.div`
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: ${PFP_SIZE}px;
-  padding-right: ${PFP_SIZE}px;
-  max-width: ${BOX_SIZE}px;
   display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+  padding-right: 20px;
+  ${mq('md')} {
+    padding-left: ${PFP_SIZE - 40}px;
+    padding-right: ${PFP_SIZE - 40}px;
+    max-width: ${BOX_SIZE}px;
+    flex-direction: row;
+  }
+  ${mq('lg')} {
+    padding-left: ${PFP_SIZE - 20}px;
+    padding-right: ${PFP_SIZE - 20}px;
+  }
 `;
 
-const HeadingContainer = styled.header`
-  position: relative;
-  margin-bottom: ${PFP_SIZE / 2}px;
-`;
+const HeadingContainer = styled.header``;
 
 const ProfilePictureContainer = styled.div`
   position: absolute;
-  bottom: -${PFP_SIZE / 2 + 10}px;
-  left: 90px;
+  top: ${-PFP_SIZE / 2}px;
+  left: 20px;
+  ${mq('md')} {
+    left: 90px;
+  }
   @media (min-width: ${BOX_SIZE - PFP_SIZE}) {
     left: 0px;
   }
@@ -107,16 +131,9 @@ const Banner = styled.div`
   width: 100%;
   height: 265px;
   background-repeat: no-repeat;
-  background-size: 100%;
-  background-attachment: fixed;
-  margin-bottom: ${PFP_SIZE / 2}px;
-`;
-
-const InnerBanner = styled.div`
-  position: relative;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  height: 100%;
+  background-size: cover;
+  ${mq('lg')} {
+    background-attachment: fixed;
+    background-size: 100%;
+  }
 `;
