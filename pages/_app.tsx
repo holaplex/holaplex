@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -58,7 +58,7 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [showMintModal, setShowMintModal] = React.useState(false);
+  const [showMintModal, setShowMintModal] = useState(false);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -104,11 +104,21 @@ function MyApp({ Component, pageProps }: AppProps) {
     ],
     [network]
   );
+  useEffect(() => {
+    if (router.query.action === 'mint') {
+      setShowMintModal(true);
+    }
+  }, [router.query.action, setShowMintModal]);
 
   return (
     <>
       <Head>
-        <title>Holaplex | Design and Host Your Metaplex NFT Storefront</title>
+        <title>Tools built by creators, for creators, owned by creators | Holaplex</title>
+        <meta
+          property="description"
+          key="description"
+          content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
+        />
       </Head>
       <ToastContainer autoClose={15000} />
       <ApolloProvider client={apolloClient}>

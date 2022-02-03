@@ -1,3 +1,5 @@
+@upload-background: rgba(255, 255, 255, 0.2);
+
 .no-style-btn {
   background: none;
   border: none;
@@ -65,4 +67,13 @@
 
 .creator-row-icon {
   stroke: @highlight-red;
+}
+
+.ant-upload.ant-upload-drag {
+  background: @upload-background;
+  border: 1px dashed @upload-background;
+}
+
+.minter-creators-row {
+  background: @grey-90;
 }

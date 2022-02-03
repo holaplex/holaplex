@@ -1789,10 +1789,10 @@
   dependencies:
     async-retry "^1.3.3"
 
-"@holaplex/ui@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@holaplex/ui/-/ui-0.0.16.tgz#24c30c9c90612967473abf08b6839296b592b062"
-  integrity sha512-i/d+FF3HIrVJVjmBuazyqlIzoK1AqwgzY2mU7nIhpCdF/iRbJFMACkBB8hZpUwar6DM/g3xuYrWQnck6GKKaJg==
+"@holaplex/ui@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@holaplex/ui/-/ui-0.0.21.tgz#160d89447cd1415da02bf970ac634ec73ea6fc1e"
+  integrity sha512-0VaY9tz662crTtcdm0wKijJABQqU4eAeqQyj5gJndz7yEQmzx7IO5jqGQrJJnWC1HxNVl63fKtIhx7jpz7IoAg==
   dependencies:
     "@holaplex/js" "^4.3.3"
     "@metaplex/js" "^4.11.3"
@@ -3983,14 +3983,9 @@ camelize@^1.0.0:
   resolved "https://registry.npmjs.org/camelize/-/camelize-1.0.0.tgz"
   integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
 
-caniuse-lite@^1.0.30001202, caniuse-lite@^1.0.30001219, caniuse-lite@^1.0.30001228:
-  version "1.0.30001239"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001239.tgz"
-  integrity sha512-cyBkXJDMeI4wthy8xJ2FvDU6+0dtcZSJW3voUF8+e9f1bBeuvyZfc3PNbkOETyhbR+dGCPzn9E7MA3iwzusOhQ==
-
-caniuse-lite@^1.0.30001286:
+caniuse-lite@^1.0.30001202, caniuse-lite@^1.0.30001219, caniuse-lite@^1.0.30001228, caniuse-lite@^1.0.30001286:
   version "1.0.30001304"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001304.tgz#38af55ed3fc8220cb13e35e6e7309c8c65a05559"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001304.tgz"
   integrity sha512-bdsfZd6K6ap87AGqSHJP/s1V+U6Z5lyrcbBu3ovbCCf8cSYpwTtGrCBObMpJqwxfTbLW6YTIdbb1jEeTelcpYQ==
 
 capital-case@^1.0.4:

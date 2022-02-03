@@ -45,22 +45,6 @@ interface MintModalProps {
 }
 
 const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
-// const tryVerify = async () => {
-//   console.log('hello');
-//   const txid =
-//     '3vdXjd81ikef5smsevgb1DnEwgt7LjJgr2UGhwABubcvoy7dF89p8ti4xFQor7vrQjh7jusDBj9gW3umDzM5AYrb';
-
-//   try {
-//     console.log('trying2');
-//     const verify = await connection.confirmTransaction(txid, 'confirmed');
-//     console.log({ verify });
-//     console.log('verified?');
-//   } catch (e) {
-//     console.error(e);
-//   }
-// };
-
-// tryVerify();
 
 const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
   const { track } = useAnalytics();
