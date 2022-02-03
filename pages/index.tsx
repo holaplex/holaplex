@@ -468,6 +468,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
           <HeroCol xs={24} sm={12} md={8} xl={6}>
             <Text strong>Featured Listings</Text>
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
+              <SkeletonListing key={'-1'} />
               {featuredListings.map((listing, i) => (
                 <ListingPreview
                   key={listing.listingAddress}
@@ -568,6 +569,14 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                 </Space>,
               ]}
             />
+            <Row gutter={24}>
+              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
+                <SkeletonListing />
+                <SkeletonListing />
+                <SkeletonListing />
+                <SkeletonListing />
+              </Col>
+            </Row>
             <Row gutter={24}>
               {take(show, displayedListings).map((listing: Listing, i) => (
                 <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
