@@ -272,7 +272,8 @@ export function ListingPreview({
     filterBy: FilterOptions;
   };
 }) {
-  const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
+  const storeHref = `https://${listing?.subdomain}.holaplex.com`;
+  const listingHref = storeHref + `/listings/${listing.listingAddress}`;
   // const cardRef = useRef(null);
   // const { inViewport } = useInViewport(cardRef);
   const [cardRef, inView] = useInView({
@@ -333,7 +334,7 @@ export function ListingPreview({
         });
       }}
     >
-      <a href={storeHref} rel="nofollow noreferrer" target="_blank" className="rounded-t-lg">
+      <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="rounded-t-lg">
         <ListingPreviewContainer>
           <Square>
             <NFTPreview
@@ -375,7 +376,7 @@ export function ListingPreview({
                       background: '#171717',
                     }}
                   >
-                    <ParticipationNFTIcon style={{ marginLeft: '8px' }} />
+                    <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
                   </Tooltip>
                 )}
                 {isSecondarySale && (
@@ -388,24 +389,26 @@ export function ListingPreview({
                       background: '#171717',
                     }}
                   >
-                    <SecondarySaleIcon style={{ marginLeft: '8px' }} />
+                    <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
                   </Tooltip>
                 )}
               </div>
             </div>
-            <div className="flex items-center">
-              {/* store favicon palceholder */}
-              {/* <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div> */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://arweave.cache.holaplex.dev/E0LYare8kKTlKkeOKFBxBu7yJqim9g8ubQNox7bjKi8"
-                className="mr-2 h-4 w-4 rounded-sm"
-                alt={'logo for ' + listing.storeTitle}
-              />
-              <h4 className="m-0 truncate text-sm font-semibold text-gray-300">
-                {listing.storeTitle}
-              </h4>
-            </div>
+            <a href={storeHref} target="_blank" rel="noreferrer">
+              <div className="flex items-center">
+                {/* store favicon palceholder */}
+                {/* <div className="mr-2 h-4 w-4 rounded-full bg-red-400"></div> */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://arweave.cache.holaplex.dev/E0LYare8kKTlKkeOKFBxBu7yJqim9g8ubQNox7bjKi8"
+                  className="mr-2 h-4 w-4 rounded-sm"
+                  alt={'logo for ' + listing.storeTitle}
+                />
+                <h4 className="m-0 truncate text-sm font-semibold text-gray-300">
+                  {listing.storeTitle}
+                </h4>
+              </div>
+            </a>
           </div>
           <div
             className={classNames(
