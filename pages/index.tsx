@@ -1,3 +1,6 @@
+// naughty
+// @ts-nocheck
+
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import StorePreview from '@/components/elements/StorePreview';
@@ -311,6 +314,13 @@ const isAuction = pipe(prop('endsAt'), is(String));
 // @ts-ignore
 const isSecondarySale = pipe((item) => item.items[0]?.primarySaleHappened == true);
 
+// look to replacec with getListingPrice in ListingPreview
+// const currentListingPrice = (listing: Listing) =>
+//   isAuction(listing)
+//     ? listing.totalUncancelledBids
+//       ? listing.highestBid
+//       : listing.priceFloor
+//     : listing.instantSalePrice;
 const currentListingPrice = ifElse(
   isAuction,
   ifElse(pipe(prop('totalUncancelledBids'), equals(0)), prop('priceFloor'), prop('highestBid')),

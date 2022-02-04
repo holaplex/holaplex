@@ -1,3 +1,6 @@
+// naughty
+// @ts-nocheck
+
 import { compose, filter, sortWith, prop, pipe, descend, not, ascend, contains } from 'ramda';
 
 const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
