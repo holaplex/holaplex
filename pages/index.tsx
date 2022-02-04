@@ -483,7 +483,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               className="home-carousel"
             >
               {featuredListings.map((listing, i) => (
-                <div key={listing.listingAddress} className="px-4">
+                <div key={listing.listingAddress} className="sm:px-4">
                   <ListingPreview
                     listing={listing}
                     meta={{
