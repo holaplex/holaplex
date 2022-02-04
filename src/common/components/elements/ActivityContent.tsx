@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -10,6 +11,7 @@ import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { mq } from '@/common/styles/MediaQuery';
 import { maybeImageCDN } from '@/common/utils';
+import { ChevronRight } from '../icons/ChevronRight';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -96,14 +98,20 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                 maybeImageCDN(bid.listing?.nfts?.[0]?.image) ??
                 `/images/gradients/gradient-${randomBetween(1, 8)}.png`
               }
+              href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
               action={
-                <AnchorButton
-                  href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View
-                </AnchorButton>
+                <>
+                  <ActivityButton
+                    href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View
+                  </ActivityButton>
+                  <ChevronRightContainer>
+                    <ChevronRight color="#fff" />
+                  </ChevronRightContainer>
+                </>
               }
               content={(() => {
                 if ((bid as any).didWalletWon === true) {
@@ -171,14 +179,6 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   );
 };
 
-type ActivityBoxProps = {
-  relatedImageUrl: string;
-  content: React.ReactElement;
-  action: React.ReactElement;
-  isPFPImage?: boolean;
-  disableMarginTop?: boolean;
-};
-
 const NoActivityBox: FC = () => {
   return (
     <ActivityBoxContainer disableMarginTop>
@@ -192,29 +192,91 @@ const NoActivityBox: FC = () => {
   );
 };
 
+type ActivityBoxProps = {
+  relatedImageUrl: string;
+  content: React.ReactElement;
+  action: React.ReactElement;
+  href: string;
+  isPFPImage?: boolean;
+  disableMarginTop?: boolean;
+};
+
 const ActivityBox: FC<ActivityBoxProps> = ({
   relatedImageUrl,
   action,
   content,
+  href,
   isPFPImage = false,
   disableMarginTop = false,
 }) => {
   return (
-    <ActivityBoxContainer disableMarginTop={disableMarginTop}>
-      <CenteredCol>
-        <NFTImage
-          unoptimized
-          isPFPImage={isPFPImage}
-          width={52}
-          height={52}
-          src={relatedImageUrl}
-        />
-      </CenteredCol>
-      <ContentContainer>{content}</ContentContainer>
-      <CenteredCol>{action}</CenteredCol>
-    </ActivityBoxContainer>
+    <>
+      <ShowOnMobile display="block">
+        <Link href={href}>
+          <a>
+            <ActivityBoxContainer disableMarginTop={disableMarginTop}>
+              <CenteredCol>
+                <NFTImage
+                  unoptimized
+                  isPFPImage={isPFPImage}
+                  width={52}
+                  height={52}
+                  src={relatedImageUrl}
+                />
+              </CenteredCol>
+              <ContentContainer>{content}</ContentContainer>
+              <CenteredCol>{action}</CenteredCol>
+            </ActivityBoxContainer>
+          </a>
+        </Link>
+      </ShowOnMobile>
+      <HideOnMobile display="block">
+        <ActivityBoxContainer disableMarginTop={disableMarginTop}>
+          <CenteredCol>
+            <NFTImage
+              unoptimized
+              isPFPImage={isPFPImage}
+              width={52}
+              height={52}
+              src={relatedImageUrl}
+            />
+          </CenteredCol>
+          <ContentContainer>{content}</ContentContainer>
+          <CenteredCol>{action}</CenteredCol>
+        </ActivityBoxContainer>
+      </HideOnMobile>
+    </>
   );
 };
+
+const ShowOnMobile = styled.div<{ display: string }>`
+  display: ${(props) => props.display};
+  ${mq('sm')} {
+    display: none;
+  }
+`;
+
+const HideOnMobile = styled.div<{ display: string }>`
+  display: none;
+  ${mq('sm')} {
+    display: ${(props) => props.display};
+  }
+`;
+
+const ChevronRightContainer = styled.div`
+  display: flex;
+  align-items: center;
+  ${mq('sm')} {
+    display: none;
+  }
+`;
+
+const ActivityButton = styled(AnchorButton)`
+  display: none;
+  ${mq('sm')} {
+    display: inline-flex;
+  }
+`;
 
 const NoActivityContainer = styled.div`
   display: flex;

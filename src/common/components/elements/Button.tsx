@@ -176,7 +176,7 @@ export const DisconnectWalletButton = styled(WalletDisconnectButton).attrs({
   width: 100%;
   flex: 1;
   &&:not([disabled]):hover {
-    background-color: #363636;;
+    background-color: #363636;
   }
 `;
 
