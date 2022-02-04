@@ -1,0 +1,4 @@
+tasks:
+  - name: Install, start node, and deploy
+    init: yarn install
+    command: yarn dev
