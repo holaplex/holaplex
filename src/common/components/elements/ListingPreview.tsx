@@ -50,14 +50,7 @@ const NFTPreview = styled(Image)<{ $show: boolean }>`
 
 // adds the active loading animation to the antd skeleton image
 const StyledSkeletonImage = styled(Skeleton.Image)`
-  background: linear-gradient(
-    90deg,
-    rgba(34, 34, 34, 0.2) 25%,
-    rgba(255, 255, 255, 0.16) 37%,
-    rgba(34, 34, 34, 0.2) 63%
-  );
   background-size: 400% 100%;
-  animation: ant-skeleton-loading 1.4s ease infinite;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 
@@ -72,6 +65,7 @@ export function SkeletonListing() {
     <div className="mb-12 pt-1">
       <Square>
         <StyledSkeletonImage
+          className="skeleton-animation"
           style={{
             borderTopLeftRadius: '8px',
             borderTopRightRadius: '8px',
@@ -82,8 +76,8 @@ export function SkeletonListing() {
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">
-        <div className="flex items-center justify-between">
-          <Skeleton.Button active block size="large" />
+        <div className="skeleton-animation flex h-14 w-full items-center justify-between">
+          {/* <Skeleton.Button active block size="large" /> */}
         </div>
       </div>
       <div
