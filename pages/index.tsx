@@ -472,7 +472,12 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               </Text>
             </div>
             {/* <SkeletonListing key={'-1'} /> */}
-            <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
+            <HeroCarousel
+              autoplay={true}
+              dots={{ className: 'carousel-dots' }}
+              dotPosition="top"
+              effect="fade"
+            >
               {featuredListings.map((listing, i) => (
                 <div key={listing.listingAddress} className="px-4">
                   <ListingPreview
