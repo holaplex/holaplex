@@ -7,8 +7,13 @@ import { PopoverBoxContents } from './ProfilePopover';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { SelectWalletButton } from '@/common/components/elements/Button';
+import { FC } from 'react';
 
-export const MobileMenu = ({ onCloseClick }: { onCloseClick: VoidFunction }) => {
+type OnCloseProps = {
+  onCloseClick: VoidFunction;
+};
+
+export const MobileMenu: FC<OnCloseProps> = ({ onCloseClick }) => {
   const { connected, wallet } = useWallet();
   const hasWalletTypeSelected = wallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
@@ -20,29 +25,29 @@ export const MobileMenu = ({ onCloseClick }: { onCloseClick: VoidFunction }) => 
           <Close color="#0e0d0d" />
         </CloseNavButton>
       </MobileHeaderContainer>
-      <MenuItems />
+      <MenuItems onCloseClick={onCloseClick} />
       <ProfileContainer>
-        {connectedAndInstalledWallet ? <PopoverBoxContents /> : <SmallConnectButton />}
+        {connectedAndInstalledWallet ? <PopoverBoxContents onViewProfile={onCloseClick} /> : <SmallConnectButton />}
       </ProfileContainer>
     </Container>
   );
 };
 
-const MenuItems = () => {
+const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
   return (
     <MarginBox>
       <Link passHref href="/">
-        <MenuItemRow>Home</MenuItemRow>
+        <MenuItemRow onClick={onCloseClick}>Home</MenuItemRow>
       </Link>
       <Link passHref href="/storefront/edit">
-        <MenuItemRow>Edit store</MenuItemRow>
+        <MenuItemRow onClick={onCloseClick}>Edit store</MenuItemRow>
       </Link>
       <MenuItemButtonRow>Mint NFTs</MenuItemButtonRow>
       <Link passHref href="/about">
-        <MenuItemRow>About</MenuItemRow>
+        <MenuItemRow onClick={onCloseClick}>About</MenuItemRow>
       </Link>
       <Link passHref href="/about">
-        <MenuItemRow>FAQ</MenuItemRow>
+        <MenuItemRow onClick={onCloseClick}>FAQ</MenuItemRow>
       </Link>
     </MarginBox>
   );

@@ -13,6 +13,7 @@ type WalletPillProps = {
   textOverride?: string | null;
   publicKey?: PublicKey | null;
   disableLink?: boolean;
+  onClick?: VoidFunction;
 };
 
 export const WalletPill: FC<WalletPillProps> = ({
@@ -20,13 +21,14 @@ export const WalletPill: FC<WalletPillProps> = ({
   textOverride,
   publicKey,
   disableLink,
+  onClick
 }) => {
   const isTwitterHandle = (textOverride?: string | null) =>
     textOverride?.length ? textOverride?.length <= 15 : false;
 
   if (disableLink) {
     return (
-      <ContainerSpan disableBackground={disableBackground ?? false}>
+      <ContainerSpan onClick={onClick} disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
           {isTwitterHandle(textOverride)
             ? `${textOverride}`
@@ -40,7 +42,7 @@ export const WalletPill: FC<WalletPillProps> = ({
 
   return (
     <Link passHref href={`/activity/${publicKey?.toBase58()}`}>
-      <ContainerAnchor disableBackground={disableBackground ?? false}>
+      <ContainerAnchor onClick={onClick} disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
           {isTwitterHandle(textOverride)
             ? `${textOverride}`

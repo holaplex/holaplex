@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { WalletLabel, WalletPill } from './WalletIndicator';
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect, FC } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -17,7 +17,11 @@ export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   );
 });
 
-export const PopoverBoxContents = () => {
+type PopoverBoxContentsProps = {
+  onViewProfile?: VoidFunction;
+};
+
+export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile }) => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { connected, publicKey } = useWallet();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
@@ -56,7 +60,7 @@ export const PopoverBoxContents = () => {
               marginLeft: 20,
             }}
           >
-            <WalletPill disableBackground textOverride={'View profile'} publicKey={publicKey} />
+            <WalletPill onClick={onViewProfile} disableBackground textOverride={'View profile'} publicKey={publicKey} />
           </div>
         </div>
       </FirstRow>
