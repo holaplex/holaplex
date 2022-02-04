@@ -167,7 +167,7 @@ export const DisconnectWalletButton = styled(WalletDisconnectButton).attrs({
   startIcon: null as any,
 })`
   ${ButtonReset};
-  background: #363636;
+  background: #262626;
   box-sizing: border-box;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   border-radius: 500px;
@@ -176,7 +176,7 @@ export const DisconnectWalletButton = styled(WalletDisconnectButton).attrs({
   width: 100%;
   flex: 1;
   &&:not([disabled]):hover {
-    background-color: #464646;;
+    background-color: #363636;;
   }
 `;
 
