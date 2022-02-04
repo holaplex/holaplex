@@ -69,7 +69,7 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
-    <div className="mb-24 pt-1">
+    <div className="mb-16 pt-1">
       <Square>
         <StyledSkeletonImage
           style={{
@@ -259,7 +259,7 @@ export function ListingPreview({
           />
         </Square>
         <div className="border-x border-gray-800 px-4 py-6">
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-1 flex items-center justify-between">
             <h3 className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</h3>
             <div className="flex items-center">
               {hasParticipationNFTs && (
