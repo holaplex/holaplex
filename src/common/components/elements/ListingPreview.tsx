@@ -345,7 +345,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className="rounded-t-lg shadow-black transition hover:scale-105 hover:shadow-xl"
+      className="rounded-t-lg pt-1 shadow-black transition hover:scale-[1.02] hover:shadow-xl"
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
