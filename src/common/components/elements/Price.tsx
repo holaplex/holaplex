@@ -4,7 +4,7 @@ const Price = (props: { listing: Listing; price: number }) => {
   return (
     <div className="flex items-center">
       <svg
-        className="mr-2 h-4 w-4 text-gray-300"
+        className="mr-[5px] h-4 w-4 text-gray-300"
         viewBox="0 0 16 16"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

@@ -69,7 +69,7 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
-    <div className="mb-16 pt-1">
+    <div className="mb-12 pt-1">
       <Square>
         <StyledSkeletonImage
           style={{
@@ -215,7 +215,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className="mb-24 rounded-t-lg pt-1 shadow-black transition hover:scale-[1.02] hover:shadow-xl"
+      className="mb-12 rounded-t-lg pt-1 shadow-black transition hover:scale-[1.02] hover:shadow-xl"
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
@@ -258,31 +258,31 @@ export function ListingPreview({
             fallback={NFTFallbackImage}
           />
         </Square>
-        <div className="border-x border-gray-800 px-4 py-6">
+        <div className="border-x border-gray-800 px-4 pt-4 pb-5">
           <div className="mb-1 flex items-center justify-between">
-            <h3 className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</h3>
+            <div className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</div>
             <div className="flex items-center">
-              {hasParticipationNFTs && (
+              {!hasParticipationNFTs && (
                 <Tooltip
+                  color="#171717"
                   title="Participation NFT"
                   overlayStyle={{
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'white',
-                    background: '#171717',
                   }}
                 >
                   <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
                 </Tooltip>
               )}
-              {isSecondarySale && (
+              {!isSecondarySale && (
                 <Tooltip
+                  color="#171717"
                   title="Secondary listing"
                   overlayStyle={{
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'white',
-                    background: '#171717',
                   }}
                 >
                   <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
@@ -323,10 +323,10 @@ export function ListingPreview({
             </div>
             <Price listing={listing} price={displayPrice} />
           </div>
-          <div>
+          <div className="text-right">
             {listing.endsAt ? (
               <>
-                <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
+                <div className="pt-1 text-right text-sm font-semibold text-gray-300">Ends in</div>
                 <AuctionCountdown endTime={listing.endsAt} />
               </>
             ) : (
