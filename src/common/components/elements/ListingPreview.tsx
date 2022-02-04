@@ -238,6 +238,12 @@ export function ListingPreview({
                     e.stopPropagation();
                     e.preventDefault();
                     setShowArtPreview(true);
+                    track('Listing Preview Expanded', {
+                      event_category: 'Discovery',
+                      event_label: nftMetadata.name,
+                      ...meta,
+                      ...addListingToTrackCall(listing),
+                    });
                   }}
                 >
                   <CustomExpandIcon />
