@@ -256,7 +256,7 @@ export function ListingPreview({
           <div className="mb-1 flex items-center justify-between">
             <div className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</div>
             <div className="flex items-center">
-              {!hasParticipationNFTs && (
+              {hasParticipationNFTs && (
                 <Tooltip
                   color="#171717"
                   title="Participation NFT"
@@ -269,7 +269,7 @@ export function ListingPreview({
                   <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
                 </Tooltip>
               )}
-              {!isSecondarySale && (
+              {isSecondarySale && (
                 <Tooltip
                   color="#171717"
                   title="Secondary listing"
