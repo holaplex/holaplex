@@ -171,7 +171,7 @@ export function ListingPreview({
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   const isDev = false && process.env.NODE_ENV === 'development';
-  const isSecondarySale = listing.primarySaleHappened;
+  const isSecondarySale = nftMetadata.primarySaleHappened;
   const isAuction = listing.endsAt;
   const hasParticipationNFTs = listing.items.length > 1;
 
@@ -474,6 +474,7 @@ export function generateListingShell(id: number): Listing {
         metadataAddress: '',
         name: '',
         uri: '',
+        primarySaleHappened: false,
       },
     ],
     createdAt: now,

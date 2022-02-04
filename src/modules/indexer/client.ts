@@ -12,6 +12,7 @@ export interface Item {
   metadataAddress: string;
   name: string;
   uri: string;
+  primarySaleHappened: boolean;
 }
 
 export interface NFTMetadata {
