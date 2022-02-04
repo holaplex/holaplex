@@ -193,7 +193,8 @@ export function generateListingShell(id: number): Listing {
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
-    <ListingPreviewContainer>
+    <div className="mb-24 pt-1">
+      {/* <ListingPreviewContainer> */}
       <Square>
         <StyledSkeletonImage
           style={{
@@ -227,7 +228,8 @@ export function SkeletonListing() {
         <Skeleton.Button active />
         <Skeleton.Button active />
       </div>
-    </ListingPreviewContainer>
+      {/* </ListingPreviewContainer> */}
+    </div>
   );
 }
 
@@ -345,7 +347,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className="rounded-t-lg pt-1 shadow-black transition hover:scale-[1.02] hover:shadow-xl"
+      className="mb-24 rounded-t-lg pt-1 shadow-black transition hover:scale-[1.02] hover:shadow-xl"
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
@@ -356,131 +358,129 @@ export function ListingPreview({
       }}
     >
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
-        <ListingPreviewContainer>
-          <Square>
-            <NFTPreview
-              $show={inView}
-              src={maybeImageCDN(nft?.image || '')}
-              preview={{
-                visible: showArtPreview,
-                mask: (
-                  <CustomImageMask
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setShowArtPreview(true);
-                    }}
-                  >
-                    <CustomExpandIcon />
-                  </CustomImageMask>
-                ),
-                onVisibleChange: (visible, prevVisible) => {
-                  prevVisible && setShowArtPreview(visible);
-                },
-                destroyOnClose: true,
-              }}
-              alt={nftMetadata?.name + ' preview'}
-              fallback={NFTFallbackImage}
-            />
-          </Square>
-          <div className="border-x border-gray-800 px-4 py-6">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</h3>
-              <div className="flex items-center">
-                {hasParticipationNFTs && (
-                  <Tooltip
-                    title="Participation NFT"
-                    overlayStyle={{
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: 'white',
-                      background: '#171717',
-                    }}
-                  >
-                    <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
-                  </Tooltip>
-                )}
-                {isSecondarySale && (
-                  <Tooltip
-                    title="Secondary listing"
-                    overlayStyle={{
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: 'white',
-                      background: '#171717',
-                    }}
-                  >
-                    <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
-                  </Tooltip>
-                )}
-              </div>
-            </div>
-            <a href={storeHref} target="_blank" rel="noreferrer">
-              <div className="flex items-center">
-                {listing.logoUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={listing.logoUrl}
-                    className="mr-2 h-4 w-4 rounded-sm"
-                    alt={'logo for ' + listing.storeTitle}
-                  />
-                )}
-
-                <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
-                  {listing.storeTitle}
-                </h4>
-              </div>
-            </a>
-          </div>
-          <div
-            className={classNames(
-              'flex items-center justify-between rounded-b-md px-4 py-4',
-              isAuction ? 'bg-gray-800' : 'border border-gray-800 '
-            )}
-          >
-            <div>
-              <div className="text-sm font-semibold text-gray-300">
-                {isAuction
-                  ? listing.totalUncancelledBids
-                    ? 'Current bid'
-                    : 'Starting bid'
-                  : 'Price'}
-              </div>
-              <div className="flex items-center">
-                {/* <Price size={18} price={displayPrice} /> */}
-                <svg
-                  className="mr-2 h-4 w-4 text-gray-300"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+        {/* <ListingPreviewContainer> */}
+        <Square>
+          <NFTPreview
+            $show={inView}
+            src={maybeImageCDN(nft?.image || '')}
+            preview={{
+              visible: showArtPreview,
+              mask: (
+                <CustomImageMask
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowArtPreview(true);
+                  }}
                 >
-                  <circle cx="8" cy="8" r="7.5" stroke="#707070" />
-                  <circle cx="8" cy="8" r="3.5" stroke="#707070" />
-                </svg>
-
-                <span
-                  className={`text-base font-semibold ${
-                    listing.totalUncancelledBids || !isAuction ? 'text-white' : 'text-gray-300'
-                  }`}
+                  <CustomExpandIcon />
+                </CustomImageMask>
+              ),
+              onVisibleChange: (visible, prevVisible) => {
+                prevVisible && setShowArtPreview(visible);
+              },
+              destroyOnClose: true,
+            }}
+            alt={nftMetadata?.name + ' preview'}
+            fallback={NFTFallbackImage}
+          />
+        </Square>
+        <div className="border-x border-gray-800 px-4 py-6">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</h3>
+            <div className="flex items-center">
+              {hasParticipationNFTs && (
+                <Tooltip
+                  title="Participation NFT"
+                  overlayStyle={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'white',
+                    background: '#171717',
+                  }}
                 >
-                  {displayPrice}
-                </span>
-              </div>
-            </div>
-            <div>
-              {listing.endsAt ? (
-                <>
-                  <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
-                  <AuctionCountdown endTime={listing.endsAt} />
-                </>
-              ) : (
-                <span className="rounded-full bg-white px-4 py-2 text-sm text-gray-900">
-                  Buy now
-                </span>
+                  <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
+                </Tooltip>
+              )}
+              {isSecondarySale && (
+                <Tooltip
+                  title="Secondary listing"
+                  overlayStyle={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'white',
+                    background: '#171717',
+                  }}
+                >
+                  <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
+                </Tooltip>
               )}
             </div>
           </div>
-          {/* <Row justify="space-between" align="middle" wrap={false}>
+          <a href={storeHref} target="_blank" rel="noreferrer">
+            <div className="flex items-center">
+              {listing.logoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={listing.logoUrl}
+                  className="mr-2 h-4 w-4 rounded-sm"
+                  alt={'logo for ' + listing.storeTitle}
+                />
+              )}
+
+              <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
+                {listing.storeTitle}
+              </h4>
+            </div>
+          </a>
+        </div>
+        <div
+          className={classNames(
+            'flex items-center justify-between rounded-b-md px-4 py-4',
+            isAuction ? 'bg-gray-800' : 'border border-gray-800 '
+          )}
+        >
+          <div>
+            <div className="text-sm font-semibold text-gray-300">
+              {isAuction
+                ? listing.totalUncancelledBids
+                  ? 'Current bid'
+                  : 'Starting bid'
+                : 'Price'}
+            </div>
+            <div className="flex items-center">
+              {/* <Price size={18} price={displayPrice} /> */}
+              <svg
+                className="mr-2 h-4 w-4 text-gray-300"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="8" cy="8" r="7.5" stroke="#707070" />
+                <circle cx="8" cy="8" r="3.5" stroke="#707070" />
+              </svg>
+
+              <span
+                className={`text-base font-semibold ${
+                  listing.totalUncancelledBids || !isAuction ? 'text-white' : 'text-gray-300'
+                }`}
+              >
+                {displayPrice}
+              </span>
+            </div>
+          </div>
+          <div>
+            {listing.endsAt ? (
+              <>
+                <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
+                <AuctionCountdown endTime={listing.endsAt} />
+              </>
+            ) : (
+              <span className="rounded-full bg-white px-4 py-2 text-sm text-gray-900">Buy now</span>
+            )}
+          </div>
+        </div>
+        {/* <Row justify="space-between" align="middle" wrap={false}>
             <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
               {nftMetadata?.name}
               {hasParticipationNFTs && (
@@ -504,27 +504,27 @@ export function ListingPreview({
             </ListingSubTitle>
             {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
           </Row> */}
-          {isDev && (
-            <Row justify="space-between" wrap={false}>
-              <span
-                style={{
-                  fontSize: 14,
-                  opacity: 0.6,
-                }}
-              >
-                Listed {listing.createdAt.slice(5, 16)}
-              </span>
-              <span
-                style={{
-                  fontSize: 14,
-                  opacity: 0.6,
-                }}
-              >
-                Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
-              </span>
-            </Row>
-          )}
-        </ListingPreviewContainer>
+        {isDev && (
+          <Row justify="space-between" wrap={false}>
+            <span
+              style={{
+                fontSize: 14,
+                opacity: 0.6,
+              }}
+            >
+              Listed {listing.createdAt.slice(5, 16)}
+            </span>
+            <span
+              style={{
+                fontSize: 14,
+                opacity: 0.6,
+              }}
+            >
+              Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
+            </span>
+          </Row>
+        )}
+        {/* </ListingPreviewContainer> */}
       </a>
     </div>
   );
