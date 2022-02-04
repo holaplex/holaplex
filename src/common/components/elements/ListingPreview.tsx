@@ -62,7 +62,7 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
-    <div className="mb-12 pt-1">
+    <div className="mb-12 pt-1 ">
       <Square>
         <StyledSkeletonImage
           className="skeleton-animation"
@@ -86,8 +86,8 @@ export function SkeletonListing() {
           'border border-gray-800 '
         )}
       >
-        <Skeleton.Button />
-        <Skeleton.Button />
+        <div className="h-[42px] w-32  rounded-md bg-[#bebebe33]"></div>
+        <div className="h-[42px] w-32  rounded-md bg-[#bebebe33]"></div>
       </div>
     </div>
   );
@@ -182,7 +182,8 @@ export function ListingPreview({
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500);
+
         if (window.location.host.includes('localhost')) {
           console.log(nftMetadata.name, {
             ...listing,
@@ -284,7 +285,7 @@ export function ListingPreview({
               )}
             </div>
           </div>
-          <a href={storeHref} target="_blank" rel="noreferrer">
+          <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
             <div className="flex items-center">
               {listing.logoUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
