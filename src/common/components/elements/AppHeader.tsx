@@ -75,7 +75,7 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, publicKey, wallet: userWallet, connect: connectUserWallet } = useWallet();
+  const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
   const { connect } = useContext(WalletContext);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
@@ -130,15 +130,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               FAQ
             </a>
           </HeaderLinkWrapper>
-          {connected ? (
-            <HeaderLinkWrapper key="activity" active={false}>
-              <Link href={`/activity/${publicKey?.toBase58()}`} passHref>
-                <a>Activity</a>
-              </Link>
-            </HeaderLinkWrapper>
-          ) : null}
           {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
-          {/* <ConnectionButton /> */}
           {/* {windowDimensions.width > 700 && <SocialLinks />} */}
         </LinkRow>
       )}

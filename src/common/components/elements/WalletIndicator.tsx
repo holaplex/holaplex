@@ -2,29 +2,56 @@ import { ButtonReset } from '@/common/styles/ButtonReset';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
+import Link from 'next/link';
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
+import { ChevronRight } from '../icons/ChevronRight';
 import { Copy } from '../icons/Copy';
 
 type WalletPillProps = {
   disableBackground?: boolean;
   textOverride?: string | null;
   publicKey?: PublicKey | null;
+  disableLink?: boolean;
 };
 
-export const WalletPill: FC<WalletPillProps> = ({ disableBackground, textOverride, publicKey }) => {
-  const handleClick = () => {
-    navigator.clipboard.writeText(publicKey?.toBase58() ?? 'DISCONNECTED');
-  };
+export const WalletPill: FC<WalletPillProps> = ({
+  disableBackground,
+  textOverride,
+  publicKey,
+  disableLink,
+}) => {
+  const isTwitterHandle = (textOverride?: string | null) =>
+    textOverride?.length ? textOverride?.length <= 15 : false;
+
+  if (disableLink) {
+    return (
+      <ContainerSpan disableBackground={disableBackground ?? false}>
+        <WalletText monospace={!isTwitterHandle(textOverride)}>
+          {isTwitterHandle(textOverride)
+            ? `@${textOverride}`
+            : publicKey
+            ? showFirstAndLastFour(publicKey.toBase58())
+            : 'DISCONNECTED'}
+        </WalletText>
+      </ContainerSpan>
+    );
+  }
 
   return (
-    <Container disableBackground={disableBackground ?? false} onClick={handleClick}>
-      <WalletText>
-        {textOverride ?? (publicKey ? showFirstAndLastFour(publicKey.toBase58()) : 'DISCONNECTED')}
-        &nbsp;
-        <Copy />
-      </WalletText>
-    </Container>
+    <Link passHref href={`/activity/${publicKey?.toBase58()}`}>
+      <ContainerAnchor disableBackground={disableBackground ?? false}>
+        <WalletText monospace={!isTwitterHandle(textOverride)}>
+          {isTwitterHandle(textOverride)
+            ? `@${textOverride}`
+            : publicKey
+            ? showFirstAndLastFour(publicKey.toBase58())
+            : 'DISCONNECTED'}
+          &nbsp;
+          <ChevronRight color='#fff' />
+        </WalletText>
+      </ContainerAnchor>
+    </Link>
   );
 };
 
@@ -59,8 +86,18 @@ const ConnectionIndicator = styled.div<{ state: 'connected' | 'disconnected' | '
   content: '';
 `;
 
-const Container = styled.button<{ disableBackground: boolean }>`
-  ${ButtonReset}
+const ContainerAnchor = styled.a<{ disableBackground: boolean }>`
+  ${({ disableBackground }) =>
+    disableBackground
+      ? css``
+      : css`
+          background-color: #262626;
+          padding: 8px 12px;
+          border-radius: 500px;
+        `}
+`;
+
+const ContainerSpan = styled.span<{ disableBackground: boolean }>`
   ${({ disableBackground }) =>
     disableBackground
       ? css``
@@ -74,6 +111,7 @@ const Container = styled.button<{ disableBackground: boolean }>`
 const SmallWalletContainer = styled.div`
   display: inline-flex;
   align-items: center;
+  height: 24px;
 `;
 
 const SmallWalletLabel = styled.span`
@@ -86,8 +124,9 @@ const SmallWalletLabel = styled.span`
   color: #a8a8a8;
 `;
 
-const WalletText = styled.span`
-  font-family: 'Space Mono', monospace;
+const WalletText = styled.span<{ monospace?: boolean }>`
+  font-family: ${({ monospace }) =>
+    monospace ? "'Space Mono', monospace" : "'Inter', sans-serif"};
   font-size: 16px;
   line-height: 24px;
   text-align: center;

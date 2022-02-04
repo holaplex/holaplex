@@ -1,9 +1,8 @@
 import { FC, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import Button, { ButtonV2 } from '@/components/elements/Button';
+import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -98,16 +97,13 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                 `/images/gradients/gradient-${randomBetween(1, 8)}.png`
               }
               action={
-                <ButtonV2
-                  onClick={() => {
-                    window.open(
-                      `https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`,
-                      '_blank'
-                    );
-                  }}
+                <AnchorButton
+                  href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   View
-                </ButtonV2>
+                </AnchorButton>
               }
               content={(() => {
                 if ((bid as any).didWalletWon === true) {

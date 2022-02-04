@@ -44,6 +44,13 @@ const ActivityLanding = () => {
     : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
   const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
 
+  const getPublicKeyFromWalletOnUrl = () => {
+    try {
+      return new PublicKey(wallet as string);
+    } catch (_) {
+      return null;
+    }
+  };
   return (
     <>
       <HeadingContainer>
@@ -55,7 +62,12 @@ const ActivityLanding = () => {
             <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
           <WalletPillContainer>
-            <WalletPill disableBackground textOverride={textOverride} />
+            <WalletPill
+              disableBackground
+              disableLink
+              textOverride={textOverride}
+              publicKey={getPublicKeyFromWalletOnUrl()}
+            />
           </WalletPillContainer>
         </Profile>
         <ActivityContentWrapper>

@@ -3,6 +3,7 @@ import { createContext, FC, useContext, useState } from 'react';
 const AppHeaderSettingsContext = createContext({
   disableMarginBottom: false,
   toggleDisableMarginBottom: () => {},
+  turnOffMarginBottom: () => {}
 });
 
 export const AppHeaderSettingsProvider: FC = ({ children }) => {
@@ -12,6 +13,7 @@ export const AppHeaderSettingsProvider: FC = ({ children }) => {
       value={{
         disableMarginBottom,
         toggleDisableMarginBottom: () => setDisableMarginBottom(!disableMarginBottom),
+        turnOffMarginBottom: () => setDisableMarginBottom(true),
       }}
     >
       {children}
