@@ -193,8 +193,8 @@ const HeroCarousel = styled(Carousel)`
     position: absolute;
     top: 0;
     right: 0;
-    margin-top: -24px;
-    margin-right: 0px;
+    margin-top: -18px;
+    margin-right: 16px;
     justify-content: flex-end;
   }
 
@@ -453,7 +453,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     <Row>
       <CenteredContentCol>
         <Section>
-          <Marketing xs={22} sm={12} md={16} xl={18}>
+          <Marketing xs={22} sm={12} lg={16}>
             <HeroTitle>
               Discover, explore, and collect NFTs from incredible creators on Solana
             </HeroTitle>
@@ -465,21 +465,26 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               <SocialLinks />
             </div>
           </Marketing>
-          <HeroCol xs={24} sm={12} md={8} xl={6}>
-            <Text strong>Featured Listings</Text>
+          <HeroCol xs={24} sm={12} lg={8}>
+            <div className="px-4">
+              <Text style={{ marginBottom: 0 }} strong>
+                Featured Listings
+              </Text>
+            </div>
+            {/* <SkeletonListing key={'-1'} /> */}
             <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
-              <SkeletonListing key={'-1'} />
               {featuredListings.map((listing, i) => (
-                <ListingPreview
-                  key={listing.listingAddress}
-                  listing={listing}
-                  meta={{
-                    index: i,
-                    list: 'featured-listings',
-                    sortBy: sortBy,
-                    filterBy: filterBy,
-                  }}
-                />
+                <div key={listing.listingAddress} className="p-4">
+                  <ListingPreview
+                    listing={listing}
+                    meta={{
+                      index: i,
+                      list: 'featured-listings',
+                      sortBy: sortBy,
+                      filterBy: filterBy,
+                    }}
+                  />
+                </div>
               ))}
             </HeroCarousel>
           </HeroCol>
@@ -569,17 +574,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                 </Space>,
               ]}
             />
-            <Row gutter={24}>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                <SkeletonListing />
-              </Col>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                <SkeletonListing />
-              </Col>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                <SkeletonListing />
-              </Col>
-            </Row>
             <Row gutter={24}>
               {take(show, displayedListings).map((listing: Listing, i) => (
                 <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>

@@ -225,6 +225,7 @@ export function SkeletonListing() {
       >
         {/* <Skeleton.Button active block size="large" /> */}
         <Skeleton.Button active />
+        <Skeleton.Button active />
       </div>
     </ListingPreviewContainer>
   );
