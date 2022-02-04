@@ -9,21 +9,8 @@ import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
-const { Title, Text } = Typography;
 import Price from '@/common/components/elements/Price';
-
-const ListingPreviewContainer = styled(Card)`
-  margin-bottom: 96px;
-
-  background: #161616 !important;
-  > .ant-card-body {
-    padding: 0;
-  }
-
-  .no_bids {
-    opacity: 0.6;
-  }
-`;
+import AuctionCountdown from './Countdown';
 
 const Square = styled(Row)`
   position: relative;
@@ -61,88 +48,6 @@ const NFTPreview = styled(Image)<{ $show: boolean }>`
   /* border: solid 1px rgba(255, 255, 255, 0.1); */
 `;
 
-const ListingTitle = styled(Title)`
-  display: flex;
-  margin-bottom: 4px !important;
-  font-size: 18px !important;
-  flex-grow: 1;
-  align-items: center;
-  max-width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  /* width: 14rem; No longer needed because of flex grow, i think */
-
-  + h3 {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    font-size: 18px;
-  }
-`;
-
-const ListingSubTitle = styled(Text)`
-  font-size: 14px;
-  opacity: 0.6;
-  flex-grow: 1;
-  max-width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  /* width: 14rem; No longer needed because of flex grow, i think */
-
-  + span {
-    font-size: 14px;
-    flex-shrink: 0;
-    opacity: 0.6;
-  }
-`;
-
-function calculateTimeLeft(endTime: string) {
-  let now = DateTime.local();
-  let end = DateTime.fromISO(endTime);
-
-  return Duration.fromObject(end.diff(now).toObject());
-}
-
-function Countdown(props: { endTime: string }) {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(props.endTime));
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(props.endTime));
-    }, 1000);
-    // Clear timeout if the component is unmounted
-    return () => clearTimeout(timer);
-  });
-
-  if (timeLeft.valueOf() < 0) return <span></span>;
-
-  const format = timeLeft.toFormat("hh'h' mm'm' ss's'");
-
-  return <span className="text-right text-base font-semibold text-white">{format}</span>;
-}
-
-function AuctionCountdown(props: { endTime: string }) {
-  const timeDiffMs = DateTime.fromISO(props.endTime).toMillis() - Date.now();
-  const lessThanADay = timeDiffMs < 86400000; // one day in ms
-
-  if (lessThanADay) {
-    // only return the "expensive" Countdown component if required
-    return <Countdown endTime={props.endTime} />;
-  } else {
-    const timeLeft = calculateTimeLeft(props.endTime).toFormat('dd:hh:mm:ss');
-
-    const daysLeft2 = Number(timeLeft.slice(0, 2));
-
-    return (
-      <span className="text-right text-base font-semibold text-white">
-        {daysLeft2} day{daysLeft2 > 1 && 's'}
-      </span>
-    );
-  }
-}
-
 // adds the active loading animation to the antd skeleton image
 const StyledSkeletonImage = styled(Skeleton.Image)`
   background: linear-gradient(
@@ -161,40 +66,10 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   }
 `;
 
-export function generateListingShell(id: number): Listing {
-  const now = new Date().toISOString();
-  const nextWeek = new Date(now).toISOString();
-
-  return {
-    listingAddress: id + '',
-    highestBid: 0,
-    lastBidTime: null,
-    priceFloor: 0,
-    instantSalePrice: 0,
-    totalUncancelledBids: 0,
-    ended: false,
-    primarySaleHappened: false,
-    logoUrl: '',
-    faviconUrl: '',
-    items: [
-      {
-        metadataAddress: '',
-        name: '',
-        uri: '',
-      },
-    ],
-    createdAt: now,
-    endsAt: nextWeek,
-    subdomain: '',
-    storeTitle: '',
-  };
-}
-
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
     <div className="mb-24 pt-1">
-      {/* <ListingPreviewContainer> */}
       <Square>
         <StyledSkeletonImage
           style={{
@@ -205,13 +80,6 @@ export function SkeletonListing() {
           }}
         />
       </Square>
-      {/* <Skeleton active /> */}
-      {/* <div className="flex justify-between pt-4">
-        <Skeleton.Button active block />
-      </div> */}
-      {/* <div className="flex justify-between pt-4">
-        <Skeleton.Button active block style={{ height: 200 }} />
-      </div> */}
 
       <div className="border-x border-gray-800 px-4 py-6">
         <div className="flex items-center justify-between">
@@ -224,11 +92,9 @@ export function SkeletonListing() {
           'border border-gray-800 '
         )}
       >
-        {/* <Skeleton.Button active block size="large" /> */}
         <Skeleton.Button active />
         <Skeleton.Button active />
       </div>
-      {/* </ListingPreviewContainer> */}
     </div>
   );
 }
@@ -264,6 +130,7 @@ const maybeImageCDN = (uri: string) => {
   return cdnURI ?? uri;
 };
 
+// returns lamports
 export function getListingPrice(listing: Listing) {
   return (
     (listing.highestBid
@@ -275,7 +142,7 @@ export function getListingPrice(listing: Listing) {
 }
 
 export function getFormatedListingPrice(listing: Listing) {
-  return Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+  return lamportToSolIsh(getListingPrice(listing));
 }
 
 export function lamportToSolIsh(lamports: number | null) {
@@ -297,8 +164,7 @@ export function ListingPreview({
 }) {
   const storeHref = `https://${listing?.subdomain}.holaplex.com`;
   const listingHref = storeHref + `/listings/${listing.listingAddress}`;
-  // const cardRef = useRef(null);
-  // const { inViewport } = useInViewport(cardRef);
+
   const [cardRef, inView] = useInView({
     threshold: 0,
   });
@@ -323,10 +189,12 @@ export function ListingPreview({
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
         setLoading(false);
-        console.log(nftMetadata.name, {
-          ...listing,
-          nftJson,
-        });
+        if (window.location.host.includes('localhost')) {
+          console.log(nftMetadata.name, {
+            ...listing,
+            nftJson,
+          });
+        }
       }
     }
     if (!nftMetadata?.uri) {
@@ -337,7 +205,7 @@ export function ListingPreview({
   }, [nftMetadata?.uri]);
 
   // shows up to 2 decimals, but removes pointless 0s
-  const displayPrice = getFormatedListingPrice(listing);
+  const displayPrice = getFormatedListingPrice(listing) || 0;
 
   // no subdomain means it's a shell/skeleton
   if (loading || !listing.subdomain) {
@@ -358,7 +226,6 @@ export function ListingPreview({
       }}
     >
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
-        {/* <ListingPreviewContainer> */}
         <Square>
           <NFTPreview
             $show={inView}
@@ -448,26 +315,7 @@ export function ListingPreview({
                   : 'Starting bid'
                 : 'Price'}
             </div>
-            <div className="flex items-center">
-              {/* <Price size={18} price={displayPrice} /> */}
-              <svg
-                className="mr-2 h-4 w-4 text-gray-300"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="8" cy="8" r="7.5" stroke="#707070" />
-                <circle cx="8" cy="8" r="3.5" stroke="#707070" />
-              </svg>
-
-              <span
-                className={`text-base font-semibold ${
-                  listing.totalUncancelledBids || !isAuction ? 'text-white' : 'text-gray-300'
-                }`}
-              >
-                {displayPrice}
-              </span>
-            </div>
+            <Price listing={listing} price={displayPrice} />
           </div>
           <div>
             {listing.endsAt ? (
@@ -480,30 +328,7 @@ export function ListingPreview({
             )}
           </div>
         </div>
-        {/* <Row justify="space-between" align="middle" wrap={false}>
-            <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
-              {nftMetadata?.name}
-              {hasParticipationNFTs && (
-                <Tooltip title="Participation NFT">
-                  <ParticipationNFTIcon style={{ marginLeft: '8px' }} />
-                </Tooltip>
-              )}
-              {isSecondarySale && (
-                <Tooltip title="Secondary listing">
-                  <SecondarySaleIcon style={{ marginLeft: '8px' }} />
-                </Tooltip>
-              )}
-            </ListingTitle>
-            <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-              <Price size={18} price={displayPrice} />
-            </h3>
-          </Row>
-          <Row justify="space-between">
-            <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
-              {listing.storeTitle}
-            </ListingSubTitle>
-            {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
-          </Row> */}
+
         {isDev && (
           <Row justify="space-between" wrap={false}>
             <span
@@ -524,7 +349,6 @@ export function ListingPreview({
             </span>
           </Row>
         )}
-        {/* </ListingPreviewContainer> */}
       </a>
     </div>
   );
@@ -628,4 +452,33 @@ const SecondarySaleIcon = (props: any) => (
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
+}
+
+export function generateListingShell(id: number): Listing {
+  const now = new Date().toISOString();
+  const nextWeek = new Date(now).toISOString();
+
+  return {
+    listingAddress: id + '',
+    highestBid: 0,
+    lastBidTime: null,
+    priceFloor: 0,
+    instantSalePrice: 0,
+    totalUncancelledBids: 0,
+    ended: false,
+    primarySaleHappened: false,
+    logoUrl: '',
+    faviconUrl: '',
+    items: [
+      {
+        metadataAddress: '',
+        name: '',
+        uri: '',
+      },
+    ],
+    createdAt: now,
+    endsAt: nextWeek,
+    subdomain: '',
+    storeTitle: '',
+  };
 }

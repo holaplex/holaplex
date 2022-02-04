@@ -239,7 +239,7 @@ export enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
   InstantSale = 'instant_sale',
-  Secondaries = 'secondaries',
+  Secondary = 'secondary',
 }
 
 export enum SortOptions {
@@ -272,7 +272,7 @@ const sortOptions: {
       key: SortOptions.Cheapest,
     },
   ],
-  secondaries: [
+  secondary: [
     {
       label: 'New',
       key: SortOptions.RecentlyAdded,
@@ -317,7 +317,7 @@ const filters = {
   [FilterOptions.Auctions]: isAuction,
   [FilterOptions.InstantSale]: pipe(isAuction, not),
   [FilterOptions.All]: pipe(always(true)),
-  [FilterOptions.Secondaries]: isSecondarySale,
+  [FilterOptions.Secondary]: isSecondarySale,
 };
 
 const sorts = {
@@ -549,7 +549,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     <Option value={FilterOptions.All}>All listings</Option>
                     <Option value={FilterOptions.Auctions}>Auctions</Option>
                     <Option value={FilterOptions.InstantSale}>Buy now</Option>
-                    <Option value={FilterOptions.Secondaries}>Secondaries</Option>
+                    <Option value={FilterOptions.Secondary}>Secondary</Option>
                   </SelectInline>
                   <SelectInline
                     label="Sort"
