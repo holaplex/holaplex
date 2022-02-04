@@ -1,9 +1,7 @@
 /* eslint-disable react/display-name */
 import styled from 'styled-components';
 import Image from 'next/image';
-import { Settings } from '../icons/Settings';
 import { WalletLabel, WalletPill } from './WalletIndicator';
-import { MiniWallet } from './MiniWallet';
 import { forwardRef, useEffect } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
@@ -12,6 +10,14 @@ import { SolBalance } from '../SolBalance';
 import { DisconnectWalletButton } from './Button';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
+  return (
+    <PopoverBox ref={ref}>
+      <PopoverBoxContents />
+    </PopoverBox>
+  );
+});
+
+export const PopoverBoxContents = () => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { connected, publicKey } = useWallet();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
@@ -29,7 +35,7 @@ export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   const textOverride = connected ? twitterHandle : null;
 
   return (
-    <PopoverBox ref={ref}>
+    <>
       <FirstRow>
         <div
           style={{
@@ -50,7 +56,7 @@ export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
               marginLeft: 20,
             }}
           >
-            <WalletPill disableBackground textOverride={textOverride} publicKey={publicKey} />
+            <WalletPill disableBackground textOverride={'View profile'} publicKey={publicKey} />
           </div>
         </div>
       </FirstRow>
@@ -66,10 +72,16 @@ export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
         <SolBalance />
         <WalletLabel />
       </div>
-      <DisconnectWalletButton />
-    </PopoverBox>
+      <div
+        style={{
+          width: '100%',
+        }}
+      >
+        <DisconnectWalletButton />
+      </div>
+    </>
   );
-});
+};
 
 const PFP_SIZE = 80;
 

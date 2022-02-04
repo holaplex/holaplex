@@ -1,7 +1,7 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Layout, Space } from 'antd';
+import { Layout, Menu, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { FC, useContext, useEffect, useState } from 'react';
@@ -11,6 +11,129 @@ import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
+import { mq } from '@/common/styles/MediaQuery';
+import { MobileMenu } from './MobileMenu';
+import { ButtonReset } from '@/common/styles/ButtonReset';
+import { Menu as MenuIcon } from '@/components/icons/Menu';
+
+interface Props {
+  setShowMintModal: (show: boolean) => void;
+  wallet?: Wallet;
+}
+
+const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
+
+export function AppHeader({ setShowMintModal, wallet }: Props) {
+  const { disableMarginBottom } = useAppHeaderSettings();
+  const router = useRouter();
+  const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
+  const { connect } = useContext(WalletContext);
+  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
+  const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
+  useEffect(() => {
+    if (!hasWalletTypeSelected || connected) return;
+    connectUserWallet();
+  }, [connectUserWallet, connected, hasWalletTypeSelected]);
+
+  const mintModalClick = () => {
+    if (!wallet) {
+      connect(router.pathname);
+    }
+    setShowMintModal(true);
+  };
+
+  return (
+    <>
+      <StyledHeader disableMarginBottom={disableMarginBottom}>
+        <HeaderTitle>
+          <Link href="/" passHref>
+            <a>
+              👋&nbsp;&nbsp;<span>Holaplex</span>
+            </a>
+          </Link>
+        </HeaderTitle>
+        {!WHICHDAO && (
+          <LinkRow size="large">
+            <HeaderLinkWrapper key="mint-nfts" active={false}>
+              <Button onClick={mintModalClick} type="text" noStyle>
+                Mint&nbsp;NFTs
+              </Button>
+            </HeaderLinkWrapper>
+            <HeaderLinkWrapper
+              key="edit"
+              onClick={() => connect()}
+              active={router.pathname == '/storefront/edit'}
+            >
+              <Link href="/storefront/edit" passHref>
+                <a>Edit store</a>
+              </Link>
+            </HeaderLinkWrapper>
+            <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
+              <Link href="/about" passHref>
+                <a>About</a>
+              </Link>
+            </HeaderLinkWrapper>
+            <HeaderLinkWrapper key="faq" active={false}>
+              <a
+                href="https://holaplex-support.zendesk.com/hc/en-us"
+                target="_blank"
+                rel="noreferrer"
+              >
+                FAQ
+              </a>
+            </HeaderLinkWrapper>
+            {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
+            {/* {windowDimensions.width > 700 && <SocialLinks />} */}
+          </LinkRow>
+        )}
+      </StyledHeader>
+      <MobileHeader />
+    </>
+  );
+}
+
+const MobileHeader = () => {
+  const [displayMenu, setDisplayMenu] = useState(false);
+  return (
+    <>
+      <MobileHeaderContainer>
+        <Link href="/" passHref>
+          <EmojiLogoAnchor>👋</EmojiLogoAnchor>
+        </Link>
+        <MenuButton onClick={() => setDisplayMenu(true)}>
+          <MenuIcon color="#fff" />
+        </MenuButton>
+      </MobileHeaderContainer>
+      {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
+    </>
+  );
+};
+
+const MenuButton = styled.button`
+  ${ButtonReset}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const EmojiLogoAnchor = styled.a`
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+`;
+
+const MobileHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 24px;
+  padding-right: 24px;
+  min-height: 72px;
+  ${mq('sm')} {
+    display: none;
+  }
+`;
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -44,12 +167,15 @@ type CustomHeaderProps = {
 };
 
 const StyledHeader = styled(Header)<CustomHeaderProps>`
-  ${sv.flexRow};
-  margin-top: 5px;
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-bottom: ${(props) => (props.disableMarginBottom ? ' 0px' : '40px')};
-  padding: 1.25rem;
+  display: none;
+  ${mq('sm')} {
+    ${sv.flexRow};
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: ${(props) => (props.disableMarginBottom ? ' 0px' : '40px')};
+    padding: 1.25rem;
+  }
 `;
 
 const HeaderLinkWrapper = styled.div<{ active: boolean }>`
@@ -64,76 +190,3 @@ const LinkRow = styled(Space)`
     }
   }
 `;
-
-interface Props {
-  setShowMintModal: (show: boolean) => void;
-  wallet?: Wallet;
-}
-
-const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
-
-export function AppHeader({ setShowMintModal, wallet }: Props) {
-  const { disableMarginBottom } = useAppHeaderSettings();
-  const router = useRouter();
-  const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
-  const { connect } = useContext(WalletContext);
-  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
-  const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
-  useEffect(() => {
-    if (!hasWalletTypeSelected || connected) return;
-    connectUserWallet();
-  }, [connectUserWallet, connected, hasWalletTypeSelected]);
-
-  const mintModalClick = () => {
-    if (!wallet) {
-      connect(router.pathname);
-    }
-    setShowMintModal(true);
-  };
-
-  return (
-    <StyledHeader disableMarginBottom={disableMarginBottom}>
-      <HeaderTitle>
-        <Link href="/" passHref>
-          <a>
-            👋&nbsp;&nbsp;<span>Holaplex</span>
-          </a>
-        </Link>
-      </HeaderTitle>
-      {!WHICHDAO && (
-        <LinkRow size="large">
-          <HeaderLinkWrapper key="mint-nfts" active={false}>
-            <Button onClick={mintModalClick} type="text" noStyle>
-              Mint&nbsp;NFTs
-            </Button>
-          </HeaderLinkWrapper>
-          <HeaderLinkWrapper
-            key="edit"
-            onClick={() => connect()}
-            active={router.pathname == '/storefront/edit'}
-          >
-            <Link href="/storefront/edit" passHref>
-              <a>Edit store</a>
-            </Link>
-          </HeaderLinkWrapper>
-          <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
-            <Link href="/about" passHref>
-              <a>About</a>
-            </Link>
-          </HeaderLinkWrapper>
-          <HeaderLinkWrapper key="faq" active={false}>
-            <a
-              href="https://holaplex-support.zendesk.com/hc/en-us"
-              target="_blank"
-              rel="noreferrer"
-            >
-              FAQ
-            </a>
-          </HeaderLinkWrapper>
-          {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
-          {/* {windowDimensions.width > 700 && <SocialLinks />} */}
-        </LinkRow>
-      )}
-    </StyledHeader>
-  );
-}

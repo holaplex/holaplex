@@ -29,7 +29,7 @@ export const WalletPill: FC<WalletPillProps> = ({
       <ContainerSpan disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
           {isTwitterHandle(textOverride)
-            ? `@${textOverride}`
+            ? `${textOverride}`
             : publicKey
             ? showFirstAndLastFour(publicKey.toBase58())
             : 'DISCONNECTED'}
@@ -43,7 +43,7 @@ export const WalletPill: FC<WalletPillProps> = ({
       <ContainerAnchor disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
           {isTwitterHandle(textOverride)
-            ? `@${textOverride}`
+            ? `${textOverride}`
             : publicKey
             ? showFirstAndLastFour(publicKey.toBase58())
             : 'DISCONNECTED'}

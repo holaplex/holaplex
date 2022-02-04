@@ -51,6 +51,7 @@ const ActivityLanding = () => {
       return null;
     }
   };
+
   return (
     <>
       <HeadingContainer>
@@ -65,7 +66,7 @@ const ActivityLanding = () => {
             <WalletPill
               disableBackground
               disableLink
-              textOverride={textOverride}
+              textOverride={`@${twitterHandle}`}
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
