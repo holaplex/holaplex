@@ -305,7 +305,7 @@ const sortOptions: {
 const isAuction = pipe(prop('endsAt'), is(String));
 
 // @ts-ignore
-const isSecondarySale = pipe(prop('primarySaleHappened'), equals(true));
+const isSecondarySale = pipe(item => item.items[0]?.primarySaleHappened == true);
 
 const currentListingPrice = ifElse(
   isAuction,
@@ -414,6 +414,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         );
       }
 
+      
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
@@ -444,6 +445,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     if (loading) {
       return;
     }
+    
 
     setDisplayedListings(applyListingFilterAndSort(allListings));
     setShow(16);
