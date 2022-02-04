@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @import './ant-theme.less';
 @import './minter-theme-overrides.less';
 
@@ -148,4 +147,14 @@ input[type='checkbox'] {
 .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
   .ant-select-selector {
   border-color: transparent;
+}
+
+.ant-image-preview-img-wrapper::before {
+  height: 10%;
+}
+
+.ant-image-preview-img-wrapper > img {
+  margin: 0 auto;
+  max-width: 80%;
+  max-height: 80%;
 }

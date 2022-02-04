@@ -468,7 +468,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
           <HeroCol xs={24} sm={12} lg={8}>
             <div className="px-4">
               <Text style={{ marginBottom: 0 }} strong>
-                Featured Listings
+                Trending Listings
               </Text>
             </div>
             {/* <SkeletonListing key={'-1'} /> */}
