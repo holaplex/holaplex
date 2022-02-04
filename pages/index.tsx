@@ -196,6 +196,10 @@ const HeroCarousel = styled(Carousel)`
     margin-top: -18px;
     margin-right: 16px;
     justify-content: flex-end;
+
+    @media screen and (max-width: 575px) {
+      margin-right: 0;
+    }
   }
 
   .carousel-dots > li > button {
@@ -305,7 +309,7 @@ const sortOptions: {
 const isAuction = pipe(prop('endsAt'), is(String));
 
 // @ts-ignore
-const isSecondarySale = pipe(item => item.items[0]?.primarySaleHappened == true);
+const isSecondarySale = pipe((item) => item.items[0]?.primarySaleHappened == true);
 
 const currentListingPrice = ifElse(
   isAuction,
@@ -414,7 +418,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         );
       }
 
-      
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
@@ -445,7 +448,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     if (loading) {
       return;
     }
-    
 
     setDisplayedListings(applyListingFilterAndSort(allListings));
     setShow(16);
@@ -468,7 +470,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </div>
           </Marketing>
           <HeroCol xs={24} sm={12} lg={8}>
-            <div className="px-4">
+            <div className="sm:px-4">
               <Text style={{ marginBottom: 0 }} strong>
                 Trending Listings
               </Text>
@@ -478,8 +480,8 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               dots={{ className: 'carousel-dots' }}
               dotPosition="top"
               effect="fade"
+              className="home-carousel"
             >
-              <SkeletonListing key={'-1'} />
               {featuredListings.map((listing, i) => (
                 <div key={listing.listingAddress} className="px-4">
                   <ListingPreview
@@ -582,11 +584,8 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               ]}
             />
             <Row gutter={24}>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6}>
-                <SkeletonListing />
-              </Col>
               {take(show, displayedListings).map((listing: Listing, i) => (
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
+                <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
                   <ListingPreview
                     listing={listing}
                     meta={{
@@ -600,16 +599,16 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               ))}
               {(hasNextPage || loading) && (
                 <>
-                  <Col ref={sentryRef} xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-0">
+                  <Col ref={sentryRef} xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-0">
                     <SkeletonListing />
                   </Col>
-                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-1">
+                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-1">
                     <SkeletonListing />
                   </Col>
-                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-2">
+                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-2">
                     <SkeletonListing />
                   </Col>
-                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-3">
+                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-3">
                     <SkeletonListing />
                   </Col>
                 </>

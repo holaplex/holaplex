@@ -76,7 +76,7 @@ export function SkeletonListing() {
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">
-        <div className="skeleton-animation flex h-14 w-full items-center justify-between">
+        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]">
           {/* <Skeleton.Button active block size="large" /> */}
         </div>
       </div>
@@ -86,8 +86,8 @@ export function SkeletonListing() {
           'border border-gray-800 '
         )}
       >
-        <Skeleton.Button active />
-        <Skeleton.Button active />
+        <Skeleton.Button />
+        <Skeleton.Button />
       </div>
     </div>
   );
@@ -319,10 +319,12 @@ export function ListingPreview({
           </div>
           <div className="text-right">
             {listing.endsAt ? (
-              <>
-                <div className="pt-1 text-right text-sm font-semibold text-gray-300">Ends in</div>
-                <AuctionCountdown endTime={listing.endsAt} />
-              </>
+              <div className="-mb-[4px] flex flex-col justify-around">
+                <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
+                <div className="-mt-[4px]">
+                  <AuctionCountdown endTime={listing.endsAt} />
+                </div>
+              </div>
             ) : (
               <span className="rounded-full bg-white px-4 py-2 text-sm text-gray-900">Buy now</span>
             )}
