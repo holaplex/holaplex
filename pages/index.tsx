@@ -193,9 +193,13 @@ const HeroCarousel = styled(Carousel)`
     position: absolute;
     top: 0;
     right: 0;
-    margin-top: -24px;
-    margin-right: 0px;
+    margin-top: -18px;
+    margin-right: 16px;
     justify-content: flex-end;
+
+    @media screen and (max-width: 575px) {
+      margin-right: 0;
+    }
   }
 
   .carousel-dots > li > button {
@@ -239,6 +243,7 @@ export enum FilterOptions {
   All = 'all',
   Auctions = 'auctions',
   InstantSale = 'instant_sale',
+  Secondary = 'secondary',
 }
 
 export enum SortOptions {
@@ -271,6 +276,21 @@ const sortOptions: {
       key: SortOptions.Cheapest,
     },
   ],
+  secondary: [
+    {
+      label: 'New',
+      key: SortOptions.RecentlyAdded,
+    },
+    { key: SortOptions.Trending, label: 'Trending' },
+    {
+      label: 'High to low',
+      key: SortOptions.Expensive,
+    },
+    {
+      label: 'Low to high',
+      key: SortOptions.Cheapest,
+    },
+  ],
   auctions: [
     { key: SortOptions.RecentlyAdded, label: 'New' },
     { key: SortOptions.Trending, label: 'Trending' },
@@ -288,6 +308,9 @@ const sortOptions: {
 // @ts-ignore
 const isAuction = pipe(prop('endsAt'), is(String));
 
+// @ts-ignore
+const isSecondarySale = pipe((item) => item.items[0]?.primarySaleHappened == true);
+
 const currentListingPrice = ifElse(
   isAuction,
   ifElse(pipe(prop('totalUncancelledBids'), equals(0)), prop('priceFloor'), prop('highestBid')),
@@ -298,6 +321,7 @@ const filters = {
   [FilterOptions.Auctions]: isAuction,
   [FilterOptions.InstantSale]: pipe(isAuction, not),
   [FilterOptions.All]: pipe(always(true)),
+  [FilterOptions.Secondary]: isSecondarySale,
 };
 
 const sorts = {
@@ -433,7 +457,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     <Row>
       <CenteredContentCol>
         <Section>
-          <Marketing xs={22} md={16}>
+          <Marketing xs={22} sm={12} lg={16}>
             <HeroTitle>
               Discover, explore, and collect NFTs from incredible creators on Solana
             </HeroTitle>
@@ -445,20 +469,34 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               <SocialLinks />
             </div>
           </Marketing>
-          <HeroCol xs={24} md={8}>
-            <Text strong>Featured Listings</Text>
-            <HeroCarousel autoplay={true} dots={{ className: 'carousel-dots' }} dotPosition="top">
+          <HeroCol xs={24} sm={12} lg={8}>
+            <div className="sm:px-4">
+              <Text style={{ marginBottom: 0 }} strong>
+                Trending Listings
+              </Text>
+            </div>
+            <HeroCarousel
+              autoplay={true}
+              dots={{ className: 'carousel-dots' }}
+              dotPosition="top"
+              effect="fade"
+              className="home-carousel"
+            >
+              {/* <div className="sm:px-4">
+                <SkeletonListing />
+              </div> */}
               {featuredListings.map((listing, i) => (
-                <ListingPreview
-                  key={listing.listingAddress}
-                  listing={listing}
-                  meta={{
-                    index: i,
-                    list: 'featured-listings',
-                    sortBy: sortBy,
-                    filterBy: filterBy,
-                  }}
-                />
+                <div key={listing.listingAddress} className="sm:px-4">
+                  <ListingPreview
+                    listing={listing}
+                    meta={{
+                      index: i,
+                      list: 'featured-listings',
+                      sortBy: sortBy,
+                      filterBy: filterBy,
+                    }}
+                  />
+                </div>
               ))}
             </HeroCarousel>
           </HeroCol>
@@ -518,6 +556,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     <Option value={FilterOptions.All}>All listings</Option>
                     <Option value={FilterOptions.Auctions}>Auctions</Option>
                     <Option value={FilterOptions.InstantSale}>Buy now</Option>
+                    <Option value={FilterOptions.Secondary}>Secondary</Option>
                   </SelectInline>
                   <SelectInline
                     label="Sort"
@@ -548,8 +587,11 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               ]}
             />
             <Row gutter={24}>
+              {/* <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6}>
+                <SkeletonListing />
+              </Col> */}
               {take(show, displayedListings).map((listing: Listing, i) => (
-                <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
+                <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
                   <ListingPreview
                     listing={listing}
                     meta={{
@@ -563,16 +605,16 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               ))}
               {(hasNextPage || loading) && (
                 <>
-                  <Col ref={sentryRef} xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-0">
+                  <Col ref={sentryRef} xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-0">
                     <SkeletonListing />
                   </Col>
-                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-1">
+                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-1">
                     <SkeletonListing />
                   </Col>
-                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-2">
+                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-2">
                     <SkeletonListing />
                   </Col>
-                  <Col xs={24} sm={12} md={8} lg={8} xl={6} xxl={6} key="shell-3">
+                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-3">
                     <SkeletonListing />
                   </Col>
                 </>

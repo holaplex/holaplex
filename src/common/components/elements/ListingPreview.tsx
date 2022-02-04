@@ -1,29 +1,17 @@
 import React, { useRef } from 'react';
-import { Skeleton, Card, Row, Image, Typography } from 'antd';
+import { Skeleton, Card, Row, Image, Typography, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime, Duration } from 'luxon';
+// import Image as NextImage from 'next/image';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
-const { Title, Text } = Typography;
 import Price from '@/common/components/elements/Price';
 import { maybeCDN, maybeImageCDN } from '@/common/utils';
-
-const ListingPreviewContainer = styled(Card)`
-  margin-bottom: 96px;
-
-  background: #161616 !important;
-  > .ant-card-body {
-    padding: 0;
-  }
-
-  .no_bids {
-    opacity: 0.6;
-  }
-`;
+import AuctionCountdown from './Countdown';
 
 const Square = styled(Row)`
   position: relative;
@@ -31,8 +19,6 @@ const Square = styled(Row)`
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-
-  margin-bottom: 13px;
 
   &:before {
     content: '';
@@ -56,154 +42,55 @@ const Square = styled(Row)`
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   object-fit: cover;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   width: 100%;
   height: 100%;
-  border: solid 1px rgba(255, 255, 255, 0.1);
+  /* border: solid 1px rgba(255, 255, 255, 0.1); */
 `;
-
-const ListingTitle = styled(Title)`
-  margin-bottom: 4px !important;
-  font-size: 18px !important;
-  flex-grow: 1;
-  max-width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  /* width: 14rem; No longer needed because of flex grow, i think */
-
-  + h3 {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    font-size: 18px;
-  }
-`;
-
-const ListingSubTitle = styled(Text)`
-  font-size: 14px;
-  opacity: 0.6;
-  flex-grow: 1;
-  max-width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  /* width: 14rem; No longer needed because of flex grow, i think */
-
-  + span {
-    font-size: 14px;
-    flex-shrink: 0;
-    opacity: 0.6;
-  }
-`;
-
-function calculateTimeLeft(endTime: string) {
-  let now = DateTime.local();
-  let end = DateTime.fromISO(endTime);
-
-  return Duration.fromObject(end.diff(now).toObject());
-}
-
-function Countdown(props: { endTime: string }) {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(props.endTime));
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(props.endTime));
-    }, 1000);
-    // Clear timeout if the component is unmounted
-    return () => clearTimeout(timer);
-  });
-
-  if (timeLeft.valueOf() < 0) return <span></span>;
-
-  const format = timeLeft.toFormat('hh:mm:ss');
-
-  return <span>{format}</span>;
-}
-
-function AuctionCountdown(props: { endTime: string }) {
-  const timeDiffMs = DateTime.fromISO(props.endTime).toMillis() - Date.now();
-  const lessThanADay = timeDiffMs < 86400000; // one day in ms
-
-  if (lessThanADay) {
-    // only return the "expensive" Countdown component if required
-    return <Countdown endTime={props.endTime} />;
-  } else {
-    const timeLeft = calculateTimeLeft(props.endTime).toFormat('dd:hh:mm:ss');
-
-    const daysLeft2 = Number(timeLeft.slice(0, 2));
-
-    return (
-      <span>
-        Ends in {daysLeft2} day{daysLeft2 > 1 && 's'}
-      </span>
-    );
-  }
-}
 
 // adds the active loading animation to the antd skeleton image
 const StyledSkeletonImage = styled(Skeleton.Image)`
-  background: linear-gradient(
-    90deg,
-    rgba(34, 34, 34, 0.2) 25%,
-    rgba(255, 255, 255, 0.16) 37%,
-    rgba(34, 34, 34, 0.2) 63%
-  );
   background-size: 400% 100%;
-  animation: ant-skeleton-loading 1.4s ease infinite;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
   > .ant-skeleton-image > svg {
     display: none;
   }
 `;
 
-export function generateListingShell(id: number): Listing {
-  const now = new Date().toISOString();
-  const nextWeek = new Date(now).toISOString();
-
-  return {
-    listingAddress: id + '',
-    highestBid: 0,
-    lastBidTime: null,
-    priceFloor: 0,
-    instantSalePrice: 0,
-    totalUncancelledBids: 0,
-    ended: false,
-    items: [
-      {
-        metadataAddress: '',
-        name: '',
-        uri: '',
-      },
-    ],
-    createdAt: now,
-    endsAt: nextWeek,
-    subdomain: '',
-    storeTitle: '',
-  };
-}
-
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
 export function SkeletonListing() {
   return (
-    <ListingPreviewContainer>
+    <div className="mb-12 pt-1 ">
       <Square>
-        <StyledSkeletonImage style={{ borderRadius: '8px', width: '100%', height: '100%' }} />
+        <StyledSkeletonImage
+          className="skeleton-animation"
+          style={{
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            width: '100%',
+            height: '100%',
+          }}
+        />
       </Square>
-      <Row justify="space-between">
-        <Skeleton.Button size="small" active />
-        <Skeleton.Button size="small" active />
-      </Row>
-      {/* Without this height: 22 there is an annoying height difference between Skeleton and real listing */}
-      {/* style={{ height: 22 }} */}
-      {/* Well, now it worked again. Maybe it'sa  browser thing */}
-      <Row justify="space-between">
-        <Skeleton.Button size="small" active />
-        <Skeleton.Button size="small" active />
-      </Row>
-    </ListingPreviewContainer>
+
+      <div className="border-x border-gray-800 px-4 py-6">
+        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]">
+          {/* <Skeleton.Button active block size="large" /> */}
+        </div>
+      </div>
+      <div
+        className={classNames(
+          'flex items-center justify-between rounded-b-md px-4 py-4',
+          'border border-gray-800 '
+        )}
+      >
+        <div className="h-[42px] w-32  rounded-md bg-[#bebebe33]"></div>
+        <div className="h-[42px] w-32  rounded-md bg-[#bebebe33]"></div>
+      </div>
+    </div>
   );
 }
 
@@ -221,13 +108,13 @@ const CustomImageMask = styled.div`
 
   > svg {
     position absolute;
-    right: 24px;
-    bottom: 24px;
+    right: 16px;
+    bottom: 16px;
 
   }
 `;
 
-
+// returns lamports
 export function getListingPrice(listing: Listing) {
   return (
     (listing.highestBid
@@ -239,7 +126,7 @@ export function getListingPrice(listing: Listing) {
 }
 
 export function getFormatedListingPrice(listing: Listing) {
-  return Number((getListingPrice(listing) * 0.000000001).toFixed(2));
+  return lamportToSolIsh(getListingPrice(listing));
 }
 
 export function lamportToSolIsh(lamports: number | null) {
@@ -259,10 +146,9 @@ export function ListingPreview({
     filterBy: FilterOptions;
   };
 }) {
-  const storeHref = `https://${listing?.subdomain}.holaplex.com/listings/${listing.listingAddress}`;
+  const storeHref = `https://${listing?.subdomain}.holaplex.com`;
+  const listingHref = storeHref + `/listings/${listing.listingAddress}`;
 
-  // const cardRef = useRef(null);
-  // const { inViewport } = useInViewport(cardRef);
   const [cardRef, inView] = useInView({
     threshold: 0,
   });
@@ -275,6 +161,9 @@ export function ListingPreview({
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   const isDev = false && process.env.NODE_ENV === 'development';
+  const isSecondarySale = nftMetadata.primarySaleHappened;
+  const isAuction = listing.endsAt;
+  const hasParticipationNFTs = listing.items.length > 1;
 
   useEffect(() => {
     async function fetchNFTDataFromIPFS() {
@@ -283,7 +172,14 @@ export function ListingPreview({
       if (res.ok) {
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500);
+
+        if (window.location.host.includes('localhost')) {
+          console.log(nftMetadata.name, {
+            ...listing,
+            nftJson,
+          });
+        }
       }
     }
     if (!nftMetadata?.uri) {
@@ -294,7 +190,7 @@ export function ListingPreview({
   }, [nftMetadata?.uri]);
 
   // shows up to 2 decimals, but removes pointless 0s
-  const displayPrice = getFormatedListingPrice(listing);
+  const displayPrice = getFormatedListingPrice(listing) || 0;
 
   // no subdomain means it's a shell/skeleton
   if (loading || !listing.subdomain) {
@@ -304,6 +200,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
+      className="mb-12 rounded-t-lg pt-1 shadow-black transition sm:hover:scale-[1.02] sm:hover:shadow-xl"
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
@@ -313,75 +210,138 @@ export function ListingPreview({
         });
       }}
     >
-      <a href={storeHref} rel="nofollow noreferrer" target="_blank">
-        <ListingPreviewContainer>
-          <Square>
-            <NFTPreview
-              $show={inView}
-              src={maybeImageCDN(nft?.image || '')}
-              preview={{
-                visible: showArtPreview,
-                mask: (
-                  <CustomImageMask
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setShowArtPreview(true);
-                      track('Listing Preview Expanded', {
-                        event_category: 'Discovery',
-                        event_label: nftMetadata.name,
-                        ...meta,
-                        ...addListingToTrackCall(listing),
-                      });
-                    }}
-                  >
-                    <CustomExpandIcon />
-                  </CustomImageMask>
-                ),
-                onVisibleChange: (visible, prevVisible) => {
-                  prevVisible && setShowArtPreview(visible);
-                },
-                destroyOnClose: true,
-              }}
-              alt={nftMetadata?.name + ' preview'}
-              fallback={NFTFallbackImage}
-            />
-          </Square>
-          <Row justify="space-between" align="middle" wrap={false}>
-            <ListingTitle level={3} ellipsis={{ tooltip: nftMetadata?.name }}>
-              {nftMetadata?.name}
-            </ListingTitle>
-            <h3 className={listing.endsAt && !listing.totalUncancelledBids ? 'no_bids' : ''}>
-              <Price size={18} price={displayPrice} />
-            </h3>
-          </Row>
-          <Row justify="space-between">
-            <ListingSubTitle ellipsis={{ tooltip: listing.storeTitle }}>
-              {listing.storeTitle}
-            </ListingSubTitle>
-            {listing.endsAt ? <AuctionCountdown endTime={listing.endsAt} /> : <span>Buy now</span>}
-          </Row>
-          {isDev && (
-            <Row justify="space-between" wrap={false}>
-              <span
-                style={{
-                  fontSize: 14,
-                  opacity: 0.6,
-                }}
-              >
-                Listed {listing.createdAt.slice(5, 16)}
-              </span>
-              <span
-                style={{
-                  fontSize: 14,
-                  opacity: 0.6,
-                }}
-              >
-                Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
-              </span>
-            </Row>
+      <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
+        <Square>
+          <NFTPreview
+            $show={inView}
+            src={maybeImageCDN(nft?.image || '')}
+            preview={{
+              visible: showArtPreview,
+              mask: (
+                <CustomImageMask
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowArtPreview(true);
+                    track('Listing Preview Expanded', {
+                      event_category: 'Discovery',
+                      event_label: nftMetadata.name,
+                      ...meta,
+                      ...addListingToTrackCall(listing),
+                    });
+                  }}
+                >
+                  <CustomExpandIcon />
+                </CustomImageMask>
+              ),
+              onVisibleChange: (visible, prevVisible) => {
+                prevVisible && setShowArtPreview(visible);
+              },
+              destroyOnClose: true,
+            }}
+            alt={nftMetadata?.name + ' preview'}
+            fallback={NFTFallbackImage}
+          />
+        </Square>
+        <div className="border-x border-gray-800 px-4 pt-4 pb-5">
+          <div className="mb-1 flex items-center justify-between">
+            <div className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</div>
+            <div className="flex items-center">
+              {hasParticipationNFTs && (
+                <Tooltip
+                  color="#171717"
+                  title="Participation NFT"
+                  overlayStyle={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'white',
+                  }}
+                >
+                  <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
+                </Tooltip>
+              )}
+              {isSecondarySale && (
+                <Tooltip
+                  color="#171717"
+                  title="Secondary listing"
+                  overlayStyle={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'white',
+                  }}
+                >
+                  <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
+                </Tooltip>
+              )}
+            </div>
+          </div>
+          <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
+            <div className="flex items-center">
+              {listing.logoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={listing.logoUrl}
+                  className="mr-2 h-4 w-4 rounded-sm"
+                  alt={'logo for ' + listing.storeTitle}
+                />
+              )}
+
+              <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
+                {listing.storeTitle}
+              </h4>
+            </div>
+          </a>
+        </div>
+        <div
+          className={classNames(
+            'flex items-center justify-between rounded-b-md px-4 py-4',
+            isAuction ? 'bg-gray-800' : 'border border-gray-800 '
           )}
-        </ListingPreviewContainer>
+        >
+          <div>
+            <div className="text-sm font-semibold text-gray-300">
+              {isAuction
+                ? listing.totalUncancelledBids
+                  ? 'Current bid'
+                  : 'Starting bid'
+                : 'Price'}
+            </div>
+            <Price listing={listing} price={displayPrice} />
+          </div>
+          <div className="text-right">
+            {listing.endsAt ? (
+              <div className="-mb-[4px] flex flex-col justify-around">
+                <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
+                <div className="-mt-[4px]">
+                  <AuctionCountdown endTime={listing.endsAt} />
+                </div>
+              </div>
+            ) : (
+              <span className="rounded-full bg-white px-4 py-2 text-sm text-gray-900">Buy now</span>
+            )}
+          </div>
+        </div>
+
+        {isDev && (
+          <Row justify="space-between" wrap={false}>
+            <span
+              style={{
+                fontSize: 14,
+                opacity: 0.6,
+              }}
+            >
+              Listed {listing.createdAt.slice(5, 16)}
+            </span>
+            <span
+              style={{
+                fontSize: 14,
+                opacity: 0.6,
+              }}
+            >
+              Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
+            </span>
+          </Row>
+        )}
       </a>
     </div>
   );
@@ -420,3 +380,99 @@ const CustomExpandIcon = () => (
     />
   </svg>
 );
+
+const ParticipationNFTIcon = (props: any) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <rect width="24" height="24" rx="12" fill="url(#paint0_linear_1_3066)" />
+    <path
+      d="M10.105 12.945L9.5 17.5L12 16L14.5 17.5L13.895 12.94M15.5 10C15.5 11.933 13.933 13.5 12 13.5C10.067 13.5 8.5 11.933 8.5 10C8.5 8.067 10.067 6.5 12 6.5C13.933 6.5 15.5 8.067 15.5 10Z"
+      stroke="white"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <defs>
+      <linearGradient
+        id="paint0_linear_1_3066"
+        x1="-0.000373752"
+        y1="23.9999"
+        x2="23.9997"
+        y2="-0.000292212"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="#171717" />
+        <stop offset="1" stopColor="#525252" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const SecondarySaleIcon = (props: any) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <rect width="24" height="24" rx="12" fill="url(#paint0_linear_1_1485)" />
+    <path
+      d="M12.1312 16.7154C12.0248 16.8234 11.8358 16.8414 11.7117 16.7154C11.6053 16.6073 11.5876 16.4152 11.7117 16.2891L13.7145 14.2541L12.8815 13.4077L10.8787 15.4427C10.7664 15.5628 10.5773 15.5568 10.4592 15.4427C10.3351 15.3167 10.3528 15.1246 10.4592 15.0165L12.462 12.9815L11.629 12.1351L9.62616 14.1701C9.51981 14.2781 9.33076 14.2961 9.20669 14.1701C9.09444 14.056 9.09444 13.8639 9.20669 13.7439L11.2095 11.7089L10.3706 10.8624L8.36775 12.8974C8.26141 13.0055 8.07235 13.0235 7.94828 12.8974C7.83603 12.7774 7.83603 12.5913 7.94828 12.4712L10.536 9.84192L11.6408 10.9585C12.2021 11.5288 13.171 11.5228 13.7322 10.9585C14.3112 10.3702 14.3112 9.42171 13.7322 8.83342L12.6333 7.71686L12.7988 7.54877C13.2596 7.08054 14.0099 7.08054 14.4707 7.54877L16.9757 10.094C17.4366 10.5623 17.4366 11.3247 16.9757 11.7929L12.1312 16.7154ZM17.8088 12.6453C18.7304 11.7089 18.7304 10.1901 17.8088 9.24762L15.3038 6.70235C14.3821 5.76588 12.8874 5.76588 11.9598 6.70235L11.7944 6.87044L11.629 6.70235C10.7073 5.76588 9.2126 5.76588 8.28504 6.70235L6.1936 8.82741C5.35466 9.67984 5.27786 11.0065 5.95728 11.943L6.81394 11.0725C6.58353 10.6223 6.66033 10.052 7.03254 9.67384L9.12398 7.54877C9.5848 7.08054 10.3351 7.08054 10.7959 7.54877L12.8992 9.68584C13.0055 9.7939 13.0233 9.98599 12.8992 10.1121C12.7751 10.2381 12.5861 10.2201 12.4797 10.1121L10.536 8.14307L7.10934 11.6188C6.53036 12.2011 6.53036 13.1556 7.10934 13.7439C7.33976 13.978 7.63516 14.1221 7.94828 14.1641C7.98964 14.4762 8.12552 14.7764 8.36184 15.0165C8.59816 15.2566 8.89356 15.3947 9.20078 15.4367C9.24214 15.7489 9.37802 16.049 9.61434 16.2891C9.85066 16.5293 10.1461 16.6673 10.4533 16.7094C10.4946 17.0335 10.6364 17.3277 10.8668 17.5618C11.1445 17.8439 11.5167 18 11.9126 18C12.3084 18 12.6806 17.8439 12.9583 17.5618L17.8088 12.6453Z"
+      fill="white"
+    />
+    <defs>
+      <linearGradient
+        id="paint0_linear_1_1485"
+        x1="-0.000373752"
+        y1="23.9999"
+        x2="23.9997"
+        y2="-0.000292212"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="#171717" />
+        <stop offset="1" stopColor="#525252" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+export function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}
+
+export function generateListingShell(id: number): Listing {
+  const now = new Date().toISOString();
+  const nextWeek = new Date(now).toISOString();
+
+  return {
+    listingAddress: id + '',
+    highestBid: 0,
+    lastBidTime: null,
+    priceFloor: 0,
+    instantSalePrice: 0,
+    totalUncancelledBids: 0,
+    ended: false,
+    primarySaleHappened: false,
+    logoUrl: '',
+    faviconUrl: '',
+    items: [
+      {
+        metadataAddress: '',
+        name: '',
+        uri: '',
+        primarySaleHappened: false,
+      },
+    ],
+    createdAt: now,
+    endsAt: nextWeek,
+    subdomain: '',
+    storeTitle: '',
+  };
+}
