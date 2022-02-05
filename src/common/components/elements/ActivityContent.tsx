@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
@@ -18,10 +18,12 @@ const randomBetween = (min: number, max: number) =>
 
 export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
 
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
   useEffect(() => {
     if (!publicKey) return;
+    setDidPerformInitialLoad(true);
     queryActivityPage({
       variables: {
         address: publicKey.toString(),
@@ -29,7 +31,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     });
   }, [publicKey, queryActivityPage]);
 
-  const isLoading = activityPage.loading;
+  const isLoading = !didPerformInitialLoad || activityPage.loading;
 
   const hasItems = !!activityPage.data?.wallet?.bids.length;
 
@@ -87,7 +89,13 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   return (
     <ActivityContainer>
       {isLoading ? (
-        <div>Loading...</div>
+        <>
+          <LoadingActivitySkeletonBox disableMarginTop />
+          <LoadingActivitySkeletonBox />
+          <LoadingActivitySkeletonBox />
+          <LoadingActivitySkeletonBox />
+          <LoadingActivitySkeletonBox />
+        </>
       ) : hasItems ? (
         <>
           {items.map((bid, i) => (
@@ -191,6 +199,70 @@ const NoActivityBox: FC = () => {
     </ActivityBoxContainer>
   );
 };
+
+const LoadingActivitySkeletonBox: FC<{ disableMarginTop?: boolean }> = ({ disableMarginTop }) => {
+  return (
+    <ActivityBoxContainer disableMarginTop={!!disableMarginTop}>
+      <CenteredCol>
+        <LoadingNFTImage />
+      </CenteredCol>
+      <ContentContainer>
+        <LoadingLinesContainer>
+          <LoadingFirstLine />
+          <LoadingSecondLine />
+        </LoadingLinesContainer>
+      </ContentContainer>
+    </ActivityBoxContainer>
+  );
+};
+
+const LoadingNFTImage = styled.div`
+  width: 52px;
+  height: 52px;
+  background: #707070;
+  border-radius: 4px;
+  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
+  animation: shimmer 2.5s infinite;
+  @keyframes shimmer {
+    100% {
+      -webkit-mask-position: left;
+    }
+  }
+`;
+
+const LoadingLinesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const LoadingFirstLine = styled.div`
+  width: 75%;
+  height: 24px;
+  background: #707070;
+  border-radius: 4px;
+  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
+  animation: shimmer 2.5s infinite;
+  @keyframes shimmer {
+    100% {
+      -webkit-mask-position: left;
+    }
+  }
+`;
+
+const LoadingSecondLine = styled.div`
+  width: 25%;
+  height: 16px;
+  background: #707070;
+  border-radius: 4px;
+  margin-top: 8px;
+  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/400% 100%;
+  animation: shimmer 2.5s infinite;
+  @keyframes shimmer {
+    100% {
+      -webkit-mask-position: left;
+    }
+  }
+`;
 
 type ActivityBoxProps = {
   relatedImageUrl: string;
@@ -333,7 +405,7 @@ const ContentCol = styled(CenteredCol)`
   justify-content: center;
 `;
 
-const ActivityBoxContainer = styled(Row)<{ disableMarginTop: boolean }>`
+const ActivityBoxContainer = styled.div<{ disableMarginTop: boolean }>`
   display: flex;
   flex: 1;
   padding: 10px;

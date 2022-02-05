@@ -66,7 +66,7 @@ const ActivityLanding = () => {
             <WalletPill
               disableBackground
               disableLink
-              textOverride={`@${twitterHandle}`}
+              textOverride={twitterHandle ? `@${twitterHandle}` : null}
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
@@ -99,6 +99,7 @@ const Profile = styled.div`
 
 const ActivityContentWrapper = styled.section`
   margin-top: ${PFP_SIZE / 2}px;
+  width: 100%;
 `;
 
 const ContentCol = styled.div`
