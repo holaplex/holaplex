@@ -1,7 +1,7 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Layout, Menu, Space } from 'antd';
+import { Layout, Menu, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { FC, useContext, useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ import { mq } from '@/common/styles/MediaQuery';
 import { MobileMenu } from './MobileMenu';
 import { ButtonReset } from '@/common/styles/ButtonReset';
 import { Menu as MenuIcon } from '@/components/icons/Menu';
+import { ChevronRight } from '../icons/ChevronRight';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
@@ -68,12 +69,75 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
                 <a>Edit store</a>
               </Link>
             </HeaderLinkWrapper>
-            <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
+            <Popover
+              placement="bottom"
+              content={
+                <div className="-mt-4 flex flex-col">
+                  <Link href="/about" passHref>
+                    <a>About Holaplex</a>
+                  </Link>
+                  <Link
+                    href="https://docs.google.com/document/d/1gVb3kWSSKrx6Iekk-l1uI3IaDpOVQX0nMwut-q1PXKQ/edit"
+                    passHref
+                  >
+                    <a target="_blank">Terms of Service</a>
+                  </Link>
+
+                  <Link
+                    href="https://docs.google.com/document/d/1gRi1OxdCK7V43bnBGRaaSKGZZZs_PcXSFs2zvMI3Rm0/edit"
+                    passHref
+                  >
+                    <a target="_blank">Privacy policy</a>
+                  </Link>
+                </div>
+              }
+            >
+              <a className="flex items-center">
+                About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
+              </a>
+            </Popover>
+            <Popover
+              placement="bottom"
+              content={
+                <div className="-mt-4 flex flex-col">
+                  <Link href="https://holaplex-support.zendesk.com/hc/en-us" passHref>
+                    <a target="_blank">FAQ</a>
+                  </Link>
+                  <Link
+                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407782141971-Set-Up-A-Store"
+                    passHref
+                  >
+                    <a target="_blank">Setting up a store</a>
+                  </Link>
+
+                  <Link
+                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407791450515-Minting-NFTs"
+                    passHref
+                  >
+                    <a target="_blank">Minting NFTS</a>
+                  </Link>
+                  <Link
+                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407792008979-Selling-NFTs"
+                    passHref
+                  >
+                    <a target="_blank">Selling NFTS</a>
+                  </Link>
+                  <Link href="https://holaplex-support.zendesk.com/hc/en-us/requests/new" passHref>
+                    <a target="_blank">Submit a support ticket</a>
+                  </Link>
+                </div>
+              }
+            >
+              <a className="flex items-center">
+                Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
+              </a>
+            </Popover>
+            {/* <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
               <Link href="/about" passHref>
-                <a>About</a>
+                <a>About old</a>
               </Link>
-            </HeaderLinkWrapper>
-            <HeaderLinkWrapper key="faq" active={false}>
+            </HeaderLinkWrapper> */}
+            {/* <HeaderLinkWrapper key="faq" active={false}>
               <a
                 href="https://holaplex-support.zendesk.com/hc/en-us"
                 target="_blank"
@@ -81,7 +145,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               >
                 FAQ
               </a>
-            </HeaderLinkWrapper>
+            </HeaderLinkWrapper> */}
             {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
             {/* {windowDimensions.width > 700 && <SocialLinks />} */}
           </LinkRow>
