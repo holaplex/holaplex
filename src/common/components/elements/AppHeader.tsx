@@ -72,19 +72,19 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             <Popover
               placement="bottom"
               content={
-                <div className="-mt-4 flex flex-col">
+                <div className="-mt-4 flex flex-col space-y-6">
                   <Link href="/about" passHref>
                     <a>About Holaplex</a>
                   </Link>
                   <Link
-                    href="https://docs.google.com/document/d/1gVb3kWSSKrx6Iekk-l1uI3IaDpOVQX0nMwut-q1PXKQ/edit"
+                    href="https://docs.google.com/document/d/1jskpoCdDm7DU2IbeXwRhhl5LGiNhonAx2HsmfJlDsEs"
                     passHref
                   >
                     <a target="_blank">Terms of Service</a>
                   </Link>
 
                   <Link
-                    href="https://docs.google.com/document/d/1gRi1OxdCK7V43bnBGRaaSKGZZZs_PcXSFs2zvMI3Rm0/edit"
+                    href="https://docs.google.com/document/d/12uQU7LbLUd0bY7Nz13-F9cua5Wk8mnRNBlyDzF6gRmo"
                     passHref
                   >
                     <a target="_blank">Privacy policy</a>
@@ -99,7 +99,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             <Popover
               placement="bottom"
               content={
-                <div className="-mt-4 flex flex-col">
+                <div className="-mt-4 flex flex-col space-y-6">
                   <Link href="https://holaplex-support.zendesk.com/hc/en-us" passHref>
                     <a target="_blank">FAQ</a>
                   </Link>
