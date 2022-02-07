@@ -36,7 +36,7 @@ const ActivityLanding = () => {
   }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
-  const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres;
+  const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
   const textOverride = twitterHandle;
 
   const bannerBackgroundImage = !!bannerUrl

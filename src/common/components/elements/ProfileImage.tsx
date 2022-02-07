@@ -24,8 +24,9 @@ export const ProfileImage = () => {
     });
   }, [queryWalletProfile, twitterHandle]);
 
-  const profilePictureUrl = connected ? walletProfile.data?.profile?.profileImageUrlHighres : null;
-
+  const profilePictureUrl = connected
+    ? walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '')
+    : null;
   const [isShowingProfilePopover, setIsShowingProfilePopover] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(popoverRef, () => setIsShowingProfilePopover(false));

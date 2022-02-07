@@ -35,7 +35,7 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
     });
   }, [queryWalletProfile, twitterHandle]);
 
-  const profilePictureUrl = connected ? walletProfile.data?.profile?.profileImageUrlHighres : null;
+  const profilePictureUrl = connected ? walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '') : null;
   const textOverride = connected ? twitterHandle : null;
 
   return (
