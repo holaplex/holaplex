@@ -27,7 +27,11 @@ export const MobileMenu: FC<OnCloseProps> = ({ onCloseClick }) => {
       </MobileHeaderContainer>
       <MenuItems onCloseClick={onCloseClick} />
       <ProfileContainer>
-        {connectedAndInstalledWallet ? <PopoverBoxContents onViewProfile={onCloseClick} /> : <SmallConnectButton />}
+        {connectedAndInstalledWallet ? (
+          <PopoverBoxContents onViewProfile={onCloseClick} />
+        ) : (
+          <SmallConnectButton />
+        )}
       </ProfileContainer>
     </Container>
   );
@@ -46,8 +50,20 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
       <Link passHref href="/about">
         <MenuItemRow onClick={onCloseClick}>About</MenuItemRow>
       </Link>
-      <Link passHref href="/about">
-        <MenuItemRow onClick={onCloseClick}>FAQ</MenuItemRow>
+      <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
+        <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
+          FAQ
+        </MenuItemRow>
+      </Link>
+      <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
+        <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
+          Terms of service
+        </MenuItemRow>
+      </Link>
+      <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
+        <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
+          Privacy policy
+        </MenuItemRow>
       </Link>
     </MarginBox>
   );
