@@ -107,7 +107,10 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               placement="bottom"
               content={
                 <div className="flex flex-col space-y-6">
-                  <Link href="https://holaplex-support.zendesk.com/hc/en-us" passHref>
+                  <Link
+                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407417107475-FAQ"
+                    passHref
+                  >
                     <a target="_blank" className="hover:underline">
                       FAQ
                     </a>
@@ -145,6 +148,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
                 </div>
               }
             >
+              {/* href https://holaplex-support.zendesk.com/hc/en-us */}
               <a className="flex items-center">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
