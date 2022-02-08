@@ -41,7 +41,7 @@ export const WalletPill: FC<WalletPillProps> = ({
   }
 
   return (
-    <Link passHref href={`/profile/${publicKey?.toBase58()}`}>
+    <Link passHref href={`/profiles/${publicKey?.toBase58()}`}>
       <ContainerAnchor onClick={onClick} disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
           {isTwitterHandle(textOverride)
