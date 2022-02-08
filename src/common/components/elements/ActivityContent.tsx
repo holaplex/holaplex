@@ -12,6 +12,7 @@ import { showFirstAndLastFour } from '@/modules/utils/string';
 import { mq } from '@/common/styles/MediaQuery';
 import { maybeImageCDN } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
+import { Unpacked } from '@/types/Unpacked';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -47,7 +48,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   const getEndedAuctions = (myBids: MyBids) => {
     if (!myBids?.length) return [];
-    return myBids.map((myBid) => {
+    const results = myBids.map((myBid) => {
       const latestListingBid = myBid.listing?.bids
         .slice()
         .sort(
@@ -55,8 +56,10 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
             DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
         )?.[0];
-      const didWalletWon =
-        !!myBid.listing?.ended && latestListingBid?.bidderAddress === publicKey?.toString();
+      if (!myBid.listing?.ended) {
+        return null;
+      }
+      const didWalletWon = latestListingBid?.bidderAddress === publicKey?.toString();
       const closedDate = latestListingBid?.lastBidTime;
       return {
         ...myBid,
@@ -68,6 +71,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
         closedDate,
       };
     });
+    return results.filter((item) => !!item) as NonNullable<Unpacked<typeof results>>[];
   };
 
   const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
