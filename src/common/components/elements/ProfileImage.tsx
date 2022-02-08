@@ -30,7 +30,7 @@ export const ProfileImage = () => {
   const [isShowingProfilePopover, setIsShowingProfilePopover] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(popoverRef, () => setIsShowingProfilePopover(false));
-  console.log({ walletProfile });
+
   return (
     <>
       <Popover
