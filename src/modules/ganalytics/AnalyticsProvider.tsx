@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
 import Bugsnag from '@bugsnag/js';

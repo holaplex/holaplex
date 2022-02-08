@@ -1,3 +1,6 @@
+// naughty
+// @ts-nocheck
+
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
 import FontSelect from '@/common/components/elements/FontSelect';
 import Upload from '@/common/components/elements/Upload';
