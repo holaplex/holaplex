@@ -56,9 +56,12 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         {!WHICHDAO && (
           <LinkRow size="large">
             <HeaderLinkWrapper key="mint-nfts" active={false}>
-              <Button onClick={mintModalClick} type="text" noStyle>
+              {/* <Button onClick={mintModalClick} type="text" noStyle>
                 Mint&nbsp;NFTs
-              </Button>
+              </Button> */}
+              <a className="hover:underline focus:underline" onClick={mintModalClick}>
+                Mint NFTs
+              </a>
             </HeaderLinkWrapper>
             <HeaderLinkWrapper
               key="edit"
@@ -66,28 +69,32 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               active={router.pathname == '/storefront/edit'}
             >
               <Link href="/storefront/edit" passHref>
-                <a>Edit store</a>
+                <a className="hover:underline focus:underline">Edit store</a>
               </Link>
             </HeaderLinkWrapper>
             <Popover
               placement="bottom"
               content={
-                <div className="-mt-4 flex flex-col space-y-6">
+                <div className="flex flex-col space-y-6">
                   <Link href="/about" passHref>
-                    <a>About Holaplex</a>
+                    <a className="hover:underline">About Holaplex</a>
                   </Link>
                   <Link
                     href="https://docs.google.com/document/d/1jskpoCdDm7DU2IbeXwRhhl5LGiNhonAx2HsmfJlDsEs"
                     passHref
                   >
-                    <a target="_blank">Terms of Service</a>
+                    <a className="hover:underline" target="_blank">
+                      Terms of Service
+                    </a>
                   </Link>
 
                   <Link
                     href="https://docs.google.com/document/d/12uQU7LbLUd0bY7Nz13-F9cua5Wk8mnRNBlyDzF6gRmo"
                     passHref
                   >
-                    <a target="_blank">Privacy policy</a>
+                    <a className="hover:underline" target="_blank">
+                      Privacy policy
+                    </a>
                   </Link>
                 </div>
               }
@@ -99,31 +106,41 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             <Popover
               placement="bottom"
               content={
-                <div className="-mt-4 flex flex-col space-y-6">
+                <div className="flex flex-col space-y-6">
                   <Link href="https://holaplex-support.zendesk.com/hc/en-us" passHref>
-                    <a target="_blank">FAQ</a>
+                    <a target="_blank" className="hover:underline">
+                      FAQ
+                    </a>
                   </Link>
                   <Link
                     href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407782141971-Set-Up-A-Store"
                     passHref
                   >
-                    <a target="_blank">Setting up a store</a>
+                    <a target="_blank" className="hover:underline">
+                      Setting up a store
+                    </a>
                   </Link>
 
                   <Link
                     href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407791450515-Minting-NFTs"
                     passHref
                   >
-                    <a target="_blank">Minting NFTS</a>
+                    <a target="_blank" className="hover:underline">
+                      Minting NFTS
+                    </a>
                   </Link>
                   <Link
                     href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407792008979-Selling-NFTs"
                     passHref
                   >
-                    <a target="_blank">Selling NFTS</a>
+                    <a target="_blank" className="hover:underline">
+                      Selling NFTS
+                    </a>
                   </Link>
                   <Link href="https://holaplex-support.zendesk.com/hc/en-us/requests/new" passHref>
-                    <a target="_blank">Submit a support ticket</a>
+                    <a target="_blank" className="hover:underline">
+                      Submit a support ticket
+                    </a>
                   </Link>
                 </div>
               }

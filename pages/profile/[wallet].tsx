@@ -1,5 +1,7 @@
 import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Image from 'next/image';
+import Head from 'next/head';
+import { GetServerSideProps } from 'next';
 import { useAppHeaderSettings } from '@/common/components/elements/AppHeaderSettingsProvider';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
@@ -9,10 +11,20 @@ import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useRouter } from 'next/router';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
+import { showFirstAndLastFour } from '@/modules/utils/string';
 
-const ActivityLanding = () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // ...
+  return {
+    props: {
+      wallet: context.query.wallet,
+    },
+  };
+};
+
+const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const router = useRouter();
-  const { wallet } = router.query;
+  // const { wallet } = router.query;
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
@@ -54,6 +66,14 @@ const ActivityLanding = () => {
 
   return (
     <>
+      <Head>
+        <title>{showFirstAndLastFour(wallet)}&apos;s profile | Holaplex</title>
+        <meta
+          property="description"
+          key="description"
+          content="View activity for this, or any other pubkey, in the Holaplex ecosystem."
+        />
+      </Head>
       <HeadingContainer>
         <Banner style={{ backgroundImage: bannerBackgroundImage }} />
       </HeadingContainer>
