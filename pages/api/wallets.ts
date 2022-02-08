@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           data,
         });
         return res.status(201).json(wallet);
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           return res.status(422).end(error.message);
         } else {

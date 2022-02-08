@@ -16,4 +16,6 @@ const plugins = [
   ],
 ];
 
-module.exports = withPlugins(plugins, {reactStrictMode: false})
+module.exports = withPlugins(plugins, {reactStrictMode: false, images: {
+  domains: ['pbs.twimg.com', 'arweave.net', 'ipfs.dweb.link'],
+}})

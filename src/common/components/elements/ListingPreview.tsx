@@ -10,6 +10,7 @@ import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 import Price from '@/common/components/elements/Price';
+import { maybeCDN, maybeImageCDN } from '@/common/utils';
 import AuctionCountdown from './Countdown';
 
 const Square = styled(Row)`
@@ -112,17 +113,6 @@ const CustomImageMask = styled.div`
 
   }
 `;
-
-const captureCid = /https:\/\/(.*).ipfs.dweb.*$/;
-const maybeCDN = (uri: string) => {
-  const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IPFS_CDN_HOST}/$1`);
-  return cdnURI ?? uri;
-};
-
-const maybeImageCDN = (uri: string) => {
-  const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/$1`);
-  return cdnURI ?? uri;
-};
 
 // returns lamports
 export function getListingPrice(listing: Listing) {
