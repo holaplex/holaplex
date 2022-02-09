@@ -417,7 +417,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       <CenteredContentCol>
         <Section>
           <Marketing xs={22} md={16}>
-            <HeroTitle>LA Hacker House</HeroTitle>
+            <HeroTitle>Seattle Hacker House</HeroTitle>
             <h3>Feb 9-13, 2022</h3>
             <br />
             <p>
