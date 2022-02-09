@@ -55,7 +55,7 @@ const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
 const DAO_LIST_IPFS =
   process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
-  'https://ipfs.io/ipfs/bafkreigv7gp6k5kusw6hehumszm43xllkeure3423ykzu2jpbbfdg7dlte';
+  'https://ipfs.io/ipfs/bafkreicphl42ovhrelvthxvsmj7hqb36etwpg26zcfg7vvpwa6i5ajxsbi';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
@@ -418,7 +418,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section>
           <Marketing xs={22} md={16}>
             <HeroTitle>LA Hacker House</HeroTitle>
-            <h3>Feb 1–5, 2022</h3>
+            <h3>Feb 9-13, 2022</h3>
             <br />
             <p>
               What began as a getaway for developers to hunker down and buidl at Solana&apos;s

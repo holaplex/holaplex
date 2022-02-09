@@ -64,7 +64,7 @@ export function AppHeader() {
       <HeaderTitle>
         <Link href="/" passHref>
           <a>
-            👋&nbsp;&nbsp;<span>Holaplex × LA Hacker House</span>
+            👋&nbsp;&nbsp;<span>Holaplex × Seattle Hacker House</span>
           </a>
         </Link>
       </HeaderTitle>

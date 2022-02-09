@@ -72,7 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Holaplex × LA Hacker House</title>
+        <title>Holaplex × Seattle Hacker House</title>
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
