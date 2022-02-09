@@ -23,8 +23,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const ActivityLanding = ({ wallet }: { wallet: string }) => {
-  const router = useRouter();
-  // const { wallet } = router.query;
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
   const { toggleDisableMarginBottom } = useAppHeaderSettings();
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);

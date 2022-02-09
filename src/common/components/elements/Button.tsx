@@ -120,15 +120,16 @@ export const SelectWalletButton = styled(WalletModalButton).attrs({
 })`
   ${ButtonReset};
   width: 88px;
-  height: 32px;
-  border-radius: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
+  border-radius: 18px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 3rem;
+  padding-right: 3rem;
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 18px;
+  line-height: 18px;
   color: #171717;
   background: #fff;
   display: flex;

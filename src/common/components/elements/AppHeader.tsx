@@ -1,11 +1,11 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Layout, Menu, Popover, Space } from 'antd';
+import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import Button, { ButtonV2, SelectWalletButton } from '@/common/components/elements/Button';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { SelectWalletButton } from '@/common/components/elements/Button';
 import { Wallet } from '@/modules/wallet/types';
 import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -16,6 +16,9 @@ import { MobileMenu } from './MobileMenu';
 import { ButtonReset } from '@/common/styles/ButtonReset';
 import { Menu as MenuIcon } from '@/components/icons/Menu';
 import { ChevronRight } from '../icons/ChevronRight';
+import { toast } from 'react-toastify';
+import { Check } from '../icons/Check';
+import { Close } from '../icons/Close';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
@@ -27,10 +30,57 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
+  const { connected, wallet: userWallet, connect: connectUserWallet, publicKey } = useWallet();
   const { connect } = useContext(WalletContext);
+  const [didShowConnectedToast, setDidShowConnectedToast] = useState(false);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
+
+  const handleViewProfile = useCallback(() => {
+    router.push(`/profiles/${publicKey!.toBase58()}`);
+  }, [publicKey, router]);
+
+  useEffect(() => {
+    if (!connected || didShowConnectedToast) {
+      return;
+    }
+    setDidShowConnectedToast(true);
+    toast(
+      <>
+        <CloseButtonContainer>
+          <Check color="#32D583" />
+        </CloseButtonContainer>
+        &nbsp;Wallet connected successfully! View profile
+      </>,
+      {
+        onClick: handleViewProfile,
+        hideProgressBar: true,
+        autoClose: 10000,
+        position: 'bottom-center',
+        closeButton: () => (
+          <CloseButtonContainer>
+            <Close color="#fff" />
+          </CloseButtonContainer>
+        ),
+        bodyStyle: {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        style: {
+          background: 'rgba(22, 22, 22, 0.8)',
+          backdropFilter: 'blur(40px)',
+          color: 'white',
+          fontFamily: 'Inter',
+          fontStyle: 'normal',
+          fontWeight: 'normal',
+          fontSize: '12px',
+          lineHeight: '16px',
+        },
+      }
+    );
+  }, [connected, didShowConnectedToast, handleViewProfile]);
+
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
     connectUserWallet();
@@ -215,7 +265,7 @@ const MobileHeaderContainer = styled.div`
   padding-left: 24px;
   padding-right: 24px;
   min-height: 72px;
-  ${mq('sm')} {
+  ${mq('md')} {
     display: none;
   }
 `;
@@ -253,7 +303,7 @@ type CustomHeaderProps = {
 
 const StyledHeader = styled(Header)<CustomHeaderProps>`
   display: none;
-  ${mq('sm')} {
+  ${mq('md')} {
     ${sv.flexRow};
     margin-top: 5px;
     margin-left: 5px;
@@ -274,4 +324,11 @@ const LinkRow = styled(Space)`
       display: none;
     }
   }
+`;
+
+const CloseButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
