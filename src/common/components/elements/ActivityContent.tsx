@@ -24,12 +24,19 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
   useEffect(() => {
     if (!publicKey) return;
-    setDidPerformInitialLoad(true);
-    queryActivityPage({
-      variables: {
-        address: publicKey.toString(),
-      },
-    });
+
+    try {
+      console.log('trying to query activity data');
+      queryActivityPage({
+        variables: {
+          address: publicKey.toString(),
+        },
+      });
+      setDidPerformInitialLoad(true);
+    } catch (error) {
+      console.error(error);
+      console.log('faield to query activity for pubkey', publicKey.toString());
+    }
   }, [publicKey, queryActivityPage]);
 
   const isLoading = !didPerformInitialLoad || activityPage.loading;
@@ -294,7 +301,7 @@ const ActivityBox: FC<ActivityBoxProps> = ({
               <CenteredCol>
                 <NFTImage
                   unoptimized
-                  isPFPImage={isPFPImage}
+                  $isPFPImage={isPFPImage}
                   width={52}
                   height={52}
                   src={relatedImageUrl}
@@ -311,7 +318,7 @@ const ActivityBox: FC<ActivityBoxProps> = ({
           <CenteredCol>
             <NFTImage
               unoptimized
-              isPFPImage={isPFPImage}
+              $isPFPImage={isPFPImage}
               width={52}
               height={52}
               src={relatedImageUrl}
@@ -426,10 +433,10 @@ const ActivityBoxContainer = styled.div<{ disableMarginTop: boolean }>`
         `}
 `;
 
-const NFTImage = styled(Image)<{ isPFPImage: boolean }>`
+const NFTImage = styled(Image)<{ $isPFPImage: boolean }>`
   object-fit: contain;
-  ${({ isPFPImage }) =>
-    isPFPImage
+  ${({ $isPFPImage }) =>
+    $isPFPImage
       ? css`
           border-radius: 50%;
         `

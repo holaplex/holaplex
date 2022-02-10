@@ -95,7 +95,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   return (
     <>
-      <StyledHeader disableMarginBottom={disableMarginBottom}>
+      <StyledHeader $disableMarginBottom={disableMarginBottom}>
         <HeaderTitle>
           <Link href="/" passHref>
             <a>
@@ -298,7 +298,7 @@ const HeaderTitle = styled.div`
 const { Header } = Layout;
 
 type CustomHeaderProps = {
-  disableMarginBottom?: boolean;
+  $disableMarginBottom?: boolean;
 };
 
 const StyledHeader = styled(Header)<CustomHeaderProps>`
@@ -308,7 +308,7 @@ const StyledHeader = styled(Header)<CustomHeaderProps>`
     margin-top: 5px;
     margin-left: 5px;
     margin-right: 5px;
-    margin-bottom: ${(props) => (props.disableMarginBottom ? ' 0px' : '40px')};
+    margin-bottom: ${(props) => (props.$disableMarginBottom ? ' 0px' : '40px')};
     padding: 1.25rem;
   }
 `;

@@ -17,6 +17,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // ...
   return {
     props: {
+      // query params must be gotten serverside to be available on initial render
       wallet: context.query.wallet,
     },
   };
@@ -31,11 +32,16 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
 
   useEffect(() => {
     if (!twitterHandle) return;
-    queryWalletProfile({
-      variables: {
-        handle: twitterHandle,
-      },
-    });
+    try {
+      queryWalletProfile({
+        variables: {
+          handle: twitterHandle,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      console.log('failed to fetch wallet');
+    }
   }, [queryWalletProfile, twitterHandle]);
 
   useEffect(() => {
