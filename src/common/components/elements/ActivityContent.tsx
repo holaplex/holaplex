@@ -13,6 +13,7 @@ import { mq } from '@/common/styles/MediaQuery';
 import { maybeImageCDN } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
 import { Unpacked } from '@/types/Unpacked';
+import Bugsnag from '@bugsnag/js';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -24,18 +25,18 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
   useEffect(() => {
     if (!publicKey) return;
+    setDidPerformInitialLoad(true);
 
     try {
-      console.log('trying to query activity data');
       queryActivityPage({
         variables: {
           address: publicKey.toString(),
         },
       });
-      setDidPerformInitialLoad(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       console.log('faield to query activity for pubkey', publicKey.toString());
+      Bugsnag.notify(error);
     }
   }, [publicKey, queryActivityPage]);
 

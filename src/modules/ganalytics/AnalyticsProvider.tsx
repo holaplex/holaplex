@@ -102,9 +102,11 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     }
 
     if (BUGSNAG_API_KEY) {
+      const devEnv = process.env.NEXT_PUBLIC_ENVIRONMENT;
       Bugsnag.start({
         appVersion: '0.1.0', // TODO: Link to app version
         apiKey: BUGSNAG_API_KEY,
+        releaseStage: devEnv || 'unknown',
         plugins: [new BugsnagPluginReact()],
         onError(event) {
           if (pubkey) {

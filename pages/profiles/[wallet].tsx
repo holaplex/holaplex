@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
 import { showFirstAndLastFour } from '@/modules/utils/string';
+import Bugsnag from '@bugsnag/js';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // ...
@@ -38,9 +39,10 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
           handle: twitterHandle,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       console.log('failed to fetch wallet');
+      Bugsnag.notify(error);
     }
   }, [queryWalletProfile, twitterHandle]);
 
