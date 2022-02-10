@@ -15,9 +15,14 @@ export interface PageMetaData<F = ArweaveFile> {
   favicon: F;
 }
 
+interface Integrations<F = ArweaveFile> {
+  bidsplitEnabled: string;
+}
+
 export interface Storefront<F = ArweaveFile> {
   theme: StorefrontTheme<F>;
   meta: PageMetaData<F>;
   subdomain: string;
   pubkey: string;
+  integrations: Integrations<F>;
 }
