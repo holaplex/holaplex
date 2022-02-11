@@ -1,42 +1,8 @@
 import ArweaveSDK from '../src/modules/arweave/client';
 import singletons from '../src/modules/singletons';
-import { ajvParse } from '../src/modules/utils/json';
-import { SCHEMAS } from '../src/modules/singletons/json-schemas';
-import { resultThenAsync } from '../src/modules/utils/result';
-import {
-  parseNotarized,
-  unpackNotarized,
-  verifyNaclSelfContained,
-} from '../src/modules/notary/server';
-import { PublicKey } from '@solana/web3.js';
-import { formatMessage } from '../src/modules/storefront/put-storefront';
 import type { Storefront } from '../src/modules/storefront/types';
 import { stylesheet } from '../src/modules/theme';
 import fs from 'fs';
-
-const storefrontJSON = fs.readFileSync('./hacks/storefront.json', 'utf-8');
-
-console.log('storefront JSON:', storefrontJSON);
-
-const verifyPutParams = async (params: any) => {
-  const schemas = singletons.jsonSchemas;
-  const parseStorefront = ajvParse(schemas.parser(SCHEMAS.storefront));
-
-  const payloadRes = await resultThenAsync(parseNotarized<Storefront>(params), (params) =>
-    unpackNotarized(
-      params,
-      verifyNaclSelfContained((s) => new PublicKey(s.pubkey).toBuffer()),
-      { parse: parseStorefront, format: formatMessage }
-    )
-  );
-
-  if (payloadRes.err !== undefined) {
-    throw new Error(`Invalid request parameters: ${payloadRes.err}`);
-  }
-  const { ok: storefront } = payloadRes;
-
-  return { storefront };
-};
 
 const postArweaveStorefront = async (storefront: Storefront) => {
   const { arweave, jwk, address } = await singletons.arweave;
@@ -79,9 +45,11 @@ const postArweaveStorefront = async (storefront: Storefront) => {
 };
 
 (async () => {
-  const { storefront } = await verifyPutParams(storefrontJSON);
+  const storefrontJSON = JSON.parse(
+    fs.readFileSync('./hacks/storefront.json', 'utf-8')
+  ) as Storefront;
 
-  await postArweaveStorefront(storefront);
+  console.log('storefront JSON:', storefrontJSON);
 
-  return storefront;
+  await postArweaveStorefront(storefrontJSON);
 })();
