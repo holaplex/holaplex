@@ -57,7 +57,7 @@ export type Listing = {
   bids: Array<Bid>;
   ended: Scalars['Boolean'];
   nfts: Array<Nft>;
-  storeOwner: Scalars['String'];
+  // storeOwner: Scalars['String'];
   storefront?: Maybe<Storefront>;
 };
 
@@ -88,32 +88,26 @@ export type QueryRoot = {
   wallet?: Maybe<Wallet>;
 };
 
-
 export type QueryRootCreatorArgs = {
   address: Scalars['String'];
 };
 
-
 export type QueryRootNftArgs = {
   address: Scalars['String'];
 };
-
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
   creators: Array<Scalars['String']>;
 };
 
-
 export type QueryRootProfileArgs = {
   handle: Scalars['String'];
 };
 
-
 export type QueryRootStorefrontArgs = {
   subdomain: Scalars['String'];
 };
-
 
 export type QueryRootWalletArgs = {
   address: Scalars['String'];
@@ -141,62 +135,113 @@ export type ActivityPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
 
-
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeOwner: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
+export type ActivityPageQuery = {
+  __typename?: 'QueryRoot';
+  wallet?: {
+    __typename: 'Wallet';
+    address: string;
+    bids: Array<{
+      __typename: 'Bid';
+      listingAddress: string;
+      bidderAddress: string;
+      lastBidTime: string;
+      lastBidAmount: any;
+      cancelled: boolean;
+      listing?: {
+        __typename?: 'Listing';
+        address: string;
+        // storeOwner: string;
+        ended: boolean;
+        storefront?: {
+          __typename: 'Storefront';
+          ownerAddress: string;
+          subdomain: string;
+          title: string;
+          description: string;
+          faviconUrl: string;
+          logoUrl: string;
+          bannerUrl: string;
+        } | null;
+        nfts: Array<{
+          __typename: 'Nft';
+          address: string;
+          name: string;
+          description: string;
+          image: string;
+        }>;
+        bids: Array<{
+          __typename?: 'Bid';
+          bidderAddress: string;
+          lastBidTime: string;
+          lastBidAmount: any;
+          cancelled: boolean;
+          listingAddress: string;
+        }>;
+      } | null;
+    }>;
+  } | null;
+};
 
 export type WalletProfileQueryVariables = Exact<{
   handle: Scalars['String'];
 }>;
 
-
-export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
-
+export type WalletProfileQuery = {
+  __typename?: 'QueryRoot';
+  profile?: {
+    __typename?: 'Profile';
+    handle: string;
+    profileImageUrlLowres: string;
+    profileImageUrlHighres: string;
+    bannerImageUrl: string;
+  } | null;
+};
 
 export const ActivityPageDocument = gql`
-    query activityPage($address: String!) {
-  wallet(address: $address) {
-    __typename
-    address
-    bids {
+  query activityPage($address: String!) {
+    wallet(address: $address) {
       __typename
-      listingAddress
-      bidderAddress
-      lastBidTime
-      lastBidAmount
-      cancelled
-      listing {
-        address
-        storeOwner
-        ended
-        storefront {
-          __typename
-          ownerAddress
-          subdomain
-          title
-          description
-          faviconUrl
-          logoUrl
-          bannerUrl
-        }
-        nfts {
-          __typename
+      address
+      bids {
+        __typename
+        listingAddress
+        bidderAddress
+        lastBidTime
+        lastBidAmount
+        cancelled
+        listing {
           address
-          name
-          description
-          image
-        }
-        bids {
-          bidderAddress
-          lastBidTime
-          lastBidAmount
-          cancelled
-          listingAddress
+          # storeOwner
+          ended
+          storefront {
+            __typename
+            ownerAddress
+            subdomain
+            title
+            description
+            faviconUrl
+            logoUrl
+            bannerUrl
+          }
+          nfts {
+            __typename
+            address
+            name
+            description
+            image
+          }
+          bids {
+            bidderAddress
+            lastBidTime
+            lastBidAmount
+            cancelled
+            listingAddress
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useActivityPageQuery__
@@ -214,27 +259,40 @@ export const ActivityPageDocument = gql`
  *   },
  * });
  */
-export function useActivityPageQuery(baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(ActivityPageDocument, options);
-      }
-export function useActivityPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(ActivityPageDocument, options);
-        }
+export function useActivityPageQuery(
+  baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(
+    ActivityPageDocument,
+    options
+  );
+}
+export function useActivityPageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(
+    ActivityPageDocument,
+    options
+  );
+}
 export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery>;
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
-export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
+export type ActivityPageQueryResult = Apollo.QueryResult<
+  ActivityPageQuery,
+  ActivityPageQueryVariables
+>;
 export const WalletProfileDocument = gql`
-    query walletProfile($handle: String!) {
-  profile(handle: $handle) {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-    bannerImageUrl
+  query walletProfile($handle: String!) {
+    profile(handle: $handle) {
+      handle
+      profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useWalletProfileQuery__
@@ -252,14 +310,27 @@ export const WalletProfileDocument = gql`
  *   },
  * });
  */
-export function useWalletProfileQuery(baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
-      }
-export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
-        }
+export function useWalletProfileQuery(
+  baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(
+    WalletProfileDocument,
+    options
+  );
+}
+export function useWalletProfileLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(
+    WalletProfileDocument,
+    options
+  );
+}
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
-export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export type WalletProfileQueryResult = Apollo.QueryResult<
+  WalletProfileQuery,
+  WalletProfileQueryVariables
+>;
