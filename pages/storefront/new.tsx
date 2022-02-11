@@ -28,7 +28,7 @@ import {
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
 import { UploadOutlined } from '@ant-design/icons';
-import { Card, Col, Form, Input, Row, Space } from 'antd';
+import { Card, Col, Form, Input, Row, Space, Switch } from 'antd';
 import { useRouter } from 'next/router';
 import {
   findIndex,
@@ -67,6 +67,7 @@ export default function New() {
     { name: ['meta', 'title'], value: '' },
     { name: ['meta', 'description'], value: '' },
     { name: ['integrations', 'crossmintClientId'], value: uuidv4() },
+    { name: ['integrations', 'bidsplitEnabled'], value: 'true' },
   ]);
 
   if (isNil(solana) || isNil(wallet)) {
@@ -262,6 +263,34 @@ export default function New() {
         rules={[{ required: true, message: 'Please enter a page description.' }]}
       >
         <Input.TextArea />
+      </Form.Item>
+      <Form.Item
+        label={
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <h3
+              style={{
+                color: values.theme.primaryColor,
+                marginRight: '10px',
+                marginBottom: '0px',
+              }}
+            >
+              {'✦ NEW'}
+            </h3>
+            <p style={{ verticalAlign: 'middle', margin: '0px' }}>
+              Enable group bids on your NFTs via{' '}
+              <a href="https://app.bridgesplit.com/bidsplit">Bidsplit</a>
+            </p>
+          </div>
+        }
+        name={['integrations', 'bidsplitEnabled']}
+      >
+        <Switch defaultChecked={values.integrations.bidsplitEnabled == 'true'} />
       </Form.Item>
     </>
   );

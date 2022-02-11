@@ -56,6 +56,7 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   tx.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
   tx.addTag('holaplex:theme:font:text', storefront.theme.textFont);
   tx.addTag('crossmint:clientId', storefront.integrations?.crossmintClientId);
+  tx.addTag('bridgesplit:bidsplitEnabled', storefront.integrations?.bidsplitEnabled);
   tx.addTag('Arweave-App', 'holaplex');
 
   if (storefront.theme.banner) {

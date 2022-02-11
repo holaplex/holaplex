@@ -17,6 +17,7 @@ export interface PageMetaData<F = ArweaveFile> {
 
 export interface Integrations<F = ArweaveFile> {
   crossmintClientId: string;
+  bidsplitEnabled: string;
 }
 
 export interface Storefront<F = ArweaveFile> {

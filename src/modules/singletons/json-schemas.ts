@@ -125,6 +125,7 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
       integrations: {
         properties: {
           crossmintClientId: { type: 'string' },
+          bidsplitEnabled: { type: 'string' },
         },
       },
     },

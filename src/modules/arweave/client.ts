@@ -111,6 +111,7 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
               },
               integrations: {
                 crossmintClientId: tags['crossmint:clientId'] || null,
+                bidsplitEnabled: tags['bridgesplit:bidsplitEnabled'] || null,
               },
             },
           };
@@ -256,6 +257,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
       transaction.addTag('holaplex:theme:font:text', storefront.theme.textFont);
       transaction.addTag('crossmint:clientId', storefront.integrations.crossmintClientId);
+      transaction.addTag('bridgesplit:bidsplitEnabled', storefront.integrations.bidsplitEnabled);
       transaction.addTag('Arweave-App', 'holaplex');
 
       if (storefront.theme.banner) {
