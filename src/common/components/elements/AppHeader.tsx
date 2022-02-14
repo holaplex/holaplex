@@ -19,6 +19,7 @@ import { ChevronRight } from '../icons/ChevronRight';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
 import { Close } from '../icons/Close';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
@@ -38,60 +39,35 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
     disconnecting,
   } = useWallet();
   const { connect } = useContext(WalletContext);
-  const [didShowConnectedToast, setDidShowConnectedToast] = useState(false);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
+
+  const { visible, setVisible } = useWalletModal();
 
   const handleViewProfile = useCallback(() => {
     router.push(`/profiles/${publicKey!.toBase58()}`);
   }, [publicKey, router]);
 
   useEffect(() => {
-    if (disconnecting) {
-      setDidShowConnectedToast(false);
+    console.log('connected effect', connected);
+    if (connected) {
+      toast(
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-white" onClick={handleViewProfile}>
+            <Check color="#32D583" className="mr-2" />
+            <div>
+              Wallet connected successfully!{' '}
+              <span className="font-semibold underline">View profile</span>
+            </div>
+          </div>
+        </div>,
+        {
+          toastId: 'connection-success',
+        }
+      );
     }
-  }, [disconnecting]);
-
-  useEffect(() => {
-    if (!connected || didShowConnectedToast) {
-      return;
-    }
-    setDidShowConnectedToast(true);
-    toast(
-      <>
-        <CloseButtonContainer>
-          <Check color="#32D583" />
-        </CloseButtonContainer>
-        &nbsp;Wallet connected successfully! View profile
-      </>,
-      {
-        onClick: handleViewProfile,
-        hideProgressBar: true,
-        autoClose: 10000,
-        position: 'bottom-right',
-        closeButton: () => (
-          <CloseButtonContainer>
-            <Close color="#fff" />
-          </CloseButtonContainer>
-        ),
-        bodyStyle: {
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-        style: {
-          background: 'rgba(22, 22, 22, 0.8)',
-          backdropFilter: 'blur(40px)',
-          color: 'white',
-          fontFamily: 'Inter',
-          fontStyle: 'normal',
-          fontWeight: 'normal',
-          fontSize: '12px',
-          lineHeight: '16px',
-        },
-      }
-    );
-  }, [connected, didShowConnectedToast, handleViewProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connected]);
 
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
@@ -210,27 +186,21 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
                 </div>
               }
             >
-              {/* href https://holaplex-support.zendesk.com/hc/en-us */}
               <a className="flex items-center">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
-            {/* <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
-              <Link href="/about" passHref>
-                <a>About old</a>
-              </Link>
-            </HeaderLinkWrapper> */}
-            {/* <HeaderLinkWrapper key="faq" active={false}>
-              <a
-                href="https://holaplex-support.zendesk.com/hc/en-us"
-                target="_blank"
-                rel="noreferrer"
+
+            {connectedAndInstalledWallet ? (
+              <ProfileImage />
+            ) : (
+              <button
+                className="rounded-full bg-white px-8 py-2 text-sm text-black"
+                onClick={() => setVisible(!visible)}
               >
-                FAQ
-              </a>
-            </HeaderLinkWrapper> */}
-            {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
-            {/* {windowDimensions.width > 700 && <SocialLinks />} */}
+                Connect
+              </button>
+            )}
           </LinkRow>
         )}
       </StyledHeader>

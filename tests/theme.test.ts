@@ -1,5 +1,4 @@
 import { stylesheet } from '../src/modules/theme'
-//@ts-ignore
 import { expect } from 'chai'
 
 describe('stylesheet', () => {

@@ -296,7 +296,7 @@ const ActivityBox: FC<ActivityBoxProps> = ({
   return (
     <>
       <ShowOnMobile display="block">
-        <Link href={href}>
+        <Link href={href} passHref>
           <a>
             <ActivityBoxContainer disableMarginTop={disableMarginTop}>
               <CenteredCol>

@@ -31,6 +31,11 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
 
+  const [{ pfp, banner }, setPfpAndBanner] = useState({
+    pfp: '/images/gradients/gradient-3.png',
+    banner: 'url(/images/gradients/gradient-5.png)', // TODO: Fetch from wallet (DERIVE)
+  });
+
   useEffect(() => {
     if (!twitterHandle) return;
     try {
@@ -55,12 +60,26 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
-  const textOverride = twitterHandle;
 
   const bannerBackgroundImage = !!bannerUrl
     ? `url(${bannerUrl})`
     : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
   const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+
+  useEffect(() => {
+    //   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
+    //   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
+
+    const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+    const bannerBackgroundImage = !!bannerUrl
+      ? `url(${bannerUrl})`
+      : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
+
+    setPfpAndBanner({
+      pfp: profilePictureImage,
+      banner: bannerBackgroundImage,
+    });
+  }, [imageUrl, bannerUrl]);
 
   const getPublicKeyFromWalletOnUrl = () => {
     try {

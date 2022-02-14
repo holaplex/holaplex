@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import React, { useContext, useEffect, useState } from 'react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';

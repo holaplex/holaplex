@@ -12,6 +12,7 @@ import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
+import { Close } from '@/common/components/icons/Close';
 import {
   AnalyticsProvider,
   OLD_GOOGLE_ANALYTICS_ID,
@@ -119,14 +120,21 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
         />
       </Head>
-      <ToastContainer autoClose={15000} />
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={true}
+        position={'bottom-right'}
+        className="w-96   font-sans text-sm text-white"
+        toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
+        closeButton={() => <Close color="#fff" />}
+      />
       <ApolloProvider client={apolloClient}>
         <ConnectionProvider endpoint={endpoint}>
           {/*
           This competes with the other WalletProvider. We need to 
           consolidate into using the one directly from solana-wallet-adapter.
         */}
-          <WalletProviderSolana wallets={wallets} autoConnect>
+          <WalletProviderSolana wallets={wallets}>
             <WalletModalProvider>
               <AppHeaderSettingsProvider>
                 <WalletProvider>
