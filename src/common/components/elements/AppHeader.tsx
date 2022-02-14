@@ -29,7 +29,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   const router = useRouter();
   const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
   const { connect } = useContext(WalletContext);
-  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
+  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed || userWallet?.readyState === WalletReadyState.Loadable;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
