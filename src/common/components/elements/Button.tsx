@@ -119,12 +119,11 @@ export const SelectWalletButton = styled(WalletModalButton).attrs({
   children: 'Connect',
 })`
   ${ButtonReset};
-  width: 88px;
   border-radius: 18px;
   padding-top: 5px;
   padding-bottom: 5px;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;

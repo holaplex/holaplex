@@ -30,7 +30,13 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, wallet: userWallet, connect: connectUserWallet, publicKey } = useWallet();
+  const {
+    connected,
+    wallet: userWallet,
+    connect: connectUserWallet,
+    publicKey,
+    disconnecting,
+  } = useWallet();
   const { connect } = useContext(WalletContext);
   const [didShowConnectedToast, setDidShowConnectedToast] = useState(false);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
@@ -39,6 +45,12 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   const handleViewProfile = useCallback(() => {
     router.push(`/profiles/${publicKey!.toBase58()}`);
   }, [publicKey, router]);
+
+  useEffect(() => {
+    if (disconnecting) {
+      setDidShowConnectedToast(false);
+    }
+  }, [disconnecting]);
 
   useEffect(() => {
     if (!connected || didShowConnectedToast) {
@@ -56,7 +68,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         onClick: handleViewProfile,
         hideProgressBar: true,
         autoClose: 10000,
-        position: 'bottom-center',
+        position: 'bottom-right',
         closeButton: () => (
           <CloseButtonContainer>
             <Close color="#fff" />
