@@ -12,6 +12,7 @@ import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
+import { Close } from '@/common/components/icons/Close';
 import {
   AnalyticsProvider,
   OLD_GOOGLE_ANALYTICS_ID,
@@ -38,7 +39,6 @@ import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
 
 import '@solana/wallet-adapter-react-ui/styles.css';
-import { Close } from '@/common/components/icons/Close';
 
 const { Content } = Layout;
 
@@ -121,12 +121,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <ToastContainer
-        autoClose={15000}
+        autoClose={5000}
         hideProgressBar={true}
         position={'bottom-right'}
         className="w-96   font-sans text-sm text-white"
         toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
-        closeButton={<Close color="#fff" />}
+        closeButton={() => <Close color="#fff" />}
       />
       <ApolloProvider client={apolloClient}>
         <ConnectionProvider endpoint={endpoint}>

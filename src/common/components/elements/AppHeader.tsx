@@ -43,13 +43,15 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   }, [publicKey, router]);
 
   useEffect(() => {
+    console.log('connected effect', connected);
     if (connected) {
       toast(
         <div className="flex items-center justify-between">
           <div className="flex items-center text-white" onClick={handleViewProfile}>
             <Check color="#32D583" className="mr-2" />
             <div>
-              Wallet connected successfully! <span className="font-semibold ">View profile</span>
+              Wallet connected successfully!{' '}
+              <span className="font-semibold underline">View profile</span>
             </div>
           </div>
         </div>,
@@ -58,7 +60,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         }
       );
     }
-  }, [connected, handleViewProfile]);
+  }, [connected]);
 
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
