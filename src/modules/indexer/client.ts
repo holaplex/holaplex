@@ -1,6 +1,7 @@
 import { compose, filter, sortWith, prop, pipe, descend, not, ascend, contains } from 'ramda';
 
-const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
+const INDEXER_URL =
+  (process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string) || 'https://api.holaplex.com/';
 
 export interface Creator {
   address: string;
