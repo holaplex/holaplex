@@ -17,6 +17,7 @@ import Bugsnag from '@bugsnag/js';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -24,8 +25,10 @@ const randomBetween = (min: number, max: number) =>
 export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
   const { data: twitterHandle } = useTwitterHandle(publicKey);
   const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
-
+  const [activityFilter, setActivityFilter] = useState('');
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
+  const { publicKey: connectedPubkey } = useWallet();
+
   useEffect(() => {
     if (!publicKey) return;
     setDidPerformInitialLoad(true);
@@ -86,6 +89,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   };
 
   const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
+    console.log('get displayname', { twitterHandle, pubKey, connectedPubkey });
+    if (connectedPubkey?.toBase58() === pubKey?.toBase58()) return 'You';
     if (twitterHandle) return twitterHandle;
     if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
     return 'Loading';
@@ -101,6 +106,18 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
         )
     : [];
 
+  const filteredItems = items.filter(
+    ({ listing }) =>
+      !activityFilter ||
+      [
+        listing?.storefront?.subdomain,
+        listing?.storefront?.title,
+        listing?.nfts.map((nft) => nft.name),
+      ]
+        .flat()
+        .some((word) => word?.includes(activityFilter))
+  );
+
   return (
     <ActivityContainer>
       <div className="mb-4 flex flex-1">
@@ -111,9 +128,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           <div className="relative w-full text-gray-400 focus-within:text-gray-600">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
               {/* <SearchIcon className="h-5 w-5" aria-hidden="true" /> */}
-              <FeatherIcon icon="search" />
+              <FeatherIcon icon="search" aria-hidden="true" />
             </div>
             <input
+              value={activityFilter}
+              onChange={(e) => setActivityFilter(e.target.value)}
               id="search-field"
               className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
               placeholder="Search"
@@ -138,8 +157,15 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           </>
         ) : hasItems ? (
           <>
-            <TextInput2 id="activity-search" label="activity search" hideLabel />
-            {items.map((bid, i) => (
+            <TextInput2
+              id="activity-search"
+              label="activity search"
+              hideLabel
+              value={activityFilter}
+              onChange={(e) => setActivityFilter(e.target.value)}
+              leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+            />
+            {filteredItems.map((bid, i) => (
               <ActivityBox
                 key={i}
                 relatedImageUrl={

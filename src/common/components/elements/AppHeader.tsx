@@ -49,7 +49,6 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   }, [publicKey, router]);
 
   useEffect(() => {
-    console.log('connected effect', connected);
     if (connected) {
       toast(
         <div className="flex items-center justify-between">
