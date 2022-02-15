@@ -3,9 +3,9 @@ import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { isNil } from 'ramda';
 import { Storefront } from '@/modules/storefront/types';
-import { Wallet } from '@/modules/wallet/types';
 import { useRouter } from 'next/router';
 import { StorefrontContext } from './context';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 type StorefrontProviderChildrenProps = {
   searching: boolean;
@@ -13,18 +13,19 @@ type StorefrontProviderChildrenProps = {
 };
 
 type StorefrontProviderProps = {
-  wallet?: Wallet;
   children: (props: StorefrontProviderChildrenProps) => React.ReactElement;
 };
 
-export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps) => {
+export const StorefrontProvider = ({ children }: StorefrontProviderProps) => {
   const [searching, setSearching] = useState(false);
   const [storefront, setStorefront] = useState<Storefront>();
   const arweave = initArweave();
   const router = useRouter();
+  const { wallet, publicKey} = useWallet();
 
   useEffect(() => {
-    if (!process.browser || !wallet) {
+    const pub_key = publicKey?.toString();
+    if (!process.browser || !pub_key) {
       return;
     }
 
@@ -32,7 +33,7 @@ export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps
 
     arweaveSDK
       .using(arweave)
-      .storefront.find('solana:pubkey', wallet.pubkey)
+      .storefront.find('solana:pubkey', pub_key)
       .then((storefront) => {
         if (isNil(storefront)) {
           setSearching(false);
@@ -43,7 +44,7 @@ export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps
         setStorefront(storefront);
         setSearching(false);
       });
-  }, [wallet]);
+  }, [arweave, publicKey, wallet]);
 
   return (
     <StorefrontContext.Provider value={{ searching, storefront }}>

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Coingecko, Currency } from '@metaplex/js';
-import { WalletContext } from '@/modules/wallet';
 import Bugsnag from '@bugsnag/js';
 import BugsnagPluginReact from '@bugsnag/plugin-react';
 
@@ -11,6 +10,7 @@ import {
   lamportToSolIsh,
 } from '@/common/components/elements/ListingPreview';
 import mixpanel from 'mixpanel-browser';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
@@ -75,8 +75,8 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const router = useRouter();
   const [trackingInitialized, setTrackingInitialized] = useState(true);
   const [trackingAccepted, setTrackingAccepted] = useState(true);
-  const { wallet } = useContext(WalletContext);
-  const pubkey = wallet?.pubkey || '';
+  const {wallet, publicKey} = useWallet();
+  const pubkey = publicKey?.toString() || '';
   // const pubkey = publicKey?.toBase58() || '';
   // const endpointName = ENDPOINTS.find((e) => e.endpoint === endpoint)?.name;
 
@@ -107,7 +107,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         apiKey: BUGSNAG_API_KEY,
         plugins: [new BugsnagPluginReact()],
         onError(event) {
-          if (pubkey) {
+          if ((pubkey)) {
             event.setUser(pubkey);
           }
         },

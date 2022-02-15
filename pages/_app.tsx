@@ -96,7 +96,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
       new SlopeWalletAdapter(),
-      new TorusWalletAdapter(),
+      new TorusWalletAdapter({params: {network}}),
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
@@ -130,17 +130,16 @@ function MyApp({ Component, pageProps }: AppProps) {
             <WalletModalProvider>
               <AppHeaderSettingsProvider>
                 <WalletProvider>
-                  {({ verifying, wallet }) => (
-                    <StorefrontProvider wallet={wallet}>
+                  {({ verifying }) => (
+                    <StorefrontProvider>
                       {({ searching }) => {
                         return (
                           <AnalyticsProvider>
                             <AppLayout>
-                              <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
+                              <AppHeader setShowMintModal={setShowMintModal} />
                               <AppContent>
-                                {showMintModal && wallet && (
+                                {showMintModal && (
                                   <MintModal
-                                    wallet={wallet}
                                     show={showMintModal}
                                     onClose={() => setShowMintModal(false)}
                                   />

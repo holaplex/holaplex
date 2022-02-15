@@ -30,6 +30,7 @@ import {
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
 import { UploadOutlined } from '@ant-design/icons';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Card, Col, Form, Input, Row, Space, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import {
@@ -61,7 +62,8 @@ export default function Edit() {
   const [tab, setTab] = useState<TabKey>('theme');
   const { storefront } = useContext(StorefrontContext);
   const [form] = Form.useForm();
-  const { solana, wallet, connect } = useContext(WalletContext);
+  const { connect } = useContext(WalletContext);
+  const { wallet, publicKey} = useWallet();
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain ?? '' },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor ?? '#333333' },
@@ -82,7 +84,7 @@ export default function Edit() {
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
   ]);
 
-  if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
+  if (isNil(storefront) || isNil(wallet)) {
     return (
       <Row justify="center">
         <Card>
@@ -99,7 +101,7 @@ export default function Edit() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, publicKey?.toString());
 
   const onSubmit = submitCallback({
     track,

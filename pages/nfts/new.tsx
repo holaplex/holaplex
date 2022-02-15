@@ -2,13 +2,15 @@ import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
 import Head from 'next/head';
 import { WalletContext } from '@/modules/wallet';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function New() {
   const router = useRouter();
-  const { connect, wallet } = useContext(WalletContext);
+  const { connect } = useContext(WalletContext);
+  const { wallet } = useWallet();
 
   useEffect(() => {
-    if (!wallet) {
+    if (wallet?.adapter && wallet.readyState !== "Unsupported") {
       connect(router.pathname);
     } else {
       router.push('/?action=mint');

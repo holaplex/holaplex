@@ -1,8 +1,7 @@
+import { WalletContextState } from '@solana/wallet-adapter-react';
 import { sha256 } from 'crypto-hash';
-import { notarize, signPhantom, stringifyNotarized } from '../notary/client';
-import { Formatter, Notarized } from '../notary/common';
-import { connectSolana } from '../solana';
-import { Solana } from '../solana/types';
+import { notarize, stringifyNotarized } from '../notary/client';
+import { Formatter, Notarized, Signer } from '../notary/common';
 import { ArweaveFile } from './types';
 
 export const PAYLOAD_FORM_NAME = 'payload';
@@ -21,13 +20,13 @@ export const formatMessage: Formatter = (bytes) =>
   `Your file upload fingerprint is ${bytes.toString('base64')}`;
 
 export const uploadFile = async ({
-  solana,
+  wallet,
   file,
   onProgress,
   onComplete,
   onError,
 }: {
-  solana: Solana | undefined;
+  wallet: Pick<WalletContextState, "signTransaction" | "signMessage" | "signAllTransactions" | "connect" | "connected" | "wallet" | "publicKey"> | undefined;
   file: File;
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed',
@@ -39,11 +38,11 @@ export const uploadFile = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (!solana) throw new Error('Could not connect to Solana');
+    if (!wallet || !wallet.wallet?.adapter || wallet.wallet.readyState === "Unsupported") throw new Error('Could not connect to Solana');
 
-    if (!solana.isConnected) {
+    if (!wallet.connected) {
       onProgress('connecting-wallet');
-      connectSolana(solana);
+      wallet?.connect();
     }
 
     onProgress('signing');
@@ -52,10 +51,10 @@ export const uploadFile = async ({
 
     const payload: ArweaveUploadPayload = {
       fileHash: hash.toString('base64'),
-      pubkey: solana.publicKey.toBase58(),
+      pubkey: wallet.publicKey?.toString() || "", 
     };
 
-    const notarized: ArweaveUploadParams = await notarize(payload, signPhantom(solana), {
+    const notarized: ArweaveUploadParams = await notarize(payload, wallet.signMessage as Signer, {
       format: formatMessage,
     });
 

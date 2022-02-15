@@ -7,8 +7,8 @@ import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
-import { Wallet } from '@/modules/wallet/types';
 import { Connection } from '@solana/web3.js';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -41,16 +41,16 @@ const StyledModal = styled(Modal)`
 interface MintModalProps {
   show: boolean;
   onClose: () => void;
-  wallet: Wallet;
 }
 
 const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
 
-const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
+const MintModal = ({ show, onClose }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
-  const { solana, storefront } = useContext(WalletContext);
-
+  const { storefront } = useContext(WalletContext);
+  const { wallet, signAllTransactions, signTransaction, publicKey} = useWallet();
+  
   useEffect(() => {
     if (show) {
       blockScroll();
@@ -59,7 +59,7 @@ const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
     }
   }, [show, blockScroll, allowScroll]);
 
-  if (!wallet || !solana) {
+  if (wallet?.readyState==="Unsupported" || !wallet?.adapter?.connected) {
     return null;
   }
 
@@ -76,7 +76,7 @@ const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
-        wallet={solana}
+        wallet={{publicKey, signAllTransactions, signTransaction}}
         track={track}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}

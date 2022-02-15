@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import Button, { ButtonV2, SelectWalletButton } from '@/common/components/elements/Button';
-import { Wallet } from '@/modules/wallet/types';
 import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
@@ -19,17 +18,16 @@ import { ChevronRight } from '../icons/ChevronRight';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
-  wallet?: Wallet;
 }
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
-export function AppHeader({ setShowMintModal, wallet }: Props) {
+export function AppHeader({ setShowMintModal }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
+  const { connected, wallet, connect: connectUserWallet } = useWallet();
   const { connect } = useContext(WalletContext);
-  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed || userWallet?.readyState === WalletReadyState.Loadable;
+  const hasWalletTypeSelected = wallet?.readyState === WalletReadyState.Installed || wallet?.readyState === WalletReadyState.Loadable;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
