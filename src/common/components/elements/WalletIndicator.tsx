@@ -21,7 +21,7 @@ export const WalletPill: FC<WalletPillProps> = ({
   textOverride,
   publicKey,
   disableLink,
-  onClick
+  onClick,
 }) => {
   const isTwitterHandle = (textOverride?: string | null) =>
     textOverride?.length ? textOverride?.length <= 15 : false;
@@ -30,11 +30,15 @@ export const WalletPill: FC<WalletPillProps> = ({
     return (
       <ContainerSpan onClick={onClick} disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
-          {isTwitterHandle(textOverride)
-            ? `${textOverride}`
-            : publicKey
-            ? showFirstAndLastFour(publicKey.toBase58())
-            : 'DISCONNECTED'}
+          {isTwitterHandle(textOverride) ? (
+            <a href={'https://twitter.com/' + textOverride} className="hover:underline">
+              {`@${textOverride}`}
+            </a>
+          ) : publicKey ? (
+            showFirstAndLastFour(publicKey.toBase58())
+          ) : (
+            'DISCONNECTED'
+          )}
         </WalletText>
       </ContainerSpan>
     );
@@ -50,7 +54,7 @@ export const WalletPill: FC<WalletPillProps> = ({
             ? showFirstAndLastFour(publicKey.toBase58())
             : 'DISCONNECTED'}
           &nbsp;
-          <ChevronRight color='#fff' />
+          <ChevronRight color="#fff" />
         </WalletText>
       </ContainerAnchor>
     </Link>

@@ -14,6 +14,9 @@ import { maybeImageCDN } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
 import { Unpacked } from '@/types/Unpacked';
 import Bugsnag from '@bugsnag/js';
+import TextInput2 from './TextInput2';
+// @ts-ignore
+import FeatherIcon from 'feather-icons-react';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -100,108 +103,143 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   return (
     <ActivityContainer>
-      {isLoading ? (
-        <>
-          <LoadingActivitySkeletonBox disableMarginTop />
-          <LoadingActivitySkeletonBox />
-          <LoadingActivitySkeletonBox />
-          <LoadingActivitySkeletonBox />
-          <LoadingActivitySkeletonBox />
-        </>
-      ) : hasItems ? (
-        <>
-          {items.map((bid, i) => (
-            <ActivityBox
-              key={i}
-              disableMarginTop={i === 0}
-              relatedImageUrl={
-                maybeImageCDN(bid.listing?.nfts?.[0]?.image) ??
-                `/images/gradients/gradient-${randomBetween(1, 8)}.png`
-              }
-              href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
-              action={
-                <>
-                  <ActivityButton
-                    href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View
-                  </ActivityButton>
-                  <ChevronRightContainer>
-                    <ChevronRight color="#fff" />
-                  </ChevronRightContainer>
-                </>
-              }
-              content={(() => {
-                if ((bid as any).didWalletWon === true) {
-                  return (
-                    <ContentCol>
-                      <Row>
-                        <ItemText>
-                          <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
-                          <b>{bid.listing?.nfts?.[0]?.name}</b>
-                          &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
-                          <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b>
-                        </ItemText>
-                      </Row>
-                      <Row style={{ marginTop: 8 }}>
-                        <TimeText>
-                          {DateTime.fromFormat(bid.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toRelative()}
-                        </TimeText>
-                      </Row>
-                    </ContentCol>
-                  );
-                } else if ((bid as any).didWalletWon === false) {
-                  return (
-                    <ContentCol>
-                      <Row>
-                        <ItemText>
-                          <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
-                          <b>{bid.listing?.nfts?.[0]?.name}</b>
-                          &nbsp;by <b>{bid.listing?.storefront?.title}</b>
-                        </ItemText>
-                      </Row>
-                      <Row style={{ marginTop: 8 }}>
-                        <TimeText>
-                          {DateTime.fromFormat(bid.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toRelative()}
-                        </TimeText>
-                      </Row>
-                    </ContentCol>
-                  );
-                } else {
-                  return (
-                    <ContentCol>
-                      <Row>
-                        <ItemText>
-                          <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-                          <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b> on{' '}
-                          <b>{bid.listing?.nfts?.[0]?.name}</b>
-                          &nbsp;by <b>{bid.listing?.storefront?.title}</b>
-                        </ItemText>
-                      </Row>
-                      <Row style={{ marginTop: 8 }}>
-                        <TimeText>
-                          {DateTime.fromFormat(bid.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toRelative()}
-                        </TimeText>
-                      </Row>
-                    </ContentCol>
-                  );
-                }
-              })()}
+      <div className="mb-4 flex flex-1">
+        <form className="flex w-full md:ml-0" action="#" method="GET">
+          <label htmlFor="search-field" className="sr-only">
+            Search
+          </label>
+          <div className="relative w-full text-gray-400 focus-within:text-gray-600">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+              {/* <SearchIcon className="h-5 w-5" aria-hidden="true" /> */}
+              <FeatherIcon icon="search" />
+            </div>
+            <input
+              id="search-field"
+              className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
+              placeholder="Search"
+              type="search"
+              name="search"
             />
-          ))}
-        </>
-      ) : (
-        <NoActivityBox />
-      )}
+          </div>
+        </form>
+      </div>
+
+      <div className="space-y-4">
+        {isLoading ? (
+          <>
+            <LoadingActivitySkeletonBoxSquareShort />
+            <LoadingActivitySkeletonBoxCircleLong />
+            <LoadingActivitySkeletonBoxSquareShort />
+            <LoadingActivitySkeletonBoxCircleLong />
+            <LoadingActivitySkeletonBoxSquareShort />
+            <LoadingActivitySkeletonBoxCircleLong />
+            <LoadingActivitySkeletonBoxSquareShort />
+            <LoadingActivitySkeletonBoxCircleLong />
+          </>
+        ) : hasItems ? (
+          <>
+            <TextInput2 id="activity-search" label="activity search" hideLabel />
+            {items.map((bid, i) => (
+              <ActivityBox
+                key={i}
+                relatedImageUrl={
+                  maybeImageCDN(bid.listing?.nfts?.[0]?.image) ??
+                  `/images/gradients/gradient-${randomBetween(1, 8)}.png`
+                }
+                href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
+                action={
+                  <>
+                    <ActivityButton
+                      href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View
+                    </ActivityButton>
+                    <ChevronRightContainer>
+                      <ChevronRight color="#fff" />
+                    </ChevronRightContainer>
+                  </>
+                }
+                content={(() => {
+                  if ((bid as any).didWalletWon === true) {
+                    return (
+                      <ContentCol>
+                        <Row>
+                          <ItemText>
+                            <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
+                            <b>{bid.listing?.nfts?.[0]?.name}</b>
+                            &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
+                            <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b>
+                          </ItemText>
+                        </Row>
+                        <Row style={{ marginTop: 8 }}>
+                          <TimeText>
+                            {DateTime.fromFormat(
+                              bid.lastBidTime,
+                              'yyyy-MM-dd HH:mm:ss'
+                            ).toRelative()}
+                          </TimeText>
+                        </Row>
+                      </ContentCol>
+                    );
+                  } else if ((bid as any).didWalletWon === false) {
+                    return (
+                      <ContentCol>
+                        <Row>
+                          <ItemText>
+                            <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
+                            <b>{bid.listing?.nfts?.[0]?.name}</b>
+                            &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+                          </ItemText>
+                        </Row>
+                        <Row style={{ marginTop: 8 }}>
+                          <TimeText>
+                            {DateTime.fromFormat(
+                              bid.lastBidTime,
+                              'yyyy-MM-dd HH:mm:ss'
+                            ).toRelative()}
+                          </TimeText>
+                        </Row>
+                      </ContentCol>
+                    );
+                  } else {
+                    return (
+                      <ContentCol>
+                        <Row>
+                          <ItemText>
+                            <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+                            <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b> on{' '}
+                            <b>{bid.listing?.nfts?.[0]?.name}</b>
+                            &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+                          </ItemText>
+                        </Row>
+                        <Row style={{ marginTop: 8 }}>
+                          <TimeText>
+                            {DateTime.fromFormat(
+                              bid.lastBidTime,
+                              'yyyy-MM-dd HH:mm:ss'
+                            ).toRelative()}
+                          </TimeText>
+                        </Row>
+                      </ContentCol>
+                    );
+                  }
+                })()}
+              />
+            ))}
+          </>
+        ) : (
+          <NoActivityBox />
+        )}
+      </div>
     </ActivityContainer>
   );
 };
 
 const NoActivityBox: FC = () => {
   return (
-    <ActivityBoxContainer disableMarginTop>
+    <ActivityBoxContainer>
       <NoActivityContainer>
         <NoActivityTitle>No activity</NoActivityTitle>
         <NoActivityText>
@@ -212,27 +250,43 @@ const NoActivityBox: FC = () => {
   );
 };
 
-const LoadingActivitySkeletonBox: FC<{ disableMarginTop?: boolean }> = ({ disableMarginTop }) => {
+const LoadingActivitySkeletonBoxSquareShort = () => {
   return (
-    <ActivityBoxContainer disableMarginTop={!!disableMarginTop}>
+    <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingNFTImage />
+        <LoadingBox $borderRadius="4px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
-          <LoadingFirstLine />
-          <LoadingSecondLine />
+          <LoadingLine $width="60%" />
+          <LoadingLine $width="25%" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
   );
 };
 
-const LoadingNFTImage = styled.div`
+const LoadingActivitySkeletonBoxCircleLong = () => {
+  return (
+    <ActivityBoxContainer>
+      <CenteredCol>
+        <LoadingBox $borderRadius="100%" />
+      </CenteredCol>
+      <ContentContainer>
+        <LoadingLinesContainer>
+          <LoadingLine $width="100%" />
+          <LoadingLine $width="25%" />
+        </LoadingLinesContainer>
+      </ContentContainer>
+    </ActivityBoxContainer>
+  );
+};
+
+const LoadingBox = styled.div<{ $borderRadius: '4px' | '100%' }>`
   width: 52px;
   height: 52px;
   background: #707070;
-  border-radius: 4px;
+  border-radius: ${({ $borderRadius }) => $borderRadius};
   -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
   animation: shimmer 2.5s infinite;
   @keyframes shimmer {
@@ -247,22 +301,8 @@ const LoadingLinesContainer = styled.div`
   flex-direction: column;
 `;
 
-const LoadingFirstLine = styled.div`
-  width: 75%;
-  height: 24px;
-  background: #707070;
-  border-radius: 4px;
-  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
-  animation: shimmer 2.5s infinite;
-  @keyframes shimmer {
-    100% {
-      -webkit-mask-position: left;
-    }
-  }
-`;
-
-const LoadingSecondLine = styled.div`
-  width: 25%;
+const LoadingLine = styled.div<{ $width: string }>`
+  width: ${({ $width }) => $width};
   height: 16px;
   background: #707070;
   border-radius: 4px;
@@ -282,7 +322,6 @@ type ActivityBoxProps = {
   action: React.ReactElement;
   href: string;
   isPFPImage?: boolean;
-  disableMarginTop?: boolean;
 };
 
 const ActivityBox: FC<ActivityBoxProps> = ({
@@ -291,14 +330,13 @@ const ActivityBox: FC<ActivityBoxProps> = ({
   content,
   href,
   isPFPImage = false,
-  disableMarginTop = false,
 }) => {
   return (
     <>
       <ShowOnMobile display="block">
         <Link href={href} passHref>
           <a>
-            <ActivityBoxContainer disableMarginTop={disableMarginTop}>
+            <ActivityBoxContainer>
               <CenteredCol>
                 <NFTImage
                   unoptimized
@@ -315,7 +353,7 @@ const ActivityBox: FC<ActivityBoxProps> = ({
         </Link>
       </ShowOnMobile>
       <HideOnMobile display="block">
-        <ActivityBoxContainer disableMarginTop={disableMarginTop}>
+        <ActivityBoxContainer>
           <CenteredCol>
             <NFTImage
               unoptimized
@@ -417,21 +455,13 @@ const ContentCol = styled(CenteredCol)`
   justify-content: center;
 `;
 
-const ActivityBoxContainer = styled.div<{ disableMarginTop: boolean }>`
+const ActivityBoxContainer = styled.div`
   display: flex;
   flex: 1;
   padding: 10px;
   border: 1px solid #262626;
   box-sizing: border-box;
   border-radius: 8px;
-  ${({ disableMarginTop }) =>
-    disableMarginTop
-      ? css`
-          margin-top: 0;
-        `
-      : css`
-          margin-top: 16px;
-        `}
 `;
 
 const NFTImage = styled(Image)<{ $isPFPImage: boolean }>`

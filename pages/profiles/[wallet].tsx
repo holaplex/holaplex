@@ -111,7 +111,7 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
             <WalletPill
               disableBackground
               disableLink
-              textOverride={twitterHandle ? `@${twitterHandle}` : null}
+              textOverride={twitterHandle ? `${twitterHandle}` : null}
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
