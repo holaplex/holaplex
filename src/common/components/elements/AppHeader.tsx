@@ -2,11 +2,10 @@ import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Space } from 'antd';
-import SocialLinks from '@/components/elements/SocialLinks';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import { useContext } from 'react';
-import Image from 'next/image';
+import customData from 'customData';
 
 const HeaderTitle = styled.div`
   font-size: 24px;
@@ -54,7 +53,6 @@ const LinkRow = styled(Space)`
   }
 `;
 
-const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader() {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
@@ -64,11 +62,11 @@ export function AppHeader() {
       <HeaderTitle>
         <Link href="/" passHref>
           <a>
-            👋&nbsp;&nbsp;<span>Holaplex × Seattle Hacker House</span>
+            👋&nbsp;&nbsp;<span>{customData.appName}</span>
           </a>
         </Link>
       </HeaderTitle>
-      {!WHICHDAO && (
+      {customData.showNavLinks && (
         <LinkRow size="large">
           <HeaderLinkWrapper
             key="edit"

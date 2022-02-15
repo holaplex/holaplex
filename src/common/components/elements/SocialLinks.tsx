@@ -5,6 +5,7 @@ import Image from 'next/image';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import DiscordLogo from '@/assets/images/discord-logo.svg';
+import customData from '../../../../customData';
 
 const Container = styled.div`
   ${sv.flexRow};
@@ -26,15 +27,21 @@ const SocialLink = styled.a`
 const SocialLinks = () => {
   return (
     <Container>
-      <SocialLink href="https://twitter.com/HackerHouseSOL" target="_blank" rel="noreferrer">
-        <FeatherIcon icon="twitter" />
-      </SocialLink>
-      <SocialLink href="https://instagram.com/HACKERHOUSE_SOL/" target="_blank" rel="noreferrer">
-        <FeatherIcon icon="instagram" />
-      </SocialLink>
-      <SocialLink href="https://discord.gg/eEbEfxSR23" target="_blank" rel="noreferrer">
-        <Image width={24} height={24} src={DiscordLogo} alt="discord" />
-      </SocialLink>
+      {customData.twitterUrl && (
+        <SocialLink href={customData.twitterUrl} target="_blank" rel="noreferrer">
+          <FeatherIcon icon="twitter" />
+        </SocialLink>
+      )}
+      {customData.instagramUrl && (
+        <SocialLink href={customData.instagramUrl} target="_blank" rel="noreferrer">
+          <FeatherIcon icon="instagram" />
+        </SocialLink>
+      )}
+      {customData.instagramUrl && (
+        <SocialLink href={customData.discordUrl} target="_blank" rel="noreferrer">
+          <Image width={24} height={24} src={DiscordLogo} alt="discord" />
+        </SocialLink>
+      )}
     </Container>
   );
 };

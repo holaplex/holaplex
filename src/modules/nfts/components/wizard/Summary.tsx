@@ -13,7 +13,6 @@ import {
   FilePreview,
 } from 'pages/nfts/new';
 import { Spinner } from '@/common/components/elements/Spinner';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 const Grid = styled.div`
   display: grid;
@@ -73,7 +72,7 @@ const SummaryItem = ({
       <Image
         width={245}
         height={245}
-        src={URL.createObjectURL(filePreview.coverImage)}
+        src={filePreview.coverImage ? URL.createObjectURL(filePreview.coverImage) : ''}
         objectFit="cover"
         alt={filePreview.file.name}
         unoptimized={true}
@@ -145,7 +144,6 @@ export default function Summary({
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFailed, setUploadFailed] = useState(false);
-  const { track } = useAnalytics();
 
   // if one or more NFTs have a different royalty percentage it makes sense to show it in the summary
   const showRoyaltyPercentage = useMemo(() => {
@@ -181,12 +179,6 @@ export default function Summary({
         hasDescription: !!nft.description,
         hasCollection: !!nft.collectionName,
       }));
-      track('Mint info and royalty Completed', {
-        event_category: 'Minter',
-        totalItems: items?.length,
-        doEachRoyaltyIndividually: doEachRoyaltyInd,
-        items,
-      });
 
       const resp = await fetch('/api/ipfs/upload', {
         method: 'POST',

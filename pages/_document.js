@@ -1,6 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import { OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '../src/modules/ganalytics/AnalyticsProvider';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -31,30 +30,7 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head>
-          {(OLD_GOOGLE_ANALYTICS_ID || GA4_ID) && (
-            <>
-              <script
-                async
-                src={`https://www.googletagmanager.com/gtag/js?id=${
-                  GA4_ID || OLD_GOOGLE_ANALYTICS_ID
-                }`}
-              />
-              <script
-                dangerouslySetInnerHTML={{
-                  __html: `
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){
-                      dataLayer.push(arguments);
-                    }
-                    gtag('js', new Date());
-                    gtag('config', '${OLD_GOOGLE_ANALYTICS_ID}');
-                    `,
-                }}
-              />
-            </>
-          )}
-        </Head>
+        <Head></Head>
         <body>
           <Main />
           <NextScript />

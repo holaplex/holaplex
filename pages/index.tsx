@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import StorePreview from '@/components/elements/StorePreview';
-import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
 import {
   PageHeader,
   List,
@@ -23,21 +21,15 @@ import {
   always,
   ifElse,
   filter,
-  concat,
   not,
   pipe,
   is,
-  isNil,
   prop,
   descend,
   ascend,
   sortWith,
   equals,
-  map,
-  range,
-  propEq,
 } from 'ramda';
-import Button from '@/components/elements/Button';
 import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import {
@@ -46,25 +38,10 @@ import {
   SkeletonListing,
 } from '@/common/components/elements/ListingPreview';
 import { SelectValue } from 'antd/lib/select';
-import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import customData from '../customData';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
-
-const FEATURED_STOREFRONTS_URL = process.env.FEATURED_STOREFRONTS_URL as string;
-const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
-const DAO_LIST_IPFS =
-  process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
-  'https://ipfs.io/ipfs/bafkreicphl42ovhrelvthxvsmj7hqb36etwpg26zcfg7vvpwa6i5ajxsbi';
-
-const DAOStoreFrontList = async () => {
-  if (WHICHDAO) {
-    const response = await fetch(DAO_LIST_IPFS);
-    const json = await response.json();
-    return json[WHICHDAO];
-  }
-  return [];
-};
 
 const HeroTitle = styled.h1`
   font-weight: 600;
@@ -116,25 +93,6 @@ const StorefrontSection = styled(Section)`
   h3 {
     &.ant-typography {
       margin: 0 0 62px 0;
-    }
-  }
-`;
-
-const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
-  .ant-list-item {
-    margin-bottom: 66px !important;
-
-    .ant-card {
-      border-radius: 8px !important;
-    }
-  }
-
-  .ant-list-grid {
-    .ant-col > .ant-list-item {
-      margin-bottom: 66px;
-    }
-    .ant-card-meta-title {
-      line-height: 20px;
     }
   }
 `;
@@ -286,9 +244,12 @@ const sortOptions: {
 // @ts-ignore
 const isAuction = pipe(prop('endsAt'), is(String));
 
+// @ts-ignore
 const currentListingPrice = ifElse(
   isAuction,
+  // @ts-ignore
   ifElse(pipe(prop('totalUncancelledBids'), equals(0)), prop('priceFloor'), prop('highestBid')),
+  // @ts-ignore
   prop('instantSalePrice')
 );
 
@@ -299,40 +260,27 @@ const filters = {
 };
 
 const sorts = {
+  // @ts-ignore
   [SortOptions.EndingSoonest]: [ascend(prop('endsAt')), descend(currentListingPrice)],
+  // @ts-ignore
   [SortOptions.RecentlyAdded]: [descend(prop('createdAt')), descend(currentListingPrice)],
+  // @ts-ignore
   [SortOptions.Expensive]: [descend(prop('highestBid')), descend(currentListingPrice)],
+  // @ts-ignore
   [SortOptions.Cheapest]: [ascend(currentListingPrice), ascend(prop('endsAt'))],
+  // @ts-ignore
   [SortOptions.Trending]: [descend(prop('totalUncancelledBids')), ascend(prop('endsAt'))],
 };
 
-export async function getStaticProps() {
-  const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
-  const selectedDaoSubdomains = await DAOStoreFrontList();
-
-  return {
-    props: {
-      featuredStorefronts,
-      selectedDaoSubdomains,
-    },
-  };
-}
-
-interface HomeProps {
-  featuredStorefronts: StorefrontFeature[];
-  selectedDaoSubdomains: String[];
-}
-
 const getDefaultFilter = () => {
-  if (WHICHDAO) {
+  if (customData.showCustomArtists) {
     return FilterOptions.All;
   }
   return FilterOptions.Auctions;
 };
 
-export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
+export default function Home() {
   const { connect } = useContext(WalletContext);
-  const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
   const [allListings, setAllListings] = useState<Listing[]>([]);
@@ -386,14 +334,15 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       const allListings = await IndexerSDK.getListings();
       let daoFilteredListings = allListings;
 
-      if (WHICHDAO) {
+      if (customData.showCustomArtists) {
         daoFilteredListings = daoFilteredListings.filter((listing) =>
-          selectedDaoSubdomains.includes(listing.subdomain)
+          customData.customArtistSubdomains.includes(listing.subdomain)
         );
       }
 
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
+      // @ts-ignore
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
@@ -408,6 +357,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       return;
     }
 
+    // @ts-ignore
     setDisplayedListings(applyListingFilterAndSort(allListings));
     setShow(16);
   }, [filterBy, sortBy]);
@@ -417,27 +367,12 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       <CenteredContentCol>
         <Section>
           <Marketing xs={22} md={16}>
-            <HeroTitle>Seattle Hacker House</HeroTitle>
-            <h3>Feb 9-13, 2022</h3>
+            <HeroTitle>{customData.heading}</HeroTitle>
+            <h3>{customData.subHeading}</h3>
             <br />
-            <p>
-              What began as a getaway for developers to hunker down and buidl at Solana&apos;s
-              biggest conference has become a worldwide movement. HackerHouse can best be described
-              as a pop-up developer experience taking over major cities around the world. These
-              week-long experiences serve as unique opportunities to share, learn, and create new
-              experiences on Solana.{' '}
-            </p>
-            <p>
-              Since Breakpoint 2021 HackerHouse has grown to provide an expressive, educational
-              experience open to all. Today investors, community leaders, developers, creators, and
-              hodlers from all walks of life gather multiple times a year to learn from the best and
-              share their stories. There is no better way to get plugged into Solana at its rawest
-              point.{' '}
-            </p>
-            <p>
-              Discover the indie artists and creators creating a more vibrant and expressive
-              experience on Solana below.
-            </p>
+            {customData.copy.map((x, i) => (
+              <p key={i}>{x}</p>
+            ))}
           </Marketing>
           <HeroCol xs={24} md={8}>
             <Text strong>Featured Listings</Text>
@@ -457,24 +392,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroCarousel>
           </HeroCol>
         </Section>
-        {!process.env.NEXT_PUBLIC_WHICHDAO && (
-          <StorefrontSection>
-            <Col xs={24}>
-              <Title level={3}>Featured Creators</Title>
-              <FeaturedStores
-                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-                dataSource={featuredStorefronts.slice(0, 4)}
-                renderItem={(feature) => (
-                  // @ts-ignore
-                  <List.Item key={feature.storefront.subdomain}>
-                    {/* @ts-ignore */}
-                    <StorePreview {...feature} />
-                  </List.Item>
-                )}
-              />
-            </Col>
-          </StorefrontSection>
-        )}
         <Section>
           <Col xs={24}>
             <div ref={listingsTopRef} />
@@ -489,14 +406,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     label="Filter"
                     onChange={(nextFilterBy) => {
                       const filter = nextFilterBy as FilterOptions;
-                      track('Filter Update', {
-                        event_category: 'Discovery',
-                        event_label: filter,
-                        from: filterBy,
-                        to: filter,
-                        sortBy,
-                        nrOfListingsOnDisplay: displayedListings.length,
-                      });
                       setFilterBy(filter);
                       // only reset sortBy if it does not work in the new filter
                       if (!sortOptions[filter].find((s) => s.key === sortBy)) {
@@ -515,14 +424,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     value={sortBy}
                     onChange={(nextSortBy) => {
                       const sort = nextSortBy as SortOptions;
-                      track('Sort Update', {
-                        event_category: 'Discovery',
-                        event_label: sort,
-                        from: sortBy,
-                        to: sort,
-                        filterBy,
-                        nrOfListingsOnDisplay: displayedListings.length,
-                      });
 
                       setSortBy(sort);
                       scrollToListingTop();

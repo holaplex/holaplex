@@ -7,7 +7,6 @@ import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import {
   FieldData,
   getTextColor,
@@ -47,7 +46,6 @@ import { toast } from 'react-toastify';
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
-  const { track } = useAnalytics();
   const router = useRouter();
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
@@ -87,7 +85,6 @@ export default function New() {
   const subdomainUniqueness = validateSubdomainUniqueness(ar);
 
   const onSubmit = submitCallback({
-    track,
     router,
     solana,
     values,
@@ -107,7 +104,6 @@ export default function New() {
           {e && ` (${e})`}
         </>
       ),
-    trackEvent: 'Storefront Created',
   });
 
   const textColor = getTextColor(values.theme.backgroundColor);

@@ -6,7 +6,6 @@ import { DateTime, Duration } from 'luxon';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
-import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 const { Title, Text } = Typography;
 import Price from '@/common/components/elements/Price';
@@ -276,8 +275,6 @@ export function ListingPreview({
     threshold: 0,
   });
 
-  const { track } = useAnalytics();
-
   const [showArtPreview, setShowArtPreview] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
@@ -311,17 +308,7 @@ export function ListingPreview({
   }
 
   return (
-    <div
-      ref={cardRef}
-      onClick={() => {
-        track('Listing Selected', {
-          event_category: 'Discovery',
-          event_label: nftMetadata.name,
-          ...meta,
-          ...addListingToTrackCall(listing),
-        });
-      }}
-    >
+    <div ref={cardRef}>
       <a href={storeHref} rel="nofollow noreferrer" target="_blank">
         <ListingPreviewContainer>
           <Square>

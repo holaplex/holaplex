@@ -220,7 +220,7 @@ export default function BulkUploadWizard() {
       }
     } catch (e) {
       console.error('Could not upload file', e);
-      throw new Error(e);
+      throw new Error(e as string | undefined);
     }
   };
 

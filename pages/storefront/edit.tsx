@@ -5,7 +5,6 @@ import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
 import {
   FieldData,
@@ -51,7 +50,6 @@ type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
   const [submitting, setSubmitting] = useState(false);
-  const { track } = useAnalytics();
   const router = useRouter();
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
@@ -70,9 +68,11 @@ export default function Edit() {
     {
       name: ['meta', 'favicon'],
       value: ifElse(
+        // @ts-ignore
         pipe(prop('url'), isNil),
         () => [],
         (favicon) => [merge({ status: 'done' })(favicon)]
+        // @ts-ignore
       )(storefront?.meta.favicon),
     },
     { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
@@ -99,7 +99,6 @@ export default function Edit() {
   const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
 
   const onSubmit = submitCallback({
-    track,
     router,
     solana,
     values,
@@ -119,7 +118,6 @@ export default function Edit() {
           {e && ` (${e})`}
         </>
       ),
-    trackEvent: 'Storefront Updated',
   });
 
   const textColor = getTextColor(values.theme.backgroundColor);

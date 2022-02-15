@@ -13,13 +13,9 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import SocialLinks from '@/components/elements/SocialLinks';
 import { AppHeader } from '@/common/components/elements/AppHeader';
-import {
-  AnalyticsProvider,
-  OLD_GOOGLE_ANALYTICS_ID,
-  GA4_ID,
-} from '@/modules/ganalytics/AnalyticsProvider';
+import customData from '../customData';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const AppContent = styled(Content)`
   display: flex;
@@ -38,41 +34,10 @@ const AppLayout = styled(Layout)`
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  const track = (category: string, action: string) => {
-    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-      return;
-    }
-
-    window.gtag('event', action, {
-      event_category: category,
-      send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
-    });
-  };
-
-  const onRouteChanged = (path: string) => {
-    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-      return;
-    }
-
-    window.gtag('config', OLD_GOOGLE_ANALYTICS_ID, { page_path: path });
-  };
-
-  useEffect(() => {
-    if (!process.browser || !OLD_GOOGLE_ANALYTICS_ID) {
-      return;
-    }
-
-    router.events.on('routeChangeComplete', onRouteChanged);
-
-    return () => {
-      router.events.off('routeChangeComplete', onRouteChanged);
-    };
-  }, [router.events]);
-
   return (
     <>
       <Head>
-        <title>Holaplex × Seattle Hacker House</title>
+        <title>{customData.appName}</title>
       </Head>
       <ToastContainer autoClose={15000} />
       <WalletProvider>
@@ -80,21 +45,19 @@ function MyApp({ Component, pageProps }: AppProps) {
           <StorefrontProvider wallet={wallet}>
             {({ searching }) => {
               return (
-                <AnalyticsProvider>
-                  <AppLayout>
-                    <AppHeader />
-                    <AppContent>
-                      <Loading loading={verifying || searching}>
-                        <>
-                          <Component {...pageProps} track={track} />
-                          <AppFooter justify="center">
-                            <SocialLinks />
-                          </AppFooter>
-                        </>
-                      </Loading>
-                    </AppContent>
-                  </AppLayout>
-                </AnalyticsProvider>
+                <AppLayout>
+                  <AppHeader />
+                  <AppContent>
+                    <Loading loading={verifying || searching}>
+                      <>
+                        <Component {...pageProps} />
+                        <AppFooter justify="center">
+                          <SocialLinks />
+                        </AppFooter>
+                      </>
+                    </Loading>
+                  </AppContent>
+                </AppLayout>
               );
             }}
           </StorefrontProvider>

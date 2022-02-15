@@ -60,19 +60,21 @@ export const IndexerSDK = {
         method: 'getListings',
         params: [],
         id: 1337,
-      })
+      }),
     });
 
     const json = await res.json();
 
     return sortWith(
       [
-        //@ts-ignore   
+        //@ts-ignore
         ascend(prop('instantSalePrice')),
+        //@ts-ignore
         descend(prop('highestBid')),
-        ascend(prop('endsAt'))
+        //@ts-ignore
+        ascend(prop('endsAt')),
       ],
       json.result
-    )
+    );
   },
 };
