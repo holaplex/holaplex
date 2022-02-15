@@ -2,7 +2,7 @@
 
 This is a simplified holaplex.com artist discovery tool spinoff starter kit. To customize, simply edit the `customData.ts` file in the root of this project.
 
-This is a NextJS project and can be hosted in many places, including Vercel or Heroku.
+---
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
