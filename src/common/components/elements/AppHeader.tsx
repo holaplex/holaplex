@@ -31,7 +31,13 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader({ setShowMintModal, wallet }: Props) {
   const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, wallet: userWallet, connect: connectUserWallet, publicKey } = useWallet();
+  const {
+    connected,
+    wallet: userWallet,
+    connect: connectUserWallet,
+    publicKey,
+    disconnecting,
+  } = useWallet();
   const { connect } = useContext(WalletContext);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
@@ -60,6 +66,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         }
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected]);
 
   useEffect(() => {

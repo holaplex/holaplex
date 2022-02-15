@@ -137,9 +137,6 @@ const Profile = styled.div`
   padding-left: calc(20px + 0.5rem);
   min-width: 348px;
   position: relative;
-  ${mq('md')} {
-    padding-left: calc(${PFP_SIZE}px + 0.5rem);
-  }
 `;
 
 const ActivityContentWrapper = styled.section`
@@ -173,9 +170,6 @@ const ProfilePictureContainer = styled.div`
   position: absolute;
   top: ${-PFP_SIZE / 2}px;
   left: 20px;
-  ${mq('md')} {
-    left: 90px;
-  }
   @media (min-width: ${BOX_SIZE - PFP_SIZE}) {
     left: 0px;
   }

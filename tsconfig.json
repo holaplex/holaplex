@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "typeRoots": ["typings"],
     "target": "es2015",
     "lib": [
       "dom",
@@ -50,7 +51,9 @@
     "incremental": true
   },
   "types": [
-    "google.analytics"
+    "google.analytics",
+    "mocha",
+    "chai"
   ],
   "include": [
     "next-env.d.ts",
