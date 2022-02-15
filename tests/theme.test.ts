@@ -1,5 +1,6 @@
 import { stylesheet } from '../src/modules/theme'
 import { expect } from 'chai'
+import {} from 'mocha';
 
 describe('stylesheet', () => {
   it('generates a css sheet', () => {

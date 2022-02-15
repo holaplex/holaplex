@@ -91,7 +91,7 @@
     "@types/formidable": "^1.2.2",
     "@types/gtag.js": "^0.0.7",
     "@types/luxon": "^2.0.7",
-    "@types/mocha": "^8.2.2",
+    "@types/mocha": "^9.1.0",
     "@types/node": "^15.12.4",
     "@types/ramda": "^0.27.41",
     "@types/react": "17.0.11",

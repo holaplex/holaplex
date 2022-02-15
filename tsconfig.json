@@ -51,7 +51,9 @@
     "incremental": true
   },
   "types": [
-    "google.analytics"
+    "google.analytics",
+    "mocha",
+    "chai"
   ],
   "include": [
     "next-env.d.ts",
