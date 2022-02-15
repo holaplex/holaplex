@@ -1,0 +1,29 @@
+{
+  "pubkey": "",
+  "subdomain": "",
+  "meta": {
+    "favicon": {
+      "url": "",
+      "name": "",
+      "type": ""
+    },
+    "title": "",
+    "description": ""
+  },
+  "theme": {
+    "logo": {
+      "url": "",
+      "name": "",
+      "type": ""
+    },
+    "primaryColor": "",
+    "backgroundColor": "",
+    "titleFont": "",
+    "textFont": "",
+    "banner": {
+      "url": "",
+      "name": "",
+      "type": ""
+    }
+  }
+}
