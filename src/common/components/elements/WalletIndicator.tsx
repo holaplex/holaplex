@@ -10,12 +10,15 @@ import { Copy } from '../icons/Copy';
 import cx from 'classnames';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
+// @ts-ignore
+import FeatherIcon from 'feather-icons-react';
 
 type WalletPillProps = {
   disableBackground?: boolean;
   textOverride?: string | null;
   publicKey?: PublicKey | null;
   disableLink?: boolean;
+  showCopyIcon?: boolean;
   onClick?: VoidFunction;
 };
 
@@ -24,6 +27,7 @@ export const WalletPill: FC<WalletPillProps> = ({
   textOverride,
   publicKey,
   disableLink,
+  showCopyIcon,
   onClick,
 }) => {
   const isTwitterHandle = (textOverride?: string | null) =>
@@ -40,7 +44,10 @@ export const WalletPill: FC<WalletPillProps> = ({
               {`@${textOverride}`}
             </a>
           ) : publicKey ? (
-            showFirstAndLastFour(publicKey.toBase58())
+            <div className="flex items-center">
+              {showFirstAndLastFour(publicKey.toBase58())}
+              <FeatherIcon icon="copy" className="ml-2 h-5 w-5 text-[#f4f4f4]" />
+            </div>
           ) : (
             'DISCONNECTED'
           )}
