@@ -4,15 +4,13 @@ import Color from 'color';
 import { NextRouter } from 'next/router';
 import { assocPath, has, isNil, reduce } from 'ramda';
 import { RuleObject } from 'rc-field-form/lib/interface';
-import { ReactChild } from 'react';
-import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
 import { PageMetaData, Storefront, StorefrontTheme } from './types';
 import { putStorefront } from './put-storefront';
 import { TrackingFunctionSignature } from '../ganalytics/AnalyticsProvider';
-import { Wallet, WalletContextState } from '@solana/wallet-adapter-react';
+import { WalletContextState } from '@solana/wallet-adapter-react';
 
 export const { Text, Title, Paragraph } = Typography;
 
@@ -180,7 +178,7 @@ export const submitCallback = ({
           favicon,
         },
         subdomain,
-        pubkey: wallet?.publicKey?.toString() ?? '',
+        pubkey: wallet?.publicKey?.toString() || '',
       };
 
       if (banner?.url) {

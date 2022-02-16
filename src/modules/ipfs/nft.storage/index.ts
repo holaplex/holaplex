@@ -5,6 +5,7 @@ import { PinFileResponse } from '../types';
 
 export default async function uploadFile(file: File): Promise<PinFileResponse> {
   try {
+    console.log(process.env.NFT_STORAGE_API_KEY);
     const response = await fetch('https://api.nft.storage/upload', {
       //@ts-ignore
       body: fs.createReadStream(file.path),
@@ -14,8 +15,8 @@ export default async function uploadFile(file: File): Promise<PinFileResponse> {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-
     const json = await response.json();
+    console.log(json);
     if (!json.ok) {
       return {
         error: json.error?.code + ': ' + json.error?.message,

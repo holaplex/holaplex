@@ -20,8 +20,7 @@ export const StorefrontProvider = ({ children }: StorefrontProviderProps) => {
   const [searching, setSearching] = useState(false);
   const [storefront, setStorefront] = useState<Storefront>();
   const arweave = initArweave();
-  const router = useRouter();
-  const { wallet, publicKey} = useWallet();
+  const { publicKey} = useWallet();
 
   useEffect(() => {
     const pub_key = publicKey?.toString();
@@ -44,7 +43,7 @@ export const StorefrontProvider = ({ children }: StorefrontProviderProps) => {
         setStorefront(storefront);
         setSearching(false);
       });
-  }, [arweave, publicKey, wallet]);
+  }, [publicKey]);
 
   return (
     <StorefrontContext.Provider value={{ searching, storefront }}>

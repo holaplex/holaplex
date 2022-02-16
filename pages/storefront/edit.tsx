@@ -90,7 +90,7 @@ export default function Edit() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button type="primary" block onClick={connect}>
+            <Button type="primary" block onClick={()=>connect()}>
               Connect
             </Button>
           </Space>

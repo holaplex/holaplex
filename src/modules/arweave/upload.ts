@@ -1,5 +1,6 @@
 import { WalletContextState } from '@solana/wallet-adapter-react';
 import { sha256 } from 'crypto-hash';
+import { isNil } from 'ramda';
 import { notarize, stringifyNotarized } from '../notary/client';
 import { Formatter, Notarized, Signer } from '../notary/common';
 import { ArweaveFile } from './types';
@@ -38,7 +39,7 @@ export const uploadFile = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (!wallet || !wallet.wallet?.adapter || wallet.wallet.readyState === "Unsupported") throw new Error('Could not connect to Solana');
+    if (isNil(wallet) || isNil(wallet.wallet?.adapter) || wallet?.wallet?.readyState === "Unsupported") throw new Error('Could not connect to Solana');
 
     if (!wallet.connected) {
       onProgress('connecting-wallet');

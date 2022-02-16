@@ -69,13 +69,13 @@ export default function New() {
     { name: ['meta', 'description'], value: '' },
   ]);
 
-  if (isNil(userWallet) || !connected || userWallet.readyState==="Unsupported") {
+  if (isNil(userWallet) || isNil(userWallet.adapter) || !connected || userWallet.readyState==="Unsupported") {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button type="primary" block onClick={connect}>
+            <Button type="primary" block onClick={()=>connect()}>
               Connect
             </Button>
           </Space>

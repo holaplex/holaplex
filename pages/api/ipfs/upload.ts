@@ -30,7 +30,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             ok({ fields, files });
           });
         });
-
         const files = await uploadFiles(params.files);
         const containsErrors = files.find((result) => !!result.error);
         if (containsErrors) {

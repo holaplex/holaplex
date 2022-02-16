@@ -9,6 +9,7 @@ import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
 import { Connection } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { isNil } from 'ramda';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -49,7 +50,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
   const { storefront } = useContext(WalletContext);
-  const { wallet, signAllTransactions, signTransaction, publicKey} = useWallet();
+  const { wallet, signAllTransactions, signTransaction, publicKey, connected} = useWallet();
   
   useEffect(() => {
     if (show) {
@@ -59,7 +60,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
     }
   }, [show, blockScroll, allowScroll]);
 
-  if (wallet?.readyState==="Unsupported" || !wallet?.adapter?.connected) {
+  if (isNil(wallet) || isNil(wallet.adapter) || wallet?.readyState==="Unsupported" || !connected) {
     return null;
   }
 

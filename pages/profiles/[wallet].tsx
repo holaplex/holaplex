@@ -12,12 +12,13 @@ import { useRouter } from 'next/router';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
 import { showFirstAndLastFour } from '@/modules/utils/string';
+import { useWallet } from "@solana/wallet-adapter-react"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // ...
   return {
     props: {
-      wallet: context.query.wallet,
+      wallet: context?.params?.wallet ?? "",
     },
   };
 };
@@ -30,6 +31,14 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const {publicKey: userPubKey, connected} = useWallet();
+  useEffect(() => {
+    if(!wallet){
+      if(userPubKey)
+      router.push(`/profiles/${userPubKey.toString()}`);
+      else router.push('/');
+    }
+  }, [])
 
   useEffect(() => {
     if (!twitterHandle) return;
