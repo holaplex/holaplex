@@ -477,7 +477,11 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
               <Button onClick={() => connectStorefront()}>Create Your Store</Button>
-              {MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>}
+              
+              {/* 
+               this is here as a refernce, can be removed at any point.
+               to allow free creation of marketplaces, go to /marketplace/new or uncomment the button :-)
+              {false && MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>} */}
             </Space>
             <div style={{ marginTop: '2.5rem' }}>
               <SocialLinks />
