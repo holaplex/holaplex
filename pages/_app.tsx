@@ -36,6 +36,8 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
+import { MarketplaceProvider } from '@/modules/marketplace';
+import { clusterApiUrl } from '@solana/web3.js';
 
 import '@solana/wallet-adapter-react-ui/styles.css';
 
@@ -130,8 +132,10 @@ function MyApp({ Component, pageProps }: AppProps) {
             <WalletModalProvider>
               <AppHeaderSettingsProvider>
                 <WalletProvider>
-                  {({ verifying, wallet }) => (
-                    <StorefrontProvider wallet={wallet}>
+                  {({ verifying, wallet, connect }) => (
+                  <MarketplaceProvider wallet={wallet} connect={connect}>
+                    {() => (
+                    <StorefrontProvider wallet={wallet} connect={connect}>
                       {({ searching }) => {
                         return (
                           <AnalyticsProvider>
@@ -157,12 +161,16 @@ function MyApp({ Component, pageProps }: AppProps) {
                       }}
                     </StorefrontProvider>
                   )}
+                  </MarketplaceProvider>
+                  )}
                 </WalletProvider>
               </AppHeaderSettingsProvider>
+
             </WalletModalProvider>
           </WalletProviderSolana>
         </ConnectionProvider>
       </ApolloProvider>
+
     </>
   );
 }

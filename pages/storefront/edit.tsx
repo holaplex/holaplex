@@ -59,9 +59,9 @@ export default function Edit() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [tab, setTab] = useState<TabKey>('theme');
-  const { storefront } = useContext(StorefrontContext);
+  const { storefront, connectStorefront } = useContext(StorefrontContext);
   const [form] = Form.useForm();
-  const { solana, wallet, connect } = useContext(WalletContext);
+  const { solana, wallet } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain ?? '' },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor ?? '#333333' },
@@ -88,7 +88,7 @@ export default function Edit() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button type="primary" block onClick={connect}>
+            <Button type="primary" block onClick={connectStorefront}>
               Connect
             </Button>
           </Space>

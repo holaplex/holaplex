@@ -11,9 +11,10 @@ type UploadProps = {
   disabled?: boolean;
   value?: any;
   children?: React.ReactElement | boolean;
+  dragger?: boolean;
 };
 
-export default function FileUpload({ children, value, onChange }: UploadProps) {
+export default function FileUpload({ children, value, onChange, dragger = false }: UploadProps) {
   const { solana } = useContext(WalletContext);
 
   const handleInputChange = async (upload: any) => {
@@ -38,8 +39,10 @@ export default function FileUpload({ children, value, onChange }: UploadProps) {
       });
   };
 
+  const Component = dragger ? Upload.Dragger : Upload;
+
   return (
-    <Upload
+    <Component
       customRequest={handleInputChange}
       maxCount={1}
       onChange={({ fileList }: any) => {
@@ -52,6 +55,6 @@ export default function FileUpload({ children, value, onChange }: UploadProps) {
       fileList={value}
     >
       {children}
-    </Upload>
+    </Component>
   );
 }

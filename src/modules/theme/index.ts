@@ -231,14 +231,14 @@ export function stylesheet({
     background: ${contrastBackgroundColor};
   }
   .ant-btn-primary, .action-btn, .metaplex-button, .overlay-btn {
-    background: ${primaryColor};
-    color: ${buttonTextColor};
+    background: white;
+    color: black;
     border: 0;
     box-shadow: none;
   }
   .ant-btn-primary:hover, .ant-btn:hover, .action-btn:hover, .metaplex-button:hover, .overlay-btn:hover, .ant-btn:focus, .type-btn:hover {
-    background: ${primaryHoverColor};
-    color: ${buttonTextColor};
+    background: white;
+    color: black;
     border-color: ${primaryColor};
 
   }

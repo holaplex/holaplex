@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Menu, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
+import { StorefrontContext } from '@/modules/storefront';
 import { WalletContext } from '@/modules/wallet';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import Button, { ButtonV2, SelectWalletButton } from '@/common/components/elements/Button';
@@ -29,6 +30,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   const router = useRouter();
   const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
   const { connect } = useContext(WalletContext);
+  const { connectStorefront } = useContext(StorefrontContext);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
   useEffect(() => {
@@ -38,7 +40,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   const mintModalClick = () => {
     if (!wallet) {
-      connect(router.pathname);
+      connect(() => router.push(router.pathname));
     }
     setShowMintModal(true);
   };
@@ -65,7 +67,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             </HeaderLinkWrapper>
             <HeaderLinkWrapper
               key="edit"
-              onClick={() => connect()}
+              onClick={() => connectStorefront()}
               active={router.pathname == '/storefront/edit'}
             >
               <Link href="/storefront/edit" passHref>

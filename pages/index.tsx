@@ -41,7 +41,6 @@ import {
   propEq,
 } from 'ramda';
 import Button from '@/components/elements/Button';
-import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import {
   generateListingShell,
@@ -51,6 +50,8 @@ import {
 import { SelectValue } from 'antd/lib/select';
 import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
+import { StorefrontContext } from '@/modules/storefront';
+import { MarketplaceContext } from '@/modules/marketplace';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -60,6 +61,7 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
 const DAO_LIST_IPFS =
   process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
   'https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4';
+const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
@@ -367,7 +369,8 @@ const getDefaultFilter = () => {
 };
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
-  const { connect } = useContext(WalletContext);
+  const { connectStorefront } = useContext(StorefrontContext);
+  const { connectMarketplace } = useContext(MarketplaceContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
@@ -473,7 +476,8 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
-              <Button onClick={() => connect()}>Create Your Store</Button>
+              <Button onClick={() => connectStorefront()}>Create Your Store</Button>
+              {MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>}
             </Space>
             <div style={{ marginTop: '2.5rem' }}>
               <SocialLinks />
@@ -631,6 +635,12 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               )}
             </Row>
           </Col>
+        </Section>
+        <Section justify="center" align="middle">
+          <Space direction="vertical" align="center">
+            <Title level={3}>Launch your own Solana NFT store today!</Title>
+            <Button onClick={() => connectStorefront()}>Create Your Store</Button>
+          </Space>
         </Section>
       </CenteredContentCol>
     </Row>
