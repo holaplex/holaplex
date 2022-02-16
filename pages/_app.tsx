@@ -96,7 +96,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
       new SlopeWalletAdapter(),
-      new TorusWalletAdapter({params: {network}}),
+      new TorusWalletAdapter({params: { network }}),
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),

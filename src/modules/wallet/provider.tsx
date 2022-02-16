@@ -51,8 +51,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         return router.push(path);
       }
       if (sf) return router.push('/storefront/edit');
-      // return router.push('/storefront/new'); // ?
-      return;
+      return router.push('/storefront/new');
     } catch (error) {
       setVerifying(false);
       return router.push("/");

@@ -51,5 +51,4 @@ export const notarize = async <T>(
 export const stringifyNotarized = <T>({
   payload,
   signature,
-}: Notarized<T>): JsonString<NotarizedStr<T>> =>
-  jsonStringify({ payload, signature: signature.toString('base64') as SignatureStr });
+}: Notarized<T>): JsonString<NotarizedStr<T>> => jsonStringify<NotarizedStr<T>>({ payload, signature: Buffer.from(signature).toString('base64') as SignatureStr});
