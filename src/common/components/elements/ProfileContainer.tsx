@@ -1,4 +1,5 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
+import { testData } from '@/common/components/elements/test-nft-data';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
