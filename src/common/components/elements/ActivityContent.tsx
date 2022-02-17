@@ -120,28 +120,17 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   return (
     <ActivityContainer>
-      <div className="mb-4 flex flex-1">
-        <form className="flex w-full md:ml-0" action="#" method="GET">
-          <label htmlFor="search-field" className="sr-only">
-            Search
-          </label>
-          <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-              {/* <SearchIcon className="h-5 w-5" aria-hidden="true" /> */}
-              <FeatherIcon icon="search" aria-hidden="true" />
-            </div>
-            <input
-              value={activityFilter}
-              onChange={(e) => setActivityFilter(e.target.value)}
-              id="search-field"
-              className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
-              placeholder="Search"
-              type="search"
-              name="search"
-            />
-          </div>
-        </form>
-      </div>
+      {/* <div className="mb-4 flex flex-1">
+        <TextInput2
+          id="activity-search"
+          label="activity search"
+          hideLabel
+          value={activityFilter}
+          onChange={(e) => setActivityFilter(e.target.value)}
+          leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+          className="w-full"
+        />
+      </div> */}
 
       <div className="space-y-4">
         {isLoading ? (
@@ -155,16 +144,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             <LoadingActivitySkeletonBoxSquareShort />
             <LoadingActivitySkeletonBoxCircleLong />
           </>
-        ) : hasItems ? (
+        ) : filteredItems.length ? (
           <>
-            <TextInput2
-              id="activity-search"
-              label="activity search"
-              hideLabel
-              value={activityFilter}
-              onChange={(e) => setActivityFilter(e.target.value)}
-              leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
-            />
             {filteredItems.map((bid, i) => (
               <ActivityBox
                 key={i}
@@ -220,12 +201,40 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                           </ItemText>
                         </Row>
                         <Row style={{ marginTop: 8 }}>
-                          <TimeText>
-                            {DateTime.fromFormat(
-                              bid.lastBidTime,
-                              'yyyy-MM-dd HH:mm:ss'
-                            ).toRelative()}
-                          </TimeText>
+                          {bid.cancelled ? (
+                            <TimeText>
+                              {DateTime.fromFormat(
+                                bid.lastBidTime,
+                                'yyyy-MM-dd HH:mm:ss'
+                              ).toRelative()}
+                            </TimeText>
+                          ) : (
+                            <div className="flex items-center text-xs font-medium text-white opacity-80">
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="mr-1"
+                              >
+                                <path
+                                  d="M8.00016 3.99967V7.99967L10.6668 9.33301M14.6668 7.99967C14.6668 11.6816 11.6821 14.6663 8.00016 14.6663C4.31826 14.6663 1.3335 11.6816 1.3335 7.99967C1.3335 4.31778 4.31826 1.33301 8.00016 1.33301C11.6821 1.33301 14.6668 4.31778 14.6668 7.99967Z"
+                                  stroke="white"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+
+                              <span>
+                                You have an unredeemed bid from{' '}
+                                {DateTime.fromFormat(
+                                  bid.lastBidTime,
+                                  'yyyy-MM-dd HH:mm:ss'
+                                ).toRelative()}
+                              </span>
+                            </div>
+                          )}
                         </Row>
                       </ContentCol>
                     );
@@ -256,7 +265,16 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             ))}
           </>
         ) : (
-          <NoActivityBox />
+          <ActivityBoxContainer>
+            <NoActivityContainer>
+              <NoActivityTitle>
+                No activity {items.length && !filteredItems.length && ' for this filter'}
+              </NoActivityTitle>
+              <NoActivityText>
+                Activity associated with this user’s wallet will show up here
+              </NoActivityText>
+            </NoActivityContainer>
+          </ActivityBoxContainer>
         )}
       </div>
     </ActivityContainer>
@@ -515,6 +533,6 @@ const ItemText = styled.span`
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 16px;
   line-height: 16px;
 `;

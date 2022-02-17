@@ -100,12 +100,12 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
         />
       </Head>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: bannerBackgroundImage }} />
+        <Banner style={{ backgroundImage: banner }} />
       </HeadingContainer>
       <ContentCol>
         <Profile>
           <ProfilePictureContainer>
-            <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
+            <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
           <WalletPillContainer>
             <WalletPill

@@ -72,6 +72,7 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
 const SmallConnectButton = styled(SelectWalletButton)`
   flex: 1;
   width: 100%;
+  border-radius: 500px;
 `;
 
 const PaddedContainer = styled.div`
