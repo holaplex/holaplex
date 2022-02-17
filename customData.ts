@@ -1,7 +1,7 @@
 // CUSTOMIZE THIS!
 
 const customData = {
-  appName: 'Holaplex × Seattle Hacker House',
+  appName: 'Holaplex × Dubai Hacker House',
   heading: 'Dubai Hacker House',
   subHeading: 'February 16–20, 2022',
   copy: [
