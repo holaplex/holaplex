@@ -35,6 +35,20 @@ export const WalletPill: FC<WalletPillProps> = ({
 
   const twitterandle = isTwitterHandle(textOverride);
 
+  const handleLabelClick = async () => {
+    if (publicKey?.toBase58().length) {
+      await navigator.clipboard.writeText(publicKey.toBase58());
+      toast(
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-white">
+            <Check color="#32D583" className="mr-2" />
+            <div>Wallet address copied to clipboard.</div>
+          </div>
+        </div>
+      );
+    }
+  };
+
   if (disableLink) {
     return (
       <ContainerSpan onClick={onClick} disableBackground={disableBackground ?? false}>
@@ -46,7 +60,11 @@ export const WalletPill: FC<WalletPillProps> = ({
           ) : publicKey ? (
             <div className="flex items-center">
               {showFirstAndLastFour(publicKey.toBase58())}
-              <FeatherIcon icon="copy" className="ml-2 h-5 w-5 text-[#f4f4f4]" />
+              <FeatherIcon
+                onClick={handleLabelClick}
+                icon="copy"
+                className="ml-2 h-5 w-5 cursor-pointer text-[#f4f4f4]  transition-colors hover:text-gray-300"
+              />
             </div>
           ) : (
             'DISCONNECTED'
@@ -100,7 +118,7 @@ export const WalletLabel = () => {
       />
       <span className="inline-flex items-center font-['Space_Mono'] text-[12px] leading-[16px] tracking-[0.02em] text-gray-300">
         &nbsp;{publicKey ? showFirstAndLastFour(publicKey.toBase58()) : 'DISCONNECTED'}&nbsp;
-        <Copy className="h-2 w-2" />
+        {/* <Copy className="h-2 w-2" /> */}
       </span>
     </button>
   );
