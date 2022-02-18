@@ -2,13 +2,11 @@ import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Image from 'next/image';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import { useAppHeaderSettings } from '@/common/components/elements/AppHeaderSettingsProvider';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { useRouter } from 'next/router';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
 import { showFirstAndLastFour } from '@/modules/utils/string';
@@ -26,8 +24,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
-  const { toggleDisableMarginBottom } = useAppHeaderSettings();
-  const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
 
@@ -51,13 +47,6 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
     }
   }, [queryWalletProfile, twitterHandle]);
 
-  useEffect(() => {
-    if (!didToggleDisableMarginBottom) {
-      setDidToggleDisableMarginBottom(true);
-      toggleDisableMarginBottom();
-    }
-  }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
-
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
 
@@ -67,9 +56,6 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
 
   useEffect(() => {
-    //   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
-    //   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
-
     const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
     const bannerBackgroundImage = !!bannerUrl
       ? `url(${bannerUrl})`

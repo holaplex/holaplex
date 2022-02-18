@@ -5,9 +5,7 @@ import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { WalletContext } from '@/modules/wallet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { SelectWalletButton } from '@/common/components/elements/Button';
 import { Wallet } from '@/modules/wallet/types';
-import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
@@ -18,7 +16,6 @@ import { Menu as MenuIcon } from '@/components/icons/Menu';
 import { ChevronRight } from '../icons/ChevronRight';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
-import { Close } from '../icons/Close';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 interface Props {
@@ -29,7 +26,6 @@ interface Props {
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
 export function AppHeader({ setShowMintModal, wallet }: Props) {
-  const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
   const {
     connected,
@@ -69,6 +65,10 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   }, [connected]);
 
   useEffect(() => {
+    console.log(router);
+  });
+
+  useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
     connectUserWallet();
   }, [connectUserWallet, connected, hasWalletTypeSelected]);
@@ -82,7 +82,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   return (
     <>
-      <StyledHeader $disableMarginBottom={disableMarginBottom}>
+      <StyledHeader $disableMarginBottom={router.pathname.startsWith('/profiles/')}>
         <HeaderTitle>
           <Link href="/" passHref>
             <a>
@@ -93,9 +93,6 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         {!WHICHDAO && (
           <LinkRow size="large">
             <HeaderLinkWrapper key="mint-nfts" active={false}>
-              {/* <Button onClick={mintModalClick} type="text" noStyle>
-                Mint&nbsp;NFTs
-              </Button> */}
               <a className="hover:underline focus:underline" onClick={mintModalClick}>
                 Mint NFTs
               </a>
@@ -286,10 +283,7 @@ const StyledHeader = styled(Header)<CustomHeaderProps>`
   display: none;
   ${mq('md')} {
     ${sv.flexRow};
-    margin-top: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-bottom: ${(props) => (props.$disableMarginBottom ? ' 0px' : '40px')};
+    margin: 5px;
     padding: 1.25rem;
   }
 `;
