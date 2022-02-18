@@ -91,7 +91,7 @@ const CustomImageMask = styled.div`
   right: 0;
   bottom: 0;
   width: 72px;
-  height: 72px; 
+  height: 72px;
   margin: auto;
   display: flex;
   align-items: center;
@@ -99,10 +99,9 @@ const CustomImageMask = styled.div`
   cursor: pointer;
 
   > svg {
-    position absolute;
+    position: absolute;
     right: 16px;
     bottom: 16px;
-
   }
 `;
 
@@ -166,12 +165,12 @@ export function ListingPreview({
         setNFT(nftJson);
         setTimeout(() => setLoading(false), 500);
 
-        if (window.location.host.includes('localhost')) {
-          console.log(nftMetadata.name, {
-            ...listing,
-            nftJson,
-          });
-        }
+        // if (window.location.host.includes('localhost')) {
+        //   console.log(nftMetadata.name, {
+        //     ...listing,
+        //     nftJson,
+        //   });
+        // }
       }
     }
     if (!nftMetadata?.uri) {

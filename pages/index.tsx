@@ -40,7 +40,7 @@ import {
   range,
   propEq,
 } from 'ramda';
-import Button from '@/components/elements/Button';
+import { WhiteRoundedButton } from '@/components/elements/Button';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import {
   generateListingShell,
@@ -50,9 +50,9 @@ import {
 import { SelectValue } from 'antd/lib/select';
 import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
-import { StorefrontContext } from '@/modules/storefront';
-import { MarketplaceContext } from '@/modules/marketplace';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { Wallet } from '@project-serum/anchor';
+import { useRouter } from 'next/router';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -383,7 +383,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const listingsTopRef = useRef<HTMLInputElement>(null);
-  const { connect } = useWallet();
+  const router = useRouter();
 
   const scrollToListingTop = () => {
     if (!listingsTopRef || !listingsTopRef.current) {
@@ -476,14 +476,18 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
-              <Button onClick={() => connect()}>Create Your Store</Button>
+              <WhiteRoundedButton onClick={() => router.push('/storefront/new')}>
+                Create Your Store
+              </WhiteRoundedButton>
 
               {/* 
                this is here as a refernce, can be removed at any point.
                to allow free creation of marketplaces, go to /marketplace/new or uncomment the button :-)*/}
 
-              {true && MARKETPLACE_ENABLED && (
-                <Button onClick={() => connect()}>Create Your Marketplace</Button>
+              {MARKETPLACE_ENABLED && (
+                <WhiteRoundedButton onClick={() => router.push('/marketplace/new')}>
+                  Create Your Marketplace
+                </WhiteRoundedButton>
               )}
             </Space>
             <div className="mt-[2.5rem]">
@@ -643,7 +647,14 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connect()}>Create Your Store</Button>
+            <WhiteRoundedButton onClick={() => router.push('/storefront/new')}>
+              Create Your Store
+            </WhiteRoundedButton>
+            {MARKETPLACE_ENABLED && (
+              <WhiteRoundedButton onClick={() => router.push('/marketplace/new')}>
+                Create Your Marketplace
+              </WhiteRoundedButton>
+            )}
           </Space>
         </Section>
       </CenteredContentCol>

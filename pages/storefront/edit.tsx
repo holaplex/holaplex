@@ -4,7 +4,7 @@
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
 import FontSelect from '@/common/components/elements/FontSelect';
 import Upload from '@/common/components/elements/Upload';
-import Button from '@/components/elements/Button';
+import { WhiteRoundedButton } from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
@@ -90,9 +90,7 @@ export default function Edit() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button type="primary" block onClick={() => connect()}>
-              Connect
-            </Button>
+            <WhiteRoundedButton onClick={() => connect()}>Connect</WhiteRoundedButton>
           </Space>
         </Card>
       </Row>
@@ -165,9 +163,7 @@ export default function Edit() {
                           view(lensPath(['response', 'url'])),
                           prop('url')
                         )(values.theme.banner[0])) && (
-                        <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                          Upload Banner
-                        </Button>
+                        <WhiteRoundedButton>Upload Banner</WhiteRoundedButton>
                       )}
                     </Upload>
                   </Form.Item>
@@ -178,9 +174,7 @@ export default function Edit() {
                   >
                     <Upload>
                       {isEmpty(values.theme.logo) && (
-                        <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                          Upload
-                        </Button>
+                        <WhiteRoundedButton>Upload</WhiteRoundedButton>
                       )}
                     </Upload>
                   </Form.Item>
@@ -266,11 +260,7 @@ export default function Edit() {
                 rules={[{ required: true, message: 'Upload a favicon.' }]}
               >
                 <Upload>
-                  {isEmpty(values.meta.favicon) && (
-                    <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                      Upload
-                    </Button>
-                  )}
+                  {isEmpty(values.meta.favicon) && <WhiteRoundedButton>Upload</WhiteRoundedButton>}
                 </Upload>
               </Form.Item>
               <Form.Item
@@ -290,15 +280,9 @@ export default function Edit() {
             </TabPane>
           </Tabs>
           <Row justify="end">
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              disabled={submitting}
-              loading={submitting}
-            >
+            <WhiteRoundedButton disabled={submitting} loading={submitting}>
               Update
-            </Button>
+            </WhiteRoundedButton>
           </Row>
         </Form>
       </Col>

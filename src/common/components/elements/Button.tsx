@@ -180,4 +180,16 @@ export const DisconnectWalletButton = styled(WalletDisconnectButton).attrs({
   }
 `;
 
+export const WhiteRoundedButton = (props: any) => {
+  return (
+    <button
+      className="rounded-full bg-white px-6 py-2 text-base text-black opacity-[0.9] hover:opacity-[1] disabled:opacity-[0.5]"
+      onClick={props.onClick}
+      disabled={props.disabled}
+    >
+      {props.loading ? '...' : props.children}
+    </button>
+  );
+};
+
 export default StyledButton;

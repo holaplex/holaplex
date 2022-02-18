@@ -1,14 +1,13 @@
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
 import FontSelect from '@/common/components/elements/FontSelect';
 import Upload from '@/common/components/elements/Upload';
-import Button from '@/components/elements/Button';
+import { WhiteRoundedButton } from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
-import { StorefrontContext } from '@/modules/storefront';
 import {
   FieldData,
   getTextColor,
@@ -89,9 +88,7 @@ export default function New() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button type="primary" block onClick={() => connect()}>
-              Connect
-            </Button>
+            <WhiteRoundedButton onClick={() => connect()}>Connect</WhiteRoundedButton>
           </Space>
         </Card>
       </Row>
@@ -173,11 +170,7 @@ export default function New() {
           rules={[{ required: false, message: 'Upload a Hero Image' }]}
         >
           <Upload>
-            {isEmpty(values.theme.banner) && (
-              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload Banner
-              </Button>
-            )}
+            {isEmpty(values.theme.banner) && <WhiteRoundedButton>Upload Banner</WhiteRoundedButton>}
           </Upload>
         </Form.Item>
         <Form.Item
@@ -186,11 +179,7 @@ export default function New() {
           rules={[{ required: true, message: 'Upload a logo.' }]}
         >
           <Upload>
-            {isEmpty(values.theme.logo) && (
-              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload Logo
-              </Button>
-            )}
+            {isEmpty(values.theme.logo) && <WhiteRoundedButton>Upload Logo</WhiteRoundedButton>}
           </Upload>
         </Form.Item>
         <Form.Item name={['theme', 'backgroundColor']} label="Background">
@@ -264,11 +253,7 @@ export default function New() {
         rules={[{ required: true, message: 'Upload a favicon.' }]}
       >
         <Upload>
-          {isEmpty(values.meta.favicon) && (
-            <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-              Upload
-            </Button>
-          )}
+          {isEmpty(values.meta.favicon) && <WhiteRoundedButton>Upload</WhiteRoundedButton>}
         </Upload>
       </Form.Item>
       <Form.Item

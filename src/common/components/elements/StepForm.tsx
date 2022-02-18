@@ -1,6 +1,6 @@
 import React, { useState, FunctionComponent } from 'react';
 import { Form, Row, Space, FormInstance } from 'antd';
-import Button from '@/components/elements/Button';
+import { WhiteRoundedButton } from '@/components/elements/Button';
 import { FormProps } from 'antd';
 
 interface StepFormProps extends FormProps {
@@ -39,21 +39,14 @@ const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: St
         <Row justify="end">
           <Space size="middle">
             {page > 0 && (
-              <Button size="large" onClick={previous} disabled={submitting} shape="round">
+              <WhiteRoundedButton onClick={previous} disabled={submitting}>
                 Back
-              </Button>
+              </WhiteRoundedButton>
             )}
             <Form.Item noStyle>
-              <Button
-                type="primary"
-                size="large"
-                htmlType="submit"
-                disabled={submitting}
-                loading={submitting}
-                shape="round"
-              >
+              <WhiteRoundedButton disabled={submitting} loading={submitting}>
                 {isLastPage ? 'Submit' : 'Next'}
-              </Button>
+              </WhiteRoundedButton>
             </Form.Item>
           </Space>
         </Row>

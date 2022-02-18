@@ -1,6 +1,6 @@
 import { programs } from '@metaplex/js';
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
-import Button from '@/components/elements/Button';
+import { WhiteRoundedButton } from '@/components/elements/Button';
 import Upload from '@/components/elements/Upload';
 import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
@@ -93,9 +93,9 @@ export default function New() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a marketplace.</Paragraph>
-            <Button type="primary" block onClick={() => connect()} shape="round">
+            <WhiteRoundedButton type="primary" onClick={() => connect()}>
               Connect
-            </Button>
+            </WhiteRoundedButton>
           </Space>
         </Card>
       </Row>
@@ -281,9 +281,7 @@ export default function New() {
                 <Space key={key} direction="horizontal" size="middle">
                   <Avatar size={36} icon={<UserOutlined />} />
                   <Typography.Text>{values.creators[idx].address}</Typography.Text>
-                  <Button onClick={() => remove(idx)} shape="round">
-                    Remove
-                  </Button>
+                  <WhiteRoundedButton onClick={() => remove(idx)}>Remove</WhiteRoundedButton>
                 </Space>
               ))}
             </Space>

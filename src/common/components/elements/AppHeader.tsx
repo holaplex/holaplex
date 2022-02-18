@@ -16,6 +16,7 @@ import { ChevronRight } from '../icons/ChevronRight';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import { WhiteRoundedButton } from './Button';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
@@ -87,11 +88,7 @@ export function AppHeader({ setShowMintModal }: Props) {
                 Mint NFTs
               </a>
             </HeaderLinkWrapper>
-            <HeaderLinkWrapper
-              key="edit"
-              onClick={() => connect()}
-              active={router.pathname == '/storefront/edit'}
-            >
+            <HeaderLinkWrapper key="edit" active={router.pathname == '/storefront/edit'}>
               <Link href="/storefront/edit" passHref>
                 <a className="hover:underline focus:underline">Edit store</a>
               </Link>
@@ -180,12 +177,7 @@ export function AppHeader({ setShowMintModal }: Props) {
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <button
-                className="rounded-full bg-white px-8 py-2 text-sm text-black"
-                onClick={() => setVisible(!visible)}
-              >
-                Connect
-              </button>
+              <WhiteRoundedButton onClick={() => setVisible(!visible)}>Connect</WhiteRoundedButton>
             )}
           </LinkRow>
         )}
