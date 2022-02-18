@@ -8,6 +8,7 @@ import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { StorefrontContext } from '@/modules/storefront';
 import {
   FieldData,
   getTextColor,
@@ -52,7 +53,8 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet, connect } = useContext(WalletContext);
+  const { solana, wallet } = useContext(WalletContext);
+  const { connectStorefront } = useContext(StorefrontContext);
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -73,7 +75,7 @@ export default function New() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button type="primary" block onClick={connect}>
+            <Button type="primary" block onClick={connectStorefront}>
               Connect
             </Button>
           </Space>

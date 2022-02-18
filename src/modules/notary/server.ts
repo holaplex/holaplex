@@ -31,7 +31,9 @@ export const verifyNacl =
 export const verifyNaclSelfContained =
   <T>(pubkey: (val: T) => Uint8Array): Verifier<T> =>
   async (utf8, sig, payload) =>
-    nacl.sign.detached.verify(utf8, sig, pubkey(payload));
+    {
+      return nacl.sign.detached.verify(utf8, sig, pubkey(payload));
+    };
 
 /**
  * Unpack and verify the inner value of a `Notarized<T>`.
@@ -57,6 +59,8 @@ export const unpackNotarized = async <T>(
   const { payload, signature } = notarized;
   const parse = options.parse ?? jsonParse(options.validate);
   const payloadRes = parse(payload);
+
+  console.log(payloadRes);
 
   if (payloadRes.err !== undefined) return payloadRes;
   const { ok: payloadDec } = payloadRes;

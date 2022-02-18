@@ -1,3 +1,4 @@
+
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
 import Head from 'next/head';
@@ -9,7 +10,7 @@ export default function New() {
 
   useEffect(() => {
     if (!wallet) {
-      connect(router.pathname);
+      connect(() => router.push(router.pathname));
     } else {
       router.push('/?action=mint');
     }

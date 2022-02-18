@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
+import { StorefrontContext } from '@/modules/storefront';
 import { WalletContext } from '@/modules/wallet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Wallet } from '@/modules/wallet/types';
@@ -35,6 +36,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
     disconnecting,
   } = useWallet();
   const { connect } = useContext(WalletContext);
+  const { connectStorefront } = useContext(StorefrontContext);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
@@ -71,7 +73,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   const mintModalClick = () => {
     if (!wallet) {
-      connect(router.pathname);
+      connect(() => router.push(router.pathname));
     }
     setShowMintModal(true);
   };
@@ -95,7 +97,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             </HeaderLinkWrapper>
             <HeaderLinkWrapper
               key="edit"
-              onClick={() => connect()}
+              onClick={() => connectStorefront()}
               active={router.pathname == '/storefront/edit'}
             >
               <Link href="/storefront/edit" passHref>
@@ -299,3 +301,4 @@ const CloseButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
+

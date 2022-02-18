@@ -5,6 +5,7 @@ import { Storefront } from '@/modules/storefront/types';
 import { JsonString } from '@/modules/utils/json';
 import Ajv, { JTDParser, JTDSchemaType, ValidateFunction } from 'ajv/dist/jtd';
 import getConfig from 'next/config';
+import { Marketplace } from '@/modules/marketplace';
 import { NotarizedStr, SignatureStr } from '../notary/common';
 
 // Tagged type hack
@@ -19,6 +20,7 @@ export const SCHEMAS = {
   notarized: Schema<NotarizedStr<unknown>>('NotarizedStr<T>'),
   signMetaParams: Schema<SignMetaParams>('SignMetaParams'),
   storefront: Schema<Storefront>('Storefront'),
+  marketplace: Schema<Marketplace>('Marketplace'),
 };
 
 class SchemaManager {
@@ -124,6 +126,35 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
       },
     },
   });
+
+  schemas.addSchema(SCHEMAS.marketplace,
+    {
+      properties: {
+        creators: { 
+          elements: { type: 'string' },
+        },
+        subdomain: { type: 'string' },
+        address: {
+          properties: {
+            auctionHouse: { type: 'string' },
+            owner: { type: 'string' },
+          },
+        },
+        meta: {
+          properties: {
+            name: { type: 'string' },
+            description: { type: 'string' },
+          }
+        },
+        theme: {
+          properties: {
+            banner: arweaveFile,
+            logo: arweaveFile
+          }
+        }
+      }
+    }
+  );
 
   return schemas;
 };
