@@ -62,9 +62,11 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
-          <ProfileMenu wallet={wallet} />
         </Profile>
-        <ContentWrapper>{children}</ContentWrapper>
+        <ContentWrapper>
+          <ProfileMenu wallet={wallet} />
+          {children}
+        </ContentWrapper>
       </ContentCol>
     </>
   );

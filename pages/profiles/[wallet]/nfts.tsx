@@ -55,10 +55,6 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
 
   const [input, setInput] = useState(true);
 
-  console.log('searchFieldRef', searchFieldRef);
-
-  useOnClickOutside(input, () => toggleSearchField(false));
-
   const [nftsToShow, setNFTSToShow] = useState(nfts);
 
   const handleListedClick = (e) => {
@@ -183,6 +179,12 @@ const StyledMenu = styled(Menu)`
 `;
 
 const StyledMenuItem = styled(Menu.Item)`
+  &:not(.ant-menu-item-selected) {
+    span {
+      color: #a8a8a8;
+    }
+  }
+
   ant-menu-title-content {
     display: flex;
   }
