@@ -54,8 +54,9 @@ export const uploadFile = async ({
       isNil(wallet) ||
       isNil(wallet.wallet?.adapter) ||
       wallet?.wallet?.readyState === 'Unsupported'
-    )
+    ) {
       throw new Error('Could not connect to Solana');
+    }
 
     if (!wallet.connected) {
       onProgress('connecting-wallet');

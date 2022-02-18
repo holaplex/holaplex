@@ -176,7 +176,7 @@ const StyleVariables = {
 
   buttonBase: {
     height: buttonHeight,
-    background: 'white',
+    background: cta,
     color: buttonText,
     border: 'none',
     padding: `0 ${grid * 2}px`,

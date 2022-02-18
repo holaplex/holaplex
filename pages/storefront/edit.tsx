@@ -1,6 +1,3 @@
-// naughty
-// @ts-nocheck
-
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
 import FontSelect from '@/common/components/elements/FontSelect';
 import Upload from '@/common/components/elements/Upload';
@@ -60,7 +57,7 @@ export default function Edit() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [tab, setTab] = useState<TabKey>('theme');
-  const { storefront, connectStorefront } = useContext(StorefrontContext);
+  const { storefront } = useContext(StorefrontContext);
   const [form] = Form.useForm();
   const { connect } = useContext(WalletContext);
   const { wallet, publicKey } = useWallet();
