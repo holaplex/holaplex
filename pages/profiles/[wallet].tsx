@@ -67,7 +67,7 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   return (
     <>
       <Head>
-        <title>{showFirstAndLastFour(wallet)}&apos;s profile | Holaplex</title>
+        <title>{showFirstAndLastFour(wallet)}&apos;s profile | RIAD</title>
         <meta
           property="description"
           key="description"

@@ -112,11 +112,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Tools built by creators, for creators, owned by creators | Holaplex</title>
+        <title>Reunion Island Art Digitizer</title>
         <meta
           property="description"
           key="description"
-          content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
+          content="Discover, explore, and collect NFTs from incredible artists of Reunion Island. Tools built by artists, for artists, owned by artists."
         />
       </Head>
       <ToastContainer autoClose={15000} />

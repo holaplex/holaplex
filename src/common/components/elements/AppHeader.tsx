@@ -47,9 +47,9 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
     <>
       <StyledHeader disableMarginBottom={disableMarginBottom}>
         <HeaderTitle>
-          <Link href="/" passHref>
+          <Link href="https://www.riad.re" passHref>
             <a>
-              👋&nbsp;&nbsp;<span>Holaplex</span>
+            <img src="./LogoRIAD.png" height="100px" width="100px"/>
             </a>
           </Link>
         </HeaderTitle>
@@ -77,7 +77,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               content={
                 <div className="flex flex-col space-y-6">
                   <Link href="/about" passHref>
-                    <a className="hover:underline">About Holaplex</a>
+                    <a className="hover:underline">About RIAD</a>
                   </Link>
                   <Link
                     href="https://docs.google.com/document/d/1jskpoCdDm7DU2IbeXwRhhl5LGiNhonAx2HsmfJlDsEs"

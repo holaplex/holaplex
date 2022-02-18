@@ -137,7 +137,7 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>We exist for our community of creators | Holaplex</title>
+        <title>RIAD is here to help Artists of Reunion Island</title>
         <meta
           property="description"
           key="description"
@@ -148,7 +148,7 @@ export default function About() {
         <ContentCol xs={22} md={20}>
           <Space direction="vertical" align="center" size="large">
             <HeroTitle>
-              Our mission is to empower creators and collectors with a suite of tools to create,
+              Our mission is to empower artists with a suite of tools to create,
               market, and sell NFTs.
             </HeroTitle>
             <Pitch>
