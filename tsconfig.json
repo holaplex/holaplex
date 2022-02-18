@@ -1,11 +1,8 @@
 {
   "compilerOptions": {
+    "typeRoots": ["typings"],
     "target": "es2015",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,45 +16,19 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/common/*": [
-        "src/common/*"
-      ],
-      "@/styles/*": [
-        "src/common/styles/*"
-      ],
-      "@/assets/*": [
-        "src/common/assets/*"
-      ],
-      "@/components/*": [
-        "src/common/components/*"
-      ],
-      "@/constants/*": [
-        "src/common/constants/*"
-      ],
-      "@/hooks/*": [
-        "src/common/hooks/*"
-      ],
-      "@/layouts/*": [
-        "src/layouts/*"
-      ],
-      "@/modules/*": [
-        "src/modules/*"
-      ],
-      "@/types/*": [
-        "src/types/*"
-      ]
+      "@/common/*": ["src/common/*"],
+      "@/styles/*": ["src/common/styles/*"],
+      "@/assets/*": ["src/common/assets/*"],
+      "@/components/*": ["src/common/components/*"],
+      "@/constants/*": ["src/common/constants/*"],
+      "@/hooks/*": ["src/common/hooks/*"],
+      "@/layouts/*": ["src/layouts/*"],
+      "@/modules/*": ["src/modules/*"],
+      "@/types/*": ["src/types/*"]
     },
     "incremental": true
   },
-  "types": [
-    "google.analytics"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "types": ["google.analytics", "mocha", "chai"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

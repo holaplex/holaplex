@@ -3,7 +3,8 @@ import singletons from '../../src/modules/singletons';
 import { SCHEMAS } from '../../src/modules/singletons/json-schemas';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { Buffer } from 'buffer';
-import { RETRY_AFTER, signingQueue } from '../../src/modules/metadata-signing'
+import { signingQueue } from '../../src/modules/metadata-signing'
+import { buildSolana } from '@/modules/solana/buildSolana'
 
 /** Adapted from metaplex/js/packages/common/src/actions/metadata.ts */
 function signMetadata(
@@ -101,9 +102,6 @@ async function consume() {
         return;
       }
 
-
-
-      const { connection, keypair, endpoint } = await singletons.solana;
       const schemas = singletons.jsonSchemas;
       const validateMessage = schemas.validator(SCHEMAS.signMetaParams);
       if (!validateMessage(parsedMessage)) {
@@ -119,6 +117,15 @@ async function consume() {
         metadata: metadataStr,
         metaProgramId: metaProgramIdStr,
       } = parsedMessage;
+
+      const {
+        connection,
+        keypair,
+        endpoint
+      } = await buildSolana(process.env.SOLANA_SECRET_ID)({
+        endpoint: clientSolEndpoint,
+        secrets: singletons.secrets
+      })
 
       if (!metaProgramIdStr.startsWith('meta')) {
         console.error('Invalid program ID');

@@ -43,25 +43,14 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
   return (
     <>
       <FirstRow>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}
-        >
+        <div className="flex w-full items-center justify-between">
           <ProfilePicture
             width={PFP_SIZE}
             height={PFP_SIZE}
             src={profilePictureUrl ?? '/images/gradients/gradient-3.png'}
             alt="Profile Picture"
           />
-          <div
-            style={{
-              marginLeft: 20,
-            }}
-          >
+          <div className="ml-5">
             <WalletPill
               onClick={onViewProfile}
               disableBackground
@@ -71,23 +60,11 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
           </div>
         </div>
       </FirstRow>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          marginTop: 24,
-        }}
-      >
+      <div className="mt-6 flex w-full items-center justify-between">
         <SolBalance />
         <WalletLabel />
       </div>
-      <div
-        style={{
-          width: '100%',
-        }}
-      >
+      <div className="w-full">
         <DisconnectWalletButton />
       </div>
     </>

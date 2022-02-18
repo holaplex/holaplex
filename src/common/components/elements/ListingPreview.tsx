@@ -65,15 +65,7 @@ export function SkeletonListing() {
   return (
     <div className="mb-12 pt-1 ">
       <Square>
-        <StyledSkeletonImage
-          className="skeleton-animation"
-          style={{
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
-            width: '100%',
-            height: '100%',
-          }}
-        />
+        <StyledSkeletonImage className="skeleton-animation h-full w-full rounded-t-lg" />
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">
@@ -243,7 +235,9 @@ export function ListingPreview({
             fallback={NFTFallbackImage}
           />
         </Square>
-        <div className="border-x border-gray-800 px-4 pt-4 pb-5">
+      </a>
+      <div className="border-x border-gray-800 px-4 pt-4 pb-5">
+        <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
           <div className="mb-1 flex items-center justify-between">
             <div className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</div>
             <div className="flex items-center">
@@ -257,7 +251,7 @@ export function ListingPreview({
                     color: 'white',
                   }}
                 >
-                  <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
+                  <ParticipationNFTIcon className="ml-2" />
                 </Tooltip>
               )}
               {isSecondarySale && (
@@ -270,28 +264,30 @@ export function ListingPreview({
                     color: 'white',
                   }}
                 >
-                  <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
+                  <SecondarySaleIcon className="ml-2" />
                 </Tooltip>
               )}
             </div>
           </div>
-          <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
-            <div className="flex items-center">
-              {listing.logoUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={listing.logoUrl}
-                  className="mr-2 h-4 w-4 rounded-sm"
-                  alt={'logo for ' + listing.storeTitle}
-                />
-              )}
+        </a>
+        <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
+          <div className="flex items-center">
+            {listing.logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={listing.logoUrl}
+                className="mr-2 h-4 w-4 rounded-sm"
+                alt={'logo for ' + listing.storeTitle}
+              />
+            )}
 
-              <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
-                {listing.storeTitle}
-              </h4>
-            </div>
-          </a>
-        </div>
+            <h4 className="m-0 truncate text-sm font-semibold text-gray-300 hover:text-white">
+              {listing.storeTitle}
+            </h4>
+          </div>
+        </a>
+      </div>
+      <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
         <div
           className={classNames(
             'flex items-center justify-between rounded-b-md px-4 py-4',
@@ -321,28 +317,16 @@ export function ListingPreview({
             )}
           </div>
         </div>
-
-        {isDev && (
-          <Row justify="space-between" wrap={false}>
-            <span
-              style={{
-                fontSize: 14,
-                opacity: 0.6,
-              }}
-            >
-              Listed {listing.createdAt.slice(5, 16)}
-            </span>
-            <span
-              style={{
-                fontSize: 14,
-                opacity: 0.6,
-              }}
-            >
-              Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
-            </span>
-          </Row>
-        )}
       </a>
+
+      {isDev && (
+        <Row justify="space-between" wrap={false}>
+          <span className="text-sm opacity-[0.6]">Listed {listing.createdAt.slice(5, 16)}</span>
+          <span className="text-sm opacity-[0.6]">
+            Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
+          </span>
+        </Row>
+      )}
     </div>
   );
 }
