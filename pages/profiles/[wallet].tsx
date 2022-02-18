@@ -2,59 +2,70 @@ import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Image from 'next/image';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import { useAppHeaderSettings } from '@/common/components/elements/AppHeaderSettingsProvider';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { useRouter } from 'next/router';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
 import { showFirstAndLastFour } from '@/modules/utils/string';
+import Bugsnag from '@bugsnag/js';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // ...
   return {
     props: {
+      // query params must be gotten serverside to be available on initial render
       wallet: context.query.wallet,
     },
   };
 };
 
 const ActivityLanding = ({ wallet }: { wallet: string }) => {
-  const router = useRouter();
-  // const { wallet } = router.query;
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
-  const { toggleDisableMarginBottom } = useAppHeaderSettings();
-  const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
 
-  useEffect(() => {
-    if (!twitterHandle) return;
-    queryWalletProfile({
-      variables: {
-        handle: twitterHandle,
-      },
-    });
-  }, [queryWalletProfile, twitterHandle]);
+  const [{ pfp, banner }, setPfpAndBanner] = useState({
+    pfp: '/images/gradients/gradient-3.png',
+    banner: 'url(/images/gradients/gradient-5.png)', // TODO: Fetch from wallet (DERIVE)
+  });
 
   useEffect(() => {
-    if (!didToggleDisableMarginBottom) {
-      setDidToggleDisableMarginBottom(true);
-      toggleDisableMarginBottom();
+    if (!twitterHandle) return;
+    try {
+      queryWalletProfile({
+        variables: {
+          handle: twitterHandle,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+      console.log('failed to fetch wallet');
+      Bugsnag.notify(error);
     }
-  }, [didToggleDisableMarginBottom, toggleDisableMarginBottom]);
+  }, [queryWalletProfile, twitterHandle]);
 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
-  const textOverride = twitterHandle;
 
   const bannerBackgroundImage = !!bannerUrl
     ? `url(${bannerUrl})`
     : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
   const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+
+  useEffect(() => {
+    const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+    const bannerBackgroundImage = !!bannerUrl
+      ? `url(${bannerUrl})`
+      : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
+
+    setPfpAndBanner({
+      pfp: profilePictureImage,
+      banner: bannerBackgroundImage,
+    });
+  }, [imageUrl, bannerUrl]);
 
   const getPublicKeyFromWalletOnUrl = () => {
     try {
@@ -75,18 +86,18 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
         />
       </Head>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: bannerBackgroundImage }} />
+        <Banner style={{ backgroundImage: banner }} />
       </HeadingContainer>
       <ContentCol>
         <Profile>
           <ProfilePictureContainer>
-            <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
+            <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
           <WalletPillContainer>
             <WalletPill
               disableBackground
               disableLink
-              textOverride={twitterHandle ? `@${twitterHandle}` : null}
+              textOverride={twitterHandle ? `${twitterHandle}` : null}
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
@@ -109,12 +120,8 @@ const WalletPillContainer = styled.div`
 `;
 
 const Profile = styled.div`
-  padding-left: calc(20px + 0.5rem);
   min-width: 348px;
   position: relative;
-  ${mq('md')} {
-    padding-left: calc(${PFP_SIZE}px + 0.5rem);
-  }
 `;
 
 const ActivityContentWrapper = styled.section`
@@ -147,10 +154,6 @@ const HeadingContainer = styled.header``;
 const ProfilePictureContainer = styled.div`
   position: absolute;
   top: ${-PFP_SIZE / 2}px;
-  left: 20px;
-  ${mq('md')} {
-    left: 90px;
-  }
   @media (min-width: ${BOX_SIZE - PFP_SIZE}) {
     left: 0px;
   }

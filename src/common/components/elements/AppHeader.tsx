@@ -1,14 +1,12 @@
 import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Layout, Menu, Popover, Space } from 'antd';
+import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { StorefrontContext } from '@/modules/storefront';
 import { WalletContext } from '@/modules/wallet';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import Button, { ButtonV2, SelectWalletButton } from '@/common/components/elements/Button';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Wallet } from '@/modules/wallet/types';
-import { useAppHeaderSettings } from './AppHeaderSettingsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
@@ -17,6 +15,9 @@ import { MobileMenu } from './MobileMenu';
 import { ButtonReset } from '@/common/styles/ButtonReset';
 import { Menu as MenuIcon } from '@/components/icons/Menu';
 import { ChevronRight } from '../icons/ChevronRight';
+import { toast } from 'react-toastify';
+import { Check } from '../icons/Check';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
@@ -26,13 +27,45 @@ interface Props {
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
 export function AppHeader({ setShowMintModal, wallet }: Props) {
-  const { disableMarginBottom } = useAppHeaderSettings();
   const router = useRouter();
-  const { connected, wallet: userWallet, connect: connectUserWallet } = useWallet();
+  const {
+    connected,
+    wallet: userWallet,
+    connect: connectUserWallet,
+    publicKey,
+    disconnecting,
+  } = useWallet();
   const { connect } = useContext(WalletContext);
   const { connectStorefront } = useContext(StorefrontContext);
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
+
+  const { visible, setVisible } = useWalletModal();
+
+  const handleViewProfile = useCallback(() => {
+    router.push(`/profiles/${publicKey!.toBase58()}`);
+  }, [publicKey, router]);
+
+  useEffect(() => {
+    if (connected) {
+      toast(
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-white" onClick={handleViewProfile}>
+            <Check color="#32D583" className="mr-2" />
+            <div>
+              Wallet connected successfully!{' '}
+              <span className="font-semibold underline">View profile</span>
+            </div>
+          </div>
+        </div>,
+        {
+          toastId: 'connection-success',
+        }
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connected]);
+
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
     connectUserWallet();
@@ -47,7 +80,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   return (
     <>
-      <StyledHeader disableMarginBottom={disableMarginBottom}>
+      <StyledHeader>
         <HeaderTitle>
           <Link href="/" passHref>
             <a>
@@ -58,9 +91,6 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         {!WHICHDAO && (
           <LinkRow size="large">
             <HeaderLinkWrapper key="mint-nfts" active={false}>
-              {/* <Button onClick={mintModalClick} type="text" noStyle>
-                Mint&nbsp;NFTs
-              </Button> */}
               <a className="hover:underline focus:underline" onClick={mintModalClick}>
                 Mint NFTs
               </a>
@@ -150,27 +180,21 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
                 </div>
               }
             >
-              {/* href https://holaplex-support.zendesk.com/hc/en-us */}
               <a className="flex items-center">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
-            {/* <HeaderLinkWrapper key="about" active={router.pathname == '/about'}>
-              <Link href="/about" passHref>
-                <a>About old</a>
-              </Link>
-            </HeaderLinkWrapper> */}
-            {/* <HeaderLinkWrapper key="faq" active={false}>
-              <a
-                href="https://holaplex-support.zendesk.com/hc/en-us"
-                target="_blank"
-                rel="noreferrer"
+
+            {connectedAndInstalledWallet ? (
+              <ProfileImage />
+            ) : (
+              <button
+                className="rounded-full bg-white px-8 py-2 text-sm text-black"
+                onClick={() => setVisible(!visible)}
               >
-                FAQ
-              </a>
-            </HeaderLinkWrapper> */}
-            {connectedAndInstalledWallet ? <ProfileImage /> : <SelectWalletButton />}
-            {/* {windowDimensions.width > 700 && <SocialLinks />} */}
+                Connect
+              </button>
+            )}
           </LinkRow>
         )}
       </StyledHeader>
@@ -217,7 +241,7 @@ const MobileHeaderContainer = styled.div`
   padding-left: 24px;
   padding-right: 24px;
   min-height: 72px;
-  ${mq('sm')} {
+  ${mq('md')} {
     display: none;
   }
 `;
@@ -249,18 +273,11 @@ const HeaderTitle = styled.div`
 
 const { Header } = Layout;
 
-type CustomHeaderProps = {
-  disableMarginBottom?: boolean;
-};
-
-const StyledHeader = styled(Header)<CustomHeaderProps>`
+const StyledHeader = styled(Header)`
   display: none;
-  ${mq('sm')} {
+  ${mq('md')} {
     ${sv.flexRow};
-    margin-top: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-bottom: ${(props) => (props.disableMarginBottom ? ' 0px' : '40px')};
+    margin: 5px;
     padding: 1.25rem;
   }
 `;
@@ -277,3 +294,11 @@ const LinkRow = styled(Space)`
     }
   }
 `;
+
+const CloseButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+

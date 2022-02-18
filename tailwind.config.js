@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -19,8 +21,11 @@ module.exports = {
         },
         'hola-black': '#262626',
       },
+      fontFamily: {
+        sans: ['Inter ', ...defaultTheme.fontFamily.sans],
+      },
     },
   },
   extend: {},
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 };

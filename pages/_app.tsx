@@ -12,13 +12,13 @@ import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
+import { Close } from '@/common/components/icons/Close';
 import {
   AnalyticsProvider,
   OLD_GOOGLE_ANALYTICS_ID,
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
 import MintModal from '@/common/components/elements/MintModal';
-import { AppHeaderSettingsProvider } from '@/common/components/elements/AppHeaderSettingsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -121,51 +121,51 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
         />
       </Head>
-      <ToastContainer autoClose={15000} />
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={true}
+        position={'bottom-center'}
+        className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
+        toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
+        closeButton={() => <Close color="#fff" />}
+      />
       <ApolloProvider client={apolloClient}>
         <ConnectionProvider endpoint={endpoint}>
           {/*
           This competes with the other WalletProvider. We need to 
           consolidate into using the one directly from solana-wallet-adapter.
         */}
-          <WalletProviderSolana wallets={wallets} autoConnect>
+          <WalletProviderSolana wallets={wallets}>
             <WalletModalProvider>
-              <AppHeaderSettingsProvider>
-                <WalletProvider>
-                  {({ verifying, wallet, connect }) => (
-                  <MarketplaceProvider wallet={wallet} connect={connect}>
-                    {() => (
-                    <StorefrontProvider wallet={wallet} connect={connect}>
-                      {({ searching }) => {
-                        return (
-                          <AnalyticsProvider>
-                            <AppLayout>
-                              <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
-                              <AppContent>
-                                {showMintModal && wallet && (
-                                  <MintModal
-                                    wallet={wallet}
-                                    show={showMintModal}
-                                    onClose={() => setShowMintModal(false)}
-                                  />
-                                )}
-                                <Loading loading={verifying || searching}>
-                                  <ContentWrapper>
-                                    <Component {...pageProps} track={track} />
-                                  </ContentWrapper>
-                                </Loading>
-                              </AppContent>
-                            </AppLayout>
-                          </AnalyticsProvider>
-                        );
-                      }}
-                    </StorefrontProvider>
-                  )}
-                  </MarketplaceProvider>
-                  )}
-                </WalletProvider>
-              </AppHeaderSettingsProvider>
-
+              <WalletProvider>
+                {({ verifying, wallet }) => (
+                  <StorefrontProvider wallet={wallet}>
+                    {({ searching }) => {
+                      return (
+                        <AnalyticsProvider>
+                          <AppLayout>
+                            <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
+                            <AppContent>
+                              {showMintModal && wallet && (
+                                <MintModal
+                                  wallet={wallet}
+                                  show={showMintModal}
+                                  onClose={() => setShowMintModal(false)}
+                                />
+                              )}
+                              <Loading loading={verifying || searching}>
+                                <ContentWrapper>
+                                  <Component {...pageProps} track={track} />
+                                </ContentWrapper>
+                              </Loading>
+                            </AppContent>
+                          </AppLayout>
+                        </AnalyticsProvider>
+                      );
+                    }}
+                  </StorefrontProvider>
+                )}
+              </WalletProvider>
             </WalletModalProvider>
           </WalletProviderSolana>
         </ConnectionProvider>

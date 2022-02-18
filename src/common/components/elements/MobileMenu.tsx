@@ -39,7 +39,7 @@ export const MobileMenu: FC<OnCloseProps> = ({ onCloseClick }) => {
 
 const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
   return (
-    <MarginBox>
+    <ItemsContainer>
       <Link passHref href="/">
         <MenuItemRow onClick={onCloseClick}>Home</MenuItemRow>
       </Link>
@@ -65,21 +65,27 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
           Privacy policy
         </MenuItemRow>
       </Link>
-    </MarginBox>
+    </ItemsContainer>
   );
 };
 
 const SmallConnectButton = styled(SelectWalletButton)`
   flex: 1;
   width: 100%;
+  border-radius: 500px;
 `;
 
-const MarginBox = styled.div`
+const PaddedContainer = styled.div`
   margin-left: 24px;
   margin-right: 24px;
 `;
 
-const ProfileContainer = styled(MarginBox)`
+const ItemsContainer = styled(PaddedContainer)`
+  height: 100%;
+  margin-left: 12px;
+`;
+
+const ProfileContainer = styled(PaddedContainer)`
   margin-bottom: 24px;
 `;
 
@@ -113,7 +119,6 @@ const MenuItemButtonRow = styled.button`
 const Container = styled.aside`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: #171717;
   position: fixed;
   width: 100%;
@@ -149,7 +154,4 @@ const MobileHeaderContainer = styled.div`
   padding-left: 24px;
   padding-right: 24px;
   min-height: 72px;
-  ${mq('sm')} {
-    display: none;
-  }
 `;

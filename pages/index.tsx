@@ -467,7 +467,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   }, [filterBy, sortBy]);
 
   return (
-    <Row>
+    <Row className="mt-10">
       <CenteredContentCol>
         <Section>
           <Marketing xs={22} sm={12} lg={16}>
@@ -483,13 +483,13 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                to allow free creation of marketplaces, go to /marketplace/new or uncomment the button :-)
               {false && MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>} */}
             </Space>
-            <div style={{ marginTop: '2.5rem' }}>
+            <div className="mt-[2.5rem]">
               <SocialLinks />
             </div>
           </Marketing>
           <HeroCol xs={24} sm={12} lg={8}>
             <div className="sm:px-4">
-              <Text style={{ marginBottom: 0 }} strong>
+              <Text className="mb-0" strong>
                 Trending Listings
               </Text>
             </div>
@@ -500,9 +500,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               effect="fade"
               className="home-carousel"
             >
-              {/* <div className="sm:px-4">
-                <SkeletonListing />
-              </div> */}
               {featuredListings.map((listing, i) => (
                 <div key={listing.listingAddress} className="sm:px-4">
                   <ListingPreview
