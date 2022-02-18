@@ -60,7 +60,15 @@ export default function Edit() {
   const { storefront } = useContext(StorefrontContext);
   const [form] = Form.useForm();
   const { connect } = useContext(WalletContext);
-  const { wallet, publicKey } = useWallet();
+  const {
+    wallet: userWallet,
+    publicKey,
+    connected,
+    signAllTransactions,
+    signMessage,
+    signTransaction,
+    connect: connectUserWallet,
+  } = useWallet();
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain ?? '' },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor ?? '#333333' },
@@ -81,7 +89,12 @@ export default function Edit() {
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
   ]);
 
-  if (isNil(storefront) || isNil(wallet)) {
+  if (
+    isNil(userWallet) ||
+    isNil(userWallet.adapter) ||
+    !connected ||
+    userWallet.readyState === 'Unsupported'
+  ) {
     return (
       <Row justify="center">
         <Card>
@@ -101,7 +114,15 @@ export default function Edit() {
   const onSubmit = submitCallback({
     track,
     router,
-    solana,
+    wallet: {
+      wallet: userWallet,
+      publicKey,
+      connected,
+      signAllTransactions,
+      signMessage,
+      signTransaction,
+      connect: connectUserWallet,
+    },
     values,
     setSubmitting,
     onSuccess: (domain) =>
