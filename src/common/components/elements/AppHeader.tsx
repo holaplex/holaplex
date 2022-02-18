@@ -65,10 +65,6 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
   }, [connected]);
 
   useEffect(() => {
-    console.log(router);
-  });
-
-  useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
     connectUserWallet();
   }, [connectUserWallet, connected, hasWalletTypeSelected]);
@@ -82,7 +78,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   return (
     <>
-      <StyledHeader $disableMarginBottom={router.pathname.startsWith('/profiles/')}>
+      <StyledHeader>
         <HeaderTitle>
           <Link href="/" passHref>
             <a>
@@ -275,11 +271,7 @@ const HeaderTitle = styled.div`
 
 const { Header } = Layout;
 
-type CustomHeaderProps = {
-  $disableMarginBottom?: boolean;
-};
-
-const StyledHeader = styled(Header)<CustomHeaderProps>`
+const StyledHeader = styled(Header)`
   display: none;
   ${mq('md')} {
     ${sv.flexRow};

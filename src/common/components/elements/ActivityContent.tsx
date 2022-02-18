@@ -268,7 +268,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           <ActivityBoxContainer>
             <NoActivityContainer>
               <NoActivityTitle>
-                No activity {items.length && !filteredItems.length && ' for this filter'}
+                No activity {!!items.length && !filteredItems.length && ' for this filter'}
               </NoActivityTitle>
               <NoActivityText>
                 Activity associated with this user’s wallet will show up here
