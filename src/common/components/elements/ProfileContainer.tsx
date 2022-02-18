@@ -3,10 +3,11 @@ import { testData } from '@/common/components/elements/test-nft-data';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
+import Bugsnag from '@bugsnag/js';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
 
@@ -23,18 +24,40 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const bannerBackgroundImage = !!bannerUrl
     ? `url(${bannerUrl})`
     : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
-  const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
   const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const router = useRouter();
+  // const { toggleDisableMarginBottom } = useAppHeaderSettings();
+  // const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
+  const [{ pfp, banner }, setPfpAndBanner] = useState({
+    pfp: '/images/gradients/gradient-3.png',
+    banner: 'url(/images/gradients/gradient-5.png)', // TODO: Fetch from wallet (DERIVE)
+  });
 
   useEffect(() => {
     if (!twitterHandle) return;
-    queryWalletProfile({
-      variables: {
-        handle: twitterHandle,
-      },
-    });
+    try {
+      queryWalletProfile({
+        variables: {
+          handle: twitterHandle,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+      console.log('failed to fetch wallet');
+      Bugsnag.notify(error);
+    }
   }, [queryWalletProfile, twitterHandle]);
+
+  useEffect(() => {
+    const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+    const bannerBackgroundImage = !!bannerUrl
+      ? `url(${bannerUrl})`
+      : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
+
+    setPfpAndBanner({
+      pfp: profilePictureImage,
+      banner: bannerBackgroundImage,
+    });
+  }, [imageUrl, bannerUrl]);
 
   const getPublicKeyFromWalletOnUrl = () => {
     try {
@@ -52,13 +75,13 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
       <ContentCol>
         <Profile>
           <ProfilePictureContainer>
-            <ProfilePicture src={profilePictureImage} width={PFP_SIZE} height={PFP_SIZE} />
+            <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
           <WalletPillContainer>
             <WalletPill
               disableBackground
               disableLink
-              textOverride={twitterHandle ? `@${twitterHandle}` : null}
+              textOverride={twitterHandle ? `${twitterHandle}` : null}
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
@@ -78,10 +101,6 @@ const BOX_SIZE = 1400;
 const ProfilePictureContainer = styled.div`
   position: absolute;
   top: ${-PFP_SIZE / 2}px;
-  left: 20px;
-  ${mq('md')} {
-    left: 90px;
-  }
   @media (min-width: ${BOX_SIZE - PFP_SIZE}) {
     left: 0px;
   }
@@ -132,12 +151,13 @@ const WalletPillContainer = styled.div`
   margin-top: 80px;
 `;
 
+const HeadingContainer = styled.header``;
+
 const Profile = styled.div`
-  padding-left: calc(20px + 0.5rem);
   min-width: 348px;
   position: relative;
-  ${mq('md')} {
-    padding-left: calc(${PFP_SIZE}px + 0.5rem);
-  }
 `;
-const HeadingContainer = styled.header``;
+
+function useAppHeaderSettings(): { toggleDisableMarginBottom: any } {
+  throw new Error('Function not implemented.');
+}
