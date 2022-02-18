@@ -180,7 +180,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                             <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b>
                           </ItemText>
                         </Row>
-                        <Row style={{ marginTop: 8 }}>
+                        <Row className="mt-2">
                           <TimeText>
                             {DateTime.fromFormat(
                               bid.lastBidTime,
@@ -200,7 +200,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b>
                           </ItemText>
                         </Row>
-                        <Row style={{ marginTop: 8 }}>
+                        <Row className="mt-2">
                           {bid.cancelled ? (
                             <TimeText>
                               {DateTime.fromFormat(
@@ -249,7 +249,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b>
                           </ItemText>
                         </Row>
-                        <Row style={{ marginTop: 8 }}>
+                        <Row className="mt-2">
                           <TimeText>
                             {DateTime.fromFormat(
                               bid.lastBidTime,

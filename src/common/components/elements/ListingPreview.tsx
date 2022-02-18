@@ -65,15 +65,7 @@ export function SkeletonListing() {
   return (
     <div className="mb-12 pt-1 ">
       <Square>
-        <StyledSkeletonImage
-          className="skeleton-animation"
-          style={{
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
-            width: '100%',
-            height: '100%',
-          }}
-        />
+        <StyledSkeletonImage className="skeleton-animation h-full w-full rounded-t-lg" />
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">
@@ -259,7 +251,7 @@ export function ListingPreview({
                     color: 'white',
                   }}
                 >
-                  <ParticipationNFTIcon style={{ marginLeft: '0.5rem' }} />
+                  <ParticipationNFTIcon className="ml-2" />
                 </Tooltip>
               )}
               {isSecondarySale && (
@@ -272,7 +264,7 @@ export function ListingPreview({
                     color: 'white',
                   }}
                 >
-                  <SecondarySaleIcon style={{ marginLeft: '0.5rem' }} />
+                  <SecondarySaleIcon className="ml-2" />
                 </Tooltip>
               )}
             </div>
@@ -329,20 +321,8 @@ export function ListingPreview({
 
       {isDev && (
         <Row justify="space-between" wrap={false}>
-          <span
-            style={{
-              fontSize: 14,
-              opacity: 0.6,
-            }}
-          >
-            Listed {listing.createdAt.slice(5, 16)}
-          </span>
-          <span
-            style={{
-              fontSize: 14,
-              opacity: 0.6,
-            }}
-          >
+          <span className="text-sm opacity-[0.6]">Listed {listing.createdAt.slice(5, 16)}</span>
+          <span className="text-sm opacity-[0.6]">
             Bids: {listing.totalUncancelledBids}, ({listing.lastBidTime?.slice(5, 16)})
           </span>
         </Row>
