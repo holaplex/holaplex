@@ -436,7 +436,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     }
 
     getListings();
-  }, []);
+  }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
   /*
    * Scroll to top of `Current listings` section
@@ -459,9 +459,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       return;
     }
 
-    setDisplayedListings(applyListingFilterAndSort(allListings));
+    setDisplayedListings(applyListingFilterAndSort(allListings))
     setShow(16);
-  }, [filterBy, sortBy]);
+  }, [filterBy, sortBy]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Row>
@@ -471,7 +471,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <HeroTitle>
               Reunion Island Art Digitizer
             </HeroTitle>
-            <Pitch>Promotion of Reunion Island's Artists</Pitch>
+            <Pitch>Promotion of Reunion Island Artists</Pitch>
             <Space direction="horizontal" size="large">
               <Button onClick={() => connect()}>Create Your Store</Button>
             </Space>

@@ -13,7 +13,7 @@ export default function New() {
     } else {
       router.push('/?action=mint');
     }
-  }, [connect, wallet]);
+  }, [connect, wallet]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
