@@ -2,7 +2,10 @@
   "name": "RIAD",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/ReunionArt/holaplex",
   "scripts": {
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -b master -d build",
     "dev": "nodemon",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
