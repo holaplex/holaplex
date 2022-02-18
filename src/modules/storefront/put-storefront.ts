@@ -1,7 +1,7 @@
-import { notarize, signPhantom, stringifyNotarized } from '../notary/client';
-import { Formatter, Notarized } from '../notary/common';
-import { connectSolana } from '../solana';
-import { Solana } from '../solana/types';
+import { WalletContextState } from '@solana/wallet-adapter-react';
+import { isNil } from 'ramda';
+import { notarize, stringifyNotarized } from '../notary/client';
+import { Formatter, Notarized, Signer } from '../notary/common';
 import { Storefront } from './types';
 
 export type PutStorefrontParams = Notarized<Storefront>;
@@ -14,13 +14,24 @@ export const formatMessage: Formatter = (bytes) =>
   `Your storefront upload fingerprint is ${bytes.toString('base64')}`;
 
 export const putStorefront = async ({
-  solana,
+  wallet,
   storefront,
   onProgress,
   onComplete,
   onError,
 }: {
-  solana: Solana | undefined;
+  wallet:
+    | Pick<
+        WalletContextState,
+        | 'signTransaction'
+        | 'signMessage'
+        | 'signAllTransactions'
+        | 'connect'
+        | 'connected'
+        | 'wallet'
+        | 'publicKey'
+      >
+    | undefined;
   storefront: Storefront;
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed'
@@ -31,18 +42,28 @@ export const putStorefront = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (!solana) throw new Error('Could not connect to Solana');
+    if (
+      isNil(wallet) ||
+      !wallet.connected ||
+      wallet.wallet?.readyState === 'Unsupported' ||
+      isNil(wallet.wallet?.adapter)
+    )
+      throw new Error('Could not connect to Solana');
 
-    if (!solana.isConnected) {
+    if (!wallet.connected) {
       onProgress('connecting-wallet');
-      connectSolana(solana);
+      wallet.connect();
     }
 
     onProgress('signing');
 
-    const notarized: PutStorefrontParams = await notarize(storefront, signPhantom(solana), {
-      format: formatMessage,
-    });
+    const notarized: PutStorefrontParams = await notarize(
+      storefront,
+      wallet?.signMessage as Signer,
+      {
+        format: formatMessage,
+      }
+    );
 
     onProgress('uploading');
 

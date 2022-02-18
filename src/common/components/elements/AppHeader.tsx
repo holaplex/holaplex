@@ -3,10 +3,8 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
-import { StorefrontContext } from '@/modules/storefront';
 import { WalletContext } from '@/modules/wallet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Wallet } from '@/modules/wallet/types';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
@@ -21,23 +19,17 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 interface Props {
   setShowMintModal: (show: boolean) => void;
-  wallet?: Wallet;
 }
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
-export function AppHeader({ setShowMintModal, wallet }: Props) {
+export function AppHeader({ setShowMintModal }: Props) {
   const router = useRouter();
-  const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
-    disconnecting,
-  } = useWallet();
+  const { connected, wallet, connect: connectUserWallet, publicKey, disconnecting } = useWallet();
   const { connect } = useContext(WalletContext);
-  const { connectStorefront } = useContext(StorefrontContext);
-  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
+  const hasWalletTypeSelected =
+    wallet?.readyState === WalletReadyState.Installed ||
+    wallet?.readyState === WalletReadyState.Loadable;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
   const { visible, setVisible } = useWalletModal();
@@ -68,7 +60,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
 
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
-    connectUserWallet();
+    connectUserWallet().catch((e) => console.error(e));
   }, [connectUserWallet, connected, hasWalletTypeSelected]);
 
   const mintModalClick = () => {
@@ -97,7 +89,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             </HeaderLinkWrapper>
             <HeaderLinkWrapper
               key="edit"
-              onClick={() => connectStorefront()}
+              onClick={() => connect()}
               active={router.pathname == '/storefront/edit'}
             >
               <Link href="/storefront/edit" passHref>
@@ -301,4 +293,3 @@ const CloseButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
-

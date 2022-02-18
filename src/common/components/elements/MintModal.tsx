@@ -7,8 +7,9 @@ import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
-import { Wallet } from '@/modules/wallet/types';
 import { Connection } from '@solana/web3.js';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { isNil } from 'ramda';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -41,15 +42,16 @@ const StyledModal = styled(Modal)`
 interface MintModalProps {
   show: boolean;
   onClose: () => void;
-  wallet: Wallet;
 }
 
 const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as string);
 
-const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
+const MintModal = ({ show, onClose }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
-  const { solana, storefront } = useContext(WalletContext);
+  const { storefront, connect } = useContext(WalletContext);
+  const { wallet, signAllTransactions, signTransaction, signMessage, publicKey, connected } =
+    useWallet();
 
   useEffect(() => {
     if (show) {
@@ -59,7 +61,12 @@ const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
     }
   }, [show, blockScroll, allowScroll]);
 
-  if (!wallet || !solana) {
+  if (
+    isNil(wallet) ||
+    isNil(wallet.adapter) ||
+    wallet?.readyState === 'Unsupported' ||
+    !connected
+  ) {
     return null;
   }
 
@@ -76,7 +83,17 @@ const MintModal = ({ show, onClose, wallet }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
-        wallet={solana}
+        wallet={{
+          isConnected: connected,
+          publicKey,
+          signAllTransactions,
+          signTransaction,
+          connect,
+          signMessage,
+          on: wallet.adapter.on,
+          off: wallet.adapter.off,
+          once: wallet.adapter.off,
+        }}
         track={track}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}

@@ -1,18 +1,14 @@
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { Solana } from '@/modules/solana/types';
 import walletSDK from '@/modules/wallet/client';
-import { Wallet } from '@/modules/wallet/types';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { useRouter } from 'next/router';
-import { isNil } from 'ramda';
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import React, { useCallback, useEffect, useRef, useState, useContext } from 'react';
 import { WalletContext, WalletContextProps } from './context';
-import { SuccessConnectFn } from './types';
+import { Storefront } from '@/modules/storefront/types';
 
 type WalletProviderProps = {
-  wallet?: Wallet;
-  solana?: Solana;
   children: (props: WalletContextProps) => React.ReactElement;
 };
 
@@ -28,80 +24,62 @@ const upsertWallet = async (pubkey: string) => {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter();
+  const arweave = initArweave();
   const [verifying, setVerifying] = useState(false);
-  const [initializing, setInitialization] = useState(true);
-  const [wallet, setWallet] = useState<Wallet>();
-  const [solana, setSolana] = useState<Solana>();
+  const { wallet, connected, publicKey } = useWallet();
+  const { setVisible } = useWalletModal();
+  const redirect = useRef('');
+  const [storefront, setStorefront] = useState<Storefront>();
 
-  if (typeof window === 'object') {
-    if (window.solana && window.solana?.connect) {  
-      if (window.solana !== solana) {
-        setSolana(window.solana);
-        setInitialization(false);
-      }
-    } else {
-      window.addEventListener(
-        'load',
-        () => {
-          setSolana(window.solana);
-          setInitialization(false);
-        },
-        { capture: false }
-      );
-    }
-  }
-
-  const connect = (onSuccess: SuccessConnectFn) => {
-    if (isNil(solana)) {
-      toast(() => (
-        <>
-          Phantom wallet is not installed on your browser. Visit{' '}
-          <a href="https://phantom.app">phantom.app</a> to setup your wallet.
-        </>
-      ));
-      return;
-    }
-
-    solana.once('connect', () => {
-      const solanaPubkey = solana.publicKey.toString();
-      upsertWallet(solanaPubkey)
-        .then((wallet: Wallet) => {
-          setWallet(wallet);
-
-          return wallet;
-        })
-        .then(onSuccess)
-        .catch(() => router.push('/'))
-        .finally(() => {
+  useEffect(() => {
+    (async () => {
+      if (connected && publicKey) {
+        setVerifying(true);
+        try {
+          const pub_key = publicKey?.toString();
+          if (!pub_key) throw new Error('Wallet not connected');
+          await upsertWallet(pub_key);
+          const sf = await arweaveSDK.using(arweave).storefront.find('solana:pubkey', pub_key);
+          if (sf) setStorefront(sf);
           setVerifying(false);
-        });
-    });
+          if (redirect.current) {
+            const path = redirect.current;
+            redirect.current = '';
+            return router.push(path);
+          }
+          if (sf) return router.push('/storefront/edit');
+          return router.push('/storefront/new');
+        } catch (error) {
+          setVerifying(false);
+          return router.push('/');
+        }
+      }
+    })();
+  }, [connected, publicKey]);
 
-    setVerifying(true);
-
-    // unclear if/when/how we get here
-    solana.connect().catch(() => {
-      router.push('/');
-      setVerifying(false);
-    });
-  };
+  const connect = useCallback(
+    (redir?: string) => {
+      redirect.current = redir ?? '';
+      if (wallet && wallet.adapter) {
+        if (connected) return router.push(redirect.current);
+        wallet.adapter.connect().catch(() => {});
+      } else setVisible(true);
+    },
+    [wallet]
+  );
 
   return (
     <WalletContext.Provider
       value={{
         verifying,
-        initializing,
-        wallet,
-        solana,
         connect,
+        storefront,
       }}
     >
       {children({
         verifying,
-        initializing,
-        wallet,
-        solana,
         connect,
+        storefront,
       })}
     </WalletContext.Provider>
   );

@@ -52,6 +52,7 @@ import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/Analytics
 import SocialLinks from '@/common/components/elements/SocialLinks';
 import { StorefrontContext } from '@/modules/storefront';
 import { MarketplaceContext } from '@/modules/marketplace';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -369,8 +370,6 @@ const getDefaultFilter = () => {
 };
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
-  const { connectStorefront } = useContext(StorefrontContext);
-  const { connectMarketplace } = useContext(MarketplaceContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
@@ -384,6 +383,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const listingsTopRef = useRef<HTMLInputElement>(null);
+  const { connect } = useWallet();
 
   const scrollToListingTop = () => {
     if (!listingsTopRef || !listingsTopRef.current) {
@@ -476,12 +476,15 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
             <Space direction="horizontal" size="large">
-              <Button onClick={() => connectStorefront()}>Create Your Store</Button>
-              
+              <Button onClick={() => connect()}>Create Your Store</Button>
+
               {/* 
                this is here as a refernce, can be removed at any point.
-               to allow free creation of marketplaces, go to /marketplace/new or uncomment the button :-)
-              {false && MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>} */}
+               to allow free creation of marketplaces, go to /marketplace/new or uncomment the button :-)*/}
+
+              {true && MARKETPLACE_ENABLED && (
+                <Button onClick={() => connect()}>Create Your Marketplace</Button>
+              )}
             </Space>
             <div className="mt-[2.5rem]">
               <SocialLinks />
@@ -640,7 +643,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connectStorefront()}>Create Your Store</Button>
+            <Button onClick={() => connect()}>Create Your Store</Button>
           </Space>
         </Section>
       </CenteredContentCol>

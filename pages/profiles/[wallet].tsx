@@ -11,13 +11,15 @@ import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import Bugsnag from '@bugsnag/js';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // ...
   return {
     props: {
       // query params must be gotten serverside to be available on initial render
-      wallet: context.query.wallet,
+      wallet: context?.params?.wallet ?? '',
     },
   };
 };
@@ -26,6 +28,15 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const router = useRouter();
+
+  const { publicKey: userPubKey, connected } = useWallet();
+  useEffect(() => {
+    if (!wallet) {
+      if (userPubKey) router.push(`/profiles/${userPubKey.toString()}`);
+      else router.push('/');
+    }
+  }, []);
 
   const [{ pfp, banner }, setPfpAndBanner] = useState({
     pfp: '/images/gradients/gradient-3.png',

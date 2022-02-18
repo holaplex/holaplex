@@ -48,6 +48,7 @@ import {
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const { TabPane } = Tabs;
 type TabKey = 'subdomain' | 'theme' | 'meta';
@@ -61,7 +62,8 @@ export default function Edit() {
   const [tab, setTab] = useState<TabKey>('theme');
   const { storefront, connectStorefront } = useContext(StorefrontContext);
   const [form] = Form.useForm();
-  const { solana, wallet } = useContext(WalletContext);
+  const { connect } = useContext(WalletContext);
+  const { wallet, publicKey } = useWallet();
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain ?? '' },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor ?? '#333333' },
@@ -82,13 +84,13 @@ export default function Edit() {
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
   ]);
 
-  if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
+  if (isNil(storefront) || isNil(wallet)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button type="primary" block onClick={connectStorefront}>
+            <Button type="primary" block onClick={() => connect()}>
               Connect
             </Button>
           </Space>
@@ -99,7 +101,7 @@ export default function Edit() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, publicKey?.toString());
 
   const onSubmit = submitCallback({
     track,

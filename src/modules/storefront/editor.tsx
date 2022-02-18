@@ -4,15 +4,13 @@ import Color from 'color';
 import { NextRouter } from 'next/router';
 import { assocPath, has, isNil, reduce } from 'ramda';
 import { RuleObject } from 'rc-field-form/lib/interface';
-import { ReactChild } from 'react';
-import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
-import { Solana } from '../solana/types';
 import { PageMetaData, Storefront, StorefrontTheme } from './types';
 import { putStorefront } from './put-storefront';
 import { TrackingFunctionSignature } from '../ganalytics/AnalyticsProvider';
+import { WalletContextState } from '@solana/wallet-adapter-react';
 
 export const { Text, Title, Paragraph } = Typography;
 
@@ -127,7 +125,7 @@ export interface StorefrontEditorProps {}
 
 export const validateSubdomainUniqueness = (
   ar: ArweaveScope,
-  allowPubkey?: string,
+  allowPubkey?: string
 ): ((rule: RuleObject, subdomain: string | null | undefined) => Promise<void>) => {
   return async (_, subdomain) => {
     const storefront = await ar.storefront.find('holaplex:metadata:subdomain', subdomain ?? '');
@@ -142,7 +140,7 @@ export const validateSubdomainUniqueness = (
 export const submitCallback = ({
   track,
   router,
-  solana,
+  wallet,
   values,
   setSubmitting,
   onSuccess,
@@ -151,7 +149,18 @@ export const submitCallback = ({
 }: {
   track: TrackingFunctionSignature;
   router: NextRouter;
-  solana: Solana | undefined;
+  wallet:
+    | Pick<
+        WalletContextState,
+        | 'signTransaction'
+        | 'signMessage'
+        | 'signAllTransactions'
+        | 'connect'
+        | 'connected'
+        | 'wallet'
+        | 'publicKey'
+      >
+    | undefined;
   values: any;
   setSubmitting: (val: boolean) => void;
   onSuccess: (domain: string) => void;
@@ -181,7 +190,7 @@ export const submitCallback = ({
           favicon,
         },
         subdomain,
-        pubkey: solana?.publicKey.toBase58() ?? '',
+        pubkey: wallet?.publicKey?.toString() || '',
       };
 
       if (banner?.url) {
@@ -189,7 +198,7 @@ export const submitCallback = ({
       }
 
       await putStorefront({
-        solana,
+        wallet,
         storefront,
         onProgress: (s) => console.log(s),
         onError,

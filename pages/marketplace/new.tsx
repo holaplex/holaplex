@@ -22,14 +22,15 @@ import {
 import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
-import { Avatar, Card, Col, Form, Input, Slider, Row, Space, Typography, InputNumber } from 'antd';
+import { Avatar, Card, Col, Form, Input, Row, Space, Typography, InputNumber } from 'antd';
 import { findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
 import { useConnection } from '@solana/wallet-adapter-react';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house/transactions/CreateAuctionHouse';
 import { AuctionHouseAccount } from '@/modules/auction-house/AuctionHouseAccount';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
@@ -60,7 +61,16 @@ export default function New() {
   const [pendingAddress, setPendingAddress] = useState<string>();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet, connect } = useContext(WalletContext);
+  const { connect } = useContext(WalletContext);
+  const {
+    wallet: userWallet,
+    publicKey,
+    connected,
+    signAllTransactions,
+    signMessage,
+    signTransaction,
+    connect: connectUserWallet,
+  } = useWallet();
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['address', 'owner'], value: '' },
@@ -72,13 +82,18 @@ export default function New() {
     { name: ['sellerFeeBasisPoints'], value: 10000 },
   ]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (
+    isNil(userWallet) ||
+    isNil(userWallet.adapter) ||
+    !connected ||
+    userWallet.readyState === 'Unsupported'
+  ) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a marketplace.</Paragraph>
-            <Button type="primary" block onClick={connect} shape="round">
+            <Button type="primary" block onClick={() => connect()} shape="round">
               Connect
             </Button>
           </Space>
@@ -89,7 +104,7 @@ export default function New() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, publicKey?.toString());
   const onSubmit = async (): Promise<void> => {
     const { theme, meta, subdomain, creators, sellerFeeBasisPoints } = values;
 
@@ -99,10 +114,7 @@ export default function New() {
     const banner = popFile(theme.banner[0]);
     const domain = `${subdomain}.holaplex.market`;
 
-    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(
-      solana.publicKey,
-      NATIVE_MINT
-    );
+    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(publicKey, NATIVE_MINT);
 
     const input = {
       meta,
@@ -112,7 +124,7 @@ export default function New() {
       },
       subdomain,
       address: {
-        owner: wallet.pubkey,
+        owner: publicKey?.toString(),
         auctionHouse: auctionHousPubkey.toBase58(),
       },
       creators: creators.map(({ address }: any) => address),
@@ -125,15 +137,15 @@ export default function New() {
       wallet: solana,
       sellerFeeBasisPoints,
     });
-    const storePubkey = await Store.getPDA(solana.publicKey);
+    const storePubkey = publicKey ? await Store.getPDA(publicKey?.toString()) : undefined;
 
     const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
     const createStoreV2Instruction = new SetStoreV2(
       {
-        feePayer: solana.publicKey,
+        feePayer: publicKey?.toString(),
       },
       {
-        admin: solana.publicKey,
+        admin: publicKey?.toString(),
         store: storePubkey,
         config: storeConfigPubkey,
         isPublic: false,
@@ -145,10 +157,10 @@ export default function New() {
 
     transaction.add(auctionHouseCreateInstruction).add(createStoreV2Instruction);
 
-    transaction.feePayer = solana.publicKey;
+    transaction.feePayer = publicKey || undefined;
     transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
 
-    const signedTransaction = await solana.signTransaction(transaction);
+    const signedTransaction = await signTransaction(transaction);
 
     const txtID = await connection.sendRawTransaction(signedTransaction.serialize());
 

@@ -58,7 +58,6 @@ const AppLayout = styled(Layout)`
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [showMintModal, setShowMintModal] = useState(false);
-  const { connectStorefront } = useContext(StorefrontContext);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -97,7 +96,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
       new SlopeWalletAdapter(),
-      new TorusWalletAdapter(),
+      new TorusWalletAdapter({ params: { network } }),
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
@@ -137,17 +136,16 @@ function MyApp({ Component, pageProps }: AppProps) {
           <WalletProviderSolana wallets={wallets}>
             <WalletModalProvider>
               <WalletProvider>
-                {({ verifying, wallet }) => (
-                  <StorefrontProvider wallet={wallet} connect={connectStorefront}>
+                {({ verifying }) => (
+                  <StorefrontProvider>
                     {({ searching }) => {
                       return (
                         <AnalyticsProvider>
                           <AppLayout>
-                            <AppHeader setShowMintModal={setShowMintModal} wallet={wallet} />
+                            <AppHeader setShowMintModal={setShowMintModal} />
                             <AppContent>
-                              {showMintModal && wallet && (
+                              {showMintModal && (
                                 <MintModal
-                                  wallet={wallet}
                                   show={showMintModal}
                                   onClose={() => setShowMintModal(false)}
                                 />

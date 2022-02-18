@@ -45,6 +45,7 @@ import {
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
@@ -53,8 +54,16 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet } = useContext(WalletContext);
-  const { connectStorefront } = useContext(StorefrontContext);
+  const { connect } = useContext(WalletContext);
+  const {
+    wallet: userWallet,
+    publicKey,
+    connected,
+    signAllTransactions,
+    signMessage,
+    signTransaction,
+    connect: connectUserWallet,
+  } = useWallet();
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -69,13 +78,18 @@ export default function New() {
     { name: ['meta', 'description'], value: '' },
   ]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (
+    isNil(userWallet) ||
+    isNil(userWallet.adapter) ||
+    !connected ||
+    userWallet.readyState === 'Unsupported'
+  ) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button type="primary" block onClick={connectStorefront}>
+            <Button type="primary" block onClick={() => connect()}>
               Connect
             </Button>
           </Space>
@@ -91,7 +105,15 @@ export default function New() {
   const onSubmit = submitCallback({
     track,
     router,
-    solana,
+    wallet: {
+      wallet: userWallet,
+      publicKey,
+      connected,
+      signAllTransactions,
+      signMessage,
+      signTransaction,
+      connect: connectUserWallet,
+    },
     values,
     setSubmitting,
     onSuccess: (domain) =>
