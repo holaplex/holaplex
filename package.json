@@ -27,6 +27,7 @@
     "@bugsnag/js": "^7.14.1",
     "@bugsnag/plugin-react": "^7.14.0",
     "@google/model-viewer": "^1.9.2",
+    "@headlessui/react": "^1.5.0",
     "@holaplex/js": "^4.3.2",
     "@holaplex/ui": "^0.0.26",
     "@metaplex/js": "^4.2.0",

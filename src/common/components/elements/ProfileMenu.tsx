@@ -6,6 +6,101 @@ import Link from 'next/link';
 import React from 'react';
 import { Menu, Row, Space } from 'antd';
 import styled from 'styled-components';
+import { Tab } from '@headlessui/react';
+
+interface Props {
+  wallet: string;
+}
+
+export const ProfileMenu: FC<Props> = ({ wallet }) => {
+  return (
+    <div>
+      <Tab.Group>
+        <Tab.List>
+          <Tab>
+            <Link href={`/profiles/${wallet}`} passHref>
+              <a>
+                <FeatherIcon height={16} width={16} icon="trending-up" />
+                Activity
+              </a>
+            </Link>
+          </Tab>
+          <Tab>
+            <Link href={`/profiles/${wallet}/nfts`} passHref>
+              <a>
+                <FeatherIcon height={16} width={16} icon="image" />
+                NFTs
+              </a>
+            </Link>
+          </Tab>
+        </Tab.List>
+      </Tab.Group>
+    </div>
+  );
+};
+// export const ProfileMenu: FC<Props> = ({ wallet }) => {
+//   return (
+//     <StyledMenu
+//       // onClick={handleListedClick}
+//       selectedKeys={['activity']}
+//       mode="horizontal"
+//       style={{ marginBottom: 16 }}
+//     >
+//       <StyledMenuItem key="activity">
+//         <Link href={`/profiles/${wallet}`} passHref>
+//           <StyledAnchor>
+//             <FeatherIcon height={16} width={16} icon="trending-up" />
+//             Activity
+//             {/* <p>Activity</p> */}
+//           </StyledAnchor>
+//         </Link>
+//       </StyledMenuItem>
+//       <StyledMenuItem key="nfts">
+//         <Link href={`/profiles/${wallet}/nfts`} passHref>
+//           <StyledAnchor>
+//             <FeatherIcon height={16} width={16} icon="image" />
+//             NFTs
+//             {/* <p>NFTs</p> */}
+//           </StyledAnchor>
+//         </Link>
+//       </StyledMenuItem>
+//     </StyledMenu>
+//   );
+// };
+
+const StyledAnchor = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    margin-right: 16px;
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const StyledMenu = styled(Menu)`
+  background: #171717;
+  border-bottom: 2px solid #262626;
+`;
+
+const StyledMenuItem = styled(Menu.Item)`
+  width: 156px;
+  padding: 16px !important;
+
+  &:not(.ant-menu-item-selected) {
+    a {
+      color: #a8a8a8;
+    }
+  }
+
+  &::after {
+    right: 0 !important;
+    left: 0 !important;
+    bottom: -1px !important;
+  }
+`;
 
 const LinkContent = styled(Row)<{ isActive: boolean }>`
   ${({ isActive }) => isActive && 'background: #262626;'}
@@ -41,71 +136,3 @@ const LinkContent = styled(Row)<{ isActive: boolean }>`
 //     </StyledLink>
 //   );
 // };
-
-interface Props {
-  wallet: string;
-}
-
-export const ProfileMenu: FC<Props> = ({ wallet }) => {
-  return (
-    <StyledMenu
-      // onClick={handleListedClick}
-      selectedKeys={['activity']}
-      mode="horizontal"
-      style={{ marginBottom: 16 }}
-    >
-      <StyledMenuItem key="activity">
-        <Link href={`/profiles/${wallet}`} passHref>
-          <StyledAnchor>
-            <FeatherIcon height={16} width={16} icon="trending-up" />
-            Activity
-            {/* <p>Activity</p> */}
-          </StyledAnchor>
-        </Link>
-      </StyledMenuItem>
-      <StyledMenuItem key="nfts">
-        <Link href={`/profiles/${wallet}/nfts`} passHref>
-          <StyledAnchor>
-            <FeatherIcon height={16} width={16} icon="image" />
-            NFTs
-            {/* <p>NFTs</p> */}
-          </StyledAnchor>
-        </Link>
-      </StyledMenuItem>
-    </StyledMenu>
-  );
-};
-
-const StyledAnchor = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    margin-right: 16px;
-    width: 16px;
-    height: 16px;
-  }
-`;
-
-const StyledMenu = styled(Menu)`
-  background: #171717;
-  border-bottom: 2px solid #262626;
-`;
-
-const StyledMenuItem = styled(Menu.Item)`
-  width: 156px;
-  padding: 16px !important;
-
-  &:not(.ant-menu-item-selected) {
-    a {
-      color: #a8a8a8;
-    }
-  }
-
-  &::after {
-    right: 0 !important;
-    left: 0 !important;
-    bottom: -1px !important;
-  }
-`;
