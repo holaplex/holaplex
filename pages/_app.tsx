@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -36,10 +36,8 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
-import { MarketplaceProvider } from '@/modules/marketplace';
-import { clusterApiUrl } from '@solana/web3.js';
-
 import '@solana/wallet-adapter-react-ui/styles.css';
+import { StorefrontContext } from '@/modules/storefront';
 
 const { Content } = Layout;
 
@@ -60,6 +58,7 @@ const AppLayout = styled(Layout)`
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [showMintModal, setShowMintModal] = useState(false);
+  const { connectStorefront } = useContext(StorefrontContext);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -139,7 +138,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <WalletModalProvider>
               <WalletProvider>
                 {({ verifying, wallet }) => (
-                  <StorefrontProvider wallet={wallet}>
+                  <StorefrontProvider wallet={wallet} connect={connectStorefront}>
                     {({ searching }) => {
                       return (
                         <AnalyticsProvider>
@@ -170,7 +169,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           </WalletProviderSolana>
         </ConnectionProvider>
       </ApolloProvider>
-
     </>
   );
 }
