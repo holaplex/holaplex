@@ -16,7 +16,7 @@ export default function New() {
     } else {
       router.push('/?action=mint');
     }
-  }, [connect, router, wallet]);
+  }, [wallet]);
 
   return (
     <div>

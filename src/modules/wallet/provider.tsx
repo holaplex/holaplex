@@ -58,7 +58,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         }
       }
     })();
-  }, [arweave, connected, publicKey, router]);
+  }, [connected, publicKey]);
 
   const connect = useCallback(
     (redir?: string) => {
