@@ -23,7 +23,7 @@ import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Avatar, Card, Col, Form, Input, Row, Space, Typography, InputNumber } from 'antd';
-import { findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
+import { cond, findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
 import { useConnection } from '@solana/wallet-adapter-react';
 import React, { useContext, useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house/transactions/CreateAuctionHouse';
@@ -31,6 +31,7 @@ import { AuctionHouseAccount } from '@/modules/auction-house/AuctionHouseAccount
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { SolanaSignMessage } from '@/modules/solana/types';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
@@ -82,6 +83,18 @@ export default function New() {
     { name: ['sellerFeeBasisPoints'], value: 10000 },
   ]);
 
+  const walletObject =
+    publicKey && signTransaction && signAllTransactions
+      ? {
+          publicKey,
+          signTransaction,
+          signAllTransactions,
+          isConnected: connected,
+          connect,
+          signMessage,
+        }
+      : undefined;
+
   if (
     isNil(userWallet) ||
     isNil(userWallet.adapter) ||
@@ -93,7 +106,7 @@ export default function New() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a marketplace.</Paragraph>
-            <WhiteRoundedButton type="primary" onClick={() => connect()}>
+            <WhiteRoundedButton className="mx-auto block" onClick={() => connect()}>
               Connect
             </WhiteRoundedButton>
           </Space>
@@ -114,7 +127,14 @@ export default function New() {
     const banner = popFile(theme.banner[0]);
     const domain = `${subdomain}.holaplex.market`;
 
-    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(publicKey, NATIVE_MINT);
+    let auctionHousePubkey;
+    if (publicKey) {
+      const [conditionalAuctionHousePubkey] = await AuctionHouseAccount.getAuctionHouse(
+        publicKey,
+        NATIVE_MINT
+      );
+      auctionHousePubkey = conditionalAuctionHousePubkey;
+    }
 
     const input = {
       meta,
@@ -125,46 +145,63 @@ export default function New() {
       subdomain,
       address: {
         owner: publicKey?.toString(),
-        auctionHouse: auctionHousPubkey.toBase58(),
+        auctionHouse: auctionHousePubkey?.toBase58(),
       },
       creators: creators.map(({ address }: any) => address),
     } as Marketplace;
 
-    const { txt } = await MarketplaceSDK.uploadManifest(input, solana);
+    const txt = async () => {
+      if (walletObject) {
+        // THE SECOND ARGUMENT TO UPLOAD MANIFEST MAY BE INCORRECT
+        const { txt } = await MarketplaceSDK.uploadManifest(input, { signMessage } as any);
+        return txt;
+      }
+      return undefined;
+    };
 
-    const auctionHouseCreateInstruction = await createAuctionHouse({
-      connection,
-      wallet: solana,
-      sellerFeeBasisPoints,
-    });
+    const auctionHouseCreateInstruction = walletObject
+      ? await createAuctionHouse({
+          connection,
+          wallet: walletObject,
+          sellerFeeBasisPoints,
+        })
+      : undefined;
     const storePubkey = publicKey ? await Store.getPDA(publicKey?.toString()) : undefined;
 
-    const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
-    const createStoreV2Instruction = new SetStoreV2(
-      {
-        feePayer: publicKey?.toString(),
-      },
-      {
-        admin: publicKey?.toString(),
-        store: storePubkey,
-        config: storeConfigPubkey,
-        isPublic: false,
-        settingsUri: `https://arweave.net/${txt}`,
-      }
-    );
+    const storeConfigPubkey = storePubkey ? await StoreConfig.getPDA(storePubkey) : undefined;
+
+    const createStoreV2Instruction =
+      publicKey && storePubkey && storeConfigPubkey
+        ? new SetStoreV2(
+            {
+              feePayer: publicKey,
+            },
+            {
+              admin: publicKey,
+              store: storePubkey,
+              config: storeConfigPubkey,
+              isPublic: false,
+              settingsUri: `https://arweave.net/${txt}`,
+            }
+          )
+        : undefined;
 
     const transaction = new Transaction();
 
-    transaction.add(auctionHouseCreateInstruction).add(createStoreV2Instruction);
+    if (auctionHouseCreateInstruction && createStoreV2Instruction) {
+      transaction.add(auctionHouseCreateInstruction).add(createStoreV2Instruction);
+    }
 
     transaction.feePayer = publicKey || undefined;
-    transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-    const signedTransaction = await signTransaction(transaction);
+    const signedTransaction = signTransaction ? await signTransaction(transaction) : undefined;
 
-    const txtID = await connection.sendRawTransaction(signedTransaction.serialize());
+    const txtId = signedTransaction
+      ? await connection.sendRawTransaction(signedTransaction.serialize())
+      : undefined;
 
-    await connection.confirmTransaction(txtID);
+    if (txtId) await connection.confirmTransaction(txtId);
 
     router.push('/');
 

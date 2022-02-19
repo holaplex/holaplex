@@ -80,9 +80,11 @@ export default function Edit() {
     {
       name: ['meta', 'favicon'],
       value: ifElse(
+        // @ts-ignore
         pipe(prop('url'), isNil),
         () => [],
         (favicon) => [merge({ status: 'done' })(favicon)]
+        // @ts-ignore
       )(storefront?.meta.favicon),
     },
     { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
@@ -100,7 +102,9 @@ export default function Edit() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <WhiteRoundedButton onClick={() => connect()}>Connect</WhiteRoundedButton>
+            <WhiteRoundedButton className="mx-auto block" onClick={() => connect()}>
+              Connect
+            </WhiteRoundedButton>
           </Space>
         </Card>
       </Row>

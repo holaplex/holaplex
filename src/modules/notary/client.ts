@@ -1,5 +1,6 @@
 import { Buffer } from 'buffer';
 import nacl from 'tweetnacl';
+import { SolanaSignMessage } from '../solana/types';
 import { JsonString, jsonStringify } from '../utils/json';
 import {
   createMessage,
@@ -11,6 +12,16 @@ import {
   SignatureStr,
   Signer,
 } from './common';
+
+/**
+ * Create a signer using the Phantom browser extension.
+ * @param solana the Phantom wallet's API
+ * @returns a function for signing data with Phantom
+ */
+export const signPhantom =
+  (solana: SolanaSignMessage): Signer =>
+  async (utf8) =>
+    (await solana.signMessage(utf8, 'utf-8')).signature as Signature;
 
 /**
  * Create a signer using a known Ed25519 private key.

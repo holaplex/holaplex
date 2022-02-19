@@ -1,4 +1,4 @@
-import { Solana } from "@/modules/solana/types";
+import { SolanaSignMessage } from '@/modules/solana/types';
 import { Formatter } from '@/modules/notary/common';
 import { notarize, signPhantom, stringifyNotarized, Notarized } from '@/modules/notary';
 import { Marketplace } from './types';
@@ -11,11 +11,13 @@ interface MarketplaceResult {
 }
 
 interface MarketplaceClient {
-  uploadManifest: (values: Marketplace, solana: Solana) => Promise<MarketplaceResult>;
-};
+  uploadManifest: (
+    values: Marketplace,
+    solanaSignMessage: SolanaSignMessage
+  ) => Promise<MarketplaceResult>;
+}
 
-export const formatMessage: Formatter = (bytes) =>
-  `Marketplace: ${bytes.toString('base64')}`;
+export const formatMessage: Formatter = (bytes) => `Marketplace: ${bytes.toString('base64')}`;
 
 const MarketplaceSDK = {
   uploadManifest: async (values, solana) => {
@@ -43,7 +45,7 @@ const MarketplaceSDK = {
     const result: MarketplaceResult = await putResp.json();
 
     return result;
-  }
+  },
 } as MarketplaceClient;
 
 export default MarketplaceSDK;

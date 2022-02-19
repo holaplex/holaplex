@@ -88,7 +88,9 @@ export default function New() {
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <WhiteRoundedButton onClick={() => connect()}>Connect</WhiteRoundedButton>
+            <WhiteRoundedButton className="mx-auto block" onClick={() => connect()}>
+              Connect
+            </WhiteRoundedButton>
           </Space>
         </Card>
       </Row>
