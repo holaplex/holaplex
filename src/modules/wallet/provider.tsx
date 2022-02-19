@@ -20,7 +20,7 @@ const upsertWallet = async (pubkey: string) => {
       return walletSDK.create(pubkey);
     }
 
-    return Promise.resolve(wallet);
+    return Promise.resolve(wallet); // Result isn't being used
   });
 };
 
@@ -30,44 +30,46 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [verifying, setVerifying] = useState(false);
   const [storefront, setStorefront] = useState<Storefront>();
   const { wallet, connected, publicKey } = useWallet();
-  const {setVisible} = useWalletModal();
-  const redirect = useRef("");
+  const { setVisible } = useWalletModal();
+  const redirect = useRef('');
 
   useEffect(() => {
-    (async ()=>{
-    if(connected && publicKey) {
-      setVerifying(true);
-    try {
-      const pub_key = publicKey?.toString();
-      if(!pub_key) throw new Error("Wallet not connected");
-      await upsertWallet(pub_key);
-      const sf = await arweaveSDK.using(arweave).storefront.find('solana:pubkey', pub_key);
-      if(sf)
-        setStorefront(sf); 
-      setVerifying(false);
-      if(redirect.current) {
-        const path = redirect.current;
-        redirect.current = "";
-        return router.push(path);
+    (async () => {
+      if (connected && publicKey) {
+        setVerifying(true);
+        try {
+          const pub_key = publicKey?.toString();
+          if (!pub_key) throw new Error('Wallet not connected');
+          await upsertWallet(pub_key);
+          
+          const sf = await arweaveSDK.using(arweave).storefront.find('solana:pubkey', pub_key);
+          if (sf) setStorefront(sf);
+          setVerifying(false);
+          if (redirect.current) {
+            const path = redirect.current;
+            redirect.current = '';
+            return router.push(path);
+          }
+          if (sf) return router.push('/storefront/edit');
+          return router.push('/storefront/new');
+        } catch (error) {
+          setVerifying(false);
+          return router.push('/');
+        }
       }
-      if (sf) return router.push('/storefront/edit');
-      return router.push('/storefront/new');
-    } catch (error) {
-      setVerifying(false);
-      return router.push("/");
-    }
-  }})();
-  }, [connected, publicKey]);
+    })();
+  }, [arweave, connected, publicKey, router]);
 
-  const connect = useCallback((redir?: string) => {
-    redirect.current = redir ?? "";
-    if (wallet && wallet.adapter){
-      if(connected)
-        return router.push(redirect.current);
-      wallet.adapter.connect().catch(()=>{});
-    }
-    else setVisible(true);
-  }, [wallet]);
+  const connect = useCallback(
+    (redir?: string) => {
+      redirect.current = redir ?? '';
+      if (wallet && wallet.adapter) {
+        if (connected) return router.push(redirect.current);
+        wallet.adapter.connect().catch(() => {});
+      } else setVisible(true);
+    },
+    [wallet]  
+  );
 
   return (
     <WalletContext.Provider

@@ -28,6 +28,7 @@ import {
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
 import { UploadOutlined } from '@ant-design/icons';
+import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Card, Col, Form, Input, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
@@ -69,7 +70,7 @@ export default function New() {
     { name: ['meta', 'description'], value: '' },
   ]);
 
-  if (isNil(userWallet) || isNil(userWallet.adapter) || !connected || userWallet.readyState==="Unsupported") {
+  if (isNil(userWallet) || isNil(userWallet.adapter) || !connected || userWallet.readyState === WalletReadyState.Unsupported) {
     return (
       <Row justify="center">
         <Card>

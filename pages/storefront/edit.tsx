@@ -59,7 +59,7 @@ export default function Edit() {
   const router = useRouter();
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
-  const [tab, setTab] = useState<TabKey>('theme');
+  // const [tab, setTab] = useState<TabKey>('theme');  
   const { storefront } = useContext(StorefrontContext);
   const [form] = Form.useForm();
   const { connect } = useContext(WalletContext);

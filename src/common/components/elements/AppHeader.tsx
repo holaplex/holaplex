@@ -31,7 +31,7 @@ export function AppHeader({ setShowMintModal }: Props) {
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
   useEffect(() => {
     if (!hasWalletTypeSelected || connected) return;
-    connectUserWallet().catch(()=>{});
+    connectUserWallet().catch(console.error);
   }, [connectUserWallet, connected, hasWalletTypeSelected]);
 
   const mintModalClick = () => {

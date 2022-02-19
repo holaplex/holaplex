@@ -34,8 +34,11 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const {publicKey: userPubKey, connected} = useWallet();
   useEffect(() => {
     if(!wallet){
-      if(userPubKey)
-      router.push(`/profiles/${userPubKey.toString()}`);
+      if (userPubKey) {
+        debugger
+        router.push(`/profiles/${userPubKey.toString()}`);
+      }
+        
       else router.push('/');
     }
   }, [])

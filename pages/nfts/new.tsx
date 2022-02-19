@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from 'react';
 import Head from 'next/head';
 import { WalletContext } from '@/modules/wallet';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletReadyState } from '@solana/wallet-adapter-base';
 
 export default function New() {
   const router = useRouter();
@@ -10,12 +11,12 @@ export default function New() {
   const { wallet } = useWallet();
 
   useEffect(() => {
-    if (wallet?.adapter && wallet.readyState !== "Unsupported") {
+    if (wallet?.adapter && wallet.readyState !== WalletReadyState.Unsupported) {
       connect(router.pathname);
     } else {
       router.push('/?action=mint');
     }
-  }, [connect, wallet]);
+  }, [connect, router, wallet]);
 
   return (
     <div>
