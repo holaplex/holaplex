@@ -2,7 +2,7 @@ import { SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { makeSingletons } from '../utils/singleton';
 import buildArweave from './arweave';
 import buildJsonSchemas from './json-schemas';
-import buildSolana from './solana';
+import buildSolana from './../solana/buildSolana';
 
 const singletons = makeSingletons({
   secrets: () => new SecretsManagerClient({ region: process.env.AWS_REGION }),

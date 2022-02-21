@@ -15,13 +15,15 @@ if (production) {
 }
 
 app.prepare().then(() => {
-  createServer((req, res) => {
+  let server = createServer((req, res) => {
     const parsedUrl = parse(req.url!, true)
     handle(req, res, parsedUrl)
   }).listen(port)
 
+  server.on('error', (err) => { console.error(err) });
+
   if (production) {
-    fs.writeFileSync("/tmp/app-initialized", "")
+    // fs.writeFileSync("/tmp/app-initialized", "")
   }
 
   // tslint:disable-next-line:no-console

@@ -54,7 +54,8 @@ export default function New() {
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
   const { connect } = useContext(WalletContext);
-  const { wallet: userWallet , publicKey, connected, signAllTransactions, signMessage, signTransaction, connect: connectUserWallet} = useWallet();
+  const contextState = useWallet();
+  const { wallet, connected } = contextState;
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -69,7 +70,7 @@ export default function New() {
     { name: ['meta', 'description'], value: '' },
   ]);
 
-  if (isNil(userWallet) || isNil(userWallet.adapter) || !connected || userWallet.readyState==="Unsupported") {
+  if (isNil(wallet) || !connected) {
     return (
       <Row justify="center">
         <Card>
@@ -91,7 +92,7 @@ export default function New() {
   const onSubmit = submitCallback({
     track,
     router,
-    wallet: { wallet: userWallet , publicKey, connected, signAllTransactions, signMessage, signTransaction, connect: connectUserWallet},
+    wallet: contextState,
     values,
     setSubmitting,
     onSuccess: (domain) =>

@@ -149,7 +149,7 @@ export const submitCallback = ({
 }: {
   track: TrackingFunctionSignature;
   router: NextRouter;
-  wallet: Pick<WalletContextState, "signTransaction" | "signMessage" | "signAllTransactions" | "connect" | "connected" | "wallet" | "publicKey"> | undefined;
+  wallet: WalletContextState | undefined;
   values: any;
   setSubmitting: (val: boolean) => void;
   onSuccess: (domain: string) => void;

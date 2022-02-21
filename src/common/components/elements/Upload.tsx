@@ -14,7 +14,7 @@ type UploadProps = {
 };
 
 export default function FileUpload({ children, value, onChange }: UploadProps) {
-  const { wallet: userWallet , publicKey, connected, signAllTransactions, signMessage, signTransaction, connect} = useWallet();
+  const contextState = useWallet();
 
   const handleInputChange = async (upload: any) => {
     const file = upload.file;
@@ -24,7 +24,7 @@ export default function FileUpload({ children, value, onChange }: UploadProps) {
     }
 
     uploadFile({
-      wallet: {wallet: userWallet, publicKey, connected, connect, signAllTransactions, signTransaction, signMessage},
+      wallet: contextState,
       file,
       onProgress: (_status, pct) => upload.onProgress({ percent: (pct ?? 0) * 100 }),
     })
