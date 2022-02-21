@@ -111,7 +111,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         releaseStage: devEnv || 'unknown',
         plugins: [new BugsnagPluginReact()],
         onError(event) {
-          if ((pubkey)) {
+          if (pubkey) {
             event.setUser(pubkey);
           }
         },
