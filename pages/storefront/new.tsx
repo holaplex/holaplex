@@ -28,7 +28,6 @@ import {
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
 import { UploadOutlined } from '@ant-design/icons';
-import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Card, Col, Form, Input, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
@@ -55,7 +54,8 @@ export default function New() {
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
   const { connect } = useContext(WalletContext);
-  const { wallet: userWallet , publicKey, connected, signAllTransactions, signMessage, signTransaction, connect: connectUserWallet} = useWallet();
+  const contextState = useWallet();
+  const { wallet, connected } = contextState;
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -70,7 +70,7 @@ export default function New() {
     { name: ['meta', 'description'], value: '' },
   ]);
 
-  if (isNil(userWallet) || isNil(userWallet.adapter) || !connected || userWallet.readyState === WalletReadyState.Unsupported) {
+  if (isNil(wallet) || !connected) {
     return (
       <Row justify="center">
         <Card>
@@ -92,7 +92,7 @@ export default function New() {
   const onSubmit = submitCallback({
     track,
     router,
-    wallet: { wallet: userWallet , publicKey, connected, signAllTransactions, signMessage, signTransaction, connect: connectUserWallet},
+    wallet: contextState,
     values,
     setSubmitting,
     onSuccess: (domain) =>

@@ -3,7 +3,6 @@ import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { isNil } from 'ramda';
 import { Storefront } from '@/modules/storefront/types';
-import { useRouter } from 'next/router';
 import { StorefrontContext } from './context';
 import { useWallet } from '@solana/wallet-adapter-react';
 

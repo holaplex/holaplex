@@ -4,14 +4,15 @@ import Head from 'next/head';
 import { WalletContext } from '@/modules/wallet';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
+import { isNil } from 'ramda';
 
 export default function New() {
   const router = useRouter();
   const { connect } = useContext(WalletContext);
-  const { wallet } = useWallet();
+  const { wallet, connected } = useWallet();
 
   useEffect(() => {
-    if (wallet?.adapter && wallet.readyState !== WalletReadyState.Unsupported) {
+    if (isNil(wallet) || !connected) {
       connect(router.pathname);
     } else {
       router.push('/?action=mint');

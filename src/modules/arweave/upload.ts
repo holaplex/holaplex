@@ -1,4 +1,3 @@
-import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { WalletContextState } from '@solana/wallet-adapter-react';
 import { sha256 } from 'crypto-hash';
 import { isNil } from 'ramda';
@@ -40,7 +39,7 @@ export const uploadFile = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (isNil(wallet) || isNil(wallet.wallet?.adapter) || wallet.wallet?.readyState === WalletReadyState.Unsupported) throw new Error('Could not connect to Solana');
+    if (isNil(wallet)) throw new Error('Could not connect to Solana');
 
     if (!wallet.connected) {
       onProgress('connecting-wallet');

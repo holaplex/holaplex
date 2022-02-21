@@ -20,7 +20,7 @@ export const putStorefront = async ({
   onComplete,
   onError,
 }: {
-  wallet: Pick<WalletContextState, "signTransaction" | "signMessage" | "signAllTransactions" | "connect" | "connected" | "wallet" | "publicKey"> | undefined;
+  wallet: WalletContextState | undefined;
   storefront: Storefront; 
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed'
@@ -31,7 +31,7 @@ export const putStorefront = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (isNil(wallet) || !wallet.connected || wallet.wallet?.readyState === "Unsupported" || isNil(wallet.wallet?.adapter)) throw new Error('Could not connect to Solana');
+    if (isNil(wallet)) throw new Error('Could not connect to Solana');
 
     if (!wallet.connected) {
       onProgress('connecting-wallet');

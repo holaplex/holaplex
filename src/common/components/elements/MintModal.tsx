@@ -49,8 +49,9 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 const MintModal = ({ show, onClose }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
-  const { storefront, connect } = useContext(WalletContext);
-  const { wallet, signAllTransactions, signTransaction, signMessage, publicKey, connected} = useWallet();
+  const { storefront } = useContext(WalletContext);
+  const contextState = useWallet();
+  const {wallet, connected} = contextState;
   
   useEffect(() => {
     if (show) {
@@ -60,7 +61,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
     }
   }, [show, blockScroll, allowScroll]);
 
-  if (isNil(wallet) || isNil(wallet.adapter) || wallet?.readyState==="Unsupported" || !connected) {
+  if (isNil(wallet) || !connected) {
     return null;
   }
 
@@ -77,7 +78,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
-        wallet={{isConnected: connected, publicKey, signAllTransactions, signTransaction, connect, signMessage, on:wallet.adapter.on, off:wallet.adapter.off, once:wallet.adapter.off}}
+        wallet={contextState}
         track={track}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}

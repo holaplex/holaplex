@@ -63,9 +63,9 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const connect = useCallback(
     (redir?: string) => {
       redirect.current = redir ?? '';
-      if (wallet && wallet.adapter) {
+      if (wallet) {
         if (connected) return router.push(redirect.current);
-        wallet.adapter.connect().catch(() => {});
+        wallet.adapter.connect().catch(console.error);
       } else setVisible(true);
     },
     [wallet]  

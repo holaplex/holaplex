@@ -31,17 +31,15 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const {publicKey: userPubKey, connected} = useWallet();
+  const { publicKey: userPubKey } = useWallet();
   useEffect(() => {
     if(!wallet){
       if (userPubKey) {
-        debugger
         router.push(`/profiles/${userPubKey.toString()}`);
       }
-        
       else router.push('/');
     }
-  }, [])
+  }, [wallet, userPubKey])
 
   useEffect(() => {
     if (!twitterHandle) return;
