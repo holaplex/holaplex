@@ -1,4 +1,3 @@
-import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
@@ -19,12 +18,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
-  const bannerBackgroundImage = !!bannerUrl
-    ? `url(${bannerUrl})`
-    : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
   const { data: twitterHandle } = useTwitterHandle(publicKey);
-  // const { toggleDisableMarginBottom } = useAppHeaderSettings();
-  // const [didToggleDisableMarginBottom, setDidToggleDisableMarginBottom] = useState(false);
   const [{ pfp, banner }, setPfpAndBanner] = useState({
     pfp: '/images/gradients/gradient-3.png',
     banner: 'url(/images/gradients/gradient-5.png)', // TODO: Fetch from wallet (DERIVE)
@@ -68,7 +62,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   return (
     <>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: bannerBackgroundImage }} />
+        <Banner style={{ backgroundImage: banner }} />
       </HeadingContainer>
       <ContentCol>
         <Profile>
@@ -84,10 +78,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
             />
           </WalletPillContainer>
         </Profile>
-        <ContentWrapper>
-          <ProfileMenu wallet={wallet} />
-          {children}
-        </ContentWrapper>
+        <ContentWrapper>{children}</ContentWrapper>
       </ContentCol>
     </>
   );
@@ -155,7 +146,3 @@ const Profile = styled.div`
   min-width: 348px;
   position: relative;
 `;
-
-function useAppHeaderSettings(): { toggleDisableMarginBottom: any } {
-  throw new Error('Function not implemented.');
-}
