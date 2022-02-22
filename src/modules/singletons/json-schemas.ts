@@ -130,9 +130,6 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
   schemas.addSchema(SCHEMAS.marketplace,
     {
       properties: {
-        creators: { 
-          elements: { type: 'string' },
-        },
         subdomain: { type: 'string' },
         address: {
           properties: {

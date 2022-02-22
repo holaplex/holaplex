@@ -1,9 +1,9 @@
 import { uploadFile } from '@/modules/arweave/upload';
+import { WalletContext } from '@/modules/wallet';
 import { Upload } from 'antd';
 import { isNil } from 'ramda';
-import React from 'react';
+import React, { useContext } from 'react';
 import { toast } from 'react-toastify';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 type UploadProps = {
   onChange?: (uploads: any) => any;
@@ -15,15 +15,8 @@ type UploadProps = {
 };
 
 export default function FileUpload({ children, value, onChange, dragger = false }: UploadProps) {
-  const {
-    wallet: userWallet,
-    publicKey,
-    connected,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connect,
-  } = useWallet();
+  const { solana } = useContext(WalletContext);
+
   const handleInputChange = async (upload: any) => {
     const file = upload.file;
 
@@ -32,15 +25,7 @@ export default function FileUpload({ children, value, onChange, dragger = false 
     }
 
     uploadFile({
-      wallet: {
-        wallet: userWallet,
-        publicKey,
-        connected,
-        connect,
-        signAllTransactions,
-        signTransaction,
-        signMessage,
-      },
+      solana,
       file,
       onProgress: (_status, pct) => upload.onProgress({ percent: (pct ?? 0) * 100 }),
     })

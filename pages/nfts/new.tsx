@@ -1,21 +1,33 @@
+
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import Head from 'next/head';
-import { WalletContext } from '@/modules/wallet';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { isNil } from 'ramda';
+import { Row, Card, Space, Typography } from 'antd';
+import Button from '@/components/elements/Button';
+import MintModal from '@/common/components/elements/MintModal';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 export default function New() {
   const router = useRouter();
-  const { connect } = useContext(WalletContext);
-  const { wallet } = useWallet();
+  const { publicKey, connecting } = useWallet();
+  const { setVisible } = useWalletModal();
 
-  useEffect(() => {
-    if (wallet?.adapter && wallet.readyState !== 'Unsupported') {
-      connect(() => router.push(router.pathname));
-    } else {
-      router.push('/?action=mint');
-    }
-  }, [connect, wallet]);
+  if (isNil(publicKey)) {
+    return (
+      <Row justify="center">
+        <Card>
+          <Space direction="vertical">
+            <Typography.Paragraph>Connect your Solana wallet to create a store.</Typography.Paragraph>
+            <Button loading={connecting} block onClick={() => setVisible(true)}>
+              Connect
+            </Button>
+          </Space>
+        </Card>
+      </Row>
+    );
+  }
 
   return (
     <div>
@@ -27,6 +39,10 @@ export default function New() {
           content="Minting an NFT is how your digital art becomes a part of the Solana blockchain - a public ledger that is unchangeable and tamper-proof."
         />
       </Head>
+      <MintModal
+        show
+        onClose={() => router.back()}
+      />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
 import FontSelect from '@/common/components/elements/FontSelect';
 import Upload from '@/common/components/elements/Upload';
-import { WhiteRoundedButton } from '@/components/elements/Button';
+import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
+import Loading from '@/components/elements/Loading';
 import {
   FieldData,
   getTextColor,
@@ -18,7 +19,6 @@ import {
   PrevText,
   PrevTitle,
   reduceFieldData,
-  StorefrontEditorProps,
   submitCallback,
   Title,
   UploadedLogo,
@@ -26,7 +26,7 @@ import {
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
-import { UploadOutlined } from '@ant-design/icons';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Card, Col, Form, Input, Row, Space, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import {
@@ -43,38 +43,27 @@ import {
   update,
   view,
 } from 'ramda';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 const { TabPane } = Tabs;
-type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
   const [submitting, setSubmitting] = useState(false);
   const { track } = useAnalytics();
   const router = useRouter();
   const arweave = initArweave();
+  const { setVisible } = useWalletModal();
   const ar = arweaveSDK.using(arweave);
-  const [tab, setTab] = useState<TabKey>('theme');
-  const { storefront } = useContext(StorefrontContext);
+  const { storefront, searching } = useContext(StorefrontContext);
   const [form] = Form.useForm();
-  const { connect } = useContext(WalletContext);
-  const {
-    wallet: userWallet,
-    publicKey,
-    connected,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connect: connectUserWallet,
-  } = useWallet();
+  const { solana, wallet, looking } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
-    { name: ['subdomain'], value: storefront?.subdomain ?? '' },
-    { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor ?? '#333333' },
-    { name: ['theme', 'primaryColor'], value: storefront?.theme.primaryColor ?? '#F2C94C' },
-    { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont ?? 'Work Sans' },
-    { name: ['theme', 'textFont'], value: storefront?.theme.textFont ?? 'Work Sans' },
+    { name: ['subdomain'], value: storefront?.subdomain },
+    { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
+    { name: ['theme', 'primaryColor'], value: storefront?.theme.primaryColor },
+    { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont },
+    { name: ['theme', 'textFont'], value: storefront?.theme.textFont },
     { name: ['theme', 'banner'], value: [{ ...storefront?.theme.banner, status: 'done' }] },
     { name: ['theme', 'logo'], value: [{ ...storefront?.theme.logo, status: 'done' }] },
     {
@@ -91,20 +80,39 @@ export default function Edit() {
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
   ]);
 
-  if (
-    isNil(userWallet) ||
-    isNil(userWallet.adapter) ||
-    !connected ||
-    userWallet.readyState === 'Unsupported'
-  ) {
+  useEffect(() => {
+    setFields([
+      { name: ['subdomain'], value: storefront?.subdomain },
+      { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
+      { name: ['theme', 'primaryColor'], value: storefront?.theme.primaryColor },
+      { name: ['theme', 'titleFont'], value: storefront?.theme.titleFont },
+      { name: ['theme', 'textFont'], value: storefront?.theme.textFont },
+      { name: ['theme', 'banner'], value: [{ ...storefront?.theme.banner, status: 'done' }] },
+      { name: ['theme', 'logo'], value: [{ ...storefront?.theme.logo, status: 'done' }] },
+      {
+        name: ['meta', 'favicon'],
+        value: ifElse(
+          // @ts-ignore
+          pipe(prop('url'), isNil),
+          () => [],
+          (favicon) => [merge({ status: 'done' })(favicon)]
+          // @ts-ignore
+        )(storefront?.meta.favicon),
+      },
+      { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
+      { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
+    ])
+  }, [storefront])
+
+  if (isNil(solana) || isNil(wallet)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <WhiteRoundedButton className="mx-auto block" onClick={() => connect()}>
+            <Button loading={solana?.connecting || looking} block onClick={() => setVisible(true)}>
               Connect
-            </WhiteRoundedButton>
+            </Button>
           </Space>
         </Card>
       </Row>
@@ -113,20 +121,12 @@ export default function Edit() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, publicKey?.toString());
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet?.pubkey);
 
   const onSubmit = submitCallback({
     track,
     router,
-    wallet: {
-      wallet: userWallet,
-      publicKey,
-      connected,
-      signAllTransactions,
-      signMessage,
-      signTransaction,
-      connect: connectUserWallet,
-    },
+    solana,
     values,
     setSubmitting,
     onSuccess: (domain) =>
@@ -149,7 +149,9 @@ export default function Edit() {
 
   const textColor = getTextColor(values.theme.backgroundColor);
   const buttontextColor = getTextColor(values.theme.primaryColor);
+
   return (
+    <Loading loading={searching || looking}>
     <Row justify="center" align="middle">
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <Form
@@ -185,8 +187,8 @@ export default function Edit() {
                           view(lensPath(['response', 'url'])),
                           prop('url')
                         )(values.theme.banner[0])) && (
-                        <WhiteRoundedButton>Upload Banner</WhiteRoundedButton>
-                      )}
+                          <Button>Upload Banner</Button>
+                        )}
                     </Upload>
                   </Form.Item>
                   <Form.Item
@@ -196,7 +198,7 @@ export default function Edit() {
                   >
                     <Upload>
                       {isEmpty(values.theme.logo) && (
-                        <WhiteRoundedButton>Upload</WhiteRoundedButton>
+                        <Button>Upload</Button>
                       )}
                     </Upload>
                   </Form.Item>
@@ -282,7 +284,7 @@ export default function Edit() {
                 rules={[{ required: true, message: 'Upload a favicon.' }]}
               >
                 <Upload>
-                  {isEmpty(values.meta.favicon) && <WhiteRoundedButton>Upload</WhiteRoundedButton>}
+                  {isEmpty(values.meta.favicon) && <Button>Upload</Button>}
                 </Upload>
               </Form.Item>
               <Form.Item
@@ -302,12 +304,13 @@ export default function Edit() {
             </TabPane>
           </Tabs>
           <Row justify="end">
-            <WhiteRoundedButton disabled={submitting} loading={submitting}>
+            <Button disabled={submitting} loading={submitting}>
               Update
-            </WhiteRoundedButton>
+            </Button>
           </Row>
         </Form>
       </Col>
     </Row>
+    </Loading>
   );
 }

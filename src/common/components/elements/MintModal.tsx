@@ -7,9 +7,9 @@ import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
+import { Wallet } from '@/modules/wallet/types';
 import { Connection } from '@solana/web3.js';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { isNil } from 'ramda';
+import { StorefrontContext } from '@/modules/storefront';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -49,9 +49,8 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 const MintModal = ({ show, onClose }: MintModalProps) => {
   const { track } = useAnalytics();
   const [blockScroll, allowScroll] = useScrollBlock();
-  const { storefront, connect } = useContext(WalletContext);
-  const { wallet, signAllTransactions, signTransaction, signMessage, publicKey, connected } =
-    useWallet();
+  const { storefront } = useContext(StorefrontContext);
+  const { solana } = useContext(WalletContext);
 
   useEffect(() => {
     if (show) {
@@ -60,15 +59,6 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
       allowScroll();
     }
   }, [show, blockScroll, allowScroll]);
-
-  if (
-    isNil(wallet) ||
-    isNil(wallet.adapter) ||
-    wallet?.readyState === 'Unsupported' ||
-    !connected
-  ) {
-    return null;
-  }
 
   return (
     <StyledModal
@@ -83,17 +73,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
-        wallet={{
-          isConnected: connected,
-          publicKey,
-          signAllTransactions,
-          signTransaction,
-          connect,
-          signMessage,
-          on: wallet.adapter.on,
-          off: wallet.adapter.off,
-          once: wallet.adapter.off,
-        }}
+        wallet={solana}
         track={track}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}

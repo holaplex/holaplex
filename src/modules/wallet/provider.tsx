@@ -1,18 +1,21 @@
-import { initArweave } from '@/modules/arweave';
-import arweaveSDK from '@/modules/arweave/client';
 import walletSDK from '@/modules/wallet/client';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import { Wallet } from '@/modules/wallet/types';
+import { useWallet, WalletContextState } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useRef, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WalletContext, WalletContextProps } from './context';
-import { Storefront } from '@/modules/storefront/types';
 
-type WalletProviderProps = {
+interface WalletProviderProps {
+  wallet?: Wallet;
+  solana?: WalletContextState;
   children: (props: WalletContextProps) => React.ReactElement;
 };
 
-const upsertWallet = async (pubkey: string) => {
+const upsertWallet = async (pubkey: string | undefined) => {
+  if (!pubkey) {
+    return Promise.reject("no public key");
+  }
+
   return walletSDK.find(pubkey).then((wallet: any) => {
     if (!wallet) {
       return walletSDK.create(pubkey);
@@ -24,62 +27,42 @@ const upsertWallet = async (pubkey: string) => {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter();
-  const arweave = initArweave();
-  const [verifying, setVerifying] = useState(false);
-  const { wallet, connected, publicKey } = useWallet();
-  const { setVisible } = useWalletModal();
-  const redirect = useRef('');
-  const [storefront, setStorefront] = useState<Storefront>();
+  const [wallet, setWallet] = useState<Wallet>();
+  const [looking, setLooking] = useState(false);
+  const solana = useWallet();
+  const { publicKey } = solana;
 
   useEffect(() => {
-    (async () => {
-      if (connected && publicKey) {
-        setVerifying(true);
-        try {
-          const pub_key = publicKey?.toString();
-          if (!pub_key) throw new Error('Wallet not connected');
-          await upsertWallet(pub_key);
-          const sf = await arweaveSDK.using(arweave).storefront.find('solana:pubkey', pub_key);
-          if (sf) setStorefront(sf);
-          setVerifying(false);
-          if (redirect.current) {
-            const path = redirect.current;
-            redirect.current = '';
-            return router.push(path);
-          }
-          if (sf) return router.push('/storefront/edit');
-          return router.push('/storefront/new');
-        } catch (error) {
-          setVerifying(false);
-          return router.push('/');
-        }
-      }
-    })();
-  }, [connected, publicKey]);
+    if (!publicKey) {
+      return;
+    }
 
-  const connect = useCallback(
-    (redir?: string) => {
-      redirect.current = redir ?? '';
-      if (wallet && wallet.adapter) {
-        if (connected) return router.push(redirect.current);
-        wallet.adapter.connect().catch(() => {});
-      } else setVisible(true);
-    },
-    [wallet]
-  );
+    setLooking(true);
+
+    upsertWallet(publicKey.toBase58())
+      .then((wallet: Wallet) => {
+        setWallet(wallet);
+
+        return wallet;
+      })
+      .catch(() => router.push('/'))
+      .finally(() => {
+        setLooking(false);
+      });
+  }, [router, publicKey])
 
   return (
     <WalletContext.Provider
       value={{
-        verifying,
-        connect,
-        storefront,
+        wallet,
+        solana,
+        looking,
       }}
     >
       {children({
-        verifying,
-        connect,
-        storefront,
+        wallet,
+        solana,
+        looking
       })}
     </WalletContext.Provider>
   );
