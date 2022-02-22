@@ -83,7 +83,7 @@ const FirstRow = styled.div`
 const PopoverBox = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px; // Since ANTD Popover Inner Content ist like 12x16px
+  padding: 12px 8px; // Since ANTD Popover Inner Content ist like 12x16px
 `;
 
 const ProfilePicture = styled(Image)`

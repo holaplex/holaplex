@@ -112,6 +112,7 @@ export const AnchorButton = styled.a`
   align-items: center;
   &&:not([disabled]):hover {
     background-color: rgba(255, 255, 255, 0.8);
+    color: #171717;
   }
 `;
 
