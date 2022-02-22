@@ -46,7 +46,9 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
       <Link passHref href="/storefront/edit">
         <MenuItemRow onClick={onCloseClick}>Edit store</MenuItemRow>
       </Link>
-      <MenuItemButtonRow>Mint NFTs</MenuItemButtonRow>
+      <Link passHref href="/nfts/new">
+        <MenuItemRow>Mint NFTs</MenuItemRow>
+      </Link>
       <Link passHref href="/about">
         <MenuItemRow onClick={onCloseClick}>About</MenuItemRow>
       </Link>

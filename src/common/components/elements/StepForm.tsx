@@ -44,7 +44,7 @@ const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: St
               </Button>
             )}
             <Form.Item noStyle>
-              <Button disabled={submitting} loading={submitting}>
+              <Button htmlType="submit" disabled={submitting} loading={submitting}>
                 {isLastPage ? 'Submit' : 'Next'}
               </Button>
             </Form.Item>

@@ -65,7 +65,7 @@ export function SkeletonListing() {
   return (
     <div className="mb-12 pt-1 ">
       <Square>
-        <StyledSkeletonImage className="skeleton-animation h-full w-full rounded-t-lg" />
+        <StyledSkeletonImage className="skeleton-animation !h-full !w-full rounded-t-lg" />
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">

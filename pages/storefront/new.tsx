@@ -264,7 +264,7 @@ export default function New() {
   );
 
   return (
-    <Loading loading={searching || solana.connecting || looking}>
+    <Loading loading={searching || looking}>
       <Row justify="center" align="middle">
         <Col xs={21} lg={18} xl={16} xxl={14}>
           <StepForm

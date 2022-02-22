@@ -41,7 +41,6 @@ const postArweaveStorefront = async (storefront: Storefront) => {
   const tx = await arweave.createTransaction({ data: stylesheet(storefront.theme) });
 
   tx.addTag('Content-Type', 'text/css');
-  // TODO: set for marketplace
   tx.addTag('solana:pubkey', storefront.pubkey);
   tx.addTag('holaplex:metadata:subdomain', storefront.subdomain);
   tx.addTag('holaplex:metadata:favicon:url', storefront.meta.favicon.url);

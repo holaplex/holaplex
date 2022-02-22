@@ -296,7 +296,7 @@ export default function Edit() {
               </TabPane>
             </Tabs>
             <Row justify="end">
-              <Button disabled={submitting} loading={submitting}>
+              <Button disabled={submitting} loading={submitting} htmlType="submit">
                 Update
               </Button>
             </Row>

@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
-import { Wallet } from '@/modules/wallet/types';
 import { Connection } from '@solana/web3.js';
 import { StorefrontContext } from '@/modules/storefront';
 
