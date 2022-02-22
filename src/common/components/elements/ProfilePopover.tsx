@@ -35,52 +35,36 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
     });
   }, [queryWalletProfile, twitterHandle]);
 
-  const profilePictureUrl = connected ? walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '') : null;
+  const profilePictureUrl = connected
+    ? walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '')
+    : null;
   const textOverride = connected ? twitterHandle : null;
 
   return (
     <>
       <FirstRow>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}
-        >
+        <div className="flex w-full items-center justify-between">
           <ProfilePicture
             width={PFP_SIZE}
             height={PFP_SIZE}
             src={profilePictureUrl ?? '/images/gradients/gradient-3.png'}
             alt="Profile Picture"
           />
-          <div
-            style={{
-              marginLeft: 20,
-            }}
-          >
-            <WalletPill onClick={onViewProfile} disableBackground textOverride={'View profile'} publicKey={publicKey} />
+          <div className="ml-5">
+            <WalletPill
+              onClick={onViewProfile}
+              disableBackground
+              textOverride={'View profile'}
+              publicKey={publicKey}
+            />
           </div>
         </div>
       </FirstRow>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          marginTop: 24,
-        }}
-      >
+      <div className="mt-6 flex w-full items-center justify-between">
         <SolBalance />
         <WalletLabel />
       </div>
-      <div
-        style={{
-          width: '100%',
-        }}
-      >
+      <div className="w-full">
         <DisconnectWalletButton />
       </div>
     </>
@@ -99,7 +83,7 @@ const FirstRow = styled.div`
 const PopoverBox = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px; // Since ANTD Popover Inner Content ist like 12x16px
+  padding: 12px 8px; // Since ANTD Popover Inner Content ist like 12x16px
 `;
 
 const ProfilePicture = styled(Image)`
