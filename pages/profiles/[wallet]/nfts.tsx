@@ -9,8 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import TextInput2 from '@/common/components/elements/TextInput2';
 import { Combobox } from '@headlessui/react';
+import cx from 'classnames';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const NFTCard = ({ nft }: { nft: any }) => {
   return (
     <div className="overflow-hidden rounded-lg border-2 border-gray-800">
-      <img src={nft.image} alt="nft" className="h-80  object-cover" />
+      <img src={nft.image} alt={nft.name} className="h-80 object-cover" />
       <div className="h-24 bg-gray-900 py-6 px-4">
         <p className="text-xl">{nft.name}</p>
       </div>
@@ -98,12 +98,22 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
       <ProfileContainer wallet={wallet} publicKey={publicKey}>
         <div className="relative flex h-8">
           <Combobox value={selectedNFT} onChange={setSelectedNFT}>
-            {/* <FeatherIcon icon="search" className="absolute h-4 w-4" /> */}
-            <Combobox.Input
-              onChange={(event) => setQuery(event.target.value)}
-              className="w-9/12 rounded-lg border-2 border-solid border-gray-800 bg-transparent focus:border-2 focus:border-white focus:outline-none"
-              placeholder="Search"
-            />
+            {({ open }) => (
+              <>
+                <FeatherIcon
+                  icon="search"
+                  className={cx(
+                    'absolute bottom-1.5 left-2.5 h-5 w-5 text-gray-800',
+                    open ? 'text-white' : ''
+                  )}
+                />
+                <Combobox.Input
+                  onChange={(event) => setQuery(event.target.value)}
+                  className="w-9/12 rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 placeholder-gray-800 shadow-none focus:border-2 focus:border-white focus:shadow-none"
+                  placeholder="Search"
+                />
+              </>
+            )}
           </Combobox>
         </div>
         <NFTGrid nfts={nftsToShow} />
