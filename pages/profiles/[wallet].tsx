@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       // query params must be gotten serverside to be available on initial render
-      wallet: context.query.wallet,
+      wallet: context?.params?.wallet ?? '',
     },
   };
 };

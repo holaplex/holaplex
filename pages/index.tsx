@@ -28,19 +28,14 @@ import {
   always,
   ifElse,
   filter,
-  concat,
   not,
   pipe,
   is,
-  isNil,
   prop,
   descend,
   ascend,
   sortWith,
   equals,
-  map,
-  range,
-  propEq,
 } from 'ramda';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
@@ -51,12 +46,10 @@ import {
 } from '@/common/components/elements/ListingPreview';
 import Link from 'next/link';
 import { SelectValue } from 'antd/lib/select';
-import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
 import { StorefrontContext } from '@/modules/storefront';
-import { MarketplaceContext } from '@/modules/marketplace';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter } from 'next/router';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -131,7 +124,7 @@ const StorefrontSection = styled(Section)`
   }
 `;
 
-const FeaturedStores = styled(List) <ListProps<StorefrontFeature>>`
+const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
   .ant-list-item {
     margin-bottom: 66px !important;
 
@@ -181,7 +174,7 @@ interface SelectInlineProps extends SelectProps<SelectValue> {
   label: string;
 }
 
-const SelectInline = styled(Select) <SelectInlineProps>`
+const SelectInline = styled(Select)<SelectInlineProps>`
   width: 165px;
   font-size: 12px;
   line-height: 12px;
@@ -380,7 +373,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [featuredListings, setFeaturedListings] = useState<Listing[]>(
     Array(5)
@@ -485,28 +477,33 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             {connected ? (
               <Space direction="horizontal" size="large">
                 {searching ? (
-                  <Skeleton.Button></Skeleton.Button>
+                  <Skeleton.Button shape="round" className="!w-[12rem]"></Skeleton.Button>
                 ) : (
                   <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
-                  <a>
-                    <Button
-                      loading={searching}
-                    >
-                      {storefront ? 'Edit your store' : 'Create your store'}
-                    </Button>
-                  </a>
-                </Link>
-                )}
-                {MARKETPLACE_ENABLED && (
-                  <Link href="/marketplace/new" passHref>
                     <a>
-                      <Button>Create Your Marketplace</Button>
+                      <Button loading={searching} className="!w-[12rem]">
+                        {storefront ? 'Edit your store' : 'Create your store'}
+                      </Button>
                     </a>
                   </Link>
                 )}
+                {MARKETPLACE_ENABLED &&
+                  (searching ? (
+                    <Skeleton.Button shape="round" className="!w-[16rem]"></Skeleton.Button>
+                  ) : (
+                    <Link href="/marketplace/new" passHref>
+                      <a>
+                        <Button>Create Your Marketplace</Button>
+                      </a>
+                    </Link>
+                  ))}
               </Space>
             ) : (
-              <Button loading={connecting} onClick={() => setVisible(true)}>Connect</Button>
+              <div>
+                <Button loading={connecting} onClick={() => setVisible(true)}>
+                  Connect
+                </Button>
+              </div>
             )}
             <div className="mt-[2.5rem]">
               <SocialLinks />
@@ -661,13 +658,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               )}
             </Row>
           </Col>
-        </Section>
-        <Section justify="center" align="middle">
-          <Space direction="vertical" align="center">
-            <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <Button onClick={() => connectStorefront()}>Create Your Store</Button>
-            {MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>}
-          </Space>
         </Section>
       </CenteredContentCol>
     </Row>

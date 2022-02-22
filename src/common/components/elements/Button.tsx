@@ -4,7 +4,9 @@ import { equals } from 'ramda';
 import { WalletDisconnectButton, WalletModalButton } from '@solana/wallet-adapter-react-ui';
 import { ButtonReset } from '@/common/styles/ButtonReset';
 
-const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ noStyle?: boolean }>`
+const StyledButton = styled(({ noStyle, ...rest }) => <Button shape="round" {...rest} />)<{
+  noStyle?: boolean;
+}>`
   font-weight: 500;
   color: #000;
   &:hover,
@@ -16,40 +18,11 @@ const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ no
   &.ant-btn-icon-only {
     width: 52px;
   }
-  ${({ type }) =>
-    equals('primary', type) &&
-    css`
-      color: #f4f4f4;
-      &:hover,
-      &:active,
-      &:focus {
-        color: #fff;
-        background: linear-gradient(10.77deg, rgb(210, 64, 137) 8.62%, rgb(185, 45, 68) 84.54%);
-      }
-      &[disabled],
-      &[disabled]:hover {
-        background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
-        color: #fff;
-
-        &:hover,
-        &:active,
-        &:focus {
-          color: #fff;
-          background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
-          color: #fff;
-
-          &:hover,
-          &:active,
-          &:focus {
-            background: linear-gradient(
-              10.77deg,
-              rgb(220, 105, 163) 8.62%,
-              rgb(210, 71, 94) 84.54%
-            );
-          }
-        }
-      }
-    `}
+  & .ant-btn-loading-icon {
+    display: inline-flex;
+    align-items: center;
+    padding-right: 8px;
+  }
 
   ${({ noStyle }) =>
     noStyle &&
@@ -88,10 +61,6 @@ const ButtonStyles = css`
   font-size: 12px;
   line-height: 16px;
   color: #171717;
-`;
-
-export const ButtonV2 = styled(StyledButton)`
-  ${ButtonStyles}
 `;
 
 export const AnchorButton = styled.a`
@@ -179,6 +148,5 @@ export const DisconnectWalletButton = styled(WalletDisconnectButton).attrs({
     background-color: #363636;
   }
 `;
-
 
 export default StyledButton;

@@ -7,7 +7,6 @@ import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import { Marketplace } from '@/modules/marketplace';
 import arweaveSDK from '@/modules/arweave/client';
-import { UserOutlined } from '@ant-design/icons';
 import {
   FieldData,
   Paragraph,
@@ -21,10 +20,10 @@ import {
 import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
-import { Avatar, Card, Col, Form, Input, Slider, Row, Space, Typography, InputNumber } from 'antd';
+import { Card, Col, Form, Input, Row, Space, InputNumber } from 'antd';
 import { findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
 import { useConnection } from '@solana/wallet-adapter-react';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house/transactions/CreateAuctionHouse';
 import { AuctionHouseAccount } from '@/modules/auction-house/AuctionHouseAccount';
 import { useRouter } from 'next/router';

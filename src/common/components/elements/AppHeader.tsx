@@ -3,11 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
-import { StorefrontContext } from '@/modules/storefront';
-import { WalletContext } from '@/modules/wallet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Wallet } from '@/modules/wallet/types';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
@@ -21,17 +17,11 @@ import { Check } from '../icons/Check';
 import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
-
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
 export function AppHeader() {
   const router = useRouter();
-  const {
-    connected,
-    wallet: userWallet,
-    publicKey,
-    connecting,
-  } = useWallet();
+  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
@@ -61,7 +51,6 @@ export function AppHeader() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected]);
 
-
   return (
     <>
       <StyledHeader>
@@ -75,10 +64,8 @@ export function AppHeader() {
         {!WHICHDAO && (
           <LinkRow size="large">
             <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/nfts/new'}>
-            <Link href="/nfts/new" passHref>
-              <a className="hover:underline focus:underline">
-                Mint NFTs
-              </a>
+              <Link href="/nfts/new" passHref>
+                <a className="hover:underline focus:underline">Mint NFTs</a>
               </Link>
             </HeaderLinkWrapper>
             <Popover
@@ -165,7 +152,9 @@ export function AppHeader() {
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button loading={connecting} onClick={() => setVisible(true)}>Connect</Button>
+              <Button loading={connecting} onClick={() => setVisible(true)}>
+                Connect
+              </Button>
             )}
           </LinkRow>
         )}
@@ -273,4 +262,3 @@ const CloseButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
-

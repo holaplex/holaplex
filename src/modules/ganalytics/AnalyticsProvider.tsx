@@ -79,8 +79,6 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const [trackingAccepted, setTrackingAccepted] = useState(true);
   const { wallet } = useContext(WalletContext);
   const pubkey = wallet?.pubkey || '';
-  // const pubkey = publicKey?.toBase58() || '';
-  // const endpointName = ENDPOINTS.find((e) => e.endpoint === endpoint)?.name;
 
   let solPrice = 0;
 
