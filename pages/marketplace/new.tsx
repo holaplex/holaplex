@@ -29,7 +29,7 @@ import { createAuctionHouse } from '@/modules/auction-house';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
+import { AuctionHouseProgram } from '@holaplex/mpl-auction-house';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
