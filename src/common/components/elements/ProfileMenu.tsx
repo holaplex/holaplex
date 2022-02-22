@@ -11,10 +11,15 @@ interface Props {
   wallet: string;
 }
 
+enum TabRoute {
+  OWNED,
+  ACTIVITY,
+}
+
 export const ProfileMenu: FC<Props> = ({ wallet }) => {
   const router = useRouter();
   const path = router.asPath;
-  const routeIndex = path.includes('/nfts') ? 1 : 0;
+  const routeIndex = path.includes('/nfts') ? TabRoute.OWNED : TabRoute.ACTIVITY;
   const [selectedIndex, setSelectedIndex] = useState(routeIndex);
 
   return (

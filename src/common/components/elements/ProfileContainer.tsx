@@ -1,12 +1,10 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
-import { testData } from '@/common/components/elements/test-nft-data';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
 import Bugsnag from '@bugsnag/js';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
