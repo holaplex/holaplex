@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -8,7 +8,6 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import { isNil } from 'ramda';
-import Loading from '@/components/elements/Loading';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
@@ -18,7 +17,6 @@ import {
   OLD_GOOGLE_ANALYTICS_ID,
   GA4_ID,
 } from '@/modules/ganalytics/AnalyticsProvider';
-import MintModal from '@/common/components/elements/MintModal';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -32,12 +30,12 @@ import {
   ConnectionProvider,
   WalletProvider as WalletProviderSolana,
 } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { WalletAdapterNetwork, WalletReadyState } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
 import '@solana/wallet-adapter-react-ui/styles.css';
-import { StorefrontContext } from '@/modules/storefront';
+import { MarketplaceProvider } from '@/modules/marketplace';
 
 const { Content } = Layout;
 
@@ -57,7 +55,6 @@ const AppLayout = styled(Layout)`
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [showMintModal, setShowMintModal] = useState(false);
 
   const track = (category: string, action: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -103,11 +100,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     ],
     [network]
   );
-  useEffect(() => {
-    if (router.query.action === 'mint') {
-      setShowMintModal(true);
-    }
-  }, [router.query.action, setShowMintModal]);
 
   return (
     <>
@@ -129,35 +121,27 @@ function MyApp({ Component, pageProps }: AppProps) {
       />
       <ApolloProvider client={apolloClient}>
         <ConnectionProvider endpoint={endpoint}>
-          {/*
-          This competes with the other WalletProvider. We need to 
-          consolidate into using the one directly from solana-wallet-adapter.
-        */}
-          <WalletProviderSolana wallets={wallets}>
+          <WalletProviderSolana wallets={wallets} autoConnect>
             <WalletModalProvider>
               <WalletProvider>
-                {({ verifying }) => (
-                  <StorefrontProvider>
-                    {({ searching }) => {
+                {({ wallet }) => (
+                  <StorefrontProvider wallet={wallet}>
+                    {({ }) => {
                       return (
-                        <AnalyticsProvider>
-                          <AppLayout>
-                            <AppHeader setShowMintModal={setShowMintModal} />
-                            <AppContent>
-                              {showMintModal && (
-                                <MintModal
-                                  show={showMintModal}
-                                  onClose={() => setShowMintModal(false)}
-                                />
-                              )}
-                              <Loading loading={verifying || searching}>
-                                <ContentWrapper>
-                                  <Component {...pageProps} track={track} />
-                                </ContentWrapper>
-                              </Loading>
-                            </AppContent>
-                          </AppLayout>
-                        </AnalyticsProvider>
+                        <MarketplaceProvider wallet={wallet}>
+                          {() => (
+                            <AnalyticsProvider>
+                              <AppLayout>
+                                <AppHeader />
+                                <AppContent>
+                                  <ContentWrapper>
+                                    <Component {...pageProps} track={track} />
+                                  </ContentWrapper>
+                                </AppContent>
+                              </AppLayout>
+                            </AnalyticsProvider>
+                          )}
+                        </MarketplaceProvider>
                       );
                     }}
                   </StorefrontProvider>

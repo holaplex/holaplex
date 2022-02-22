@@ -1,7 +1,6 @@
 import { WalletContextState } from '@solana/wallet-adapter-react';
-import { isNil } from 'ramda';
-import { notarize, stringifyNotarized } from '../notary/client';
-import { Formatter, Notarized, Signer } from '../notary/common';
+import { notarize, signPhantom, stringifyNotarized } from '../notary/client';
+import { Formatter, Notarized } from '../notary/common';
 import { Storefront } from './types';
 
 export type PutStorefrontParams = Notarized<Storefront>;
@@ -14,24 +13,13 @@ export const formatMessage: Formatter = (bytes) =>
   `Your storefront upload fingerprint is ${bytes.toString('base64')}`;
 
 export const putStorefront = async ({
-  wallet,
+  solana,
   storefront,
   onProgress,
   onComplete,
   onError,
 }: {
-  wallet:
-    | Pick<
-        WalletContextState,
-        | 'signTransaction'
-        | 'signMessage'
-        | 'signAllTransactions'
-        | 'connect'
-        | 'connected'
-        | 'wallet'
-        | 'publicKey'
-      >
-    | undefined;
+  solana: WalletContextState | undefined;
   storefront: Storefront;
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed'
@@ -42,28 +30,13 @@ export const putStorefront = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (
-      isNil(wallet) ||
-      !wallet.connected ||
-      wallet.wallet?.readyState === 'Unsupported' ||
-      isNil(wallet.wallet?.adapter)
-    )
-      throw new Error('Could not connect to Solana');
-
-    if (!wallet.connected) {
-      onProgress('connecting-wallet');
-      wallet.connect();
-    }
+    if (!solana?.publicKey || !solana) throw new Error('solana wallet not connected');
 
     onProgress('signing');
 
-    const notarized: PutStorefrontParams = await notarize(
-      storefront,
-      wallet?.signMessage as Signer,
-      {
-        format: formatMessage,
-      }
-    );
+    const notarized: PutStorefrontParams = await notarize(storefront, signPhantom(solana), {
+      format: formatMessage,
+    });
 
     onProgress('uploading');
 

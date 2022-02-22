@@ -1,14 +1,11 @@
 import React from 'react';
-import { Storefront } from '@/modules/storefront/types';
-import { ConnectFn } from './types';
+import { Wallet } from './types';
+import { WalletContextState } from '@solana/wallet-adapter-react';
 
-export type WalletContextProps = {
-  verifying: boolean;
-  connect: ConnectFn;
-  storefront?: Storefront;
+export interface WalletContextProps {
+  wallet?: Wallet;
+  solana?: WalletContextState;
+  looking: boolean;
 };
 
-export const WalletContext = React.createContext<WalletContextProps>({
-  verifying: false,
-  connect: () => {},
-});
+export const WalletContext = React.createContext<WalletContextProps>({ looking: false });

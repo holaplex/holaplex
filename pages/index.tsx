@@ -16,7 +16,9 @@ import {
   Carousel,
   Select,
   SelectProps,
+  Skeleton,
 } from 'antd';
+import Button from '@/components/elements/Button';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import {
   take,
@@ -40,18 +42,20 @@ import {
   range,
   propEq,
 } from 'ramda';
-import { WhiteRoundedButton } from '@/components/elements/Button';
 import { IndexerSDK, Listing } from '@/modules/indexer';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import {
   generateListingShell,
   ListingPreview,
   SkeletonListing,
 } from '@/common/components/elements/ListingPreview';
+import Link from 'next/link';
 import { SelectValue } from 'antd/lib/select';
 import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
+import { StorefrontContext } from '@/modules/storefront';
+import { MarketplaceContext } from '@/modules/marketplace';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Wallet } from '@project-serum/anchor';
 import { useRouter } from 'next/router';
 
 const { Title, Text } = Typography;
@@ -127,7 +131,7 @@ const StorefrontSection = styled(Section)`
   }
 `;
 
-const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
+const FeaturedStores = styled(List) <ListProps<StorefrontFeature>>`
   .ant-list-item {
     margin-bottom: 66px !important;
 
@@ -177,7 +181,7 @@ interface SelectInlineProps extends SelectProps<SelectValue> {
   label: string;
 }
 
-const SelectInline = styled(Select)<SelectInlineProps>`
+const SelectInline = styled(Select) <SelectInlineProps>`
   width: 165px;
   font-size: 12px;
   line-height: 12px;
@@ -370,9 +374,13 @@ const getDefaultFilter = () => {
 };
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
+  const { setVisible } = useWalletModal();
+  const { storefront, searching } = useContext(StorefrontContext);
+  const { connected, connecting } = useWallet();
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [featuredListings, setFeaturedListings] = useState<Listing[]>(
     Array(5)
@@ -383,7 +391,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
   const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
   const listingsTopRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
 
   const scrollToListingTop = () => {
     if (!listingsTopRef || !listingsTopRef.current) {
@@ -475,21 +482,32 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               Discover, explore, and collect NFTs from incredible creators on Solana
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
-            <Space direction="horizontal" size="large">
-              <WhiteRoundedButton onClick={() => router.push('/storefront/new')}>
-                Create Your Store
-              </WhiteRoundedButton>
-
-              {/* 
-               this is here as a refernce, can be removed at any point.
-               to allow free creation of marketplaces, go to /marketplace/new or uncomment the button :-)*/}
-
-              {MARKETPLACE_ENABLED && (
-                <WhiteRoundedButton onClick={() => router.push('/marketplace/new')}>
-                  Create Your Marketplace
-                </WhiteRoundedButton>
-              )}
-            </Space>
+            {connected ? (
+              <Space direction="horizontal" size="large">
+                {searching ? (
+                  <Skeleton.Button></Skeleton.Button>
+                ) : (
+                  <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
+                  <a>
+                    <Button
+                      loading={searching}
+                    >
+                      {storefront ? 'Edit your store' : 'Create your store'}
+                    </Button>
+                  </a>
+                </Link>
+                )}
+                {MARKETPLACE_ENABLED && (
+                  <Link href="/marketplace/new" passHref>
+                    <a>
+                      <Button>Create Your Marketplace</Button>
+                    </a>
+                  </Link>
+                )}
+              </Space>
+            ) : (
+              <Button loading={connecting} onClick={() => setVisible(true)}>Connect</Button>
+            )}
             <div className="mt-[2.5rem]">
               <SocialLinks />
             </div>
@@ -647,14 +665,8 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section justify="center" align="middle">
           <Space direction="vertical" align="center">
             <Title level={3}>Launch your own Solana NFT store today!</Title>
-            <WhiteRoundedButton onClick={() => router.push('/storefront/new')}>
-              Create Your Store
-            </WhiteRoundedButton>
-            {MARKETPLACE_ENABLED && (
-              <WhiteRoundedButton onClick={() => router.push('/marketplace/new')}>
-                Create Your Marketplace
-              </WhiteRoundedButton>
-            )}
+            <Button onClick={() => connectStorefront()}>Create Your Store</Button>
+            {MARKETPLACE_ENABLED && <Button onClick={() => connectMarketplace()}>Create Your Marketplace</Button>}
           </Space>
         </Section>
       </CenteredContentCol>

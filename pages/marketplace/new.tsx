@@ -1,13 +1,12 @@
-import { programs } from '@metaplex/js';
+import { programs, Wallet } from '@metaplex/js';
 import DomainFormItem from '@/common/components/elements/DomainFormItem';
-import { WhiteRoundedButton } from '@/components/elements/Button';
+import Button from '@/components/elements/Button';
 import Upload from '@/components/elements/Upload';
 import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import { Marketplace } from '@/modules/marketplace';
 import arweaveSDK from '@/modules/arweave/client';
-import MarketplaceSDK from '@/modules/marketplace/client';
 import { UserOutlined } from '@ant-design/icons';
 import {
   FieldData,
@@ -22,16 +21,15 @@ import {
 import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
-import { Avatar, Card, Col, Form, Input, Row, Space, Typography, InputNumber } from 'antd';
-import { cond, findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
+import { Avatar, Card, Col, Form, Input, Slider, Row, Space, Typography, InputNumber } from 'antd';
+import { findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
 import { useConnection } from '@solana/wallet-adapter-react';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house/transactions/CreateAuctionHouse';
 import { AuctionHouseAccount } from '@/modules/auction-house/AuctionHouseAccount';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { SolanaSignMessage } from '@/modules/solana/types';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
@@ -59,19 +57,10 @@ export default function New() {
   const { connection } = useConnection();
   const [submitting, setSubmitting] = useState(false);
   const arweave = initArweave();
-  const [pendingAddress, setPendingAddress] = useState<string>();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { connect } = useContext(WalletContext);
-  const {
-    wallet: userWallet,
-    publicKey,
-    connected,
-    signAllTransactions,
-    signMessage,
-    signTransaction,
-    connect: connectUserWallet,
-  } = useWallet();
+  const { setVisible } = useWalletModal();
+  const { solana, wallet, looking } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['address', 'owner'], value: '' },
@@ -83,32 +72,15 @@ export default function New() {
     { name: ['sellerFeeBasisPoints'], value: 10000 },
   ]);
 
-  const walletObject =
-    publicKey && signTransaction && signAllTransactions
-      ? {
-          publicKey,
-          signTransaction,
-          signAllTransactions,
-          isConnected: connected,
-          connect,
-          signMessage,
-        }
-      : undefined;
-
-  if (
-    isNil(userWallet) ||
-    isNil(userWallet.adapter) ||
-    !connected ||
-    userWallet.readyState === 'Unsupported'
-  ) {
+  if (isNil(solana) || isNil(wallet)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
-            <Paragraph>Connect your Solana wallet to create a marketplace.</Paragraph>
-            <WhiteRoundedButton className="mx-auto block" onClick={() => connect()}>
+            <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
+            <Button loading={solana?.connecting || looking} block onClick={() => setVisible(true)}>
               Connect
-            </WhiteRoundedButton>
+            </Button>
           </Space>
         </Card>
       </Row>
@@ -117,9 +89,12 @@ export default function New() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, publicKey?.toString());
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
   const onSubmit = async (): Promise<void> => {
-    const { theme, meta, subdomain, creators, sellerFeeBasisPoints } = values;
+    if (isNil(solana) || isNil(solana.signTransaction) || isNil(solana.publicKey)) {
+      return;
+    }
+    const { theme, meta, subdomain, sellerFeeBasisPoints } = values;
 
     setSubmitting(true);
 
@@ -127,14 +102,10 @@ export default function New() {
     const banner = popFile(theme.banner[0]);
     const domain = `${subdomain}.holaplex.market`;
 
-    let auctionHousePubkey;
-    if (publicKey) {
-      const [conditionalAuctionHousePubkey] = await AuctionHouseAccount.getAuctionHouse(
-        publicKey,
-        NATIVE_MINT
-      );
-      auctionHousePubkey = conditionalAuctionHousePubkey;
-    }
+    const [auctionHousPubkey] = await AuctionHouseAccount.getAuctionHouse(
+      solana.publicKey,
+      NATIVE_MINT
+    );
 
     const input = {
       meta,
@@ -144,47 +115,31 @@ export default function New() {
       },
       subdomain,
       address: {
-        owner: publicKey?.toString(),
-        auctionHouse: auctionHousePubkey?.toBase58(),
+        owner: wallet.pubkey,
+        auctionHouse: auctionHousPubkey.toBase58(),
       },
-      creators: creators.map(({ address }: any) => address),
     } as Marketplace;
 
-    const txt = async () => {
-      if (walletObject) {
-        // THE SECOND ARGUMENT TO UPLOAD MANIFEST MAY BE INCORRECT
-        const { txt } = await MarketplaceSDK.uploadManifest(input, { signMessage } as any);
-        return txt;
+    const auctionHouseCreateInstruction = await createAuctionHouse({
+      connection,
+      wallet: solana as Wallet,
+      sellerFeeBasisPoints,
+    });
+    const storePubkey = await Store.getPDA(solana.publicKey);
+
+    const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
+    const createStoreV2Instruction = new SetStoreV2(
+      {
+        feePayer: solana.publicKey,
+      },
+      {
+        admin: solana.publicKey,
+        store: storePubkey,
+        config: storeConfigPubkey,
+        isPublic: false,
+        settingsUri: `https://ipfs.blah.com`,
       }
-      return undefined;
-    };
-
-    const auctionHouseCreateInstruction = walletObject
-      ? await createAuctionHouse({
-          connection,
-          wallet: walletObject,
-          sellerFeeBasisPoints,
-        })
-      : undefined;
-    const storePubkey = publicKey ? await Store.getPDA(publicKey?.toString()) : undefined;
-
-    const storeConfigPubkey = storePubkey ? await StoreConfig.getPDA(storePubkey) : undefined;
-
-    const createStoreV2Instruction =
-      publicKey && storePubkey && storeConfigPubkey
-        ? new SetStoreV2(
-            {
-              feePayer: publicKey,
-            },
-            {
-              admin: publicKey,
-              store: storePubkey,
-              config: storeConfigPubkey,
-              isPublic: false,
-              settingsUri: `https://arweave.net/${txt}`,
-            }
-          )
-        : undefined;
+    );
 
     const transaction = new Transaction();
 
@@ -192,10 +147,10 @@ export default function New() {
       transaction.add(auctionHouseCreateInstruction).add(createStoreV2Instruction);
     }
 
-    transaction.feePayer = publicKey || undefined;
+    transaction.feePayer = solana.publicKey;
     transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-    const signedTransaction = signTransaction ? await signTransaction(transaction) : undefined;
+    const signedTransaction = await solana.signTransaction(transaction);
 
     const txtId = signedTransaction
       ? await connection.sendRawTransaction(signedTransaction.serialize())
@@ -306,44 +261,6 @@ export default function New() {
     </Col>
   );
 
-  const creators = (
-    <Col xs={24}>
-      <Title level={2}>Add creators</Title>
-      <Paragraph>Choose the creators you want to feature on your market</Paragraph>
-      <Form.List name="creators">
-        {(fields, { add, remove }) => (
-          <>
-            <Space direction="vertical" size="middle">
-              {fields.map(({ key, name, ...restField }, idx) => (
-                <Space key={key} direction="horizontal" size="middle">
-                  <Avatar size={36} icon={<UserOutlined />} />
-                  <Typography.Text>{values.creators[idx].address}</Typography.Text>
-                  <WhiteRoundedButton onClick={() => remove(idx)}>Remove</WhiteRoundedButton>
-                </Space>
-              ))}
-            </Space>
-            <Input
-              autoFocus
-              type="text"
-              onChange={(e) => setPendingAddress(e.target.value)}
-              onPressEnter={(e) => {
-                e.preventDefault();
-
-                add({ address: pendingAddress });
-
-                setPendingAddress(undefined);
-              }}
-              value={pendingAddress}
-              placeholder="SOL wallet address..."
-            />
-          </>
-        )}
-      </Form.List>
-    </Col>
-  );
-
-  console.log(fields);
-
   return (
     <Row justify="center" align="middle">
       <Col xs={21} lg={18} xl={16} xxl={14}>
@@ -369,7 +286,6 @@ export default function New() {
             </FillSpace>
           </Row>
           <Row>{details}</Row>
-          <Row>{creators}</Row>
         </StepForm>
       </Col>
     </Row>

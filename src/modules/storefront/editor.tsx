@@ -125,7 +125,7 @@ export interface StorefrontEditorProps {}
 
 export const validateSubdomainUniqueness = (
   ar: ArweaveScope,
-  allowPubkey?: string
+  allowPubkey?: string,
 ): ((rule: RuleObject, subdomain: string | null | undefined) => Promise<void>) => {
   return async (_, subdomain) => {
     const storefront = await ar.storefront.find('holaplex:metadata:subdomain', subdomain ?? '');
@@ -140,7 +140,7 @@ export const validateSubdomainUniqueness = (
 export const submitCallback = ({
   track,
   router,
-  wallet,
+  solana,
   values,
   setSubmitting,
   onSuccess,
@@ -149,18 +149,7 @@ export const submitCallback = ({
 }: {
   track: TrackingFunctionSignature;
   router: NextRouter;
-  wallet:
-    | Pick<
-        WalletContextState,
-        | 'signTransaction'
-        | 'signMessage'
-        | 'signAllTransactions'
-        | 'connect'
-        | 'connected'
-        | 'wallet'
-        | 'publicKey'
-      >
-    | undefined;
+  solana: WalletContextState | undefined;
   values: any;
   setSubmitting: (val: boolean) => void;
   onSuccess: (domain: string) => void;
@@ -190,7 +179,7 @@ export const submitCallback = ({
           favicon,
         },
         subdomain,
-        pubkey: wallet?.publicKey?.toString() || '',
+        pubkey: solana?.publicKey?.toBase58() ?? '',
       };
 
       if (banner?.url) {
@@ -198,7 +187,7 @@ export const submitCallback = ({
       }
 
       await putStorefront({
-        wallet,
+        solana,
         storefront,
         onProgress: (s) => console.log(s),
         onError,

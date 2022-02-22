@@ -5,8 +5,8 @@ import arweaveSDK from '@/modules/arweave/client';
 import { isNil } from 'ramda';
 import { useRouter } from 'next/router';
 import { Storefront } from '@/modules/storefront/types';
+import { Wallet, ConnectFn } from '@/modules/wallet/types';
 import { StorefrontContext } from './context';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 type StorefrontProviderChildrenProps = {
   searching: boolean;
@@ -14,41 +14,24 @@ type StorefrontProviderChildrenProps = {
 };
 
 type StorefrontProviderProps = {
+  wallet?: Wallet;
   children: (props: StorefrontProviderChildrenProps) => React.ReactElement;
 };
 
-export const StorefrontProvider = ({ children }: StorefrontProviderProps) => {
+export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps) => {
   const [searching, setSearching] = useState(false);
   const [storefront, setStorefront] = useState<Storefront>();
-  const router = useRouter();
-  const { publicKey } = useWallet();
   const arweave = initArweave();
-
-  const onSuccesConnect = async () => {
-    return arweaveSDK
-      .using(arweave)
-      .storefront.find('solana:pubkey', publicKey?.toString() || '')
-      .then((storefront: any) => {
-        setStorefront(storefront);
-        if (storefront) {
-          return router.push('/storefront/edit');
-        }
-
-        return router.push('/storefront/new');
-      });
-  };
+  const arweaveClient = arweaveSDK.using(arweave);
 
   useEffect(() => {
-    const pub_key = publicKey?.toString();
-    if (!process.browser || !pub_key) {
+    if (typeof window === 'undefined' || !wallet?.pubkey) {
       return;
     }
 
     setSearching(true);
 
-    arweaveSDK
-      .using(arweave)
-      .storefront.find('solana:pubkey', pub_key)
+      arweaveClient.storefront.find('solana:pubkey', wallet.pubkey)
       .then((storefront) => {
         if (isNil(storefront)) {
           setSearching(false);
@@ -59,7 +42,7 @@ export const StorefrontProvider = ({ children }: StorefrontProviderProps) => {
         setStorefront(storefront);
         setSearching(false);
       });
-  }, [publicKey]);
+  }, [wallet?.pubkey]);
 
   return (
     <StorefrontContext.Provider value={{ searching, storefront }}>
