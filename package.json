@@ -2,8 +2,11 @@
   "name": "holaplex-builder",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://reunionart.github.io/holaplex/",
   "scripts": {
     "dev": "nodemon",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "consumers:sign-metadata": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./tasks/consumers/sign-metadata.ts",
