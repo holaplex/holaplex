@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b main -d build",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "consumers:sign-metadata": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./tasks/consumers/sign-metadata.ts",
