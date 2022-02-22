@@ -30,7 +30,7 @@ import {
   ConnectionProvider,
   WalletProvider as WalletProviderSolana,
 } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork, WalletReadyState } from '@solana/wallet-adapter-base';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
@@ -76,7 +76,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   useEffect(() => {
-    if (!process.browser || !OLD_GOOGLE_ANALYTICS_ID) {
+    if (typeof window !== 'undefined' || !OLD_GOOGLE_ANALYTICS_ID) {
       return;
     }
     router.events.on('routeChangeComplete', onRouteChanged);
