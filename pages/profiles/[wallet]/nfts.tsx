@@ -11,6 +11,9 @@ import styled from 'styled-components';
 import FeatherIcon from 'feather-icons-react';
 import { Combobox } from '@headlessui/react';
 import cx from 'classnames';
+import Image from 'next/image';
+import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
+import { TripleGrid } from '@/common/components/icons/TripleGrid';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -23,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const NFTCard = ({ nft }: { nft: any }) => {
   return (
     <div className="overflow-hidden rounded-lg border-2 border-gray-800">
-      <img src={nft.image} alt={nft.name} className="h-80 object-cover" />
+      <img src={nft.image} alt={nft.name} className="h-80 w-full object-cover" />
       <div className="h-24 bg-gray-900 py-6 px-4">
         <p className="text-xl">{nft.name}</p>
       </div>
@@ -31,9 +34,14 @@ const NFTCard = ({ nft }: { nft: any }) => {
   );
 };
 
-const NFTGrid = ({ nfts }: { nfts: any }) => {
+const NFTGrid = ({ nfts, gridView }: { nfts: any; gridView: '2x2' | '3x3' }) => {
   return (
-    <div className="mt-10 grid grid-cols-3 gap-6">
+    <div
+      className={cx(
+        'mt-10 grid grid-cols-1 gap-6',
+        gridView === '2x2' ? 'md:grid-cols-2' : 'md:grid-cols-3'
+      )}
+    >
       {nfts.map((nft: any) => (
         <NFTCard key={nft.name} nft={nft} />
       ))}
@@ -53,6 +61,8 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   // const unlistedTotal = unlistedNfts.length;
   const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
   const [showSearchField, toggleSearchField] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
 
   const [input, setInput] = useState(true);
 
@@ -89,6 +99,49 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   //   toggleSearchField(false);
   // };
 
+  const GridChange = () => {
+    return (
+      <div className="hidden w-20 rounded-lg border-2 border-solid border-gray-800 md:flex">
+        <button
+          className={cx('flex w-10 items-center justify-center', {
+            'bg-gray-800': gridView === '2x2',
+          })}
+          onClick={() => setGridView('2x2')}
+        >
+          <DoubleGrid color={gridView === '2x2' ? 'white' : '#707070'} />
+        </button>
+
+        <button
+          className={cx('flex w-10 items-center justify-center', {
+            'bg-gray-800': gridView === '3x3',
+          })}
+          onClick={() => setGridView('3x3')}
+        >
+          <TripleGrid color={gridView === '3x3' ? 'white' : '#707070'} />
+        </button>
+      </div>
+    );
+  };
+
+  const Search = () => (
+    <Combobox value={selectedNFT} onChange={setSelectedNFT}>
+      <FeatherIcon
+        icon="search"
+        className={cx(
+          'absolute bottom-1.5 left-2.5 h-5 w-5',
+          searchFocused ? 'text-white' : 'text-gray-800'
+        )}
+      />
+      <Combobox.Input
+        onChange={(event) => setQuery(event.target.value)}
+        onFocus={() => setSearchFocused(true)}
+        onBlur={() => setSearchFocused(false)}
+        className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-800 focus:border-white focus:shadow-none focus:ring-0 md:w-9/12"
+        placeholder="Search"
+      />
+    </Combobox>
+  );
+
   return (
     <>
       <Head>
@@ -96,27 +149,11 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
         <meta property="description" key="description" content="View owned and created NFTs" />
       </Head>
       <ProfileContainer wallet={wallet} publicKey={publicKey}>
-        <div className="relative flex h-8">
-          <Combobox value={selectedNFT} onChange={setSelectedNFT}>
-            {({ open }) => (
-              <>
-                <FeatherIcon
-                  icon="search"
-                  className={cx(
-                    'absolute bottom-1.5 left-2.5 h-5 w-5 text-gray-800',
-                    open ? 'text-white' : ''
-                  )}
-                />
-                <Combobox.Input
-                  onChange={(event) => setQuery(event.target.value)}
-                  className="w-9/12 rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 placeholder-gray-800 shadow-none focus:border-2 focus:border-white focus:shadow-none"
-                  placeholder="Search"
-                />
-              </>
-            )}
-          </Combobox>
+        <div className="relative flex h-8 justify-between">
+          <Search />
+          <GridChange />
         </div>
-        <NFTGrid nfts={nftsToShow} />
+        <NFTGrid nfts={nftsToShow} gridView={gridView} />
       </ProfileContainer>
     </>
   );
