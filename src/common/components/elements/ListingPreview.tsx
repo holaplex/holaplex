@@ -58,6 +58,8 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   > .ant-skeleton-image > svg {
     display: none;
   }
+  width: 100% !important;
+  height: 100% !important;
 `;
 
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)

@@ -22,6 +22,13 @@ import { useWallet } from '@solana/wallet-adapter-react';
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
+// use this or similar in a refactor of activity item card
+enum SUPPORTED_ACTIVITIES {
+  BID_MADE,
+  AUCTION_WON,
+  AUCTION_LOST,
+}
+
 export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
   const { data: twitterHandle } = useTwitterHandle(publicKey);
   const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
@@ -118,6 +125,18 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
         .some((word) => word?.includes(activityFilter))
   );
 
+  // use for refactor later
+  function ItemTextForActivity({ bid }: any) {
+    // check for acivity type
+    return (
+      <ItemText>
+        <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+        {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
+        &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+      </ItemText>
+    );
+  }
+
   return (
     <ActivityContainer>
       {/* <div className="mb-4 flex flex-1">
@@ -160,6 +179,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="hover:text-black"
                     >
                       View
                     </ActivityButton>
@@ -177,7 +197,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                             <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
                             <b>{bid.listing?.nfts?.[0]?.name}</b>
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
-                            <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b>
+                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
@@ -244,7 +264,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                         <Row>
                           <ItemText>
                             <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-                            <b>{(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL</b> on{' '}
+                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on{' '}
                             <b>{bid.listing?.nfts?.[0]?.name}</b>
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b>
                           </ItemText>
