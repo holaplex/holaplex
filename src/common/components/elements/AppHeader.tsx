@@ -152,7 +152,7 @@ export function AppHeader() {
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button loading={connecting} onClick={() => setVisible(true)}>
+              <Button loading={connecting} onClick={() => setVisible(true)} size="small">
                 Connect
               </Button>
             )}

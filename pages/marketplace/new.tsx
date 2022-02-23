@@ -15,7 +15,7 @@ import {
   UploadedLogo,
   validateSubdomainUniqueness,
   popFile,
-  UploadedBanner
+  UploadedBanner,
 } from '@/modules/storefront/editor';
 import ipfsSDK from '@/modules/ipfs/client';
 import { Transaction } from '@solana/web3.js';
@@ -101,13 +101,12 @@ export default function New() {
     const banner = popFile(theme.banner[0]);
     const domain = `${subdomain}.holaplex.market`;
 
-
     try {
       const [auctionHousPubkey] = await AuctionHouseProgram.findAuctionHouseAddress(
         solana.publicKey,
         NATIVE_MINT
       );
-  
+
       const input = {
         meta,
         theme: {
@@ -120,17 +119,17 @@ export default function New() {
           auctionHouse: auctionHousPubkey.toBase58(),
         },
       } as Marketplace;
-  
+
       const settings = new File([JSON.stringify(input)], 'storefront_settings');
-  
+
       const { uri } = await ipfsSDK.uploadFile(settings);
-  
+
       const auctionHouseCreateInstruction = await createAuctionHouse({
         wallet: solana as Wallet,
         sellerFeeBasisPoints,
       });
       const storePubkey = await Store.getPDA(solana.publicKey);
-  
+
       const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
       const setStorefrontV2Instructions = new SetStoreV2(
         {
@@ -144,35 +143,32 @@ export default function New() {
           settingsUri: uri,
         }
       );
-  
+
       const transaction = new Transaction();
-  
+
       transaction.add(auctionHouseCreateInstruction).add(setStorefrontV2Instructions);
-  
+
       transaction.feePayer = solana.publicKey;
       transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-  
+
       const signedTransaction = await solana.signTransaction(transaction);
-  
+
       const txtId = await connection.sendRawTransaction(signedTransaction.serialize());
-  
+
       if (txtId) await connection.confirmTransaction(txtId);
-  
+
       router.push('/');
-  
+
       toast(
         <>
           Your marketplace is ready. Visit <a href={`https://${domain}`}>{domain}</a>.
         </>,
         { autoClose: 60000 }
       );
-    } catch(e: any) {
-      toast(
-        e.message,
-        { autoClose: 60000, type: 'error' }
-      );
+    } catch (e: any) {
+      toast(e.message, { autoClose: 60000, type: 'error' });
     } finally {
-      setSubmitting(false);      
+      setSubmitting(false);
     }
   };
 
@@ -197,12 +193,12 @@ export default function New() {
         >
           <Row>
             <FillSpace direction="vertical" size="large">
-              <div className="main-heading">Let&apos;s start with your domain</div>
-              <div className="margin-top-4 margin-bottom-8 slightly-transparent">
+              <h2 className="text-3xl font-black">Let&apos;s start with your domain</h2>
+              <div className="mb-4 opacity-70">
                 This is the address that people will use to get to your marketplace.
               </div>
 
-              <div className="margin-bottom-8">
+              <div className="mb-8">
                 <DomainFormItem
                   name="subdomain"
                   rules={[
@@ -212,8 +208,9 @@ export default function New() {
                       message: 'The subdomain entered is not valid.',
                     },
                     {
-                      required: true, validator: subdomainUniqueness,
-                    }
+                      required: true,
+                      validator: subdomainUniqueness,
+                    },
                   ]}
                 >
                   <Input autoFocus suffix=".holaplex.market" />
@@ -223,7 +220,7 @@ export default function New() {
           </Row>
           <Row>
             <Col span={24}>
-              <Title level={2}>Customize your marketplace</Title>
+              <h2 className="mb-7 text-3xl font-black">Customize your marketplace</h2>
               {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
                 <UploadedBanner
                   src={ifElse(
@@ -239,11 +236,12 @@ export default function New() {
                 name={['theme', 'banner']}
                 rules={[{ required: true, message: 'Upload a Hero Image' }]}
               >
-                <Upload dragger>
-                  <>
-                    <p className="ant-upload-text">Upload banner image</p>
-                    <p className="ant-upload-hint">1500px x 375px JPEG, PNG or GIF - max file size 2mb</p>
-                  </>
+                <Upload dragger className="h-[1000px]">
+                  <div className="flex h-[8rem] flex-col justify-center">
+                    <span className="material-icons mb-2">add_circle_outline</span>
+                    <p className="">Upload banner image (required)</p>
+                    <p className="">1500px x 375px JPEG, PNG or GIF - max file size 2mb</p>
+                  </div>
                 </Upload>
               </Form.Item>
               {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
@@ -263,7 +261,9 @@ export default function New() {
                 <Upload dragger>
                   <>
                     <p className="ant-upload-text">Upload logo image</p>
-                    <p className="ant-upload-hint">225px x 225px JPEG, PNG or GIF - max file size 1mb</p>
+                    <p className="ant-upload-hint">
+                      225px x 225px JPEG, PNG or GIF - max file size 1mb
+                    </p>
                   </>
                 </Upload>
               </Form.Item>
@@ -277,7 +277,9 @@ export default function New() {
               <Form.Item
                 name={['meta', 'description']}
                 label="Marketplace Description"
-                rules={[{ required: true, message: 'Please enter a description for the marketplace.' }]}
+                rules={[
+                  { required: true, message: 'Please enter a description for the marketplace.' },
+                ]}
               >
                 <Input.TextArea />
               </Form.Item>

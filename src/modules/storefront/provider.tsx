@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { curry } from 'ramda';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { isNil } from 'ramda';
-import { useRouter } from 'next/router';
 import { Storefront } from '@/modules/storefront/types';
-import { Wallet, ConnectFn } from '@/modules/wallet/types';
+import { Wallet } from '@/modules/wallet/types';
 import { StorefrontContext } from './context';
 
 type StorefrontProviderChildrenProps = {
@@ -31,17 +29,16 @@ export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps
 
     setSearching(true);
 
-      arweaveClient.storefront.find('solana:pubkey', wallet.pubkey)
-      .then((storefront) => {
-        if (isNil(storefront)) {
-          setSearching(false);
-
-          return;
-        }
-
-        setStorefront(storefront);
+    arweaveClient.storefront.find('solana:pubkey', wallet.pubkey).then((storefront) => {
+      if (isNil(storefront)) {
         setSearching(false);
-      });
+
+        return;
+      }
+
+      setStorefront(storefront);
+      setSearching(false);
+    });
   }, [wallet?.pubkey]);
 
   return (

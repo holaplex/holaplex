@@ -16,7 +16,6 @@ import {
   Carousel,
   Select,
   SelectProps,
-  Skeleton,
 } from 'antd';
 import Button from '@/components/elements/Button';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
@@ -469,33 +468,30 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
               Discover, explore, and collect NFTs from incredible creators on Solana
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
+
             {connected ? (
               <Space direction="horizontal" size="large">
-                {searching || looking ? (
-                  <Skeleton.Button shape="round" className="!w-[12rem]"></Skeleton.Button>
-                ) : (
-                  <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
+                <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
+                  <a>
+                    <Button skeleton={looking || searching} className="min-w-[13rem]">
+                      {storefront ? 'Edit your store' : 'Create your store'}
+                    </Button>
+                  </a>
+                </Link>
+
+                {MARKETPLACE_ENABLED && (
+                  <Link href="/marketplace/new" passHref>
                     <a>
-                      <Button loading={searching} className="!w-[12rem]">
-                        {storefront ? 'Edit your store' : 'Create your store'}
+                      <Button skeleton={looking || searching} className="min-w-[13rem]">
+                        Create Your Marketplace
                       </Button>
                     </a>
                   </Link>
                 )}
-                {MARKETPLACE_ENABLED &&
-                  (searching || looking ? (
-                    <Skeleton.Button shape="round" className="!w-[16rem]"></Skeleton.Button>
-                  ) : (
-                    <Link href="/marketplace/new" passHref>
-                      <a>
-                        <Button>Create Your Marketplace</Button>
-                      </a>
-                    </Link>
-                  ))}
               </Space>
             ) : (
               <div>
-                <Button loading={connecting} onClick={() => setVisible(true)} className="!w-[16rem]">
+                <Button loading={connecting} onClick={() => setVisible(true)}>
                   Connect
                 </Button>
               </div>

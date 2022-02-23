@@ -71,9 +71,7 @@ export function SkeletonListing() {
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">
-        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]">
-          {/* <Skeleton.Button active block size="large" /> */}
-        </div>
+        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]"></div>
       </div>
       <div
         className={classNames(
