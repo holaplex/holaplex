@@ -45,7 +45,7 @@ const Button = ({
 
   return (
     <button
-      className={`${sizes} ${colors} ${display} ${focusAndHover} items-center justify-center rounded-full border-[3px] border-transparent py-1 opacity-90 transition-transform ${className} border-opacity-10`}
+      className={`${sizes} ${colors} ${display} ${focusAndHover} items-center justify-center rounded-full border-[3px] border-transparent py-1 opacity-90 transition-all ${className} whitespace-nowrap border-opacity-10`}
       disabled={disabled}
       type={htmlType}
       onClick={onClick}

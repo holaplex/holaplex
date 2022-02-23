@@ -470,7 +470,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
 
             {connected ? (
-              <Space direction="horizontal" size="large">
+              <div className="flex flex-wrap gap-4">
                 <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
                   <a>
                     <Button skeleton={looking || searching} className="min-w-[13rem]">
@@ -488,7 +488,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     </a>
                   </Link>
                 )}
-              </Space>
+              </div>
             ) : (
               <div>
                 <Button loading={connecting} onClick={() => setVisible(true)}>
