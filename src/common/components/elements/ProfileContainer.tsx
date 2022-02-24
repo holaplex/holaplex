@@ -7,6 +7,8 @@ import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
+import { ButtonV2 } from './Button';
+import { FollowerCount } from './FollowerCount';
 
 interface Props {
   children: React.ReactNode;
@@ -77,6 +79,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
+          <FollowerCount pubKey={wallet} />
         </Profile>
         <ContentWrapper>{children}</ContentWrapper>
       </ContentCol>
