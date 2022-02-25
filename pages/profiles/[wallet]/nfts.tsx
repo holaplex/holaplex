@@ -1,19 +1,19 @@
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
-import { testData } from '@/common/components/elements/test-nft-data';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { PublicKey } from '@solana/web3.js';
-import { Button, Divider, Input, Menu, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { Combobox } from '@headlessui/react';
 import cx from 'classnames';
-import Image from 'next/image';
 import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
 import { TripleGrid } from '@/common/components/icons/TripleGrid';
+import { OwnedNfTsQuery, useOwnedNfTsLazyQuery } from '../../../src/graphql/indexerTypes';
+import Bugsnag from '@bugsnag/js';
+
+type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -23,18 +23,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-const NFTCard = ({ nft }: { nft: any }) => {
+const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   return (
     <div className="overflow-hidden rounded-lg border-2 border-gray-800">
       <img src={nft.image} alt={nft.name} className="h-80 w-full object-cover" />
       <div className="h-24 bg-gray-900 py-6 px-4">
-        <p className="text-xl">{nft.name}</p>
+        <p className="text-lg">{nft.name}</p>
       </div>
     </div>
   );
 };
 
-const NFTGrid = ({ nfts, gridView }: { nfts: any; gridView: '2x2' | '3x3' }) => {
+const NFTGrid = ({ nfts, gridView }: { nfts: OwnedNFT[]; gridView: '2x2' | '3x3' }) => {
   return (
     <div
       className={cx(
@@ -42,8 +42,8 @@ const NFTGrid = ({ nfts, gridView }: { nfts: any; gridView: '2x2' | '3x3' }) => 
         gridView === '2x2' ? 'md:grid-cols-2' : 'md:grid-cols-3'
       )}
     >
-      {nfts.map((nft: any) => (
-        <NFTCard key={nft.name} nft={nft} />
+      {nfts.map((nft) => (
+        <NFTCard key={nft.address} nft={nft} />
       ))}
     </div>
   );
@@ -53,8 +53,7 @@ type ListedFilterState = 'all' | 'listed' | 'unlisted' | 'search';
 
 const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
-  const nfts = testData;
-  const total = nfts.length;
+
   // const listedNfts = nfts.filter((nft) => nft.listed);
   // const listedTotal = listedNfts.length;
   // const unlistedNfts = nfts.filter((nft) => !nft.listed);
@@ -63,8 +62,8 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   const [showSearchField, toggleSearchField] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
-
-  const [input, setInput] = useState(true);
+  const [queryOwnedNFTs, ownedNFTs] = useOwnedNfTsLazyQuery();
+  const nfts = ownedNFTs?.data?.nfts || [];
 
   const [query, setQuery] = useState('');
 
@@ -72,6 +71,21 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
     query === ''
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
+  useEffect(() => {
+    if (!wallet) return;
+
+    try {
+      queryOwnedNFTs({
+        variables: {
+          address: wallet,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+      console.log('failed to query owned NFTS for pubkey', wallet);
+      Bugsnag.notify(error);
+    }
+  }, [queryOwnedNFTs, wallet]);
 
   // const handleListedClick = (e) => {
   //   setListedFilter(e.key);
