@@ -30,6 +30,7 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { AuctionHouseProgram } from '@holaplex/mpl-auction-house';
+import Image from 'next/image';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
@@ -219,17 +220,9 @@ export default function New() {
             </FillSpace>
           </Row>
           <Row>
-            <Col span={24}>
+            <Col span={24} className="marketplace-form">
               <h2 className="mb-7 text-3xl font-black">Customize your marketplace</h2>
-              {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
-                <UploadedBanner
-                  src={ifElse(
-                    has('response'),
-                    view(lensPath(['response', 'url'])),
-                    prop('url')
-                  )(values.theme.banner[0])}
-                />
-              )}
+
               <Form.Item
                 label="Hero Banner"
                 tooltip="Placed at the top of the marketplace."
@@ -244,15 +237,19 @@ export default function New() {
                   </div>
                 </Upload>
               </Form.Item>
-              {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
-                <UploadedLogo
-                  src={ifElse(
-                    has('response'),
-                    view(lensPath(['response', 'url'])),
-                    prop('url')
-                  )(values.theme.logo[0])}
-                />
+              {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
+                <div className="mb-8">
+                  <span className="mb-2 text-sm">Banner preview:</span>
+                  <UploadedBanner
+                    src={ifElse(
+                      has('response'),
+                      view(lensPath(['response', 'url'])),
+                      prop('url')
+                    )(values.theme.banner[0])}
+                  />
+                </div>
               )}
+
               <Form.Item
                 label="Logo"
                 name={['theme', 'logo']}
@@ -268,6 +265,21 @@ export default function New() {
                   </div>
                 </Upload>
               </Form.Item>
+              {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
+                <div className="mb-8">
+                  <div className="mb-2 text-sm">Logo preview:</div>
+                  <Image
+                    src={ifElse(
+                      has('response'),
+                      view(lensPath(['response', 'url'])),
+                      prop('url')
+                    )(values.theme.logo[0])}
+                    width="72"
+                    height="72"
+                    alt="uploaded logo"
+                  />
+                </div>
+              )}
               <Form.Item
                 name={['meta', 'name']}
                 rules={[{ required: true, message: 'Please enter a name for the marketplace.' }]}
