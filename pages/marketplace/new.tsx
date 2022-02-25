@@ -259,12 +259,13 @@ export default function New() {
                 rules={[{ required: true, message: 'Upload a logo.' }]}
               >
                 <Upload dragger>
-                  <>
+                  <div className="flex h-[8rem] flex-col justify-center">
+                    <span className="material-icons mb-2">add_circle_outline</span>
                     <p className="ant-upload-text">Upload logo image</p>
                     <p className="ant-upload-hint">
                       225px x 225px JPEG, PNG or GIF - max file size 1mb
                     </p>
-                  </>
+                  </div>
                 </Upload>
               </Form.Item>
               <Form.Item
