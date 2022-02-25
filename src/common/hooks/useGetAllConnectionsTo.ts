@@ -1,7 +1,7 @@
 import { Program } from '@holaplex/graph-program';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
-import useSWR from 'swr';
+import useSWR from 'swr/immutable';
 
 export const ALL_CONNECTIONS_TO = `allConnectionsTo`;
 

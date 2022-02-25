@@ -2,39 +2,15 @@ import { FC, useMemo } from 'react';
 import { ButtonV3 } from './Button';
 import { PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { Check } from '../icons/Check';
-import { Close } from '../icons/Close';
 import { useGetAllConnectionsTo } from '@/common/hooks/useGetAllConnectionsTo';
 import { useGetAllConnectionsFrom } from '@/common/hooks/useGetAllConnectionsFrom';
 import { useConnectTo } from '@/common/hooks/useConnectTo';
 import { useDisconnectTo } from '@/common/hooks/useDisconnectTo';
 import styled from 'styled-components';
-import { Program } from '@holaplex/graph-program';
-import { b } from '@/common/utils/string';
 import { toast } from 'react-toastify';
-import { showFirstAndLastFour } from '@/modules/utils/string';
-
-export const SuccessToast: FC = ({ children }) => {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center text-white">
-        <Check color="#32D583" className="mr-2" />
-        <div>{children}</div>
-      </div>
-    </div>
-  );
-};
-
-export const FailureToast: FC = ({ children }) => {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center text-white">
-        <Close color="#D53232" className="mr-2" />
-        <div>{children}</div>
-      </div>
-    </div>
-  );
-};
+import { showFirstAndLastFour, b } from '@/modules/utils/string';
+import { SuccessToast } from './SuccessToast';
+import { FailureToast } from './FailureToast';
 
 export const FollowerCount: FC<{
   pubKey: string;
@@ -58,17 +34,15 @@ export const FollowerCountContent: FC<{
   );
   const allConnectionsTo = useGetAllConnectionsTo(pubKey, walletConnectionPair);
   const allConnectionsFrom = useGetAllConnectionsFrom(pubKey, walletConnectionPair);
-  const [connectTo, connectToStatus] = useConnectTo(walletConnectionPair, {
+  const [connectTo] = useConnectTo(walletConnectionPair, {
     onSuccess: async ({ data: txId, input: toWallet }) => {
       const from = wallet.publicKey;
       const to = new PublicKey(toWallet);
-      
       const [publicKey] = await PublicKey.findProgramAddress(
         [b`connection`, from.toBytes(), to.toBytes()],
-        new PublicKey("grphSXQnjAoPXSG5p1aJ7ZFw2A1akqP3pkXvjfbSJef")
+        new PublicKey('grphSXQnjAoPXSG5p1aJ7ZFw2A1akqP3pkXvjfbSJef')
       );
-      console.log({ from, to, publicKey });
-      await allConnectionsTo.mutate([
+      const mutationData = [
         ...(allConnectionsTo.data ?? []),
         {
           account: {
@@ -77,11 +51,17 @@ export const FollowerCountContent: FC<{
           },
           publicKey,
         },
-      ]);
+      ];
+      allConnectionsTo.mutate(mutationData, { revalidate: false });
       toast(
         <SuccessToast>
-          Followed: {showFirstAndLastFour(toWallet)}, TX:
-          <a href={`https://explorer.solana.com/tx/${txId}`} target="_blank" rel="noreferrer">
+          Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
             {showFirstAndLastFour(txId)}
           </a>
         </SuccessToast>
@@ -96,23 +76,31 @@ export const FollowerCountContent: FC<{
       );
     },
   });
-  const [disconnectTo, disConnectToStatus] = useDisconnectTo(walletConnectionPair, {
+  const [disconnectTo] = useDisconnectTo(walletConnectionPair, {
     onSuccess: async ({ data: txId, input: toWallet }) => {
       const from = wallet.publicKey;
       const to = new PublicKey(toWallet);
       const [publicKey] = await PublicKey.findProgramAddress(
         [b`connection`, from.toBytes(), to.toBytes()],
-        new PublicKey("grphSXQnjAoPXSG5p1aJ7ZFw2A1akqP3pkXvjfbSJef")
+        new PublicKey('grphSXQnjAoPXSG5p1aJ7ZFw2A1akqP3pkXvjfbSJef')
       );
-      await allConnectionsTo.mutate(
-        (allConnectionsTo.data ?? []).filter((i) => i.publicKey !== publicKey)
+      allConnectionsTo.mutate(
+        (allConnectionsTo.data ?? []).filter((i) => i.publicKey !== publicKey),
+        { revalidate: false }
       );
-      <SuccessToast>
-        Unfollowed: {showFirstAndLastFour(toWallet)}, TX:
-        <a href={`https://explorer.solana.com/tx/${txId}`} target="_blank" rel="noreferrer">
-          {showFirstAndLastFour(txId)}
-        </a>
-      </SuccessToast>;
+      toast(
+        <SuccessToast>
+          Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>
+      );
     },
     onFailure: ({ error, input: toWallet }) => {
       console.error(error);
@@ -134,11 +122,10 @@ export const FollowerCountContent: FC<{
   const allConnectionsToLoading = !allConnectionsTo.data && !allConnectionsTo.error;
   const allConnectionsFromLoading = !allConnectionsFrom.data && !allConnectionsFrom.error;
 
-  const isLoading =
-    allConnectionsToLoading ||
-    allConnectionsFromLoading ||
-    connectToStatus.status === 'running' ||
-    disConnectToStatus.status === 'running';
+  const isLoading = allConnectionsToLoading || allConnectionsFromLoading; // ||
+  // connectToStatus.status === 'running' ||
+  // disConnectToStatus.status === 'running';
+  // commented for hyper-mode ;)
 
   if (isLoading) return <FollowerCountSkeleton />;
   const isSameWallet = wallet.publicKey.equals(new PublicKey(pubKey));
