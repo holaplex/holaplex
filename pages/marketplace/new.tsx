@@ -239,7 +239,7 @@ export default function New() {
               </Form.Item>
               {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
                 <div className="mb-8">
-                  <span className="mb-2 text-sm">Banner preview:</span>
+                  <div className="mb-2 text-sm">Banner preview:</div>
                   <UploadedBanner
                     src={ifElse(
                       has('response'),
