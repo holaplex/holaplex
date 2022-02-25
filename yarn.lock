@@ -1299,6 +1299,11 @@
     "@ethersproject/logger" "^5.5.0"
     hash.js "1.1.7"
 
+"@fontsource/material-icons@^4.5.2":
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/material-icons/-/material-icons-4.5.2.tgz#0a914c0d52272efd37d2b45c79c75a3839bb9e66"
+  integrity sha512-J6Slv1GhQ42TF/DbEIvsebIe1rYvkMrEglVsPYvKAnbQzpm7m7Uv4bkpbsqxjXJvaJZWefg1sXqvCOYAyBTfIA==
+
 "@google/model-viewer@^1.9.2":
   version "1.10.1"
   resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.10.1.tgz#521d6112685f629514a7fbd1be1dcc476f58c9b1"
@@ -9237,6 +9242,11 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+
+react-loader-spinner@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/react-loader-spinner/-/react-loader-spinner-5.1.4.tgz#1f08e21aa6b721b6c303658a294f4afbf8ad8d05"
+  integrity sha512-qjS/5/+tWX4gPJXdA1LB2HzTHv/CX/2ic+DBLLbacM+S7gVTfS7L7gJ7IOZMzVXETaiItdCUh3f8Y2GoYG5o8Q==
 
 react-native-swipeout@^2.2.2:
   version "2.3.6"

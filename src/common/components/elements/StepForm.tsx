@@ -2,6 +2,7 @@ import React, { useState, FunctionComponent } from 'react';
 import { Form, Row, Space, FormInstance } from 'antd';
 import Button from '@/components/elements/Button';
 import { FormProps } from 'antd';
+import { useRouter } from 'next/router';
 
 interface StepFormProps extends FormProps {
   children: React.ReactElement[];
@@ -13,6 +14,7 @@ const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: St
   const [page, changePage] = useState(0);
   const activePage = React.Children.toArray(children)[page];
   const isLastPage = page === React.Children.count(children) - 1;
+  const router = useRouter();
 
   const next = () => {
     changePage(Math.min(page + 1, children.length - 1));
@@ -38,13 +40,21 @@ const StepForm = ({ children, onFinish, submitting, fields, form, ...props }: St
         {activePage}
         <Row justify="end">
           <Space size="middle">
-            {page > 0 && (
-              <Button onClick={previous} disabled={submitting}>
-                Back
+            {
+              <Button
+                onClick={page > 0 ? previous : router.back}
+                disabled={submitting}
+                secondary={true}
+              >
+                {page > 0 ? 'Back' : 'Cancel'}
               </Button>
-            )}
+            }
             <Form.Item noStyle>
-              <Button htmlType="submit" disabled={submitting} loading={submitting}>
+              <Button
+                htmlType="submit"
+                disabled={submitting || form.isFieldsValidating(fields?.map((x) => x.name) || [])}
+                loading={submitting}
+              >
                 {isLastPage ? 'Submit' : 'Next'}
               </Button>
             </Form.Item>

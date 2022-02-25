@@ -36,6 +36,7 @@ import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
+import '@fontsource/material-icons';
 
 const { Content } = Layout;
 
@@ -126,7 +127,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <WalletProvider>
                 {({ wallet }) => (
                   <StorefrontProvider wallet={wallet}>
-                    {({ }) => {
+                    {({}) => {
                       return (
                         <MarketplaceProvider wallet={wallet}>
                           {() => (

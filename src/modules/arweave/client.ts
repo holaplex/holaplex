@@ -1,18 +1,7 @@
 import Arweave from 'arweave';
 import { ArweaveTransaction, AreweaveTagFilter } from './types';
 import { Storefront } from '@/modules/storefront/types';
-import {
-  isEmpty,
-  reduce,
-  concat,
-  pipe,
-  last,
-  prop,
-  uniqBy,
-  view,
-  lensPath,
-} from 'ramda';
-
+import { isEmpty, reduce, concat, pipe, last, prop, uniqBy, view, lensPath } from 'ramda';
 
 export interface StorefrontEdge {
   cursor: string;
