@@ -247,8 +247,8 @@ export const FollowerCountContent: FC<{
                         />
                         <span
                           className={cx('ml-3 text-base font-medium leading-6 text-white', {
-                            "font-['Inter']": !hasTwitterHandle,
-                            "font-['Space_Mono']": hasTwitterHandle,
+                            "font-['Inter']": hasTwitterHandle,
+                            "font-['Space_Mono']": !hasTwitterHandle,
                           })}
                         >
                           {hasTwitterHandle
@@ -284,8 +284,8 @@ export const FollowerCountContent: FC<{
                         />
                         <span
                           className={cx('ml-3 text-base font-medium leading-6 text-white', {
-                            "font-['Inter']": !hasTwitterHandle,
-                            "font-['Space_Mono']": hasTwitterHandle,
+                            "font-['Inter']": hasTwitterHandle,
+                            "font-['Space_Mono']": !hasTwitterHandle,
                           })}
                         >
                           {hasTwitterHandle
