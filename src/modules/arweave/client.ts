@@ -103,6 +103,8 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
               meta: {
                 description: tags['holaplex:metadata:page:description'],
                 title: tags['holaplex:metadata:page:title'],
+                mint: tags['holaplex:metadata:mint'],
+                mintname: tags['holaplex:metadata:mintname'],
                 favicon: {
                   url: tags['holaplex:metadata:favicon:url'],
                   name: tags['holaplex:metadata:favicon:name'],

@@ -7,8 +7,6 @@ export interface StorefrontTheme<F = ArweaveFile> {
   textFont: string;
   titleFont: string;
   logo: F;
-  mint: string;
-  mintname: string;
 }
 
 export interface PageMetaData<F = ArweaveFile> {
@@ -24,6 +22,4 @@ export interface Storefront<F = ArweaveFile> {
   meta: PageMetaData<F>;
   subdomain: string;
   pubkey: string;
-  mint: string;
-  mintname: string;
 }
