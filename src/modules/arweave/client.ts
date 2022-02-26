@@ -103,8 +103,8 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
               meta: {
                 description: tags['holaplex:metadata:page:description'],
                 title: tags['holaplex:metadata:page:title'],
-                mint: tags['holaplex:metadata:mint'],
-                mintname: tags['holaplex:metadata:mintname'],
+                mint: tags['holaplex:metadata:page:mint'],
+                mintname: tags['holaplex:metadata:page:mintname'],
                 favicon: {
                   url: tags['holaplex:metadata:favicon:url'],
                   name: tags['holaplex:metadata:favicon:name'],
@@ -247,6 +247,8 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag('holaplex:metadata:favicon:type', storefront.meta.favicon.type);
       transaction.addTag('holaplex:metadata:page:title', storefront.meta.title);
       transaction.addTag('holaplex:metadata:page:description', storefront.meta.description);
+      transaction.addTag('holaplex:metadata:page:mint', storefront.meta.mint);
+      transaction.addTag('holaplex:metadata:page:mintname', storefront.meta.mintname);
       transaction.addTag('holaplex:theme:logo:url', storefront.theme.logo.url);
       transaction.addTag('holaplex:theme:logo:name', storefront.theme.logo.name);
       transaction.addTag('holaplex:theme:logo:type', storefront.theme.logo.type);
