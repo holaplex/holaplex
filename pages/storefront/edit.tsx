@@ -81,6 +81,8 @@ export default function Edit() {
     },
     { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
+    { name: ['meta', 'mint'], value: storefront?.meta.mint ?? '' },
+    { name: ['meta', 'mintname'], value: storefront?.meta.mintname ?? '' },
   ]);
 
   if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
@@ -283,6 +285,22 @@ export default function Edit() {
                 name={['meta', 'description']}
                 label="Page Description"
                 rules={[{ required: true, message: 'Please enter a page description.' }]}
+              >
+                <Input.TextArea />
+              </Form.Item>
+              <Form.Item
+                name={['meta', 'mint']}
+                label="Mint? Leave Default For SOL"
+                    placeholder="So11111111111111111111111111111111111111112"
+                rules={[{ required: true, message: 'So11111111111111111111111111111111111111112' }]}
+              >
+                <Input.TextArea />
+              </Form.Item>
+              <Form.Item
+                name={['meta', 'mintname']}
+                label="Mint Name?"
+                placeholder="SOL"
+                rules={[{ required: true, message: 'SOL' }]}
               >
                 <Input.TextArea />
               </Form.Item>

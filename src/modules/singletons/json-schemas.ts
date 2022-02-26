@@ -105,6 +105,8 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
         properties: {
           title: { type: 'string' },
           description: { type: 'string' },
+          mint: { type: 'string' },
+          mintname: { type: 'string' },
           favicon: arweaveFile,
         },
       },

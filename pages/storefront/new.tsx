@@ -65,6 +65,8 @@ export default function New() {
     { name: ['meta', 'favicon'], value: [] },
     { name: ['meta', 'title'], value: '' },
     { name: ['meta', 'description'], value: '' },
+    { name: ['meta', 'mint'], value: 'So11111111111111111111111111111111111111112' },
+    { name: ['meta', 'mintname'], value: 'SOL' },
   ]);
 
   if (isNil(solana) || isNil(wallet)) {
@@ -259,9 +261,23 @@ export default function New() {
         label="Page Description"
         rules={[{ required: true, message: 'Please enter a page description.' }]}
       >
-        <Input.TextArea />
+      <Input.TextArea />
       </Form.Item>
-    </>
+              <Form.Item
+                name={['meta', 'mint']}
+                label="Mint? Leave Default For SOL"
+                rules={[{ required: true, message: 'So11111111111111111111111111111111111111112' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name={['meta', 'mintname']}
+                label="Mint Name?"
+                rules={[{ required: true, message: 'SOL' }]}
+              >
+              <Input />
+              </Form.Item>
+      </>
   );
 
   return (
