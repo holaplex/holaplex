@@ -421,16 +421,17 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   useEffect(() => {
     async function getListings() {
       const allListings = await IndexerSDK.getListings();
+
       let daoFilteredListings = allListings;
-
-      if (WHICHDAO) {
+      let jareJare = ["freegam"]
+      //if (WHICHDAO) {
         daoFilteredListings = daoFilteredListings.filter((listing) =>
-          selectedDaoSubdomains.includes(listing.subdomain)
+          jareJare.includes(listing.subdomain)
         );
-      }
-
+     // }
+      
       setAllListings(daoFilteredListings);
-      setFeaturedListings(daoFilteredListings.slice(0, 5));
+      setFeaturedListings(daoFilteredListings.slice(0, 30));//5));
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);

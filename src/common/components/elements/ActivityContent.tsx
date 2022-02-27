@@ -133,7 +133,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     return (
       <ItemText>
         <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-        {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
+        {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} on <b>{bid.listing?.nfts?.[0]?.name}</b>
         &nbsp;by <b>{bid.listing?.storefront?.title}</b>
       </ItemText>
     );
@@ -199,7 +199,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                             <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
                             <b>{bid.listing?.nfts?.[0]?.name}</b>
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
-                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
+                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL}
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
@@ -266,7 +266,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                         <Row>
                           <ItemText>
                             <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on{' '}
+                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} on{' '}
                             <b>{bid.listing?.nfts?.[0]?.name}</b>
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b>
                           </ItemText>

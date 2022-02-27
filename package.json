@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon",
-    "dev2": "next dev --port 80",
+    "dev2": "next dev --port 801",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "consumers:sign-metadata": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./tasks/consumers/sign-metadata.ts",
