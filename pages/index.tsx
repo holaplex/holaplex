@@ -423,7 +423,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       const allListings = await IndexerSDK.getListings();
 
       let daoFilteredListings = allListings;
-      let jareJare = ["freegam", "freeorca"]
+      let jareJare = ["stacc", "freegam", "freeorca"]
       //if (WHICHDAO) {
         daoFilteredListings = daoFilteredListings.filter((listing) =>
           jareJare.includes(listing.subdomain)
