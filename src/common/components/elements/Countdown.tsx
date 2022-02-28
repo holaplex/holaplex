@@ -2,8 +2,8 @@ import { DateTime, Duration } from 'luxon';
 import { useEffect, useState } from 'react';
 
 function calculateTimeLeft(endTime: string) {
-  let now = DateTime.local();
-  let end = DateTime.fromISO(endTime);
+  const now = DateTime.local();
+  const end = DateTime.fromISO(endTime);
 
   return Duration.fromObject(end.diff(now).toObject());
 }
