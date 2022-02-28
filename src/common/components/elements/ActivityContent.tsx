@@ -213,6 +213,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       </ContentCol>
                     );
                   } else if ((bid as any).didWalletWon === false) {
+                    const timeOfLastBid = DateTime.fromFormat(
+                      bid.lastBidTime,
+                      'yyyy-MM-dd HH:mm:ss'
+                    );
+                    const lessThan10DaysHavePassed = timeOfLastBid.diffNow().days < 10;
                     return (
                       <ContentCol>
                         <Row>
@@ -223,7 +228,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
-                          {bid.cancelled && isYou ? (
+                          {bid.cancelled && isYou && lessThan10DaysHavePassed ? (
                             <div className="flex items-center text-xs font-medium text-white opacity-80">
                               <svg
                                 width="16"
@@ -242,20 +247,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                               </svg>
 
                               <span>
-                                You have an unredeemed bid from{' '}
-                                {DateTime.fromFormat(
-                                  bid.lastBidTime,
-                                  'yyyy-MM-dd HH:mm:ss'
-                                ).toRelative()}
+                                You have an uncanceled bid from {timeOfLastBid.toRelative()}
                               </span>
                             </div>
                           ) : (
-                            <TimeText>
-                              {DateTime.fromFormat(
-                                bid.lastBidTime,
-                                'yyyy-MM-dd HH:mm:ss'
-                              ).toRelative()}
-                            </TimeText>
+                            <TimeText>{timeOfLastBid.toRelative()}</TimeText>
                           )}
                         </Row>
                       </ContentCol>
