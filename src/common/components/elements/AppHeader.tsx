@@ -187,7 +187,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
               <ProfileImage />
             ) : (
               <button
-                className="rounded-full bg-white px-8 py-2 text-sm text-black"
+                className="rounded-full bg-white px-6 py-2 text-sm text-black"
                 onClick={() => setVisible(!visible)}
               >
                 Connect

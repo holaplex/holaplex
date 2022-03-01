@@ -58,6 +58,8 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
   > .ant-skeleton-image > svg {
     display: none;
   }
+  width: 100% !important;
+  height: 100% !important;
 `;
 
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
@@ -189,6 +191,8 @@ export function ListingPreview({
     return <SkeletonListing />;
   }
 
+  const listingEndsAtDateTime = listing.endsAt ? DateTime.fromISO(listing.endsAt) : null;
+
   return (
     <div
       ref={cardRef}
@@ -305,11 +309,15 @@ export function ListingPreview({
             <Price listing={listing} price={displayPrice} />
           </div>
           <div className="text-right">
-            {listing.endsAt ? (
+            {listing.endsAt && listingEndsAtDateTime ? (
               <div className="-mb-[4px] flex flex-col justify-around">
                 <div className="text-right text-sm font-semibold text-gray-300">Ends in</div>
                 <div className="-mt-[4px]">
-                  <AuctionCountdown endTime={listing.endsAt} />
+                  {Date.now() < listingEndsAtDateTime.toMillis() ? (
+                    <AuctionCountdown endTime={listing.endsAt} />
+                  ) : (
+                    listingEndsAtDateTime.toRelative()
+                  )}
                 </div>
               </div>
             ) : (
