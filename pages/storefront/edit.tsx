@@ -8,6 +8,7 @@ import arweaveSDK from '@/modules/arweave/client';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
 import Loading from '@/components/elements/Loading';
+import styled from 'styled-components';
 import {
   FieldData,
   getTextColor,
@@ -174,7 +175,7 @@ export default function Edit() {
                 <Row justify="space-between">
                   <Col sm={24} md={12} lg={12}>
                     <Title level={2}>Style your store.</Title>
-                    <Form.Item
+                    <StyledUploadFormItem
                       label="Banner"
                       name={['theme', 'banner']}
                       tooltip="Sits at the top of your store, 1500px wide and 375px tall works best!"
@@ -188,14 +189,14 @@ export default function Edit() {
                             prop('url')
                           )(values.theme.banner[0])) && <Button>Upload Banner</Button>}
                       </Upload>
-                    </Form.Item>
-                    <Form.Item
+                    </StyledUploadFormItem>
+                    <StyledUploadFormItem
                       label="Logo"
                       name={['theme', 'logo']}
                       rules={[{ required: true, message: 'Upload a logo.' }]}
                     >
                       <Upload>{isEmpty(values.theme.logo) && <Button>Upload</Button>}</Upload>
-                    </Form.Item>
+                    </StyledUploadFormItem>
                     <Form.Item name={['theme', 'backgroundColor']} label="Background">
                       <ColorPicker />
                     </Form.Item>
@@ -306,3 +307,17 @@ export default function Edit() {
     </Loading>
   );
 }
+
+const StyledUploadFormItem = styled(Form.Item)`
+  .ant-upload-list-item-card-actions-btn {
+    svg {
+      fill: red;
+      stroke: red;
+    }
+  }
+  .ant-upload-list-item-info {
+    &:hover {
+      background-color: transparent;
+    }
+  }
+`;

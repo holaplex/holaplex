@@ -95,9 +95,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     return results.filter((item) => !!item) as NonNullable<Unpacked<typeof results>>[];
   };
 
+  const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
+
   const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
     console.log('get displayname', { twitterHandle, pubKey, connectedPubkey });
-    if (connectedPubkey?.toBase58() === pubKey?.toBase58()) return 'You';
+    if (isYou) return 'You';
     if (twitterHandle) return twitterHandle;
     if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
     return 'Loading';
@@ -211,6 +213,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       </ContentCol>
                     );
                   } else if ((bid as any).didWalletWon === false) {
+                    const timeOfLastBid = DateTime.fromFormat(
+                      bid.lastBidTime,
+                      'yyyy-MM-dd HH:mm:ss'
+                    );
+                    const lessThan10DaysHavePassed = timeOfLastBid.diffNow().days < 10;
                     return (
                       <ContentCol>
                         <Row>
@@ -221,14 +228,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
-                          {bid.cancelled ? (
-                            <TimeText>
-                              {DateTime.fromFormat(
-                                bid.lastBidTime,
-                                'yyyy-MM-dd HH:mm:ss'
-                              ).toRelative()}
-                            </TimeText>
-                          ) : (
+                          {bid.cancelled && isYou && lessThan10DaysHavePassed ? (
                             <div className="flex items-center text-xs font-medium text-white opacity-80">
                               <svg
                                 width="16"
@@ -247,13 +247,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                               </svg>
 
                               <span>
-                                You have an unredeemed bid from{' '}
-                                {DateTime.fromFormat(
-                                  bid.lastBidTime,
-                                  'yyyy-MM-dd HH:mm:ss'
-                                ).toRelative()}
+                                You have an uncanceled bid from {timeOfLastBid.toRelative()}
                               </span>
                             </div>
+                          ) : (
+                            <TimeText>{timeOfLastBid.toRelative()}</TimeText>
                           )}
                         </Row>
                       </ContentCol>
