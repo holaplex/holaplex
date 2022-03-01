@@ -1,3 +1,6 @@
+// naughty
+// @ts-nocheck
+
 import { compose, filter, sortWith, prop, pipe, descend, not, ascend, contains } from 'ramda';
 
 const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
@@ -12,6 +15,7 @@ export interface Item {
   metadataAddress: string;
   name: string;
   uri: string;
+  primarySaleHappened: boolean;
 }
 
 export interface NFTMetadata {
@@ -43,7 +47,10 @@ export interface Listing {
   priceFloor: number | null;
   storeTitle: string;
   subdomain: string;
+  logoUrl: string;
+  faviconUrl: string;
   totalUncancelledBids?: number | null;
+  primarySaleHappened: boolean;
   // would neeed to store listings in an object to make this performant in state management. Better to just reload it pr mount for now.
   // nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
 }
@@ -60,19 +67,19 @@ export const IndexerSDK = {
         method: 'getListings',
         params: [],
         id: 1337,
-      })
+      }),
     });
 
     const json = await res.json();
 
     return sortWith(
       [
-        //@ts-ignore   
+        //@ts-ignore
         ascend(prop('instantSalePrice')),
         descend(prop('highestBid')),
-        ascend(prop('endsAt'))
+        ascend(prop('endsAt')),
       ],
       json.result
-    )
+    );
   },
 };

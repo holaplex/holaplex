@@ -67,7 +67,6 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
 
     solana.once('connect', () => {
       const solanaPubkey = solana.publicKey.toString();
-
       upsertWallet(solanaPubkey)
         .then((wallet) => {
           setWallet(wallet);
@@ -96,7 +95,12 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
 
     setVerifying(true);
 
-    solana.connect();
+    solana.connect().catch(() => {
+      if (redirect) {
+        router.push(redirect);
+      }
+      setVerifying(false);
+    });
   };
 
   return (

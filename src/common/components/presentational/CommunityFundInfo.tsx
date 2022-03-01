@@ -1,5 +1,4 @@
 import React from 'react';
-import Modal, { ModalFuncProps } from 'antd/lib/modal/Modal';
 import { Typography, Layout, Space } from 'antd';
 const { Header, Content } = Layout;
 import Paragraph from 'antd/lib/typography/Paragraph';
@@ -14,11 +13,9 @@ const HolaLink = styled.a`
 `;
 
 const PieChartLegendItem = (props: { text: string; children: React.ReactNode }) => (
-  <div style={{ display: 'flex', alignItems: 'center' }}>
+  <div className="flex items-center">
     <svg
-      style={{
-        marginRight: 8,
-      }}
+      className="mr-2"
       width="10"
       height="10"
       viewBox="0 0 10 10"
@@ -27,19 +24,19 @@ const PieChartLegendItem = (props: { text: string; children: React.ReactNode }) 
     >
       {props.children}
     </svg>
-    <span style={{ fontSize: 14 }}>{props.text}</span>
+    <span className="text-sm">{props.text}</span>
   </div>
 );
 
 export default function CommunityFundInfo() {
   return (
     <div>
-      <Title style={{ fontSize: 32, color: '#f4f4f4' }} level={2}>
+      <Title className="text-[32px]" style={{ color: '#f4f4f4' }} level={2}>
         Hola Community Fund
       </Title>
 
       <Content>
-        <Paragraph style={{ fontSize: '18px', opacity: 0.6, marginBottom: 75 }}>
+        <Paragraph className="mb-[75px] text-[18px] opacity-[0.6]">
           The Hola Community Fund will receive 2% of the royalties on NFTs minted on our platform to
           be contributed back to the community.
           <HolaLink
@@ -53,18 +50,11 @@ export default function CommunityFundInfo() {
         </Paragraph>
       </Content>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'start',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'start', marginBottom: 20 }}>
-          <InitialSaleChartSVG style={{ marginRight: 16 }} />
+      <div className="flex flex-wrap items-start justify-between">
+        <div className="mb-5 flex items-start">
+          <InitialSaleChartSVG className="mr-4" />
           <div>
-            <Title style={{ fontSize: 18, color: '#f4f4f4' }} level={4}>
+            <Title className="text-lg" style={{ color: '#f4f4f4' }} level={4}>
               Initial sale
             </Title>
 
@@ -104,13 +94,13 @@ export default function CommunityFundInfo() {
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'start', marginBottom: 20 }}>
-          <FutureSalesChartSVG style={{ marginRight: 16 }} />
+        <div className="mb-5 flex items-start">
+          <FutureSalesChartSVG className="mr-4" />
           <div>
-            <Title style={{ fontSize: 18, color: '#f4f4f4' }} level={4}>
+            <Title className="text-lg" style={{ color: '#f4f4f4' }} level={4}>
               Future sales
             </Title>
-            <Paragraph style={{ fontSize: '12px', opacity: 0.6 }}>assuming 10% royalty</Paragraph>
+            <Paragraph className="text-[12px] opacity-[0.6]">assuming 10% royalty</Paragraph>
             <div>
               <PieChartLegendItem text="Seller 90%">
                 <circle cx="5" cy="5" r="5" fill="url(#paint0_linear_484_138)" />

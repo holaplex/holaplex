@@ -1,5 +1,6 @@
+//@ts-nocheck
+
 import React, { useContext, useEffect, useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { Coingecko, Currency } from '@metaplex/js';
 import { WalletContext } from '@/modules/wallet';
 import Bugsnag from '@bugsnag/js';
@@ -98,15 +99,16 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
     if (MIXPANEL_TOKEN) {
       mixpanel.init(MIXPANEL_TOKEN, {
-        debug: window.location.host.includes('localhost'),
-        disable_persistence: true,
+        debug: window.location.host.includes('localhost') || window.location.host.includes('.dev'),
       });
     }
 
     if (BUGSNAG_API_KEY) {
+      const devEnv = process.env.NEXT_PUBLIC_ENVIRONMENT;
       Bugsnag.start({
         appVersion: '0.1.0', // TODO: Link to app version
         apiKey: BUGSNAG_API_KEY,
+        releaseStage: devEnv || 'unknown',
         plugins: [new BugsnagPluginReact()],
         onError(event) {
           if (pubkey) {
@@ -237,6 +239,8 @@ export function addListingToTrackCall(listing: Listing) {
     isAuction: !!listing.endsAt,
     listingCategory: !listing.endsAt ? 'buy_now' : 'auction',
     subdomain: listing.subdomain,
+    isSecondarySale: listing.primarySaleHappened,
+    hasParticipationNFTs: listing.items.length,
   };
 }
 

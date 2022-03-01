@@ -1,16 +1,21 @@
 const withImages = require('next-images');
-const withAntdLess = require('next-plugin-antd-less');
+const withPlugins = require('next-compose-plugins');
+const withLess = require('next-with-less');
 
-// Add your plugins here
 const plugins = [
-  withAntdLess,
   withImages,
+  [
+    withLess,
+    {
+      lessLoaderOptions: {
+        lessOptions: {
+          javascriptEnabled: true,
+        },
+      },
+    },
+  ],
 ];
 
-// Other config goes here
-const config = {
-  reactStrictMode: true,
-  lessVarsFilePath: './ant-theme.less',
-};
-
-module.exports = plugins.reduce((conf, plug) => plug(conf), config);
+module.exports = withPlugins(plugins, {reactStrictMode: false, images: {
+  domains: ['pbs.twimg.com', 'arweave.net', 'ipfs.dweb.link'],
+}})

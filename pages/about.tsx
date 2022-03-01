@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
+import Head from 'next/head';
 import sv from '@/constants/styles';
 import RoadmapImage from '@/assets/images/roadmap-v1.svg';
 import investorData from '@/assets/investors/investors-stub';
@@ -135,6 +136,14 @@ const SocialWrapper = styled.div`
 export default function About() {
   return (
     <>
+      <Head>
+        <title>We exist for our community of creators | Holaplex</title>
+        <meta
+          property="description"
+          key="description"
+          content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
+        />
+      </Head>
       <Row justify="center">
         <ContentCol xs={22} md={20}>
           <Space direction="vertical" align="center" size="large">

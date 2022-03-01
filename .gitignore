@@ -37,3 +37,7 @@ yarn-error.log*
 public/demo-theme.css
 
 .vscode
+.yalc
+yalc.lock
+
+tsconfig.tsbuildinfo
