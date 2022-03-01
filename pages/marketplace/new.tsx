@@ -12,7 +12,6 @@ import {
   Paragraph,
   reduceFieldData,
   Title,
-  UploadedLogo,
   validateSubdomainUniqueness,
   popFile,
   UploadedBanner,
@@ -21,8 +20,8 @@ import ipfsSDK from '@/modules/ipfs/client';
 import { Transaction } from '@solana/web3.js';
 import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
-import { Card, Col, Form, Input, Row, Space, InputNumber } from 'antd';
-import { findIndex, has, ifElse, isNil, lensPath, prop, propEq, update, view } from 'ramda';
+import { Card, Col, Form, Input, Row, Space, InputNumber, Typography } from 'antd';
+import { findIndex, has, ifElse, isEmpty, isNil, lensPath, prop, propEq, update, view, pipe, not } from 'ramda';
 import { useConnection } from '@solana/wallet-adapter-react';
 import React, { useContext, useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house';
@@ -60,6 +59,7 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
+  const [pendingAddress, setPendingAddress] = useState<string>();
   const { setVisible } = useWalletModal();
   const { solana, wallet, looking } = useContext(WalletContext);
   const [fields, setFields] = useState<FieldData[]>([
@@ -70,6 +70,7 @@ export default function New() {
     { name: ['meta', 'name'], value: '' },
     { name: ['meta', 'description'], value: '' },
     { name: ['sellerFeeBasisPoints'], value: 10000 },
+    { name: ['creators'], value: [] }
   ]);
 
   if (isNil(solana) || isNil(wallet)) {
@@ -94,7 +95,7 @@ export default function New() {
     if (isNil(solana) || isNil(solana.signTransaction) || isNil(solana.publicKey)) {
       return;
     }
-    const { theme, meta, subdomain, sellerFeeBasisPoints } = values;
+    const { theme, meta, subdomain, sellerFeeBasisPoints, creators } = values;
 
     setSubmitting(true);
 
@@ -114,6 +115,7 @@ export default function New() {
           logo,
           banner,
         },
+        creators,
         subdomain,
         address: {
           owner: wallet.pubkey,
@@ -147,7 +149,9 @@ export default function New() {
 
       const transaction = new Transaction();
 
-      transaction.add(auctionHouseCreateInstruction).add(setStorefrontV2Instructions);
+      transaction
+        .add(auctionHouseCreateInstruction)
+        .add(setStorefrontV2Instructions);
 
       transaction.feePayer = solana.publicKey;
       transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
@@ -177,6 +181,7 @@ export default function New() {
     <Row justify="center" align="middle">
       <Col xs={21} lg={18} xl={16} xxl={14}>
         <StepForm
+          className="marketplace-form"
           submitting={submitting}
           form={form}
           layout="vertical"
@@ -220,7 +225,7 @@ export default function New() {
             </FillSpace>
           </Row>
           <Row>
-            <Col span={24} className="marketplace-form">
+            <Col span={24}>
               <h2 className="mb-7 text-3xl font-black">Customize your marketplace</h2>
 
               <Form.Item
@@ -299,6 +304,61 @@ export default function New() {
               <Form.Item name={['sellerFeeBasisPoints']} label="Seller Fee Basis Points">
                 <InputNumber<number> min={0} max={100000} />
               </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={24}>
+              <Title level={2}>Add creators</Title>
+              <Paragraph>Choose the creators you want to feature on your market</Paragraph>
+              <Form.List
+                name="creators"
+                rules={[
+                  {
+                    validator: async (rule, value) => {
+                      if (isEmpty(value)) {
+                        return Promise.reject("At least 1 creator is required");
+                      }
+                    }
+                  }
+                ]}
+              >
+                {(fields, { add, remove }) => (
+                  <>
+                    <Space direction="vertical" size="middle" className="w-full">
+                      {fields.map(({ key, name, ...restField }, idx) => (
+                        <Space key={key} direction="horizontal" size="middle" className="flex w-full justify-between mb-4">
+                          <Typography.Text>{values.creators[idx].address}</Typography.Text>
+                          <Button size="small" onClick={() => remove(idx)}>Remove</Button>
+                        </Space>
+                      ))}
+                    </Space>
+                    <Form.Item
+                      label="Find creator by wallet address"
+                      className="ant-form-item-with-help ant-form-item-has-error"
+                    >
+                      <Input
+                        autoFocus
+                        type="text"
+                        onChange={(e) => setPendingAddress(e.target.value)}
+                        onPressEnter={(e) => {
+                          e.preventDefault();
+
+                          add({ address: pendingAddress });
+
+                          setPendingAddress(undefined);
+                        }}
+                        value={pendingAddress}
+                        placeholder="SOL wallet address..."
+                      />
+                      <div className="ant-form-item-explain ant-form-item-explain-connected">
+                        <div role="alert" className="ant-form-item-explain-error">
+                          {form.getFieldError(['creators'])}
+                        </div>
+                      </div>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
             </Col>
           </Row>
         </StepForm>

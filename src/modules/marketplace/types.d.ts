@@ -15,9 +15,14 @@ export interface MarketplaceAddress {
   owner: string;
 }
 
+export interface MarketplaceCreator {
+  address: string;
+}
+
 export interface Marketplace<F = ArweaveFile> {
   address: MarketplaceAddress;
   subdomain: string;
   meta: MarketplaceMetaData;
   theme: MarketplaceTheme;
+  creators: MarketplaceCreator[];
 }

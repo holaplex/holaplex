@@ -59,7 +59,6 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
 const DAO_LIST_IPFS =
   process.env.NEXT_PUBLIC_DAO_LIST_IPFS ||
   'https://ipfs.cache.holaplex.com/bafkreidnqervhpcnszmjrj7l44mxh3tgd7pphh5c4jknmnagifsm62uel4';
-const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
 const DAOStoreFrontList = async () => {
   if (WHICHDAO) {
@@ -478,16 +477,6 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                     </Button>
                   </a>
                 </Link>
-
-                {MARKETPLACE_ENABLED && (
-                  <Link href="/marketplace/new" passHref>
-                    <a>
-                      <Button skeleton={looking || searching} className="min-w-[13rem]">
-                        Create Your Marketplace
-                      </Button>
-                    </a>
-                  </Link>
-                )}
               </div>
             ) : (
               <div>
