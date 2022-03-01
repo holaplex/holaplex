@@ -12,6 +12,7 @@ import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
 import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsLazyQuery } from '../../../src/graphql/indexerTypes';
 import Bugsnag from '@bugsnag/js';
+import Link from 'next/link';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -24,11 +25,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
+  const creatorsCopy = [...nft.creators];
+  const sortedCreators = creatorsCopy ? creatorsCopy.sort((a, b) => b.share - a.share) : [];
+  const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
   return (
     <div className="overflow-hidden rounded-lg border-2 border-gray-800">
       <img src={nft.image} alt={nft.name} className="h-80 w-full object-cover" />
       <div className="h-24 bg-gray-900 py-6 px-4">
-        <p className="text-lg">{nft.name}</p>
+        <p className="m-0 text-lg">{nft.name}</p>
+        {shownCreatorAddress && (
+          <Link href={`/profiles/${shownCreatorAddress}`} passHref>
+            <a className="text-base text-gray-300">{showFirstAndLastFour(shownCreatorAddress)}</a>
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -66,6 +75,9 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   const nfts = ownedNFTs?.data?.nfts || [];
 
   const [query, setQuery] = useState('');
+
+  console.log('nfts[0]', nfts[0]);
+  console.log('nfts[1]', nfts[1]);
 
   const nftsToShow =
     query === ''

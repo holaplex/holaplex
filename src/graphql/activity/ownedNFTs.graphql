@@ -9,6 +9,7 @@ query ownedNFTs($address: String!) {
     primarySaleHappened
     creators {
       address
+      share
     }
     owner {
       address
