@@ -49,8 +49,10 @@ import {
 } from 'ramda';
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 const { TabPane } = Tabs;
+
 type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
@@ -81,6 +83,10 @@ export default function Edit() {
     },
     { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
+    {
+      name: ['integrations', 'crossmintClientId'],
+      value: storefront?.integrations?.crossmintClientId ?? uuidv4(),
+    },
   ]);
 
   if (isNil(solana) || isNil(storefront) || isNil(wallet)) {
