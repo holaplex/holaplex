@@ -7,6 +7,17 @@ import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
+
+import { useWallet } from "@solana/wallet-adapter-react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { MarketplaceSdk } from "@strata-foundation/marketplace-sdk";
+import {
+  truthy,
+  useMintTokenRef,
+  usePrimaryClaimedTokenRef,
+  useProvider,
+  usePublicKey,
+} from "@strata-foundation/react";
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import {
   FieldData,
@@ -45,14 +56,60 @@ import {
 import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { FormProvider, useForm } from "react-hook-form";
+import * as yup from "yup";
+import { FormControlWithError } from "./FormControlWithError";
+import { Recipient } from "./Recipient";
+import {
+  IMetadataFormProps,
+  TokenMetadataInputs,
+} from "./TokenMetadataInputs";
+import { MintSelect } from "./MintSelect";
+
+interface IBountyFormProps extends IMetadataFormProps {
+  mint: string;
+  shortName: string;
+  contact: string;
+  discussion: string;
+  authority: string;
+}
+
+const validationSchema = yup.object({
+  mint: yup.string().required(),
+  image: yup.mixed(),
+  name: yup.string().required().min(2),
+  description: yup.string(),
+  shortName: yup.string().min(2).max(10),
+  contact: yup.string(),
+  discussion: yup.string(),
+  authority: yup.string().required(),
+});
+
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
   const { track } = useAnalytics();
-  const router = useRouter();
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
   const { solana, wallet, connect } = useContext(WalletContext);
+  const formProps = useForm<IBountyFormProps>({
+    resolver: yupResolver(validationSchema),
+  });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = formProps;
+  const { publicKey } = useWallet();
+  const { info: tokenRef } = usePrimaryClaimedTokenRef(publicKey);
+  const { awaitingApproval } = useProvider();
+  const router = useRouter();
+  const { authority, mint } = watch();
+  const mintKey = usePublicKey(mint);
+  const { info: mintTokenRef } = useMintTokenRef(mintKey);
+
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -263,13 +320,27 @@ export default function New() {
       >
       <Input.TextArea />
       </Form.Item>
-              <Form.Item
-                name={['meta', 'mint']}
-                label="Mint? Leave Default For SOL"
-                rules={[{ required: true, message: 'So11111111111111111111111111111111111111112' }]}
+             
+          <FormControlWithError
+            id="mint"
+            help={`The mint that should be used on this bounty, example So11111111111111111111111111111111111111112 for SOL`}
+            label="Mint"
+            errors={errors}
+          >
+            {tokenRef && (
+              <Button
+                variant="link"
+                onClick={() => setValue("mint", tokenRef.mint.toBase58())}
               >
-                <Input />
-              </Form.Item>
+                Use my Social Token
+              </Button>
+            )}
+            <MintSelect
+              value={watch("mint")}
+              onChange={(s) => setValue("mint", s)}
+            />
+          </FormControlWithError>
+
               <Form.Item
                 name={['meta', 'mintname']}
                 label="Mint Name?"
