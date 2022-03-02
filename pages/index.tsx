@@ -343,8 +343,7 @@ const sorts = {
 };
 
 export async function getStaticProps() {
- // @ts-ignore
-  const featuredStorefronts = null;//await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
+  const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
   const selectedDaoSubdomains = await DAOStoreFrontList();
 
   return {
@@ -421,17 +420,16 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
   useEffect(() => {
     async function getListings() {
       const allListings = await IndexerSDK.getListings();
-
       let daoFilteredListings = allListings;
-      let jareJare = ["stacc", "freegam", "freeorca"]
-      //if (WHICHDAO) {
+
+      if (WHICHDAO) {
         daoFilteredListings = daoFilteredListings.filter((listing) =>
-          jareJare.includes(listing.subdomain)
+          selectedDaoSubdomains.includes(listing.subdomain)
         );
-     // }
-      
+      }
+
       setAllListings(daoFilteredListings);
-      setFeaturedListings(daoFilteredListings.slice(0, 30));//5));
+      setFeaturedListings(daoFilteredListings.slice(0, 5));
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
@@ -514,7 +512,17 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
           <StorefrontSection>
             <Col xs={24}>
               <Title level={3}>Featured Creators</Title>
-
+              <FeaturedStores
+                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
+                dataSource={featuredStorefronts.slice(0, 4)}
+                renderItem={(feature) => (
+                  // @ts-ignore
+                  <List.Item key={feature.storefront.subdomain}>
+                    {/* @ts-ignore */}
+                    <StorePreview {...feature} />
+                  </List.Item>
+                )}
+              />
             </Col>
           </StorefrontSection>
         )}
