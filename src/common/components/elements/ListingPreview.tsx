@@ -10,7 +10,7 @@ import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 import Price from '@/common/components/elements/Price';
-import { maybeCDN, maybeImageCDN } from '@/common/utils';
+import { maybeCDN, imgOpt } from '@/common/utils';
 import AuctionCountdown from './Countdown';
 
 const Square = styled(Row)`
@@ -93,7 +93,7 @@ const CustomImageMask = styled.div`
   right: 0;
   bottom: 0;
   width: 72px;
-  height: 72px; 
+  height: 72px;
   margin: auto;
   display: flex;
   align-items: center;
@@ -210,7 +210,7 @@ export function ListingPreview({
         <Square>
           <NFTPreview
             $show={inView}
-            src={maybeImageCDN(nft?.image || '')}
+            src={imgOpt(nft?.image || '', 600)}
             preview={{
               visible: showArtPreview,
               mask: (
@@ -276,10 +276,10 @@ export function ListingPreview({
         </a>
         <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
           <div className="flex items-center">
-            {listing.logoUrl && (
+            {imgOpt(listing.logoUrl || '', 100) && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={listing.logoUrl}
+                src={imgOpt(listing.logoUrl || '', 100)}
                 className="mr-2 h-4 w-4 rounded-sm"
                 alt={'logo for ' + listing.storeTitle}
               />

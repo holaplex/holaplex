@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Avatar, Card, Image, Row, Col } from 'antd';
 import { Storefront } from '@/modules/storefront/types';
+import { imgOpt } from '@/common/utils';
 
 const PreviewCard = styled(Card)`
   .ant-card-meta-detail {
@@ -61,7 +62,7 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
         avatar={
           <StyledAvatar
             size="large"
-            src={<Image preview={false} src={storefront.theme.logo.url} />}
+            src={<Image preview={false} src={imgOpt(storefront.theme.logo.url, 100)} />}
           />
         }
         title={storefront.meta.title}
@@ -73,8 +74,8 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
       />
       <Row justify="space-between">
         {metadata.map((url) => (
-          <Metadata span={11} key={url}>
-            <Image src={url} />
+          <Metadata span={11} key={imgOpt(url, 600)}>
+            <Image src={imgOpt(url, 600)} />
           </Metadata>
         ))}
       </Row>
