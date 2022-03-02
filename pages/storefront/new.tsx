@@ -127,7 +127,7 @@ export default function New() {
           rules={[
             {
               required: true,
-              pattern: /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/,
+              pattern: /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
               message: 'The subdomain entered is not valid.',
             },
             { required: true, validator: subdomainUniqueness },
