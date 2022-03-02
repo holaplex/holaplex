@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   const creatorsCopy = [...nft.creators];
-  const sortedCreators = creatorsCopy ? creatorsCopy.sort((a, b) => b.share - a.share) : [];
+  const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
   return (
     <div className="overflow-hidden rounded-lg border-2 border-gray-800">
@@ -75,9 +75,6 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   const nfts = ownedNFTs?.data?.nfts || [];
 
   const [query, setQuery] = useState('');
-
-  console.log('nfts[0]', nfts[0]);
-  console.log('nfts[1]', nfts[1]);
 
   const nftsToShow =
     query === ''
