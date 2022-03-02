@@ -109,6 +109,10 @@ export default function New() {
         NATIVE_MINT
       );
 
+      const storePubkey = await Store.getPDA(solana.publicKey);
+
+      const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
+
       const input = {
         meta,
         theme: {
@@ -120,6 +124,7 @@ export default function New() {
         address: {
           owner: wallet.pubkey,
           auctionHouse: auctionHousPubkey.toBase58(),
+          store: storePubkey.toBase58(),
         },
       } as Marketplace;
 
@@ -131,9 +136,7 @@ export default function New() {
         wallet: solana as Wallet,
         sellerFeeBasisPoints,
       });
-      const storePubkey = await Store.getPDA(solana.publicKey);
 
-      const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
       const setStorefrontV2Instructions = new SetStoreV2(
         {
           feePayer: solana.publicKey,

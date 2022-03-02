@@ -13,6 +13,7 @@ export interface MarketplaceTheme<F = ArweaveFile> {
 export interface MarketplaceAddress {
   auctionHouse: string;
   owner: string;
+  store: string;
 }
 
 export interface MarketplaceCreator {
