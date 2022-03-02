@@ -14,7 +14,7 @@ export const SolBalance = () => {
   } else if (data === undefined || data === null) {
     amountToShow = ' ';
   } else if (data > 0) {
-    amountToShow = `${(data / LAMPORTS_PER_SOL).toFixed(2)}`;
+    amountToShow = `${(data / LAMPORTS_PER_SOL).toFixed(2)} SOL`;
   } else {
     amountToShow = ' ';
   }
