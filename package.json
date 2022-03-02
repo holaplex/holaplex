@@ -29,7 +29,7 @@
     "@bugsnag/plugin-react": "^7.14.0",
     "@google/model-viewer": "^1.9.2",
     "@holaplex/js": "^4.3.2",
-    "@holaplex/ui": "^0.0.26",
+    "@holaplex/ui": "^0.0.27",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^3.9.2",
     "@samuelmeuli/font-manager": "^1.4.0",
