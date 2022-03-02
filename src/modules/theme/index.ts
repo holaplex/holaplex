@@ -118,7 +118,7 @@ export function stylesheet({
     border: none;
   }
   .input:hover, .input:focus, .ant-input:hover, .ant-input-number:hover, .ant-input:focus, .ant-input-focused, .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused, .ant-input-number:focus, .ant-input-number-focused, .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover, .ant-input-affix-wrapper:hover, .ant-input.focus-visible  {
-    border: 1px ${primaryColor}id;
+    border: 1px ${primaryColor} solid;
     box-shadow: none;
   }
   .ant-input::placeholder {
