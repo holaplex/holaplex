@@ -20,6 +20,6 @@ export const imgOpt = (uri?: string, width?: number) => {
   .replace(captureCidArweaveCache, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
   .replace(captureCidIpfsIo, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`);
   cdnURI = cdnURI + `?width=${width}`
-  console.log(uri, cdnURI)
+
   return cdnURI ?? uri;
 };
