@@ -146,25 +146,6 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
     );
   };
 
-  const Search = () => (
-    <Combobox value={selectedNFT} onChange={setSelectedNFT}>
-      <FeatherIcon
-        icon="search"
-        className={cx(
-          'absolute bottom-1.5 left-2.5 h-5 w-5',
-          searchFocused ? 'text-white' : 'text-gray-500'
-        )}
-      />
-      <Combobox.Input
-        onChange={(event) => setQuery(event.target.value)}
-        onFocus={() => setSearchFocused(true)}
-        onBlur={() => setSearchFocused(false)}
-        className="mr-4 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:shadow-none focus:ring-0 md:w-9/12"
-        placeholder="Search"
-      />
-    </Combobox>
-  );
-
   return (
     <>
       <Head>
@@ -173,7 +154,22 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
       </Head>
       <ProfileContainer wallet={wallet} publicKey={publicKey}>
         <div className="relative flex h-8 justify-between">
-          <Search />
+          <Combobox value={selectedNFT} onChange={setSelectedNFT}>
+            <FeatherIcon
+              icon="search"
+              className={cx(
+                'absolute bottom-1.5 left-2.5 h-5 w-5',
+                searchFocused ? 'text-white' : 'text-gray-500'
+              )}
+            />
+            <Combobox.Input
+              onChange={(event) => setQuery(event.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              className="mr-4 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 md:w-9/12"
+              placeholder="Search"
+            />
+          </Combobox>
           <GridChange />
         </div>
         <NFTGrid nfts={nftsToShow} gridView={gridView} />
