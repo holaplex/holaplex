@@ -15,9 +15,14 @@ export interface PageMetaData<F = ArweaveFile> {
   favicon: F;
 }
 
+export interface Integrations<F = ArweaveFile> {
+  crossmintClientId: string;
+}
+
 export interface Storefront<F = ArweaveFile> {
   theme: StorefrontTheme<F>;
   meta: PageMetaData<F>;
   subdomain: string;
   pubkey: string;
+  integrations: Integrations<F>;
 }

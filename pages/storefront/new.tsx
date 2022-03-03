@@ -45,6 +45,7 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
@@ -69,6 +70,7 @@ export default function New() {
     { name: ['meta', 'favicon'], value: [] },
     { name: ['meta', 'title'], value: '' },
     { name: ['meta', 'description'], value: '' },
+    { name: ['integrations', 'crossmintClientId'], value: uuidv4() },
   ]);
 
 
@@ -136,7 +138,7 @@ export default function New() {
           rules={[
             {
               required: true,
-              pattern: /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/,
+              pattern: /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
               message: 'The subdomain entered is not valid.',
             },
             { required: true, validator: subdomainUniqueness },

@@ -160,8 +160,7 @@ export const submitCallback = ({
     try {
       setSubmitting(true);
 
-      const { theme, meta, subdomain } = values;
-      // TODO: not always .com
+      const { theme, meta, subdomain, integrations } = values;
       const domain = `${subdomain}.holaplex.com`;
 
       const logo = popFile(theme.logo[0]);
@@ -180,6 +179,7 @@ export const submitCallback = ({
         },
         subdomain,
         pubkey: solana?.publicKey?.toBase58() ?? '',
+        integrations,
       };
 
       if (banner?.url) {

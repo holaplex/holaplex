@@ -27,6 +27,7 @@ import {
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
+import { UploadOutlined } from '@ant-design/icons';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Card, Col, Form, Input, Row, Space, Tabs } from 'antd';
 import { useRouter } from 'next/router';
@@ -46,8 +47,11 @@ import {
 } from 'ramda';
 import React, { useContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 const { TabPane } = Tabs;
+
+type TabKey = 'subdomain' | 'theme' | 'meta';
 
 export default function Edit() {
   const [submitting, setSubmitting] = useState(false);
@@ -79,6 +83,10 @@ export default function Edit() {
     },
     { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
     { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
+    {
+      name: ['integrations', 'crossmintClientId'],
+      value: storefront?.integrations?.crossmintClientId ?? uuidv4(),
+    },
   ]);
 
   useEffect(() => {
@@ -102,6 +110,10 @@ export default function Edit() {
       },
       { name: ['meta', 'title'], value: storefront?.meta.title ?? '' },
       { name: ['meta', 'description'], value: storefront?.meta.description ?? '' },
+      {
+        name: ['integrations', 'crossmintClientId'],
+        value: storefront?.integrations?.crossmintClientId ?? uuidv4(),
+      },
     ]);
   }, [storefront]);
 
@@ -187,7 +199,11 @@ export default function Edit() {
                             has('response'),
                             view(lensPath(['response', 'url'])),
                             prop('url')
-                          )(values.theme.banner[0])) && <Button>Upload Banner</Button>}
+                          )(values.theme.banner[0])) && (
+                            <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                              Upload Banner
+                            </Button>
+                          )}
                       </Upload>
                     </StyledUploadFormItem>
                     <StyledUploadFormItem
@@ -195,7 +211,13 @@ export default function Edit() {
                       name={['theme', 'logo']}
                       rules={[{ required: true, message: 'Upload a logo.' }]}
                     >
-                      <Upload>{isEmpty(values.theme.logo) && <Button>Upload</Button>}</Upload>
+                      <Upload>
+                        {isEmpty(values.theme.logo) && (
+                          <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                            Upload
+                          </Button>
+                        )}
+                      </Upload>
                     </StyledUploadFormItem>
                     <Form.Item name={['theme', 'backgroundColor']} label="Background">
                       <ColorPicker />
@@ -239,8 +261,8 @@ export default function Edit() {
                         </PrevTitle>
                         <PrevText color={textColor} fontFamily={values.theme.textFont}>
                           Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo
-                          shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida
-                          vizzle, arcu.
+                          shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle,
+                          arcu.
                         </PrevText>
                         <PreviewLink color={values.theme.primaryColor}>Link to things</PreviewLink>
                         <PreviewButton
@@ -262,7 +284,7 @@ export default function Edit() {
                   rules={[
                     {
                       required: true,
-                      pattern: /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/,
+                      pattern: /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
                       message: 'The subdomain entered is not valid.',
                     },
                     { required: true, validator: subdomainUniqueness },
@@ -278,7 +300,13 @@ export default function Edit() {
                   name={['meta', 'favicon']}
                   rules={[{ required: true, message: 'Upload a favicon.' }]}
                 >
-                  <Upload>{isEmpty(values.meta.favicon) && <Button>Upload</Button>}</Upload>
+                  <Upload>
+                    {isEmpty(values.meta.favicon) && (
+                      <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                        Upload
+                      </Button>
+                    )}
+                  </Upload>
                 </Form.Item>
                 <Form.Item
                   name={['meta', 'title']}
@@ -297,7 +325,13 @@ export default function Edit() {
               </TabPane>
             </Tabs>
             <Row justify="end">
-              <Button disabled={submitting} loading={submitting} htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                disabled={submitting}
+                loading={submitting}
+              >
                 Update
               </Button>
             </Row>
