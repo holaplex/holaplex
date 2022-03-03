@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import uploadFiles from '@/modules/ipfs/client';
+import { Files } from 'formidable';
+import uploadFile from '@/modules/ipfs/nft.storage';
+import { values, map, pipe, is, take, when } from 'ramda';
 import { IncomingForm } from 'formidable';
 import { ApiError, FormData } from '@/modules/utils';
 import NextCors from 'nextjs-cors';
@@ -31,7 +33,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           });
         });
 
-        const files = await uploadFiles(params.files);
+        //@ts-ignore
+        const payload = pipe(values, map(when(is(Array), take(0))))(params.files) as File[];
+        const uploadPromises = payload.map((file) => uploadFile(file as File));
+        const files = await Promise.all(uploadPromises);
+
         const containsErrors = files.find((result) => !!result.error);
         if (containsErrors) {
           res.status(500);

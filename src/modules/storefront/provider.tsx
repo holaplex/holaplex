@@ -4,7 +4,6 @@ import arweaveSDK from '@/modules/arweave/client';
 import { isNil } from 'ramda';
 import { Storefront } from '@/modules/storefront/types';
 import { Wallet } from '@/modules/wallet/types';
-import { useRouter } from 'next/router';
 import { StorefrontContext } from './context';
 
 type StorefrontProviderChildrenProps = {
@@ -21,29 +20,26 @@ export const StorefrontProvider = ({ wallet, children }: StorefrontProviderProps
   const [searching, setSearching] = useState(false);
   const [storefront, setStorefront] = useState<Storefront>();
   const arweave = initArweave();
-  const router = useRouter();
+  const arweaveClient = arweaveSDK.using(arweave);
 
   useEffect(() => {
-    if (!process.browser || !wallet) {
+    if (typeof window === 'undefined' || !wallet?.pubkey) {
       return;
     }
 
     setSearching(true);
 
-    arweaveSDK
-      .using(arweave)
-      .storefront.find('solana:pubkey', wallet.pubkey)
-      .then((storefront) => {
-        if (isNil(storefront)) {
-          setSearching(false);
-
-          return;
-        }
-
-        setStorefront(storefront);
+    arweaveClient.storefront.find('solana:pubkey', wallet.pubkey).then((storefront) => {
+      if (isNil(storefront)) {
         setSearching(false);
-      });
-  }, [wallet]);
+
+        return;
+      }
+
+      setStorefront(storefront);
+      setSearching(false);
+    });
+  }, [wallet?.pubkey]);
 
   return (
     <StorefrontContext.Provider value={{ searching, storefront }}>

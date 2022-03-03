@@ -3,9 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
-import { WalletContext } from '@/modules/wallet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Wallet } from '@/modules/wallet/types';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
@@ -16,29 +14,18 @@ import { Menu as MenuIcon } from '@/components/icons/Menu';
 import { ChevronRight } from '../icons/ChevronRight';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
+import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-
-interface Props {
-  setShowMintModal: (show: boolean) => void;
-  wallet?: Wallet;
-}
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
-export function AppHeader({ setShowMintModal, wallet }: Props) {
+export function AppHeader() {
   const router = useRouter();
-  const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
-    disconnecting,
-  } = useWallet();
-  const { connect } = useContext(WalletContext);
+  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
   const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
-  const { visible, setVisible } = useWalletModal();
+  const { setVisible } = useWalletModal();
 
   const handleViewProfile = useCallback(() => {
     router.push(`/profiles/${publicKey!.toBase58()}`);
@@ -64,18 +51,6 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected]);
 
-  useEffect(() => {
-    if (!hasWalletTypeSelected || connected) return;
-    connectUserWallet();
-  }, [connectUserWallet, connected, hasWalletTypeSelected]);
-
-  const mintModalClick = () => {
-    if (!wallet) {
-      connect(router.pathname);
-    }
-    setShowMintModal(true);
-  };
-
   return (
     <>
       <StyledHeader>
@@ -88,18 +63,9 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
         </HeaderTitle>
         {!WHICHDAO && (
           <LinkRow size="large">
-            <HeaderLinkWrapper key="mint-nfts" active={false}>
-              <a className="hover:underline focus:underline" onClick={mintModalClick}>
-                Mint NFTs
-              </a>
-            </HeaderLinkWrapper>
-            <HeaderLinkWrapper
-              key="edit"
-              onClick={() => connect()}
-              active={router.pathname == '/storefront/edit'}
-            >
-              <Link href="/storefront/edit" passHref>
-                <a className="hover:underline focus:underline">Edit store</a>
+            <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/nfts/new'}>
+              <Link href="/nfts/new" passHref>
+                <a className="hover:underline focus:underline">Mint NFTs</a>
               </Link>
             </HeaderLinkWrapper>
             <Popover
@@ -186,12 +152,9 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <button
-                className="rounded-full bg-white px-6 py-2 text-sm text-black"
-                onClick={() => setVisible(!visible)}
-              >
+              <Button loading={connecting} onClick={() => setVisible(true)} size="small">
                 Connect
-              </button>
+              </Button>
             )}
           </LinkRow>
         )}

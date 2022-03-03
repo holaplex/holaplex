@@ -1,23 +1,14 @@
 import Arweave from 'arweave';
 import { ArweaveTransaction, AreweaveTagFilter } from './types';
 import { Storefront } from '@/modules/storefront/types';
-import {
-  isEmpty,
-  isNil,
-  map,
-  reduce,
-  concat,
-  pipe,
-  last,
-  prop,
-  uniqBy,
-  view,
-  lensPath,
-} from 'ramda';
+import { isEmpty, reduce, concat, pipe, last, prop, uniqBy, view, lensPath } from 'ramda';
 
 export interface StorefrontEdge {
   cursor: string;
   storefront: Storefront;
+}
+export interface MarketplaceEdge {
+  cursor: string;
 }
 
 interface StorefrontConnection {
@@ -30,10 +21,10 @@ interface ArweaveResponseTransformer {
   json: () => Promise<any>;
 }
 
-interface ArweaveObjectInteraction {
-  find: (tag: string, value: string) => Promise<Storefront | null>;
-  upsert: (storefront: Storefront, css: string) => Promise<Storefront>;
-  list: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<StorefrontEdge[]>;
+interface ArweaveObjectInteraction<T, U> {
+  find: (tag: string, value: string) => Promise<T | null>;
+  upsert: (record: T, css: string) => Promise<T>;
+  list: (tags?: AreweaveTagFilter[], batch?: number, start?: string) => Promise<U[]>;
 }
 
 interface ArweaveWalletHelpers {
@@ -41,7 +32,7 @@ interface ArweaveWalletHelpers {
 }
 
 export interface ArweaveScope {
-  storefront: ArweaveObjectInteraction;
+  storefront: ArweaveObjectInteraction<Storefront, StorefrontEdge>;
   wallet: ArweaveWalletHelpers;
 }
 
@@ -108,6 +99,9 @@ const transformer = (response: Response): ArweaveResponseTransformer => {
                   name: tags['holaplex:metadata:favicon:name'],
                   type: tags['holaplex:metadata:favicon:type'],
                 },
+              },
+              integrations: {
+                crossmintClientId: tags['crossmint:clientId'] || null,
               },
             },
           };
@@ -252,6 +246,7 @@ const using = (arweave: Arweave): ArweaveScope => ({
       transaction.addTag('holaplex:theme:color:background', storefront.theme.backgroundColor);
       transaction.addTag('holaplex:theme:font:title', storefront.theme.titleFont);
       transaction.addTag('holaplex:theme:font:text', storefront.theme.textFont);
+      transaction.addTag('crossmint:clientId', storefront.integrations.crossmintClientId);
       transaction.addTag('Arweave-App', 'holaplex');
 
       if (storefront.theme.banner) {

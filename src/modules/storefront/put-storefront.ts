@@ -1,7 +1,6 @@
+import { WalletContextState } from '@solana/wallet-adapter-react';
 import { notarize, signPhantom, stringifyNotarized } from '../notary/client';
 import { Formatter, Notarized } from '../notary/common';
-import { connectSolana } from '../solana';
-import { Solana } from '../solana/types';
 import { Storefront } from './types';
 
 export type PutStorefrontParams = Notarized<Storefront>;
@@ -20,7 +19,7 @@ export const putStorefront = async ({
   onComplete,
   onError,
 }: {
-  solana: Solana | undefined;
+  solana: WalletContextState | undefined;
   storefront: Storefront;
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed'
@@ -31,12 +30,7 @@ export const putStorefront = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (!solana) throw new Error('Could not connect to Solana');
-
-    if (!solana.isConnected) {
-      onProgress('connecting-wallet');
-      connectSolana(solana);
-    }
+    if (!solana?.publicKey || !solana) throw new Error('solana wallet not connected');
 
     onProgress('signing');
 

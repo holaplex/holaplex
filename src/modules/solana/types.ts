@@ -19,4 +19,6 @@ export interface Solana {
   signTransaction: (tx: Transaction) => Promise<Transaction>;
   signAllTransactions(txs: Transaction[]): Promise<Transaction[]>;
   signMessage: (input: ArrayBuffer, enc: string) => Promise<Signature>;
+  signAndSendTransaction: (tx: Transaction) => Promise<string>;
+  sendRawTransactionAndConfirm: (rawTrasnaction: Buffer) => Promise<string>;
 }

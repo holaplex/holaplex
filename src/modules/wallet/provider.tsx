@@ -1,23 +1,21 @@
-import { initArweave } from '@/modules/arweave';
-import arweaveSDK from '@/modules/arweave/client';
-import { Solana } from '@/modules/solana/types';
-import { Storefront } from '@/modules/storefront/types';
 import walletSDK from '@/modules/wallet/client';
 import { Wallet } from '@/modules/wallet/types';
+import { useWallet, WalletContextState } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-import { isNil } from 'ramda';
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react';
 import { WalletContext, WalletContextProps } from './context';
 
-type WalletProviderProps = {
+interface WalletProviderProps {
   wallet?: Wallet;
-  solana?: Solana;
+  solana?: WalletContextState;
   children: (props: WalletContextProps) => React.ReactElement;
-  storefront?: Storefront;
 };
 
-const upsertWallet = async (pubkey: string) => {
+const upsertWallet = async (pubkey: string | undefined) => {
+  if (!pubkey) {
+    return Promise.reject("no public key");
+  }
+
   return walletSDK.find(pubkey).then((wallet: any) => {
     if (!wallet) {
       return walletSDK.create(pubkey);
@@ -29,98 +27,42 @@ const upsertWallet = async (pubkey: string) => {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter();
-  const arweave = initArweave();
-  const [verifying, setVerifying] = useState(false);
-  const [initializing, setInitialization] = useState(true);
   const [wallet, setWallet] = useState<Wallet>();
-  const [solana, setSolana] = useState<Solana>();
-  const [storefront, setStorefront] = useState<Storefront>();
+  const [looking, setLooking] = useState(false);
+  const solana = useWallet();
+  const { publicKey } = solana;
 
-  if (typeof window === 'object') {
-    if (window.solana && window.solana?.connect) {
-      if (window.solana !== solana) {
-        setSolana(window.solana);
-        setInitialization(false);
-      }
-    } else {
-      window.addEventListener(
-        'load',
-        () => {
-          setSolana(window.solana);
-          setInitialization(false);
-        },
-        { capture: false }
-      );
-    }
-  }
-
-  const connect = (redirect?: string) => {
-    if (isNil(solana)) {
-      toast(() => (
-        <>
-          Phantom wallet is not installed on your browser. Visit{' '}
-          <a href="https://phantom.app">phantom.app</a> to setup your wallet.
-        </>
-      ));
+  useEffect(() => {
+    if (!publicKey) {
       return;
     }
 
-    solana.once('connect', () => {
-      const solanaPubkey = solana.publicKey.toString();
-      upsertWallet(solanaPubkey)
-        .then((wallet) => {
-          setWallet(wallet);
-          return arweaveSDK.using(arweave).storefront.find('solana:pubkey', wallet.pubkey);
-        })
-        .then((storefront: any) => {
-          setStorefront(storefront);
-          if (redirect) {
-            if (redirect === '') {
-              return;
-            }
-            return router.push(redirect);
-          }
+    setLooking(true);
 
-          if (storefront) {
-            return router.push('/storefront/edit');
-          }
+    upsertWallet(publicKey.toBase58())
+      .then((wallet: Wallet) => {
+        setWallet(wallet);
 
-          return router.push('/storefront/new');
-        })
-        .catch(() => router.push('/'))
-        .finally(() => {
-          setVerifying(false);
-        });
-    });
-
-    setVerifying(true);
-
-    solana.connect().catch(() => {
-      if (redirect) {
-        router.push(redirect);
-      }
-      setVerifying(false);
-    });
-  };
+        return wallet;
+      })
+      .catch(() => router.push('/'))
+      .finally(() => {
+        setLooking(false);
+      });
+  }, [router, publicKey])
 
   return (
     <WalletContext.Provider
       value={{
-        verifying,
-        initializing,
         wallet,
         solana,
-        connect,
-        storefront,
+        looking,
       }}
     >
       {children({
-        verifying,
-        initializing,
         wallet,
         solana,
-        connect,
-        storefront,
+        looking
       })}
     </WalletContext.Provider>
   );
