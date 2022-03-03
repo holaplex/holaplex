@@ -64,9 +64,29 @@ export type Listing = {
 export type Nft = {
   __typename?: 'Nft';
   address: Scalars['String'];
+  attributes: Array<NftAttribute>;
+  creators: Array<NftCreator>;
   description: Scalars['String'];
   image: Scalars['String'];
+  mintAddress: Scalars['String'];
   name: Scalars['String'];
+  primarySaleHappened: Scalars['Boolean'];
+  sellerFeeBasisPoints: Scalars['Int'];
+};
+
+export type NftAttribute = {
+  __typename?: 'NftAttribute';
+  metadataAddress: Scalars['String'];
+  traitType: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type NftCreator = {
+  __typename?: 'NftCreator';
+  address: Scalars['String'];
+  metadataAddress: Scalars['String'];
+  share: Scalars['Int'];
+  verified: Scalars['Boolean'];
 };
 
 export type Profile = {
@@ -150,6 +170,13 @@ export type WalletProfileQueryVariables = Exact<{
 
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
+
+export type NftPageQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }> } | null };
 
 
 export const ActivityPageDocument = gql`
@@ -263,3 +290,48 @@ export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export const NftPageDocument = gql`
+    query nftPage($address: String!) {
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      verified
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftPageQuery__
+ *
+ * To run a query within a React component, call `useNftPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftPageQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useNftPageQuery(baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+      }
+export function useNftPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+        }
+export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
+export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
+export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;

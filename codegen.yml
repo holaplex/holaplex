@@ -1,4 +1,4 @@
-schema: 'http://localhost:4000/v0'
+schema: ${NEXT_PUBLIC_INDEXER_GRAPHQL_URL}
 documents: './src/graphql/**/*.graphql'
 generates:
   ./src/graphql/indexerTypes.ts:
