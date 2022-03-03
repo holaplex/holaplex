@@ -5,9 +5,11 @@ import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import FillSpace from '@/components/elements/FillSpace';
 import StepForm from '@/components/elements/StepForm';
+import { StorefrontContext } from '@/modules/storefront';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import Loading from '@/common/components/elements/Loading';
 import {
   FieldData,
   getTextColor,
@@ -19,7 +21,6 @@ import {
   PrevText,
   PrevTitle,
   reduceFieldData,
-  StorefrontEditorProps,
   submitCallback,
   Title,
   UploadedLogo,
@@ -27,7 +28,6 @@ import {
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
-import { UploadOutlined } from '@ant-design/icons';
 import { Card, Col, Form, Input, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
 import {
@@ -42,8 +42,9 @@ import {
   update,
   view,
 } from 'ramda';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function New() {
@@ -53,7 +54,10 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet, connect } = useContext(WalletContext);
+  const { solana, wallet, looking } = useContext(WalletContext);
+  const { setVisible } = useWalletModal();
+  const { storefront, searching } = useContext(StorefrontContext);
+
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -69,13 +73,20 @@ export default function New() {
     { name: ['integrations', 'crossmintClientId'], value: uuidv4() },
   ]);
 
+
+  useEffect(() => {
+    if (storefront) {
+      router.push('/storefront/edit');
+    }
+  }, [storefront, wallet, router])
+
   if (isNil(solana) || isNil(wallet)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button type="primary" block onClick={connect}>
+            <Button loading={solana?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -151,11 +162,7 @@ export default function New() {
           rules={[{ required: false, message: 'Upload a Hero Image' }]}
         >
           <Upload>
-            {isEmpty(values.theme.banner) && (
-              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload Banner
-              </Button>
-            )}
+            {isEmpty(values.theme.banner) && <Button>Upload Banner</Button>}
           </Upload>
         </Form.Item>
         <Form.Item
@@ -164,11 +171,7 @@ export default function New() {
           rules={[{ required: true, message: 'Upload a logo.' }]}
         >
           <Upload>
-            {isEmpty(values.theme.logo) && (
-              <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-                Upload Logo
-              </Button>
-            )}
+            {isEmpty(values.theme.logo) && <Button>Upload Logo</Button>}
           </Upload>
         </Form.Item>
         <Form.Item name={['theme', 'backgroundColor']} label="Background">
@@ -242,11 +245,7 @@ export default function New() {
         rules={[{ required: true, message: 'Upload a favicon.' }]}
       >
         <Upload>
-          {isEmpty(values.meta.favicon) && (
-            <Button block type="primary" size="middle" icon={<UploadOutlined />}>
-              Upload
-            </Button>
-          )}
+          {isEmpty(values.meta.favicon) && <Button>Upload</Button>}
         </Upload>
       </Form.Item>
       <Form.Item
@@ -267,35 +266,37 @@ export default function New() {
   );
 
   return (
-    <Row justify="center" align="middle">
-      <Col xs={21} lg={18} xl={16} xxl={14}>
-        <StepForm
-          submitting={submitting}
-          form={form}
-          layout="vertical"
-          fields={fields}
-          onFieldsChange={([changed], _) => {
-            if (isNil(changed)) {
-              return;
-            }
+    <Loading loading={searching || looking}>
+      <Row justify="center" align="middle">
+        <Col xs={21} lg={18} xl={16} xxl={14}>
+          <StepForm
+            submitting={submitting}
+            form={form}
+            layout="vertical"
+            fields={fields}
+            onFieldsChange={([changed], _) => {
+              if (isNil(changed)) {
+                return;
+              }
 
-            const current = findIndex(propEq('name', changed.name), fields);
-            setFields(update(current, changed, fields));
-          }}
-          onFinish={onSubmit}
-          colon={false}
-        >
-          <Row>
-            <FillSpace direction="vertical" size="large">
-              {subdomain}
-            </FillSpace>
-          </Row>
-          <Row justify="space-between">{theme}</Row>
-          <Row justify="space-between">
-            <Col xs={24}>{meta}</Col>
-          </Row>
-        </StepForm>
-      </Col>
-    </Row>
+              const current = findIndex(propEq('name', changed.name), fields);
+              setFields(update(current, changed, fields));
+            }}
+            onFinish={onSubmit}
+            colon={false}
+          >
+            <Row>
+              <FillSpace direction="vertical" size="large">
+                {subdomain}
+              </FillSpace>
+            </Row>
+            <Row justify="space-between">{theme}</Row>
+            <Row justify="space-between">
+              <Col xs={24}>{meta}</Col>
+            </Row>
+          </StepForm>
+        </Col>
+      </Row>
+    </Loading>
   );
 }

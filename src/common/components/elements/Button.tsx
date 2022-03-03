@@ -1,80 +1,68 @@
 import styled, { css } from 'styled-components';
-import { Button } from 'antd';
-import { equals } from 'ramda';
 import { WalletDisconnectButton, WalletModalButton } from '@solana/wallet-adapter-react-ui';
 import { ButtonReset } from '@/common/styles/ButtonReset';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { TailSpin } from 'react-loader-spinner';
 
-const StyledButton = styled(({ noStyle, ...rest }) => <Button {...rest} />)<{ noStyle?: boolean }>`
-  font-weight: 500;
-  color: #000;
-  &:hover,
-  &:active,
-  &:focus {
-    color: #000;
-    background: rgba(255, 255, 255, 0.8);
-  }
-  &.ant-btn-icon-only {
-    width: 52px;
-  }
-  ${({ type }) =>
-    equals('primary', type) &&
-    css`
-      color: #f4f4f4;
-      &:hover,
-      &:active,
-      &:focus {
-        color: #fff;
-        background: linear-gradient(10.77deg, rgb(210, 64, 137) 8.62%, rgb(185, 45, 68) 84.54%);
-      }
-      &[disabled],
-      &[disabled]:hover {
-        background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
-        color: #fff;
+interface ButtonProps {
+  children?: any;
+  htmlType?: 'button' | 'submit' | 'reset' | undefined;
+  disabled?: boolean;
+  loading?: boolean;
+  className?: string;
+  secondary?: boolean;
+  block?: boolean;
+  size?: string;
+  skeleton?: boolean;
+  onClick?: () => any;
+}
 
-        &:hover,
-        &:active,
-        &:focus {
-          color: #fff;
-          background: linear-gradient(10.77deg, rgb(220, 105, 163) 8.62%, rgb(210, 71, 94) 84.54%);
-          color: #fff;
+const Button = ({
+  children,
+  htmlType = 'button',
+  disabled = false,
+  loading = false,
+  className = '',
+  secondary = false,
+  block = false,
+  size = 'medium',
+  skeleton = false,
+  onClick,
+}: ButtonProps) => {
+  const sizes = size === 'small' ? 'text-[85%] h-9 max-h-9 px-4' : 'h12 max-h-12 px-6';
+  const colors = skeleton
+    ? 'text-gray-500 bg-gray-500'
+    : secondary
+    ? 'text-white bg-black'
+    : 'text-black bg-white';
+  const display = block ? 'flex w-full' : 'inline-flex';
+  const focusAndHover =
+    skeleton || disabled || loading
+      ? 'opacity-70'
+      : `${
+          secondary ? 'focus:border-[#72a4e1aa]' : 'focus:border-[#72a4e1]'
+        } active:scale-[0.99] hover:opacity-100`;
 
-          &:hover,
-          &:active,
-          &:focus {
-            background: linear-gradient(
-              10.77deg,
-              rgb(220, 105, 163) 8.62%,
-              rgb(210, 71, 94) 84.54%
-            );
-          }
-        }
-      }
-    `}
+  return (
+    <button
+      className={`${sizes} ${colors} ${display} ${focusAndHover} items-center justify-center rounded-full border-[3px] border-transparent py-1 opacity-90 transition-all ${className} whitespace-nowrap border-opacity-10`}
+      disabled={disabled}
+      type={htmlType}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-3">
+        {loading && (
+          <span className="absolute ">
+            <TailSpin height="15" width="15" color="grey" ariaLabel="loading" />
+          </span>
+        )}
+        <span className={loading ? 'ml-7' : ''}>{children}</span>
+      </div>
+    </button>
+  );
+};
 
-  ${({ noStyle }) =>
-    noStyle &&
-    css`
-      background: none;
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: auto;
-      overflow: visible;
-      background: transparent;
-      color: inherit;
-      font: inherit;
-      line-height: normal;
-      *[ant-click-animating-without-extra-node='true']::after {
-        display: none;
-      }
-      &:hover,
-      &:focus {
-        background: transparent;
-        color: #fff;
-        border-bottom: transparent;
-      }
-    `}
-`;
+export default Button;
 
 const ButtonStyles = css`
   width: 88px;
@@ -88,10 +76,6 @@ const ButtonStyles = css`
   font-size: 12px;
   line-height: 16px;
   color: #171717;
-`;
-
-export const ButtonV2 = styled(StyledButton)`
-  ${ButtonStyles}
 `;
 
 export const AnchorButton = styled.a`
@@ -180,5 +164,3 @@ export const DisconnectWalletButton = styled(WalletDisconnectButton).attrs({
     background-color: #363636;
   }
 `;
-
-export default StyledButton;

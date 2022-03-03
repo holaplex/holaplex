@@ -17,6 +17,7 @@ import {
   Select,
   SelectProps,
 } from 'antd';
+import Button from '@/components/elements/Button';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import {
   take,
@@ -26,31 +27,29 @@ import {
   always,
   ifElse,
   filter,
-  concat,
   not,
   pipe,
   is,
-  isNil,
   prop,
   descend,
   ascend,
   sortWith,
   equals,
-  map,
-  range,
-  propEq,
 } from 'ramda';
-import Button from '@/components/elements/Button';
-import { WalletContext } from '@/modules/wallet';
 import { IndexerSDK, Listing } from '@/modules/indexer';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import {
   generateListingShell,
   ListingPreview,
   SkeletonListing,
 } from '@/common/components/elements/ListingPreview';
+import Link from 'next/link';
 import { SelectValue } from 'antd/lib/select';
-import { TrackingAttributes, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
+import { StorefrontContext } from '@/modules/storefront';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletContext } from '@/modules/wallet';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -314,13 +313,6 @@ const isAuction = pipe(prop('endsAt'), is(String));
 // @ts-ignore
 const isSecondarySale = pipe((item) => item.items[0]?.primarySaleHappened == true);
 
-// look to replacec with getListingPrice in ListingPreview
-// const currentListingPrice = (listing: Listing) =>
-//   isAuction(listing)
-//     ? listing.totalUncancelledBids
-//       ? listing.highestBid
-//       : listing.priceFloor
-//     : listing.instantSalePrice;
 const currentListingPrice = ifElse(
   isAuction,
   ifElse(pipe(prop('totalUncancelledBids'), equals(0)), prop('priceFloor'), prop('highestBid')),
@@ -367,7 +359,10 @@ const getDefaultFilter = () => {
 };
 
 export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
-  const { connect } = useContext(WalletContext);
+  const { setVisible } = useWalletModal();
+  const { storefront, searching } = useContext(StorefrontContext);
+  const { connected, connecting } = useWallet();
+  const { looking } = useContext(WalletContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
@@ -467,19 +462,34 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
     <Row className="mt-10">
       <CenteredContentCol>
         <Section>
-          <Marketing xs={22} sm={12} lg={16}>
+          <Marketing xs={22} lg={12} xl={16}>
             <HeroTitle>
               Discover, explore, and collect NFTs from incredible creators on Solana
             </HeroTitle>
             <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
-            <Space direction="horizontal" size="large">
-              <Button onClick={() => connect()}>Create Your Store</Button>
-            </Space>
+
+            {connected ? (
+              <div className="flex flex-wrap gap-4">
+                <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
+                  <a>
+                    <Button skeleton={looking || searching} className="min-w-[13rem]">
+                      {storefront ? 'Edit your store' : 'Create your store'}
+                    </Button>
+                  </a>
+                </Link>
+              </div>
+            ) : (
+              <div>
+                <Button loading={connecting} onClick={() => setVisible(true)}>
+                  Connect
+                </Button>
+              </div>
+            )}
             <div className="mt-[2.5rem]">
               <SocialLinks />
             </div>
           </Marketing>
-          <HeroCol xs={24} sm={12} lg={8}>
+          <HeroCol xs={24} lg={12} xl={8}>
             <div className="sm:px-4">
               <Text className="mb-0" strong>
                 Trending Listings

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SetStateAction, Dispatch } from 'react';
 import { Storefront } from './types';
 
 export type StorefrontContextProps = {
