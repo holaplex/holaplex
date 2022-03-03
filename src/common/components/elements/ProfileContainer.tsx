@@ -1,14 +1,13 @@
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
-import { seededRandomBetween } from '@/modules/utils/random';
+import { getBannerFromPublicKey, getPFPFromPublicKey } from '@/modules/utils/image';
 import Bugsnag from '@bugsnag/js';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
-import { ButtonV2 } from './Button';
 import { FollowerCount } from './FollowerCount';
 
 interface Props {
@@ -22,10 +21,9 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
   const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const seed = publicKey?.toBytes()?.reduce((a, b) => a + b, 0) ?? 0;
   const [{ pfp, banner }, setPfpAndBanner] = useState({
-    pfp: `/images/gradients/gradient-${seededRandomBetween(seed, 1, 8)}.png`,
-    banner: `url(/images/gradients/gradient-${seededRandomBetween(seed + 1, 1, 8)}.png)`, // TODO: Fetch from wallet (DERIVE)
+    pfp: getPFPFromPublicKey(publicKey),
+    banner: `url(${getBannerFromPublicKey(publicKey)})`,
   });
 
   useEffect(() => {
@@ -44,21 +42,20 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   }, [queryWalletProfile, twitterHandle]);
 
   useEffect(() => {
-    const profilePictureImage =
-      imageUrl ?? `/images/gradients/gradient-${seededRandomBetween(seed, 1, 8)}.png`; // TODO: Fetch from wallet [here-too] (DERIVE).
+    const profilePictureImage = imageUrl ?? getPFPFromPublicKey(publicKey);
     const bannerBackgroundImage = !!bannerUrl
       ? `url(${bannerUrl})`
-      : `url(/images/gradients/gradient-${seededRandomBetween(seed + 1, 1, 8)}.png)`; // TODO: Fetch from wallet (DERIVE).
+      : `url(${getBannerFromPublicKey(publicKey)})`;
 
     setPfpAndBanner({
       pfp: profilePictureImage,
       banner: bannerBackgroundImage,
     });
-  }, [imageUrl, bannerUrl, seed]);
+  }, [imageUrl, bannerUrl, publicKey]);
 
   const getPublicKeyFromWalletOnUrl = () => {
     try {
-      return new PublicKey(wallet as string);
+      return new PublicKey(wallet);
     } catch (_) {
       return null;
     }

@@ -8,7 +8,7 @@ import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { SolBalance } from '../SolBalance';
 import { DisconnectWalletButton } from './Button';
-import { seededRandomBetween } from '@/modules/utils/random';
+import { getPFPFromPublicKey } from '@/modules/utils/image';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   return (
@@ -25,7 +25,6 @@ type PopoverBoxContentsProps = {
 export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile }) => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { connected, publicKey } = useWallet();
-  const seed = publicKey?.toBytes()?.reduce((a, b) => a + b, 0) ?? 0;
   const { data: twitterHandle } = useTwitterHandle(publicKey);
 
   useEffect(() => {
@@ -40,7 +39,6 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
   const profilePictureUrl = connected
     ? walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '')
     : null;
-  const textOverride = connected ? twitterHandle : null;
 
   return (
     <>
@@ -49,10 +47,7 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
           <ProfilePicture
             width={PFP_SIZE}
             height={PFP_SIZE}
-            src={
-              profilePictureUrl ??
-              `/images/gradients/gradient-${seededRandomBetween(seed, 1, 8)}.png`
-            }
+            src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
             alt="Profile Picture"
           />
           <div className="ml-5">

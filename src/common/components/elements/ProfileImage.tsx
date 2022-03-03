@@ -8,13 +8,12 @@ import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { seededRandomBetween } from '@/modules/utils/random';
+import { getPFPFromPublicKey } from '@/modules/utils/image';
 
 export const ProfileImage = () => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
 
   const { connected, publicKey } = useWallet();
-  const seed = publicKey?.toBytes()?.reduce((a, b) => a + b, 0) ?? 0;
   const { data: twitterHandle } = useTwitterHandle(publicKey);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export const ProfileImage = () => {
           <Image
             width={40}
             height={40}
-            src={profilePictureUrl ?? `/images/gradients/gradient-${seededRandomBetween(seed, 1, 8)}.png`}
+            src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
             alt="Profile Image"
           />
         </ProfileImageWrapper>

@@ -38,7 +38,6 @@ export const useGetAllConnectionsFromWithTwitter = (
         },
       },
     ]);
-    console.log('a', pubKey);
     /**
      * Terribly inefficient until we can index this too...
      * What happens for people who have 2500+ followers?
@@ -65,6 +64,5 @@ export const useGetAllConnectionsFromWithTwitter = (
       })
     );
     const results = await Promise.all(promises);
-    console.log({ results });
     return results;
   });

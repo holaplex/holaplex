@@ -38,7 +38,6 @@ export const useGetAllConnectionsToWithTwitter = (
         },
       },
     ]);
-    console.log('b', pubKey);
     const limit = pLimit(10);
     const promises = response.map((i) =>
       limit(async () => {
@@ -60,6 +59,5 @@ export const useGetAllConnectionsToWithTwitter = (
       })
     );
     const results = await Promise.all(promises);
-    console.log({ results });
     return results;
   });
