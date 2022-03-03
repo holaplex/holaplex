@@ -108,9 +108,7 @@ export default function New() {
         solana.publicKey,
         NATIVE_MINT
       );
-
       const storePubkey = await Store.getPDA(solana.publicKey);
-
       const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
 
       const input = {
@@ -125,6 +123,7 @@ export default function New() {
           owner: wallet.pubkey,
           auctionHouse: auctionHousPubkey.toBase58(),
           store: storePubkey.toBase58(),
+          storeConfig: storeConfigPubkey.toBase58(),
         },
       } as Marketplace;
 
