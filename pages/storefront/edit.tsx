@@ -27,7 +27,6 @@ import {
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
 import { WalletContext } from '@/modules/wallet';
-import { UploadOutlined } from '@ant-design/icons';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Card, Col, Form, Input, Row, Space, Tabs } from 'antd';
 import { useRouter } from 'next/router';
@@ -200,7 +199,7 @@ export default function Edit() {
                             view(lensPath(['response', 'url'])),
                             prop('url')
                           )(values.theme.banner[0])) && (
-                            <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                            <Button block>
                               Upload Banner
                             </Button>
                           )}
@@ -213,7 +212,7 @@ export default function Edit() {
                     >
                       <Upload>
                         {isEmpty(values.theme.logo) && (
-                          <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                          <Button block>
                             Upload
                           </Button>
                         )}
@@ -302,7 +301,7 @@ export default function Edit() {
                 >
                   <Upload>
                     {isEmpty(values.meta.favicon) && (
-                      <Button block type="primary" size="middle" icon={<UploadOutlined />}>
+                      <Button>
                         Upload
                       </Button>
                     )}
@@ -325,13 +324,7 @@ export default function Edit() {
               </TabPane>
             </Tabs>
             <Row justify="end">
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                disabled={submitting}
-                loading={submitting}
-              >
+            <Button disabled={submitting} loading={submitting} htmlType="submit">
                 Update
               </Button>
             </Row>
