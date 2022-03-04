@@ -1,13 +1,13 @@
 /* eslint-disable react/display-name */
 import styled from 'styled-components';
 import Image from 'next/image';
-import { WalletLabel, WalletPill } from './WalletIndicator';
 import { forwardRef, useEffect, FC } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { SolBalance } from '../SolBalance';
-import { DisconnectWalletButton } from './Button';
+import { WalletLabel, WalletPill } from '@/common/components/elements/WalletIndicator';
+import { SolBalance } from '@/common/components/SolBalance';
+import { DisconnectWalletButton } from '@/common/components/elements/Button';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   return (
