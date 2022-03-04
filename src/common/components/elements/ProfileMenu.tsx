@@ -25,38 +25,32 @@ export const ProfileMenu: FC<Props> = ({ wallet }) => {
   return (
     <div className="mb-6  border-b-2  border-gray-800">
       <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <Tab.List className="-mb-px h-14">
+        <Tab.List className="-mb-px flex h-14">
           <Tab as={Fragment}>
             {({ selected }) => (
-              <button className={cx('h-full w-40', selected ? 'border-b-2 border-white' : '')}>
-                <Link href={`/profiles/${wallet}/nfts`} passHref>
-                  <a
-                    className={cx(
-                      'flex items-center justify-center',
-                      !selected ? 'text-gray-300' : ''
-                    )}
-                  >
-                    <FeatherIcon height={16} width={16} icon="image" className="mr-4" />
-                    Owned
-                  </a>
-                </Link>
+              <button
+                onClick={() => router.push(`/profiles/${wallet}/nfts`)}
+                className={cx(
+                  'flex h-full w-40 items-center justify-center',
+                  selected ? 'border-b-2 border-white' : 'text-gray-300'
+                )}
+              >
+                <FeatherIcon height={16} width={16} icon="image" className="mr-4" />
+                Owned
               </button>
             )}
           </Tab>
           <Tab as={Fragment}>
             {({ selected }) => (
-              <button className={cx('h-full w-40', selected ? 'border-b-2 border-white' : '')}>
-                <Link href={`/profiles/${wallet}`} passHref>
-                  <a
-                    className={cx(
-                      'flex items-center justify-center',
-                      !selected ? 'text-gray-300' : ''
-                    )}
-                  >
-                    <FeatherIcon height={16} width={16} icon="trending-up" className="mr-4" />
-                    Activity
-                  </a>
-                </Link>
+              <button
+                onClick={() => router.push(`/profiles/${wallet}`)}
+                className={cx(
+                  'flex h-full w-40 items-center justify-center align-middle',
+                  selected ? 'border-b-2 border-white' : 'text-gray-300'
+                )}
+              >
+                <FeatherIcon height={16} width={16} icon="trending-up" className="mr-4" />
+                Activity
               </button>
             )}
           </Tab>
