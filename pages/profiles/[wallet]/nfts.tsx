@@ -13,6 +13,7 @@ import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsLazyQuery } from '../../../src/graphql/indexerTypes';
 import Bugsnag from '@bugsnag/js';
 import Link from 'next/link';
+import { divide } from 'ramda';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -80,6 +81,11 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
     query === ''
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
+
+  // const nftsToShow = filteredNfts.filter(
+  //   (v, i, a) => a.findIndex((t) => t.address === v.address) === i
+  // );
+
   useEffect(() => {
     if (!wallet) return;
 
@@ -172,7 +178,11 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
           </Combobox>
           <GridChange />
         </div>
-        <NFTGrid nfts={nftsToShow} gridView={gridView} />
+        {nftsToShow.length > 0 ? (
+          <NFTGrid nfts={nftsToShow} gridView={gridView} />
+        ) : (
+          <div className="flex justify-center pt-8">No matches</div>
+        )}
       </ProfileContainer>
     </>
   );
