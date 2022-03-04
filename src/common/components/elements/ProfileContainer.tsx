@@ -80,7 +80,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
           </WalletPillContainer>
         </Profile>
         <ContentWrapper>
-          <ProfileMenu wallet={wallet} />
+          {/* <ProfileMenu wallet={wallet} /> */}
           {children}
         </ContentWrapper>
       </ContentCol>
