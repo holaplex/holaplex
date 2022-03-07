@@ -1,3 +1,4 @@
+import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
@@ -78,7 +79,10 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
             />
           </WalletPillContainer>
         </Profile>
-        <ContentWrapper>{children}</ContentWrapper>
+        <ContentWrapper>
+          {/* <ProfileMenu wallet={wallet} /> */}
+          {children}
+        </ContentWrapper>
       </ContentCol>
     </>
   );

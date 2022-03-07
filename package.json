@@ -29,6 +29,7 @@
     "@bugsnag/plugin-react": "^7.14.0",
     "@fontsource/material-icons": "^4.5.2",
     "@google/model-viewer": "^1.9.2",
+    "@headlessui/react": "^1.5.0",
     "@holaplex/js": "^4.3.2",
     "@holaplex/mpl-auction-house": "^0.0.3",
     "@holaplex/ui": "^0.0.27",

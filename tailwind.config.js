@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       // look here to add more colors later https://www.figma.com/file/8WjVJW9fa2rwGctm7ZVaCT/Design-System?node-id=1023%3A36350
       colors: {
+        transparent: 'transparent',
         gray: {
           25: '#FEFEFE',
           50: '#F4F4F4',
