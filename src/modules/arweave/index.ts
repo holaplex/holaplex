@@ -6,6 +6,7 @@ export const initArweave = () => {
     port: process.env.NEXT_PUBLIC_ARWEAVE_PORT,
     protocol: process.env.NEXT_PUBLIC_ARWEAVE_PROTOCOL,
     logging: true,
+    timeout: 30 * 1000
   });
 
   return arweave;

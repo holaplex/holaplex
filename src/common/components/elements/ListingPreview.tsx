@@ -10,7 +10,7 @@ import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FilterOptions, SortOptions } from 'pages';
 import Price from '@/common/components/elements/Price';
-import { maybeCDN, maybeImageCDN } from '@/common/utils';
+import { maybeCDN, imgOpt } from '@/common/utils';
 import AuctionCountdown from './Countdown';
 
 const Square = styled(Row)`
@@ -67,13 +67,11 @@ export function SkeletonListing() {
   return (
     <div className="mb-12 pt-1 ">
       <Square>
-        <StyledSkeletonImage className="skeleton-animation h-full w-full rounded-t-lg" />
+        <StyledSkeletonImage className="skeleton-animation !h-full !w-full rounded-t-lg" />
       </Square>
 
       <div className="border-x border-gray-800 px-4 py-6">
-        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]">
-          {/* <Skeleton.Button active block size="large" /> */}
-        </div>
+        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]"></div>
       </div>
       <div
         className={classNames(
@@ -93,7 +91,7 @@ const CustomImageMask = styled.div`
   right: 0;
   bottom: 0;
   width: 72px;
-  height: 72px; 
+  height: 72px;
   margin: auto;
   display: flex;
   align-items: center;
@@ -101,10 +99,9 @@ const CustomImageMask = styled.div`
   cursor: pointer;
 
   > svg {
-    position absolute;
+    position: absolute;
     right: 16px;
     bottom: 16px;
-
   }
 `;
 
@@ -168,12 +165,12 @@ export function ListingPreview({
         setNFT(nftJson);
         setTimeout(() => setLoading(false), 500);
 
-        if (window.location.host.includes('localhost')) {
-          console.log(nftMetadata.name, {
-            ...listing,
-            nftJson,
-          });
-        }
+        // if (window.location.host.includes('localhost')) {
+        //   console.log(nftMetadata.name, {
+        //     ...listing,
+        //     nftJson,
+        //   });
+        // }
       }
     }
     if (!nftMetadata?.uri) {
@@ -210,7 +207,7 @@ export function ListingPreview({
         <Square>
           <NFTPreview
             $show={inView}
-            src={maybeImageCDN(nft?.image || '')}
+            src={imgOpt(nft?.image || '', 600)}
             preview={{
               visible: showArtPreview,
               mask: (
@@ -276,10 +273,10 @@ export function ListingPreview({
         </a>
         <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
           <div className="flex items-center">
-            {listing.logoUrl && (
+            {imgOpt(listing.logoUrl || '', 100) && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={listing.logoUrl}
+                src={imgOpt(listing.logoUrl || '', 100)}
                 className="mr-2 h-4 w-4 rounded-sm"
                 alt={'logo for ' + listing.storeTitle}
               />

@@ -10,7 +10,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { mq } from '@/common/styles/MediaQuery';
-import { maybeImageCDN } from '@/common/utils';
+import { imgOpt } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
 import { Unpacked } from '@/types/Unpacked';
 import Bugsnag from '@bugsnag/js';
@@ -171,7 +171,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
               <ActivityBox
                 key={i}
                 relatedImageUrl={
-                  maybeImageCDN(bid.listing?.nfts?.[0]?.image) ??
+                  imgOpt(bid.listing?.nfts?.[0]?.image, 600) ??
                   `/images/gradients/gradient-${randomBetween(1, 8)}.png`
                 }
                 href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
@@ -405,7 +405,7 @@ const ActivityBox: FC<ActivityBoxProps> = ({
                   $isPFPImage={isPFPImage}
                   width={52}
                   height={52}
-                  src={relatedImageUrl}
+                  src={imgOpt(relatedImageUrl || '', 100) || relatedImageUrl}
                 />
               </CenteredCol>
               <ContentContainer>{content}</ContentContainer>

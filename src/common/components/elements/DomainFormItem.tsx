@@ -3,9 +3,7 @@ import { Form } from 'antd';
 
 const DomainFormItem = styled(Form.Item)`
   text-align: right;
-  font-size: 24px;
   .ant-input {
-    font-size: 24px;
     border-radius: 0px;
     border: none;
   }
@@ -13,8 +11,14 @@ const DomainFormItem = styled(Form.Item)`
     margin: 0;
     color: rgb(102, 102, 102);
   }
-  .ant-form-item-explain {
-    text-align: left;
+  .ant-input-affix-wrapper {
+    border: 1px solid #333;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  #subdomain {
+    box-shadow: none;
   }
 
   &.ant-form-item-has-error :not(.ant-input-disabled).ant-input:focus,

@@ -122,6 +122,11 @@ const addDefaultBuilders = (schemas: SchemaManager): SchemaManager => {
           banner: arweaveFile,
         },
       },
+      integrations: {
+        properties: {
+          crossmintClientId: { type: 'string' },
+        },
+      },
     },
   });
 

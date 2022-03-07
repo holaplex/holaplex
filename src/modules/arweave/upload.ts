@@ -1,8 +1,7 @@
+import { WalletContextState } from '@solana/wallet-adapter-react';
 import { sha256 } from 'crypto-hash';
 import { notarize, signPhantom, stringifyNotarized } from '../notary/client';
 import { Formatter, Notarized } from '../notary/common';
-import { connectSolana } from '../solana';
-import { Solana } from '../solana/types';
 import { ArweaveFile } from './types';
 
 export const PAYLOAD_FORM_NAME = 'payload';
@@ -27,7 +26,7 @@ export const uploadFile = async ({
   onComplete,
   onError,
 }: {
-  solana: Solana | undefined;
+  solana: WalletContextState | undefined;
   file: File;
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed',
@@ -39,12 +38,7 @@ export const uploadFile = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (!solana) throw new Error('Could not connect to Solana');
-
-    if (!solana.isConnected) {
-      onProgress('connecting-wallet');
-      connectSolana(solana);
-    }
+    if (!solana?.publicKey || !solana) throw new Error('solana wallet not connected');
 
     onProgress('signing');
 

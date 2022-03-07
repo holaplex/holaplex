@@ -1,5 +1,5 @@
 import { getHandleAndRegistryKey } from '@solana/spl-name-service';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import useSWR from 'swr';
 

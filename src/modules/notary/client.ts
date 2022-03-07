@@ -1,6 +1,7 @@
+import { WalletSignMessageError } from '@solana/wallet-adapter-base';
+import { WalletContextState } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
 import nacl from 'tweetnacl';
-import { Solana } from '../solana/types';
 import { JsonString, jsonStringify } from '../utils/json';
 import {
   createMessage,
@@ -19,9 +20,14 @@ import {
  * @returns a function for signing data with Phantom
  */
 export const signPhantom =
-  (solana: Solana): Signer =>
-  async (utf8) =>
-    (await solana.signMessage(utf8, 'utf-8')).signature as Signature;
+  (solana: WalletContextState): Signer =>
+  async (utf8) => {
+    if (!solana.signMessage) {
+      throw new WalletSignMessageError("sign message not supported");
+    }
+    
+    return await solana.signMessage(utf8) as Signature
+  };
 
 /**
  * Create a signer using a known Ed25519 private key.
