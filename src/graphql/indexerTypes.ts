@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** DateTime */
+  DateTimeUtc: any;
   /** Lamports */
   Lamports: any;
 };
@@ -39,8 +41,18 @@ export type AuctionHouse = {
   __typename?: 'AuctionHouse';
   address: Scalars['String'];
   auctionHouseFeeAccount: Scalars['String'];
+  auctionHouseTreasury: Scalars['String'];
   authority: Scalars['String'];
+  bump: Scalars['Int'];
+  canChangeSalePrice: Scalars['Boolean'];
+  creator: Scalars['String'];
+  feePayerBump: Scalars['Int'];
+  feeWithdrawalDestination: Scalars['String'];
+  requiresSignOff: Scalars['Boolean'];
   sellerFeeBasisPoints: Scalars['Int'];
+  treasuryBump: Scalars['Int'];
+  treasuryMint: Scalars['String'];
+  treasuryWithdrawalDestination: Scalars['String'];
 };
 
 export type Bid = {
@@ -51,6 +63,21 @@ export type Bid = {
   lastBidTime: Scalars['String'];
   listing?: Maybe<Listing>;
   listingAddress: Scalars['String'];
+};
+
+/** auction house bid receipt */
+export type BidReceipt = {
+  __typename?: 'BidReceipt';
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  buyer: Scalars['String'];
+  canceledAt?: Maybe<Scalars['DateTimeUtc']>;
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  tokenAccount?: Maybe<Scalars['String']>;
+  tradeState: Scalars['String'];
+  tradeStateBump: Scalars['Int'];
 };
 
 export type Creator = {
@@ -69,14 +96,35 @@ export type Listing = {
   storefront?: Maybe<Storefront>;
 };
 
+export type ListingReceipt = {
+  __typename?: 'ListingReceipt';
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  bookkeeper: Scalars['String'];
+  bump: Scalars['Int'];
+  canceledAt?: Maybe<Scalars['DateTimeUtc']>;
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  purchaseReceipt?: Maybe<Scalars['String']>;
+  seller: Scalars['String'];
+  tokenSize: Scalars['Int'];
+  tradeState: Scalars['String'];
+  tradeStateBump: Scalars['Int'];
+};
+
 export type Marketplace = {
   __typename?: 'Marketplace';
-  auctionHouse: Array<AuctionHouse>;
+  auctionHouse?: Maybe<AuctionHouse>;
   auctionHouseAddress: Scalars['String'];
   bannerUrl: Scalars['String'];
+  configAddress: Scalars['String'];
+  creators: Array<StoreCreator>;
   description: Scalars['String'];
   logoUrl: Scalars['String'];
   name: Scalars['String'];
+  ownerAddress: Scalars['String'];
+  storeAddress?: Maybe<Scalars['String']>;
   subdomain: Scalars['String'];
 };
 
@@ -87,8 +135,10 @@ export type Nft = {
   creators: Array<NftCreator>;
   description: Scalars['String'];
   image: Scalars['String'];
+  listings: Array<ListingReceipt>;
   mintAddress: Scalars['String'];
   name: Scalars['String'];
+  offers: Array<BidReceipt>;
   owner?: Maybe<NftOwner>;
   primarySaleHappened: Scalars['Boolean'];
   sellerFeeBasisPoints: Scalars['Int'];
@@ -172,6 +222,12 @@ export type QueryRootWalletArgs = {
   address: Scalars['String'];
 };
 
+export type StoreCreator = {
+  __typename?: 'StoreCreator';
+  creatorAddress: Scalars['String'];
+  storeConfigAddress: Scalars['String'];
+};
+
 /** A Metaplex storefront */
 export type Storefront = {
   __typename?: 'Storefront';
@@ -211,6 +267,13 @@ export type WalletProfileQueryVariables = Exact<{
 
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
+
+export type NftPageQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }> } | null };
 
 
 export const ActivityPageDocument = gql`
@@ -372,3 +435,48 @@ export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export const NftPageDocument = gql`
+    query nftPage($address: String!) {
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      verified
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftPageQuery__
+ *
+ * To run a query within a React component, call `useNftPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftPageQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useNftPageQuery(baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+      }
+export function useNftPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+        }
+export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
+export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
+export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;

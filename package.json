@@ -18,7 +18,7 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
     "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts",
     "prepare": "husky install",
-    "generate": "graphql-codegen --config codegen.yml",
+    "generate": "graphql-codegen -r dotenv/config --config codegen.yml",
     "storefronts:update": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/update-store-json.ts"
   },
   "dependencies": {
