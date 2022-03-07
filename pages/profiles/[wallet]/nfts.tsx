@@ -166,7 +166,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
               onChange={(event) => setQuery(event.target.value)}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
-              className="mr-4 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 md:w-9/12"
+              className="md:mr-4 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 md:w-9/12"
               placeholder="Search"
             />
           </Combobox>
