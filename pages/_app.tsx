@@ -134,7 +134,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             <AnalyticsProvider>
                               <AppLayout>
                                 <div className='bg-[#005BBB] sm:flex items-center justify-center text-[#FFD500] p-6 w-full'>
-                                  🇺🇦 Help the people of Ukraine through charity auctions.
+                                  Help the people of Ukraine through charity auctions.
                                   <a
                                     href="https://twitter.com/the_urs_/status/1500248930436665352?s=21"
                                     className='sm:flex inline sm:h-10 sm:px-6 underline sm:no-underline ml-4 sm:rounded-full sm:hover:scale-[1.02] transition-transform sm:hover:text-[#005BBB] items-center justify-center sm:text-[#005BBB] sm:bg-[#FFD500]'
