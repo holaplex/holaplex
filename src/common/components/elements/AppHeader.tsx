@@ -35,7 +35,7 @@ export function AppHeader({ setShowMintModal, wallet }: Props) {
     disconnecting,
   } = useWallet();
   const { connect } = useContext(WalletContext);
-  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
+  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed || userWallet?.readyState === WalletReadyState.Loadable;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
   const { visible, setVisible } = useWalletModal();

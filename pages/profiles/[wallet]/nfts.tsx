@@ -32,10 +32,10 @@ const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
     <div className="overflow-hidden rounded-lg border-2 border-gray-800">
       <img src={nft.image} alt={nft.name} className="h-80 w-full object-cover" />
       <div className="h-24 bg-gray-900 py-6 px-4">
-        <p className="m-0 text-lg">{nft.name}</p>
+        <p className="m-0 text-lg w-max-fit truncate">{nft.name}</p>
         {shownCreatorAddress && (
           <Link href={`/profiles/${shownCreatorAddress}`} passHref>
-            <a className="text-base text-gray-300">{showFirstAndLastFour(shownCreatorAddress)}</a>
+            <a className="text-base text-gray-300 w-max-fit truncate">{showFirstAndLastFour(shownCreatorAddress)}</a>
           </Link>
         )}
       </div>
