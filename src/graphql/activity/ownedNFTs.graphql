@@ -1,0 +1,18 @@
+query ownedNFTs($address: String!) {
+  nfts(owners: [$address]) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+    }
+    owner {
+      address
+    }
+  }
+}

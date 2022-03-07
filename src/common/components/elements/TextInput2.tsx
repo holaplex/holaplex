@@ -1,7 +1,7 @@
 import { InputHTMLAttributes } from 'react';
 import cx from 'classnames';
 
-export default function TextInput2({
+function TextInput2({
   label,
   hideLabel,
   leadingIcon,
@@ -34,3 +34,5 @@ export default function TextInput2({
     </div>
   );
 }
+
+export default TextInput2;

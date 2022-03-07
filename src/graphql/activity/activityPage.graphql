@@ -11,7 +11,7 @@ query activityPage($address: String!) {
       cancelled
       listing {
         address
-        storeOwner
+        # storeAddress
         ended
         storefront {
           __typename

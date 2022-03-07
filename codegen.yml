@@ -1,4 +1,4 @@
-schema: 'http://localhost:4000/v0'
+schema: 'https://indexer-graphql-staging.herokuapp.com/v0'
 documents: './src/graphql/**/*.graphql'
 generates:
   ./src/graphql/indexerTypes.ts:
