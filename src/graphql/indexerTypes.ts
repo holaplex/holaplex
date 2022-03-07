@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** DateTime */
+  DateTimeUtc: any;
   /** Lamports */
   Lamports: any;
 };
@@ -39,8 +41,18 @@ export type AuctionHouse = {
   __typename?: 'AuctionHouse';
   address: Scalars['String'];
   auctionHouseFeeAccount: Scalars['String'];
+  auctionHouseTreasury: Scalars['String'];
   authority: Scalars['String'];
+  bump: Scalars['Int'];
+  canChangeSalePrice: Scalars['Boolean'];
+  creator: Scalars['String'];
+  feePayerBump: Scalars['Int'];
+  feeWithdrawalDestination: Scalars['String'];
+  requiresSignOff: Scalars['Boolean'];
   sellerFeeBasisPoints: Scalars['Int'];
+  treasuryBump: Scalars['Int'];
+  treasuryMint: Scalars['String'];
+  treasuryWithdrawalDestination: Scalars['String'];
 };
 
 export type Bid = {
@@ -51,6 +63,21 @@ export type Bid = {
   lastBidTime: Scalars['String'];
   listing?: Maybe<Listing>;
   listingAddress: Scalars['String'];
+};
+
+/** auction house bid receipt */
+export type BidReceipt = {
+  __typename?: 'BidReceipt';
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  buyer: Scalars['String'];
+  canceledAt?: Maybe<Scalars['DateTimeUtc']>;
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  tokenAccount?: Maybe<Scalars['String']>;
+  tradeState: Scalars['String'];
+  tradeStateBump: Scalars['Int'];
 };
 
 export type Creator = {
@@ -69,14 +96,35 @@ export type Listing = {
   storefront?: Maybe<Storefront>;
 };
 
+export type ListingReceipt = {
+  __typename?: 'ListingReceipt';
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  bookkeeper: Scalars['String'];
+  bump: Scalars['Int'];
+  canceledAt?: Maybe<Scalars['DateTimeUtc']>;
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  purchaseReceipt?: Maybe<Scalars['String']>;
+  seller: Scalars['String'];
+  tokenSize: Scalars['Int'];
+  tradeState: Scalars['String'];
+  tradeStateBump: Scalars['Int'];
+};
+
 export type Marketplace = {
   __typename?: 'Marketplace';
-  auctionHouse: Array<AuctionHouse>;
+  auctionHouse?: Maybe<AuctionHouse>;
   auctionHouseAddress: Scalars['String'];
   bannerUrl: Scalars['String'];
+  configAddress: Scalars['String'];
+  creators: Array<StoreCreator>;
   description: Scalars['String'];
   logoUrl: Scalars['String'];
   name: Scalars['String'];
+  ownerAddress: Scalars['String'];
+  storeAddress?: Maybe<Scalars['String']>;
   subdomain: Scalars['String'];
 };
 
@@ -87,8 +135,10 @@ export type Nft = {
   creators: Array<NftCreator>;
   description: Scalars['String'];
   image: Scalars['String'];
+  listings: Array<ListingReceipt>;
   mintAddress: Scalars['String'];
   name: Scalars['String'];
+  offers: Array<BidReceipt>;
   owner?: Maybe<NftOwner>;
   primarySaleHappened: Scalars['Boolean'];
   sellerFeeBasisPoints: Scalars['Int'];
@@ -172,6 +222,12 @@ export type QueryRootWalletArgs = {
   address: Scalars['String'];
 };
 
+export type StoreCreator = {
+  __typename?: 'StoreCreator';
+  creatorAddress: Scalars['String'];
+  storeConfigAddress: Scalars['String'];
+};
+
 /** A Metaplex storefront */
 export type Storefront = {
   __typename?: 'Storefront';
@@ -196,7 +252,7 @@ export type ActivityPageQueryVariables = Exact<{
 }>;
 
 
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, storeAddress: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
+export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
 
 export type OwnedNfTsQueryVariables = Exact<{
   address: Scalars['String'];
@@ -227,7 +283,6 @@ export const ActivityPageDocument = gql`
       cancelled
       listing {
         address
-        storeAddress
         ended
         storefront {
           __typename
