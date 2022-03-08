@@ -228,7 +228,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
-                          {bid.cancelled && isYou && lessThan10DaysHavePassed ? (
+                          {/* Hiding this message until we are sure we can detect when a bid is uncancelled */}
+                          {false && bid.cancelled && isYou && lessThan10DaysHavePassed ? (
                             <div className="flex items-center text-xs font-medium text-white opacity-80">
                               <svg
                                 width="16"
