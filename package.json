@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "i": "npm i --legaccy-peer-deps --force",
+    "install": "npm i --legaccy-peer-deps --force",
     "dev": "nodemon",
     "dev2": "next dev --port 8010",
     "build": "next build && tsc --project tsconfig.server.json",
