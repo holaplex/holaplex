@@ -1,7 +1,8 @@
 import { Program } from '@holaplex/graph-program';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
-import useSWR from 'swr/immutable';
+import useSWRImmutable from 'swr/immutable';
+import useSWR from 'swr';
 import { getTwitterHandle } from './useTwitterHandle';
 
 export const ALL_CONNECTIONS_TO = `allConnectionsTo`;

@@ -22,6 +22,7 @@
     "storefronts:update": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/update-store-json.ts"
   },
   "dependencies": {
+    "use-mutation": "^2.2.1",
     "@apollo/client": "^3.5.8",
     "@aws-sdk/client-secrets-manager": "^3.30.0",
     "@aws-sdk/types": "^3.29.0",

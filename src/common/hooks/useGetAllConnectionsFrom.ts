@@ -21,9 +21,6 @@ export const useGetAllConnectionsFrom = (
     ])
   );
 
-/**
- * TODO: Use indexer instead.
- */
 export const useGetAllConnectionsFromWithTwitter = (
   pubKey: string,
   walletAndConnection: { connection: Connection; wallet: AnchorWallet }
