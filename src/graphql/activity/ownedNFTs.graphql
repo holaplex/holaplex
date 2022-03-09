@@ -1,4 +1,4 @@
-query ownedNFTs($address: String!) {
+query ownedNFTs($address: PublicKey!) {
   nfts(owners: [$address]) {
     address
     name

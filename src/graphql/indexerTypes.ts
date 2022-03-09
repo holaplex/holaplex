@@ -17,6 +17,8 @@ export type Scalars = {
   DateTimeUtc: any;
   /** Lamports */
   Lamports: any;
+  /** PublicKey */
+  PublicKey: any;
 };
 
 /** Filter on NFT attributes */
@@ -84,6 +86,12 @@ export type Creator = {
   __typename?: 'Creator';
   address: Scalars['String'];
   attributeGroups: Array<AttributeGroup>;
+};
+
+export type Denylist = {
+  __typename?: 'Denylist';
+  listings: Array<Scalars['PublicKey']>;
+  storefronts: Array<Scalars['PublicKey']>;
 };
 
 export type Listing = {
@@ -175,6 +183,8 @@ export type Profile = {
 export type QueryRoot = {
   __typename?: 'QueryRoot';
   creator: Creator;
+  denylist: Denylist;
+  listings: Array<Listing>;
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
   nft?: Maybe<Nft>;
@@ -182,6 +192,7 @@ export type QueryRoot = {
   profile?: Maybe<Profile>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
+  storefronts: Array<Storefront>;
   wallet?: Maybe<Wallet>;
 };
 
@@ -203,8 +214,9 @@ export type QueryRootNftArgs = {
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
-  creators?: InputMaybe<Array<Scalars['String']>>;
-  owners?: InputMaybe<Array<Scalars['String']>>;
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+  listed?: InputMaybe<Array<Scalars['PublicKey']>>;
+  owners?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 
@@ -255,7 +267,7 @@ export type ActivityPageQueryVariables = Exact<{
 export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
 
 export type OwnedNfTsQueryVariables = Exact<{
-  address: Scalars['String'];
+  address: Scalars['PublicKey'];
 }>;
 
 
@@ -342,7 +354,7 @@ export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
 export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
 export const OwnedNfTsDocument = gql`
-    query ownedNFTs($address: String!) {
+    query ownedNFTs($address: PublicKey!) {
   nfts(owners: [$address]) {
     address
     name
