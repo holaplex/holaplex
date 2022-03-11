@@ -215,7 +215,9 @@ export type QueryRootNftArgs = {
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+  limit: Scalars['Int'];
   listed?: InputMaybe<Array<Scalars['PublicKey']>>;
+  offset: Scalars['Int'];
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
@@ -268,6 +270,8 @@ export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typenam
 
 export type OwnedNfTsQueryVariables = Exact<{
   address: Scalars['PublicKey'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 }>;
 
 
@@ -354,8 +358,8 @@ export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
 export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
 export const OwnedNfTsDocument = gql`
-    query ownedNFTs($address: PublicKey!) {
-  nfts(owners: [$address]) {
+    query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!) {
+  nfts(owners: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -387,6 +391,8 @@ export const OwnedNfTsDocument = gql`
  * const { data, loading, error } = useOwnedNfTsQuery({
  *   variables: {
  *      address: // value for 'address'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
