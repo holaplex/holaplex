@@ -1,9 +1,9 @@
 // CUSTOMIZE THIS!
 
 const customData = {
-  appName: 'Holaplex × Dubai Hacker House',
-  heading: 'Dubai Hacker House',
-  subHeading: 'February 16–20, 2022',
+  appName: 'Holaplex × New York Hacker House',
+  heading: 'New York Hacker House',
+  subHeading: 'March 14–28, 2022',
   copy: [
     "What began as a getaway for developers to hunker down and buidl at Solana's biggest conference has become a worldwide movement. HackerHouse can best be described as a pop-up developer experience taking over major cities around the world. These week-long experiences serve as unique opportunities to share, learn, and create new experiences on Solana.",
     'Since Breakpoint 2021 HackerHouse has grown to provide an expressive, educational experience open to all. Today investors, community leaders, developers, creators, and hodlers from all walks of life gather multiple times a year to learn from the best and share their stories. There is no better way to get plugged into Solana at its rawest point.',
