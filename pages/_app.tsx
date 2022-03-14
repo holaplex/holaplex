@@ -88,7 +88,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
-  const network = WalletAdapterNetwork.Devnet;
+  const network = (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
+    ? WalletAdapterNetwork.Devnet
+    : WalletAdapterNetwork.Mainnet;
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
   const wallets = useMemo(
