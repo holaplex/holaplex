@@ -32,7 +32,7 @@
     "@headlessui/react": "^1.5.0",
     "@holaplex/js": "^4.3.2",
     "@holaplex/mpl-auction-house": "^0.0.3",
-    "@holaplex/ui": "^0.0.30",
+    "@holaplex/ui": "^0.0.31",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^3.9.2",
     "@project-serum/anchor": "^0.20.1",

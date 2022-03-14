@@ -1701,10 +1701,10 @@
   dependencies:
     async-retry "^1.3.3"
 
-"@holaplex/ui@^0.0.30":
-  version "0.0.30"
-  resolved "https://registry.yarnpkg.com/@holaplex/ui/-/ui-0.0.30.tgz#7c177cfb2c18852d688c557406b9a698d9f8791d"
-  integrity sha512-nlwQui120bFpNW8gTViGv0LL9+EEY0+vqLY4Z5aG59Sk7Hi83psAHP5MzQ2zJ/G8PTDsCnPxy02wmQZNTmD4VQ==
+"@holaplex/ui@^0.0.31":
+  version "0.0.31"
+  resolved "https://registry.yarnpkg.com/@holaplex/ui/-/ui-0.0.31.tgz#c5916b36f2d4b838e8d296f5159106b13c0120ba"
+  integrity sha512-HnmHC4YUiX9ClVdRr7TkmPwelPHeDLkNGZk6eoya8xhsEaCm+VNplpjAuylauSdgy9PylRyjHo9RmNy/eEeWMg==
   dependencies:
     "@holaplex/js" "^4.3.3"
     "@metaplex/js" "^4.11.3"
