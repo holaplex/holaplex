@@ -16,7 +16,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
-  console.log('❤️‍🔥', { publicKey: publicKey?.toString() });
   return (
     <>
       <Head>
