@@ -8,6 +8,7 @@ import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { getPFPFromPublicKey } from '@/modules/utils/image';
 
 export const ProfileImage = () => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
@@ -43,7 +44,7 @@ export const ProfileImage = () => {
           <Image
             width={40}
             height={40}
-            src={profilePictureUrl ?? '/images/gradients/gradient-3.png'}
+            src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
             alt="Profile Image"
           />
         </ProfileImageWrapper>

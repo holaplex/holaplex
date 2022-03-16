@@ -1,5 +1,5 @@
-query ownedNFTs($address: String!) {
-  nfts(owners: [$address]) {
+query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!) {
+  nfts(owners: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints

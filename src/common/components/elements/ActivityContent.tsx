@@ -92,8 +92,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
 
   const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
-    console.log('get displayname', { twitterHandle, pubKey, connectedPubkey });
     if (isYou) return 'You';
+
     if (twitterHandle) return twitterHandle;
     if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
     return 'Loading';
@@ -324,26 +324,26 @@ interface ListingWonActivity {
   store: string;
 }
 
-function ActivityCard(activity: Activity) {
-  let content;
-  switch (activity.type) {
-    case 'BID_MADE':
-      content = '';
-      break;
-    case 'LISTING_WON':
-      content = (
-        <>
-          <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-          {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
-          &nbsp;by <b>{bid.listing?.storefront?.title}</b>
-        </>
-      );
-      break;
-    default:
-      content = <div></div>;
-  }
-  return <div className="border border-gray-400"></div>;
-}
+// function ActivityCard(activity: Activity) {
+//   let content;
+//   switch (activity.type) {
+//     case 'BID_MADE':
+//       content = '';
+//       break;
+//     case 'LISTING_WON':
+//       content = (
+//         <>
+//           <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+//           {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
+//           &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+//         </>
+//       );
+//       break;
+//     default:
+//       content = <div></div>;
+//   }
+//   return <div className="border border-gray-400"></div>;
+// }
 
 const NoActivityBox: FC = () => {
   return (

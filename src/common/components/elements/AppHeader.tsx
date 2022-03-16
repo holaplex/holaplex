@@ -21,8 +21,18 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
 export function AppHeader() {
   const router = useRouter();
-  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
-  const hasWalletTypeSelected = userWallet?.readyState === WalletReadyState.Installed;
+
+  const {
+    connected,
+    wallet: userWallet,
+    connect: connectUserWallet,
+    publicKey,
+    connecting,
+    disconnecting,
+  } = useWallet();
+  const hasWalletTypeSelected =
+    userWallet?.readyState === WalletReadyState.Installed ||
+    userWallet?.readyState === WalletReadyState.Loadable;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
   const { setVisible } = useWalletModal();

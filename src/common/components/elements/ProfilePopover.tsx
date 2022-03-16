@@ -5,9 +5,12 @@ import { forwardRef, useEffect, FC } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useWallet } from '@solana/wallet-adapter-react';
+
 import { WalletLabel, WalletPill } from '@/common/components/elements/WalletIndicator';
 import { SolBalance } from '@/common/components/SolBalance';
 import { DisconnectWalletButton } from '@/common/components/elements/Button';
+
+import { getPFPFromPublicKey } from '@/modules/utils/image';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   return (
@@ -38,7 +41,6 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
   const profilePictureUrl = connected
     ? walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '')
     : null;
-  const textOverride = connected ? twitterHandle : null;
 
   return (
     <>
@@ -47,7 +49,7 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
           <ProfilePicture
             width={PFP_SIZE}
             height={PFP_SIZE}
-            src={profilePictureUrl ?? '/images/gradients/gradient-3.png'}
+            src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
             alt="Profile Picture"
           />
           <div className="ml-5">
