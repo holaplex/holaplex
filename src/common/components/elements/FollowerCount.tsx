@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { ButtonV3 } from './Button';
 import { PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
@@ -8,7 +8,7 @@ import { useMakeConnection } from '@/common/hooks/useMakeConnection';
 import { useRevokeConnection } from '@/common/hooks/useRevokeConnection';
 import styled, { css } from 'styled-components';
 import { toast } from 'react-toastify';
-import { showFirstAndLastFour, b } from '@/modules/utils/string';
+import { showFirstAndLastFour } from '@/modules/utils/string';
 import { SuccessToast } from './SuccessToast';
 import { FailureToast } from './FailureToast';
 import cx from 'classnames';
@@ -18,6 +18,7 @@ import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import Link from 'next/link';
 import { FollowModal } from './FollowModal';
+import { useQueryClient } from 'react-query';
 
 type FollowerCountProps = {
   pubKey: string;
@@ -33,6 +34,8 @@ type FollowerCountContentProps = FollowerCountProps & {
   wallet: AnchorWallet;
 };
 
+type FollowsModalState = 'hidden' | 'followers' | 'following';
+
 export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wallet }) => {
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(
@@ -42,13 +45,12 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
     }),
     [wallet, connection]
   );
-  const [showFollowsModal, setShowFollowsModal] = useState<'hidden' | 'followers' | 'following'>(
-    'hidden'
-  );
+  const [showFollowsModal, setShowFollowsModal] = useState<FollowsModalState>('hidden');
+  const queryClient = useQueryClient();
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
-  const [connectTo] = useMakeConnection(walletConnectionPair, {
-    onSuccess: async ({ data: txId, input: toWallet }) => {
+  const connectTo = useMakeConnection(walletConnectionPair, {
+    onSuccess: async (txId, toWallet) => {
       toast(
         <SuccessToast>
           Confirming transaction:&nbsp;
@@ -60,11 +62,11 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
           >
             {showFirstAndLastFour(txId)}
           </a>
-        </SuccessToast>
+        </SuccessToast>,
+        { autoClose: 13_000 }
       );
-      await connection.confirmTransaction(txId, 'processed');
-      await allConnectionsTo.mutate();
-      await allConnectionsFrom.mutate();
+      await connection.confirmTransaction(txId, 'finalized');
+      await queryClient.invalidateQueries();
       toast(
         <SuccessToast>
           Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
@@ -79,13 +81,13 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
         </SuccessToast>
       );
     },
-    onFailure: ({ error }) => {
+    onError: (error) => {
       console.error(error);
       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
     },
   });
-  const [disconnectTo] = useRevokeConnection(walletConnectionPair, {
-    onSuccess: async ({ data: txId, input: toWallet }) => {
+  const disconnectTo = useRevokeConnection(walletConnectionPair, {
+    onSuccess: async (txId, toWallet) => {
       toast(
         <SuccessToast>
           Confirming transaction:&nbsp;
@@ -97,11 +99,11 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
           >
             {showFirstAndLastFour(txId)}
           </a>
-        </SuccessToast>
+        </SuccessToast>,
+        { autoClose: 13_000 }
       );
-      await connection.confirmTransaction(txId, 'processed');
-      await allConnectionsTo.mutate();
-      await allConnectionsFrom.mutate();
+      await connection.confirmTransaction(txId, 'finalized');
+      await queryClient.invalidateQueries();
       toast(
         <SuccessToast>
           Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
@@ -116,7 +118,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
         </SuccessToast>
       );
     },
-    onFailure: ({ error }) => {
+    onError: (error) => {
       console.error(error);
       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
     },
@@ -131,14 +133,13 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
     return <div>Error</div>;
   }
 
-  const handleUnFollowClick = async (pubKeyOverride?: string) => {
+  const handleUnFollowClick = (pubKeyOverride?: string) => {
     const pk = pubKeyOverride ?? pubKey;
-    await disconnectTo(pk);
+    disconnectTo.mutate(pk);
   };
-  const handleFollowClick = async (pubKeyOverride?: string) => {
+  const handleFollowClick = (pubKeyOverride?: string) => {
     const pk = pubKeyOverride ?? pubKey;
-    console.log({ pk });
-    await connectTo(pk);
+    connectTo.mutate(pk);
   };
 
   const allConnectionsToLoading = !allConnectionsTo.data && !allConnectionsTo.error;
@@ -283,6 +284,25 @@ const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) =
   );
 };
 
+const FollowerCountSkeleton = () => (
+  <div className="flex flex-col">
+    <div className="mt-9 flex flex-row">
+      <button disabled className="flex flex-col">
+        <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
+          &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div className="text-sm text-gray-200">Followers</div>
+      </button>
+      <button disabled className="ml-4 flex flex-col">
+        <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
+          &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div className="text-sm text-gray-200">Following</div>
+      </button>
+    </div>
+  </div>
+);
+
 const OtherFollowersNumberBubble = styled.button`
   font-size: 12px;
   color: #a8a8a8;
@@ -307,24 +327,3 @@ const UnFollowButton = styled(ButtonV3)`
     }
   }
 `;
-
-const FollowerCountSkeleton = () => {
-  return (
-    <div className="flex flex-col">
-      <div className="mt-9 flex flex-row">
-        <button disabled className="flex flex-col">
-          <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
-            &nbsp;&nbsp;&nbsp;&nbsp;
-          </div>
-          <div className="text-sm text-gray-200">Followers</div>
-        </button>
-        <button disabled className="ml-4 flex flex-col">
-          <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
-            &nbsp;&nbsp;&nbsp;&nbsp;
-          </div>
-          <div className="text-sm text-gray-200">Following</div>
-        </button>
-      </div>
-    </div>
-  );
-};

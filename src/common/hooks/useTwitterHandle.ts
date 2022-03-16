@@ -1,7 +1,7 @@
 import { getHandleAndRegistryKey } from '@solana/spl-name-service';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
-import useSWR from 'swr';
+import { useQuery } from 'react-query';
 
 export const getTwitterHandle = async (pk: string, connection: Connection) => {
   try {
@@ -14,7 +14,7 @@ export const getTwitterHandle = async (pk: string, connection: Connection) => {
 
 export const useTwitterHandle = (forWallet?: PublicKey | null) => {
   const { connection } = useConnection();
-  return useSWR(['twitter-handle', forWallet?.toBase58()], async (_: string, pk: string) => {
+  return useQuery(['twitter-handle', forWallet?.toBase58()], async ({ queryKey: [_, pk] }) => {
     if (pk && connection) {
       return await getTwitterHandle(pk, connection);
     } else {

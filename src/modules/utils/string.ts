@@ -2,10 +2,8 @@
  * Given "SOME_RANDOM_LARGE_STRING" input, returns "SOME...RING";
  * Doesn't add ellipsis on smaller strings.
  */
-export const showFirstAndLastFour = (str: string, isLowerThanEight = str.length <= 8) => {
-  console.log({str});
-  return isLowerThanEight ? str : `${str.substring(0, 4)}...${str.substring(str.length - 4)}`;
-};
+export const showFirstAndLastFour = (str: string, isLowerThanEight = str.length <= 8) =>
+  isLowerThanEight ? str : `${str.substring(0, 4)}...${str.substring(str.length - 4)}`;
 
 /**
  * Pretty similar to Rust's b"Something" literal.

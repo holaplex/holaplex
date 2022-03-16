@@ -21,17 +21,17 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+
   const [{ pfp, banner }, setPfpAndBanner] = useState({
     pfp: getPFPFromPublicKey(publicKey),
     banner: `url(${getBannerFromPublicKey(publicKey)})`,
   });
 
   useEffect(() => {
-    if (!twitterHandle) return;
     try {
       queryWalletProfile({
         variables: {
-          handle: twitterHandle,
+          handle: twitterHandle??"",
         },
       });
     } catch (error: any) {

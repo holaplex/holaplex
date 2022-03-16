@@ -27,6 +27,10 @@ const upsertWallet = async (pubkey: string) => {
   });
 };
 
+/**
+ * 
+ * @deprecated Use `WalletProvider` from (@solana/wallet-adapter) instead.
+ */
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter();
   const arweave = initArweave();

@@ -96,7 +96,6 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   };
 
   const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
-    console.log('get displayname', { twitterHandle, pubKey, connectedPubkey });
     if (connectedPubkey?.toBase58() === pubKey?.toBase58()) return 'You';
     if (twitterHandle) return twitterHandle;
     if (pubKey) return showFirstAndLastFour(pubKey.toBase58());

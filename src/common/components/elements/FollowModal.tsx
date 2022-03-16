@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import { useRevokeConnectionWithUpdateTarget } from '@/common/hooks/useRevokeConnection';
 import { useMakeConnectionWithUpdateTarget } from '@/common/hooks/useMakeConnection';
 import { Unpacked } from '@/types/Unpacked';
+import { useQueryClient } from 'react-query';
 
 type Visibility = 'hidden' | 'followers' | 'following';
 
@@ -44,6 +45,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     }),
     [wallet, connection]
   );
+  const queryClient = useQueryClient();
   const allConnectionsToWallet = useGetAllConnectionsToWithTwitter(
     wallet.publicKey.toBase58(),
     walletConnectionPair
@@ -68,88 +70,80 @@ export const FollowModal: FC<FollowModalProps> = ({
       .map((i) => i.account.from.toBase58());
   }, [allConnectionsTo.data, wallet.publicKey]);
 
-  const [makeConnection, { status: makeConnectionStatus }] = useMakeConnectionWithUpdateTarget(
-    walletConnectionPair,
-    {
-      onSuccess: async ({ data: txId, input }) => {
-        toast(
-          <SuccessToast>
-            Confirming transaction:&nbsp;
-            <a
-              className="font-bold underline"
-              href={`https://explorer.solana.com/tx/${txId}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {showFirstAndLastFour(txId)}
-            </a>
-          </SuccessToast>
-        );
-        await connection.confirmTransaction(txId, 'processed');
-        await allConnectionsTo.mutate();
-        await allConnectionsFrom.mutate();
-        await allConnectionsToWallet.mutate();
-        await allConnectionsFromWallet.mutate();
-        toast(
-          <SuccessToast>
-            Followed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
-            <a
-              className="font-bold underline"
-              href={`https://explorer.solana.com/tx/${txId}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {showFirstAndLastFour(txId)}
-            </a>
-          </SuccessToast>
-        );
-      },
-      onFailure: ({ error, input }) => {
-        console.error(error, { input });
-        toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
-      },
-    }
-  );
-  const [revokeConnection, { status: revokeConnectionStatus }] =
-    useRevokeConnectionWithUpdateTarget(walletConnectionPair, {
-      onSuccess: async ({ data: txId, input }) => {
-        toast(
-          <SuccessToast>
-            Confirming transaction:&nbsp;
-            <a
-              className="font-bold underline"
-              href={`https://explorer.solana.com/tx/${txId}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {showFirstAndLastFour(txId)}
-            </a>
-          </SuccessToast>
-        );
-        await connection.confirmTransaction(txId, 'processed');
-        await allConnectionsTo.mutate();
-        await allConnectionsFrom.mutate();
-        await allConnectionsToWallet.mutate();
-        await allConnectionsFromWallet.mutate();
-        toast(
-          <SuccessToast>
-            Unfollowed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
-            <a
-              className="font-bold underline"
-              href={`https://explorer.solana.com/tx/${txId}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {showFirstAndLastFour(txId)}
-            </a>
-          </SuccessToast>
-        );
-      },
-      onFailure: ({ error, input }) => {
-        console.error(error, { input });
-        toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
-      },
-    });
+  const makeConnection = useMakeConnectionWithUpdateTarget(walletConnectionPair, {
+    onSuccess: async (txId, input) => {
+      toast(
+        <SuccessToast>
+          Confirming transaction:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>,
+        { autoClose: 13_000 }
+      );
+      await connection.confirmTransaction(txId, 'finalized');
+      await queryClient.invalidateQueries();
+      toast(
+        <SuccessToast>
+          Followed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>
+      );
+    },
+    onError: (error) => {
+      console.error(error);
+      toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
+    },
+  });
+  const revokeConnection = useRevokeConnectionWithUpdateTarget(walletConnectionPair, {
+    onSuccess: async (txId, input) => {
+      toast(
+        <SuccessToast>
+          Confirming transaction:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>,
+        { autoClose: 13_000 }
+      );
+      await connection.confirmTransaction(txId, 'finalized');
+      await queryClient.invalidateQueries();
+      toast(
+        <SuccessToast>
+          Unfollowed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>
+      );
+    },
+    onError: (error) => {
+      console.error(error);
+      toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
+    },
+  });
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -165,7 +159,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     if (itemIsMyWallet) {
       return null;
     }
-    if (makeConnectionStatus === 'running' || revokeConnectionStatus === 'running') {
+    if (makeConnection.status === 'loading' || revokeConnection.status === 'loading') {
       return (
         <ButtonV3 disabled>
           <svg
@@ -189,7 +183,9 @@ export const FollowModal: FC<FollowModalProps> = ({
     }
     const amIFollowingThisAccount =
       (side === 'allConnectionsFrom' &&
-        (allConnectionsToWallet.data ?? []).some((i) => i.account.from.equals(item.account.from))) ||
+        (allConnectionsToWallet.data ?? []).some((i) =>
+          i.account.from.equals(item.account.from)
+        )) ||
       (side === 'allConnectionsTo' &&
         (allConnectionsFromWallet.data ?? []).some((i) => i.account.to.equals(item.account.to)));
 
@@ -204,8 +200,7 @@ export const FollowModal: FC<FollowModalProps> = ({
                   : item.account.to.toBase58(),
               updateTarget: side,
             };
-            console.log(revokeConnectionInput);
-            revokeConnection(revokeConnectionInput);
+            revokeConnection.mutate(revokeConnectionInput);
           }}
         >
           Unfollow
@@ -222,8 +217,7 @@ export const FollowModal: FC<FollowModalProps> = ({
                   : item.account.to.toBase58(),
               updateTarget: side,
             };
-            console.log(makeConnectionInput);
-            makeConnection(makeConnectionInput);
+            makeConnection.mutate(makeConnectionInput);
           }}
         >
           Follow
