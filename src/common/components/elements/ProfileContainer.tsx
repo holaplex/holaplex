@@ -2,12 +2,14 @@ import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
+import { getBannerFromPublicKey, getPFPFromPublicKey } from '@/modules/utils/image';
 import Bugsnag from '@bugsnag/js';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
+import { FollowerCount } from './FollowerCount';
 
 interface Props {
   children: React.ReactNode;
@@ -20,17 +22,17 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+
   const [{ pfp, banner }, setPfpAndBanner] = useState({
-    pfp: '/images/gradients/gradient-3.png',
-    banner: 'url(/images/gradients/gradient-5.png)', // TODO: Fetch from wallet (DERIVE)
+    pfp: getPFPFromPublicKey(publicKey),
+    banner: `url(${getBannerFromPublicKey(publicKey)})`,
   });
 
   useEffect(() => {
-    if (!twitterHandle) return;
     try {
       queryWalletProfile({
         variables: {
-          handle: twitterHandle,
+          handle: twitterHandle??"",
         },
       });
     } catch (error: any) {
@@ -41,20 +43,20 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   }, [queryWalletProfile, twitterHandle]);
 
   useEffect(() => {
-    const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+    const profilePictureImage = imageUrl ?? getPFPFromPublicKey(publicKey);
     const bannerBackgroundImage = !!bannerUrl
       ? `url(${bannerUrl})`
-      : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
+      : `url(${getBannerFromPublicKey(publicKey)})`;
 
     setPfpAndBanner({
       pfp: profilePictureImage,
       banner: bannerBackgroundImage,
     });
-  }, [imageUrl, bannerUrl]);
+  }, [imageUrl, bannerUrl, publicKey]);
 
   const getPublicKeyFromWalletOnUrl = () => {
     try {
-      return new PublicKey(wallet as string);
+      return new PublicKey(wallet);
     } catch (_) {
       return null;
     }
@@ -78,6 +80,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
+          <FollowerCount pubKey={wallet} />
         </Profile>
         <ContentWrapper>
           {/* <ProfileMenu wallet={wallet} /> */}

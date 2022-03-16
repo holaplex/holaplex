@@ -78,6 +78,50 @@ const ButtonStyles = css`
   color: #171717;
 `;
 
+export const ButtonV3 = styled.button`
+  width: 88px;
+  height: 32px;
+  border-radius: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #171717;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &&:not([disabled]):hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #171717;
+  }
+`;
+
+export const SecondaryButtonV3 = styled.button`
+  width: 88px;
+  height: 32px;
+  border-radius: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #fff;
+  background: #262626;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &&:not([disabled]):hover {
+    background-color: #666666;
+    color: #ddd;
+  }
+`;
+
 export const AnchorButton = styled.a`
   width: 88px;
   height: 32px;

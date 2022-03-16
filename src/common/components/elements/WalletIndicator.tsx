@@ -33,7 +33,7 @@ export const WalletPill: FC<WalletPillProps> = ({
   const isTwitterHandle = (textOverride?: string | null) =>
     textOverride?.length ? textOverride?.length <= 15 : false;
 
-  const twitterandle = isTwitterHandle(textOverride);
+  const twitterHandle = isTwitterHandle(textOverride);
 
   const handleLabelClick = async () => {
     if (publicKey?.toBase58().length) {
@@ -77,8 +77,8 @@ export const WalletPill: FC<WalletPillProps> = ({
   return (
     <Link passHref href={`/profiles/${publicKey?.toBase58()}`}>
       <ContainerAnchor onClick={onClick} disableBackground={disableBackground ?? false}>
-        <WalletText monospace={!twitterandle} twitterHandle={twitterandle ? textOverride! : ''}>
-          {twitterandle
+        <WalletText monospace={!twitterHandle} twitterHandle={twitterHandle ? textOverride! : ''}>
+          {twitterHandle
             ? `${textOverride}`
             : publicKey
             ? showFirstAndLastFour(publicKey.toBase58())

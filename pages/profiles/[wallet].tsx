@@ -16,7 +16,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const ActivityLanding = ({ wallet }: { wallet: string }) => {
   const publicKey = wallet ? new PublicKey(wallet as string) : null;
-
   return (
     <>
       <Head>
@@ -27,7 +26,6 @@ const ActivityLanding = ({ wallet }: { wallet: string }) => {
           content="View activity for this, or any other pubkey, in the Holaplex ecosystem."
         />
       </Head>
-
       <ProfileContainer wallet={wallet} publicKey={publicKey}>
         <ActivityContent publicKey={publicKey} />
       </ProfileContainer>
