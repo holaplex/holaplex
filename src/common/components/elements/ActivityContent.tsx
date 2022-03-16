@@ -18,16 +18,10 @@ import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { ActivityType } from '@/modules/feed/feed.interfaces';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
-
-// use this or similar in a refactor of activity item card
-enum SUPPORTED_ACTIVITIES {
-  BID_MADE,
-  AUCTION_WON,
-  AUCTION_LOST,
-}
 
 export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
   const { data: twitterHandle } = useTwitterHandle(publicKey);
@@ -141,7 +135,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   return (
     <ActivityContainer>
-      {/* <div className="mb-4 flex flex-1">
+      <div className="mb-4 flex flex-1">
         <TextInput2
           id="activity-search"
           label="activity search"
@@ -151,7 +145,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
           className="w-full"
         />
-      </div> */}
+      </div>
 
       <div className="space-y-4">
         {isLoading ? (
@@ -299,6 +293,57 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     </ActivityContainer>
   );
 };
+// use this or similar in a refactor of activity item card
+
+interface Activity {
+  type: ActivityType;
+  thumbnail?: string; // usually NFT image
+}
+
+interface BaseActivity extends Activity {}
+
+interface BidActivity extends BaseActivity {
+  type: 'BID_MADE';
+  thumbnail?: string;
+  who: {
+    pubkey: string;
+    handle?: string;
+  };
+  sol: number;
+  on: string;
+  in: string; // store
+}
+
+interface ListingWonActivity {
+  who: {
+    pubkey: string;
+    handle?: string;
+  };
+  sol: number;
+  nftName: string;
+  store: string;
+}
+
+function ActivityCard(activity: Activity) {
+  let content;
+  switch (activity.type) {
+    case 'BID_MADE':
+      content = '';
+      break;
+    case 'LISTING_WON':
+      content = (
+        <>
+          <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+          {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
+          &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+        </>
+      );
+      break;
+    default:
+      content = <div></div>;
+  }
+  return <div className="border border-gray-400"></div>;
+}
 
 const NoActivityBox: FC = () => {
   return (

@@ -1,8 +1,7 @@
 import WhoToFollowList from './WhoToFollowList';
-
-function FollowingFeed() {
-  return <div>FollowingFeed</div>;
-}
+import { Tab } from '@headlessui/react';
+import classNames from 'classnames';
+import FollowingFeed from './FollowingFeed';
 
 function DiscoveryFeed() {
   return <div>DiscoveryFeed</div>;
@@ -53,9 +52,57 @@ export default function FeedContainer() {
   return (
     <div className="flex">
       <div className="w-2/3">
-        <FollowingFeed />
+        <Tab.Group>
+          <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+            <Tab
+              className={({ selected }) =>
+                classNames(
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                  selected
+                    ? 'bg-white shadow'
+                    : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                )
+              }
+            >
+              Following
+            </Tab>
+            <Tab
+              className={({ selected }) =>
+                classNames(
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                  selected
+                    ? 'bg-white shadow'
+                    : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                )
+              }
+            >
+              Discovery
+            </Tab>
+          </Tab.List>
+          <Tab.Panels className="mt-2">
+            <Tab.Panel
+              key={0}
+              className={classNames(
+                'rounded-xl  p-3',
+                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+              )}
+            >
+              <FollowingFeed />
+            </Tab.Panel>
 
-        <DiscoveryFeed />
+            <Tab.Panel
+              key={1}
+              className={classNames(
+                'rounded-xl bg-white p-3',
+                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+              )}
+            >
+              <DiscoveryFeed />
+            </Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
       </div>
       <div className="w-1/3 space-y-7">
         <WhoToFollowList />

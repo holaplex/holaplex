@@ -1,8 +1,4 @@
-interface Profile {
-  pfp?: string;
-  pubkey: string;
-  handle?: string;
-}
+import { IProfile } from './feed.interfaces';
 
 function FollowButton() {
   return (
@@ -10,7 +6,7 @@ function FollowButton() {
   );
 }
 
-function FollowListItem({ profile }: { profile: Profile }) {
+function FollowListItem({ profile }: { profile: IProfile }) {
   return (
     <div className="flex justify-between">
       <div className="flex items-center">
@@ -32,7 +28,7 @@ function FollowListItem({ profile }: { profile: Profile }) {
   );
 }
 
-const WHO_TO_FOLLOW: Profile[] = [
+const WHO_TO_FOLLOW: IProfile[] = [
   {
     pfp: 'https://pbs.twimg.com/profile_images/1502268999316525059/nZNPG8GX_bigger.jpg',
     pubkey: '',
