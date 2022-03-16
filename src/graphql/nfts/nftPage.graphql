@@ -1,0 +1,41 @@
+query nftPage($address: String!) {
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      verified
+    }
+    # owner {
+    #   address
+    # }
+    # listings {
+    #   address
+    #   tradeState
+    #   seller
+    #   metadata
+    #   auctionHouse
+    #   price
+    #   tradeStateBump
+    #   createdAt
+    #   canceledAt
+    # }
+    # offers {
+    #   address
+    #   tradeState
+    #   buyer
+    #   metadata
+    #   auctionHouse
+    #   price
+    #   tradeStateBump
+    #   tokenAccount
+    #   createdAt
+    #   canceledAt
+    # }
+  }
+}
