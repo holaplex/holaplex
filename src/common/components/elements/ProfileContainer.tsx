@@ -32,7 +32,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
     try {
       queryWalletProfile({
         variables: {
-          handle: twitterHandle??"",
+          handle: twitterHandle ?? '',
         },
       });
     } catch (error: any) {
@@ -83,7 +83,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
           <FollowerCount pubKey={wallet} />
         </Profile>
         <ContentWrapper>
-          {/* <ProfileMenu wallet={wallet} /> */}
+          <ProfileMenu wallet={wallet} />
           {children}
         </ContentWrapper>
       </ContentCol>
