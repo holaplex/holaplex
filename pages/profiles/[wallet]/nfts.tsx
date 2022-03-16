@@ -89,6 +89,8 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
       queryOwnedNFTs({
         variables: {
           address: wallet,
+          limit: 100,
+          offset: 0,
         },
       });
     } catch (error: any) {
