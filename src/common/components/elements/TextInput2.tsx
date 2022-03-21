@@ -5,6 +5,7 @@ function TextInput2({
   label,
   hideLabel,
   leadingIcon,
+  className,
   ...props
 }: {
   label: string;
@@ -26,8 +27,9 @@ function TextInput2({
           {...props}
           type={props.type || 'text'}
           className={cx(
-            'block w-full rounded-md border-gray-300 bg-gray-900 shadow-sm focus:border-white focus:bg-black focus:ring-white sm:text-sm  ',
-            { 'pl-8 pr-3': leadingIcon }
+            // 'block w-full rounded-md border-gray-300 bg-gray-900 shadow-sm focus:border-white focus:bg-black focus:ring-white sm:text-sm  ',
+            // { 'pl-8 pr-3': leadingIcon },
+            className
           )}
         />
       </div>

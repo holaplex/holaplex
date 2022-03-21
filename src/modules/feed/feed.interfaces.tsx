@@ -1,6 +1,7 @@
 export const BID_ACTIVITY = [
   'BID_MADE',
   'OUTBID',
+  'WAS_OUTBID',
   'BID_CANCELLED',
   // 'BID_LOWERED',
   // 'BID_INCREASED',
@@ -70,11 +71,12 @@ export interface IProfile {
 }
 
 interface NFT {
-  creator: IProfile;
+  creator?: IProfile;
   name: string;
   storeSubdomain: string;
   imageURL: string;
   address: string;
+  listingAddress?: string;
 }
 
 export interface IFeedItem {
@@ -84,6 +86,6 @@ export interface IFeedItem {
   from?: IProfile; // if from is empty, defualt to creator
   // creator?: string; // creator can be empty if the activity is not related to an NFT (like following)
   to?: IProfile;
-  solAmount: number;
+  solAmount?: number;
   nft?: NFT;
 }

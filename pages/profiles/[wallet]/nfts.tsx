@@ -162,7 +162,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
             <FeatherIcon
               icon="search"
               className={cx(
-                'absolute bottom-1.5 left-2.5 h-5 w-5',
+                'absolute bottom-1 left-2 h-4 w-4',
                 searchFocused ? 'text-white' : 'text-gray-500'
               )}
             />

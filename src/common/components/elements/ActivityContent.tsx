@@ -10,7 +10,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { mq } from '@/common/styles/MediaQuery';
-import { imgOpt } from '@/common/utils';
+import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
 import { Unpacked } from '@/types/Unpacked';
 import Bugsnag from '@bugsnag/js';
@@ -18,7 +18,10 @@ import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { ActivityType } from '@/modules/feed/feed.interfaces';
+import { ActivityType, IFeedItem } from '@/modules/feed/feed.interfaces';
+import { ActivityCard } from './ActivityCard';
+import { Combobox } from '@headlessui/react';
+import { classNames } from './ListingPreview';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -55,8 +58,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     .slice()
     .sort(
       (a, b) =>
-        DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
-        DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
+        DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+        DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
     );
 
   type MyBids = typeof bids;
@@ -68,8 +71,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
         .slice()
         .sort(
           (a, b) =>
-            DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
-            DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
+            DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+            DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
         )?.[0];
       if (!myBid.listing?.ended) {
         return null;
@@ -79,9 +82,9 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
       return {
         ...myBid,
         // Add 1 second to these items to pop them over bids that are too close.
-        lastBidTime: DateTime.fromFormat(myBid.lastBidTime, 'yyyy-MM-dd HH:mm:ss')
+        lastBidTime: DateTime.fromFormat(myBid.lastBidTime, RUST_ISO_UTC_DATE_FORMAT)
           .plus({ seconds: 1 })
-          .toFormat('yyyy-MM-dd HH:mm:ss'),
+          .toFormat(RUST_ISO_UTC_DATE_FORMAT),
         didWalletWon,
         closedDate,
       };
@@ -104,8 +107,8 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
         .slice()
         .sort(
           (a, b) =>
-            DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
-            DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
+            DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+            DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
         )
     : [];
 
@@ -133,18 +136,137 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     );
   }
 
+  const activityItems =
+    bids?.reduce((items, bid) => {
+      const listing = bid.listing;
+      const storefront = bid.listing?.storefront;
+      if (!listing || !storefront) return items;
+
+      const nft = bid.listing?.nfts[0]!;
+      // if (
+      //   activityFilter &&
+      //   ![storefront.subdomain, storefront.title, nft.name].some((facet) =>
+      //     facet.includes(activityFilter)
+      //   )
+      // ) {
+      //   return items;
+      // }
+
+      const listingEnded = listing.ended;
+
+      const itemBase: Partial<IFeedItem> = {
+        id: bid.bidderAddress + bid.listingAddress,
+        from: {
+          pubkey: bid.bidderAddress,
+          // handle // fetch async?
+        },
+        nft: {
+          address: nft.address,
+          imageURL: nft.image,
+          storeSubdomain: storefront.subdomain,
+          name: nft.name,
+          listingAddress: listing.address,
+          // creator
+        },
+      };
+
+      let activityType: ActivityType = 'BID_MADE';
+      let toPubkey = '';
+      if (listingEnded) {
+        if (
+          listing.bids.some(
+            (b) => b.bidderAddress !== bid.bidderAddress && b.lastBidAmount > bid.lastBidAmount
+          )
+        ) {
+          // you lost
+          activityType = 'LISTING_LOST';
+          toPubkey = listing.bids[0].bidderAddress;
+        } else {
+          // you won
+          activityType = 'LISTING_WON';
+        }
+      } else {
+        if (listing.bids[0].bidderAddress === bid.bidderAddress) {
+          activityType = listing.bids.length > 1 ? 'OUTBID' : 'BID_MADE'; // maybe redundant
+          // you made a bid
+          toPubkey = listing.bids[1]?.bidderAddress;
+        } else {
+          activityType = 'WAS_OUTBID';
+          toPubkey = listing.bids[0]?.bidderAddress;
+        }
+      }
+
+      const activityItem = {
+        id: bid.bidderAddress + bid.listingAddress,
+        timestamp: listingEnded ? listing.bids[0].lastBidTime : bid.lastBidTime,
+        type: activityType,
+        from: {
+          pubkey: bid.bidderAddress,
+          // handle // fetch async?
+        },
+        to:
+          activityType === 'BID_MADE' || activityType === 'LISTING_WON'
+            ? undefined
+            : {
+                pubkey: toPubkey,
+              },
+        solAmount: activityType === 'BID_MADE' ? bid.lastBidAmount : listing.bids[0].lastBidAmount,
+        nft: {
+          address: nft.address,
+          imageURL: nft.image,
+          storeSubdomain: storefront.subdomain,
+          name: nft.name,
+          listingAddress: listing.address,
+          // creator
+        },
+      };
+
+      items.push(activityItem);
+      return items;
+    }, [] as IFeedItem[]) || [];
+
+  const [selectedActivity, setSelectedActivity] = useState(activityItems[0]);
+
+  console.log('test', {
+    activityFilter,
+    activityItemsN: activityItems.length,
+    filteredItemsN: filteredItems.length,
+  });
+
   return (
     <ActivityContainer>
-      <div className="mb-4 flex flex-1">
-        <TextInput2
-          id="activity-search"
-          label="activity search"
-          hideLabel
-          value={activityFilter}
-          onChange={(e) => setActivityFilter(e.target.value)}
-          leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
-          className="w-full"
-        />
+      <div className="mb-4 space-y-4">
+        <div className="relative flex  flex-1  ">
+          <TextInput2
+            id="activity-search"
+            label="activity search"
+            hideLabel
+            value={activityFilter}
+            onChange={(e) => setActivityFilter(e.target.value)}
+            leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+            className="h-10 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 "
+            placeholder="Search"
+          />
+        </div>
+        {/* <div className="group relative  flex h-10  flex-1">
+          <Combobox value={selectedActivity} onChange={setSelectedActivity}>
+            <FeatherIcon
+              icon="search"
+              className={classNames(
+                'absolute bottom-1.5 left-2.5 h-5 w-5',
+                'text-gray-500 group-focus:text-white'
+              )}
+            />
+            <Combobox.Input
+              value={activityFilter}
+              onChange={(e) => setActivityFilter(e.target.value)}
+              // onFocus={() => setSearchFocused(true)}
+              // onBlur={() => setSearchFocused(false)}
+              className="w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 "
+              placeholder="Search"
+            />
+          </Combobox>
+        </div> */}
       </div>
 
       <div className="space-y-4">
@@ -161,6 +283,17 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           </>
         ) : filteredItems.length ? (
           <>
+            {activityItems
+              ?.filter(
+                (i) =>
+                  !activityFilter ||
+                  [i.nft?.name, i.nft?.storeSubdomain].some((word) =>
+                    word?.includes(activityFilter)
+                  )
+              )
+              .map((item) => (
+                <ActivityCard activity={item} key={item.id} />
+              ))}
             {filteredItems.map((bid, i) => (
               <ActivityBox
                 key={i}
@@ -200,7 +333,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                           <TimeText>
                             {DateTime.fromFormat(
                               bid.lastBidTime,
-                              'yyyy-MM-dd HH:mm:ss'
+                              RUST_ISO_UTC_DATE_FORMAT
                             ).toRelative()}
                           </TimeText>
                         </Row>
@@ -209,7 +342,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                   } else if ((bid as any).didWalletWon === false) {
                     const timeOfLastBid = DateTime.fromFormat(
                       bid.lastBidTime,
-                      'yyyy-MM-dd HH:mm:ss'
+                      RUST_ISO_UTC_DATE_FORMAT
                     );
                     const lessThan10DaysHavePassed = timeOfLastBid.diffNow().days < 10;
                     return (
@@ -266,7 +399,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                           <TimeText>
                             {DateTime.fromFormat(
                               bid.lastBidTime,
-                              'yyyy-MM-dd HH:mm:ss'
+                              RUST_ISO_UTC_DATE_FORMAT
                             ).toRelative()}
                           </TimeText>
                         </Row>
@@ -313,37 +446,6 @@ interface BidActivity extends BaseActivity {
   on: string;
   in: string; // store
 }
-
-interface ListingWonActivity {
-  who: {
-    pubkey: string;
-    handle?: string;
-  };
-  sol: number;
-  nftName: string;
-  store: string;
-}
-
-// function ActivityCard(activity: Activity) {
-//   let content;
-//   switch (activity.type) {
-//     case 'BID_MADE':
-//       content = '';
-//       break;
-//     case 'LISTING_WON':
-//       content = (
-//         <>
-//           <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-//           {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
-//           &nbsp;by <b>{bid.listing?.storefront?.title}</b>
-//         </>
-//       );
-//       break;
-//     default:
-//       content = <div></div>;
-//   }
-//   return <div className="border border-gray-400"></div>;
-// }
 
 const NoActivityBox: FC = () => {
   return (
@@ -537,13 +639,14 @@ const NoActivityText = styled.span`
 const ActivityContainer = styled.main`
   flex: 1;
   margin-top: 16px;
-  ${mq('lg')} {
+  /* ${mq('lg')} {
     margin-top: 0px;
     margin-left: 40px;
   }
   ${mq('xl')} {
     margin-left: 80px;
   }
+  */
 `;
 
 const ContentContainer = styled.div`

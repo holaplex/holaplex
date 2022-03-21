@@ -32,13 +32,15 @@ export default function FeedItem(props: { fi: IFeedItem }) {
             src={fi.nft?.imageURL}
             alt={fi.nft?.name}
           />
-          <div className="flex justify-between">
-            <div className="flex">
-              <ProfilePFP profile={fi.nft.creator} />
-              <div>{fi.nft.creator.handle || showFirstAndLastFour(fi.nft.creator.pubkey)}</div>
+          {fi.nft.creator && (
+            <div className="flex justify-between">
+              <div className="flex">
+                <ProfilePFP profile={fi.nft.creator} />
+                <div>{fi.nft.creator.handle || showFirstAndLastFour(fi.nft.creator.pubkey)}</div>
+              </div>
+              <ShareMenu />
             </div>
-            <ShareMenu />
-          </div>
+          )}
         </>
       )}
     </div>
