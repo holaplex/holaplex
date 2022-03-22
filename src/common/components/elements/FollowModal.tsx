@@ -229,7 +229,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     <div
       role="dialog"
       className={cx(
-        'fixed top-0 left-0 right-0 bottom-0 z-20',
+        'fixed top-0 left-0 right-0 bottom-0 z-40',
         'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
         'transition-opacity duration-500 ease-in-out',
         'flex flex-col items-center justify-center',
@@ -243,7 +243,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative flex h-[30rem] w-[30rem] flex-col rounded-xl bg-black p-6 text-white shadow-md"
+        className="relative flex h-full max-h-[30rem] w-full flex-col rounded-xl bg-black p-6 text-white shadow-md sm:max-w-lg"
       >
         <button onClick={() => setVisibility('hidden')} className="absolute top-6 right-6">
           <Close color="#fff" />

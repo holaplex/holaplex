@@ -4,12 +4,14 @@ import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '@/modules/utils/image';
 import Bugsnag from '@bugsnag/js';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
 import { FollowerCount } from './FollowerCount';
+import { FollowModal } from './FollowModal';
 
 interface Props {
   children: React.ReactNode;
@@ -61,7 +63,10 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
       return null;
     }
   };
-
+  const [showFollowsModal, setShowFollowsModal] = useState<'hidden' | 'followers' | 'following'>(
+    'hidden'
+  );
+  const anchorWallet = useAnchorWallet();
   return (
     // <div className="flex h-screen flex-col">
     <>
@@ -81,12 +86,20 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
-          <FollowerCount pubKey={wallet} />
+          <FollowerCount pubKey={wallet} setShowFollowsModal={setShowFollowsModal} />
         </div>
         <ContentWrapper>
           <ProfileMenu wallet={wallet} />
           {children}
         </ContentWrapper>
+        {anchorWallet && (
+          <FollowModal
+            visibility={showFollowsModal}
+            setVisibility={setShowFollowsModal}
+            pubKey={wallet}
+            wallet={anchorWallet}
+          />
+        )}
       </ContentCol>
     </>
   );
