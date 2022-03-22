@@ -175,7 +175,10 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
           </button>
           {isSameWallet ? null : amIFollowing ? (
             <div className="ml-10 flex flex-row items-center justify-center">
-              <UnFollowButton onClick={() => handleUnFollowClick()} />
+              <UnFollowButton
+                onClick={() => handleUnFollowClick()}
+                className="hover:bg-red-200 hover:text-red-800"
+              />
             </div>
           ) : (
             <div className="ml-10 flex flex-row items-center justify-center">
