@@ -439,39 +439,6 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     </ActivityContainer>
   );
 };
-// use this or similar in a refactor of activity item card
-
-interface Activity {
-  type: ActivityType;
-  thumbnail?: string; // usually NFT image
-}
-
-interface BaseActivity extends Activity {}
-
-interface BidActivity extends BaseActivity {
-  type: 'BID_MADE';
-  thumbnail?: string;
-  who: {
-    pubkey: string;
-    handle?: string;
-  };
-  sol: number;
-  on: string;
-  in: string; // store
-}
-
-// const NoActivityBox: FC = () => {
-//   return (
-//     <ActivityBoxContainer>
-//       <NoActivityContainer>
-//         <NoActivityTitle>No activity</NoActivityTitle>
-//         <NoActivityText>
-//           Activity associated with this user’s wallet will show up here
-//         </NoActivityText>
-//       </NoActivityContainer>
-//     </ActivityBoxContainer>
-//   );
-// };
 
 const LoadingActivitySkeletonBoxSquareShort = () => {
   return (

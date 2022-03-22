@@ -13,6 +13,7 @@ import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsLazyQuery } from '../../../src/graphql/indexerTypes';
 import Bugsnag from '@bugsnag/js';
 import Link from 'next/link';
+import TextInput2 from '@/common/components/elements/TextInput2';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -49,7 +50,7 @@ const NFTGrid = ({ nfts, gridView }: { nfts: OwnedNFT[]; gridView: '2x2' | '3x3'
   return (
     <div
       className={cx(
-        'mt-10 grid grid-cols-1 gap-6',
+        'mt-4 grid grid-cols-1 gap-6',
         gridView === '2x2' ? 'md:grid-cols-2' : 'md:grid-cols-3'
       )}
     >
@@ -128,7 +129,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
 
   const GridChange = () => {
     return (
-      <div className="hidden w-20 rounded-lg border-2 border-solid border-gray-800 md:flex">
+      <div className="hidden rounded-lg border-2 border-solid border-gray-800 md:flex">
         <button
           className={cx('flex w-10 items-center justify-center', {
             'bg-gray-800': gridView === '2x2',
@@ -157,7 +158,21 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
         <meta property="description" key="description" content="View owned and created NFTs" />
       </Head>
       <ProfileContainer wallet={wallet} publicKey={publicKey}>
-        <div className="relative flex h-8 justify-between">
+        <div className="flex">
+          <TextInput2
+            id="owned-search"
+            label="owned search"
+            hideLabel
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+            className="h-10 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 "
+            placeholder="Search"
+          />
+          <GridChange />
+        </div>
+
+        {/* <div className="relative flex h-8 justify-between">
           <Combobox value={selectedNFT} onChange={setSelectedNFT}>
             <FeatherIcon
               icon="search"
@@ -175,7 +190,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
             />
           </Combobox>
           <GridChange />
-        </div>
+        </div> */}
         <NFTGrid nfts={nftsToShow} gridView={gridView} />
       </ProfileContainer>
     </>
