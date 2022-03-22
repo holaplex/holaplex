@@ -42,8 +42,21 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
   const NftHelper = () => {
     const nft = activity.nft;
-    if (!nft) return null;
-    const nftURL = 'https://' + nft.storeSubdomain + '.holaplex.com/listings/' + nft.listingAddress;
+    const storefront = activity.storefront;
+    if (!nft && !storefront) return null;
+    const listingsURL = 'https://' + storefront?.subdomain + '.holaplex.com/listings/';
+
+    if (!nft) {
+      return !activity.storefront ? null : (
+        <span>
+          an NFT from
+          <a href={listingsURL}>
+            <span className="text-white"> {activity.storefront?.title}</span>
+          </a>
+        </span>
+      );
+    }
+    const nftURL = listingsURL + nft.listingAddress;
     return (
       <a href={nftURL}>
         <span className="text-white">{nft.name}</span>
@@ -104,7 +117,8 @@ export function ActivityCard(props: { activity: IFeedItem }) {
   const { publicKey: connectedPubkey } = useWallet();
   const isYou = connectedPubkey?.toBase58() === props.activity.from?.pubkey;
   // const content = generateContent(props.activity);
-  const activityThumbnailImageURL = props.activity.nft?.imageURL;
+  const activityThumbnailImageURL =
+    props.activity.nft?.imageURL || props.activity.storefront?.logoUrl;
   const thumbnailType = 'DEFAULT'; // 'PFP'
   const actionURL =
     'https://' +
@@ -169,7 +183,7 @@ export function ActivityCard(props: { activity: IFeedItem }) {
         </div>
       </div>
       <a href={actionURL} target="_blank" className="ml-auto pl-4" rel="noreferrer">
-        <button className="font-base  rounded-full bg-white px-9 py-2 font-bold text-gray-900 ">
+        <button className="rounded-full bg-white  px-9 py-2 font-sans text-base font-semibold text-gray-900 ">
           View
         </button>
       </a>

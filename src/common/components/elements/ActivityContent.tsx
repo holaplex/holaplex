@@ -157,7 +157,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           pubkey: bid.bidderAddress,
           // handle // fetch async?
         },
-        nft: {
+        nft: nft && {
           address: nft.address,
           imageURL: nft.image,
           storeSubdomain: storefront.subdomain,
@@ -169,6 +169,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           bidCancelled: bid.cancelled,
           wonListing: listingEnded && hasHighestBid,
         },
+        listing: {
+          address: listing.address,
+          ended: listing.ended,
+        },
+        storefront,
       };
 
       if (listingEnded) {
@@ -455,18 +460,18 @@ interface BidActivity extends BaseActivity {
   in: string; // store
 }
 
-const NoActivityBox: FC = () => {
-  return (
-    <ActivityBoxContainer>
-      <NoActivityContainer>
-        <NoActivityTitle>No activity</NoActivityTitle>
-        <NoActivityText>
-          Activity associated with this user’s wallet will show up here
-        </NoActivityText>
-      </NoActivityContainer>
-    </ActivityBoxContainer>
-  );
-};
+// const NoActivityBox: FC = () => {
+//   return (
+//     <ActivityBoxContainer>
+//       <NoActivityContainer>
+//         <NoActivityTitle>No activity</NoActivityTitle>
+//         <NoActivityText>
+//           Activity associated with this user’s wallet will show up here
+//         </NoActivityText>
+//       </NoActivityContainer>
+//     </ActivityBoxContainer>
+//   );
+// };
 
 const LoadingActivitySkeletonBoxSquareShort = () => {
   return (

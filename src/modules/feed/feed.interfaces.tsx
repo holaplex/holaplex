@@ -87,6 +87,22 @@ export interface IFeedItem {
   // creator?: string; // creator can be empty if the activity is not related to an NFT (like following)
   to?: IProfile;
   solAmount?: number;
+  listing?: {
+    // TODO Source form grapql
+    address: string;
+    ended: boolean;
+  };
+  storefront?: {
+    // TODO Source form grapql
+    __typename: 'Storefront';
+    ownerAddress: string;
+    subdomain: string;
+    title: string;
+    description: string;
+    faviconUrl: string;
+    logoUrl: string;
+    bannerUrl: string;
+  };
   nft?: NFT;
   misc?: {
     bidCancelled?: boolean;
