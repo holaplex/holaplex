@@ -196,10 +196,15 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       <ContentCol>
                         <Row>
                           <ItemText>
-                            <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
-                            <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
-                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
+                            <span className="text-white">
+                              {getDisplayName(twitterHandle, publicKey)}
+                            </span>{' '}
+                            won&nbsp;
+                            <span className="text-white">{bid.listing?.nfts?.[0]?.name}</span>
+                            &nbsp;by{' '}
+                            <span className="text-white">
+                              {bid.listing?.storefront?.title}
+                            </span> for {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
@@ -222,9 +227,13 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       <ContentCol>
                         <Row>
                           <ItemText>
-                            <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
-                            <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+                            <span className="text-white">
+                              {getDisplayName(twitterHandle, publicKey)}
+                            </span>{' '}
+                            lost&nbsp;
+                            <span className="text-white">{bid.listing?.nfts?.[0]?.name}</span>
+                            &nbsp;by{' '}
+                            <span className="text-white">{bid.listing?.storefront?.title}</span>
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
@@ -262,10 +271,13 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       <ContentCol>
                         <Row>
                           <ItemText>
-                            <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on{' '}
-                            <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            &nbsp;by <b>{bid.listing?.storefront?.title}</b>
+                            <span className="text-white">
+                              {getDisplayName(twitterHandle, publicKey)}
+                            </span>{' '}
+                            bid {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on{' '}
+                            <span className="text-white">{bid.listing?.nfts?.[0]?.name}</span>
+                            &nbsp;by{' '}
+                            <span className="text-white">{bid.listing?.storefront?.title}</span>
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
@@ -401,13 +413,14 @@ const ActivityBox: FC<ActivityBoxProps> = ({
           <a>
             <ActivityBoxContainer>
               <CenteredCol>
-                <NFTImage
-                  unoptimized
-                  $isPFPImage={isPFPImage}
-                  width={52}
-                  height={52}
-                  src={imgOpt(relatedImageUrl || '', 100) || relatedImageUrl}
-                />
+                <div className="h-14 w-14 xl:h-20 xl:w-20">
+                  <NFTImage
+                    unoptimized
+                    $isPFPImage={isPFPImage}
+                    layout="fill"
+                    src={imgOpt(relatedImageUrl || '', 100) || relatedImageUrl}
+                  />
+                </div>
               </CenteredCol>
               <ContentContainer>{content}</ContentContainer>
               <CenteredCol>{action}</CenteredCol>
@@ -418,13 +431,16 @@ const ActivityBox: FC<ActivityBoxProps> = ({
       <HideOnMobile display="block">
         <ActivityBoxContainer>
           <CenteredCol>
-            <NFTImage
-              unoptimized
-              $isPFPImage={isPFPImage}
-              width={52}
-              height={52}
-              src={relatedImageUrl}
-            />
+            <div className="h-14 w-14 md:h-20 md:w-20">
+              <NFTImage
+                layout="fill"
+                unoptimized
+                $isPFPImage={isPFPImage}
+                width={52}
+                height={52}
+                src={relatedImageUrl}
+              />
+            </div>
           </CenteredCol>
           <ContentContainer>{content}</ContentContainer>
           <CenteredCol>{action}</CenteredCol>
@@ -551,7 +567,8 @@ const TimeText = styled.span`
 const ItemText = styled.span`
   font-family: 'Inter', sans-serif;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   font-size: 16px;
   line-height: 16px;
+  color: #a8a8a8;
 `;

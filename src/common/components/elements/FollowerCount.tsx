@@ -166,11 +166,11 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
       <div className="flex flex-col">
         <div className="mt-9 flex flex-row">
           <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-            <div className="font-bold">{allConnectionsTo.data?.length ?? 0}</div>
+            <div className="font-bold text-left">{allConnectionsTo.data?.length ?? 0}</div>
             <div className="text-sm text-gray-200">Followers</div>
           </button>
           <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
-            <div className="font-bold">{allConnectionsFrom.data?.length ?? 0}</div>
+            <div className="font-bold text-left">{allConnectionsFrom.data?.length ?? 0}</div>
             <div className="text-sm text-gray-200">Following</div>
           </button>
           {isSameWallet ? null : amIFollowing ? (
@@ -264,7 +264,7 @@ const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) =
     <div className="mt-4 flex flex-col">
       <div className="text-sm text-gray-200">Followed by</div>
       <div className="relative mt-2 flex flex-row">
-        {(followers ?? []).map((follower, i) => (
+        {(followers ?? []).slice(0, 4).map((follower, i) => (
           <FollowerBubble
             key={follower.publicKey.toBase58()}
             isFirst={i === 0}

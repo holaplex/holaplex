@@ -134,9 +134,12 @@ const ContentCol = styled.div`
 
 const Banner = styled.div`
   width: 100%;
-  height: 265px;
   background-repeat: no-repeat;
   background-size: cover;
+  height: 10.5rem;
+  ${mq('sm')} {
+    height: 265px;
+  }
   ${mq('lg')} {
     background-attachment: fixed;
     background-size: 100%;
