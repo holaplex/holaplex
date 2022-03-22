@@ -25,7 +25,7 @@ export const ProfileMenu: FC<Props> = ({ wallet }) => {
   return (
     <div className="mb-6  border-b-2  border-gray-800">
       <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <Tab.List className="-mb-px flex h-14">
+        <Tab.List className="-mb-px flex h-14 w-full justify-between sm:w-auto sm:justify-start ">
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
