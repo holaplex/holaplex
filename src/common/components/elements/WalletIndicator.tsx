@@ -53,11 +53,11 @@ export const WalletPill: FC<WalletPillProps> = ({
     return (
       <ContainerSpan onClick={onClick} disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
-          <div className="flex items-center">
+          <div className="flex items-center ">
             {isTwitterHandle(textOverride) ? (
               <a
                 href={'https://twitter.com/' + textOverride}
-                className="hover:underline"
+                className="hover:text-gray-300 "
                 target="_blank"
                 rel="noreferrer"
               >

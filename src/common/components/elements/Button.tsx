@@ -86,7 +86,7 @@ export const ButtonV3 = styled.button`
   padding-right: 10px;
   font-family: 'Inter', sans-serif;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 12px;
   line-height: 16px;
   color: #171717;

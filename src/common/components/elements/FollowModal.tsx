@@ -192,6 +192,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     if (amIFollowingThisAccount) {
       return (
         <ButtonV3
+          className="!bg-gray-800 !text-white hover:!bg-gray-600"
           onClick={() => {
             const revokeConnectionInput = {
               targetPubKey:
@@ -243,12 +244,12 @@ export const FollowModal: FC<FollowModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative flex h-full max-h-[30rem] w-full flex-col rounded-xl bg-gray-900 p-6 text-white shadow-md sm:max-w-lg"
+        className="relative flex h-full max-h-[30rem] w-full flex-col rounded-xl bg-gray-900  pt-6 text-white shadow-md sm:max-w-lg"
       >
         <button onClick={() => setVisibility('hidden')} className="absolute top-6 right-6">
           <Close color="#fff" />
         </button>
-        <div id="tabs" className="mt-12 flex h-14">
+        <div id="tabs" className="mt-4 flex h-14">
           <button
             onClick={() => setVisibility('followers')}
             className={cx(
@@ -274,7 +275,7 @@ export const FollowModal: FC<FollowModalProps> = ({
             Following
           </button>
         </div>
-        <div className="mt-12 flex flex-1 flex-col overflow-y-auto">
+        <div className="flex flex-1 flex-col overflow-y-auto py-4 px-6">
           {visibility === 'followers' ? (
             <>
               {(allConnectionsTo.data ?? []).map(

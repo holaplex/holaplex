@@ -180,10 +180,16 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
           </button>
           {isSameWallet ? null : amIFollowing ? (
             <div className="ml-10 flex flex-row items-center justify-center">
-              <UnFollowButton
-                className="hover:bg-red-200 hover:text-red-800"
+              {/* <UnFollowButton
+                className="hover:bg-gray-800 hover:text-white"
                 onClick={() => handleUnFollowClick()}
-              />
+              /> */}
+              <ButtonV3
+                className="!bg-gray-800 !text-white hover:!bg-gray-600"
+                onClick={() => handleUnFollowClick()}
+              >
+                Unfollow
+              </ButtonV3>
             </div>
           ) : (
             <div className="ml-10 flex flex-row items-center justify-center">

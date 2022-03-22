@@ -76,7 +76,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
       <ContentCol>
         <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
           <ProfilePictureContainer>
-            <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
+            <ProfilePicture src={pfp} className="bg-gray-900" width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
           <WalletPillContainer>
             <WalletPill
