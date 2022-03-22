@@ -19,7 +19,7 @@ function TextInput2({
       </label>
       <div className="relative mt-1 rounded-md shadow-sm">
         {leadingIcon && (
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
             {leadingIcon}
           </div>
         )}

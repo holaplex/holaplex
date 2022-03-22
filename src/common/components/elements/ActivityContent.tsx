@@ -54,13 +54,14 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   const hasItems = !!activityPage.data?.wallet?.bids.length;
 
-  const bids = activityPage.data?.wallet?.bids
-    .slice()
-    .sort(
-      (a, b) =>
-        DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-        DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-    );
+  const bids =
+    activityPage.data?.wallet?.bids
+      .slice()
+      .sort(
+        (a, b) =>
+          DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+          DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
+      ) || [];
 
   type MyBids = typeof bids;
 
@@ -137,22 +138,18 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   }
 
   const activityItems =
-    bids?.reduce((items, bid) => {
+    bids.reduce((items, bid) => {
       const listing = bid.listing;
       const storefront = bid.listing?.storefront;
       if (!listing || !storefront) return items;
 
       const nft = bid.listing?.nfts[0]!;
-      // if (
-      //   activityFilter &&
-      //   ![storefront.subdomain, storefront.title, nft.name].some((facet) =>
-      //     facet.includes(activityFilter)
-      //   )
-      // ) {
-      //   return items;
-      // }
 
       const listingEnded = listing.ended;
+      const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
+      // !listing.bids.some(
+      //   (b) => b.bidderAddress !== bid.bidderAddress && b.lastBidAmount > bid.lastBidAmount
+      // );
 
       const itemBase: Partial<IFeedItem> = {
         id: bid.bidderAddress + bid.listingAddress,
@@ -168,70 +165,67 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           listingAddress: listing.address,
           // creator
         },
+        misc: {
+          bidCancelled: bid.cancelled,
+          wonListing: listingEnded && hasHighestBid,
+        },
       };
 
-      let activityType: ActivityType = 'BID_MADE';
-      let toPubkey = '';
       if (listingEnded) {
-        if (
-          listing.bids.some(
-            (b) => b.bidderAddress !== bid.bidderAddress && b.lastBidAmount > bid.lastBidAmount
-          )
-        ) {
-          // you lost
-          activityType = 'LISTING_LOST';
-          toPubkey = listing.bids[0].bidderAddress;
-        } else {
-          // you won
-          activityType = 'LISTING_WON';
-        }
-      } else {
-        if (listing.bids[0].bidderAddress === bid.bidderAddress) {
-          activityType = listing.bids.length > 1 ? 'OUTBID' : 'BID_MADE'; // maybe redundant
-          // you made a bid
-          toPubkey = listing.bids[1]?.bidderAddress;
-        } else {
-          activityType = 'WAS_OUTBID';
-          toPubkey = listing.bids[0]?.bidderAddress;
-        }
+        const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
+        items.push({
+          ...itemBase,
+          id: itemBase.id + activityType,
+          type: activityType,
+          timestamp: listing.bids[0].lastBidTime, // more or less
+          to:
+            activityType === 'LISTING_LOST'
+              ? {
+                  pubkey: listing.bids[0].bidderAddress,
+                }
+              : undefined,
+          solAmount: listing.bids[0].lastBidAmount,
+        });
       }
 
-      const activityItem = {
-        id: bid.bidderAddress + bid.listingAddress,
-        timestamp: listingEnded ? listing.bids[0].lastBidTime : bid.lastBidTime,
-        type: activityType,
-        from: {
-          pubkey: bid.bidderAddress,
-          // handle // fetch async?
-        },
-        to:
-          activityType === 'BID_MADE' || activityType === 'LISTING_WON'
-            ? undefined
-            : {
-                pubkey: toPubkey,
-              },
-        solAmount: activityType === 'BID_MADE' ? bid.lastBidAmount : listing.bids[0].lastBidAmount,
-        nft: {
-          address: nft.address,
-          imageURL: nft.image,
-          storeSubdomain: storefront.subdomain,
-          name: nft.name,
-          listingAddress: listing.address,
-          // creator
-        },
-      };
+      if (listing.bids.length > 1) {
+        const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
+        const activityType =
+          listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
+        const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
+        items.push({
+          ...itemBase,
+          id: itemBase.id + activityType,
+          type: activityType,
+          timestamp: listing.bids[0].lastBidTime, // more or less
+          to: {
+            pubkey:
+              activityType === 'OUTBID'
+                ? listing.bids[toIdx].bidderAddress
+                : listing.bids[toIdx].bidderAddress,
+          },
+          solAmount: listing.bids[toIdx].lastBidAmount,
+        });
+      }
 
-      items.push(activityItem);
+      items.push({
+        ...itemBase,
+        id: itemBase.id + 'BID_MADE',
+        solAmount: bid.lastBidAmount,
+        type: 'BID_MADE',
+        timestamp: bid.lastBidTime,
+      });
+
       return items;
     }, [] as IFeedItem[]) || [];
 
   const [selectedActivity, setSelectedActivity] = useState(activityItems[0]);
 
-  console.log('test', {
-    activityFilter,
-    activityItemsN: activityItems.length,
-    filteredItemsN: filteredItems.length,
-  });
+  // console.log('test', {
+  //   activityFilter,
+  //   activityItemsN: activityItems.length,
+  //   filteredItemsN: filteredItems.length,
+  // });
 
   return (
     <ActivityContainer>
@@ -248,6 +242,12 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             placeholder="Search"
           />
         </div>
+        {/* <div className="flex">
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Bids</button>
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Unclaimed bids</button>
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Wins</button>
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Losses</button>
+        </div> */}
         {/* <div className="group relative  flex h-10  flex-1">
           <Combobox value={selectedActivity} onChange={setSelectedActivity}>
             <FeatherIcon
@@ -294,7 +294,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
               .map((item) => (
                 <ActivityCard activity={item} key={item.id} />
               ))}
-            {filteredItems.map((bid, i) => (
+            {filteredItems.slice(0, 1).map((bid, i) => (
               <ActivityBox
                 key={i}
                 relatedImageUrl={
@@ -356,7 +356,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                         </Row>
                         <Row className="mt-2">
                           {/* Hiding this message until we are sure we can detect when a bid is uncancelled */}
-                          {false && bid.cancelled && isYou && lessThan10DaysHavePassed ? (
+                          {false && !bid.cancelled && isYou && lessThan10DaysHavePassed ? (
                             <div className="flex items-center text-xs font-medium text-white opacity-80">
                               <svg
                                 width="16"

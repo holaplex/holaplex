@@ -88,4 +88,10 @@ export interface IFeedItem {
   to?: IProfile;
   solAmount?: number;
   nft?: NFT;
+  misc?: {
+    bidCancelled?: boolean;
+    wonListing?: boolean;
+    // hasUncancelledBid
+    // showClaimUncancelledBid
+  };
 }

@@ -8,66 +8,10 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 
-export function generateContent(fi: IFeedItem) {
-  const from = (fi.from || fi.nft?.creator) as IProfile;
-
-  const fromDisplay = from.handle || showFirstAndLastFour(from.pubkey);
-  const toDisplay = fi.to ? fi.to.handle || showFirstAndLastFour(fi.to.pubkey) : '';
-  const creatorDisplay = fi.nft?.creator?.handle || fi.nft?.creator?.pubkey;
-
-  const creatorTextHelper = () => (creatorDisplay ? ` by ${creatorDisplay}` : '');
-
-  switch (fi.type) {
-    case 'BID_MADE':
-      return (
-        `${fromDisplay} placed a bid of SOL${fi.solAmount} on ${fi.nft?.name}` + creatorTextHelper()
-      );
-    case 'OUTBID':
-      return (
-        `${fromDisplay} outbid ${toDisplay} on ${fi.nft?.name}` +
-        creatorTextHelper() +
-        ` with a bid of SOL${fi.solAmount}`
-      );
-    case 'WAS_OUTBID':
-      return (
-        `${fromDisplay} was outbid by ${toDisplay} on ${fi.nft?.name}` +
-        creatorTextHelper() +
-        ` with a bid of SOL${fi.solAmount}`
-      );
-    case 'LISTING_WON':
-      return (
-        `${fromDisplay} won the auction for ${fi.nft?.name}` +
-        creatorTextHelper() +
-        ` for SOL${fi.solAmount}`
-      );
-
-    case 'LISTING_LOST':
-      return (
-        `${fromDisplay} lost the auction for ${fi.nft?.name}` +
-        creatorTextHelper() +
-        ` for SOL${fi.solAmount}`
-      );
-
-    // return (
-    //   <>
-    //     <b>{fromDisplay}</b> lost&nbsp;
-    //     <b>{fi.nft?.name  bid.listing?.nfts?.[0]?.name}</b>
-    //     &nbsp;by <b>{bid.listing?.storefront?.title}</b>
-    //   </>
-    // );
-    default:
-      return 'No content for this activity';
-  }
-}
-
-function ActivityCardContent({ activity }: { activity: IFeedItem }) {
-  const { publicKey: connectedPubkey } = useWallet();
+function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
   const from = (activity.from || activity.nft?.creator) as IProfile;
 
-  const fromDisplay =
-    connectedPubkey?.toBase58() === from.pubkey
-      ? 'You'
-      : from.handle || showFirstAndLastFour(from.pubkey);
+  const fromDisplay = isYou ? 'You' : from.handle || showFirstAndLastFour(from.pubkey);
   const toDisplay = activity.to
     ? activity.to.handle || showFirstAndLastFour(activity.to.pubkey)
     : '';
@@ -110,49 +54,46 @@ function ActivityCardContent({ activity }: { activity: IFeedItem }) {
   const SolTextHelper = () =>
     activity.solAmount ? (
       <b className="inline-flex items-center">
-        <SolIcon className=" mr-1 h-4 w-4 " stroke="white" />{' '}
-        {activity.solAmount / LAMPORTS_PER_SOL}
+        <SolIcon className="h-3 w-3 " stroke="white" /> {activity.solAmount / LAMPORTS_PER_SOL}
       </b>
     ) : null;
 
   switch (activity.type) {
     case 'BID_MADE':
       return (
-        <>
+        <div className="text-gray-300">
           <FromHelper /> placed a bid of <SolTextHelper />
           <CreatorTextHelper /> on <NftHelper />
-        </>
+        </div>
       );
     case 'OUTBID':
       return (
-        <>
+        <div className="text-gray-300">
           <FromHelper /> outbid <ToHelper /> on <NftHelper /> <CreatorTextHelper /> with a bid of{' '}
           <SolTextHelper />
-        </>
+        </div>
       );
     case 'WAS_OUTBID':
       return (
-        <>
-          <FromHelper /> was outbid by <ToHelper /> on <NftHelper /> <CreatorTextHelper /> with a
-          bid of <SolTextHelper />
-        </>
+        <div className="text-gray-300">
+          <FromHelper /> {fromDisplay === 'You' ? 'were' : 'was'} outbid by <ToHelper /> on{' '}
+          <NftHelper /> <CreatorTextHelper /> with a bid of <SolTextHelper />
+        </div>
       );
 
     case 'LISTING_WON':
       return (
-        <>
+        <div className="text-gray-300">
           <FromHelper /> won the auction for <NftHelper /> <CreatorTextHelper /> for{' '}
           <SolTextHelper />
-        </>
+        </div>
       );
 
     case 'LISTING_LOST':
       return (
-        <>
-          <FromHelper /> lost the auction for <NftHelper />
-          {/* for <SolTextHelper /> */}
-          to <ToHelper />
-        </>
+        <div className="text-gray-300">
+          <FromHelper /> lost the auction for <NftHelper /> to <ToHelper /> for <SolTextHelper />
+        </div>
       );
     default:
       return <div>No content for this activity</div>;
@@ -160,6 +101,8 @@ function ActivityCardContent({ activity }: { activity: IFeedItem }) {
 }
 
 export function ActivityCard(props: { activity: IFeedItem }) {
+  const { publicKey: connectedPubkey } = useWallet();
+  const isYou = connectedPubkey?.toBase58() === props.activity.from?.pubkey;
   // const content = generateContent(props.activity);
   const activityThumbnailImageURL = props.activity.nft?.imageURL;
   const thumbnailType = 'DEFAULT'; // 'PFP'
@@ -169,11 +112,19 @@ export function ActivityCard(props: { activity: IFeedItem }) {
     '.holaplex.com/listings/' +
     props.activity.nft?.listingAddress;
 
+  const timeOfActivity = DateTime.fromFormat(props.activity.timestamp, RUST_ISO_UTC_DATE_FORMAT);
+
+  // console.log('claim cancel bid' + props.activity.nft?.name, {
+  //   isYou,
+  //   lostListing: !props.activity.misc?.wonListing,
+  //   bidAlreadyCancelled: !props.activity?.misc?.bidCancelled,
+  // });
+
   return (
     <div className="relative flex items-center rounded-md border border-gray-800 p-4 font-sans text-base">
       <div
         className={classNames(
-          'relative mr-4 h-14 w-14 items-center  text-gray-300',
+          'relative mr-4 flex h-20 w-20  flex-shrink-0 items-center text-gray-300',
           thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'
         )}
       >
@@ -187,9 +138,34 @@ export function ActivityCard(props: { activity: IFeedItem }) {
         )}
       </div>
       <div>
-        <ActivityCardContent activity={props.activity} />
+        <ActivityCardContent activity={props.activity} isYou={isYou} />
         <div className="mt-2 text-sm text-gray-500">
-          {DateTime.fromFormat(props.activity.timestamp, RUST_ISO_UTC_DATE_FORMAT).toRelative()}
+          {isYou &&
+          !props.activity.misc?.wonListing &&
+          !props.activity?.misc?.bidCancelled &&
+          props.activity.type === 'BID_MADE' ? (
+            <div className="flex items-center text-xs font-medium text-white opacity-80">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mr-1"
+              >
+                <path
+                  d="M8.00016 3.99967V7.99967L10.6668 9.33301M14.6668 7.99967C14.6668 11.6816 11.6821 14.6663 8.00016 14.6663C4.31826 14.6663 1.3335 11.6816 1.3335 7.99967C1.3335 4.31778 4.31826 1.33301 8.00016 1.33301C11.6821 1.33301 14.6668 4.31778 14.6668 7.99967Z"
+                  stroke="white"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              <span>You have an uncanceled bid from {timeOfActivity.toRelative()}</span>
+            </div>
+          ) : (
+            timeOfActivity.toRelative()
+          )}
         </div>
       </div>
       <a href={actionURL} target="_blank" className="ml-auto" rel="noreferrer">

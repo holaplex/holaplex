@@ -63,12 +63,13 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   };
 
   return (
+    // <div className="flex h-screen flex-col">
     <>
       <HeadingContainer>
         <Banner style={{ backgroundImage: banner }} />
       </HeadingContainer>
       <ContentCol>
-        <Profile>
+        <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
           <ProfilePictureContainer>
             <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
@@ -81,7 +82,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
             />
           </WalletPillContainer>
           <FollowerCount pubKey={wallet} />
-        </Profile>
+        </div>
         <ContentWrapper>
           <ProfileMenu wallet={wallet} />
           {children}
@@ -149,7 +150,7 @@ const WalletPillContainer = styled.div`
 
 const HeadingContainer = styled.header``;
 
-const Profile = styled.div`
-  min-width: 348px;
-  position: relative;
-`;
+// const Profile = styled.div`
+//   min-width: 348px;
+//   position: relative;
+// `;
