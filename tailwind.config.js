@@ -29,7 +29,11 @@ module.exports = {
     },
   },
   extend: {},
+  ariants: {
+    scrollbar: ['rounded'],
+  },
   plugins: [
+    require('tailwind-scrollbar'),
     require('@tailwindcss/forms'),
     plugin(function ({ addUtilities }) {
       addUtilities({

@@ -275,7 +275,7 @@ export const FollowModal: FC<FollowModalProps> = ({
             Following
           </button>
         </div>
-        <div className="flex flex-1 flex-col overflow-y-auto py-4 px-6">
+        <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-track-gray-900 scrollbar-thumb-gray-300">
           {visibility === 'followers' ? (
             <>
               {(allConnectionsTo.data ?? []).map(
