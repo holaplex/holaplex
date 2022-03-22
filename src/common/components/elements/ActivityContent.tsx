@@ -411,16 +411,24 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             ))}
           </>
         ) : (
-          <ActivityBoxContainer>
-            <NoActivityContainer>
-              <NoActivityTitle>
-                No activity {!!items.length && !filteredItems.length && ' for this filter'}
-              </NoActivityTitle>
-              <NoActivityText>
-                Activity associated with this user’s wallet will show up here
-              </NoActivityText>
-            </NoActivityContainer>
-          </ActivityBoxContainer>
+          // <ActivityBoxContainer>
+          //   <NoActivityContainer>
+          //     <NoActivityTitle>
+          //       No activity {!!items.length && !filteredItems.length && ' for this filter'}
+          //     </NoActivityTitle>
+          //     <NoActivityText>
+          //       Activity associated with this user’s wallet will show up here
+          //     </NoActivityText>
+          //   </NoActivityContainer>
+          // </ActivityBoxContainer>
+          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
+            <NoActivityTitle>
+              No activity {!!items.length && !filteredItems.length && ' for this filter'}
+            </NoActivityTitle>
+            <NoActivityText>
+              Activity associated with this user’s wallet will show up here
+            </NoActivityText>
+          </div>
         )}
       </div>
     </ActivityContainer>

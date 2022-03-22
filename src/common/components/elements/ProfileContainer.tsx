@@ -66,7 +66,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
     // <div className="flex h-screen flex-col">
     <>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: banner }} />
+        <Banner className="h-40 md:h-64 " style={{ backgroundImage: banner }} />
       </HeadingContainer>
       <ContentCol>
         <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
@@ -135,7 +135,7 @@ const ContentCol = styled.div`
 
 const Banner = styled.div`
   width: 100%;
-  height: 265px;
+  /* height: 265px; */
   background-repeat: no-repeat;
   background-size: cover;
   ${mq('lg')} {

@@ -168,7 +168,7 @@ export function ActivityCard(props: { activity: IFeedItem }) {
           )}
         </div>
       </div>
-      <a href={actionURL} target="_blank" className="ml-auto" rel="noreferrer">
+      <a href={actionURL} target="_blank" className="ml-auto pl-4" rel="noreferrer">
         <button className="font-base  rounded-full bg-white px-9 py-2 font-bold text-gray-900 ">
           View
         </button>
