@@ -171,12 +171,12 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
       <div className="flex flex-col">
         <div className="mt-9 flex flex-row">
           <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-            <div className="text-left font-bold">{allConnectionsTo.data?.length ?? 0}</div>
-            <div className="text-sm text-gray-200">Followers</div>
+            <div className="text-left font-semibold">{allConnectionsTo.data?.length ?? 0}</div>
+            <div className="text-sm font-medium text-gray-200">Followers</div>
           </button>
           <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
-            <div className="text-left font-bold">{allConnectionsFrom.data?.length ?? 0}</div>
-            <div className="text-sm text-gray-200">Following</div>
+            <div className="text-left font-semibold">{allConnectionsFrom.data?.length ?? 0}</div>
+            <div className="text-sm font-medium text-gray-200">Following</div>
           </button>
           {isSameWallet ? null : amIFollowing ? (
             <div className="ml-10 flex flex-row items-center justify-center">
@@ -270,7 +270,7 @@ const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) =
   const followerLength = followers?.length ?? 0;
   return (
     <div className="mt-4 flex flex-col">
-      <div className="text-sm text-gray-200">Followed by</div>
+      <div className="text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2 flex flex-row">
         {(followers ?? []).slice(0, 4).map((follower, i) => (
           <FollowerBubble

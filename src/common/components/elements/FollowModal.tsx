@@ -243,7 +243,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative flex h-full max-h-[30rem] w-full flex-col rounded-xl bg-black p-6 text-white shadow-md sm:max-w-lg"
+        className="relative flex h-full max-h-[30rem] w-full flex-col rounded-xl bg-gray-900 p-6 text-white shadow-md sm:max-w-lg"
       >
         <button onClick={() => setVisibility('hidden')} className="absolute top-6 right-6">
           <Close color="#fff" />
