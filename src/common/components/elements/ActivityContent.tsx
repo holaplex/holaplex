@@ -27,7 +27,7 @@ const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
-  const { data: twitterHandle } = useTwitterHandle(publicKey);
+  // const { data: twitterHandle } = useTwitterHandle(publicKey);
   const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
   const [activityFilter, setActivityFilter] = useState('');
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
@@ -52,7 +52,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   const isLoading = !didPerformInitialLoad || activityPage.loading;
 
-  const hasItems = !!activityPage.data?.wallet?.bids.length;
+  // const hasItems = !!activityPage.data?.wallet?.bids.length;
 
   const bids =
     activityPage.data?.wallet?.bids
@@ -63,67 +63,15 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
       ) || [];
 
-  type MyBids = typeof bids;
-
-  // const getEndedAuctions = (myBids: MyBids) => {
-  //   if (!myBids?.length) return [];
-  //   const results = myBids.map((myBid) => {
-  //     const latestListingBid = myBid.listing?.bids
-  //       .slice()
-  //       .sort(
-  //         (a, b) =>
-  //           DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-  //           DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-  //       )?.[0];
-  //     if (!myBid.listing?.ended) {
-  //       return null;
-  //     }
-  //     const didWalletWon = latestListingBid?.bidderAddress === publicKey?.toString();
-  //     const closedDate = latestListingBid?.lastBidTime;
-  //     return {
-  //       ...myBid,
-  //       // Add 1 second to these items to pop them over bids that are too close.
-  //       lastBidTime: DateTime.fromFormat(myBid.lastBidTime, RUST_ISO_UTC_DATE_FORMAT)
-  //         .plus({ seconds: 1 })
-  //         .toFormat(RUST_ISO_UTC_DATE_FORMAT),
-  //       didWalletWon,
-  //       closedDate,
-  //     };
-  //   });
-  //   return results.filter((item) => !!item) as NonNullable<Unpacked<typeof results>>[];
-  // };
-
   const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
 
-  const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
-    if (isYou) return 'You';
+  // const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
+  //   if (isYou) return 'You';
 
-    if (twitterHandle) return twitterHandle;
-    if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
-    return 'Loading';
-  };
-
-  // const items = hasItems
-  //   ? [...bids!, ...getEndedAuctions(bids!)]
-  //       .slice()
-  //       .sort(
-  //         (a, b) =>
-  //           DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-  //           DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-  //       )
-  //   : [];
-
-  // const filteredItems = items.filter(
-  //   ({ listing }) =>
-  //     !activityFilter ||
-  //     [
-  //       listing?.storefront?.subdomain,
-  //       listing?.storefront?.title,
-  //       listing?.nfts.map((nft) => nft.name),
-  //     ]
-  //       .flat()
-  //       .some((word) => word?.includes(activityFilter))
-  // );
+  //   if (twitterHandle) return twitterHandle;
+  //   if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
+  //   return 'Loading';
+  // };
 
   const activityItems =
     bids.reduce((items, bid) => {

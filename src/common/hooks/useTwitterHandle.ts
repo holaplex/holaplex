@@ -13,13 +13,16 @@ export const getTwitterHandle = async (pk: string, connection: Connection) => {
   }
 };
 
-export const useTwitterHandle = (forWallet?: PublicKey | null) => {
+export const useTwitterHandle = (forWallet?: PublicKey | null, base58Key?: string) => {
   const { connection } = useConnection();
-  return useQuery(['twitter-handle', forWallet?.toBase58()], async ({ queryKey: [_, pk] }) => {
-    if (pk && connection) {
-      return await getTwitterHandle(pk, connection);
-    } else {
-      return undefined;
+  return useQuery(
+    ['twitter-handle', forWallet?.toBase58() || base58Key],
+    async ({ queryKey: [_, pk] }) => {
+      if (pk && connection) {
+        return await getTwitterHandle(pk, connection);
+      } else {
+        return undefined;
+      }
     }
-  });
+  );
 };

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
   const from = (activity.from || activity.nft?.creator) as IProfile;
@@ -17,21 +18,25 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
     : '';
   const creatorDisplay = activity.nft?.creator?.handle || activity.nft?.creator?.pubkey;
 
-  const FromHelper = () =>
-    fromDisplay === 'You' ? (
+  const FromHelper = () => {
+    const { data: twitterHandle } = useTwitterHandle(null, from.pubkey);
+    return fromDisplay === 'You' ? (
       <span>You</span>
     ) : (
       <a href={from.pubkey}>
-        <span className="text-white">{fromDisplay}</span>{' '}
+        <span className="text-white">{twitterHandle || fromDisplay}</span>{' '}
       </a>
     );
+  };
 
-  const ToHelper = () =>
-    activity.to ? (
+  const ToHelper = () => {
+    const { data: twitterHandle } = useTwitterHandle(null, activity.to?.pubkey);
+    return activity.to ? (
       <a href={activity.to.pubkey}>
-        <span className="text-white">{toDisplay}</span>
+        <span className="text-white">{twitterHandle || toDisplay}</span>
       </a>
     ) : null;
+  };
 
   const CreatorTextHelper = () =>
     creatorDisplay ? (
@@ -67,7 +72,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   const SolTextHelper = () =>
     activity.solAmount ? (
       <b className="inline-flex items-center">
-        <SolIcon className="h-3 w-3 " stroke="white" /> {activity.solAmount / LAMPORTS_PER_SOL}
+        <SolIcon className="mr-1 h-3 w-3" stroke="white" /> {activity.solAmount / LAMPORTS_PER_SOL}
       </b>
     ) : null;
 
@@ -127,12 +132,6 @@ export function ActivityCard(props: { activity: IFeedItem }) {
     props.activity.nft?.listingAddress;
 
   const timeOfActivity = DateTime.fromFormat(props.activity.timestamp, RUST_ISO_UTC_DATE_FORMAT);
-
-  // console.log('claim cancel bid' + props.activity.nft?.name, {
-  //   isYou,
-  //   lostListing: !props.activity.misc?.wonListing,
-  //   bidAlreadyCancelled: !props.activity?.misc?.bidCancelled,
-  // });
 
   return (
     <div className="relative flex items-center rounded-md border border-gray-800 p-4 font-sans text-base">
