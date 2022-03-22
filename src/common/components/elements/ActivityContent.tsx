@@ -196,10 +196,27 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       <ContentCol>
                         <Row>
                           <ItemText>
-                            <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
-                            <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            &nbsp;by <b>{bid.listing?.storefront?.title}</b> for{' '}
-                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
+                            <Link href={'/profiles/' + publicKey} passHref>
+                              <a>
+                                <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
+                              </a>
+                            </Link>
+                            <a
+                              href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <b>{bid.listing?.nfts?.[0]?.name}</b>
+                            </a>
+                            &nbsp;by
+                            <a
+                              href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <b>{bid.listing?.storefront?.title}</b>
+                            </a>
+                            for {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
                           </ItemText>
                         </Row>
                         <Row className="mt-2">
@@ -222,7 +239,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       <ContentCol>
                         <Row>
                           <ItemText>
-                            <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
+                            <Link href={'/profiles/' + publicKey} passHref>
+                              <a>
+                                <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
+                              </a>
+                            </Link>
                             <b>{bid.listing?.nfts?.[0]?.name}</b>
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b>
                           </ItemText>
@@ -262,7 +283,11 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
                       <ContentCol>
                         <Row>
                           <ItemText>
-                            <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+                            <Link href={'/profiles/' + publicKey} passHref>
+                              <a>
+                                <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
+                              </a>
+                            </Link>
                             {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on{' '}
                             <b>{bid.listing?.nfts?.[0]?.name}</b>
                             &nbsp;by <b>{bid.listing?.storefront?.title}</b>
@@ -492,13 +517,14 @@ const NoActivityText = styled.span`
 const ActivityContainer = styled.main`
   flex: 1;
   margin-top: 16px;
+  /*
   ${mq('lg')} {
     margin-top: 0px;
     margin-left: 40px;
   }
   ${mq('xl')} {
     margin-left: 80px;
-  }
+  }*/
 `;
 
 const ContentContainer = styled.div`
