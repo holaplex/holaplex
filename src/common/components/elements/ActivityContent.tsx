@@ -10,7 +10,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { mq } from '@/common/styles/MediaQuery';
-import { imgOpt } from '@/common/utils';
+import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
 import { Unpacked } from '@/types/Unpacked';
 import Bugsnag from '@bugsnag/js';
@@ -18,16 +18,13 @@ import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { ActivityType, IFeedItem } from '@/modules/feed/feed.interfaces';
+import { ActivityCard } from './ActivityCard';
+import { Combobox } from '@headlessui/react';
+import { classNames } from './ListingPreview';
 
 const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
-
-// use this or similar in a refactor of activity item card
-enum SUPPORTED_ACTIVITIES {
-  BID_MADE,
-  AUCTION_WON,
-  AUCTION_LOST,
-}
 
 export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
   const { data: twitterHandle } = useTwitterHandle(publicKey);
@@ -57,43 +54,44 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   const hasItems = !!activityPage.data?.wallet?.bids.length;
 
-  const bids = activityPage.data?.wallet?.bids
-    .slice()
-    .sort(
-      (a, b) =>
-        DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
-        DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
-    );
+  const bids =
+    activityPage.data?.wallet?.bids
+      .slice()
+      .sort(
+        (a, b) =>
+          DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+          DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
+      ) || [];
 
   type MyBids = typeof bids;
 
-  const getEndedAuctions = (myBids: MyBids) => {
-    if (!myBids?.length) return [];
-    const results = myBids.map((myBid) => {
-      const latestListingBid = myBid.listing?.bids
-        .slice()
-        .sort(
-          (a, b) =>
-            DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
-            DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
-        )?.[0];
-      if (!myBid.listing?.ended) {
-        return null;
-      }
-      const didWalletWon = latestListingBid?.bidderAddress === publicKey?.toString();
-      const closedDate = latestListingBid?.lastBidTime;
-      return {
-        ...myBid,
-        // Add 1 second to these items to pop them over bids that are too close.
-        lastBidTime: DateTime.fromFormat(myBid.lastBidTime, 'yyyy-MM-dd HH:mm:ss')
-          .plus({ seconds: 1 })
-          .toFormat('yyyy-MM-dd HH:mm:ss'),
-        didWalletWon,
-        closedDate,
-      };
-    });
-    return results.filter((item) => !!item) as NonNullable<Unpacked<typeof results>>[];
-  };
+  // const getEndedAuctions = (myBids: MyBids) => {
+  //   if (!myBids?.length) return [];
+  //   const results = myBids.map((myBid) => {
+  //     const latestListingBid = myBid.listing?.bids
+  //       .slice()
+  //       .sort(
+  //         (a, b) =>
+  //           DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+  //           DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
+  //       )?.[0];
+  //     if (!myBid.listing?.ended) {
+  //       return null;
+  //     }
+  //     const didWalletWon = latestListingBid?.bidderAddress === publicKey?.toString();
+  //     const closedDate = latestListingBid?.lastBidTime;
+  //     return {
+  //       ...myBid,
+  //       // Add 1 second to these items to pop them over bids that are too close.
+  //       lastBidTime: DateTime.fromFormat(myBid.lastBidTime, RUST_ISO_UTC_DATE_FORMAT)
+  //         .plus({ seconds: 1 })
+  //         .toFormat(RUST_ISO_UTC_DATE_FORMAT),
+  //       didWalletWon,
+  //       closedDate,
+  //     };
+  //   });
+  //   return results.filter((item) => !!item) as NonNullable<Unpacked<typeof results>>[];
+  // };
 
   const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
 
@@ -105,43 +103,112 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
     return 'Loading';
   };
 
-  const items = hasItems
-    ? [...bids!, ...getEndedAuctions(bids!)]
-        .slice()
-        .sort(
-          (a, b) =>
-            DateTime.fromFormat(b.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis() -
-            DateTime.fromFormat(a.lastBidTime, 'yyyy-MM-dd HH:mm:ss').toMillis()
-        )
-    : [];
+  // const items = hasItems
+  //   ? [...bids!, ...getEndedAuctions(bids!)]
+  //       .slice()
+  //       .sort(
+  //         (a, b) =>
+  //           DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+  //           DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
+  //       )
+  //   : [];
 
-  const filteredItems = items.filter(
-    ({ listing }) =>
-      !activityFilter ||
-      [
-        listing?.storefront?.subdomain,
-        listing?.storefront?.title,
-        listing?.nfts.map((nft) => nft.name),
-      ]
-        .flat()
-        .some((word) => word?.includes(activityFilter))
-  );
+  // const filteredItems = items.filter(
+  //   ({ listing }) =>
+  //     !activityFilter ||
+  //     [
+  //       listing?.storefront?.subdomain,
+  //       listing?.storefront?.title,
+  //       listing?.nfts.map((nft) => nft.name),
+  //     ]
+  //       .flat()
+  //       .some((word) => word?.includes(activityFilter))
+  // );
 
-  // use for refactor later
-  function ItemTextForActivity({ bid }: any) {
-    // check for acivity type
-    return (
-      <ItemText>
-        <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-        {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on <b>{bid.listing?.nfts?.[0]?.name}</b>
-        &nbsp;by&nbsp;<b>{bid.listing?.storefront?.title}</b>
-      </ItemText>
-    );
-  }
+  const activityItems =
+    bids.reduce((items, bid) => {
+      const listing = bid.listing;
+      const storefront = bid.listing?.storefront;
+      if (!listing || !storefront) return items;
+
+      const nft = bid.listing?.nfts[0];
+
+      const listingEnded = listing.ended;
+      const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
+
+      const itemBase: Partial<IFeedItem> = {
+        id: bid.bidderAddress + bid.listingAddress,
+        from: {
+          pubkey: bid.bidderAddress,
+          // handle // fetch async?
+        },
+        nft: nft && {
+          address: nft.address,
+          imageURL: nft.image,
+          storeSubdomain: storefront.subdomain,
+          name: nft.name,
+          listingAddress: listing.address,
+          // creator
+        },
+        misc: {
+          bidCancelled: bid.cancelled,
+          wonListing: listingEnded && hasHighestBid,
+        },
+        listing: {
+          address: listing.address,
+          ended: listing.ended,
+        },
+        storefront,
+      };
+
+      if (listingEnded) {
+        const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
+        items.push({
+          ...itemBase,
+          id: itemBase.id + activityType,
+          type: activityType,
+          timestamp: listing.bids[0].lastBidTime, // more or less
+          to:
+            activityType === 'LISTING_LOST'
+              ? {
+                  pubkey: listing.bids[0].bidderAddress,
+                }
+              : undefined,
+          solAmount: listing.bids[0].lastBidAmount,
+        });
+      }
+
+      if (listing.bids.length > 1) {
+        const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
+        const activityType =
+          listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
+        const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
+        items.push({
+          ...itemBase,
+          id: itemBase.id + activityType,
+          type: activityType,
+          timestamp: listing.bids[0].lastBidTime, // more or less
+          to: {
+            pubkey: listing.bids[toIdx].bidderAddress,
+          },
+          solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
+        });
+      }
+
+      items.push({
+        ...itemBase,
+        id: itemBase.id + 'BID_MADE',
+        solAmount: bid.lastBidAmount,
+        type: 'BID_MADE',
+        timestamp: bid.lastBidTime,
+      });
+
+      return items;
+    }, [] as IFeedItem[]) || [];
 
   return (
     <ActivityContainer>
-      {/* <div className="mb-4 flex flex-1">
+      <div className="relative flex  flex-1  ">
         <TextInput2
           id="activity-search"
           label="activity search"
@@ -149,9 +216,16 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           value={activityFilter}
           onChange={(e) => setActivityFilter(e.target.value)}
           leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
-          className="w-full"
+          className="h-10 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 "
+          placeholder="Search"
         />
-      </div> */}
+      </div>
+      {/* <div className="flex">
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Bids</button>
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Unclaimed bids</button>
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Wins</button>
+          <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Losses</button>
+        </div> */}
 
       <div className="space-y-4">
         {isLoading ? (
@@ -165,176 +239,21 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             <LoadingActivitySkeletonBoxSquareShort />
             <LoadingActivitySkeletonBoxCircleLong />
           </>
-        ) : filteredItems.length ? (
-          <>
-            {filteredItems.map((bid, i) => (
-              <ActivityBox
-                key={i}
-                relatedImageUrl={
-                  imgOpt(bid.listing?.nfts?.[0]?.image, 600) ??
-                  `/images/gradients/gradient-${randomBetween(1, 8)}.png`
-                }
-                href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
-                action={
-                  <>
-                    <ActivityButton
-                      href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-black"
-                    >
-                      View
-                    </ActivityButton>
-                    <ChevronRightContainer>
-                      <ChevronRight color="#fff" />
-                    </ChevronRightContainer>
-                  </>
-                }
-                content={(() => {
-                  if ((bid as any).didWalletWon === true) {
-                    return (
-                      <ContentCol>
-                        <Row>
-                          <ItemText>
-                            <Link href={'/profiles/' + publicKey} passHref>
-                              <a>
-                                <b>{getDisplayName(twitterHandle, publicKey)}</b> won&nbsp;
-                              </a>
-                            </Link>
-                            <a
-                              href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/${bid.listingAddress}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            </a>
-                            &nbsp;by&nbsp;
-                            <a
-                              href={`https://${bid.listing?.storefront?.subdomain}.holaplex.com/listings/`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <b>{bid.listing?.storefront?.title}</b>
-                            </a>
-                            for {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL
-                          </ItemText>
-                        </Row>
-                        <Row className="mt-2">
-                          <TimeText>
-                            {DateTime.fromFormat(
-                              bid.lastBidTime,
-                              'yyyy-MM-dd HH:mm:ss'
-                            ).toRelative()}
-                          </TimeText>
-                        </Row>
-                      </ContentCol>
-                    );
-                  } else if ((bid as any).didWalletWon === false) {
-                    const timeOfLastBid = DateTime.fromFormat(
-                      bid.lastBidTime,
-                      'yyyy-MM-dd HH:mm:ss'
-                    );
-                    const lessThan10DaysHavePassed = timeOfLastBid.diffNow().days < 10;
-                    return (
-                      <ContentCol>
-                        <Row>
-                          <ItemText>
-                            <Link href={'/profiles/' + publicKey} passHref>
-                              <a>
-                                <b>{getDisplayName(twitterHandle, publicKey)}</b> lost&nbsp;
-                              </a>
-                            </Link>
-                            <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            &nbsp;by&nbsp;<b>{bid.listing?.storefront?.title}</b>
-                          </ItemText>
-                        </Row>
-                        <Row className="mt-2">
-                          {/* Hiding this message until we are sure we can detect when a bid is uncancelled */}
-                          {false && bid.cancelled && isYou && lessThan10DaysHavePassed ? (
-                            <div className="flex items-center text-xs font-medium text-white opacity-80">
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="mr-1"
-                              >
-                                <path
-                                  d="M8.00016 3.99967V7.99967L10.6668 9.33301M14.6668 7.99967C14.6668 11.6816 11.6821 14.6663 8.00016 14.6663C4.31826 14.6663 1.3335 11.6816 1.3335 7.99967C1.3335 4.31778 4.31826 1.33301 8.00016 1.33301C11.6821 1.33301 14.6668 4.31778 14.6668 7.99967Z"
-                                  stroke="white"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-
-                              <span>
-                                You have an uncanceled bid from {timeOfLastBid.toRelative()}
-                              </span>
-                            </div>
-                          ) : (
-                            <TimeText>{timeOfLastBid.toRelative()}</TimeText>
-                          )}
-                        </Row>
-                      </ContentCol>
-                    );
-                  } else {
-                    return (
-                      <ContentCol>
-                        <Row>
-                          <ItemText>
-                            <Link href={'/profiles/' + publicKey} passHref>
-                              <a>
-                                <b>{getDisplayName(twitterHandle, publicKey)}</b> bid{' '}
-                              </a>
-                            </Link>
-                            {(bid.lastBidAmount ?? 0) / LAMPORTS_PER_SOL} SOL on{' '}
-                            <b>{bid.listing?.nfts?.[0]?.name}</b>
-                            &nbsp;by&nbsp;<b>{bid.listing?.storefront?.title}</b>
-                          </ItemText>
-                        </Row>
-                        <Row className="mt-2">
-                          <TimeText>
-                            {DateTime.fromFormat(
-                              bid.lastBidTime,
-                              'yyyy-MM-dd HH:mm:ss'
-                            ).toRelative()}
-                          </TimeText>
-                        </Row>
-                      </ContentCol>
-                    );
-                  }
-                })()}
-              />
-            ))}
-          </>
+        ) : activityItems.length ? (
+          activityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
         ) : (
-          <ActivityBoxContainer>
-            <NoActivityContainer>
-              <NoActivityTitle>
-                No activity {!!items.length && !filteredItems.length && ' for this filter'}
-              </NoActivityTitle>
-              <NoActivityText>
-                Activity associated with this user’s wallet will show up here
-              </NoActivityText>
-            </NoActivityContainer>
-          </ActivityBoxContainer>
+          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
+            <NoActivityTitle>
+              No activity
+              {/* {!!items.length && !filteredItems.length && ' for this filter'} */}
+            </NoActivityTitle>
+            <NoActivityText>
+              Activity associated with this user’s wallet will show up here
+            </NoActivityText>
+          </div>
         )}
       </div>
     </ActivityContainer>
-  );
-};
-
-const NoActivityBox: FC = () => {
-  return (
-    <ActivityBoxContainer>
-      <NoActivityContainer>
-        <NoActivityTitle>No activity</NoActivityTitle>
-        <NoActivityText>
-          Activity associated with this user’s wallet will show up here
-        </NoActivityText>
-      </NoActivityContainer>
-    </ActivityBoxContainer>
   );
 };
 
@@ -410,57 +329,6 @@ type ActivityBoxProps = {
   action: React.ReactElement;
   href: string;
   isPFPImage?: boolean;
-};
-
-const ActivityBox: FC<ActivityBoxProps> = ({
-  relatedImageUrl,
-  action,
-  content,
-  href,
-  isPFPImage = false,
-}) => {
-  return (
-    <>
-      <ShowOnMobile display="block">
-        <Link href={href} passHref>
-          <a>
-            <ActivityBoxContainer>
-              <CenteredCol>
-                <div className="h-14 w-14 xl:h-20 xl:w-20">
-                  <NFTImage
-                    unoptimized
-                    $isPFPImage={isPFPImage}
-                    layout="fill"
-                    src={imgOpt(relatedImageUrl || '', 100) || relatedImageUrl}
-                  />
-                </div>
-              </CenteredCol>
-              <ContentContainer>{content}</ContentContainer>
-              <CenteredCol>{action}</CenteredCol>
-            </ActivityBoxContainer>
-          </a>
-        </Link>
-      </ShowOnMobile>
-      <HideOnMobile display="block">
-        <ActivityBoxContainer>
-          <CenteredCol>
-            <div className="h-14 w-14 md:h-20 md:w-20">
-              <NFTImage
-                layout="fill"
-                unoptimized
-                $isPFPImage={isPFPImage}
-                width={52}
-                height={52}
-                src={relatedImageUrl}
-              />
-            </div>
-          </CenteredCol>
-          <ContentContainer>{content}</ContentContainer>
-          <CenteredCol>{action}</CenteredCol>
-        </ActivityBoxContainer>
-      </HideOnMobile>
-    </>
-  );
 };
 
 const ShowOnMobile = styled.div<{ display: string }>`

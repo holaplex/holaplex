@@ -4,12 +4,14 @@ import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '@/modules/utils/image';
 import Bugsnag from '@bugsnag/js';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
 import { FollowerCount } from './FollowerCount';
+import { FollowModal } from './FollowModal';
 
 interface Props {
   children: React.ReactNode;
@@ -22,6 +24,10 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const [showFollowsModal, setShowFollowsModal] = useState<'hidden' | 'followers' | 'following'>(
+    'hidden'
+  );
+  const anchorWallet = useAnchorWallet();
 
   const [{ pfp, banner }, setPfpAndBanner] = useState({
     pfp: getPFPFromPublicKey(publicKey),
@@ -65,10 +71,10 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   return (
     <>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: banner }} />
+        <Banner className="h-40 md:h-64 " style={{ backgroundImage: banner }} />
       </HeadingContainer>
       <ContentCol>
-        <Profile>
+        <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
           <ProfilePictureContainer>
             <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
           </ProfilePictureContainer>
@@ -80,12 +86,20 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
               publicKey={getPublicKeyFromWalletOnUrl()}
             />
           </WalletPillContainer>
-          <FollowerCount pubKey={wallet} />
-        </Profile>
+          <FollowerCount pubKey={wallet} setShowFollowsModal={setShowFollowsModal} />
+        </div>
         <ContentWrapper>
           <ProfileMenu wallet={wallet} />
           {children}
         </ContentWrapper>
+        {anchorWallet && (
+          <FollowModal
+            visibility={showFollowsModal}
+            setVisibility={setShowFollowsModal}
+            pubKey={wallet}
+            wallet={anchorWallet}
+          />
+        )}
       </ContentCol>
     </>
   );
@@ -136,10 +150,7 @@ const Banner = styled.div`
   width: 100%;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 10.5rem;
-  ${mq('sm')} {
-    height: 265px;
-  }
+
   ${mq('lg')} {
     background-attachment: fixed;
     background-size: 100%;
@@ -151,8 +162,3 @@ const WalletPillContainer = styled.div`
 `;
 
 const HeadingContainer = styled.header``;
-
-const Profile = styled.div`
-  min-width: 348px;
-  position: relative;
-`;

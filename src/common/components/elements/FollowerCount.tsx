@@ -22,12 +22,19 @@ import { useQueryClient } from 'react-query';
 
 type FollowerCountProps = {
   pubKey: string;
+  setShowFollowsModal: (s: FollowsModalState) => void;
 };
 
-export const FollowerCount: FC<FollowerCountProps> = ({ pubKey }) => {
+export const FollowerCount: FC<FollowerCountProps> = ({ pubKey, setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
   if (!wallet) return null;
-  return <FollowerCountContent wallet={wallet} pubKey={pubKey} />;
+  return (
+    <FollowerCountContent
+      wallet={wallet}
+      pubKey={pubKey}
+      setShowFollowsModal={setShowFollowsModal}
+    />
+  );
 };
 
 type FollowerCountContentProps = FollowerCountProps & {
@@ -36,7 +43,11 @@ type FollowerCountContentProps = FollowerCountProps & {
 
 type FollowsModalState = 'hidden' | 'followers' | 'following';
 
-export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wallet }) => {
+export const FollowerCountContent: FC<FollowerCountContentProps> = ({
+  pubKey,
+  wallet,
+  setShowFollowsModal,
+}) => {
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(
     () => ({
@@ -45,7 +56,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
     }),
     [wallet, connection]
   );
-  const [showFollowsModal, setShowFollowsModal] = useState<FollowsModalState>('hidden');
+
   const queryClient = useQueryClient();
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
@@ -156,26 +167,23 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
 
   return (
     <>
-      <FollowModal
-        visibility={showFollowsModal}
-        setVisibility={setShowFollowsModal}
-        pubKey={pubKey}
-        wallet={wallet}
-      />
       {/*** Contents */}
       <div className="flex flex-col">
         <div className="mt-9 flex flex-row">
           <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-            <div className="font-bold text-left">{allConnectionsTo.data?.length ?? 0}</div>
+            <div className="text-left font-bold">{allConnectionsTo.data?.length ?? 0}</div>
             <div className="text-sm text-gray-200">Followers</div>
           </button>
           <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
-            <div className="font-bold text-left">{allConnectionsFrom.data?.length ?? 0}</div>
+            <div className="text-left font-bold">{allConnectionsFrom.data?.length ?? 0}</div>
             <div className="text-sm text-gray-200">Following</div>
           </button>
           {isSameWallet ? null : amIFollowing ? (
             <div className="ml-10 flex flex-row items-center justify-center">
-              <UnFollowButton onClick={() => handleUnFollowClick()} />
+              <UnFollowButton
+                className="hover:bg-red-200 hover:text-red-800"
+                onClick={() => handleUnFollowClick()}
+              />
             </div>
           ) : (
             <div className="ml-10 flex flex-row items-center justify-center">
