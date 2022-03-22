@@ -83,6 +83,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
     query === ''
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
+
   useEffect(() => {
     if (!wallet) return;
 
