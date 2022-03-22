@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
@@ -54,14 +54,14 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
   // const hasItems = !!activityPage.data?.wallet?.bids.length;
 
-  const bids =
-    activityPage.data?.wallet?.bids
-      .slice()
-      .sort(
-        (a, b) =>
-          DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-          DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-      ) || [];
+  // const bids =
+  //   activityPage.data?.wallet?.bids.slice() ||
+  //   // .sort(
+  //   //   (a, b) =>
+  //   //     DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
+  //   //     DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
+  //   // )
+  //   [];
 
   const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
 
@@ -73,90 +73,102 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   //   return 'Loading';
   // };
 
-  const activityItems =
-    bids.reduce((items, bid) => {
-      const listing = bid.listing;
-      const storefront = bid.listing?.storefront;
-      if (!listing || !storefront) return items;
+  const activityItems = useMemo(
+    () =>
+      activityPage.data?.wallet?.bids.reduce((items, bid) => {
+        const listing = bid.listing;
+        const storefront = bid.listing?.storefront;
+        if (!listing || !storefront) return items;
 
-      const nft = bid.listing?.nfts[0];
+        const nft = bid.listing?.nfts[0];
 
-      const listingEnded = listing.ended;
-      const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
+        const listingEnded = listing.ended;
+        const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
 
-      const itemBase: Partial<IFeedItem> = {
-        id: bid.bidderAddress + bid.listingAddress,
-        from: {
-          pubkey: bid.bidderAddress,
-          // handle // fetch async?
-        },
-        nft: nft && {
-          address: nft.address,
-          imageURL: nft.image,
-          storeSubdomain: storefront.subdomain,
-          name: nft.name,
-          listingAddress: listing.address,
-          // creator
-        },
-        misc: {
-          bidCancelled: bid.cancelled,
-          wonListing: listingEnded && hasHighestBid,
-        },
-        listing: {
-          address: listing.address,
-          ended: listing.ended,
-        },
-        storefront,
-      };
-
-      if (listingEnded) {
-        const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
-        items.push({
-          ...itemBase,
-          id: itemBase.id + activityType,
-          type: activityType,
-          timestamp: listing.bids[0].lastBidTime, // more or less
-          to:
-            activityType === 'LISTING_LOST'
-              ? {
-                  pubkey: listing.bids[0].bidderAddress,
-                }
-              : undefined,
-          solAmount: listing.bids[0].lastBidAmount,
-        });
-      }
-
-      if (listing.bids.length > 1) {
-        const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
-        const activityType =
-          listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
-        const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
-        items.push({
-          ...itemBase,
-          id: itemBase.id + activityType,
-          type: activityType,
-          timestamp: listing.bids[0].lastBidTime, // more or less
-          to: {
-            pubkey: listing.bids[toIdx].bidderAddress,
+        const itemBase: Partial<IFeedItem> = {
+          id: bid.bidderAddress + bid.listingAddress,
+          from: {
+            pubkey: bid.bidderAddress,
+            // handle // fetch async?
           },
-          solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
+          nft: nft && {
+            address: nft.address,
+            imageURL: nft.image,
+            storeSubdomain: storefront.subdomain,
+            name: nft.name,
+            listingAddress: listing.address,
+            // creator
+          },
+          misc: {
+            bidCancelled: bid.cancelled,
+            wonListing: listingEnded && hasHighestBid,
+          },
+          listing: {
+            address: listing.address,
+            ended: listing.ended,
+          },
+          storefront,
+        };
+
+        if (listingEnded) {
+          const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
+          items.push({
+            ...itemBase,
+            id: itemBase.id + activityType,
+            type: activityType,
+            timestamp: listing.bids[0].lastBidTime, // more or less
+            to:
+              activityType === 'LISTING_LOST'
+                ? {
+                    pubkey: listing.bids[0].bidderAddress,
+                  }
+                : undefined,
+            solAmount: listing.bids[0].lastBidAmount,
+          });
+        }
+
+        if (listing.bids.length > 1) {
+          const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
+          const activityType =
+            listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
+          const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
+          items.push({
+            ...itemBase,
+            id: itemBase.id + activityType,
+            type: activityType,
+            timestamp: listing.bids[0].lastBidTime, // more or less
+            to: {
+              pubkey: listing.bids[toIdx].bidderAddress,
+            },
+            solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
+          });
+        }
+
+        items.push({
+          ...itemBase,
+          id: itemBase.id + 'BID_MADE',
+          solAmount: bid.lastBidAmount,
+          type: 'BID_MADE',
+          timestamp: bid.lastBidTime,
         });
-      }
 
-      items.push({
-        ...itemBase,
-        id: itemBase.id + 'BID_MADE',
-        solAmount: bid.lastBidAmount,
-        type: 'BID_MADE',
-        timestamp: bid.lastBidTime,
-      });
+        return items;
+      }, [] as IFeedItem[]) || [],
+    [activityPage.data?.wallet?.bids]
+  );
 
-      return items;
-    }, [] as IFeedItem[]) || [];
+  const filteredActivityItems = activityItems.filter((i) => {
+    return (
+      !activityFilter ||
+      [i.nft?.name, i.storefront?.title, i.storefront?.subdomain].some((w) =>
+        w?.toLocaleLowerCase()?.includes(activityFilter.toLocaleLowerCase())
+      )
+    );
+  });
 
   return (
     <ActivityContainer>
-      <div className="relative flex  flex-1  ">
+      <div className="mb-4  ">
         <TextInput2
           id="activity-search"
           label="activity search"
@@ -164,7 +176,6 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           value={activityFilter}
           onChange={(e) => setActivityFilter(e.target.value)}
           leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
-          className="h-10 w-full grow rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 pr-0 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0 "
           placeholder="Search"
         />
       </div>
@@ -187,13 +198,13 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             <LoadingActivitySkeletonBoxSquareShort />
             <LoadingActivitySkeletonBoxCircleLong />
           </>
-        ) : activityItems.length ? (
-          activityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
+        ) : filteredActivityItems.length ? (
+          filteredActivityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
         ) : (
           <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
             <NoActivityTitle>
               No activity
-              {/* {!!items.length && !filteredItems.length && ' for this filter'} */}
+              {!!activityItems.length && !filteredActivityItems.length && ' for this filter'}
             </NoActivityTitle>
             <NoActivityText>
               Activity associated with this user’s wallet will show up here
