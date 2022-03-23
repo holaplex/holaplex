@@ -11,8 +11,5 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!) {
       address
       share
     }
-    owner {
-      address
-    }
   }
 }

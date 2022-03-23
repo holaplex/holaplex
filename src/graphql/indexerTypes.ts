@@ -19,6 +19,8 @@ export type Scalars = {
   Lamports: any;
   /** PublicKey */
   PublicKey: any;
+  /** Volume */
+  Volume: any;
 };
 
 /** Filter on NFT attributes */
@@ -52,6 +54,7 @@ export type AuctionHouse = {
   feeWithdrawalDestination: Scalars['String'];
   requiresSignOff: Scalars['Boolean'];
   sellerFeeBasisPoints: Scalars['Int'];
+  stats?: Maybe<MintStats>;
   treasuryBump: Scalars['Int'];
   treasuryMint: Scalars['String'];
   treasuryWithdrawalDestination: Scalars['String'];
@@ -98,7 +101,9 @@ export type Listing = {
   __typename?: 'Listing';
   address: Scalars['String'];
   bids: Array<Bid>;
+  cacheAddress: Scalars['String'];
   ended: Scalars['Boolean'];
+  extAddress: Scalars['String'];
   nfts: Array<Nft>;
   storeAddress: Scalars['String'];
   storefront?: Maybe<Storefront>;
@@ -121,6 +126,11 @@ export type ListingReceipt = {
   tradeStateBump: Scalars['Int'];
 };
 
+export type MarketStats = {
+  __typename?: 'MarketStats';
+  nfts?: Maybe<Scalars['Volume']>;
+};
+
 export type Marketplace = {
   __typename?: 'Marketplace';
   auctionHouse?: Maybe<AuctionHouse>;
@@ -132,8 +142,17 @@ export type Marketplace = {
   logoUrl: Scalars['String'];
   name: Scalars['String'];
   ownerAddress: Scalars['String'];
+  stats?: Maybe<MarketStats>;
   storeAddress?: Maybe<Scalars['String']>;
   subdomain: Scalars['String'];
+};
+
+export type MintStats = {
+  __typename?: 'MintStats';
+  average?: Maybe<Scalars['Volume']>;
+  floor?: Maybe<Scalars['Volume']>;
+  mint: Scalars['String'];
+  volume24hr?: Maybe<Scalars['Volume']>;
 };
 
 export type Nft = {
@@ -245,6 +264,7 @@ export type QueryRootWalletArgs = {
 export type StoreCreator = {
   __typename?: 'StoreCreator';
   creatorAddress: Scalars['String'];
+  preview: Array<Nft>;
   storeConfigAddress: Scalars['String'];
 };
 
@@ -281,7 +301,7 @@ export type OwnedNfTsQueryVariables = Exact<{
 }>;
 
 
-export type OwnedNfTsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number }>, owner?: { __typename?: 'NftOwner', address: string } | null }> };
+export type OwnedNfTsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number }> }> };
 
 export type WalletProfileQueryVariables = Exact<{
   handle: Scalars['String'];
@@ -383,9 +403,6 @@ export const OwnedNfTsDocument = gql`
     creators {
       address
       share
-    }
-    owner {
-      address
     }
   }
 }
