@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { ButtonV3 } from './Button';
-import { PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
 import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
@@ -344,6 +344,102 @@ const FollowedByImage = styled(Image)<{ isFirst?: boolean }>`
       border: 1.5px solid #161616 !important;
     `}
 `;
+
+// const FollowButton = (props: {
+//   walletConnectionPair: { wallet: AnchorWallet; connection: Connec };
+// }) => {
+//   const walletConnectionPair = useMemo(
+//     () => ({
+//       wallet,
+//       connection,
+//     }),
+//     [wallet, connection]
+//   );
+
+//   const connectTo = useMakeConnection(walletConnectionPair, {
+//     onSuccess: async (txId, toWallet) => {
+//       toast(
+//         <SuccessToast>
+//           Confirming transaction:&nbsp;
+//           <a
+//             className="font-bold underline"
+//             href={`https://explorer.solana.com/tx/${txId}`}
+//             target="_blank"
+//             rel="noreferrer"
+//           >
+//             {showFirstAndLastFour(txId)}
+//           </a>
+//         </SuccessToast>,
+//         { autoClose: 13_000 }
+//       );
+//       await connection.confirmTransaction(txId, 'finalized');
+//       await queryClient.invalidateQueries();
+//       toast(
+//         <SuccessToast>
+//           Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+//           <a
+//             className="font-bold underline"
+//             href={`https://explorer.solana.com/tx/${txId}`}
+//             target="_blank"
+//             rel="noreferrer"
+//           >
+//             {showFirstAndLastFour(txId)}
+//           </a>
+//         </SuccessToast>
+//       );
+//     },
+//     onError: (error) => {
+//       console.error(error);
+//       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
+//     },
+//   });
+//   const disconnectTo = useRevokeConnection(walletConnectionPair, {
+//     onSuccess: async (txId, toWallet) => {
+//       toast(
+//         <SuccessToast>
+//           Confirming transaction:&nbsp;
+//           <a
+//             className="font-bold underline"
+//             href={`https://explorer.solana.com/tx/${txId}`}
+//             target="_blank"
+//             rel="noreferrer"
+//           >
+//             {showFirstAndLastFour(txId)}
+//           </a>
+//         </SuccessToast>,
+//         { autoClose: 13_000 }
+//       );
+//       await connection.confirmTransaction(txId, 'finalized');
+//       await queryClient.invalidateQueries();
+//       toast(
+//         <SuccessToast>
+//           Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+//           <a
+//             className="font-bold underline"
+//             href={`https://explorer.solana.com/tx/${txId}`}
+//             target="_blank"
+//             rel="noreferrer"
+//           >
+//             {showFirstAndLastFour(txId)}
+//           </a>
+//         </SuccessToast>
+//       );
+//     },
+//     onError: (error) => {
+//       console.error(error);
+//       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
+//     },
+//   });
+
+//   return (
+//     <button
+//       className="rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-200"
+//       onClick={() => handleFollowClick()}
+//     >
+//       Follow
+//     </button>
+//   );
+// };
 
 const UnFollowButton = styled(ButtonV3)`
   :after {
