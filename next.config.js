@@ -28,6 +28,11 @@ module.exports = withPlugins(plugins, {
       'assets2.holaplex.com',
       'assets3.holaplex.com',
       'assets4.holaplex.com',
+      'assets.holaplex.market',
+      'assets1.holaplex.market',
+      'assets2.holaplex.market',
+      'assets3.holaplex.market',
+      'assets4.holaplex.market',
     ],
   },
 });

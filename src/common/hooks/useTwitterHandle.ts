@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 
 export const getTwitterHandle = async (pk: string, connection: Connection) => {
   try {
+    console.log('does this fire?');
     const [twitterHandle] = await getHandleAndRegistryKey(connection, new PublicKey(pk));
     return `${twitterHandle}`;
   } catch (err) {
