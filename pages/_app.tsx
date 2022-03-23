@@ -34,39 +34,34 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../src/graphql/apollo';
+
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
 
 const { Content } = Layout;
 
-const AppContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
+const getSolanaNetwork = () => {
+  return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
+    ? WalletAdapterNetwork.Devnet
+    : WalletAdapterNetwork.Mainnet;
+};
 
-const ContentWrapper = styled.div`
-  padding-bottom: 3rem;
-`;
+const track = (category: string, action: string) => {
+  if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
+    return;
+  }
 
-const AppLayout = styled(Layout)`
-  overflow-y: auto;
-`;
+  window.gtag('event', action, {
+    event_category: category,
+    send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
+  });
+};
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-
-  const track = (category: string, action: string) => {
-    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-      return;
-    }
-
-    window.gtag('event', action, {
-      event_category: category,
-      send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
-    });
-  };
 
   const onRouteChanged = (path: string) => {
     if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
@@ -86,7 +81,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
-  const network = WalletAdapterNetwork.Mainnet;
+  const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
   const wallets = useMemo(
@@ -102,6 +97,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     [network]
   );
 
+  const queryClient = useMemo(() => new QueryClient(), []);
+
   return (
     <>
       <Head>
@@ -112,59 +109,84 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
         />
       </Head>
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        position={'bottom-center'}
-        className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
-        toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
-        closeButton={() => <Close color="#fff" />}
-      />
-      <ApolloProvider client={apolloClient}>
-        <ConnectionProvider endpoint={endpoint}>
-          <WalletProviderSolana wallets={wallets} autoConnect>
-            <WalletModalProvider>
-              <WalletProvider>
-                {({ wallet }) => (
-                  <StorefrontProvider wallet={wallet}>
-                    {({ }) => {
-                      return (
-                        <MarketplaceProvider wallet={wallet}>
-                          {() => (
-                            <AnalyticsProvider>
-                              <AppLayout>
-                                <div className='bg-[#005BBB] sm:flex items-center justify-center text-[#FFD500] p-6 w-full'>
-                                  Help the people of Ukraine through SOL donations.
-                                  <a
-                                    href="https://donate.metaplex.com/"
-                                    className='sm:flex inline sm:h-10 sm:px-6 underline sm:no-underline ml-4 sm:rounded-full sm:hover:scale-[1.02] transition-transform sm:hover:text-[#005BBB] items-center justify-center sm:text-[#005BBB] sm:bg-[#FFD500]'
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                  >
-                                    Learn more
-                                  </a>
-                                </div>
-                                <AppHeader />
-                                <AppContent>
-                                  <ContentWrapper>
-                                    <Component {...pageProps} track={track} />
-                                  </ContentWrapper>
-                                </AppContent>
-                              </AppLayout>
-                            </AnalyticsProvider>
-                          )}
-                        </MarketplaceProvider>
-                      );
-                    }}
-                  </StorefrontProvider>
-                )}
-              </WalletProvider>
-            </WalletModalProvider>
-          </WalletProviderSolana>
-        </ConnectionProvider>
-      </ApolloProvider>
+
+      <QueryClientProvider client={queryClient}>
+        <ToastContainer
+          autoClose={5000}
+          hideProgressBar={true}
+          position={'bottom-center'}
+          className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
+          toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
+          closeButton={() => <Close color="#fff" />}
+        />
+        <ToastContainer
+          autoClose={5000}
+          hideProgressBar={true}
+          position={'bottom-center'}
+          className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
+          toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
+          closeButton={() => <Close color="#fff" />}
+        />
+        <ApolloProvider client={apolloClient}>
+          <ConnectionProvider endpoint={endpoint}>
+            <WalletProviderSolana wallets={wallets} autoConnect>
+              <WalletModalProvider>
+                <WalletProvider>
+                  {({ wallet }) => (
+                    <StorefrontProvider wallet={wallet}>
+                      {({}) => {
+                        return (
+                          <MarketplaceProvider wallet={wallet}>
+                            {() => (
+                              <AnalyticsProvider>
+                                <AppLayout>
+                                  <div className="w-full items-center justify-center bg-[#005BBB] p-6 text-[#FFD500] sm:flex">
+                                    Help the people of Ukraine through SOL donations.
+                                    <a
+                                      href="https://donate.metaplex.com/"
+                                      className="ml-4 inline items-center justify-center underline transition-transform sm:flex sm:h-10 sm:rounded-full sm:bg-[#FFD500] sm:px-6 sm:text-[#005BBB] sm:no-underline sm:hover:scale-[1.02] sm:hover:text-[#005BBB]"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      Learn more
+                                    </a>
+                                  </div>
+                                  <AppHeader />
+                                  <AppContent>
+                                    <ContentWrapper>
+                                      <Component {...pageProps} track={track} />
+                                    </ContentWrapper>
+                                  </AppContent>
+                                </AppLayout>
+                              </AnalyticsProvider>
+                            )}
+                          </MarketplaceProvider>
+                        );
+                      }}
+                    </StorefrontProvider>
+                  )}
+                </WalletProvider>
+              </WalletModalProvider>
+            </WalletProviderSolana>
+          </ConnectionProvider>
+        </ApolloProvider>
+      </QueryClientProvider>
     </>
   );
 }
 
 export default MyApp;
+
+const AppContent = styled(Content)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const ContentWrapper = styled.div`
+  padding-bottom: 3rem;
+`;
+
+const AppLayout = styled(Layout)`
+  overflow-y: auto;
+`;

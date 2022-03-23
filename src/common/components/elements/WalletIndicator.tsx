@@ -33,7 +33,7 @@ export const WalletPill: FC<WalletPillProps> = ({
   const isTwitterHandle = (textOverride?: string | null) =>
     textOverride?.length ? textOverride?.length <= 15 : false;
 
-  const twitterandle = isTwitterHandle(textOverride);
+  const twitterHandle = isTwitterHandle(textOverride);
 
   const handleLabelClick = async () => {
     if (publicKey?.toBase58().length) {
@@ -53,22 +53,30 @@ export const WalletPill: FC<WalletPillProps> = ({
     return (
       <ContainerSpan onClick={onClick} disableBackground={disableBackground ?? false}>
         <WalletText monospace={!isTwitterHandle(textOverride)}>
-          {isTwitterHandle(textOverride) ? (
-            <a href={'https://twitter.com/' + textOverride} className="hover:underline">
-              {`@${textOverride}`}
-            </a>
-          ) : publicKey ? (
-            <div className="flex items-center">
-              {showFirstAndLastFour(publicKey.toBase58())}
+          <div className="flex items-center ">
+            {isTwitterHandle(textOverride) ? (
+              <a
+                href={'https://twitter.com/' + textOverride}
+                className="hover:text-gray-300 "
+                target="_blank"
+                rel="noreferrer"
+              >
+                {`@${textOverride}`}
+              </a>
+            ) : publicKey ? (
+              showFirstAndLastFour(publicKey.toBase58())
+            ) : (
+              'DISCONNECTED'
+            )}
+
+            {(textOverride || publicKey) && (
               <FeatherIcon
                 onClick={handleLabelClick}
                 icon="copy"
                 className="ml-2 h-5 w-5 cursor-pointer text-[#f4f4f4]  transition-colors hover:text-gray-300"
               />
-            </div>
-          ) : (
-            'DISCONNECTED'
-          )}
+            )}
+          </div>
         </WalletText>
       </ContainerSpan>
     );
@@ -77,8 +85,8 @@ export const WalletPill: FC<WalletPillProps> = ({
   return (
     <Link passHref href={`/profiles/${publicKey?.toBase58()}`}>
       <ContainerAnchor onClick={onClick} disableBackground={disableBackground ?? false}>
-        <WalletText monospace={!twitterandle} twitterHandle={twitterandle ? textOverride! : ''}>
-          {twitterandle
+        <WalletText monospace={!twitterHandle} twitterHandle={twitterHandle ? textOverride! : ''}>
+          {twitterHandle
             ? `${textOverride}`
             : publicKey
             ? showFirstAndLastFour(publicKey.toBase58())
@@ -154,8 +162,7 @@ type WalletTextProps = {
 const WalletText: FC<WalletTextProps> = ({ monospace, twitterHandle, children }) => {
   const classes = cx(
     'text-white, inline-flex items-center justify-center text-center text-[16px] leading-[24px] tracking-[0.02em]',
-    { ["font-['Space_Mono']"]: monospace },
-    { ["font-['Inter']"]: !monospace }
+    monospace ? 'font-mono' : 'font-sans'
   );
   if (twitterHandle?.length) {
     return (

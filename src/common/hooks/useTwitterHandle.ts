@@ -1,21 +1,25 @@
 import { getHandleAndRegistryKey } from '@solana/spl-name-service';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import useSWR from 'swr';
 
-export const useTwitterHandle = (forWallet?: PublicKey | null) => {
+import { Connection, PublicKey } from '@solana/web3.js';
+import { useQuery } from 'react-query';
+
+export const getTwitterHandle = async (pk: string, connection: Connection) => {
+  try {
+    const [twitterHandle] = await getHandleAndRegistryKey(connection, new PublicKey(pk));
+    return `${twitterHandle}`;
+  } catch (err) {
+    return undefined;
+  }
+};
+
+export const useTwitterHandle = (forWallet?: PublicKey | null, base58Key?: string) => {
   const { connection } = useConnection();
-  return useSWR(
-    ['twitter-handle', forWallet?.toBase58()],
-    async (_: string, pk: string) => {
+  return useQuery(
+    ['twitter-handle', forWallet?.toBase58() || base58Key],
+    async ({ queryKey: [_, pk] }) => {
       if (pk && connection) {
-        try {
-          const [twitterHandle] = await getHandleAndRegistryKey(connection, new PublicKey(pk));
-          return `${twitterHandle}`;
-        } catch (err) {
-          console.warn(`err: `, err);
-          return undefined;
-        }
+        return await getTwitterHandle(pk, connection);
       } else {
         return undefined;
       }

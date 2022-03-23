@@ -10,16 +10,20 @@ export const maybeCDN = (uri: string) => {
 };
 
 export const imgOpt = (uri?: string, width?: number) => {
-  if (!uri) { return uri }
+  if (!uri) {
+    return uri;
+  }
   let cdnURI = uri
-  .replace(':443', '')
-  .replace('www.', '')
-  .replace(cleanExt, '')
-  .replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`)
-  .replace(captureCidArweave, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
-  .replace(captureCidArweaveCache, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
-  .replace(captureCidIpfsIo, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`);
-  cdnURI = cdnURI + `?width=${width}`
+    .replace(':443', '')
+    .replace('www.', '')
+    .replace(cleanExt, '')
+    .replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`)
+    .replace(captureCidArweave, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
+    .replace(captureCidArweaveCache, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
+    .replace(captureCidIpfsIo, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`);
+  cdnURI = cdnURI + `?width=${width}`;
 
   return cdnURI ?? uri;
 };
+
+export const RUST_ISO_UTC_DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
