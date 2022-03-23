@@ -135,50 +135,52 @@ export function ActivityCard(props: { activity: IFeedItem }) {
 
   return (
     <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base md:flex-nowrap">
-      <div
-        className={classNames(
-          'relative mr-4 flex h-20 w-20  flex-shrink-0 items-center text-gray-300',
-          thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'
-        )}
-      >
-        {activityThumbnailImageURL && (
-          <Image
-            className={thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'}
-            src={activityThumbnailImageURL}
-            alt="activity thumbnail"
-            layout="fill"
-          />
-        )}
-      </div>
-      <div>
-        <ActivityCardContent activity={props.activity} isYou={isYou} />
-        <div className="mt-2 text-sm text-gray-500">
-          {isYou &&
-          !props.activity.misc?.wonListing &&
-          !props.activity?.misc?.bidCancelled &&
-          props.activity.type === 'BID_MADE' ? (
-            <div className="flex items-center text-xs font-medium text-white opacity-80">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-1"
-              >
-                <path
-                  d="M8.00016 3.99967V7.99967L10.6668 9.33301M14.6668 7.99967C14.6668 11.6816 11.6821 14.6663 8.00016 14.6663C4.31826 14.6663 1.3335 11.6816 1.3335 7.99967C1.3335 4.31778 4.31826 1.33301 8.00016 1.33301C11.6821 1.33301 14.6668 4.31778 14.6668 7.99967Z"
-                  stroke="white"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-
-              <span>You have an uncanceled bid from {timeOfActivity.toRelative()}</span>
-            </div>
-          ) : (
-            timeOfActivity.toRelative()
+      <div className="flex items-center">
+        <div
+          className={classNames(
+            'relative mr-4 flex h-20 w-20  flex-shrink-0 items-center text-gray-300',
+            thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'
           )}
+        >
+          {activityThumbnailImageURL && (
+            <Image
+              className={thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'}
+              src={activityThumbnailImageURL}
+              alt="activity thumbnail"
+              layout="fill"
+            />
+          )}
+        </div>
+        <div>
+          <ActivityCardContent activity={props.activity} isYou={isYou} />
+          <div className="mt-2 text-sm text-gray-500">
+            {isYou &&
+            !props.activity.misc?.wonListing &&
+            !props.activity?.misc?.bidCancelled &&
+            props.activity.type === 'BID_MADE' ? (
+              <div className="flex items-center text-xs font-medium text-white opacity-80">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-1"
+                >
+                  <path
+                    d="M8.00016 3.99967V7.99967L10.6668 9.33301M14.6668 7.99967C14.6668 11.6816 11.6821 14.6663 8.00016 14.6663C4.31826 14.6663 1.3335 11.6816 1.3335 7.99967C1.3335 4.31778 4.31826 1.33301 8.00016 1.33301C11.6821 1.33301 14.6668 4.31778 14.6668 7.99967Z"
+                    stroke="white"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+
+                <span>You have an uncanceled bid from {timeOfActivity.toRelative()}</span>
+              </div>
+            ) : (
+              timeOfActivity.toRelative()
+            )}
+          </div>
         </div>
       </div>
       <a
@@ -187,7 +189,7 @@ export function ActivityCard(props: { activity: IFeedItem }) {
         className="ml-auto w-full pt-4 md:w-auto md:pl-4 md:pt-0"
         rel="noreferrer"
       >
-        <button className="w-full rounded-full bg-white px-9  py-2 font-sans text-base font-semibold text-gray-900 hover:bg-gray-200  focus:outline-none focus:ring-2 focus:ring-gray-200  focus:ring-offset-2 md:w-auto">
+        <button className="w-full rounded-full bg-white px-9  py-2 font-sans text-base font-medium text-gray-900 hover:bg-gray-200  focus:outline-none focus:ring-2 focus:ring-gray-200  focus:ring-offset-2 md:w-auto">
           View
         </button>
       </a>
