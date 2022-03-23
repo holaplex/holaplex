@@ -17,6 +17,7 @@ import { useRevokeConnectionWithUpdateTarget } from '@/common/hooks/useRevokeCon
 import { useMakeConnectionWithUpdateTarget } from '@/common/hooks/useMakeConnection';
 import { Unpacked } from '@/types/Unpacked';
 import { useQueryClient } from 'react-query';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 type Visibility = 'hidden' | 'followers' | 'following';
 
@@ -196,11 +197,9 @@ const FollowButton: FC<{
 }> = ({ wallet, item, side }) => {
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+  const { track } = useAnalytics();
   const queryClient = useQueryClient();
-  const allConnectionsToWallet = useGetAllConnectionsToWithTwitter(
-    wallet.publicKey.toBase58(),
-    walletConnectionPair
-  );
+
   const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
     wallet.publicKey.toBase58(),
     walletConnectionPair
@@ -223,6 +222,13 @@ const FollowButton: FC<{
       );
       await connection.confirmTransaction(txId, 'finalized');
       await queryClient.invalidateQueries();
+      track('Follow succeeded', {
+        event_category: 'Profile',
+        event_label: 'modal',
+        from: item.account.from.toBase58(),
+        to: item.account.to.toBase58(),
+        source: 'modal',
+      });
       toast(
         <SuccessToast>
           Followed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
@@ -239,6 +245,13 @@ const FollowButton: FC<{
     },
     onError: (error) => {
       console.error(error);
+      track('Follow errored', {
+        event_category: 'Profile',
+        event_label: 'modal',
+        from: item.account.from.toBase58(),
+        to: item.account.to.toBase58(),
+        source: 'modal',
+      });
       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
     },
   });
@@ -260,6 +273,13 @@ const FollowButton: FC<{
       );
       await connection.confirmTransaction(txId, 'finalized');
       await queryClient.invalidateQueries();
+      track('Unfollow succeeded', {
+        event_category: 'Profile',
+        event_label: 'modal',
+        from: item.account.from.toBase58(),
+        to: item.account.to.toBase58(),
+        source: 'modal',
+      });
       toast(
         <SuccessToast>
           Unfollowed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
@@ -276,6 +296,13 @@ const FollowButton: FC<{
     },
     onError: (error) => {
       console.error(error);
+      track('Unfollow errored', {
+        event_category: 'Profile',
+        event_label: 'modal',
+        from: item.account.from.toBase58(),
+        to: item.account.to.toBase58(),
+        source: 'modal',
+      });
       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
     },
   });
@@ -321,6 +348,13 @@ const FollowButton: FC<{
       <ButtonV3
         className="!bg-gray-800 !text-white hover:!bg-gray-600"
         onClick={() => {
+          track('Unfollow initiated', {
+            event_category: 'Profile',
+            event_label: 'modal',
+            from: item.account.from.toBase58(),
+            to: item.account.to.toBase58(),
+            source: 'modal',
+          });
           const revokeConnectionInput = {
             targetPubKey:
               side === 'allConnectionsFrom'
@@ -338,6 +372,14 @@ const FollowButton: FC<{
     return (
       <ButtonV3
         onClick={() => {
+          track('Follow initiated', {
+            event_category: 'Profile',
+            event_label: 'modal',
+            from: item.account.from.toBase58(),
+            to: item.account.to.toBase58(),
+            source: 'modal',
+          });
+
           const makeConnectionInput = {
             targetPubKey:
               side === 'allConnectionsFrom'

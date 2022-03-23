@@ -19,6 +19,7 @@ import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import Link from 'next/link';
 import { FollowModal } from './FollowModal';
 import { useQueryClient } from 'react-query';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 
 type FollowerCountProps = {
   pubKey: string;
@@ -56,7 +57,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
     }),
     [wallet, connection]
   );
-
+  const { track } = useAnalytics();
   const queryClient = useQueryClient();
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
@@ -78,6 +79,13 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
       );
       await connection.confirmTransaction(txId, 'finalized');
       await queryClient.invalidateQueries();
+      track('Follow succeeded', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: wallet.publicKey.toBase58(),
+        to: toWallet,
+        source: 'profile',
+      });
       toast(
         <SuccessToast>
           Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
@@ -92,8 +100,15 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
         </SuccessToast>
       );
     },
-    onError: (error) => {
+    onError: (error, toWallet) => {
       console.error(error);
+      track('Follow errored', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: wallet.publicKey.toBase58(),
+        to: toWallet,
+        source: 'profile',
+      });
       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
     },
   });
@@ -115,6 +130,13 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
       );
       await connection.confirmTransaction(txId, 'finalized');
       await queryClient.invalidateQueries();
+      track('Unfollow succeeded', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: wallet.publicKey.toBase58(),
+        to: toWallet,
+        source: 'profile',
+      });
       toast(
         <SuccessToast>
           Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
@@ -129,8 +151,15 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
         </SuccessToast>
       );
     },
-    onError: (error) => {
+    onError: (error, toWallet) => {
       console.error(error);
+      track('Unfollow errored', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: wallet.publicKey.toBase58(),
+        to: toWallet,
+        source: 'profile',
+      });
       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
     },
   });
@@ -146,10 +175,24 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
 
   const handleUnFollowClick = (pubKeyOverride?: string) => {
     const pk = pubKeyOverride ?? pubKey;
+    track('Unfollow initiated', {
+      event_category: 'Profile',
+      event_label: 'profile',
+      from: wallet.publicKey.toBase58(),
+      to: pk,
+      source: 'profile',
+    });
     disconnectTo.mutate(pk);
   };
   const handleFollowClick = (pubKeyOverride?: string) => {
     const pk = pubKeyOverride ?? pubKey;
+    track('Follow initiated', {
+      event_category: 'Profile',
+      event_label: 'profile',
+      from: wallet.publicKey.toBase58(),
+      to: pk,
+      source: 'profile',
+    });
     connectTo.mutate(pk);
   };
 
