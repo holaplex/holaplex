@@ -94,10 +94,12 @@ export const ButtonV3 = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  /*
   &&:not([disabled]):hover {
     background-color: rgba(255, 255, 255, 0.8);
     color: #171717;
   }
+  */
 `;
 
 export const SecondaryButtonV3 = styled.button`

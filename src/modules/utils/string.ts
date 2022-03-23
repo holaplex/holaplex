@@ -5,6 +5,12 @@
 export const showFirstAndLastFour = (str: string, isLowerThanEight = str.length <= 8) =>
   isLowerThanEight ? str : `${str.substring(0, 4)}...${str.substring(str.length - 4)}`;
 
+// shorten the checksummed version of the input address to have 4 characters at start and end
+export function shortenAddress(address?: string, chars = 4): string {
+  if (!address) return '';
+  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+}
+
 /**
  * Pretty similar to Rust's b"Something" literal.
  * Useful for using with Solana's PDAs.

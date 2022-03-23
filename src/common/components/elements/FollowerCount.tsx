@@ -22,12 +22,19 @@ import { useQueryClient } from 'react-query';
 
 type FollowerCountProps = {
   pubKey: string;
+  setShowFollowsModal: (s: FollowsModalState) => void;
 };
 
-export const FollowerCount: FC<FollowerCountProps> = ({ pubKey }) => {
+export const FollowerCount: FC<FollowerCountProps> = ({ pubKey, setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
   if (!wallet) return null;
-  return <FollowerCountContent wallet={wallet} pubKey={pubKey} />;
+  return (
+    <FollowerCountContent
+      wallet={wallet}
+      pubKey={pubKey}
+      setShowFollowsModal={setShowFollowsModal}
+    />
+  );
 };
 
 type FollowerCountContentProps = FollowerCountProps & {
@@ -36,7 +43,11 @@ type FollowerCountContentProps = FollowerCountProps & {
 
 type FollowsModalState = 'hidden' | 'followers' | 'following';
 
-export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wallet }) => {
+export const FollowerCountContent: FC<FollowerCountContentProps> = ({
+  pubKey,
+  wallet,
+  setShowFollowsModal,
+}) => {
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(
     () => ({
@@ -45,7 +56,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
     }),
     [wallet, connection]
   );
-  const [showFollowsModal, setShowFollowsModal] = useState<FollowsModalState>('hidden');
+
   const queryClient = useQueryClient();
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
@@ -156,32 +167,49 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({ pubKey, wa
 
   return (
     <>
-      <FollowModal
-        visibility={showFollowsModal}
-        setVisibility={setShowFollowsModal}
-        pubKey={pubKey}
-        wallet={wallet}
-      />
       {/*** Contents */}
       <div className="flex flex-col">
-        <div className="mt-9 flex flex-row">
+        <div className="mt-10 flex justify-between md:justify-start">
           <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-            <div className="font-bold">{allConnectionsTo.data?.length ?? 0}</div>
-            <div className="text-sm text-gray-200">Followers</div>
+            <div className="text-left font-semibold">{allConnectionsTo.data?.length ?? 0}</div>
+            <div className="text-sm font-medium text-gray-200">Followers</div>
           </button>
           <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
-            <div className="font-bold">{allConnectionsFrom.data?.length ?? 0}</div>
-            <div className="text-sm text-gray-200">Following</div>
+            <div className="text-left font-semibold">{allConnectionsFrom.data?.length ?? 0}</div>
+            <div className="text-sm font-medium text-gray-200">Following</div>
           </button>
-          {isSameWallet ? null : amIFollowing ? (
-            <div className="ml-10 flex flex-row items-center justify-center">
-              <UnFollowButton onClick={() => handleUnFollowClick()} />
-            </div>
-          ) : (
-            <div className="ml-10 flex flex-row items-center justify-center">
-              <ButtonV3 onClick={() => handleFollowClick()}>Follow</ButtonV3>
-            </div>
-          )}
+          <div className="ml-10">
+            {isSameWallet ? null : amIFollowing ? (
+              // <div className="ml-10 flex flex-row items-center justify-center">
+              /* <UnFollowButton
+            className="hover:bg-gray-800 hover:text-white"
+            onClick={() => handleUnFollowClick()}
+            /> 
+               <ButtonV3
+               className="!bg-gray-800 !px-6 !py-2 !text-base !text-white hover:!bg-gray-600"
+               onClick={() => handleUnFollowClick()}
+               >
+               Unfollow
+               </ButtonV3> */
+              // </div>
+              <button
+                className="rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-600"
+                onClick={() => handleUnFollowClick()}
+              >
+                Unfollow
+              </button>
+            ) : (
+              <button
+                className="rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-200"
+                onClick={() => handleFollowClick()}
+              >
+                Follow
+              </button>
+              // <div className="ml-10 flex flex-row items-center justify-center">
+              //   <ButtonV3 onClick={() => handleFollowClick()}>Follow</ButtonV3>
+              // </div>
+            )}
+          </div>
         </div>
         {allConnectionsTo.data?.length ? (
           <FollowedBy
@@ -261,10 +289,10 @@ type FollowedByProps = {
 const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) => {
   const followerLength = followers?.length ?? 0;
   return (
-    <div className="mt-4 flex flex-col">
-      <div className="text-sm text-gray-200">Followed by</div>
+    <div className="mt-2 flex items-center space-x-2 md:flex-col md:items-start md:space-x-0">
+      <div className="text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2 flex flex-row">
-        {(followers ?? []).map((follower, i) => (
+        {(followers ?? []).slice(0, 4).map((follower, i) => (
           <FollowerBubble
             key={follower.publicKey.toBase58()}
             isFirst={i === 0}
@@ -276,7 +304,7 @@ const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) =
             onClick={onOtherFollowersClick}
             className="z-10 ml-[-8px] flex h-8 w-8 flex-col items-center justify-center rounded-full"
           >
-            {followerLength - 4}
+            +{followerLength - 4}
           </OtherFollowersNumberBubble>
         ) : null}
       </div>
@@ -286,7 +314,7 @@ const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) =
 
 const FollowerCountSkeleton = () => (
   <div className="flex flex-col">
-    <div className="mt-9 flex flex-row">
+    <div className="mt-10 flex flex-row">
       <button disabled className="flex flex-col">
         <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
           &nbsp;&nbsp;&nbsp;&nbsp;
