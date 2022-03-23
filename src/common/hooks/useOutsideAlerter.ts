@@ -1,15 +1,15 @@
 import { RefObject, useEffect } from 'react';
 
-export const useOutsideAlerter = (ref: RefObject<Node>, callback: VoidFunction) => {
+export const useOutsideAlerter = (ref: RefObject<Node>, cb: VoidFunction) => {
   useEffect(() => {
-    function handleClickOutside(event: Event) {
+    const handleClickOutside = (event: Event) => {
       if (ref?.current && !ref?.current?.contains(event.target as Node)) {
-        callback();
+        cb();
       }
-    }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [callback, ref]);
+  }, [cb, ref]);
 };

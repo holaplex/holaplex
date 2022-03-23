@@ -25,6 +25,10 @@ const upsertWallet = async (pubkey: string | undefined) => {
   });
 };
 
+/**
+ * 
+ * @deprecated Use `WalletProvider` from (@solana/wallet-adapter) instead.
+ */
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   const router = useRouter();
   const [wallet, setWallet] = useState<Wallet>();
