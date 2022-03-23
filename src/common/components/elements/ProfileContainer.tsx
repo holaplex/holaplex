@@ -2,12 +2,20 @@ import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { WalletPill } from '@/common/components/elements/WalletIndicator';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
+import { getBannerFromPublicKey, getPFPFromPublicKey } from '@/modules/utils/image';
 import Bugsnag from '@bugsnag/js';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import styled from 'styled-components';
+import { FollowerCount } from './FollowerCount';
+import { FollowModal } from './FollowModal';
+// @ts-ignore
+import FeatherIcon from 'feather-icons-react';
+import { shortenAddress } from '@/modules/utils/string';
+import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 
 interface Props {
   children: React.ReactNode;
@@ -20,17 +28,21 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
   const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
   const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const [showFollowsModal, setShowFollowsModal] = useState<'hidden' | 'followers' | 'following'>(
+    'hidden'
+  );
+  const anchorWallet = useAnchorWallet();
+
   const [{ pfp, banner }, setPfpAndBanner] = useState({
-    pfp: '/images/gradients/gradient-3.png',
-    banner: 'url(/images/gradients/gradient-5.png)', // TODO: Fetch from wallet (DERIVE)
+    pfp: getPFPFromPublicKey(publicKey),
+    banner: `url(${getBannerFromPublicKey(publicKey)})`,
   });
 
   useEffect(() => {
-    if (!twitterHandle) return;
     try {
       queryWalletProfile({
         variables: {
-          handle: twitterHandle,
+          handle: twitterHandle ?? '',
         },
       });
     } catch (error: any) {
@@ -41,20 +53,20 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   }, [queryWalletProfile, twitterHandle]);
 
   useEffect(() => {
-    const profilePictureImage = imageUrl ?? '/images/gradients/gradient-3.png'; // TODO: Fetch from wallet [here-too] (DERIVE).
+    const profilePictureImage = imageUrl ?? getPFPFromPublicKey(publicKey);
     const bannerBackgroundImage = !!bannerUrl
       ? `url(${bannerUrl})`
-      : 'url(/images/gradients/gradient-5.png)'; // TODO: Fetch from wallet (DERIVE).
+      : `url(${getBannerFromPublicKey(publicKey)})`;
 
     setPfpAndBanner({
       pfp: profilePictureImage,
       banner: bannerBackgroundImage,
     });
-  }, [imageUrl, bannerUrl]);
+  }, [imageUrl, bannerUrl, publicKey]);
 
   const getPublicKeyFromWalletOnUrl = () => {
     try {
-      return new PublicKey(wallet as string);
+      return new PublicKey(wallet);
     } catch (_) {
       return null;
     }
@@ -63,32 +75,101 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   return (
     <>
       <HeadingContainer>
-        <Banner style={{ backgroundImage: banner }} />
+        <Banner className="h-40 md:h-64 " style={{ backgroundImage: banner }} />
+        {/* <Image
+          className="h-40 object-cover md:h-64"
+          alt="banner"
+          src={'/' + banner}
+          layout="fill"
+        /> */}
       </HeadingContainer>
       <ContentCol>
-        <Profile>
-          <ProfilePictureContainer>
-            <ProfilePicture src={pfp} width={PFP_SIZE} height={PFP_SIZE} />
-          </ProfilePictureContainer>
-          <WalletPillContainer>
-            <WalletPill
+        <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
+          {/* <ProfilePictureContainer>
+            <ProfilePicture src={pfp} className="bg-gray-900" width={PFP_SIZE} height={PFP_SIZE} />
+          </ProfilePictureContainer> */}
+          <div className="-mt-12 flex justify-center md:justify-start">
+            <ProfilePicture src={pfp} className="bg-gray-900" width={PFP_SIZE} height={PFP_SIZE} />
+            {/* <div className="rounded-full !border-4 !border-gray-100">
+              <Image
+                src={pfp}
+                alt="profile picture"
+                className="rounded-full !border-4 !border-gray-100 bg-gray-900"
+                width={PFP_SIZE}
+                height={PFP_SIZE}
+              />
+            </div> */}
+          </div>
+          <div className="mt-10 flex justify-center  md:justify-start">
+            {/* <WalletPill
               disableBackground
               disableLink
               textOverride={twitterHandle ? `${twitterHandle}` : null}
               publicKey={getPublicKeyFromWalletOnUrl()}
+            /> */}
+            <ProfileDisplayName
+              publicKey={getPublicKeyFromWalletOnUrl()}
+              twitterHandle={twitterHandle}
             />
-          </WalletPillContainer>
-        </Profile>
+          </div>
+          <FollowerCount pubKey={wallet} setShowFollowsModal={setShowFollowsModal} />
+        </div>
         <ContentWrapper>
-          {/* <ProfileMenu wallet={wallet} /> */}
+          <ProfileMenu wallet={wallet} />
           {children}
         </ContentWrapper>
+        {anchorWallet && (
+          <FollowModal
+            visibility={showFollowsModal}
+            setVisibility={setShowFollowsModal}
+            pubKey={wallet}
+            wallet={anchorWallet}
+          />
+        )}
       </ContentCol>
     </>
   );
 };
 
-export const PFP_SIZE = 90;
+const ProfileDisplayName = (props: { publicKey: PublicKey | null; twitterHandle?: string }) => {
+  const pubkey = props.publicKey?.toBase58();
+
+  const [copied, setCopeied] = useState(false);
+  const copyPubKey = async () => {
+    if (pubkey) {
+      await navigator.clipboard.writeText(pubkey);
+      setCopeied(true);
+      setTimeout(() => setCopeied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="flex items-center text-2xl font-medium">
+      {props.twitterHandle ? (
+        <a
+          className="hover:text-gray-300"
+          target="_blank"
+          href={'https://www.twitter.com/' + props.twitterHandle}
+          rel="noreferrer"
+        >
+          @{props.twitterHandle}
+        </a>
+      ) : (
+        <span className="font-mono ">{shortenAddress(pubkey)}</span>
+      )}
+      {copied ? (
+        <CheckIcon className="ml-4 h-7 w-7  hover:text-gray-300" />
+      ) : (
+        <DuplicateIcon
+          className="ml-4 h-7 w-7 cursor-pointer  hover:text-gray-300"
+          onClick={copyPubKey}
+        />
+      )}
+    </div>
+  );
+};
+
+export const PFP_SIZE = 100;
 const BOX_SIZE = 1400;
 
 const ProfilePictureContainer = styled.div`
@@ -131,22 +212,13 @@ const ContentCol = styled.div`
 
 const Banner = styled.div`
   width: 100%;
-  height: 265px;
   background-repeat: no-repeat;
   background-size: cover;
+
   ${mq('lg')} {
     background-attachment: fixed;
     background-size: 100%;
   }
 `;
 
-const WalletPillContainer = styled.div`
-  margin-top: 80px;
-`;
-
 const HeadingContainer = styled.header``;
-
-const Profile = styled.div`
-  min-width: 348px;
-  position: relative;
-`;
