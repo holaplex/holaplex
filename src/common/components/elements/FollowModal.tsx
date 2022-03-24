@@ -14,7 +14,7 @@ import { SuccessToast } from './SuccessToast';
 import { FailureToast } from './FailureToast';
 import { toast } from 'react-toastify';
 import { useRevokeConnectionWithUpdateTarget } from '@/common/hooks/useRevokeConnection';
-import { useMakeConnectionWithUpdateTarget } from '@/common/hooks/useMakeConnection';
+// import { useMakeConnectionWithUpdateTarget } from '@/common/hooks/useMakeConnection';
 import { Unpacked } from '@/types/Unpacked';
 import { useQueryClient } from 'react-query';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
@@ -96,51 +96,57 @@ export const FollowModal: FC<FollowModalProps> = ({
             Following
           </button>
         </div>
-        <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
+        <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers' ? (
             <>
               {(allConnectionsTo.data ?? []).map(
                 (
-                  i,
-                  idx,
-                  _,
-                  twitter = i.twitter.fromHandle,
-                  hasTwitter = !!i.twitter.fromHandle
+                  i
+                  // idx,
+                  // _,
+                  // twitter = i.twitter.fromHandle,
+                  // hasTwitter = !!i.twitter.fromHandle
                 ) => (
-                  <div
+                  <FollowItem
+                    walletConnectionPair={walletConnectionPair}
                     key={i.publicKey.toBase58()}
-                    className={cx('flex h-10', {
-                      'mt-6': idx !== 0,
-                    })}
-                  >
-                    <div className="flex flex-1 justify-between">
-                      <div className="flex items-center">
-                        <Image
-                          className="rounded-full"
-                          width={40}
-                          height={40}
-                          src={getPFPFromPublicKey(i.account.from)}
-                          alt="PFP"
-                        />
-                        <Link href={`/profiles/${i.account.from.toBase58()}`} passHref>
-                          <a
-                            onClick={() => setVisibility('hidden')}
-                            className={cx('ml-3 text-base font-medium leading-6 text-white', {
-                              "font-['Inter']": hasTwitter,
-                              "font-['Space_Mono']": !hasTwitter,
-                            })}
-                          >
-                            {hasTwitter
-                              ? `@${twitter}`
-                              : showFirstAndLastFour(i.account.from.toBase58())}
-                          </a>
-                        </Link>
-                      </div>
-                      <div className="flex items-center">
-                        <FollowButton wallet={wallet} item={i} side="allConnectionsFrom" />
-                      </div>
-                    </div>
-                  </div>
+                    item={i}
+                    side={'allConnectionsFrom'}
+                  />
+                  // <div
+                  //   key={i.publicKey.toBase58()}
+                  //   className={cx('flex h-10', {
+                  //     'mt-6': idx !== 0,
+                  //   })}
+                  // >
+                  //   <div className="flex flex-1 justify-between">
+                  //     <div className="flex items-center">
+                  //       <Image
+                  //         className="rounded-full"
+                  //         width={40}
+                  //         height={40}
+                  //         src={getPFPFromPublicKey(i.account.from)}
+                  //         alt="PFP"
+                  //       />
+                  //       <Link href={`/profiles/${i.account.from.toBase58()}`} passHref>
+                  //         <a
+                  //           onClick={() => setVisibility('hidden')}
+                  //           className={cx('ml-3 text-base font-medium leading-6 text-white', {
+                  //             "font-['Inter']": hasTwitter,
+                  //             "font-['Space_Mono']": !hasTwitter,
+                  //           })}
+                  //         >
+                  //           {hasTwitter
+                  //             ? `@${twitter}`
+                  //             : showFirstAndLastFour(i.account.from.toBase58())}
+                  //         </a>
+                  //       </Link>
+                  //     </div>
+                  //     <div className="flex items-center">
+                  //       <FollowButton wallet={wallet} item={i} side="allConnectionsFrom" />
+                  //     </div>
+                  //   </div>
+                  // </div>
                 )
               )}
             </>
@@ -148,39 +154,52 @@ export const FollowModal: FC<FollowModalProps> = ({
           {visibility === 'following' ? (
             <>
               {(allConnectionsFrom.data ?? []).map(
-                (i, idx, _, twitter = i.twitter.toHandle, hasTwitter = !!i.twitter.toHandle) => (
-                  <div
+                (
+                  i
+                  // idx,
+                  //  _,
+                  //  twitter = i.twitter.toHandle,
+                  //  hasTwitter = !!i.twitter.toHandle
+                ) => (
+                  <FollowItem
+                    walletConnectionPair={walletConnectionPair}
                     key={i.publicKey.toBase58()}
-                    className={cx('flex h-10', { 'mt-6': idx !== 0 })}
-                  >
-                    <div className="flex flex-1 justify-between">
-                      <div className="flex items-center">
-                        <Image
-                          className="rounded-full"
-                          width={40}
-                          height={40}
-                          src={getPFPFromPublicKey(i.account.to)}
-                          alt="PFP"
-                        />
-                        <Link href={`/profiles/${i.account.to}`} passHref>
-                          <a
-                            onClick={() => setVisibility('hidden')}
-                            className={cx('ml-3 text-base font-medium leading-6 text-white', {
-                              "font-['Inter']": hasTwitter,
-                              "font-['Space_Mono']": !hasTwitter,
-                            })}
-                          >
-                            {hasTwitter
-                              ? `@${twitter}`
-                              : showFirstAndLastFour(i.account.to.toBase58())}
-                          </a>
-                        </Link>
-                      </div>
-                      <div className="flex items-center">
-                        <FollowButton wallet={wallet} item={i} side="allConnectionsTo" />
-                      </div>
-                    </div>
-                  </div>
+                    item={i}
+                    side={'allConnectionsTo'}
+                  />
+                  // <div
+                  //   key={i.publicKey.toBase58()}
+                  //   className={cx('flex h-10', { 'mt-6': idx !== 0 })}
+                  // >
+                  //   <div className="flex flex-1 justify-between">
+                  //     <div className="flex items-center">
+                  //       <Image
+                  //         className="rounded-full"
+                  //         width={40}
+                  //         height={40}
+                  //         src={getPFPFromPublicKey(i.account.to)}
+                  //         alt="PFP"
+                  //       />
+                  //       <Link href={`/profiles/${i.account.to}`} passHref>
+                  //         <a
+                  //           onClick={() => setVisibility('hidden')}
+                  //           className={cx('ml-3 text-base font-medium leading-6 text-white', {
+                  //             "font-['Inter']": hasTwitter,
+                  //             "font-['Space_Mono']": !hasTwitter,
+                  //           })}
+                  //         >
+                  //           {hasTwitter
+                  //             ? `@${twitter}`
+                  //             : showFirstAndLastFour(i.account.to.toBase58())}
+                  //         </a>
+                  //       </Link>
+                  //     </div>
+                  //     <div className="flex items-center">
+                  //       {/* <FollowButton wallet={wallet} item={i} side="allConnectionsTo" /> */}
+                  //       <FollowUnfollowButton walletConnectionPair={walletConnectionPair}  />
+                  //     </div>
+                  //   </div>
+                  // </div>
                 )
               )}
             </>
@@ -191,26 +210,28 @@ export const FollowModal: FC<FollowModalProps> = ({
   );
 };
 
-const FollowButton: FC<{
-  item: ConnectionItem;
+const FollowItem = (props: {
+  item: any;
+  walletConnectionPair: any;
   side: 'allConnectionsTo' | 'allConnectionsFrom';
-  wallet: AnchorWallet;
-}> = ({ wallet, item, side }) => {
-  const { connection } = useConnection();
-  const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+}) => {
+  const item = props.item;
+  const side = props.side;
+  const { wallet } = props.walletConnectionPair;
+
+  const twitterHandle = item.twitter.toHandle;
+  const hasTwitter = !!twitterHandle;
 
   const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
     wallet.publicKey.toBase58(),
-    walletConnectionPair
+    props.walletConnectionPair
   );
 
   const itemIsMyWallet =
     (side === 'allConnectionsFrom' &&
       item.account.from.toBase58() === wallet.publicKey.toBase58()) ||
     (side === 'allConnectionsTo' && item.account.to.toBase58() === wallet.publicKey.toBase58());
-  if (itemIsMyWallet) {
-    return null;
-  }
+
   const amIFollowingThisAccount =
     (side === 'allConnectionsFrom' &&
       (allConnectionsFromWallet.data ?? []).some((i) => i.account.to.equals(item.account.from))) ||
@@ -218,10 +239,73 @@ const FollowButton: FC<{
       (allConnectionsFromWallet.data ?? []).some((i) => i.account.to.equals(item.account.to)));
 
   return (
-    <FollowUnfollowButton
-      walletConnectionPair={walletConnectionPair}
-      toWallet={item.account.to.toBase58()}
-      type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
-    />
+    <div className={cx('flex h-10')}>
+      <div className="flex flex-1 justify-between">
+        <div className="flex items-center">
+          <Image
+            className="rounded-full"
+            width={40}
+            height={40}
+            src={getPFPFromPublicKey(item.account.to)}
+            alt="PFP"
+          />
+          <Link href={`/profiles/${item.account.to}`} passHref>
+            <a
+              // onClick={() => setVisibility('hidden')}
+              className={cx('ml-3 text-base font-medium leading-6 text-white', {
+                'font-sans': hasTwitter,
+                'font-mono': !hasTwitter,
+              })}
+            >
+              {hasTwitter ? `@${twitterHandle}` : showFirstAndLastFour(item.account.to.toBase58())}
+            </a>
+          </Link>
+        </div>
+        <div className="flex items-center">
+          {itemIsMyWallet ? null : (
+            <FollowUnfollowButton
+              type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
+              walletConnectionPair={props.walletConnectionPair}
+              toWallet={item.account.to.toBase58()}
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
+
+// const FollowButton: FC<{
+//   item: ConnectionItem;
+//   side: 'allConnectionsTo' | 'allConnectionsFrom';
+//   wallet: AnchorWallet;
+// }> = ({ wallet, item, side }) => {
+//   const { connection } = useConnection();
+//   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+
+//   const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
+//     wallet.publicKey.toBase58(),
+//     walletConnectionPair
+//   );
+
+//   const itemIsMyWallet =
+//     (side === 'allConnectionsFrom' &&
+//       item.account.from.toBase58() === wallet.publicKey.toBase58()) ||
+//     (side === 'allConnectionsTo' && item.account.to.toBase58() === wallet.publicKey.toBase58());
+//   if (itemIsMyWallet) {
+//     return null;
+//   }
+//   const amIFollowingThisAccount =
+//     (side === 'allConnectionsFrom' &&
+//       (allConnectionsFromWallet.data ?? []).some((i) => i.account.to.equals(item.account.from))) ||
+//     (side === 'allConnectionsTo' &&
+//       (allConnectionsFromWallet.data ?? []).some((i) => i.account.to.equals(item.account.to)));
+
+//   return (
+//     <FollowUnfollowButton
+//       walletConnectionPair={walletConnectionPair}
+//       toWallet={item.account.to.toBase58()}
+//       type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
+//     />
+//   );
+// };
