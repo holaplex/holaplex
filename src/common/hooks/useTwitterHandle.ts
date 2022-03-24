@@ -8,8 +8,10 @@ export const getTwitterHandle = async (pk: string, connection: Connection) => {
   try {
     console.log('does this fire?');
     const [twitterHandle] = await getHandleAndRegistryKey(connection, new PublicKey(pk));
+    console.log('tiwtter hanzdl', twitterHandle);
     return `${twitterHandle}`;
   } catch (err) {
+    console.error('err', err);
     return undefined;
   }
 };
@@ -18,8 +20,12 @@ export const useTwitterHandle = (forWallet?: PublicKey | null, base58Key?: strin
   const { connection } = useConnection();
   return useQuery(
     ['twitter-handle', forWallet?.toBase58() || base58Key],
+
     async ({ queryKey: [_, pk] }) => {
+      console.log('pk', pk);
+      console.log('connection', connection);
       if (pk && connection) {
+        console.log('awiating???');
         return await getTwitterHandle(pk, connection);
       } else {
         return undefined;

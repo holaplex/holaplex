@@ -33,6 +33,7 @@ module.exports = withPlugins(plugins, {
       'assets2.holaplex.market',
       'assets3.holaplex.market',
       'assets4.holaplex.market',
+      'ipfs.io'
     ],
   },
 });

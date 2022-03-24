@@ -185,7 +185,7 @@ const ContentWrapper = styled.section`
   width: 100%;
 `;
 
-const ProfilePicture = styled(Image)`
+export const ProfilePicture = styled(Image)`
   border-radius: 50%;
   border: 5px solid #161616 !important;
 `;

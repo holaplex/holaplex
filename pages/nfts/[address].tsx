@@ -1,21 +1,47 @@
 import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
-import { useNftPageLazyQuery } from '../../src/graphql/indexerTypes';
+import { useNftPageLazyQuery, useWalletProfileLazyQuery } from '../../src/graphql/indexerTypes';
 import { always, equals, ifElse, pipe, length, find, prop } from 'ramda';
 import BN from 'bn.js';
 import cx from 'classnames';
 import { showFirstAndLastFour } from '../../src/modules/utils/string';
 import { useTwitterHandle } from '../../src/common/hooks/useTwitterHandle';
 import Link from 'next/link';
+import Custom404 from '../404';
+import { getPFPFromPublicKey } from '../../src/modules/utils/image';
+import Image from 'next/image';
+import Accordion from '../../src/common/components/elements/Accordion';
 // import Bugsnag from '@bugsnag/js';
 
 const Avatar = ({ address }: { address: string }) => {
-  const { data } = useTwitterHandle(null, address);
-  const twitterHandle = `@${data}`;
+  const { data: twitterHandle } = useTwitterHandle(null, address);
+  console.log('twitterHandle', twitterHandle);
+  const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
+
+  useEffect(() => {
+    if (!twitterHandle) return;
+    queryWalletProfile({
+      variables: {
+        handle: twitterHandle,
+      },
+    });
+  }, [queryWalletProfile, twitterHandle]);
+
+  useEffect(() => {}, [twitterHandle]);
+  const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
 
   return (
     <div className="flex items-center">
-      <div> {data ? twitterHandle : showFirstAndLastFour(address)}</div>
+      <Image
+        width={24}
+        height={24}
+        src={profilePictureUrl ?? getPFPFromPublicKey(address)}
+        alt="Profile Picture"
+        className=" rounded-full"
+      />
+      <div className="ml-2 text-base">
+        {twitterHandle ? `@${twitterHandle}` : showFirstAndLastFour(address)}
+      </div>
     </div>
   );
 };
@@ -28,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function NftByAddress({ address }: { address: string }) {
-  const [queryNft, { data, loading, refetch }] = useNftPageLazyQuery();
+  const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
   const nft = data?.nft;
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
 
@@ -46,6 +72,10 @@ export default function NftByAddress({ address }: { address: string }) {
       // Bugsnag.notify(error);
     }
   }, [address, queryNft]);
+
+  if (called && !data && !loading) {
+    return <Custom404 />;
+  }
 
   return (
     <div className="container mx-auto px-4 pb-10 text-white">
@@ -82,77 +112,71 @@ export default function NftByAddress({ address }: { address: string }) {
               </>
             )}
           </div>
-          <div className="mb-8 flex-1">
-            <div className="label mb-1">
-              {loading ? (
-                <div className="h-4 w-14 rounded bg-gray-800" />
-              ) : (
-                ifElse(
-                  pipe(length, equals(1)),
-                  always('CREATOR'),
-                  always('CREATORS')
-                )(nft?.creators || '')
-              )}
-            </div>
-            <ul>
-              {loading ? (
-                <li>
-                  <div className="h-6 w-20 rounded bg-gray-800" />
-                </li>
-              ) : (
-                nft?.creators.map(({ address }) => (
-                  <li key={address}>
-                    <Link href={`/profiles/${address}`}>
-                      <a>
-                        <Avatar address={address} />
-                      </a>
-                    </Link>
+          <div className="mb-8 flex flex-1 flex-row justify-between">
+            <div>
+              <div className="label mb-1 text-gray-500">
+                {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Created by'}
+              </div>
+              <ul>
+                {loading ? (
+                  <li>
+                    <div className="h-6 w-20 rounded bg-gray-800" />
                   </li>
-                ))
-              )}
-            </ul>
-          </div>
-          <div
-            className={cx('mt-8 w-full rounded-lg bg-gray-800 p-6', {
-              'h-44': loading,
-            })}
-          >
+                ) : (
+                  nft?.creators.map(({ address }) => (
+                    <li key={address} className="mb-2 last:mb-0">
+                      <Link href={`/profiles/${address}`}>
+                        <a>
+                          <Avatar address={address} />
+                        </a>
+                      </Link>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+
             <div
               className={cx('flex', {
                 hidden: loading,
               })}
             >
-              {nft?.owner?.address && (
-                <div className="flex-1">
-                  <div className="label mb-1">OWNER</div>
+              <div className="flex flex-1 flex-col">
+                <div className="label mb-1 self-end text-gray-500">Owned by</div>
+                {nft?.owner?.address && (
                   <Link href={`/profiles/${nft?.owner?.address}`}>
                     <a>
                       <Avatar address={nft?.owner?.address} />
                     </a>
                   </Link>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-          <div className="mt-8 grid grid-cols-2 gap-6">
-            {loading ? (
-              <>
-                <div className="h-16 rounded bg-gray-800" />
-                <div className="h-16 rounded bg-gray-800" />
-                <div className="h-16 rounded bg-gray-800" />
-                <div className="h-16 rounded bg-gray-800" />
-              </>
-            ) : (
-              nft?.attributes.map((a) => (
-                <div key={a.traitType} className="rounded border border-gray-700 p-3">
-                  <p className="label uppercase">{a.traitType}</p>
-                  <p className="truncate text-ellipsis" title={a.value}>
-                    {a.value}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
+          <Accordion title="Attributes">
+            <div className="mt-8 grid grid-cols-2 gap-6">
+              {loading ? (
+                <>
+                  <div className="h-16 rounded bg-gray-800" />
+                  <div className="h-16 rounded bg-gray-800" />
+                  <div className="h-16 rounded bg-gray-800" />
+                  <div className="h-16 rounded bg-gray-800" />
+                </>
+              ) : (
+                nft?.attributes.map((a) => (
+                  <div
+                    key={a.traitType}
+                    className="max-h-[300px] rounded border border-gray-700 p-6"
+                  >
+                    <p className="label uppercase text-gray-500">{a.traitType}</p>
+                    <p className="truncate text-ellipsis" title={a.value}>
+                      {a.value}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </Accordion>
         </div>
       </div>
     </div>
