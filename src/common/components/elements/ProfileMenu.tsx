@@ -31,7 +31,7 @@ export const ProfileMenu: FC<Props> = ({ wallet }) => {
               <button
                 onClick={() => router.push(`/profiles/${wallet}/nfts`)}
                 className={cx(
-                  'flex h-full w-40 items-center justify-center',
+                  'flex h-full w-1/2 items-center justify-center sm:w-40',
                   selected ? 'border-b-2 border-white' : 'text-gray-300'
                 )}
               >
@@ -45,7 +45,7 @@ export const ProfileMenu: FC<Props> = ({ wallet }) => {
               <button
                 onClick={() => router.push(`/profiles/${wallet}`)}
                 className={cx(
-                  'flex h-full w-40 items-center justify-center align-middle',
+                  'flex h-full w-1/2 items-center justify-center align-middle sm:w-40',
                   selected ? 'border-b-2 border-white' : 'text-gray-300'
                 )}
               >

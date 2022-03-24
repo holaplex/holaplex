@@ -18,6 +18,7 @@ import { useMakeConnectionWithUpdateTarget } from '@/common/hooks/useMakeConnect
 import { Unpacked } from '@/types/Unpacked';
 import { useQueryClient } from 'react-query';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import FollowUnfollowButton from './FollowUnfollowButton';
 
 type Visibility = 'hidden' | 'followers' | 'following';
 
@@ -64,7 +65,7 @@ export const FollowModal: FC<FollowModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative flex h-full max-h-[30rem] w-full flex-col rounded-xl bg-gray-900  pt-6 text-white shadow-md sm:max-w-lg"
+        className="relative flex h-full max-h-screen w-full flex-col rounded-xl bg-gray-900 pt-6  text-white shadow-md sm:max-h-[30rem] sm:max-w-lg"
       >
         <button onClick={() => setVisibility('hidden')} className="absolute top-6 right-6">
           <Close color="#fff" />
@@ -197,138 +198,11 @@ const FollowButton: FC<{
 }> = ({ wallet, item, side }) => {
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
-  const { track } = useAnalytics();
-  const queryClient = useQueryClient();
 
   const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
     wallet.publicKey.toBase58(),
     walletConnectionPair
   );
-  const makeConnection = useMakeConnectionWithUpdateTarget(walletConnectionPair, {
-    onSuccess: async (txId, input) => {
-      toast(
-        <SuccessToast>
-          Confirming transaction:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>,
-        { autoClose: 13_000 }
-      );
-      await connection.confirmTransaction(txId, 'finalized');
-      await queryClient.invalidateQueries();
-      track('Follow succeeded', {
-        event_category: 'Profile',
-        event_label: 'modal',
-        from: item.account.from.toBase58(),
-        to: item.account.to.toBase58(),
-        source: 'modal',
-      });
-      toast(
-        <SuccessToast>
-          Followed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>
-      );
-    },
-    onError: (error) => {
-      console.error(error);
-      track('Follow errored', {
-        event_category: 'Profile',
-        event_label: 'modal',
-        from: item.account.from.toBase58(),
-        to: item.account.to.toBase58(),
-        source: 'modal',
-      });
-      toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
-    },
-  });
-  const revokeConnection = useRevokeConnectionWithUpdateTarget(walletConnectionPair, {
-    onSuccess: async (txId, input) => {
-      toast(
-        <SuccessToast>
-          Confirming transaction:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>,
-        { autoClose: 13_000 }
-      );
-      await connection.confirmTransaction(txId, 'finalized');
-      await queryClient.invalidateQueries();
-      track('Unfollow succeeded', {
-        event_category: 'Profile',
-        event_label: 'modal',
-        from: item.account.from.toBase58(),
-        to: item.account.to.toBase58(),
-        source: 'modal',
-      });
-      toast(
-        <SuccessToast>
-          Unfollowed: {showFirstAndLastFour(input.targetPubKey)}, TX:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>
-      );
-    },
-    onError: (error) => {
-      console.error(error);
-      track('Unfollow errored', {
-        event_category: 'Profile',
-        event_label: 'modal',
-        from: item.account.from.toBase58(),
-        to: item.account.to.toBase58(),
-        source: 'modal',
-      });
-      toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
-    },
-  });
-
-  if (makeConnection.status === 'loading' || revokeConnection.status === 'loading') {
-    return (
-      <ButtonV3 disabled>
-        <svg
-          role="status"
-          className="h-4 w-4 animate-spin fill-black text-gray-200 dark:text-gray-600"
-          viewBox="0 0 100 101"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-            fill="currentColor"
-          />
-          <path
-            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-            fill="currentFill"
-          />
-        </svg>
-      </ButtonV3>
-    );
-  }
 
   const itemIsMyWallet =
     (side === 'allConnectionsFrom' &&
@@ -343,55 +217,11 @@ const FollowButton: FC<{
     (side === 'allConnectionsTo' &&
       (allConnectionsFromWallet.data ?? []).some((i) => i.account.to.equals(item.account.to)));
 
-  if (amIFollowingThisAccount) {
-    return (
-      <ButtonV3
-        className="!bg-gray-800 !text-white hover:!bg-gray-600"
-        onClick={() => {
-          track('Unfollow initiated', {
-            event_category: 'Profile',
-            event_label: 'modal',
-            from: item.account.from.toBase58(),
-            to: item.account.to.toBase58(),
-            source: 'modal',
-          });
-          const revokeConnectionInput = {
-            targetPubKey:
-              side === 'allConnectionsFrom'
-                ? item.account.from.toBase58()
-                : item.account.to.toBase58(),
-            updateTarget: side,
-          };
-          revokeConnection.mutate(revokeConnectionInput);
-        }}
-      >
-        Unfollow
-      </ButtonV3>
-    );
-  } else {
-    return (
-      <ButtonV3
-        onClick={() => {
-          track('Follow initiated', {
-            event_category: 'Profile',
-            event_label: 'modal',
-            from: item.account.from.toBase58(),
-            to: item.account.to.toBase58(),
-            source: 'modal',
-          });
-
-          const makeConnectionInput = {
-            targetPubKey:
-              side === 'allConnectionsFrom'
-                ? item.account.from.toBase58()
-                : item.account.to.toBase58(),
-            updateTarget: side,
-          };
-          makeConnection.mutate(makeConnectionInput);
-        }}
-      >
-        Follow
-      </ButtonV3>
-    );
-  }
+  return (
+    <FollowUnfollowButton
+      walletConnectionPair={walletConnectionPair}
+      toWallet={item.account.to.toBase58()}
+      type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
+    />
+  );
 };

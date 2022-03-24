@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { FollowModal } from './FollowModal';
 import { useQueryClient } from 'react-query';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import FollowUnfollowButton from './FollowUnfollowButton';
 
 type FollowerCountProps = {
   pubKey: string;
@@ -184,17 +185,17 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
     });
     disconnectTo.mutate(pk);
   };
-  const handleFollowClick = (pubKeyOverride?: string) => {
-    const pk = pubKeyOverride ?? pubKey;
-    track('Follow initiated', {
-      event_category: 'Profile',
-      event_label: 'profile',
-      from: wallet.publicKey.toBase58(),
-      to: pk,
-      source: 'profile',
-    });
-    connectTo.mutate(pk);
-  };
+  // const handleFollowClick = (pubKeyOverride?: string) => {
+  //   const pk = pubKeyOverride ?? pubKey;
+  //   track('Follow initiated', {
+  //     event_category: 'Profile',
+  //     event_label: 'profile',
+  //     from: wallet.publicKey.toBase58(),
+  //     to: pk,
+  //     source: 'profile',
+  //   });
+  //   connectTo.mutate(pk);
+  // };
 
   const allConnectionsToLoading = !allConnectionsTo.data && !allConnectionsTo.error;
   const allConnectionsFromLoading = !allConnectionsFrom.data && !allConnectionsFrom.error;
@@ -222,36 +223,30 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
             <div className="text-sm font-medium text-gray-200">Following</div>
           </button>
           <div className="ml-10">
-            {isSameWallet ? null : amIFollowing ? (
-              // <div className="ml-10 flex flex-row items-center justify-center">
-              /* <UnFollowButton
-            className="hover:bg-gray-800 hover:text-white"
-            onClick={() => handleUnFollowClick()}
-            /> 
-               <ButtonV3
-               className="!bg-gray-800 !px-6 !py-2 !text-base !text-white hover:!bg-gray-600"
-               onClick={() => handleUnFollowClick()}
-               >
-               Unfollow
-               </ButtonV3> */
-              // </div>
-              <button
-                className="rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-600"
-                onClick={() => handleUnFollowClick()}
-              >
-                Unfollow
-              </button>
-            ) : (
-              <button
-                className="rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-200"
-                onClick={() => handleFollowClick()}
-              >
-                Follow
-              </button>
-              // <div className="ml-10 flex flex-row items-center justify-center">
-              //   <ButtonV3 onClick={() => handleFollowClick()}>Follow</ButtonV3>
-              // </div>
+            {isSameWallet ? null : (
+              <FollowUnfollowButton
+                walletConnectionPair={walletConnectionPair}
+                toWallet={pubKey}
+                type={amIFollowing ? 'Unfollow' : 'Follow'}
+              />
             )}
+            {/* {isSameWallet ? null : amIFollowing ? (
+              <UnfollowButton walletConnectionPair={walletConnectionPair} toWallet={pubKey} />
+            ) : (
+              // <button
+              //   className="rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-600"
+              //   onClick={() => handleUnFollowClick()}
+              // >
+              //   Unfollow
+              // </button>
+              // <button
+              //   className="rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-200"
+              //   onClick={() => handleFollowClick()}
+              // >
+              //   Follow
+              // </button>
+              <FollowButton walletConnectionPair={walletConnectionPair} toWallet={pubKey} />
+            )} */}
           </div>
         </div>
         {allConnectionsTo.data?.length ? (
@@ -388,109 +383,166 @@ const FollowedByImage = styled(Image)<{ isFirst?: boolean }>`
     `}
 `;
 
-// const FollowButton = (props: {
-//   walletConnectionPair: { wallet: AnchorWallet; connection: Connec };
-// }) => {
-//   const walletConnectionPair = useMemo(
-//     () => ({
-//       wallet,
-//       connection,
-//     }),
-//     [wallet, connection]
-//   );
+const FollowButton = (props: {
+  walletConnectionPair: { wallet: AnchorWallet; connection: Connection };
+  toWallet: string;
+}) => {
+  const { track } = useAnalytics();
+  const queryClient = useQueryClient();
+  const { connection, wallet } = props.walletConnectionPair;
+  const myWallet = wallet.publicKey.toBase58();
+  const connectTo = useMakeConnection(props.walletConnectionPair, {
+    onSuccess: async (txId, toWallet) => {
+      toast(
+        <SuccessToast>
+          Confirming transaction:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>,
+        { autoClose: 13_000 }
+      );
+      await connection.confirmTransaction(txId, 'finalized');
+      await queryClient.invalidateQueries();
+      track('Follow succeeded', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: myWallet,
+        to: toWallet,
+        source: 'profile',
+      });
+      toast(
+        <SuccessToast>
+          Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>
+      );
+    },
+    onError: (error, toWallet) => {
+      console.error(error);
+      track('Follow errored', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: myWallet,
+        to: toWallet,
+        source: 'profile',
+      });
+      toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
+    },
+  });
 
-//   const connectTo = useMakeConnection(walletConnectionPair, {
-//     onSuccess: async (txId, toWallet) => {
-//       toast(
-//         <SuccessToast>
-//           Confirming transaction:&nbsp;
-//           <a
-//             className="font-bold underline"
-//             href={`https://explorer.solana.com/tx/${txId}`}
-//             target="_blank"
-//             rel="noreferrer"
-//           >
-//             {showFirstAndLastFour(txId)}
-//           </a>
-//         </SuccessToast>,
-//         { autoClose: 13_000 }
-//       );
-//       await connection.confirmTransaction(txId, 'finalized');
-//       await queryClient.invalidateQueries();
-//       toast(
-//         <SuccessToast>
-//           Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
-//           <a
-//             className="font-bold underline"
-//             href={`https://explorer.solana.com/tx/${txId}`}
-//             target="_blank"
-//             rel="noreferrer"
-//           >
-//             {showFirstAndLastFour(txId)}
-//           </a>
-//         </SuccessToast>
-//       );
-//     },
-//     onError: (error) => {
-//       console.error(error);
-//       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
-//     },
-//   });
-//   const disconnectTo = useRevokeConnection(walletConnectionPair, {
-//     onSuccess: async (txId, toWallet) => {
-//       toast(
-//         <SuccessToast>
-//           Confirming transaction:&nbsp;
-//           <a
-//             className="font-bold underline"
-//             href={`https://explorer.solana.com/tx/${txId}`}
-//             target="_blank"
-//             rel="noreferrer"
-//           >
-//             {showFirstAndLastFour(txId)}
-//           </a>
-//         </SuccessToast>,
-//         { autoClose: 13_000 }
-//       );
-//       await connection.confirmTransaction(txId, 'finalized');
-//       await queryClient.invalidateQueries();
-//       toast(
-//         <SuccessToast>
-//           Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
-//           <a
-//             className="font-bold underline"
-//             href={`https://explorer.solana.com/tx/${txId}`}
-//             target="_blank"
-//             rel="noreferrer"
-//           >
-//             {showFirstAndLastFour(txId)}
-//           </a>
-//         </SuccessToast>
-//       );
-//     },
-//     onError: (error) => {
-//       console.error(error);
-//       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
-//     },
-//   });
+  const handleFollowClick = (pubKeyOverride?: string) => {
+    const pk = pubKeyOverride ?? props.toWallet; // props.walletConnectionPair.wallet.publicKey.toBase58();
+    track('Follow initiated', {
+      event_category: 'Profile',
+      event_label: 'profile',
+      from: myWallet,
+      to: pk,
+      source: 'profile',
+    });
+    connectTo.mutate(pk);
+  };
 
-//   return (
-//     <button
-//       className="rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-200"
-//       onClick={() => handleFollowClick()}
-//     >
-//       Follow
-//     </button>
-//   );
-// };
+  return (
+    <button
+      className="rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-200"
+      onClick={() => handleFollowClick()}
+    >
+      Follow2
+    </button>
+  );
+};
 
-const UnFollowButton = styled(ButtonV3)`
-  :after {
-    content: 'Following';
-  }
-  :hover {
-    :after {
-      content: 'Unfollow';
-    }
-  }
-`;
+const UnfollowButton = (props: {
+  walletConnectionPair: { wallet: AnchorWallet; connection: Connection };
+  toWallet: string;
+}) => {
+  const { track } = useAnalytics();
+  const queryClient = useQueryClient();
+  const { connection, wallet } = props.walletConnectionPair;
+  const myWallet = wallet.publicKey.toBase58();
+
+  const disconnectTo = useRevokeConnection(props.walletConnectionPair, {
+    onSuccess: async (txId, toWallet) => {
+      toast(
+        <SuccessToast>
+          Confirming transaction:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>,
+        { autoClose: 13_000 }
+      );
+      await connection.confirmTransaction(txId, 'finalized');
+      await queryClient.invalidateQueries();
+      track('Unfollow succeeded', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: myWallet,
+        to: toWallet,
+        source: 'profile',
+      });
+      toast(
+        <SuccessToast>
+          Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txId)}
+          </a>
+        </SuccessToast>
+      );
+    },
+    onError: (error, toWallet) => {
+      console.error(error);
+      track('Unfollow errored', {
+        event_category: 'Profile',
+        event_label: 'profile',
+        from: wallet.publicKey.toBase58(),
+        to: toWallet,
+        source: 'profile',
+      });
+      toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
+    },
+  });
+
+  const handleUnFollowClick = (pubKeyOverride?: string) => {
+    const pk = pubKeyOverride ?? props.toWallet;
+    track('Unfollow initiated', {
+      event_category: 'Profile',
+      event_label: 'profile',
+      from: myWallet,
+      to: pk,
+      source: 'profile',
+    });
+    disconnectTo.mutate(pk);
+  };
+  return (
+    <button
+      className="rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-600"
+      onClick={() => handleUnFollowClick()}
+    >
+      Unfollow2
+    </button>
+  );
+};
