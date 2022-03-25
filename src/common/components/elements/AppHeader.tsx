@@ -57,7 +57,8 @@ export function AppHeader() {
         <HeaderTitle>
           <Link href="/" passHref>
             <a>
-              👋&nbsp;&nbsp;<span>Holaplex</span>
+              <img src="../images/logo.png" height="20" width="60" alt="RIAD logo"  />
+             <span>RIAD</span>
             </a>
           </Link>
         </HeaderTitle>
@@ -220,11 +221,9 @@ const HeaderTitle = styled.div`
       color: ${sv.colors.buttonText};
     }
   }
-
   span {
     display: none;
   }
-
   @media screen and (min-width: 550px) {
     span {
       display: block;
