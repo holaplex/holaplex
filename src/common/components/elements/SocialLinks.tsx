@@ -41,25 +41,25 @@ const SocialLinks = () => {
   return (
     <Container>
       <SocialLink
-        href="https://twitter.com/holaplex"
+        href="https://twitter.com/ReunionArt"
         target="_blank"
         rel="noreferrer"
         onClick={() => trackSocialLink('Twitter')}
       >
         <FeatherIcon icon="twitter" />
       </SocialLink>
-      {/* <SocialLink
-        href="https://www.facebook.com/Holaplex-110107494681247/"
+      <SocialLink
+        href="https://www.facebook.com/ReunionIslandArtDigitizer"
         target="_blank"
         rel="noreferrer"
       >
         <FeatherIcon icon="facebook" />
       </SocialLink>
-      <SocialLink href="https://www.instagram.com/holaplex.nft/" target="_blank" rel="noreferrer">
+      <SocialLink href="https://www.instagram.com/reunion.island.art.digitizer" target="_blank" rel="noreferrer">
         <FeatherIcon icon="instagram" />
-      </SocialLink> */}
+      </SocialLink>
       <SocialLink
-        href="https://github.com/holaplex"
+        href="https://github.com/ReunionArt"
         target="_blank"
         rel="noreferrer"
         onClick={() => trackSocialLink('Github')}
@@ -67,7 +67,7 @@ const SocialLinks = () => {
         <FeatherIcon icon="github" />
       </SocialLink>
       <SocialLink
-        href="https://discord.com/invite/TEu7Qx5ux3"
+        href="https://discord.gg/ygvrgsqmqr"
         target="_blank"
         rel="noreferrer"
         onClick={() => trackSocialLink('Discord')}
