@@ -137,22 +137,22 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>We exist for our community of creators | Holaplex</title>
+        <title>We exist for our community of artists | RIAD</title>
         <meta
           property="description"
           key="description"
-          content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
+          content="Our mission is to empower artists and collectors with a suite of tools to create, market, and sell NFTs."
         />
       </Head>
       <Row justify="center">
         <ContentCol xs={22} md={20}>
           <Space direction="vertical" align="center" size="large">
             <HeroTitle>
-              Our mission is to empower creators and collectors with a suite of tools to create,
+              Our mission is to empower artists and collectors with a suite of tools to create,
               market, and sell NFTs.
             </HeroTitle>
             <Pitch>
-              Tools that are open source, owned by creators, are permissionless, and governed by the
+              Tools that are open source, owned by artists, are permissionless, and governed by the
               community.
             </Pitch>
           </Space>
@@ -171,7 +171,7 @@ export default function About() {
         <ContentCol xs={22} md={20}>
           <Row>
             <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <LightTitle level={2}>We exist for our community of creators.</LightTitle>
+              <LightTitle level={2}>We exist for our community of artists.</LightTitle>
               <LightText>
                 The rapid rise of NFTs has allowed creators to build communities and monetize their
                 work in innovative ways. So much talent has come into this space but there are
@@ -179,7 +179,7 @@ export default function About() {
                 is non-trivial even for experienced developers.
               </LightText>
               <LightText>
-                Holaplex is committed to building tools that will allow creators and collectors to
+                RIAD is committed to building tools that will allow artists and collectors to
                 join the NFT community easily and safely.
               </LightText>
             </Col>
