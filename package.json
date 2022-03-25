@@ -2,6 +2,7 @@
   "name": "holaplex-builder",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "nodemon",
     "dev2": "next dev",
