@@ -464,9 +464,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
         <Section>
           <Marketing xs={22} lg={12} xl={16}>
             <HeroTitle>
-              Discover, explore, and collect NFTs from incredible creators on Solana
+              Discover, explore, and collect NFTs from incredible Reunion Island's artists.
             </HeroTitle>
-            <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
+            <Pitch>Tools built by artists, for artists, owned by artists.</Pitch>
 
             {connected ? (
               <div className="flex flex-wrap gap-4">
