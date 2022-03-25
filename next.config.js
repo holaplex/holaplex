@@ -33,6 +33,11 @@ module.exports = withPlugins(plugins, {
       'assets2.holaplex.market',
       'assets3.holaplex.market',
       'assets4.holaplex.market',
+      'assets.holaplex.tools',
+      'assets1.holaplex.tools',
+      'assets2.holaplex.tools',
+      'assets3.holaplex.tools',
+      'assets4.holaplex.tools',
     ],
   },
 });
