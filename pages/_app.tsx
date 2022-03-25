@@ -105,11 +105,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Tools built by creators, for creators, owned by creators | Holaplex</title>
+        <title>Tools built by artists, for artists, owned by artists | RIAD</title>
         <meta
           property="description"
           key="description"
-          content="Discover, explore, and collect NFTs from incredible creators on Solana. Tools built by creators, for creators, owned by creators."
+          content="Discover, explore, and collect NFTs from incredible Reunion Island's artists. Tools built by artists, for artists, owned by artists."
         />
       </Head>
       <ToastContainer
@@ -133,17 +133,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                           {() => (
                             <AnalyticsProvider>
                               <AppLayout>
-                                <div className='bg-[#005BBB] sm:flex items-center justify-center text-[#FFD500] p-6 w-full'>
-                                  Help the people of Ukraine through SOL donations.
-                                  <a
-                                    href="https://donate.metaplex.com/"
-                                    className='sm:flex inline sm:h-10 sm:px-6 underline sm:no-underline ml-4 sm:rounded-full sm:hover:scale-[1.02] transition-transform sm:hover:text-[#005BBB] items-center justify-center sm:text-[#005BBB] sm:bg-[#FFD500]'
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                  >
-                                    Learn more
-                                  </a>
-                                </div>
                                 <AppHeader />
                                 <AppContent>
                                   <ContentWrapper>
