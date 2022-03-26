@@ -118,14 +118,14 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
           <ProfileMenu wallet={wallet} />
           {children}
         </ContentWrapper>
-        {anchorWallet && (
+        {anchorWallet ? (
           <FollowModal
             visibility={showFollowsModal}
             setVisibility={setShowFollowsModal}
             pubKey={wallet}
             wallet={anchorWallet}
           />
-        )}
+        ) : null}
       </ContentCol>
     </>
   );
@@ -171,14 +171,6 @@ const ProfileDisplayName = (props: { publicKey: PublicKey | null; twitterHandle?
 
 export const PFP_SIZE = 100;
 const BOX_SIZE = 1400;
-
-const ProfilePictureContainer = styled.div`
-  position: absolute;
-  top: ${-PFP_SIZE / 2}px;
-  @media (min-width: ${BOX_SIZE - PFP_SIZE}) {
-    left: 0px;
-  }
-`;
 
 const ContentWrapper = styled.section`
   margin-top: ${PFP_SIZE / 2}px;

@@ -4,50 +4,62 @@ import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
-import React from 'react';
+import React, { FC } from 'react';
 import { useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
 import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 
-export default function FollowUnfollowButton(props: {
-  walletConnectionPair: { wallet: AnchorWallet; connection: Connection };
+type FollowUnfollowButtonProps = {
+  source: 'modalFrom' | 'modalTo' | 'profileButton';
+  walletConnectionPair: {
+    wallet: AnchorWallet;
+    connection: Connection;
+  };
   toWallet: string;
   type: 'Follow' | 'Unfollow';
-}) {
+};
+
+export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
+  source,
+  walletConnectionPair,
+  toWallet,
+  type,
+}) => {
   const { track } = useAnalytics();
   const queryClient = useQueryClient();
-  const { connection, wallet } = props.walletConnectionPair;
+  const { connection, wallet } = walletConnectionPair;
   const myWallet = wallet.publicKey.toBase58();
 
   const trackInitiate = () =>
-    track(props.type + ' initiated', {
+    track(type + ' initiated', {
       event_category: 'Profile',
       event_label: 'profile',
       from: myWallet,
-      to: props.toWallet,
+      to: toWallet,
       source: 'profile',
     });
 
   const trackSuccess = () =>
-    track(props.type + ' succeeded', {
+    track(type + ' succeeded', {
       event_category: 'Profile',
       event_label: 'profile',
       from: myWallet,
-      to: props.toWallet,
-      source: 'profile',
-    });
-  const trackError = () =>
-    track(props.type + ' errored', {
-      event_category: 'Profile',
-      event_label: 'profile',
-      from: myWallet,
-      to: props.toWallet,
+      to: toWallet,
       source: 'profile',
     });
 
-  const connectTo = useMakeConnection(props.walletConnectionPair, {
+  const trackError = () =>
+    track(type + ' errored', {
+      event_category: 'Profile',
+      event_label: 'profile',
+      from: myWallet,
+      to: toWallet,
+      source: 'profile',
+    });
+
+  const connectTo = useMakeConnection(walletConnectionPair, {
     onSuccess: async (txId, toWallet) => {
       toast(
         <SuccessToast>
@@ -87,7 +99,7 @@ export default function FollowUnfollowButton(props: {
     },
   });
 
-  const disconnectTo = useRevokeConnection(props.walletConnectionPair, {
+  const disconnectTo = useRevokeConnection(walletConnectionPair, {
     onSuccess: async (txId, toWallet) => {
       toast(
         <SuccessToast>
@@ -123,27 +135,26 @@ export default function FollowUnfollowButton(props: {
     },
     onError: (error, toWallet) => {
       console.error(error);
-
       trackError();
       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
     },
   });
 
   const handleFollowClick = (pubKeyOverride?: string) => {
-    const pk = pubKeyOverride ?? props.toWallet; // props.walletConnectionPair.wallet.publicKey.toBase58();
+    const pk = pubKeyOverride ?? toWallet;
     trackInitiate();
     connectTo.mutate(pk);
   };
 
   const handleUnFollowClick = (pubKeyOverride?: string) => {
-    const pk = pubKeyOverride ?? props.toWallet;
+    const pk = pubKeyOverride ?? toWallet;
     trackInitiate();
     disconnectTo.mutate(pk);
   };
 
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
-  return props.type === 'Follow' ? (
+  return type === 'Follow' ? (
     <Button5
       v="primary"
       className="h-10 w-28"
@@ -162,4 +173,4 @@ export default function FollowUnfollowButton(props: {
       Unfollow
     </Button5>
   );
-}
+};

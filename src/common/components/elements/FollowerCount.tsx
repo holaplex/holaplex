@@ -17,10 +17,9 @@ import { Unpacked } from '@/types/Unpacked';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import Link from 'next/link';
-import { FollowModal } from './FollowModal';
 import { useQueryClient } from 'react-query';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
-import FollowUnfollowButton from './FollowUnfollowButton';
+import { FollowUnfollowButton } from './FollowUnfollowButton';
 
 type FollowerCountProps = {
   pubKey: string;
@@ -225,6 +224,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
           <div className="ml-10">
             {isSameWallet ? null : (
               <FollowUnfollowButton
+                source='profileButton'
                 walletConnectionPair={walletConnectionPair}
                 toWallet={pubKey}
                 type={amIFollowing ? 'Unfollow' : 'Follow'}
