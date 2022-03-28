@@ -4,12 +4,32 @@ const cleanExt = /\?ext=(.*)/;
 const captureCidArweaveCache = /https:\/\/arweave.cache.holaplex.com\/(.*)/;
 const captureCidIpfsIo = /https:\/\/ipfs.io\/ipfs\/(.*)/;
 
+const captureCidOldHolaplexAssets = /https:\/\/images.holaplex.com\/(.*)/;
+
 export const maybeCDN = (uri: string) => {
   const cdnURI = uri.replace(captureCid, `${process.env.NEXT_PUBLIC_IPFS_CDN_HOST}/$1`);
   return cdnURI ?? uri;
 };
 
-export const imgOpt = (uri?: string, width?: number) => {
+type IMAGE_SIZE =
+  | 0 // original size
+  | 50
+  | 100
+  | 200
+  | 400
+  | 500
+  | 600
+  | 800
+  | 700
+  | 900
+  | 1000
+  | 1100
+  | 1200
+  | 1300
+  | 1400
+  | 1500;
+
+export const imgOpt = (uri?: string, width?: IMAGE_SIZE) => {
   if (!uri) {
     return uri;
   }
@@ -18,6 +38,7 @@ export const imgOpt = (uri?: string, width?: number) => {
     .replace('www.', '')
     .replace(cleanExt, '')
     .replace(captureCid, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`)
+    .replace(captureCidOldHolaplexAssets, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`)
     .replace(captureCidArweave, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
     .replace(captureCidArweaveCache, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
     .replace(captureCidIpfsIo, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`);
