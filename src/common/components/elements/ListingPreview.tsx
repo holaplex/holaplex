@@ -273,10 +273,10 @@ export function ListingPreview({
         </a>
         <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
           <div className="flex items-center">
-            {imgOpt(listing.logoUrl || '', 100) && (
+            {listing.logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={imgOpt(listing.logoUrl || '', 100)}
+                src={imgOpt(listing.logoUrl, 100)}
                 className="mr-2 h-4 w-4 rounded-sm"
                 alt={'logo for ' + listing.storeTitle}
               />

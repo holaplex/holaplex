@@ -6,7 +6,7 @@ import { SolIcon } from './Price';
 import Image from 'next/image';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
-import { RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
+import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
@@ -145,7 +145,7 @@ export function ActivityCard(props: { activity: IFeedItem }) {
           {activityThumbnailImageURL && (
             <Image
               className={thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'}
-              src={activityThumbnailImageURL}
+              src={imgOpt(activityThumbnailImageURL, 200)!}
               alt="activity thumbnail"
               layout="fill"
             />
