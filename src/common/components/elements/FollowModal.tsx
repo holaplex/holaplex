@@ -13,6 +13,7 @@ import { Unpacked } from '@/types/Unpacked';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { Connection } from '@solana/web3.js';
 import { useWalletProfileQuery } from 'src/graphql/indexerTypes';
+import { IProfile } from '@/modules/feed/feed.interfaces';
 
 type Visibility = 'hidden' | 'followers' | 'following';
 
@@ -21,7 +22,7 @@ type ConnectionItem =
   | NonNullable<Unpacked<ReturnType<typeof useGetAllConnectionsFromWithTwitter>['data']>>;
 
 type FollowModalProps = {
-  pubKey: string;
+  profile: IProfile;
   wallet: AnchorWallet;
   visibility: Visibility;
   setVisibility: Dispatch<SetStateAction<Visibility>> | ((visibility: Visibility) => void);
@@ -29,14 +30,15 @@ type FollowModalProps = {
 
 export const FollowModal: FC<FollowModalProps> = ({
   wallet,
-  pubKey,
+  profile,
   visibility,
   setVisibility,
 }) => {
   const { connection } = useConnection();
+  const { pubkey } = profile;
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
+  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, walletConnectionPair);
+  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, walletConnectionPair);
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -194,7 +196,10 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
               source="modalTo"
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
               walletConnectionPair={walletConnectionPair}
-              toWallet={itemToReferTo.toBase58()}
+              toProfile={{
+                pubkey: itemToReferTo.toBase58(),
+                handle: twitterHandle,
+              }}
             />
           )}
         </div>

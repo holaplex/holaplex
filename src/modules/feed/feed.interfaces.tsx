@@ -64,7 +64,7 @@ export enum LISTING_ACTIVITY_E {
 export interface IProfile {
   pfp?: string;
   pubkey: string;
-  handle?: string;
+  handle?: string | null;
   followers?: number;
   following?: number;
   nfts?: NFT[];

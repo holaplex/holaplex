@@ -20,13 +20,14 @@ import Link from 'next/link';
 import { useQueryClient } from 'react-query';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
+import { IProfile } from '@/modules/feed/feed.interfaces';
 
 type FollowerCountProps = {
-  pubKey: string;
+  profile: IProfile;
   setShowFollowsModal: (s: FollowsModalState) => void;
 };
 
-export const FollowerCount: FC<FollowerCountProps> = ({ pubKey, setShowFollowsModal }) => {
+export const FollowerCount: FC<FollowerCountProps> = ({ profile, setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
   if (!wallet)
     return (
@@ -43,7 +44,7 @@ export const FollowerCount: FC<FollowerCountProps> = ({ pubKey, setShowFollowsMo
   return (
     <FollowerCountContent
       wallet={wallet}
-      pubKey={pubKey}
+      profile={profile}
       setShowFollowsModal={setShowFollowsModal}
     />
   );
@@ -56,7 +57,7 @@ type FollowerCountContentProps = FollowerCountProps & {
 type FollowsModalState = 'hidden' | 'followers' | 'following';
 
 export const FollowerCountContent: FC<FollowerCountContentProps> = ({
-  pubKey,
+  profile,
   wallet,
   setShowFollowsModal,
 }) => {
@@ -68,10 +69,13 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
     }),
     [wallet, connection]
   );
+
+  const { pubkey } = profile;
+
   // const { track } = useAnalytics();
   // const queryClient = useQueryClient();
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
+  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, walletConnectionPair);
+  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, walletConnectionPair);
   // const connectTo = useMakeConnection(walletConnectionPair, {
   //   onSuccess: async (txId, toWallet) => {
   //     toast(
@@ -213,7 +217,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const isLoading = allConnectionsToLoading || allConnectionsFromLoading;
 
   if (isLoading) return <FollowerCountSkeleton />;
-  const isSameWallet = wallet.publicKey.equals(new PublicKey(pubKey));
+  const isSameWallet = wallet.publicKey.equals(new PublicKey(pubkey));
 
   const amIFollowing = (allConnectionsTo.data ?? []).some((i) =>
     i.account.from.equals(wallet.publicKey)
@@ -237,7 +241,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
               <FollowUnfollowButton
                 source="profileButton"
                 walletConnectionPair={walletConnectionPair}
-                toWallet={pubKey}
+                toProfile={profile}
                 type={amIFollowing ? 'Unfollow' : 'Follow'}
               />
             )}

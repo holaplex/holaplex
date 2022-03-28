@@ -1,5 +1,6 @@
 import { useMakeConnection } from '@/common/hooks/useMakeConnection';
 import { useRevokeConnection } from '@/common/hooks/useRevokeConnection';
+import { IProfile } from '@/modules/feed/feed.interfaces';
 import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -17,47 +18,35 @@ type FollowUnfollowButtonProps = {
     wallet: AnchorWallet;
     connection: Connection;
   };
-  toWallet: string;
+  toProfile: IProfile;
   type: 'Follow' | 'Unfollow';
 };
 
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   source,
   walletConnectionPair,
-  toWallet,
+  toProfile,
   type,
 }) => {
   const { track } = useAnalytics();
   const queryClient = useQueryClient();
   const { connection, wallet } = walletConnectionPair;
   const myWallet = wallet.publicKey.toBase58();
+  const toWallet = toProfile.pubkey;
 
-  const trackInitiateTransaction = () =>
-    track(type + ' initiated', {
-      event_category: 'Profile',
-      event_label: 'profile',
-      from: myWallet,
-      to: toWallet,
-      source: 'profile',
-    });
+  const sharedTrackingParams = {
+    source,
+    event_category: 'Profile',
+    event_label: 'profile',
+    from: myWallet,
+    to: toWallet,
+  } as const;
 
-  const trackSuccess = () =>
-    track(type + ' succeeded', {
-      event_category: 'Profile',
-      event_label: 'profile',
-      from: myWallet,
-      to: toWallet,
-      source: 'profile',
-    });
+  const trackInitiateTransaction = () => track(type + ' initiated', sharedTrackingParams);
 
-  const trackError = () =>
-    track(type + ' errored', {
-      event_category: 'Profile',
-      event_label: 'profile',
-      from: myWallet,
-      to: toWallet,
-      source: 'profile',
-    });
+  const trackSuccess = () => track(type + ' succeeded', sharedTrackingParams);
+
+  const trackError = () => track(type + ' errored', sharedTrackingParams);
 
   const connectTo = useMakeConnection(walletConnectionPair, {
     onSuccess: async (txId, toWallet) => {

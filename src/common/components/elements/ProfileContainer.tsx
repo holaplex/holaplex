@@ -112,7 +112,10 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
               twitterHandle={twitterHandle}
             />
           </div>
-          <FollowerCount pubKey={wallet} setShowFollowsModal={setShowFollowsModal} />
+          <FollowerCount
+            profile={{ pubkey: wallet, handle: twitterHandle }}
+            setShowFollowsModal={setShowFollowsModal}
+          />
         </div>
         <ContentWrapper>
           <ProfileMenu wallet={wallet} />
@@ -122,7 +125,7 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
           <FollowModal
             visibility={showFollowsModal}
             setVisibility={setShowFollowsModal}
-            pubKey={wallet}
+            profile={{ pubkey: wallet, handle: twitterHandle }}
             wallet={anchorWallet}
           />
         ) : null}
