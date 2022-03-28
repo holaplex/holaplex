@@ -189,6 +189,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
       <div className="space-y-4">
         {isLoading ? (
           <>
+            <LoadingActivitySkeletonBoxCircleLong />
             <LoadingActivitySkeletonBoxSquareShort />
             <LoadingActivitySkeletonBoxCircleLong />
             <LoadingActivitySkeletonBoxSquareShort />
@@ -220,12 +221,12 @@ const LoadingActivitySkeletonBoxSquareShort = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingBox $borderRadius="4px" />
+        <LoadingBox $borderRadius="8px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
           <LoadingLine $width="60%" />
-          <LoadingLine $width="25%" />
+          <LoadingLine $width="25%" $height="16px" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
@@ -236,21 +237,21 @@ const LoadingActivitySkeletonBoxCircleLong = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingBox $borderRadius="100%" />
+        <LoadingBox $borderRadius="8px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
           <LoadingLine $width="100%" />
-          <LoadingLine $width="25%" />
+          <LoadingLine $width="25%" $height="16px" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
   );
 };
 
-const LoadingBox = styled.div<{ $borderRadius: '4px' | '100%' }>`
-  width: 52px;
-  height: 52px;
+const LoadingBox = styled.div<{ $borderRadius: '8px' | '100%' }>`
+  width: 80px;
+  height: 80px;
   background: #707070;
   border-radius: ${({ $borderRadius }) => $borderRadius};
   -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
@@ -267,9 +268,9 @@ const LoadingLinesContainer = styled.div`
   flex-direction: column;
 `;
 
-const LoadingLine = styled.div<{ $width: string }>`
-  width: ${({ $width }) => $width};
-  height: 16px;
+const LoadingLine = styled.div<{ $width: string; $height?: string }>`
+  width: ${({ $width }) => $width || '100%'};
+  height: ${({ $height }) => $height || '24px'};
   background: #707070;
   border-radius: 4px;
   margin-top: 8px;
@@ -362,6 +363,7 @@ const ContentContainer = styled.div`
   flex: 1;
   margin-left: 16px;
   margin-right: 16px;
+  align-items: center;
 `;
 
 const CenteredCol = styled(Col)`
@@ -378,7 +380,7 @@ const ContentCol = styled(CenteredCol)`
 const ActivityBoxContainer = styled.div`
   display: flex;
   flex: 1;
-  padding: 10px;
+  padding: 16px;
   border: 1px solid #262626;
   box-sizing: border-box;
   border-radius: 8px;

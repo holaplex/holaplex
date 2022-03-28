@@ -135,9 +135,18 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
 
   const walletProfile = useWalletProfileQuery({
     variables: {
-      handle: twitterHandle ?? ""
-    }
+      handle: twitterHandle ?? '',
+    },
   });
+
+  // const [copied, setCopeied] = useState(false);
+  const copyPubKey = async () => {
+    if (itemToReferTo) {
+      await navigator.clipboard.writeText(itemToReferTo.toBase58());
+      // setCopeied(true);
+      // setTimeout(() => setCopeied(false), 2000);
+    }
+  };
 
   const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
     wallet.publicKey.toBase58(),
@@ -158,10 +167,14 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
       <div className="flex flex-1 justify-between">
         <div className="flex items-center">
           <Image
+            onClick={copyPubKey}
             className="rounded-full"
             width={40}
             height={40}
-            src={walletProfile.data?.profile?.profileImageUrlHighres ?? getPFPFromPublicKey(itemToReferTo)}
+            src={
+              walletProfile.data?.profile?.profileImageUrlHighres ??
+              getPFPFromPublicKey(itemToReferTo)
+            }
             alt="PFP"
           />
           <Link href={`/profiles/${itemToReferTo}`} passHref>

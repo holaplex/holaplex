@@ -3,9 +3,10 @@ import classNames from 'classnames';
 type ButtonType = 'primary' | 'secondary' | 'ghost' | 'text';
 
 const BUTTON_BASE_CLASSES = {
-  primary: 'rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:bg-gray-100',
+  primary:
+    'rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:text-gray-700 hover:bg-gray-100',
   secondary:
-    'rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-700',
+    'rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-700 hover:text-gray-100',
   ghost:
     'w-full rounded-full border border-gray-800 bg-gray-900 px-9 py-2 font-sans text-sm font-medium text-white hover:bg-gray-700 focus:outline-none  focus:ring-2 focus:ring-gray-600 focus:ring-offset-2  sm:text-base md:w-auto',
   text: '',

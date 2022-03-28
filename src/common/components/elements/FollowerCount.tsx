@@ -28,7 +28,18 @@ type FollowerCountProps = {
 
 export const FollowerCount: FC<FollowerCountProps> = ({ pubKey, setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
-  if (!wallet) return null;
+  if (!wallet)
+    return (
+      <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
+        <span className="text-center text-xl">
+          Connect to see <b>Followers</b> and <b>Following</b>{' '}
+        </span>
+        {/* 
+        <span className="text-base text-gray-300">
+          Activity associated with this user’s wallet will show up here
+        </span> */}
+      </div>
+    );
   return (
     <FollowerCountContent
       wallet={wallet}
@@ -57,112 +68,112 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
     }),
     [wallet, connection]
   );
-  const { track } = useAnalytics();
-  const queryClient = useQueryClient();
+  // const { track } = useAnalytics();
+  // const queryClient = useQueryClient();
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubKey, walletConnectionPair);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubKey, walletConnectionPair);
-  const connectTo = useMakeConnection(walletConnectionPair, {
-    onSuccess: async (txId, toWallet) => {
-      toast(
-        <SuccessToast>
-          Confirming transaction:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>,
-        { autoClose: 13_000 }
-      );
-      await connection.confirmTransaction(txId, 'finalized');
-      await queryClient.invalidateQueries();
-      track('Follow succeeded', {
-        event_category: 'Profile',
-        event_label: 'profile',
-        from: wallet.publicKey.toBase58(),
-        to: toWallet,
-        source: 'profile',
-      });
-      toast(
-        <SuccessToast>
-          Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>
-      );
-    },
-    onError: (error, toWallet) => {
-      console.error(error);
-      track('Follow errored', {
-        event_category: 'Profile',
-        event_label: 'profile',
-        from: wallet.publicKey.toBase58(),
-        to: toWallet,
-        source: 'profile',
-      });
-      toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
-    },
-  });
-  const disconnectTo = useRevokeConnection(walletConnectionPair, {
-    onSuccess: async (txId, toWallet) => {
-      toast(
-        <SuccessToast>
-          Confirming transaction:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>,
-        { autoClose: 13_000 }
-      );
-      await connection.confirmTransaction(txId, 'finalized');
-      await queryClient.invalidateQueries();
-      track('Unfollow succeeded', {
-        event_category: 'Profile',
-        event_label: 'profile',
-        from: wallet.publicKey.toBase58(),
-        to: toWallet,
-        source: 'profile',
-      });
-      toast(
-        <SuccessToast>
-          Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>
-      );
-    },
-    onError: (error, toWallet) => {
-      console.error(error);
-      track('Unfollow errored', {
-        event_category: 'Profile',
-        event_label: 'profile',
-        from: wallet.publicKey.toBase58(),
-        to: toWallet,
-        source: 'profile',
-      });
-      toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
-    },
-  });
+  // const connectTo = useMakeConnection(walletConnectionPair, {
+  //   onSuccess: async (txId, toWallet) => {
+  //     toast(
+  //       <SuccessToast>
+  //         Confirming transaction:&nbsp;
+  //         <a
+  //           className="font-bold underline"
+  //           href={`https://explorer.solana.com/tx/${txId}`}
+  //           target="_blank"
+  //           rel="noreferrer"
+  //         >
+  //           {showFirstAndLastFour(txId)}
+  //         </a>
+  //       </SuccessToast>,
+  //       { autoClose: 13_000 }
+  //     );
+  //     await connection.confirmTransaction(txId, 'finalized');
+  //     await queryClient.invalidateQueries();
+  //     track('Follow succeeded', {
+  //       event_category: 'Profile',
+  //       event_label: 'profile',
+  //       from: wallet.publicKey.toBase58(),
+  //       to: toWallet,
+  //       source: 'profile',
+  //     });
+  //     toast(
+  //       <SuccessToast>
+  //         Followed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+  //         <a
+  //           className="font-bold underline"
+  //           href={`https://explorer.solana.com/tx/${txId}`}
+  //           target="_blank"
+  //           rel="noreferrer"
+  //         >
+  //           {showFirstAndLastFour(txId)}
+  //         </a>
+  //       </SuccessToast>
+  //     );
+  //   },
+  //   onError: (error, toWallet) => {
+  //     console.error(error);
+  //     track('Follow errored', {
+  //       event_category: 'Profile',
+  //       event_label: 'profile',
+  //       from: wallet.publicKey.toBase58(),
+  //       to: toWallet,
+  //       source: 'profile',
+  //     });
+  //     toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
+  //   },
+  // });
+  // const disconnectTo = useRevokeConnection(walletConnectionPair, {
+  //   onSuccess: async (txId, toWallet) => {
+  //     toast(
+  //       <SuccessToast>
+  //         Confirming transaction:&nbsp;
+  //         <a
+  //           className="font-bold underline"
+  //           href={`https://explorer.solana.com/tx/${txId}`}
+  //           target="_blank"
+  //           rel="noreferrer"
+  //         >
+  //           {showFirstAndLastFour(txId)}
+  //         </a>
+  //       </SuccessToast>,
+  //       { autoClose: 13_000 }
+  //     );
+  //     await connection.confirmTransaction(txId, 'finalized');
+  //     await queryClient.invalidateQueries();
+  //     track('Unfollow succeeded', {
+  //       event_category: 'Profile',
+  //       event_label: 'profile',
+  //       from: wallet.publicKey.toBase58(),
+  //       to: toWallet,
+  //       source: 'profile',
+  //     });
+  //     toast(
+  //       <SuccessToast>
+  //         Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+  //         <a
+  //           className="font-bold underline"
+  //           href={`https://explorer.solana.com/tx/${txId}`}
+  //           target="_blank"
+  //           rel="noreferrer"
+  //         >
+  //           {showFirstAndLastFour(txId)}
+  //         </a>
+  //       </SuccessToast>
+  //     );
+  //   },
+  //   onError: (error, toWallet) => {
+  //     console.error(error);
+  //     track('Unfollow errored', {
+  //       event_category: 'Profile',
+  //       event_label: 'profile',
+  //       from: wallet.publicKey.toBase58(),
+  //       to: toWallet,
+  //       source: 'profile',
+  //     });
+  //     toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
+  //   },
+  // });
 
   if (allConnectionsTo.error) {
     console.error(allConnectionsTo.error);
@@ -173,17 +184,17 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
     return <div>Error</div>;
   }
 
-  const handleUnFollowClick = (pubKeyOverride?: string) => {
-    const pk = pubKeyOverride ?? pubKey;
-    track('Unfollow initiated', {
-      event_category: 'Profile',
-      event_label: 'profile',
-      from: wallet.publicKey.toBase58(),
-      to: pk,
-      source: 'profile',
-    });
-    disconnectTo.mutate(pk);
-  };
+  // const handleUnFollowClick = (pubKeyOverride?: string) => {
+  //   const pk = pubKeyOverride ?? pubKey;
+  //   track('Unfollow initiated', {
+  //     event_category: 'Profile',
+  //     event_label: 'profile',
+  //     from: wallet.publicKey.toBase58(),
+  //     to: pk,
+  //     source: 'profile',
+  //   });
+  //   disconnectTo.mutate(pk);
+  // };
   // const handleFollowClick = (pubKeyOverride?: string) => {
   //   const pk = pubKeyOverride ?? pubKey;
   //   track('Follow initiated', {
@@ -224,7 +235,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
           <div className="ml-10">
             {isSameWallet ? null : (
               <FollowUnfollowButton
-                source='profileButton'
+                source="profileButton"
                 walletConnectionPair={walletConnectionPair}
                 toWallet={pubKey}
                 type={amIFollowing ? 'Unfollow' : 'Follow'}

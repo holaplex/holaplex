@@ -32,7 +32,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const { connection, wallet } = walletConnectionPair;
   const myWallet = wallet.publicKey.toBase58();
 
-  const trackInitiate = () =>
+  const trackInitiateTransaction = () =>
     track(type + ' initiated', {
       event_category: 'Profile',
       event_label: 'profile',
@@ -140,36 +140,51 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
     },
   });
 
-  const handleFollowClick = (pubKeyOverride?: string) => {
+  const handleClick = (pubKeyOverride?: string) => {
     const pk = pubKeyOverride ?? toWallet;
-    trackInitiate();
-    connectTo.mutate(pk);
-  };
+    trackInitiateTransaction();
 
-  const handleUnFollowClick = (pubKeyOverride?: string) => {
-    const pk = pubKeyOverride ?? toWallet;
-    trackInitiate();
-    disconnectTo.mutate(pk);
+    console.log('initiate', type, {
+      from: myWallet,
+      toWallet,
+    });
+    if ((type = 'Follow')) {
+      connectTo.mutate(pk);
+    } else {
+      disconnectTo.mutate(pk);
+    }
+
+    // kris NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H
+    // alex
+    // belle 2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR
+    // ryan 8iGmtE26nBETcxiL6rp1Sn6ZJ8F6ZzTKLW6GL9BGPPHe
+    // scuba 3XzWJgu5WEU3GV3mHkWKDYtMXVybUhGeFt7N6uwkcezF
+    // damian GYNT1qUj9Ew45WpHaVZqGSz7R97ve2EjJEEfTcNVrJvQ
+
+    // check list
+    // ! follow profile page OK, also !!!
+    // ! unfillow profile page !!!
+    // ! follow modal !!!, but also OK
+    // * unfollow modal OK
+    // follow many modal (with confirmation inbetweent) !!!
+    // * unfollow many modal OK
   };
 
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
+  if (!loading) {
+    console.log('loaded', type, 'button', {
+      from: myWallet,
+      toWallet,
+    });
+  }
+
   return type === 'Follow' ? (
-    <Button5
-      v="primary"
-      className="h-10 w-28"
-      onClick={() => handleFollowClick()}
-      loading={loading}
-    >
+    <Button5 v="primary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
       Follow
     </Button5>
   ) : (
-    <Button5
-      v="secondary"
-      className="h-10 w-28"
-      onClick={() => handleUnFollowClick()}
-      loading={loading}
-    >
+    <Button5 v="secondary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
       Unfollow
     </Button5>
   );
