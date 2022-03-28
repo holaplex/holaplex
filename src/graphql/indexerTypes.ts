@@ -103,6 +103,7 @@ export type Listing = {
   bids: Array<Bid>;
   cacheAddress: Scalars['String'];
   ended: Scalars['Boolean'];
+  endsAt?: Maybe<Scalars['DateTimeUtc']>;
   extAddress: Scalars['String'];
   nfts: Array<Nft>;
   storeAddress: Scalars['String'];
@@ -168,6 +169,7 @@ export type Nft = {
   offers: Array<BidReceipt>;
   owner?: Maybe<NftOwner>;
   primarySaleHappened: Scalars['Boolean'];
+  purchases: Array<PurchaseReceipt>;
   sellerFeeBasisPoints: Scalars['Int'];
 };
 
@@ -203,6 +205,17 @@ export type Profile = {
   handle: Scalars['String'];
   profileImageUrlHighres: Scalars['String'];
   profileImageUrlLowres: Scalars['String'];
+};
+
+/** auction house bid receipt */
+export type PurchaseReceipt = {
+  __typename?: 'PurchaseReceipt';
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  buyer: Scalars['String'];
+  createdAt: Scalars['DateTimeUtc'];
+  price: Scalars['Lamports'];
+  seller: Scalars['String'];
 };
 
 export type QueryRoot = {

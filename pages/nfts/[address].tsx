@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { useNftPageLazyQuery, useWalletProfileLazyQuery } from '../../src/graphql/indexerTypes';
-import { always, equals, ifElse, pipe, length, find, prop } from 'ramda';
-import BN from 'bn.js';
 import cx from 'classnames';
 import { showFirstAndLastFour } from '../../src/modules/utils/string';
 import { useTwitterHandle } from '../../src/common/hooks/useTwitterHandle';
@@ -11,6 +9,8 @@ import Custom404 from '../404';
 import { getPFPFromPublicKey } from '../../src/modules/utils/image';
 import Image from 'next/image';
 import Accordion from '../../src/common/components/elements/Accordion';
+import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
+
 // import Bugsnag from '@bugsnag/js';
 
 const Avatar = ({ address }: { address: string }) => {
@@ -86,7 +86,11 @@ export default function NftByAddress({ address }: { address: string }) {
               <div className="h-32 w-full rounded-lg bg-gray-800" />
             ) : (
               <>
-                <h1 className="mb-4 text-2xl">{nft?.name}</h1>
+                <div>
+                  <h1 className="mb-4 text-2xl">{nft?.name}</h1>
+                  {/* <FeatherIcon icon="more-horizontal" /> */}
+                </div>
+
                 <p className="text-lg">{nft?.description}</p>
               </>
             )}
@@ -107,7 +111,11 @@ export default function NftByAddress({ address }: { address: string }) {
               <div className="h-32 w-full rounded-lg bg-gray-800" />
             ) : (
               <>
-                <h1 className="mb-4 text-2xl md:text-3xl lg:text-4xl">{nft?.name}</h1>
+                <div className="flex justify-between">
+                  <h1 className="mb-4 text-2xl md:text-3xl lg:text-4xl">{nft?.name}</h1>
+                  <MoreDropdown address={nft?.address || ''} />
+                </div>
+
                 <p className="text-lg">{nft?.description}</p>
               </>
             )}
