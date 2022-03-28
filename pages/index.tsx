@@ -351,17 +351,21 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (context)
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
   const selectedDaoSubdomains = await DAOStoreFrontList();
 
-  const initialFilterBy =
+  const initialFilterBy: string | undefined =
     Object.values(FilterOptions).includes(context.query.filter || '') && context.query.filter;
 
-  const initialSortBy =
+  const initialSortBy: string | undefined =
     Object.values(SortOptions).includes(context.query.sort || '') && context.query.sort;
+
+  const initialSearchBy: string[] | undefined = context.query.search
+    ?.split(',')
+    .map((term) => term.toLowerCase());
 
   return {
     props: {
       initialFilterBy: initialFilterBy || FilterOptions.Auctions,
       initialSortBy: initialSortBy || SortOptions.Trending,
-      initialSearchBy: context.query.search || '',
+      initialSearchBy: initialSearchBy || [],
       featuredStorefronts,
       selectedDaoSubdomains,
     },
@@ -373,7 +377,7 @@ interface HomeProps {
   selectedDaoSubdomains: String[];
   initialSortBy: SortOptions;
   initialFilterBy: FilterOptions;
-  initialSearchBy?: string;
+  initialSearchBy: string[];
 }
 
 const getDefaultFilter = () => {
@@ -409,7 +413,7 @@ export default function Home({
     WHICHDAO ? FilterOptions.All : initialFilterBy
   );
   const [sortBy, setSortBy] = useState<SortOptions>(initialSortBy);
-  const [searchBy, setSearchBy] = useState<string>(initialSearchBy || '');
+  const [searchBy, setSearchBy] = useState<string[]>(initialSearchBy);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
   const scrollToListingTop = () => {
@@ -444,10 +448,10 @@ export default function Home({
     filter(filters[filterBy]),
     filter(
       (l: Listing) =>
-        !searchBy ||
+        !searchBy.length ||
         [l.storeTitle, l.subdomain, l.items.map((i) => i.name)]
           .flat()
-          .some((w) => w.includes(searchBy))
+          .some((w) => searchBy.some((term) => w.toLowerCase().includes(term)))
     ),
     //@ts-ignore
     sortWith(sorts[sortBy])
@@ -615,6 +619,7 @@ export default function Home({
                         sortBy,
                         nrOfListingsOnDisplay: displayedListings.length,
                       });
+                      setSearchBy([]);
                       setFilterBy(filter);
                       // only reset sortBy if it does not work in the new filter
                       if (!sortOptions[filter].find((s) => s.key === sortBy)) {
@@ -642,8 +647,9 @@ export default function Home({
                         filterBy,
                         nrOfListingsOnDisplay: displayedListings.length,
                       });
-
+                      setSearchBy([]);
                       setSortBy(sort);
+
                       scrollToListingTop();
                     }}
                   >
