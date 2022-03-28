@@ -18,7 +18,7 @@ const HowToArModal = ({ show, onCancel }: HowToARModalProps) => (
     <Paragraph>
       Arweave (AR) token is available on Binance. If you are unable to access Binance please reach
       out to MaxJ on the
-      <a href="https://discord.gg/2QXmnEMsJE" target="_blank">
+      <a href="https://discord.com/invite/holaplex" target="_blank" rel="noreferrer">
         &nbsp;Holaplex Discord server.
       </a>
     </Paragraph>
