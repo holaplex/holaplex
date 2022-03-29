@@ -173,7 +173,6 @@ export type Nft = {
   sellerFeeBasisPoints: Scalars['Int'];
 };
 
-
 export type NftImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
 };
@@ -234,21 +233,17 @@ export type QueryRoot = {
   wallet?: Maybe<Wallet>;
 };
 
-
 export type QueryRootCreatorArgs = {
   address: Scalars['String'];
 };
-
 
 export type QueryRootMarketplaceArgs = {
   subdomain: Scalars['String'];
 };
 
-
 export type QueryRootNftArgs = {
   address: Scalars['String'];
 };
-
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
@@ -259,16 +254,13 @@ export type QueryRootNftsArgs = {
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
-
 export type QueryRootProfileArgs = {
   handle: Scalars['String'];
 };
 
-
 export type QueryRootStorefrontArgs = {
   subdomain: Scalars['String'];
 };
-
 
 export type QueryRootWalletArgs = {
   address: Scalars['String'];
@@ -304,8 +296,51 @@ export type ActivityPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
 
-
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
+export type ActivityPageQuery = {
+  __typename?: 'QueryRoot';
+  wallet?: {
+    __typename: 'Wallet';
+    address: string;
+    bids: Array<{
+      __typename: 'Bid';
+      listingAddress: string;
+      bidderAddress: string;
+      lastBidTime: string;
+      lastBidAmount: any;
+      cancelled: boolean;
+      listing?: {
+        __typename?: 'Listing';
+        address: string;
+        ended: boolean;
+        storefront?: {
+          __typename: 'Storefront';
+          ownerAddress: string;
+          subdomain: string;
+          title: string;
+          description: string;
+          faviconUrl: string;
+          logoUrl: string;
+          bannerUrl: string;
+        } | null;
+        nfts: Array<{
+          __typename: 'Nft';
+          address: string;
+          name: string;
+          description: string;
+          image: string;
+        }>;
+        bids: Array<{
+          __typename?: 'Bid';
+          bidderAddress: string;
+          lastBidTime: string;
+          lastBidAmount: any;
+          cancelled: boolean;
+          listingAddress: string;
+        }>;
+      } | null;
+    }>;
+  } | null;
+};
 
 export type OwnedNfTsQueryVariables = Exact<{
   address: Scalars['PublicKey'];
@@ -313,68 +348,131 @@ export type OwnedNfTsQueryVariables = Exact<{
   offset: Scalars['Int'];
 }>;
 
-
-export type OwnedNfTsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number }> }> };
+export type OwnedNfTsQuery = {
+  __typename?: 'QueryRoot';
+  nfts: Array<{
+    __typename?: 'Nft';
+    address: string;
+    name: string;
+    sellerFeeBasisPoints: number;
+    mintAddress: string;
+    description: string;
+    image: string;
+    primarySaleHappened: boolean;
+    creators: Array<{ __typename?: 'NftCreator'; address: string; share: number }>;
+  }>;
+};
 
 export type WalletProfileQueryVariables = Exact<{
   handle: Scalars['String'];
 }>;
 
-
-export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
+export type WalletProfileQuery = {
+  __typename?: 'QueryRoot';
+  profile?: {
+    __typename?: 'Profile';
+    handle: string;
+    profileImageUrlLowres: string;
+    profileImageUrlHighres: string;
+    bannerImageUrl: string;
+  } | null;
+};
 
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
 
-
-export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
-
+export type NftPageQuery = {
+  __typename?: 'QueryRoot';
+  nft?: {
+    __typename?: 'Nft';
+    address: string;
+    name: string;
+    sellerFeeBasisPoints: number;
+    mintAddress: string;
+    description: string;
+    image: string;
+    primarySaleHappened: boolean;
+    attributes: Array<{
+      __typename?: 'NftAttribute';
+      metadataAddress: string;
+      value: string;
+      traitType: string;
+    }>;
+    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    owner?: { __typename?: 'NftOwner'; address: string } | null;
+    listings: Array<{
+      __typename?: 'ListingReceipt';
+      address: string;
+      tradeState: string;
+      seller: string;
+      metadata: string;
+      auctionHouse: string;
+      price: any;
+      tradeStateBump: number;
+      createdAt: any;
+      canceledAt?: any | null;
+    }>;
+    offers: Array<{
+      __typename?: 'BidReceipt';
+      address: string;
+      tradeState: string;
+      buyer: string;
+      metadata: string;
+      auctionHouse: string;
+      price: any;
+      tradeStateBump: number;
+      tokenAccount?: string | null;
+      createdAt: any;
+      canceledAt?: any | null;
+    }>;
+  } | null;
+};
 
 export const ActivityPageDocument = gql`
-    query activityPage($address: String!) {
-  wallet(address: $address) {
-    __typename
-    address
-    bids {
+  query activityPage($address: String!) {
+    wallet(address: $address) {
       __typename
-      listingAddress
-      bidderAddress
-      lastBidTime
-      lastBidAmount
-      cancelled
-      listing {
-        address
-        ended
-        storefront {
-          __typename
-          ownerAddress
-          subdomain
-          title
-          description
-          faviconUrl
-          logoUrl
-          bannerUrl
-        }
-        nfts {
-          __typename
+      address
+      bids {
+        __typename
+        listingAddress
+        bidderAddress
+        lastBidTime
+        lastBidAmount
+        cancelled
+        listing {
           address
-          name
-          description
-          image
-        }
-        bids {
-          bidderAddress
-          lastBidTime
-          lastBidAmount
-          cancelled
-          listingAddress
+          ended
+          storefront {
+            __typename
+            ownerAddress
+            subdomain
+            title
+            description
+            faviconUrl
+            logoUrl
+            bannerUrl
+          }
+          nfts {
+            __typename
+            address
+            name
+            description
+            image
+          }
+          bids {
+            bidderAddress
+            lastBidTime
+            lastBidAmount
+            cancelled
+            listingAddress
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useActivityPageQuery__
@@ -392,34 +490,47 @@ export const ActivityPageDocument = gql`
  *   },
  * });
  */
-export function useActivityPageQuery(baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(ActivityPageDocument, options);
-      }
-export function useActivityPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(ActivityPageDocument, options);
-        }
+export function useActivityPageQuery(
+  baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(
+    ActivityPageDocument,
+    options
+  );
+}
+export function useActivityPageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(
+    ActivityPageDocument,
+    options
+  );
+}
 export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery>;
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
-export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
+export type ActivityPageQueryResult = Apollo.QueryResult<
+  ActivityPageQuery,
+  ActivityPageQueryVariables
+>;
 export const OwnedNfTsDocument = gql`
-    query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!) {
-  nfts(owners: [$address], limit: $limit, offset: $offset) {
-    address
-    name
-    sellerFeeBasisPoints
-    mintAddress
-    description
-    image
-    primarySaleHappened
-    creators {
+  query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!) {
+    nfts(owners: [$address], limit: $limit, offset: $offset) {
       address
-      share
+      name
+      sellerFeeBasisPoints
+      mintAddress
+      description
+      image
+      primarySaleHappened
+      creators {
+        address
+        share
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useOwnedNfTsQuery__
@@ -439,27 +550,31 @@ export const OwnedNfTsDocument = gql`
  *   },
  * });
  */
-export function useOwnedNfTsQuery(baseOptions: Apollo.QueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
-      }
-export function useOwnedNfTsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
-        }
+export function useOwnedNfTsQuery(
+  baseOptions: Apollo.QueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
+}
+export function useOwnedNfTsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
+}
 export type OwnedNfTsQueryHookResult = ReturnType<typeof useOwnedNfTsQuery>;
 export type OwnedNfTsLazyQueryHookResult = ReturnType<typeof useOwnedNfTsLazyQuery>;
 export type OwnedNfTsQueryResult = Apollo.QueryResult<OwnedNfTsQuery, OwnedNfTsQueryVariables>;
 export const WalletProfileDocument = gql`
-    query walletProfile($handle: String!) {
-  profile(handle: $handle) {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-    bannerImageUrl
+  query walletProfile($handle: String!) {
+    profile(handle: $handle) {
+      handle
+      profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useWalletProfileQuery__
@@ -477,65 +592,78 @@ export const WalletProfileDocument = gql`
  *   },
  * });
  */
-export function useWalletProfileQuery(baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
-      }
-export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
-        }
+export function useWalletProfileQuery(
+  baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(
+    WalletProfileDocument,
+    options
+  );
+}
+export function useWalletProfileLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(
+    WalletProfileDocument,
+    options
+  );
+}
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
-export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export type WalletProfileQueryResult = Apollo.QueryResult<
+  WalletProfileQuery,
+  WalletProfileQueryVariables
+>;
 export const NftPageDocument = gql`
-    query nftPage($address: String!) {
-  nft(address: $address) {
-    address
-    name
-    sellerFeeBasisPoints
-    mintAddress
-    description
-    image
-    primarySaleHappened
-    attributes {
-      metadataAddress
-      value
-      traitType
-    }
-    creators {
+  query nftPage($address: String!) {
+    nft(address: $address) {
       address
-      verified
-    }
-    owner {
-      address
-    }
-    listings {
-      address
-      tradeState
-      seller
-      metadata
-      auctionHouse
-      price
-      tradeStateBump
-      createdAt
-      canceledAt
-    }
-    offers {
-      address
-      tradeState
-      buyer
-      metadata
-      auctionHouse
-      price
-      tradeStateBump
-      tokenAccount
-      createdAt
-      canceledAt
+      name
+      sellerFeeBasisPoints
+      mintAddress
+      description
+      image
+      primarySaleHappened
+      attributes {
+        metadataAddress
+        value
+        traitType
+      }
+      creators {
+        address
+        verified
+      }
+      owner {
+        address
+      }
+      listings {
+        address
+        tradeState
+        seller
+        metadata
+        auctionHouse
+        price
+        tradeStateBump
+        createdAt
+        canceledAt
+      }
+      offers {
+        address
+        tradeState
+        buyer
+        metadata
+        auctionHouse
+        price
+        tradeStateBump
+        tokenAccount
+        createdAt
+        canceledAt
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useNftPageQuery__
@@ -553,14 +681,18 @@ export const NftPageDocument = gql`
  *   },
  * });
  */
-export function useNftPageQuery(baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
-      }
-export function useNftPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
-        }
+export function useNftPageQuery(
+  baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+}
+export function useNftPageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+}
 export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
 export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
 export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;

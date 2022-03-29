@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
-import { useNftPageLazyQuery, useWalletProfileLazyQuery } from '../../src/graphql/indexerTypes';
+import {
+  NftPageQuery,
+  useNftPageLazyQuery,
+  useWalletProfileLazyQuery,
+} from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
 import { showFirstAndLastFour } from '../../src/modules/utils/string';
 import { useTwitterHandle } from '../../src/common/hooks/useTwitterHandle';
@@ -12,6 +16,53 @@ import Accordion from '../../src/common/components/elements/Accordion';
 import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
 
 // import Bugsnag from '@bugsnag/js';
+
+const OverlappingCircles = ({
+  creators,
+}: {
+  creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+}) => {
+  return (
+    <div className="relative">
+      {creators.map(({ address }, i) => (
+        // <li key={address} className={cx('absolute', `left-[10px] hover:z-10`)}>
+        <li key={address} className={cx('absolute', `left-[${i * 10}px] hover:z-10`)}>
+          <Link href={`/profiles/${address}`}>
+            <a>
+              <HoverAvatar address={address} />
+            </a>
+          </Link>
+        </li>
+      ))}
+    </div>
+  );
+};
+
+const HoverAvatar = ({ address }: { address: string }) => {
+  const { data: twitterHandle } = useTwitterHandle(null, address);
+  const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
+
+  useEffect(() => {
+    if (!twitterHandle) return;
+    queryWalletProfile({
+      variables: {
+        handle: twitterHandle,
+      },
+    });
+  }, [queryWalletProfile, twitterHandle]);
+
+  useEffect(() => {}, [twitterHandle]);
+  const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
+  return (
+    <Image
+      width={24}
+      height={24}
+      src={profilePictureUrl ?? getPFPFromPublicKey(address)}
+      alt="Profile Picture"
+      className=" rounded-full"
+    />
+  );
+};
 
 const Avatar = ({ address }: { address: string }) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
@@ -73,7 +124,7 @@ export default function NftByAddress({ address }: { address: string }) {
     }
   }, [address, queryNft]);
 
-  if (called && !data && !loading) {
+  if (called && !data?.nft && !loading) {
     return <Custom404 />;
   }
 
@@ -130,16 +181,14 @@ export default function NftByAddress({ address }: { address: string }) {
                   <li>
                     <div className="h-6 w-20 rounded bg-gray-800" />
                   </li>
+                ) : nft?.creators.length === 1 ? (
+                  <Link href={`/profiles/${nft?.creators[0].address}`}>
+                    <a>
+                      <Avatar address={nft?.creators[0].address} />
+                    </a>
+                  </Link>
                 ) : (
-                  nft?.creators.map(({ address }) => (
-                    <li key={address} className="mb-2 last:mb-0">
-                      <Link href={`/profiles/${address}`}>
-                        <a>
-                          <Avatar address={address} />
-                        </a>
-                      </Link>
-                    </li>
-                  ))
+                  <OverlappingCircles creators={nft?.creators || []} />
                 )}
               </ul>
             </div>
@@ -161,30 +210,32 @@ export default function NftByAddress({ address }: { address: string }) {
               </div>
             </div>
           </div>
-          <Accordion title="Attributes">
-            <div className="mt-8 grid grid-cols-2 gap-6">
-              {loading ? (
-                <>
-                  <div className="h-16 rounded bg-gray-800" />
-                  <div className="h-16 rounded bg-gray-800" />
-                  <div className="h-16 rounded bg-gray-800" />
-                  <div className="h-16 rounded bg-gray-800" />
-                </>
-              ) : (
-                nft?.attributes.map((a) => (
-                  <div
-                    key={a.traitType}
-                    className="max-h-[300px] rounded border border-gray-700 p-6"
-                  >
-                    <p className="label uppercase text-gray-500">{a.traitType}</p>
-                    <p className="truncate text-ellipsis" title={a.value}>
-                      {a.value}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
-          </Accordion>
+          {nft?.attributes && (
+            <Accordion title="Attributes">
+              <div className="mt-8 grid grid-cols-2 gap-6">
+                {loading ? (
+                  <>
+                    <div className="h-16 rounded bg-gray-800" />
+                    <div className="h-16 rounded bg-gray-800" />
+                    <div className="h-16 rounded bg-gray-800" />
+                    <div className="h-16 rounded bg-gray-800" />
+                  </>
+                ) : (
+                  nft?.attributes.map((a) => (
+                    <div
+                      key={a.traitType}
+                      className="max-h-[300px] rounded border border-gray-700 p-6"
+                    >
+                      <p className="label uppercase text-gray-500">{a.traitType}</p>
+                      <p className="truncate text-ellipsis" title={a.value}>
+                        {a.value}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Accordion>
+          )}
         </div>
       </div>
     </div>

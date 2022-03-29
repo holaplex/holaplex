@@ -1,55 +1,89 @@
-import { Menu } from '@headlessui/react';
+import { Menu, Popover, Transition } from '@headlessui/react';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
 import { ExplorerIcon } from '../icons/Explorer';
 import { SolscanIcon } from '../icons/Solscan';
+import { Fragment, useEffect, useState } from 'react';
 
 function MoreDropdown({ address }: { address: string }) {
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  useEffect(() => {
+    if (linkCopied) {
+      const timer = setTimeout(() => {
+        setLinkCopied(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [linkCopied]);
+
+  const handleCopyClick = async () => {
+    await navigator.clipboard.writeText(`https://www.holaplex.com/nfts/${address}`);
+    setLinkCopied(true);
+  };
   return (
-    <Menu as="div" className="relative">
+    <Popover as="div" className="relative">
       {({ open }) => (
         <>
-          <Menu.Button
+          <Popover.Button
             className={cx(
-              'flex h-10 w-10 items-center justify-center rounded-full',
+              'flex h-10 w-10 items-center justify-center rounded-full ',
               open ? 'bg-white' : ''
             )}
           >
             <FeatherIcon icon="more-horizontal" className={open ? 'stroke-black' : ''} />
-          </Menu.Button>
+          </Popover.Button>
+
           {open && (
-            <Menu.Items
-              static
-              as="ul"
-              className=" absolute right-5 top-12 z-10 w-56 rounded border border-white bg-black p-4"
+            <Transition
+              show={open}
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+              as={Fragment}
             >
-              <Menu.Item as="li">
-                <button onClick={() => {}} className="flex items-center">
-                  <FeatherIcon icon="copy" />
-                  <span className="pl-5">Copy link to NFT</span>
-                </button>
-              </Menu.Item>
-              <Menu.Item as="li">
-                <a
-                  href={`https://explorer.solana.com/address/${address}`}
-                  className="flex items-center"
-                >
-                  <ExplorerIcon />
-                  <span className="pl-5">View on Explorer</span>
-                </a>
-              </Menu.Item>
-              <Menu.Item as="li">
-                <a href={`https://solscan.io/account/${address}`} className="flex items-center">
-                  <SolscanIcon />
-                  <span className="pl-5">View on SolScan</span>
-                </a>
-              </Menu.Item>
-            </Menu.Items>
+              <Popover.Panel
+                static
+                as="ul"
+                className=" absolute right-5 top-12 z-10 w-56 rounded bg-gray-800 p-4 shadow-lg"
+              >
+                <li>
+                  {linkCopied ? (
+                    <div className="flex items-center">
+                      <FeatherIcon icon="check" /> <span className="pl-5">Link copied</span>
+                    </div>
+                  ) : (
+                    <button onClick={handleCopyClick} className="flex items-center">
+                      <FeatherIcon icon="copy" />
+                      <span className="pl-5">Copy link to NFT</span>
+                    </button>
+                  )}
+                </li>
+                <li>
+                  <a
+                    href={`https://explorer.solana.com/address/${address}`}
+                    className="flex items-center"
+                  >
+                    <ExplorerIcon />
+                    <span className="pl-5">View on Explorer</span>
+                  </a>
+                </li>
+                <li>
+                  <a href={`https://solscan.io/account/${address}`} className="flex items-center">
+                    <SolscanIcon />
+                    <span className="pl-5">View on SolScan</span>
+                  </a>
+                </li>
+              </Popover.Panel>
+            </Transition>
           )}
         </>
       )}
-    </Menu>
+    </Popover>
   );
 }
 
