@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next';
 import {
   Creator,
   ListingReceipt,
+  NftCreator,
   useNftPageLazyQuery,
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
@@ -25,7 +26,11 @@ import { SolIcon } from '../../src/common/components/elements/Price';
 
 // import Bugsnag from '@bugsnag/js';
 
-const OverlappingCircles = ({ creators }: { creators: Creator[] }) => {
+const OverlappingCircles = ({
+  creators,
+}: {
+  creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
+}) => {
   return (
     <div className="relative">
       {creators.map(({ address }, i) => (
@@ -41,7 +46,11 @@ const OverlappingCircles = ({ creators }: { creators: Creator[] }) => {
   );
 };
 
-const Activities = ({ listings }: { listings: ListingReceipt[] }) => {
+const Activities = ({
+  listings,
+}: {
+  listings: Omit<ListingReceipt, 'bookkeeper' | 'tokenSize' | 'bump'>[];
+}) => {
   const l = [
     {
       __typename: 'ListingReceipt',
