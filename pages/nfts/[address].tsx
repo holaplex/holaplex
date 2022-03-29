@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import {
-  NftPageQuery,
+  Creator,
+  ListingReceipt,
   useNftPageLazyQuery,
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
@@ -14,18 +15,20 @@ import { getPFPFromPublicKey } from '../../src/modules/utils/image';
 import Image from 'next/image';
 import Accordion from '../../src/common/components/elements/Accordion';
 import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
+import { imgOpt } from '../../src/common/utils';
+//@ts-ignore
+import FeatherIcon from 'feather-icons-react';
+import { Duration, DateTime } from 'luxon';
+import { timeAgo } from '../../src/common/utils/time';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { SolIcon } from '../../src/common/components/elements/Price';
 
 // import Bugsnag from '@bugsnag/js';
 
-const OverlappingCircles = ({
-  creators,
-}: {
-  creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-}) => {
+const OverlappingCircles = ({ creators }: { creators: Creator[] }) => {
   return (
     <div className="relative">
       {creators.map(({ address }, i) => (
-        // <li key={address} className={cx('absolute', `left-[10px] hover:z-10`)}>
         <li key={address} className={cx('absolute', `left-[${i * 10}px] hover:z-10`)}>
           <Link href={`/profiles/${address}`}>
             <a>
@@ -35,6 +38,81 @@ const OverlappingCircles = ({
         </li>
       ))}
     </div>
+  );
+};
+
+const Activities = ({ listings }: { listings: ListingReceipt[] }) => {
+  const l = [
+    {
+      __typename: 'ListingReceipt',
+      address: '3wfjd9mtM4M3JhgvCEoUaw3EZp9CXWLeaMfU92MteY19',
+      tradeState: '3TXeCqUHS64mLsnRSFLsfoFtcfwebaemZjMYpVr4t2Sb',
+      seller: '3fB955q6xxxZcgnCyguLwkSa7egxgBoksPQVQ3U8HRHL',
+      metadata: '1iEGdrtshyzSXU6nW94PG8ypbFJg3mrTsZtnmW1j6eX',
+      auctionHouse: 'EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE',
+      price: '50000000000',
+      tradeStateBump: 251,
+      createdAt: '2022-03-24T18:05:50+00:00',
+      canceledAt: null,
+    },
+    {
+      __typename: 'ListingReceipt',
+      address: '3wfjd9mtM4M3JhgvCEoUaw3EZp9CXWLeaMfU92MteY19',
+      tradeState: '3TXeCqUHS64mLsnRSFLsfoFtcfwebaemZjMYpVr4t2Sb',
+      seller: '3fB955q6xxxZcgnCyguLwkSa7egxgBoksPQVQ3U8HRHL',
+      metadata: '1iEGdrtshyzSXU6nW94PG8ypbFJg3mrTsZtnmW1j6eX',
+      auctionHouse: 'EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE',
+      price: '50000000000',
+      tradeStateBump: 251,
+      createdAt: '2022-01-11T18:05:50+00:00',
+      canceledAt: null,
+    },
+    {
+      __typename: 'ListingReceipt',
+      address: '3wfjd9mtM4M3JhgvCEoUaw3EZp9CXWLeaMfU92MteY19',
+      tradeState: '3TXeCqUHS64mLsnRSFLsfoFtcfwebaemZjMYpVr4t2Sb',
+      seller: '3fB955q6xxxZcgnCyguLwkSa7egxgBoksPQVQ3U8HRHL',
+      metadata: '1iEGdrtshyzSXU6nW94PG8ypbFJg3mrTsZtnmW1j6eX',
+      auctionHouse: 'EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE',
+      price: '50000000000',
+      tradeStateBump: 251,
+      createdAt: '2022-03-14T18:05:50+00:00',
+      canceledAt: null,
+    },
+  ];
+  // return listings.map(({ createdAt }) => (
+  return (
+    <>
+      <div className="grid grid-cols-4 p-6 opacity-50">
+        <div>Event</div>
+
+        <div>Wallets</div>
+
+        <div>Price</div>
+        <div className="justify-self-end">Time</div>
+      </div>
+      {l.map(({ createdAt, seller, price }) => (
+        <div
+          key={createdAt}
+          className=" mb-4 grid grid-cols-4 items-center rounded border border-gray-700 p-6 last:mb-0"
+        >
+          <div className="flex items-center">
+            <FeatherIcon height={16} width={16} icon="tag" />
+            <span className="ml-4">Listed</span>
+          </div>
+          <Link href={`/profiles/${seller}`}>
+            <a>
+              <Avatar address={seller} />
+            </a>
+          </Link>
+          <div className="flex items-center ">
+            <SolIcon className="h-4 w-4 " stroke="#ffffff" />
+            <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
+          </div>
+          <div className="justify-self-end">{timeAgo(createdAt)}</div>
+        </div>
+      ))}
+    </>
   );
 };
 
@@ -64,7 +142,7 @@ const HoverAvatar = ({ address }: { address: string }) => {
   );
 };
 
-const Avatar = ({ address }: { address: string }) => {
+export const Avatar = ({ address }: { address: string }) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
   console.log('twitterHandle', twitterHandle);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
@@ -150,7 +228,7 @@ export default function NftByAddress({ address }: { address: string }) {
             <div className="aspect-square w-full rounded-lg border-none bg-gray-800" />
           ) : (
             <img
-              src={nft?.image}
+              src={imgOpt(nft?.image)}
               className="block h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
               alt=""
             />
@@ -238,6 +316,22 @@ export default function NftByAddress({ address }: { address: string }) {
           )}
         </div>
       </div>
+      {nft?.listings && (
+        <Accordion title="Activity">
+          <div className="mt-8 flex flex-col">
+            {loading ? (
+              <>
+                <div className="mb-5 h-16 rounded bg-gray-800" />
+                <div className=" mb-5 h-16 rounded bg-gray-800" />
+                <div className=" mb-5 h-16 rounded bg-gray-800" />
+                <div className="h-16 rounded bg-gray-800" />
+              </>
+            ) : (
+              <Activities listings={nft?.listings} />
+            )}
+          </div>
+        </Accordion>
+      )}
     </div>
   );
 }

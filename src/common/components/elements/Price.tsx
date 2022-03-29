@@ -1,6 +1,6 @@
 import { Listing } from '@/modules/indexer';
 
-export const SolIcon = (props: { className: string; stroke?: string }) => (
+export const SolIcon = (props: { className?: string; stroke?: string }) => (
   <svg
     className={props.className}
     viewBox="0 0 16 16"
