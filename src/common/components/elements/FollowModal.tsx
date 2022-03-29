@@ -15,7 +15,7 @@ import { Connection } from '@solana/web3.js';
 import { useWalletProfileQuery } from 'src/graphql/indexerTypes';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 
-type Visibility = 'hidden' | 'followers' | 'following';
+export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type ConnectionItem =
   | NonNullable<Unpacked<ReturnType<typeof useGetAllConnectionsToWithTwitter>['data']>>
@@ -24,8 +24,10 @@ type ConnectionItem =
 type FollowModalProps = {
   profile: IProfile;
   wallet: AnchorWallet;
-  visibility: Visibility;
-  setVisibility: Dispatch<SetStateAction<Visibility>> | ((visibility: Visibility) => void);
+  visibility: FollowModalVisibility;
+  setVisibility:
+    | Dispatch<SetStateAction<FollowModalVisibility>>
+    | ((visibility: FollowModalVisibility) => void);
 };
 
 export const FollowModal: FC<FollowModalProps> = ({

@@ -1,131 +1,54 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
-import { WalletPill } from '@/common/components/elements/WalletIndicator';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { mq } from '@/common/styles/MediaQuery';
-import { getBannerFromPublicKey, getPFPFromPublicKey } from '@/modules/utils/image';
-import Bugsnag from '@bugsnag/js';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
-import { FC, useEffect, useState } from 'react';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { FollowerCount } from './FollowerCount';
-import { FollowModal } from './FollowModal';
-// @ts-ignore
-import FeatherIcon from 'feather-icons-react';
+import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
+import { useProfileData, asProfile } from '@/common/context/ProfileData';
 
-interface Props {
-  children: React.ReactNode;
-  wallet: string;
-  publicKey: PublicKey | null;
-}
+export const ProfileContainer: FC = ({ children }) => {
+  const profileData = useProfileData();
+  const { banner, profilePicture } = profileData;
 
-export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => {
-  const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
-  const bannerUrl = walletProfile.data?.profile?.bannerImageUrl;
-  const imageUrl = walletProfile.data?.profile?.profileImageUrlHighres?.replace('_normal', '');
-  const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const [showFollowsModal, setShowFollowsModal] = useState<'hidden' | 'followers' | 'following'>(
-    'hidden'
-  );
+  const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
-
-  const [{ pfp, banner }, setPfpAndBanner] = useState({
-    pfp: getPFPFromPublicKey(publicKey),
-    banner: `url(${getBannerFromPublicKey(publicKey)})`,
-  });
-
-  useEffect(() => {
-    try {
-      queryWalletProfile({
-        variables: {
-          handle: twitterHandle ?? '',
-        },
-      });
-    } catch (error: any) {
-      console.error(error);
-      console.log('failed to fetch wallet');
-      Bugsnag.notify(error);
-    }
-  }, [queryWalletProfile, twitterHandle]);
-
-  useEffect(() => {
-    const profilePictureImage = imageUrl ?? getPFPFromPublicKey(publicKey);
-    const bannerBackgroundImage = !!bannerUrl
-      ? `url(${bannerUrl})`
-      : `url(${getBannerFromPublicKey(publicKey)})`;
-
-    setPfpAndBanner({
-      pfp: profilePictureImage,
-      banner: bannerBackgroundImage,
-    });
-  }, [imageUrl, bannerUrl, publicKey]);
-
-  const getPublicKeyFromWalletOnUrl = () => {
-    try {
-      return new PublicKey(wallet);
-    } catch (_) {
-      return null;
-    }
-  };
 
   return (
     <>
       <HeadingContainer>
-        <Banner className="h-40 md:h-64 " style={{ backgroundImage: banner }} />
-        {/* <Image
-          className="h-40 object-cover md:h-64"
-          alt="banner"
-          src={'/' + banner}
-          layout="fill"
-        /> */}
+        <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
       </HeadingContainer>
       <ContentCol>
         <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
-          {/* <ProfilePictureContainer>
-            <ProfilePicture src={pfp} className="bg-gray-900" width={PFP_SIZE} height={PFP_SIZE} />
-          </ProfilePictureContainer> */}
           <div className="-mt-12 flex justify-center md:justify-start">
-            <ProfilePicture src={pfp} className="bg-gray-900" width={PFP_SIZE} height={PFP_SIZE} />
-            {/* <div className="rounded-full !border-4 !border-gray-100">
-              <Image
-                src={pfp}
-                alt="profile picture"
-                className="rounded-full !border-4 !border-gray-100 bg-gray-900"
-                width={PFP_SIZE}
-                height={PFP_SIZE}
-              />
-            </div> */}
-          </div>
-          <div className="mt-10 flex justify-center  md:justify-start">
-            {/* <WalletPill
-              disableBackground
-              disableLink
-              textOverride={twitterHandle ? `${twitterHandle}` : null}
-              publicKey={getPublicKeyFromWalletOnUrl()}
-            /> */}
-            <ProfileDisplayName
-              publicKey={getPublicKeyFromWalletOnUrl()}
-              twitterHandle={twitterHandle}
+            <ProfilePicture
+              src={profilePicture}
+              className="bg-gray-900"
+              width={PFP_SIZE}
+              height={PFP_SIZE}
             />
           </div>
+          <div className="mt-10 flex justify-center  md:justify-start">
+            <ProfileDisplayName />
+          </div>
           <FollowerCount
-            profile={{ pubkey: wallet, handle: twitterHandle }}
+            profile={asProfile(profileData)}
             setShowFollowsModal={setShowFollowsModal}
           />
         </div>
         <ContentWrapper>
-          <ProfileMenu wallet={wallet} />
+          <ProfileMenu />
           {children}
         </ContentWrapper>
         {anchorWallet ? (
           <FollowModal
             visibility={showFollowsModal}
             setVisibility={setShowFollowsModal}
-            profile={{ pubkey: wallet, handle: twitterHandle }}
+            profile={asProfile(profileData)}
             wallet={anchorWallet}
           />
         ) : null}
@@ -134,13 +57,13 @@ export const ProfileContainer: FC<Props> = ({ children, wallet, publicKey }) => 
   );
 };
 
-const ProfileDisplayName = (props: { publicKey: PublicKey | null; twitterHandle?: string }) => {
-  const pubkey = props.publicKey?.toBase58();
+const ProfileDisplayName: FC = () => {
+  const { publicKey, twitterHandle } = useProfileData();
 
   const [copied, setCopeied] = useState(false);
   const copyPubKey = async () => {
-    if (pubkey) {
-      await navigator.clipboard.writeText(pubkey);
+    if (publicKey) {
+      await navigator.clipboard.writeText(publicKey);
       setCopeied(true);
       setTimeout(() => setCopeied(false), 2000);
     }
@@ -148,17 +71,17 @@ const ProfileDisplayName = (props: { publicKey: PublicKey | null; twitterHandle?
 
   return (
     <div className="flex items-center text-2xl font-medium">
-      {props.twitterHandle ? (
+      {twitterHandle ? (
         <a
           className="hover:text-gray-300"
           target="_blank"
-          href={'https://www.twitter.com/' + props.twitterHandle}
+          href={'https://www.twitter.com/' + twitterHandle}
           rel="noreferrer"
         >
-          @{props.twitterHandle}
+          @{twitterHandle}
         </a>
       ) : (
-        <span className="font-mono ">{shortenAddress(pubkey)}</span>
+        <span className="font-mono ">{shortenAddress(publicKey)}</span>
       )}
       {copied ? (
         <CheckIcon className="ml-4 h-7 w-7  hover:text-gray-300" />
@@ -209,7 +132,6 @@ const Banner = styled.div`
   width: 100%;
   background-repeat: no-repeat;
   background-size: cover;
-
   ${mq('lg')} {
     background-attachment: fixed;
     background-size: 100%;

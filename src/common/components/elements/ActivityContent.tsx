@@ -4,7 +4,7 @@ import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
+import { useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
@@ -17,61 +17,21 @@ import Bugsnag from '@bugsnag/js';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { ActivityType, IFeedItem } from '@/modules/feed/feed.interfaces';
+import { IFeedItem } from '@/modules/feed/feed.interfaces';
 import { ActivityCard } from './ActivityCard';
-import { Combobox } from '@headlessui/react';
-import { classNames } from './ListingPreview';
+import { useProfileData } from '@/common/context/ProfileData';
 
-const randomBetween = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
-
-export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
-  // const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
+export const ActivityContent = () => {
+  const { publicKey: pk } = useProfileData();
+  const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
-  const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
-  const { publicKey: connectedPubkey } = useWallet();
+  const activityPage = useActivityPageQuery({
+    variables: {
+      address: publicKey.toBase58(),
+    },
+  });
 
-  useEffect(() => {
-    if (!publicKey) return;
-    setDidPerformInitialLoad(true);
-
-    try {
-      queryActivityPage({
-        variables: {
-          address: publicKey.toString(),
-        },
-      });
-    } catch (error: any) {
-      console.error(error);
-      console.log('faield to query activity for pubkey', publicKey.toString());
-      Bugsnag.notify(error);
-    }
-  }, [publicKey, queryActivityPage]);
-
-  const isLoading = !didPerformInitialLoad || activityPage.loading;
-
-  // const hasItems = !!activityPage.data?.wallet?.bids.length;
-
-  // const bids =
-  //   activityPage.data?.wallet?.bids.slice() ||
-  //   // .sort(
-  //   //   (a, b) =>
-  //   //     DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-  //   //     DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-  //   // )
-  //   [];
-
-  const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
-
-  // const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
-  //   if (isYou) return 'You';
-
-  //   if (twitterHandle) return twitterHandle;
-  //   if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
-  //   return 'Loading';
-  // };
+  const isLoading = activityPage.loading;
 
   const activityItems = useMemo(
     () =>
