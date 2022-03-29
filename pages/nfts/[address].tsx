@@ -23,111 +23,14 @@ import { Duration, DateTime } from 'luxon';
 import { timeAgo } from '../../src/common/utils/time';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
+import { Tooltip } from 'antd';
 
 // import Bugsnag from '@bugsnag/js';
-
-const OverlappingCircles = ({
-  creators,
-}: {
-  creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
-}) => {
-  return (
-    <div className="relative">
-      {creators.map(({ address }, i) => (
-        <li key={address} className={cx('absolute', `left-[${i * 10}px] hover:z-10`)}>
-          <Link href={`/profiles/${address}`}>
-            <a>
-              <HoverAvatar address={address} />
-            </a>
-          </Link>
-        </li>
-      ))}
-    </div>
-  );
-};
-
-const Activities = ({
-  listings,
-}: {
-  listings: Omit<ListingReceipt, 'bookkeeper' | 'tokenSize' | 'bump'>[];
-}) => {
-  const l = [
-    {
-      __typename: 'ListingReceipt',
-      address: '3wfjd9mtM4M3JhgvCEoUaw3EZp9CXWLeaMfU92MteY19',
-      tradeState: '3TXeCqUHS64mLsnRSFLsfoFtcfwebaemZjMYpVr4t2Sb',
-      seller: '3fB955q6xxxZcgnCyguLwkSa7egxgBoksPQVQ3U8HRHL',
-      metadata: '1iEGdrtshyzSXU6nW94PG8ypbFJg3mrTsZtnmW1j6eX',
-      auctionHouse: 'EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE',
-      price: '50000000000',
-      tradeStateBump: 251,
-      createdAt: '2022-03-24T18:05:50+00:00',
-      canceledAt: null,
-    },
-    {
-      __typename: 'ListingReceipt',
-      address: '3wfjd9mtM4M3JhgvCEoUaw3EZp9CXWLeaMfU92MteY19',
-      tradeState: '3TXeCqUHS64mLsnRSFLsfoFtcfwebaemZjMYpVr4t2Sb',
-      seller: '3fB955q6xxxZcgnCyguLwkSa7egxgBoksPQVQ3U8HRHL',
-      metadata: '1iEGdrtshyzSXU6nW94PG8ypbFJg3mrTsZtnmW1j6eX',
-      auctionHouse: 'EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE',
-      price: '50000000000',
-      tradeStateBump: 251,
-      createdAt: '2022-01-11T18:05:50+00:00',
-      canceledAt: null,
-    },
-    {
-      __typename: 'ListingReceipt',
-      address: '3wfjd9mtM4M3JhgvCEoUaw3EZp9CXWLeaMfU92MteY19',
-      tradeState: '3TXeCqUHS64mLsnRSFLsfoFtcfwebaemZjMYpVr4t2Sb',
-      seller: '3fB955q6xxxZcgnCyguLwkSa7egxgBoksPQVQ3U8HRHL',
-      metadata: '1iEGdrtshyzSXU6nW94PG8ypbFJg3mrTsZtnmW1j6eX',
-      auctionHouse: 'EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE',
-      price: '50000000000',
-      tradeStateBump: 251,
-      createdAt: '2022-03-14T18:05:50+00:00',
-      canceledAt: null,
-    },
-  ];
-  // return listings.map(({ createdAt }) => (
-  return (
-    <>
-      <div className="grid grid-cols-4 p-6 opacity-50">
-        <div>Event</div>
-
-        <div>Wallets</div>
-
-        <div>Price</div>
-        <div className="justify-self-end">Time</div>
-      </div>
-      {l.map(({ createdAt, seller, price }) => (
-        <div
-          key={createdAt}
-          className=" mb-4 grid grid-cols-4 items-center rounded border border-gray-700 p-6 last:mb-0"
-        >
-          <div className="flex items-center">
-            <FeatherIcon height={16} width={16} icon="tag" />
-            <span className="ml-4">Listed</span>
-          </div>
-          <Link href={`/profiles/${seller}`}>
-            <a>
-              <Avatar address={seller} />
-            </a>
-          </Link>
-          <div className="flex items-center ">
-            <SolIcon className="h-4 w-4 " stroke="#ffffff" />
-            <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
-          </div>
-          <div className="justify-self-end">{timeAgo(createdAt)}</div>
-        </div>
-      ))}
-    </>
-  );
-};
-
-const HoverAvatar = ({ address }: { address: string }) => {
+const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
+  const leftPosPixls = 12;
+  const leftPos = index * leftPosPixls;
 
   useEffect(() => {
     if (!twitterHandle) return;
@@ -141,13 +44,90 @@ const HoverAvatar = ({ address }: { address: string }) => {
   useEffect(() => {}, [twitterHandle]);
   const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
   return (
-    <Image
-      width={24}
-      height={24}
-      src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-      alt="Profile Picture"
-      className=" rounded-full"
-    />
+    // Using antd tooltip since no tailwind supported component, replace when better alternative is available
+    <Tooltip
+      key={address}
+      title={twitterHandle ?? address}
+      mouseEnterDelay={0.09}
+      overlayStyle={{
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        color: 'white',
+      }}
+    >
+      {/* // Need to use style prop for dynamic style application, Tailwind does not support */}
+      <li className="absolute transition hover:z-10 hover:scale-125" style={{ left: leftPos }}>
+        <Link href={`/profiles/${address}`}>
+          <a>
+            <Image
+              width={24}
+              height={24}
+              src={profilePictureUrl ?? getPFPFromPublicKey(address)}
+              alt="Profile Picture"
+              className=" rounded-full"
+            />
+          </a>
+        </Link>
+      </li>
+    </Tooltip>
+  );
+};
+const OverlappingCircles = ({
+  creators,
+}: {
+  creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
+}) => {
+  return (
+    <div className="relative">
+      {creators.map(({ address }, i) => (
+        <HoverAvatar address={address} index={i} key={address} />
+      ))}
+    </div>
+  );
+};
+
+const Activities = ({
+  listings,
+}: {
+  listings: Omit<ListingReceipt, 'bookkeeper' | 'tokenSize' | 'bump'>[];
+}) => {
+  const activities = listings;
+  return (
+    <>
+      <div className="grid grid-cols-4 p-6 opacity-50">
+        <div>Event</div>
+
+        <div>Wallets</div>
+
+        <div>Price</div>
+        <div className="justify-self-end">Time</div>
+      </div>
+      {activities.length < 1 ? (
+        <div className="flex justify-center">No Activity Found</div>
+      ) : (
+        activities.map(({ createdAt, seller, price }) => (
+          <div
+            key={createdAt}
+            className=" mb-4 grid grid-cols-4 items-center rounded border border-gray-700 p-6 last:mb-0"
+          >
+            <div className="flex items-center">
+              <FeatherIcon height={16} width={16} icon="tag" />
+              <span className="ml-4">Listed</span>
+            </div>
+            <Link href={`/profiles/${seller}`}>
+              <a>
+                <Avatar address={seller} />
+              </a>
+            </Link>
+            <div className="flex items-center ">
+              <SolIcon className="h-4 w-4 " stroke="#ffffff" />
+              <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
+            </div>
+            <div className="justify-self-end">{timeAgo(createdAt)}</div>
+          </div>
+        ))
+      )}
+    </>
   );
 };
 
@@ -224,9 +204,9 @@ export default function NftByAddress({ address }: { address: string }) {
               <div className="h-32 w-full rounded-lg bg-gray-800" />
             ) : (
               <>
-                <div>
+                <div className="flex items-center justify-between">
                   <h1 className="mb-4 text-2xl">{nft?.name}</h1>
-                  {/* <FeatherIcon icon="more-horizontal" /> */}
+                  <MoreDropdown address={nft?.address || ''} />
                 </div>
 
                 <p className="text-lg">{nft?.description}</p>
@@ -275,7 +255,9 @@ export default function NftByAddress({ address }: { address: string }) {
                     </a>
                   </Link>
                 ) : (
-                  <OverlappingCircles creators={nft?.creators || []} />
+                  <div>
+                    <OverlappingCircles creators={nft?.creators || []} />
+                  </div>
                 )}
               </ul>
             </div>
@@ -313,7 +295,7 @@ export default function NftByAddress({ address }: { address: string }) {
                       key={a.traitType}
                       className="max-h-[300px] rounded border border-gray-700 p-6"
                     >
-                      <p className="label uppercase text-gray-500">{a.traitType}</p>
+                      <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
                       <p className="truncate text-ellipsis" title={a.value}>
                         {a.value}
                       </p>
@@ -326,20 +308,22 @@ export default function NftByAddress({ address }: { address: string }) {
         </div>
       </div>
       {nft?.listings && (
-        <Accordion title="Activity">
-          <div className="mt-8 flex flex-col">
-            {loading ? (
-              <>
-                <div className="mb-5 h-16 rounded bg-gray-800" />
-                <div className=" mb-5 h-16 rounded bg-gray-800" />
-                <div className=" mb-5 h-16 rounded bg-gray-800" />
-                <div className="h-16 rounded bg-gray-800" />
-              </>
-            ) : (
-              <Activities listings={nft?.listings} />
-            )}
-          </div>
-        </Accordion>
+        <div className="overflow-x-auto ">
+          <Accordion title="Activity" allowHorizOverflow>
+            <div className="mt-8 flex min-w-[700px] flex-col">
+              {loading ? (
+                <>
+                  <div className="mb-5 h-16 rounded bg-gray-800" />
+                  <div className=" mb-5 h-16 rounded bg-gray-800" />
+                  <div className=" mb-5 h-16 rounded bg-gray-800" />
+                  <div className="h-16 rounded bg-gray-800" />
+                </>
+              ) : (
+                <Activities listings={nft?.listings} />
+              )}
+            </div>
+          </Accordion>
+        </div>
       )}
     </div>
   );

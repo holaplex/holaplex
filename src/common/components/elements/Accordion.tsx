@@ -2,7 +2,15 @@ import { Disclosure, Transition } from '@headlessui/react';
 import { ChevronRight } from '../icons/ChevronRight';
 import cx from 'classnames';
 
-function Accordion({ title, children }: { title: string; children: React.ReactNode }) {
+function Accordion({
+  title,
+  children,
+  allowHorizOverflow,
+}: {
+  title: string;
+  children: React.ReactNode;
+  allowHorizOverflow?: boolean;
+}) {
   return (
     <Disclosure>
       {({ open }) => (
@@ -27,7 +35,11 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <div className="rounded-b border border-t-0 border-gray-700 p-6">
+            <div
+              className={cx('rounded-b border border-t-0 border-gray-700 p-6', {
+                'overflow-x-auto': allowHorizOverflow,
+              })}
+            >
               <Disclosure.Panel>{children}</Disclosure.Panel>
             </div>
           </Transition>
