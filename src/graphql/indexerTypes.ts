@@ -89,6 +89,18 @@ export type Creator = {
   __typename?: 'Creator';
   address: Scalars['String'];
   attributeGroups: Array<AttributeGroup>;
+  counts: CreatorCounts;
+  stats: Array<MintStats>;
+};
+
+
+export type CreatorStatsArgs = {
+  auctionHouses: Array<Scalars['PublicKey']>;
+};
+
+export type CreatorCounts = {
+  __typename?: 'CreatorCounts';
+  creations: Scalars['Int'];
 };
 
 export type Denylist = {
@@ -150,6 +162,7 @@ export type Marketplace = {
 
 export type MintStats = {
   __typename?: 'MintStats';
+  auctionHouse: Scalars['String'];
   average?: Maybe<Scalars['Volume']>;
   floor?: Maybe<Scalars['Volume']>;
   mint: Scalars['String'];
@@ -250,6 +263,7 @@ export type QueryRootNftsArgs = {
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
   listed?: InputMaybe<Array<Scalars['PublicKey']>>;
+  offerers?: InputMaybe<Array<Scalars['PublicKey']>>;
   offset: Scalars['Int'];
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
 };

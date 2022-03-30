@@ -18,7 +18,9 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
     "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts",
     "prepare": "husky install",
-    "generate": "graphql-codegen -r dotenv/config --config codegen.yml",
+    "generate:graphql-apollo": "graphql-codegen -r dotenv/config --config codegen.yml",
+    "generate:graphql-request": "graphql-codegen -r dotenv/config --config codegen-ssr.yml",
+    "generate:graphql": "yarn generate:graphql-apollo && yarn generate:graphql-request",
     "storefronts:update": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/update-store-json.ts"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "@bugsnag/plugin-react": "^7.14.0",
     "@fontsource/material-icons": "^4.5.2",
     "@google/model-viewer": "^1.9.2",
+    "@graphql-codegen/typescript-graphql-request": "^4.4.4",
     "@headlessui/react": "^1.5.0",
     "@heroicons/react": "^1.0.6",
     "@holaplex/graph-program": "^0.1.1",
@@ -64,6 +67,8 @@
     "formidable": "^1.2.2",
     "fs-extra": "^10.0.0",
     "graphql": "^16.3.0",
+    "graphql-query": "^0.1.2",
+    "graphql-request": "^4.2.0",
     "luxon": "^2.1.1",
     "mixpanel-browser": "^2.43.0",
     "next": "^12.0.10",

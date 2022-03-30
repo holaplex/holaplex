@@ -4,7 +4,7 @@ import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
+import { useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
@@ -17,62 +17,22 @@ import Bugsnag from '@bugsnag/js';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { ActivityType, IFeedItem } from '@/modules/feed/feed.interfaces';
+import { IFeedItem } from '@/modules/feed/feed.interfaces';
 import { ActivityCard } from './ActivityCard';
-import { Combobox } from '@headlessui/react';
-import { classNames } from './ListingPreview';
+import { useProfileData } from '@/common/context/ProfileData';
 
-const randomBetween = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
-
-export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
-  // const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
+export const ActivityContent = () => {
+  const { publicKey: pk } = useProfileData();
+  const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
-  const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
-  const { publicKey: connectedPubkey } = useWallet();
   const [searchFocused, setSearchFocused] = useState(false);
+  const activityPage = useActivityPageQuery({
+    variables: {
+      address: publicKey.toBase58(),
+    },
+  });
 
-  useEffect(() => {
-    if (!publicKey) return;
-    setDidPerformInitialLoad(true);
-
-    try {
-      queryActivityPage({
-        variables: {
-          address: publicKey.toString(),
-        },
-      });
-    } catch (error: any) {
-      console.error(error);
-      console.log('faield to query activity for pubkey', publicKey.toString());
-      Bugsnag.notify(error);
-    }
-  }, [publicKey, queryActivityPage]);
-
-  const isLoading = !didPerformInitialLoad || activityPage.loading;
-
-  // const hasItems = !!activityPage.data?.wallet?.bids.length;
-
-  // const bids =
-  //   activityPage.data?.wallet?.bids.slice() ||
-  //   // .sort(
-  //   //   (a, b) =>
-  //   //     DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-  //   //     DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-  //   // )
-  //   [];
-
-  const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
-
-  // const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
-  //   if (isYou) return 'You';
-
-  //   if (twitterHandle) return twitterHandle;
-  //   if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
-  //   return 'Loading';
-  // };
+  const isLoading = activityPage.loading;
 
   const activityItems = useMemo(
     () =>
@@ -198,6 +158,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
       <div className="space-y-4">
         {isLoading ? (
           <>
+            <LoadingActivitySkeletonBoxCircleLong />
             <LoadingActivitySkeletonBoxSquareShort />
             <LoadingActivitySkeletonBoxCircleLong />
             <LoadingActivitySkeletonBoxSquareShort />
@@ -229,12 +190,12 @@ const LoadingActivitySkeletonBoxSquareShort = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingBox $borderRadius="4px" />
+        <LoadingBox $borderRadius="8px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
           <LoadingLine $width="60%" />
-          <LoadingLine $width="25%" />
+          <LoadingLine $width="25%" $height="16px" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
@@ -245,21 +206,21 @@ const LoadingActivitySkeletonBoxCircleLong = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingBox $borderRadius="100%" />
+        <LoadingBox $borderRadius="8px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
           <LoadingLine $width="100%" />
-          <LoadingLine $width="25%" />
+          <LoadingLine $width="25%" $height="16px" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
   );
 };
 
-const LoadingBox = styled.div<{ $borderRadius: '4px' | '100%' }>`
-  width: 52px;
-  height: 52px;
+const LoadingBox = styled.div<{ $borderRadius: '8px' | '100%' }>`
+  width: 80px;
+  height: 80px;
   background: #707070;
   border-radius: ${({ $borderRadius }) => $borderRadius};
   -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
@@ -276,9 +237,9 @@ const LoadingLinesContainer = styled.div`
   flex-direction: column;
 `;
 
-const LoadingLine = styled.div<{ $width: string }>`
-  width: ${({ $width }) => $width};
-  height: 16px;
+const LoadingLine = styled.div<{ $width: string; $height?: string }>`
+  width: ${({ $width }) => $width || '100%'};
+  height: ${({ $height }) => $height || '24px'};
   background: #707070;
   border-radius: 4px;
   margin-top: 8px;
@@ -371,6 +332,7 @@ const ContentContainer = styled.div`
   flex: 1;
   margin-left: 16px;
   margin-right: 16px;
+  align-items: center;
 `;
 
 const CenteredCol = styled(Col)`
@@ -387,7 +349,7 @@ const ContentCol = styled(CenteredCol)`
 const ActivityBoxContainer = styled.div`
   display: flex;
   flex: 1;
-  padding: 10px;
+  padding: 16px;
   border: 1px solid #262626;
   box-sizing: border-box;
   border-radius: 8px;

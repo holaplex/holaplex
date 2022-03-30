@@ -25,6 +25,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter ', ...defaultTheme.fontFamily.sans],
+        mono: ['Space_Mono', ...defaultTheme.fontFamily.mono],
       },
     },
   },

@@ -8,6 +8,8 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { Button5 } from './Button2';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
   const from = (activity.from || activity.nft?.creator) as IProfile;
@@ -133,12 +135,25 @@ export function ActivityCard(props: { activity: IFeedItem }) {
 
   const timeOfActivity = DateTime.fromFormat(props.activity.timestamp, RUST_ISO_UTC_DATE_FORMAT);
 
+  const { track } = useAnalytics();
+
+  // Activity Selected
+  // Pubkey
+
+  function activitySelected() {
+    track('Activity Selected', {
+      event_category: 'Profile',
+      event_label: props.activity.type,
+      activityType: props.activity.type,
+    });
+  }
+
   return (
     <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base md:flex-nowrap">
       <div className="flex items-center">
         <div
           className={classNames(
-            'relative mr-4 flex h-20 w-20  flex-shrink-0 items-center text-gray-300',
+            'relative mr-4 flex  h-20 w-20  flex-shrink-0 items-center text-gray-300',
             thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'
           )}
         >
@@ -186,12 +201,12 @@ export function ActivityCard(props: { activity: IFeedItem }) {
       <a
         href={actionURL}
         target="_blank"
-        className="ml-auto w-full pt-4 md:w-auto md:pl-4 md:pt-0"
+        className="ml-auto w-full pt-4 sm:block md:w-auto md:pl-4 md:pt-0"
         rel="noreferrer"
       >
-        <button className="w-full rounded-full bg-white px-9  py-2 font-sans text-base font-medium text-gray-900 hover:bg-gray-200  focus:outline-none focus:ring-2 focus:ring-gray-200  focus:ring-offset-2 md:w-auto">
+        <Button5 v="ghost" onClick={() => activitySelected()}>
           View
-        </button>
+        </Button5>
       </a>
     </div>
   );
