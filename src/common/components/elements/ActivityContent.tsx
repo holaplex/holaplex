@@ -32,6 +32,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
   const [activityFilter, setActivityFilter] = useState('');
   const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
   const { publicKey: connectedPubkey } = useWallet();
+  const [searchFocused, setSearchFocused] = useState(false);
 
   useEffect(() => {
     if (!publicKey) return;
@@ -175,7 +176,15 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           hideLabel
           value={activityFilter}
           onChange={(e) => setActivityFilter(e.target.value)}
-          leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+          onFocus={() => setSearchFocused(true)}
+          onBlur={() => setSearchFocused(false)}
+          leadingIcon={
+            <FeatherIcon
+              icon="search"
+              aria-hidden="true"
+              className={searchFocused ? 'text-white' : 'text-gray-500'}
+            />
+          }
           placeholder="Search"
         />
       </div>
