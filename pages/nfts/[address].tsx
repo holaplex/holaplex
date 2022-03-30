@@ -48,7 +48,7 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
     // Using antd tooltip since no tailwind supported component, replace when better alternative is available
     <Tooltip
       key={address}
-      title={twitterHandle ?? address}
+      title={twitterHandle ?? showFirstAndLastFour(address)}
       mouseEnterDelay={0.09}
       overlayStyle={{
         fontSize: '0.75rem',
@@ -222,7 +222,7 @@ export default function NftByAddress({ address }: { address: string }) {
             <div className="aspect-square w-full rounded-lg border-none bg-gray-800" />
           ) : (
             <img
-              src={imgOpt(nft?.image)}
+              src={imgOpt(nft?.image, 0)}
               className="block h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
               alt=""
             />
@@ -285,7 +285,7 @@ export default function NftByAddress({ address }: { address: string }) {
             </div>
           </div>
           {nft?.attributes && nft.attributes.length > 0 && (
-            <Accordion title="Attributes">
+            <Accordion title="Attributes" defaultOpen>
               <div className="mt-8 grid grid-cols-2 gap-6">
                 {loading ? (
                   <>
@@ -314,7 +314,7 @@ export default function NftByAddress({ address }: { address: string }) {
       </div>
       {nft?.listings && (
         <div className="overflow-x-auto ">
-          <Accordion title="Activity" allowHorizOverflow>
+          <Accordion title="Activity" allowHorizOverflow defaultOpen>
             <div className="mt-8 flex min-w-[700px] flex-col">
               {loading ? (
                 <>

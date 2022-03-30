@@ -2,17 +2,16 @@ import { Disclosure, Transition } from '@headlessui/react';
 import { ChevronRight } from '../icons/ChevronRight';
 import cx from 'classnames';
 
-function Accordion({
-  title,
-  children,
-  allowHorizOverflow,
-}: {
+interface Props {
   title: string;
   children: React.ReactNode;
   allowHorizOverflow?: boolean;
-}) {
+  defaultOpen?: boolean;
+}
+
+function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props }: Props) {
   return (
-    <Disclosure>
+    <Disclosure {...props}>
       {({ open }) => (
         <>
           <Disclosure.Button className="flex h-[71px] w-full justify-between rounded-t border border-gray-700 p-6">

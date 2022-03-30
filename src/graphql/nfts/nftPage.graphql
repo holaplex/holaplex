@@ -12,12 +12,20 @@ query nftPage($address: String!) {
       value
       traitType
     }
+
     creators {
       address
       verified
     }
     owner {
       address
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
     }
     listings {
       address
