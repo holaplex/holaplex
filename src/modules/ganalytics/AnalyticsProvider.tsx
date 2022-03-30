@@ -18,6 +18,7 @@ export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
+export const META_ID = process.env.NEXT_PUBLIC_META_ID;
 
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
