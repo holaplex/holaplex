@@ -24,6 +24,7 @@ import { timeAgo } from '../../src/common/utils/time';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 // import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
@@ -133,8 +134,14 @@ const Activities = ({
 
 export const Avatar = ({ address }: { address: string }) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
-  console.log('twitterHandle', twitterHandle);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
+  const { publicKey } = useWallet();
+  const isYou = publicKey?.toBase58() === address;
+  const displayName = isYou
+    ? 'You'
+    : twitterHandle
+    ? `@${twitterHandle}`
+    : showFirstAndLastFour(address);
 
   useEffect(() => {
     if (!twitterHandle) return;
@@ -157,9 +164,7 @@ export const Avatar = ({ address }: { address: string }) => {
         alt="Profile Picture"
         className=" rounded-full"
       />
-      <div className="ml-2 text-base">
-        {twitterHandle ? `@${twitterHandle}` : showFirstAndLastFour(address)}
-      </div>
+      <div className="ml-2 text-base">{displayName}</div>
     </div>
   );
 };
@@ -279,7 +284,7 @@ export default function NftByAddress({ address }: { address: string }) {
               </div>
             </div>
           </div>
-          {nft?.attributes && (
+          {nft?.attributes.length && (
             <Accordion title="Attributes">
               <div className="mt-8 grid grid-cols-2 gap-6">
                 {loading ? (
