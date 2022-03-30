@@ -284,7 +284,7 @@ export default function NftByAddress({ address }: { address: string }) {
               </div>
             </div>
           </div>
-          {nft?.attributes.length && (
+          {nft?.attributes && nft.attributes.length > 0 && (
             <Accordion title="Attributes">
               <div className="mt-8 grid grid-cols-2 gap-6">
                 {loading ? (
