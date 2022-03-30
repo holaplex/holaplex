@@ -131,7 +131,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
   //   toggleSearchField(false);
   // };
 
-  const GridChange = () => {
+  const GridSelector = () => {
     return (
       <div className="ml-4 hidden rounded-lg border-2 border-solid border-gray-800 md:flex">
         <button
@@ -140,7 +140,10 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
           })}
           onClick={() => setGridView('2x2')}
         >
-          <DoubleGrid color={gridView === '2x2' ? 'white' : '#707070'} />
+          <DoubleGrid
+            className={gridView !== '2x2' ? 'transition hover:scale-110 ' : ''}
+            color={gridView === '2x2' ? 'white' : '#707070'}
+          />
         </button>
 
         <button
@@ -149,7 +152,10 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
           })}
           onClick={() => setGridView('3x3')}
         >
-          <TripleGrid color={gridView === '3x3' ? 'white' : '#707070'} />
+          <TripleGrid
+            className={gridView !== '3x3' ? 'transition hover:scale-110' : ''}
+            color={gridView === '3x3' ? 'white' : '#707070'}
+          />
         </button>
       </div>
     );
@@ -199,7 +205,7 @@ const ProfileNFTs = ({ wallet }: { wallet: string }) => {
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
           />
-          <GridChange />
+          <GridSelector />
         </div>
         <NFTGrid nfts={nftsToShow} gridView={gridView} />
       </ProfileContainer>
