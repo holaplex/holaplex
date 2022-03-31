@@ -19,6 +19,7 @@ import {
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
+import { imgOpt } from '../../../src/common/utils';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -32,9 +33,9 @@ const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   return (
     <Link href={`/nfts/${nft.address}`} passHref>
       <a className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-[300ms] hover:scale-[1.02]">
-        <img src={nft.image} alt={nft.name} className="h-80 w-full object-cover" />
+        <img src={imgOpt(nft.image)} alt={nft.name} className="h-80 w-full object-cover" />
         <div className="h-24 bg-gray-900 py-6 px-4">
-          <p className="w-max-fit m-0 mb-2 truncate text-lg">{nft.name}</p>
+          <p className="w-max-fit m-0 mb-2 min-h-[28px] truncate text-lg">{nft.name}</p>
           {shownCreatorAddress && (
             <Link href={`/profiles/${shownCreatorAddress}`}>
               <a className="text-gray-300">

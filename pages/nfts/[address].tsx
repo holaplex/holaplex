@@ -13,14 +13,12 @@ import { useTwitterHandle } from '../../src/common/hooks/useTwitterHandle';
 import Link from 'next/link';
 import Custom404 from '../404';
 import { getPFPFromPublicKey } from '../../src/modules/utils/image';
-import Image from 'next/image';
 import Accordion from '../../src/common/components/elements/Accordion';
 import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
 import { imgOpt } from '../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { Duration, DateTime } from 'luxon';
-import { timeAgo } from '../../src/common/utils/time';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
@@ -60,12 +58,10 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
       <li className="absolute transition hover:z-10 hover:scale-125" style={{ left: leftPos }}>
         <Link href={`/profiles/${address}`}>
           <a>
-            <Image
-              width={24}
-              height={24}
+            <img
               src={profilePictureUrl ?? getPFPFromPublicKey(address)}
               alt="Profile Picture"
-              className=" rounded-full"
+              className="h-6 w-6 rounded-full"
             />
           </a>
         </Link>
@@ -124,7 +120,7 @@ const Activities = ({
               <SolIcon className="h-4 w-4 " stroke="#ffffff" />
               <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
             </div>
-            <div className="justify-self-end">{timeAgo(createdAt)}</div>
+            <div className="justify-self-end">{DateTime.fromISO(createdAt).toRelative()}</div>
           </div>
         ))
       )}
@@ -157,12 +153,10 @@ export const Avatar = ({ address }: { address: string }) => {
 
   return (
     <div className="flex items-center">
-      <Image
-        width={24}
-        height={24}
+      <img
         src={profilePictureUrl ?? getPFPFromPublicKey(address)}
         alt="Profile Picture"
-        className=" rounded-full"
+        className="h-6 w-6 rounded-full"
       />
       <div className="ml-2 text-base">{displayName}</div>
     </div>
@@ -312,7 +306,7 @@ export default function NftByAddress({ address }: { address: string }) {
           )}
         </div>
       </div>
-      {nft?.listings && (
+      {/* {nft?.listings && (
         <div className="overflow-x-auto ">
           <Accordion title="Activity" allowHorizOverflow defaultOpen>
             <div className="mt-8 flex min-w-[700px] flex-col">
@@ -329,7 +323,7 @@ export default function NftByAddress({ address }: { address: string }) {
             </div>
           </Accordion>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
