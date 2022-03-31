@@ -36,7 +36,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <meta name="facebook-domain-verification" content="1shmkwfy1aajm8cbbwwe91f30j8ihi" />
+          <meta name="facebook-domain-verification" content={META_ID} />
           {(OLD_GOOGLE_ANALYTICS_ID || GA4_ID) && (
             <>
               <script
