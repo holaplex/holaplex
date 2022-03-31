@@ -1,10 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import {
-  OLD_GOOGLE_ANALYTICS_ID,
-  GA4_ID,
-  META_ID,
-} from '../src/modules/ganalytics/AnalyticsProvider';
+import { OLD_GOOGLE_ANALYTICS_ID, GA4_ID, META_ID } from '../src/common/context/AnalyticsProvider';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -36,7 +32,8 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <meta name="facebook-domain-verification" content={META_ID} />
+          {/* meta .dev verification. Will remove in future */}
+          <meta name="facebook-domain-verification" content={'pvzsx7s3k2om21tjz7kmt6gpr0vaun'} />
           {(OLD_GOOGLE_ANALYTICS_ID || GA4_ID) && (
             <>
               <script

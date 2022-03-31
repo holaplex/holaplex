@@ -57,7 +57,10 @@ function MoreDropdown({ address }: { address: string }) {
                       <FeatherIcon icon="check" /> <span className="pl-5">Link copied</span>
                     </div>
                   ) : (
-                    <button onClick={handleCopyClick} className="flex items-center">
+                    <button
+                      onClick={handleCopyClick}
+                      className="flex items-center hover:text-gray-300"
+                    >
                       <FeatherIcon icon="copy" />
                       <span className="pl-5">Copy link to NFT</span>
                     </button>
@@ -66,14 +69,17 @@ function MoreDropdown({ address }: { address: string }) {
                 <li>
                   <a
                     href={`https://explorer.solana.com/address/${address}`}
-                    className="flex items-center"
+                    className="flex items-center hover:text-gray-300"
                   >
                     <ExplorerIcon />
                     <span className="pl-5">View on Explorer</span>
                   </a>
                 </li>
                 <li>
-                  <a href={`https://solscan.io/account/${address}`} className="flex items-center">
+                  <a
+                    href={`https://solscan.io/account/${address}`}
+                    className="flex items-center hover:text-gray-300"
+                  >
                     <SolscanIcon />
                     <span className="pl-5">View on SolScan</span>
                   </a>

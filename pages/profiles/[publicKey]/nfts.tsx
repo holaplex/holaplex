@@ -1,12 +1,10 @@
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { PublicKey } from '@solana/web3.js';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { Combobox } from '@headlessui/react';
 import cx from 'classnames';
 import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
 import { TripleGrid } from '@/common/components/icons/TripleGrid';
@@ -33,7 +31,11 @@ const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   return (
     <Link href={`/nfts/${nft.address}`} passHref>
       <a className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-[300ms] hover:scale-[1.02]">
-        <img src={imgOpt(nft.image)} alt={nft.name} className="h-80 w-full object-cover" />
+        <img
+          src={imgOpt(nft.image)}
+          alt={nft.name}
+          className=" aspect-square h-80 w-full object-cover"
+        />
         <div className="h-24 bg-gray-900 py-6 px-4">
           <p className="w-max-fit m-0 mb-2 min-h-[28px] truncate text-lg">{nft.name}</p>
           {shownCreatorAddress && (
@@ -68,8 +70,8 @@ type ListedFilterState = 'all' | 'listed' | 'unlisted' | 'search';
 
 const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
-  const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
-  const [showSearchField, toggleSearchField] = useState(false);
+  // const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
+  // const [showSearchField, toggleSearchField] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
   const ownedNFTs = useOwnedNfTsQuery({
@@ -88,7 +90,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
 
-  const [selectedNFT, setSelectedNFT] = useState(nfts[0]);
+  // const [selectedNFT, setSelectedNFT] = useState(nfts[0]);
 
   const GridSelector = () => {
     return (

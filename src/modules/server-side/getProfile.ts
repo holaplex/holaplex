@@ -42,7 +42,7 @@ export const getPropsForWalletOrUsername: GetServerSideProps<WalletDependantPage
 ) => {
   const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!, 'confirmed');
   const { walletProfile } = getSdk(graphqlRequestClient);
-  const input = ctx.params?.wallet;
+  const input = ctx.params?.publicKey;
   if (typeof input !== 'string') {
     return { notFound: true };
   }
@@ -67,7 +67,7 @@ export const getPropsForWalletOrUsername: GetServerSideProps<WalletDependantPage
     const results = await walletProfile({
       handle: twitterHandle,
     });
-    profilePicture = results.profile?.profileImageUrlHighres.replace("_normal", '') ?? null;
+    profilePicture = results.profile?.profileImageUrlHighres.replace('_normal', '') ?? null;
     banner = results.profile?.bannerImageUrl ?? null;
   }
 

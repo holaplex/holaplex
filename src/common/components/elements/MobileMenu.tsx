@@ -15,7 +15,9 @@ type OnCloseProps = {
 
 export const MobileMenu: FC<OnCloseProps> = ({ onCloseClick }) => {
   const { connected, wallet } = useWallet();
-  const hasWalletTypeSelected = wallet?.readyState === WalletReadyState.Installed;
+  const hasWalletTypeSelected =
+    wallet?.readyState === WalletReadyState.Installed ||
+    wallet?.readyState === WalletReadyState.Loadable;
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
   return (
     <Container>
