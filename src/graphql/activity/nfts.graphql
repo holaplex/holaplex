@@ -1,0 +1,31 @@
+query nftsByCreator($address: PublicKey!, $limit: Int!, $offset: Int!) {
+  nfts(creators: [$address], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+    }
+  }
+}
+
+query nftsByOwner($address: PublicKey!, $limit: Int!, $offset: Int!) {
+  nfts(owners: [$address], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+    }
+  }
+}

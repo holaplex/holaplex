@@ -14,7 +14,7 @@ import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { ChevronRight } from '../icons/ChevronRight';
 import { Unpacked } from '@/types/Unpacked';
 import Bugsnag from '@bugsnag/js';
-import TextInput2 from './TextInput2';
+import TextInput from './TextInput';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { IFeedItem } from '@/modules/feed/feed.interfaces';
@@ -131,7 +131,7 @@ export const ActivityContent = () => {
   return (
     <ActivityContainer>
       <div className="mb-4  ">
-        <TextInput2
+        <TextInput
           id="activity-search"
           label="activity search"
           hideLabel

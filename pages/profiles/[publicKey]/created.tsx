@@ -6,6 +6,7 @@ import { useState } from 'react';
 import cx from 'classnames';
 import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
 import { TripleGrid } from '@/common/components/icons/TripleGrid';
+import { useNftsByCreatorQuery } from '../../../src/graphql/indexerTypes';
 import Link from 'next/link';
 import TextInput from '@/common/components/elements/TextInput';
 import { Avatar } from '../../nfts/[address]';
@@ -17,9 +18,8 @@ import { ProfileDataProvider } from '@/common/context/ProfileData';
 import { imgOpt } from '../../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { NftsByOwnerQuery, useNftsByOwnerQuery } from '../../../src/graphql/indexerTypes';
 
-type OwnedNFT = NftsByOwnerQuery['nfts'][0];
+// type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getPropsForWalletOrUsername(context);
@@ -66,18 +66,17 @@ const NFTGrid = ({ nfts, gridView }: { nfts: OwnedNFT[]; gridView: '2x2' | '3x3'
   );
 };
 
-const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
+const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
   const [searchFocused, setSearchFocused] = useState(false);
   const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
-  const { data } = useNftsByOwnerQuery({
+  const { data } = useNftsByCreatorQuery({
     variables: {
       address: pk,
       limit: 100,
       offset: 0,
     },
   });
-
   const nfts = data?.nfts || [];
 
   const [query, setQuery] = useState('');
@@ -150,4 +149,4 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   );
 };
 
-export default ProfileNFTs;
+export default CreatedNFTs;
