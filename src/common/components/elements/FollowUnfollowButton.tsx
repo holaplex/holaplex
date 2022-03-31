@@ -131,10 +131,6 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
     const pk = pubKeyOverride ?? toWallet;
     trackInitiateTransaction();
 
-    console.log('initiate', type, {
-      from: myWallet,
-      toWallet,
-    });
     if (type === 'Follow') {
       connectTo.mutate(pk);
     } else {
@@ -143,13 +139,6 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   };
 
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
-
-  if (!loading) {
-    console.log('loaded', type, 'button', {
-      from: myWallet,
-      toWallet,
-    });
-  }
 
   return type === 'Follow' ? (
     <Button5 v="primary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
