@@ -31,8 +31,8 @@ const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
   return (
     <Link href={`/nfts/${nft.address}`} passHref>
-      <a className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-[300ms] hover:scale-[1.02]">
-        <img src={nft.image} alt={nft.name} className="h-80 w-full object-cover" />
+      <a className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-300 hover:scale-[1.02]">
+        <img src={nft.image} alt={nft.name} className="aspect-square  w-full object-cover " />
         <div className="h-24 bg-gray-900 py-6 px-4">
           <p className="w-max-fit m-0 mb-2 truncate text-lg">{nft.name}</p>
           {shownCreatorAddress && (

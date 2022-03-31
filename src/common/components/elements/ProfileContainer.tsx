@@ -23,7 +23,7 @@ export const ProfileContainer: FC = ({ children }) => {
       <header>
         <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
       </header>
-      <CenteredContentCol className="flex">
+      <CenteredContentCol className="md:flex">
         <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
           <div className="-mt-12 flex justify-center md:justify-start">
             <ProfilePicture

@@ -19,7 +19,7 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
   const router = useRouter();
 
   useEffect(() => {
-    router.push(`/profiles/${publicKey}/nfts`);
+    router.replace(`/profiles/${publicKey}/nfts`);
   }, []);
 
   return (

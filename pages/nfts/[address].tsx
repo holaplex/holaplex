@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import {
   Creator,
@@ -25,6 +25,11 @@ import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { CenteredContentCol } from 'pages';
+import {
+  LoadingBox,
+  LoadingContainer,
+  LoadingLine,
+} from '@/common/components/elements/LoadingPlaceholders';
 
 // import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
@@ -103,36 +108,27 @@ const Activities = ({
         <div>Price</div>
         <div className="justify-self-end">Time</div>
       </div>
-      {activities.length < 1 ? (
-        <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
-          <span className="text-center text-2xl font-semibold">No activity</span>
-          <span className="mt-2 text-gray-300 ">
-            Activity associated with this NFT will show up here
-          </span>
-        </div>
-      ) : (
-        activities.map(({ createdAt, seller, price }) => (
-          <div
-            key={createdAt}
-            className=" mb-4 grid grid-cols-4 items-center rounded border border-gray-700 p-6 last:mb-0"
-          >
-            <div className="flex items-center">
-              <FeatherIcon height={16} width={16} icon="tag" />
-              <span className="ml-4">Listed</span>
-            </div>
-            <Link href={`/profiles/${seller}`}>
-              <a>
-                <Avatar address={seller} />
-              </a>
-            </Link>
-            <div className="flex items-center ">
-              <SolIcon className="h-4 w-4 " stroke="#ffffff" />
-              <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
-            </div>
-            <div className="justify-self-end">{DateTime.fromISO(createdAt).toRelative()}</div>
+      {activities.map(({ createdAt, seller, price }) => (
+        <div
+          key={createdAt}
+          className=" mb-4 grid grid-cols-4 items-center rounded border border-gray-700 p-6 last:mb-0"
+        >
+          <div className="flex items-center">
+            <FeatherIcon height={16} width={16} icon="tag" />
+            <span className="ml-4">Listed</span>
           </div>
-        ))
-      )}
+          <Link href={`/profiles/${seller}`}>
+            <a>
+              <Avatar address={seller} />
+            </a>
+          </Link>
+          <div className="flex items-center ">
+            <SolIcon className="h-4 w-4 " stroke="#ffffff" />
+            <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
+          </div>
+          <div className="justify-self-end">{DateTime.fromISO(createdAt).toRelative()}</div>
+        </div>
+      ))}
     </>
   );
 };
@@ -183,6 +179,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function NftByAddress({ address }: { address: string }) {
   const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
+  const [imgLoad, setImgLoad] = useState(false);
   const nft = data?.nft;
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
 
@@ -224,15 +221,29 @@ export default function NftByAddress({ address }: { address: string }) {
                 </>
               )}
             </div>
-            {loading ? (
+            <div className="relative aspect-square w-full  ">
+              {!imgLoad && (
+                <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
+              )}
+              {nft?.image && (
+                <Image
+                  src={imgOpt(nft?.image)!}
+                  layout="fill"
+                  className="block aspect-square h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
+                  alt=""
+                  onLoadingComplete={() => setImgLoad(true)}
+                />
+              )}
+            </div>
+            {/* {loading ? (
               <div className="aspect-square w-full rounded-lg border-none bg-gray-800" />
             ) : (
-              <img
-                src={imgOpt(nft?.image)}
-                className="block h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
+              <Image
+                src={imgOpt(nft?.image)!}
+                className="block aspect-square h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
                 alt=""
               />
-            )}
+            )} */}
           </div>
           <div>
             <div className="mb-8 hidden lg:block">
@@ -318,23 +329,32 @@ export default function NftByAddress({ address }: { address: string }) {
             )}
           </div>
         </div>
-        {nft?.listings && (
-          <div className="overflow-x-auto ">
-            <Accordion title="Activity" allowHorizOverflow>
-              <div className="mt-8 flex min-w-[700px] flex-col">
-                {loading ? (
-                  <div>
-                    <div className="mb-5 h-16 rounded bg-gray-800" />
-                    <div className=" mb-5 h-16 rounded bg-gray-800" />
-                    <div className=" mb-5 h-16 rounded bg-gray-800" />
-                    <div className="h-16 rounded bg-gray-800" />
-                  </div>
-                ) : (
-                  <Activities listings={nft?.listings} />
-                )}
-              </div>
-            </Accordion>
+        {loading ? (
+          <div className="mb-4 grid grid-cols-4 gap-6 ">
+            <LoadingLine $height="56px" />
+            <LoadingLine $height="56px" />
+            <LoadingLine $height="56px" />
+            <LoadingLine $height="56px" />
           </div>
+        ) : (
+          nft?.listings && (
+            <div className="overflow-x-auto ">
+              {!nft?.listings.length ? (
+                <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+                  <span className="text-center text-2xl font-semibold">No activity</span>
+                  <span className="mt-2 text-gray-300 ">
+                    Activity associated with this NFT will show up here
+                  </span>
+                </div>
+              ) : (
+                <Accordion title="Activity" allowHorizOverflow>
+                  <div className="mt-8 flex min-w-[700px] flex-col">
+                    <Activities listings={nft?.listings} />
+                  </div>
+                </Accordion>
+              )}
+            </div>
+          )
         )}
       </div>
     </CenteredContentCol>

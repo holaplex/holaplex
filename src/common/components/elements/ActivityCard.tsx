@@ -149,7 +149,7 @@ export function ActivityCard(props: { activity: IFeedItem }) {
   }
 
   return (
-    <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base md:flex-nowrap">
+    <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base transition-transform duration-300 hover:scale-[1.02] md:flex-nowrap">
       <div className="flex items-center">
         <div
           className={classNames(
