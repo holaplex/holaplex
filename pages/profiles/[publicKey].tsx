@@ -19,7 +19,7 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
   const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() => router.push(`/profiles/${publicKey}/nfts`), 2000);
+    router.push(`/profiles/${publicKey}/nfts`);
   }, []);
 
   return (

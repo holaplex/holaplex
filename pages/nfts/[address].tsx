@@ -8,7 +8,7 @@ import {
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
-import { showFirstAndLastFour } from '../../src/modules/utils/string';
+import { shortenAddress, showFirstAndLastFour } from '../../src/modules/utils/string';
 import { useTwitterHandle } from '../../src/common/hooks/useTwitterHandle';
 import Link from 'next/link';
 import Custom404 from '../404';
@@ -49,7 +49,7 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
     // Using antd tooltip since no tailwind supported component, replace when better alternative is available
     <Tooltip
       key={address}
-      title={twitterHandle ?? address}
+      title={twitterHandle || shortenAddress(address)}
       mouseEnterDelay={0.09}
       overlayStyle={{
         fontSize: '0.75rem',
