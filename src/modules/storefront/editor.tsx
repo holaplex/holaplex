@@ -9,7 +9,7 @@ import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
 import { PageMetaData, Storefront, StorefrontTheme } from './types';
 import { putStorefront } from './put-storefront';
-import { TrackingFunctionSignature } from '../ganalytics/AnalyticsProvider';
+import { TrackingFunctionSignature } from '../../common/context/AnalyticsProvider';
 import { WalletContextState } from '@solana/wallet-adapter-react';
 
 export const { Text, Title, Paragraph } = Typography;
@@ -125,7 +125,7 @@ export interface StorefrontEditorProps {}
 
 export const validateSubdomainUniqueness = (
   ar: ArweaveScope,
-  allowPubkey?: string,
+  allowPubkey?: string
 ): ((rule: RuleObject, subdomain: string | null | undefined) => Promise<void>) => {
   return async (_, subdomain) => {
     const storefront = await ar.storefront.find('holaplex:metadata:subdomain', subdomain ?? '');

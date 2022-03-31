@@ -16,7 +16,7 @@ import {
   AnalyticsProvider,
   OLD_GOOGLE_ANALYTICS_ID,
   GA4_ID,
-} from '@/modules/ganalytics/AnalyticsProvider';
+} from '@/common/context/AnalyticsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,

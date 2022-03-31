@@ -25,6 +25,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { CenteredContentCol } from 'pages';
 
 // import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
@@ -104,7 +105,12 @@ const Activities = ({
         <div className="justify-self-end">Time</div>
       </div>
       {activities.length < 1 ? (
-        <div className="flex justify-center">No Activity Found</div>
+        <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+          <span className="text-center text-2xl font-semibold">No activity</span>
+          <span className="mt-2 text-gray-300 ">
+            Activity associated with this NFT will show up here
+          </span>
+        </div>
       ) : (
         activities.map(({ createdAt, seller, price }) => (
           <div
@@ -201,135 +207,137 @@ export default function NftByAddress({ address }: { address: string }) {
   }
 
   return (
-    <div className="container mx-auto px-4 pb-10 text-white">
-      <div className="mt-12 mb-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-        <div className="mb-4 block lg:mb-0 lg:flex lg:items-center lg:justify-center ">
-          <div className="mb-6 block lg:hidden">
-            {loading ? (
-              <div className="h-32 w-full rounded-lg bg-gray-800" />
-            ) : (
-              <>
-                <div className="flex items-center justify-between">
-                  <h1 className="mb-4 text-2xl">{nft?.name}</h1>
-                  <MoreDropdown address={nft?.address || ''} />
-                </div>
-
-                <p className="text-lg">{nft?.description}</p>
-              </>
-            )}
-          </div>
-          {loading ? (
-            <div className="aspect-square w-full rounded-lg border-none bg-gray-800" />
-          ) : (
-            <img
-              src={imgOpt(nft?.image)}
-              className="block h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
-              alt=""
-            />
-          )}
-        </div>
-        <div>
-          <div className="mb-8 hidden lg:block">
-            {loading ? (
-              <div className="h-32 w-full rounded-lg bg-gray-800" />
-            ) : (
-              <>
-                <div className="flex justify-between">
-                  <h1 className="mb-4 text-2xl md:text-3xl lg:text-4xl">{nft?.name}</h1>
-                  <MoreDropdown address={nft?.address || ''} />
-                </div>
-
-                <p className="text-lg">{nft?.description}</p>
-              </>
-            )}
-          </div>
-          <div className="mb-8 flex flex-1 flex-row justify-between">
-            <div>
-              <div className="label mb-1 text-gray-500">
-                {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Created by'}
-              </div>
-              <ul>
-                {loading ? (
-                  <li>
-                    <div className="h-6 w-20 rounded bg-gray-800" />
-                  </li>
-                ) : nft?.creators.length === 1 ? (
-                  <Link href={`/profiles/${nft?.creators[0].address}`}>
-                    <a>
-                      <Avatar address={nft?.creators[0].address} />
-                    </a>
-                  </Link>
-                ) : (
-                  <div>
-                    <OverlappingCircles creators={nft?.creators || []} />
+    <CenteredContentCol>
+      <div className=" text-white">
+        <div className="mt-12 mb-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+          <div className="mb-4 block lg:mb-0 lg:flex lg:items-center lg:justify-center ">
+            <div className="mb-6 block lg:hidden">
+              {loading ? (
+                <div className="h-32 w-full rounded-lg bg-gray-800" />
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h1 className="mb-4 text-2xl">{nft?.name}</h1>
+                    <MoreDropdown address={nft?.address || ''} />
                   </div>
-                )}
-              </ul>
-            </div>
 
-            <div
-              className={cx('flex', {
-                hidden: loading,
-              })}
-            >
-              <div className="flex flex-1 flex-col">
-                <div className="label mb-1 self-end text-gray-500">Owned by</div>
-                {nft?.owner?.address && (
-                  <Link href={`/profiles/${nft?.owner?.address}`}>
-                    <a>
-                      <Avatar address={nft?.owner?.address} />
-                    </a>
-                  </Link>
-                )}
+                  <p className="text-lg">{nft?.description}</p>
+                </>
+              )}
+            </div>
+            {loading ? (
+              <div className="aspect-square w-full rounded-lg border-none bg-gray-800" />
+            ) : (
+              <img
+                src={imgOpt(nft?.image)}
+                className="block h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
+                alt=""
+              />
+            )}
+          </div>
+          <div>
+            <div className="mb-8 hidden lg:block">
+              {loading ? (
+                <div className="h-32 w-full rounded-lg bg-gray-800" />
+              ) : (
+                <>
+                  <div className="flex justify-between">
+                    <h1 className="mb-4 text-2xl md:text-3xl lg:text-4xl">{nft?.name}</h1>
+                    <MoreDropdown address={nft?.address || ''} />
+                  </div>
+
+                  <p className="text-lg">{nft?.description}</p>
+                </>
+              )}
+            </div>
+            <div className="mb-8 flex flex-1 flex-row justify-between">
+              <div>
+                <div className="label mb-1 text-gray-500">
+                  {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Created by'}
+                </div>
+                <ul>
+                  {loading ? (
+                    <li>
+                      <div className="h-6 w-20 rounded bg-gray-800" />
+                    </li>
+                  ) : nft?.creators.length === 1 ? (
+                    <Link href={`/profiles/${nft?.creators[0].address}`}>
+                      <a>
+                        <Avatar address={nft?.creators[0].address} />
+                      </a>
+                    </Link>
+                  ) : (
+                    <div>
+                      <OverlappingCircles creators={nft?.creators || []} />
+                    </div>
+                  )}
+                </ul>
+              </div>
+
+              <div
+                className={cx('flex', {
+                  hidden: loading,
+                })}
+              >
+                <div className="flex flex-1 flex-col">
+                  <div className="label mb-1 self-end text-gray-500">Owned by</div>
+                  {nft?.owner?.address && (
+                    <Link href={`/profiles/${nft?.owner?.address}`}>
+                      <a>
+                        <Avatar address={nft?.owner?.address} />
+                      </a>
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          {nft?.attributes && nft.attributes.length > 0 && (
-            <Accordion title="Attributes">
-              <div className="mt-8 grid grid-cols-2 gap-6">
-                {loading ? (
-                  <>
-                    <div className="h-16 rounded bg-gray-800" />
-                    <div className="h-16 rounded bg-gray-800" />
-                    <div className="h-16 rounded bg-gray-800" />
-                    <div className="h-16 rounded bg-gray-800" />
-                  </>
-                ) : (
-                  nft?.attributes.map((a) => (
-                    <div
-                      key={a.traitType}
-                      className="max-h-[300px] rounded border border-gray-700 p-6"
-                    >
-                      <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
-                      <p className="truncate text-ellipsis" title={a.value}>
-                        {a.value}
-                      </p>
+            {nft?.attributes && nft.attributes.length > 0 && (
+              <Accordion title="Attributes">
+                <div className="mt-8 grid grid-cols-2 gap-6">
+                  {loading ? (
+                    <div>
+                      <div className="h-16 rounded bg-gray-800" />
+                      <div className="h-16 rounded bg-gray-800" />
+                      <div className="h-16 rounded bg-gray-800" />
+                      <div className="h-16 rounded bg-gray-800" />
                     </div>
-                  ))
+                  ) : (
+                    nft?.attributes.map((a) => (
+                      <div
+                        key={a.traitType}
+                        className="max-h-[300px] rounded border border-gray-700 p-6"
+                      >
+                        <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
+                        <p className="truncate text-ellipsis" title={a.value}>
+                          {a.value}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </Accordion>
+            )}
+          </div>
+        </div>
+        {nft?.listings && (
+          <div className="overflow-x-auto ">
+            <Accordion title="Activity" allowHorizOverflow>
+              <div className="mt-8 flex min-w-[700px] flex-col">
+                {loading ? (
+                  <div>
+                    <div className="mb-5 h-16 rounded bg-gray-800" />
+                    <div className=" mb-5 h-16 rounded bg-gray-800" />
+                    <div className=" mb-5 h-16 rounded bg-gray-800" />
+                    <div className="h-16 rounded bg-gray-800" />
+                  </div>
+                ) : (
+                  <Activities listings={nft?.listings} />
                 )}
               </div>
             </Accordion>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-      {nft?.listings && (
-        <div className="overflow-x-auto ">
-          <Accordion title="Activity" allowHorizOverflow>
-            <div className="mt-8 flex min-w-[700px] flex-col">
-              {loading ? (
-                <>
-                  <div className="mb-5 h-16 rounded bg-gray-800" />
-                  <div className=" mb-5 h-16 rounded bg-gray-800" />
-                  <div className=" mb-5 h-16 rounded bg-gray-800" />
-                  <div className="h-16 rounded bg-gray-800" />
-                </>
-              ) : (
-                <Activities listings={nft?.listings} />
-              )}
-            </div>
-          </Accordion>
-        </div>
-      )}
-    </div>
+    </CenteredContentCol>
   );
 }

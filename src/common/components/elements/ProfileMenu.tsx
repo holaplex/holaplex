@@ -17,7 +17,7 @@ export const ProfileMenu: FC = () => {
   const { publicKey } = useProfileData();
   const router = useRouter();
   const path = router.asPath;
-  const routeIndex = path.includes('/nfts') ? TabRoute.OWNED : TabRoute.ACTIVITY;
+  const routeIndex = path.includes('/activity') ? TabRoute.ACTIVITY : TabRoute.OWNED;
   const [selectedIndex, setSelectedIndex] = useState(routeIndex);
 
   return (
@@ -41,7 +41,7 @@ export const ProfileMenu: FC = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                onClick={() => router.push(`/profiles/${publicKey}`)}
+                onClick={() => router.push(`/profiles/${publicKey}/activity`)}
                 className={cx(
                   'flex h-full w-1/2 items-center justify-center align-middle sm:w-40',
                   selected ? 'border-b-2 border-white' : 'text-gray-300'

@@ -9,6 +9,7 @@ import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData, asProfile } from '@/common/context/ProfileData';
+import { CenteredContentCol } from 'pages';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
@@ -18,11 +19,11 @@ export const ProfileContainer: FC = ({ children }) => {
   const anchorWallet = useAnchorWallet();
 
   return (
-    <>
-      <HeadingContainer>
+    <div>
+      <header>
         <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
-      </HeadingContainer>
-      <ContentCol>
+      </header>
+      <CenteredContentCol className="flex">
         <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
           <div className="-mt-12 flex justify-center md:justify-start">
             <ProfilePicture
@@ -52,8 +53,8 @@ export const ProfileContainer: FC = ({ children }) => {
             wallet={anchorWallet}
           />
         ) : null}
-      </ContentCol>
-    </>
+      </CenteredContentCol>
+    </div>
   );
 };
 
@@ -137,5 +138,3 @@ const Banner = styled.div`
     background-size: 100%;
   }
 `;
-
-const HeadingContainer = styled.header``;

@@ -171,14 +171,14 @@ export const ActivityContent = () => {
         ) : filteredActivityItems.length ? (
           filteredActivityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
         ) : (
-          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
-            <NoActivityTitle>
+          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+            <span className="text-center text-2xl font-semibold">
               No activity
               {!!activityItems.length && !filteredActivityItems.length && ' for this filter'}
-            </NoActivityTitle>
-            <NoActivityText>
+            </span>
+            <span className="mt-2 text-gray-300 ">
               Activity associated with this user’s wallet will show up here
-            </NoActivityText>
+            </span>
           </div>
         )}
       </div>

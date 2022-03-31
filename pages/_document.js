@@ -1,10 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import {
-  OLD_GOOGLE_ANALYTICS_ID,
-  GA4_ID,
-  META_ID,
-} from '../src/modules/ganalytics/AnalyticsProvider';
+import { OLD_GOOGLE_ANALYTICS_ID, GA4_ID, META_ID } from '../src/common/context/AnalyticsProvider';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
