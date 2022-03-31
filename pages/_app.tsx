@@ -103,6 +103,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         defaultOptions: {
           queries: {
             retry: false,
+            // retry: (failureCount, error) => {
+            //   console.log('failure count', failureCount, error);
+            //   return failureCount < 4;
+            //   // return 3;
+            // },
           },
         },
       }),

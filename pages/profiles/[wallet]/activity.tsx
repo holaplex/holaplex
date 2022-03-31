@@ -12,7 +12,7 @@ import { ProfileDataProvider } from '@/common/context/ProfileData';
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getPropsForWalletOrUsername(context);
 
-const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => (
+const ActivityPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => (
   <ProfileDataProvider profileData={{ publicKey, ...props }}>
     <Head>
       <title>{showFirstAndLastFour(publicKey)}&apos;s profile | Holaplex</title>
@@ -28,4 +28,4 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
   </ProfileDataProvider>
 );
 
-export default ActivityLanding;
+export default ActivityPage;
