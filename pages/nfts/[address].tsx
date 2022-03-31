@@ -312,7 +312,7 @@ export default function NftByAddress({ address }: { address: string }) {
             )}
           </div>
         </div>
-        {loading ? (
+        {/* {loading ? (
           <div className="mb-4 grid grid-cols-4 gap-6 ">
             <LoadingLine $height="56px" />
             <LoadingLine $height="56px" />
@@ -338,7 +338,7 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
             </div>
           )
-        )}
+        )} */}
       </div>
     </CenteredContentCol>
   );
