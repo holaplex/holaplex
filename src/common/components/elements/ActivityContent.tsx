@@ -20,11 +20,13 @@ import FeatherIcon from 'feather-icons-react';
 import { IFeedItem } from '@/modules/feed/feed.interfaces';
 import { ActivityCard } from './ActivityCard';
 import { useProfileData } from '@/common/context/ProfileData';
+import { LoadingBox, LoadingLine } from './LoadingPlaceholders';
 
 export const ActivityContent = () => {
   const { publicKey: pk } = useProfileData();
   const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
   const activityPage = useActivityPageQuery({
     variables: {
       address: publicKey.toBase58(),
@@ -135,7 +137,15 @@ export const ActivityContent = () => {
           hideLabel
           value={activityFilter}
           onChange={(e) => setActivityFilter(e.target.value)}
-          leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+          onFocus={() => setSearchFocused(true)}
+          onBlur={() => setSearchFocused(false)}
+          leadingIcon={
+            <FeatherIcon
+              icon="search"
+              aria-hidden="true"
+              className={searchFocused ? 'text-white' : 'text-gray-500'}
+            />
+          }
           placeholder="Search"
         />
       </div>
@@ -162,14 +172,14 @@ export const ActivityContent = () => {
         ) : filteredActivityItems.length ? (
           filteredActivityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
         ) : (
-          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
-            <NoActivityTitle>
+          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+            <span className="text-center text-2xl font-semibold">
               No activity
               {!!activityItems.length && !filteredActivityItems.length && ' for this filter'}
-            </NoActivityTitle>
-            <NoActivityText>
+            </span>
+            <span className="mt-2 text-gray-300 ">
               Activity associated with this user’s wallet will show up here
-            </NoActivityText>
+            </span>
           </div>
         )}
       </div>
@@ -209,38 +219,9 @@ const LoadingActivitySkeletonBoxCircleLong = () => {
   );
 };
 
-const LoadingBox = styled.div<{ $borderRadius: '8px' | '100%' }>`
-  width: 80px;
-  height: 80px;
-  background: #707070;
-  border-radius: ${({ $borderRadius }) => $borderRadius};
-  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
-  animation: shimmer 2.5s infinite;
-  @keyframes shimmer {
-    100% {
-      -webkit-mask-position: left;
-    }
-  }
-`;
-
 const LoadingLinesContainer = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const LoadingLine = styled.div<{ $width: string; $height?: string }>`
-  width: ${({ $width }) => $width || '100%'};
-  height: ${({ $height }) => $height || '24px'};
-  background: #707070;
-  border-radius: 4px;
-  margin-top: 8px;
-  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/400% 100%;
-  animation: shimmer 2.5s infinite;
-  @keyframes shimmer {
-    100% {
-      -webkit-mask-position: left;
-    }
-  }
 `;
 
 const NoActivityTitle = styled.span`

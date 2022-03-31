@@ -14,6 +14,7 @@ export const getTwitterHandle = async (pk: string, connection: Connection) => {
     const [twitterHandle] = await getHandleAndRegistryKey(connection, new PublicKey(pk));
     return `${twitterHandle}`;
   } catch (err) {
+    console.error('err', err);
     return undefined;
   }
 };
@@ -29,6 +30,7 @@ export const useTwitterHandle = (forWallet?: PublicKey | null, base58Key?: strin
   const { connection } = useConnection();
   return useQuery(
     ['twitter-handle', forWallet?.toBase58() || base58Key],
+
     async ({ queryKey: [_, pk] }) => {
       if (pk && connection) {
         return await getTwitterHandle(pk, connection);

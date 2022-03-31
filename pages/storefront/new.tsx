@@ -8,7 +8,7 @@ import StepForm from '@/components/elements/StepForm';
 import { StorefrontContext } from '@/modules/storefront';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import Loading from '@/common/components/elements/Loading';
 import {
   FieldData,
@@ -73,12 +73,11 @@ export default function New() {
     { name: ['integrations', 'crossmintClientId'], value: uuidv4() },
   ]);
 
-
   useEffect(() => {
     if (storefront) {
       router.push('/storefront/edit');
     }
-  }, [storefront, wallet, router])
+  }, [storefront, wallet, router]);
 
   if (isNil(solana) || isNil(wallet)) {
     return (
@@ -161,18 +160,14 @@ export default function New() {
           name={['theme', 'banner']}
           rules={[{ required: false, message: 'Upload a Hero Image' }]}
         >
-          <Upload>
-            {isEmpty(values.theme.banner) && <Button>Upload Banner</Button>}
-          </Upload>
+          <Upload>{isEmpty(values.theme.banner) && <Button>Upload Banner</Button>}</Upload>
         </Form.Item>
         <Form.Item
           label="Logo"
           name={['theme', 'logo']}
           rules={[{ required: true, message: 'Upload a logo.' }]}
         >
-          <Upload>
-            {isEmpty(values.theme.logo) && <Button>Upload Logo</Button>}
-          </Upload>
+          <Upload>{isEmpty(values.theme.logo) && <Button>Upload Logo</Button>}</Upload>
         </Form.Item>
         <Form.Item name={['theme', 'backgroundColor']} label="Background">
           <ColorPicker />
@@ -244,9 +239,7 @@ export default function New() {
         name={['meta', 'favicon']}
         rules={[{ required: true, message: 'Upload a favicon.' }]}
       >
-        <Upload>
-          {isEmpty(values.meta.favicon) && <Button>Upload</Button>}
-        </Upload>
+        <Upload>{isEmpty(values.meta.favicon) && <Button>Upload</Button>}</Upload>
       </Form.Item>
       <Form.Item
         name={['meta', 'title']}

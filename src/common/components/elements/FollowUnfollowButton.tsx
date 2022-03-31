@@ -1,7 +1,7 @@
 import { useMakeConnection } from '@/common/hooks/useMakeConnection';
 import { useRevokeConnection } from '@/common/hooks/useRevokeConnection';
 import { IProfile } from '@/modules/feed/feed.interfaces';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';

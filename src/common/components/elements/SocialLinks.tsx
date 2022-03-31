@@ -7,7 +7,7 @@ import FeatherIcon from 'feather-icons-react';
 import DiscordLogo from '@/assets/images/discord-logo.svg';
 import MediumLogo from '@/assets/images/medium-blog-logo.svg';
 
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 const Container = styled.div`
   ${sv.flexRow};

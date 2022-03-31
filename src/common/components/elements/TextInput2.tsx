@@ -19,7 +19,7 @@ function TextInput2({
       </label>
       <div className={cx('relative  rounded-md shadow-sm', !hideLabel && 'mt-1')}>
         {leadingIcon && (
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             {leadingIcon}
           </div>
         )}

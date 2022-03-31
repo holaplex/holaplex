@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { Button5 } from './Button2';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
@@ -149,7 +149,7 @@ export function ActivityCard(props: { activity: IFeedItem }) {
   }
 
   return (
-    <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base md:flex-nowrap">
+    <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base transition-transform duration-300 hover:scale-[1.02] md:flex-nowrap">
       <div className="flex items-center">
         <div
           className={classNames(
