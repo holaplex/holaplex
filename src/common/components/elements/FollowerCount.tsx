@@ -123,9 +123,9 @@ type FollowedByProps = {
 const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) => {
   const followerLength = followers?.length ?? 0;
   return (
-    <div className="mt-2 flex items-center space-x-2 md:flex-col md:items-start md:space-x-0">
-      <div className="text-sm font-medium text-gray-200">Followed by</div>
-      <div className="relative mt-2 flex flex-row">
+    <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
+      <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
+      <div className="relative mt-2  flex flex-row">
         {(followers ?? []).slice(0, 4).map((follower, i) => (
           <FollowerBubble
             key={follower.publicKey.toBase58()}
