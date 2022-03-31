@@ -195,7 +195,7 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
         <div className="flex items-center">
           {itemIsMyWallet ? null : (
             <FollowUnfollowButton
-              source="modalTo"
+              source={side === 'allConnectionsTo' ? 'modalTo' : 'modalFrom'}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
               walletConnectionPair={walletConnectionPair}
               toProfile={{
