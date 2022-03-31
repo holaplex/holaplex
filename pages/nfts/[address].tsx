@@ -20,7 +20,6 @@ import { imgOpt } from '../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { Duration, DateTime } from 'luxon';
-import { timeAgo } from '../../src/common/utils/time';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
@@ -130,7 +129,7 @@ const Activities = ({
               <SolIcon className="h-4 w-4 " stroke="#ffffff" />
               <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
             </div>
-            <div className="justify-self-end">{timeAgo(createdAt)}</div>
+            <div className="justify-self-end">{DateTime.fromISO(createdAt).toRelative()}</div>
           </div>
         ))
       )}
