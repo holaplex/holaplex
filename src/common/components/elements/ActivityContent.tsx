@@ -47,7 +47,7 @@ export const ActivityContent = () => {
 
         const itemBase: Partial<IFeedItem> = {
           id: bid.bidderAddress + bid.listingAddress,
-          from: {
+          sourceUser: {
             pubkey: bid.bidderAddress,
             // handle // fetch async?
           },
@@ -77,7 +77,7 @@ export const ActivityContent = () => {
             id: itemBase.id + activityType,
             type: activityType,
             timestamp: listing.bids[0].lastBidTime, // more or less
-            to:
+            toUser:
               activityType === 'LISTING_LOST'
                 ? {
                     pubkey: listing.bids[0].bidderAddress,
@@ -97,7 +97,7 @@ export const ActivityContent = () => {
             id: itemBase.id + activityType,
             type: activityType,
             timestamp: listing.bids[0].lastBidTime, // more or less
-            to: {
+            toUser: {
               pubkey: listing.bids[toIdx].bidderAddress,
             },
             solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
@@ -243,49 +243,6 @@ const LoadingLine = styled.div<{ $width: string; $height?: string }>`
   }
 `;
 
-type ActivityBoxProps = {
-  relatedImageUrl: string;
-  content: React.ReactElement;
-  action: React.ReactElement;
-  href: string;
-  isPFPImage?: boolean;
-};
-
-const ShowOnMobile = styled.div<{ display: string }>`
-  display: ${(props) => props.display};
-  ${mq('sm')} {
-    display: none;
-  }
-`;
-
-const HideOnMobile = styled.div<{ display: string }>`
-  display: none;
-  ${mq('sm')} {
-    display: ${(props) => props.display};
-  }
-`;
-
-const ChevronRightContainer = styled.div`
-  display: flex;
-  align-items: center;
-  ${mq('sm')} {
-    display: none;
-  }
-`;
-
-const ActivityButton = styled(AnchorButton)`
-  display: none;
-  ${mq('sm')} {
-    display: inline-flex;
-  }
-`;
-
-const NoActivityContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
 const NoActivityTitle = styled.span`
   font-family: 'Inter', sans-serif;
   font-style: normal;
@@ -332,11 +289,6 @@ const CenteredCol = styled(Col)`
   justify-content: center;
 `;
 
-const ContentCol = styled(CenteredCol)`
-  height: 100%;
-  justify-content: center;
-`;
-
 const ActivityBoxContainer = styled.div`
   display: flex;
   flex: 1;
@@ -356,22 +308,4 @@ const NFTImage = styled(Image)<{ $isPFPImage: boolean }>`
       : css`
           border-radius: 2px;
         `}
-`;
-
-const TimeText = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 16px;
-  color: #707070;
-`;
-
-const ItemText = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 16px;
-  color: #a8a8a8;
 `;

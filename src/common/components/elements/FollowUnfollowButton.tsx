@@ -43,9 +43,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   } as const;
 
   const trackInitiateTransaction = () => track(type + ' initiated', sharedTrackingParams);
-
   const trackSuccess = () => track(type + ' succeeded', sharedTrackingParams);
-
   const trackError = () => track(type + ' errored', sharedTrackingParams);
 
   const connectTo = useMakeConnection(walletConnectionPair, {

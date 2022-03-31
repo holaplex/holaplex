@@ -12,11 +12,11 @@ import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
 import { Button5 } from './Button2';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
-  const from = (activity.from || activity.nft?.creator) as IProfile;
+  const from = (activity.sourceUser || activity.nft?.creator) as IProfile;
 
   const fromDisplay = isYou ? 'You' : from.handle || showFirstAndLastFour(from.pubkey);
-  const toDisplay = activity.to
-    ? activity.to.handle || showFirstAndLastFour(activity.to.pubkey)
+  const toDisplay = activity.toUser
+    ? activity.toUser.handle || showFirstAndLastFour(activity.toUser.pubkey)
     : '';
   const creatorDisplay = activity.nft?.creator?.handle || activity.nft?.creator?.pubkey;
 
@@ -32,9 +32,9 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   };
 
   const ToHelper = () => {
-    const { data: twitterHandle } = useTwitterHandle(null, activity.to?.pubkey);
-    return activity.to ? (
-      <a href={activity.to.pubkey}>
+    const { data: twitterHandle } = useTwitterHandle(null, activity.toUser?.pubkey);
+    return activity.toUser ? (
+      <a href={activity.toUser.pubkey}>
         <span className="text-white">{twitterHandle || toDisplay}</span>
       </a>
     ) : null;
@@ -122,7 +122,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
 export function ActivityCard(props: { activity: IFeedItem }) {
   const { publicKey: connectedPubkey } = useWallet();
-  const isYou = connectedPubkey?.toBase58() === props.activity.from?.pubkey;
+  const isYou = connectedPubkey?.toBase58() === props.activity.sourceUser?.pubkey;
   // const content = generateContent(props.activity);
   const activityThumbnailImageURL =
     props.activity.nft?.imageURL || props.activity.storefront?.logoUrl;
