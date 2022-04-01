@@ -22,10 +22,11 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
   const FromHelper = () => {
     const { data: twitterHandle } = useTwitterHandle(null, from.pubkey);
+    const profileURL = window.location.origin + '/profiles/' + from.pubkey;
     return fromDisplay === 'You' ? (
       <span>You</span>
     ) : (
-      <a href={from.pubkey}>
+      <a href={profileURL}>
         <span className="text-white">{twitterHandle || fromDisplay}</span>{' '}
       </a>
     );
@@ -33,8 +34,9 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
   const ToHelper = () => {
     const { data: twitterHandle } = useTwitterHandle(null, activity.toUser?.pubkey);
+    const profileURL = window.location.origin + '/profiles/' + activity.toUser?.pubkey;
     return activity.toUser ? (
-      <a href={activity.toUser.pubkey}>
+      <a href={profileURL}>
         <span className="text-white">{twitterHandle || toDisplay}</span>
       </a>
     ) : null;
