@@ -171,6 +171,7 @@ export type MintStats = {
 
 export type Nft = {
   __typename?: 'Nft';
+  activities: Array<NftActivity>;
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   creators: Array<NftCreator>;
@@ -189,6 +190,17 @@ export type Nft = {
 
 export type NftImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
+};
+
+export type NftActivity = {
+  __typename?: 'NftActivity';
+  activityType: Scalars['String'];
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  wallets: Array<Scalars['String']>;
 };
 
 export type NftAttribute = {
@@ -210,6 +222,7 @@ export type NftCreator = {
 export type NftOwner = {
   __typename?: 'NftOwner';
   address: Scalars['String'];
+  associatedTokenAccountAddress: Scalars['String'];
 };
 
 export type Profile = {
@@ -330,6 +343,13 @@ export type OwnedNfTsQueryVariables = Exact<{
 
 export type OwnedNfTsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number }> }> };
 
+export type ProfileAnalyticsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ProfileAnalyticsQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', lastBidAmount: any, bidderAddress: string, listing?: { __typename?: 'Listing', nfts: Array<{ __typename: 'Nft', address: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidAmount: any, cancelled: boolean }> } | null }> } | null };
+
 export type WalletProfileQueryVariables = Exact<{
   handle: Scalars['String'];
 }>;
@@ -342,7 +362,7 @@ export type NftPageQueryVariables = Exact<{
 }>;
 
 
-export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }> } | null };
+export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, auctionHouse: string, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
 
 
 export const ActivityPageDocument = gql`
@@ -406,6 +426,30 @@ export const OwnedNfTsDocument = gql`
   }
 }
     `;
+export const ProfileAnalyticsDocument = gql`
+    query profileAnalytics($address: String!) {
+  wallet(address: $address) {
+    __typename
+    address
+    bids {
+      __typename
+      lastBidAmount
+      bidderAddress
+      listing {
+        nfts {
+          __typename
+          address
+        }
+        bids {
+          bidderAddress
+          lastBidAmount
+          cancelled
+        }
+      }
+    }
+  }
+}
+    `;
 export const WalletProfileDocument = gql`
     query walletProfile($handle: String!) {
   profile(handle: $handle) {
@@ -426,9 +470,47 @@ export const NftPageDocument = gql`
     description
     image
     primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
     creators {
       address
       verified
+    }
+    owner {
+      address
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
 }
@@ -446,6 +528,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     ownedNFTs(variables: OwnedNfTsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<OwnedNfTsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<OwnedNfTsQuery>(OwnedNfTsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'ownedNFTs', 'query');
+    },
+    profileAnalytics(variables: ProfileAnalyticsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProfileAnalyticsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ProfileAnalyticsQuery>(ProfileAnalyticsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'profileAnalytics', 'query');
     },
     walletProfile(variables: WalletProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WalletProfileQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WalletProfileQuery>(WalletProfileDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'walletProfile', 'query');

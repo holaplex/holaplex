@@ -1,0 +1,22 @@
+query profileAnalytics($address: String!) {
+  wallet(address: $address) {
+    __typename
+    address
+    bids {
+      __typename
+      lastBidAmount
+      bidderAddress
+      listing {
+        nfts {
+          __typename
+          address
+        }
+        bids {
+          bidderAddress
+          lastBidAmount
+          cancelled
+        }
+      }
+    }
+  }
+}

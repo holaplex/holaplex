@@ -10,6 +10,7 @@ import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData, asProfile } from '@/common/context/ProfileData';
 import { CenteredContentCol } from 'pages';
+import { ProfileAnalytics } from './ProfileAnalytics';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
@@ -40,6 +41,7 @@ export const ProfileContainer: FC = ({ children }) => {
             profile={asProfile(profileData)}
             setShowFollowsModal={setShowFollowsModal}
           />
+          <ProfileAnalytics profile={asProfile(profileData)} />
         </div>
         <ContentWrapper>
           <ProfileMenu />

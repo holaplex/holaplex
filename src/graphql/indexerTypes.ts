@@ -171,6 +171,7 @@ export type MintStats = {
 
 export type Nft = {
   __typename?: 'Nft';
+  activities: Array<NftActivity>;
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   creators: Array<NftCreator>;
@@ -189,6 +190,17 @@ export type Nft = {
 
 export type NftImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
+};
+
+export type NftActivity = {
+  __typename?: 'NftActivity';
+  activityType: Scalars['String'];
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  wallets: Array<Scalars['String']>;
 };
 
 export type NftAttribute = {
@@ -210,6 +222,7 @@ export type NftCreator = {
 export type NftOwner = {
   __typename?: 'NftOwner';
   address: Scalars['String'];
+  associatedTokenAccountAddress: Scalars['String'];
 };
 
 export type Profile = {
@@ -329,6 +342,13 @@ export type OwnedNfTsQueryVariables = Exact<{
 
 
 export type OwnedNfTsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number }> }> };
+
+export type ProfileAnalyticsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ProfileAnalyticsQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', lastBidAmount: any, bidderAddress: string, listing?: { __typename?: 'Listing', nfts: Array<{ __typename: 'Nft', address: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidAmount: any, cancelled: boolean }> } | null }> } | null };
 
 export type WalletProfileQueryVariables = Exact<{
   handle: Scalars['String'];
@@ -464,6 +484,58 @@ export function useOwnedNfTsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type OwnedNfTsQueryHookResult = ReturnType<typeof useOwnedNfTsQuery>;
 export type OwnedNfTsLazyQueryHookResult = ReturnType<typeof useOwnedNfTsLazyQuery>;
 export type OwnedNfTsQueryResult = Apollo.QueryResult<OwnedNfTsQuery, OwnedNfTsQueryVariables>;
+export const ProfileAnalyticsDocument = gql`
+    query profileAnalytics($address: String!) {
+  wallet(address: $address) {
+    __typename
+    address
+    bids {
+      __typename
+      lastBidAmount
+      bidderAddress
+      listing {
+        nfts {
+          __typename
+          address
+        }
+        bids {
+          bidderAddress
+          lastBidAmount
+          cancelled
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useProfileAnalyticsQuery__
+ *
+ * To run a query within a React component, call `useProfileAnalyticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfileAnalyticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfileAnalyticsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useProfileAnalyticsQuery(baseOptions: Apollo.QueryHookOptions<ProfileAnalyticsQuery, ProfileAnalyticsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfileAnalyticsQuery, ProfileAnalyticsQueryVariables>(ProfileAnalyticsDocument, options);
+      }
+export function useProfileAnalyticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfileAnalyticsQuery, ProfileAnalyticsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfileAnalyticsQuery, ProfileAnalyticsQueryVariables>(ProfileAnalyticsDocument, options);
+        }
+export type ProfileAnalyticsQueryHookResult = ReturnType<typeof useProfileAnalyticsQuery>;
+export type ProfileAnalyticsLazyQueryHookResult = ReturnType<typeof useProfileAnalyticsLazyQuery>;
+export type ProfileAnalyticsQueryResult = Apollo.QueryResult<ProfileAnalyticsQuery, ProfileAnalyticsQueryVariables>;
 export const WalletProfileDocument = gql`
     query walletProfile($handle: String!) {
   profile(handle: $handle) {
