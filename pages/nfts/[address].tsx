@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import {
   Creator,
@@ -160,7 +160,9 @@ export const Avatar = ({ address }: { address: string }) => {
         alt="Profile Picture"
         className="h-6 w-6 rounded-full"
       />
-      <div className="ml-2 text-base">{displayName}</div>
+      <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
+        {displayName}
+      </div>
     </div>
   );
 };
@@ -174,6 +176,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function NftByAddress({ address }: { address: string }) {
   const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
+  const [imgLoaded, setImgLoaded] = useState(false);
   const nft = data?.nft;
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
 
@@ -207,7 +210,7 @@ export default function NftByAddress({ address }: { address: string }) {
               ) : (
                 <>
                   <div className="flex items-center justify-between">
-                    <h1 className="mb-4 text-2xl">{nft?.name}</h1>
+                    <h1 className="!mb-4 !text-2xl !font-semibold">{nft?.name}</h1>
                     <MoreDropdown address={nft?.address || ''} />
                   </div>
 
@@ -216,13 +219,14 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
             </div>
             <div className="relative aspect-square w-full  ">
-              {loading && (
+              {(loading || !imgLoaded) && (
                 <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
               )}
               {nft?.image && (
                 <img
+                  onLoad={() => setImgLoaded(true)}
                   src={imgOpt(nft?.image, 800)!}
-                  className="block aspect-square h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
+                  className="block aspect-square  w-full rounded-lg border-none object-cover shadow"
                   alt=""
                 />
               )}
@@ -235,7 +239,7 @@ export default function NftByAddress({ address }: { address: string }) {
               ) : (
                 <>
                   <div className="flex justify-between">
-                    <h1 className="mb-4 text-2xl md:text-3xl lg:text-4xl">{nft?.name}</h1>
+                    <h1 className="mb-4 text-2xl font-semibold">{nft?.name}</h1>
                     <MoreDropdown address={nft?.address || ''} />
                   </div>
 
@@ -245,7 +249,7 @@ export default function NftByAddress({ address }: { address: string }) {
             </div>
             <div className="mb-8 flex flex-1 flex-row justify-between">
               <div>
-                <div className="label mb-1 text-gray-500">
+                <div className="label mb-1 text-gray-300">
                   {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Created by'}
                 </div>
                 <ul>
@@ -272,8 +276,8 @@ export default function NftByAddress({ address }: { address: string }) {
                   hidden: loading,
                 })}
               >
-                <div className="flex flex-1 flex-col">
-                  <div className="label mb-1 self-end text-gray-500">Owned by</div>
+                <div className="flex flex-1 flex-col items-end">
+                  <div className="label mb-1 self-end text-gray-300">Owned by</div>
                   {nft?.owner?.address && (
                     <Link href={`/profiles/${nft?.owner?.address}`}>
                       <a>
