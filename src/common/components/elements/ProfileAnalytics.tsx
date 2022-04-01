@@ -18,7 +18,7 @@ type AnalyticNumberProps = {
   num?: number;
 };
 
-const SolTextHelper: FC<SolTextHelperProps> = ({ sol }) =>
+const SolNumber: FC<SolTextHelperProps> = ({ sol }) =>
   sol ? (
     <b className="ml-1 inline-flex items-center">
       <SolIcon className="mr-1 h-3 w-3" stroke="white" /> {sol / LAMPORTS_PER_SOL}
@@ -29,12 +29,12 @@ const SolTextHelper: FC<SolTextHelperProps> = ({ sol }) =>
     </b>
   );
 
-const AnalyticNumber: FC<AnalyticNumberProps> = ({ num }) => {
-  if (!num) {
-    return <span className={`pl-1 font-bold text-gray-200`}>0</span>;
-  }
-  return <span className={`pl-1 font-bold text-gray-200`}>{num}</span>;
-};
+const AnalyticNumber: FC<AnalyticNumberProps> = ({ num }) =>
+  num ? (
+    <span className={`pl-1 font-bold text-gray-200`}>{num}</span>
+  ) : (
+    <span className={`pl-1 font-bold text-gray-200`}>0</span>
+  );
 
 const calcTotalBids = (bids: Bid[]) => {
   let bidTotal = 0;
@@ -79,13 +79,11 @@ export const ProfileAnalytics: FC<ProfileAnalyticsProps> = ({ profile, ...rest }
     return calcTotalBids(data?.wallet?.bids as Bid[]);
   }, [data?.wallet?.bids]);
 
-  console.log(totalBids);
-
   const { wonBids, lostBids } = useMemo(() => {
     return calcBidResults(data?.wallet?.bids as Bid[]);
   }, [data?.wallet?.bids]);
 
-  if (!wallet) {
+  if (!wallet || !data) {
     return null;
   }
   return (
@@ -96,13 +94,13 @@ export const ProfileAnalytics: FC<ProfileAnalyticsProps> = ({ profile, ...rest }
           {}
         </div>
         <div className={`inline-flex items-center text-xs text-gray-200`}>
-          Bid Volume: <SolTextHelper sol={totalBids} />
+          Bid Volume: <SolNumber sol={totalBids} />
         </div>
         <div className={`inline-flex items-center text-xs text-gray-200`}>
-          Lost Bids: <SolTextHelper sol={lostBids} />
+          Lost Bids: <SolNumber sol={lostBids} />
         </div>
         <div className={`inline-flex items-center text-xs text-gray-200`}>
-          Total Won Bids: <SolTextHelper sol={wonBids} />
+          Total Won Bids: <SolNumber sol={wonBids} />
         </div>
       </div>
     </div>
