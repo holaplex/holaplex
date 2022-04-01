@@ -1,6 +1,7 @@
 const captureCid = /https:\/\/(.*).ipfs.dweb.*$/;
 const captureCidArweave = /https:\/\/arweave.net\/(.*)/;
 const cleanExt = /\?ext=(.*)/;
+const replaceWidth = /\?width=400/;
 const captureCidArweaveCache = /https:\/\/arweave.cache.holaplex.com\/(.*)/;
 const captureCidIpfsIo = /https:\/\/ipfs.io\/ipfs\/(.*)/;
 
@@ -30,10 +31,12 @@ type IMAGE_SIZE =
   | 1500;
 
 export const imgOpt = (uri?: string, width: IMAGE_SIZE = 0) => {
-  if (!uri) {
+  if (!uri){
     return uri;
-  }
-  let cdnURI = uri
+  } else if (uri.includes('holaplex.tools')) {
+    return uri.replace(replaceWidth, `?width=${width}`)
+  } else {
+    let cdnURI = uri
     .replace(':443', '')
     .replace('www.', '')
     .replace(cleanExt, '')
@@ -42,9 +45,10 @@ export const imgOpt = (uri?: string, width: IMAGE_SIZE = 0) => {
     .replace(captureCidArweave, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
     .replace(captureCidArweaveCache, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/arweave/$1`)
     .replace(captureCidIpfsIo, `${process.env.NEXT_PUBLIC_IMAGE_CDN_HOST}/ipfs/$1`);
-  cdnURI = cdnURI + `?width=${width}`;
+    cdnURI = cdnURI + `?width=${width}`;
 
-  return cdnURI ?? uri;
+    return cdnURI ?? uri;
+  }
 };
 
 export const RUST_ISO_UTC_DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
