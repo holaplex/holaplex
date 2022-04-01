@@ -221,7 +221,7 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
               {nft?.image && (
                 <img
-                  src={imgOpt(nft?.image)!}
+                  src={imgOpt(nft?.image, 800)!}
                   className="block aspect-square h-auto max-h-[606px] w-full rounded-lg border-none object-cover shadow"
                   alt=""
                 />
