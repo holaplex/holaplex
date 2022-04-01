@@ -7,6 +7,7 @@ import cx from 'classnames';
 import React from 'react';
 import { Tab } from '@headlessui/react';
 import { useProfileData } from '@/common/context/ProfileData';
+import { useOwnedNfTsQuery } from '../../../graphql/indexerTypes';
 
 enum TabRoute {
   OWNED,
@@ -19,6 +20,13 @@ export const ProfileMenu: FC = () => {
   const path = router.asPath;
   const routeIndex = path.includes('/activity') ? TabRoute.ACTIVITY : TabRoute.OWNED;
   const [selectedIndex, setSelectedIndex] = useState(routeIndex);
+  const { data } = useOwnedNfTsQuery({
+    variables: {
+      address: publicKey,
+      limit: 500,
+      offset: 0,
+    },
+  });
 
   return (
     <div className="mb-6  border-b-2  border-gray-800">
@@ -35,6 +43,13 @@ export const ProfileMenu: FC = () => {
               >
                 <FeatherIcon height={16} width={16} icon="image" className="mr-4" />
                 Owned
+                {selected && (
+                  <span
+                    className={cx(`ml-1`, selected ? `font-bold text-rose-400` : `text-gray-300`)}
+                  >
+                    {data?.nfts.length}
+                  </span>
+                )}
               </button>
             )}
           </Tab>
