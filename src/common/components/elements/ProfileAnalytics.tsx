@@ -42,7 +42,7 @@ const calcTotalBids = (bids: Bid[]) => {
   return bidTotal;
 };
 
-const calcWonBids = (bids: Bid[]) => {
+const calcBidResults = (bids: Bid[]) => {
   let wonBids = 0;
   let lostBids = 0;
   if (bids) {
@@ -76,7 +76,7 @@ export const ProfileAnalytics: FC<ProfileAnalyticsProps> = ({ profile, ...rest }
   }, [data?.wallet?.bids]);
 
   const { wonBids, lostBids } = useMemo(() => {
-    return calcWonBids(data?.wallet?.bids as Bid[]);
+    return calcBidResults(data?.wallet?.bids as Bid[]);
   }, [data?.wallet?.bids]);
 
   if (!wallet) {
