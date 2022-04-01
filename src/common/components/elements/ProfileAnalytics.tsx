@@ -97,7 +97,7 @@ export const ProfileAnalytics: FC<ProfileAnalyticsProps> = ({ profile, ...rest }
           Bid Volume: <SolNumber sol={totalBids} />
         </div>
         <div className={`inline-flex items-center text-xs text-gray-200`}>
-          Total Won Bids: <SolNumber sol={wonBids} />
+          Won Bids: <SolNumber sol={wonBids} />
         </div>
         <div className={`inline-flex items-center text-xs text-gray-200`}>
           Lost Bids: <SolNumber sol={lostBids} />
