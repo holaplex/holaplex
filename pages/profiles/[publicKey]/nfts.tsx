@@ -32,7 +32,7 @@ const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
     <Link href={`/nfts/${nft.address}`} passHref>
       <a className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-[300ms] hover:scale-[1.02]">
         <img
-          src={imgOpt(nft.image)}
+          src={imgOpt(nft.image, 600)}
           alt={nft.name}
           className=" aspect-square h-80 w-full object-cover"
         />
