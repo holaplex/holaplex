@@ -29,7 +29,7 @@ type IMAGE_SIZE =
   | 1400
   | 1500;
 
-export const imgOpt = (uri?: string, width?: IMAGE_SIZE) => {
+export const imgOpt = (uri?: string, width: IMAGE_SIZE = 0) => {
   if (!uri) {
     return uri;
   }

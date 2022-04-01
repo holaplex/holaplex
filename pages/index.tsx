@@ -45,7 +45,7 @@ import {
 } from '@/common/components/elements/ListingPreview';
 import Link from 'next/link';
 import { SelectValue } from 'antd/lib/select';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
 import { StorefrontContext } from '@/modules/storefront';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -142,7 +142,7 @@ const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
   }
 `;
 
-const CenteredContentCol = styled.div`
+export const CenteredContentCol = styled.div`
   margin: 0 auto;
   width: calc(1400px + 3rem);
   max-width: 100vw;

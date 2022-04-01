@@ -13,11 +13,14 @@ import {
   lamportToSolIsh,
 } from '@/common/components/elements/ListingPreview';
 import mixpanel from 'mixpanel-browser';
+import Script from 'next/script';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
+export const META_ID = process.env.NEXT_PUBLIC_META_ID;
+// Reference implementation https://github.com/vercel/next.js/tree/canary/examples/with-facebook-pixel
 
 type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
 type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
@@ -75,7 +78,7 @@ const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
 
 export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const router = useRouter();
-  const [trackingInitialized, setTrackingInitialized] = useState(true);
+  const [trackingInitialized, setTrackingInitialized] = useState(false);
   const [trackingAccepted, setTrackingAccepted] = useState(true);
   const { wallet } = useContext(WalletContext);
   const pubkey = wallet?.pubkey || '';
@@ -92,12 +95,14 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       gtag('config', GA4_ID, {
         send_page_view: true,
       });
-      setTrackingInitialized(true);
     }
 
     if (MIXPANEL_TOKEN) {
       mixpanel.init(MIXPANEL_TOKEN, {
-        debug: window.location.host.includes('localhost') || window.location.host.includes('.dev'),
+        debug:
+          process.env.DEBUG ||
+          window.location.host.includes('localhost') ||
+          window.location.host.includes('.dev'),
       });
     }
 
@@ -115,6 +120,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         },
       });
     }
+    setTrackingInitialized(true);
   }
 
   function identify() {
@@ -145,16 +151,29 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     track('page_view', {
       page_path: path,
     });
+    if (window.fbq && META_ID) {
+      // window.fbq.pageview();
+      window.fbq('track', 'PageView');
+    }
   }
 
   // initialize (goes first no matter what)
   useEffect(() => {
-    if (trackingAccepted) {
+    if (META_ID && window.fbq && !trackingInitialized) {
+      console.log('Trying to init meta', {
+        trackingInitialized: trackingInitialized,
+        trackingAccepted: trackingAccepted,
+        'window.fbq': window.fbq,
+      });
+      window.fbq('init', META_ID);
+      window.fbq('track', 'PageView');
+    }
+    if (trackingAccepted && !trackingInitialized) {
       initializeTracking();
     } else {
-      resetTracking();
+      // resetTracking();
     }
-  }, [trackingAccepted]);
+  }, [trackingInitialized, trackingAccepted]);
 
   useEffect(() => {
     identify();
@@ -199,6 +218,9 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
           // need to attach additional these here as Mixpanel does not support super properties without persitence
         });
       }
+      if (META_ID && window.fbq) {
+        window.fbq('track', action, attrs);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -210,6 +232,22 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         track,
       }}
     >
+      <Script
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+         
+          `,
+        }}
+      />
       {props.children}
     </AnalyticsContext.Provider>
   );

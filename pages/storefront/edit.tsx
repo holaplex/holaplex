@@ -5,7 +5,7 @@ import Button from '@/components/elements/Button';
 import ColorPicker from '@/components/elements/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
 import Loading from '@/components/elements/Loading';
 import styled from 'styled-components';
@@ -198,11 +198,7 @@ export default function Edit() {
                             has('response'),
                             view(lensPath(['response', 'url'])),
                             prop('url')
-                          )(values.theme.banner[0])) && (
-                            <Button block>
-                              Upload Banner
-                            </Button>
-                          )}
+                          )(values.theme.banner[0])) && <Button block>Upload Banner</Button>}
                       </Upload>
                     </StyledUploadFormItem>
                     <StyledUploadFormItem
@@ -210,13 +206,7 @@ export default function Edit() {
                       name={['theme', 'logo']}
                       rules={[{ required: true, message: 'Upload a logo.' }]}
                     >
-                      <Upload>
-                        {isEmpty(values.theme.logo) && (
-                          <Button block>
-                            Upload
-                          </Button>
-                        )}
-                      </Upload>
+                      <Upload>{isEmpty(values.theme.logo) && <Button block>Upload</Button>}</Upload>
                     </StyledUploadFormItem>
                     <Form.Item name={['theme', 'backgroundColor']} label="Background">
                       <ColorPicker />
@@ -260,8 +250,8 @@ export default function Edit() {
                         </PrevTitle>
                         <PrevText color={textColor} fontFamily={values.theme.textFont}>
                           Main text Lorem gizzle dolizzle go to hizzle amizzle, own yo adipiscing fo
-                          shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida vizzle,
-                          arcu.
+                          shizzle. Cool sapizzle velizzle, volutpat, suscipizzle quis, gravida
+                          vizzle, arcu.
                         </PrevText>
                         <PreviewLink color={values.theme.primaryColor}>Link to things</PreviewLink>
                         <PreviewButton
@@ -299,13 +289,7 @@ export default function Edit() {
                   name={['meta', 'favicon']}
                   rules={[{ required: true, message: 'Upload a favicon.' }]}
                 >
-                  <Upload>
-                    {isEmpty(values.meta.favicon) && (
-                      <Button>
-                        Upload
-                      </Button>
-                    )}
-                  </Upload>
+                  <Upload>{isEmpty(values.meta.favicon) && <Button>Upload</Button>}</Upload>
                 </Form.Item>
                 <Form.Item
                   name={['meta', 'title']}
@@ -324,7 +308,7 @@ export default function Edit() {
               </TabPane>
             </Tabs>
             <Row justify="end">
-            <Button disabled={submitting} loading={submitting} htmlType="submit">
+              <Button disabled={submitting} loading={submitting} htmlType="submit">
                 Update
               </Button>
             </Row>

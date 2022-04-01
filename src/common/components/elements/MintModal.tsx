@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Modal } from 'antd';
 import styled from 'styled-components';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { WalletContext } from '@/modules/wallet';
 import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
