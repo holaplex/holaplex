@@ -170,7 +170,7 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
     <div className={cx('flex h-10')}>
       <div className="flex flex-1 justify-between">
         <div className="flex items-center">
-          <Image
+          <img
             onClick={copyPubKey}
             className="rounded-full"
             width={40}

@@ -41,7 +41,7 @@ export const ProfileImage = () => {
         content={<ProfilePopover ref={popoverRef} />}
       >
         <ProfileImageWrapper onClick={() => setIsShowingProfilePopover((v) => !v)}>
-          <Image
+          <img
             width={40}
             height={40}
             src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}

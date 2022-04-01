@@ -62,7 +62,12 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
         avatar={
           <StyledAvatar
             size="large"
-            src={<Image preview={false} src={imgOpt(storefront.theme.logo.url, 100)} />}
+            src={
+              <img
+                alt={storefront.meta.title + ' logo'}
+                src={imgOpt(storefront.theme.logo.url, 100)}
+              />
+            }
           />
         }
         title={storefront.meta.title}
@@ -75,7 +80,7 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
       <Row justify="space-between">
         {metadata.map((url) => (
           <Metadata span={11} key={imgOpt(url, 600)}>
-            <Image src={imgOpt(url, 600)} />
+            <img src={imgOpt(url, 600)} alt="featured nft image" />
           </Metadata>
         ))}
       </Row>
