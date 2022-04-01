@@ -23,7 +23,11 @@ const SolTextHelper: FC<SolTextHelperProps> = ({ sol }) =>
     <b className="ml-1 inline-flex items-center">
       <SolIcon className="mr-1 h-3 w-3" stroke="white" /> {sol / LAMPORTS_PER_SOL}
     </b>
-  ) : null;
+  ) : (
+    <b className="ml-1 inline-flex items-center">
+      <SolIcon className="mr-1 h-3 w-3" stroke="white" /> {0}
+    </b>
+  );
 
 const AnalyticNumber: FC<AnalyticNumberProps> = ({ num }) => {
   if (!num) {
@@ -74,6 +78,8 @@ export const ProfileAnalytics: FC<ProfileAnalyticsProps> = ({ profile, ...rest }
   const totalBids = useMemo(() => {
     return calcTotalBids(data?.wallet?.bids as Bid[]);
   }, [data?.wallet?.bids]);
+
+  console.log(totalBids);
 
   const { wonBids, lostBids } = useMemo(() => {
     return calcBidResults(data?.wallet?.bids as Bid[]);
