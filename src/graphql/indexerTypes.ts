@@ -171,6 +171,7 @@ export type MintStats = {
 
 export type Nft = {
   __typename?: 'Nft';
+  activities: Array<NftActivity>;
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   creators: Array<NftCreator>;
@@ -189,6 +190,17 @@ export type Nft = {
 
 export type NftImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
+};
+
+export type NftActivity = {
+  __typename?: 'NftActivity';
+  activityType: Scalars['String'];
+  address: Scalars['String'];
+  auctionHouse: Scalars['String'];
+  createdAt: Scalars['DateTimeUtc'];
+  metadata: Scalars['String'];
+  price: Scalars['Lamports'];
+  wallets: Array<Scalars['String']>;
 };
 
 export type NftAttribute = {
@@ -210,6 +222,7 @@ export type NftCreator = {
 export type NftOwner = {
   __typename?: 'NftOwner';
   address: Scalars['String'];
+  associatedTokenAccountAddress: Scalars['String'];
 };
 
 export type Profile = {

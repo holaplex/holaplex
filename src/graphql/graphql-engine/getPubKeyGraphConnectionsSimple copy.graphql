@@ -1,0 +1,10 @@
+query getPubKeyGraphConnectionsSimple($publicKey: String!) {
+  from: graph_connections(where: { from_account: { _eq: $publicKey } }) {
+    from_account
+    to_account
+  }
+  to: graph_connections(where: { to_account: { _eq: $publicKey } }) {
+    from_account
+    to_account
+  }
+}

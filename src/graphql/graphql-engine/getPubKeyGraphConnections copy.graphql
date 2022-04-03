@@ -1,0 +1,42 @@
+query getPubKeyGraphConnections(
+  $publicKey: String!,
+) {
+  from: graph_connections(where: { from_account: { _eq: $publicKey }}) {
+    address
+    from_account
+    to_account
+    from_twitter_handle: from_account_twitter_handle_name_services {
+      twitter_handle
+      twitter_handle_profile_data {
+        profileImageUrlHighres
+        bannerImageUrl
+      }
+    }
+    to_twitter_handle: to_account_twitter_handle_name_services {
+      twitter_handle
+      twitter_handle_profile_data {
+        profileImageUrlHighres
+        bannerImageUrl
+      }
+    }
+  }
+  to: graph_connections(where: { to_account: { _eq: $publicKey }}) {
+    address
+    from_account
+    to_account
+    from_twitter_handle: from_account_twitter_handle_name_services {
+      twitter_handle
+      twitter_handle_profile_data {
+        profileImageUrlHighres
+        bannerImageUrl
+      }
+    }
+    to_twitter_handle: to_account_twitter_handle_name_services {
+      twitter_handle
+      twitter_handle_profile_data {
+        profileImageUrlHighres
+        bannerImageUrl
+      }
+    }
+  }
+}

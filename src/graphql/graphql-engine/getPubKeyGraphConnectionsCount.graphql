@@ -1,0 +1,12 @@
+query getPubKeyGraphConnectionsCount($publicKey: String!) {
+  from: graph_connections_aggregate(where: { from_account: { _eq: $publicKey } }) {
+    aggregate {
+      count
+    }
+  }
+  to: graph_connections_aggregate(where: { to_account: { _eq: $publicKey } }) {
+    aggregate {
+      count
+    }
+  }
+}

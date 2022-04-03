@@ -20,7 +20,8 @@
     "prepare": "husky install",
     "generate:graphql-apollo": "graphql-codegen -r dotenv/config --config codegen.yml",
     "generate:graphql-request": "graphql-codegen -r dotenv/config --config codegen-ssr.yml",
-    "generate:graphql": "yarn generate:graphql-apollo && yarn generate:graphql-request",
+    "generate:graphql-hasura": "graphql-codegen -r dotenv/config --config codegen-hgql.yml",
+    "generate:graphql": "yarn generate:graphql-apollo && yarn generate:graphql-request && yarn generate:graphql-hasura",
     "storefronts:update": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/update-store-json.ts"
   },
   "dependencies": {

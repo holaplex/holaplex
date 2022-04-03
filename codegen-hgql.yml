@@ -1,7 +1,7 @@
-schema: ${NEXT_PUBLIC_INDEXER_GRAPHQL_URL}
-documents: './src/graphql/indexer/**/*.graphql'
+schema: ${NEXT_PUBLIC_HASURA_GRAPHQL_URL}
+documents: './src/graphql/graphql-engine/**/*.graphql'
 generates:
-  ./src/graphql/indexerTypes.ts:
+  ./src/graphql/gqlEngineTypes.ts:
     plugins:
       - typescript
       - typescript-operations
