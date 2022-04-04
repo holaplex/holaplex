@@ -66,12 +66,8 @@ const NFTGrid = ({ nfts, gridView }: { nfts: OwnedNFT[]; gridView: '2x2' | '3x3'
   );
 };
 
-type ListedFilterState = 'all' | 'listed' | 'unlisted' | 'search';
-
 const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
-  // const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
-  // const [showSearchField, toggleSearchField] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
   const ownedNFTs = useOwnedNfTsQuery({

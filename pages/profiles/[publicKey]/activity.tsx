@@ -10,7 +10,7 @@ import {
 import { ProfileDataProvider } from '@/common/context/ProfileData';
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+getPropsForWalletOrUsername(context);
 
 const ActivityPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => (
   <ProfileDataProvider profileData={{ publicKey, ...props }}>

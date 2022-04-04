@@ -8,7 +8,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import { isNil } from 'ramda';
-import { WalletProvider } from '@/modules/wallet';
+import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { Close } from '@/common/components/icons/Close';
@@ -33,13 +33,13 @@ import {
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from '../src/graphql/apollo';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
+import { useApollo } from 'src/graphql/apollo';
 
 const { Content } = Layout;
 
@@ -60,7 +60,7 @@ const track = (category: string, action: string) => {
   });
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+const HolaplexApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
   const onRouteChanged = (path: string) => {
@@ -98,21 +98,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 
   const queryClient = useMemo(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-            // retry: (failureCount, error) => {
-            //   console.log('failure count', failureCount, error);
-            //   return failureCount < 4;
-            //   // return 3;
-            // },
-          },
-        },
-      }),
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
+
+  const apolloClient = useApollo(pageProps.initialApolloState);
 
   return (
     <>
@@ -146,7 +136,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ConnectionProvider endpoint={endpoint}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
-                <WalletProvider>
+                <WalletProviderDeprecated>
                   {({ wallet }) => (
                     <StorefrontProvider wallet={wallet}>
                       {({}) => {
@@ -180,7 +170,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                       }}
                     </StorefrontProvider>
                   )}
-                </WalletProvider>
+                </WalletProviderDeprecated>
               </WalletModalProvider>
             </WalletProviderSolana>
           </ConnectionProvider>
@@ -188,9 +178,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </QueryClientProvider>
     </>
   );
-}
+};
 
-export default MyApp;
+export default HolaplexApp;
 
 const AppContent = styled(Content)`
   display: flex;

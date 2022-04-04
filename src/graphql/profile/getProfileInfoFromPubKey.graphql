@@ -1,0 +1,7 @@
+#import "./profileInfo.graphql"
+
+query getProfileInfoFromPubKey($pubKey: String!) {
+  profileInfo: twitter_handle_name_services(where: { wallet_address: { _eq: $pubKey } }) {
+    ...ProfileInfo
+  }
+}

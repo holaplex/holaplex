@@ -18,8 +18,8 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
     "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts",
     "prepare": "husky install",
-    "generate:graphql-apollo": "graphql-codegen -r dotenv/config --config codegen.yml",
-    "generate:graphql-request": "graphql-codegen -r dotenv/config --config codegen-ssr.yml",
+    "generate:graphql-apollo": "graphql-codegen -r dotenv-flow/config --config codegen-apollo.yml",
+    "generate:graphql-request": "graphql-codegen -r dotenv-flow/config --config codegen-graphql-request.yml",
     "generate:graphql": "yarn generate:graphql-apollo && yarn generate:graphql-request",
     "storefronts:update": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/update-store-json.ts"
   },
@@ -122,6 +122,7 @@
     "autoprefixer": "^10.4.2",
     "babel-plugin-import": "^1.13.3",
     "chai": "^4.3.4",
+    "dotenv-flow": "^3.2.0",
     "eslint": "7.29.0",
     "eslint-config-next": "11.0.1",
     "husky": "^7.0.2",

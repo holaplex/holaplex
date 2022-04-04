@@ -1,4 +1,3 @@
-import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Head from 'next/head';
 import { GetServerSideProps, NextPage } from 'next';
 import { showFirstAndLastFour } from '@/modules/utils/string';
@@ -12,16 +11,23 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Spinner } from '@/common/components/elements/Spinner';
 
-export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) => {
+  const result = await getPropsForWalletOrUsername(context);
+  if ((result as { redirect?: boolean }).redirect) {
+    return result;
+  } else {
+    const { props } = result as { props: WalletDependantPageProps };
+    return {
+      redirect: { destination: `/profiles/${props.publicKey}/nfts`, statusCode: 302 },
+    };
+  }
+}; // Do server side redirection for SEO purposes.
 
 const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => {
   const router = useRouter();
-
   useEffect(() => {
     router.replace(`/profiles/${publicKey}/nfts`);
   }, []);
-
   return (
     <ProfileDataProvider profileData={{ publicKey, ...props }}>
       <Head>
@@ -33,7 +39,6 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
         />
       </Head>
       <ProfileContainer>
-        {/* <ActivityContent /> */}
         <div className="flex h-48 w-full items-center justify-center">
           <Spinner />
         </div>

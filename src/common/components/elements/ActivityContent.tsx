@@ -49,10 +49,7 @@ export const ActivityContent = () => {
 
         const itemBase: Partial<IFeedItem> = {
           id: bid.bidderAddress + bid.listingAddress,
-          sourceUser: {
-            pubkey: bid.bidderAddress,
-            // handle // fetch async?
-          },
+          sourceUser: { pubkey: bid.bidderAddress },
           nft: nft && {
             address: nft.address,
             imageURL: nft.image,
