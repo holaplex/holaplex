@@ -29,6 +29,10 @@ import {
   LoadingContainer,
   LoadingLine,
 } from '@/common/components/elements/LoadingPlaceholders';
+import { Tag } from '../../src/common/components/icons/Tag';
+import Button from '../../src/common/components/elements/Button';
+
+const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
 // import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
@@ -178,6 +182,8 @@ export default function NftByAddress({ address }: { address: string }) {
   const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
   const [imgLoaded, setImgLoaded] = useState(false);
   const nft = data?.nft;
+
+  const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
 
   useEffect(() => {
@@ -288,32 +294,49 @@ export default function NftByAddress({ address }: { address: string }) {
                 </div>
               </div>
             </div>
-            {nft?.attributes && nft.attributes.length > 0 && (
-              <Accordion title="Attributes">
-                <div className="mt-8 grid grid-cols-2 gap-6">
-                  {loading ? (
-                    <div>
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                    </div>
-                  ) : (
-                    nft?.attributes.map((a) => (
-                      <div
-                        key={a.traitType}
-                        className="max-h-[300px] rounded border border-gray-700 p-6"
-                      >
-                        <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
-                        <p className="truncate text-ellipsis" title={a.value}>
-                          {a.value}
-                        </p>
-                      </div>
-                    ))
-                  )}
+            <div className={`grid grid-cols-1 gap-10`}>
+              <div
+                className={`flex h-24 w-full items-center justify-between rounded-md bg-gray-800 p-6`}
+              >
+                <div className={`flex items-center`}>
+                  <Tag className={`mr-2`} />
+                  <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
                 </div>
-              </Accordion>
-            )}
+                <div>
+                  <Link href={`/nfts/${nft?.address}/offers/new`}>
+                    <a>
+                      <Button>Make offer</Button>
+                    </a>
+                  </Link>
+                </div>
+              </div>
+              {nft?.attributes && nft.attributes.length > 0 && (
+                <Accordion title="Attributes">
+                  <div className="mt-8 grid grid-cols-2 gap-6">
+                    {loading ? (
+                      <div>
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                      </div>
+                    ) : (
+                      nft?.attributes.map((a) => (
+                        <div
+                          key={a.traitType}
+                          className="max-h-[300px] rounded border border-gray-700 p-6"
+                        >
+                          <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
+                          <p className="truncate text-ellipsis" title={a.value}>
+                            {a.value}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </Accordion>
+              )}
+            </div>
           </div>
         </div>
         {/* {loading ? (
