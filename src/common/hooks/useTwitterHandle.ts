@@ -14,7 +14,6 @@ export const getTwitterHandle = async (pk: string, connection: Connection) => {
     const [twitterHandle] = await getHandleAndRegistryKey(connection, new PublicKey(pk));
     return `${twitterHandle}`;
   } catch (err) {
-    console.error('err', err);
     return undefined;
   }
 };

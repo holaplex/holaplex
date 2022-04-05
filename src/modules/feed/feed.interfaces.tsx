@@ -1,3 +1,5 @@
+import { TopFollower } from "@/common/context/ProfileData";
+
 export const BID_ACTIVITY = [
   'BID_MADE',
   'OUTBID',
@@ -67,6 +69,7 @@ export interface IProfile {
   handle?: string | null;
   followers?: number;
   following?: number;
+  topFollowers?: TopFollower[];
   nfts?: NFT[];
 }
 

@@ -2983,6 +2983,13 @@ export type NftPageQueryVariables = Exact<{
 
 export type NftPageQuery = { __typename?: 'query_root', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, auctionHouse: string, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
 
+export type GetProfileFollowerOverviewQueryVariables = Exact<{
+  pubKey: Scalars['String'];
+}>;
+
+
+export type GetProfileFollowerOverviewQuery = { __typename?: 'query_root', to: { __typename?: 'graph_connections_aggregate', aggregate?: { __typename?: 'graph_connections_aggregate_fields', count: number } | null }, from: { __typename?: 'graph_connections_aggregate', aggregate?: { __typename?: 'graph_connections_aggregate_fields', count: number } | null }, to_brief: Array<{ __typename?: 'graph_connections', pubKey: string, profileInfo?: { __typename?: 'twitter_handle_name_services', twitter_handle: string, wallet_address: string, images?: { __typename?: 'Profile', bannerImageUrl: string, profileImageUrlHighres: string, profileImageUrlLowres: string } | null } | null }> };
+
 export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
   pubKey: Scalars['String'];
 }>;
@@ -2996,6 +3003,14 @@ export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
 
 
 export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'query_root', profileInfo: Array<{ __typename?: 'twitter_handle_name_services', twitter_handle: string, wallet_address: string, images?: { __typename?: 'Profile', bannerImageUrl: string, profileImageUrlHighres: string, profileImageUrlLowres: string } | null }> };
+
+export type IsXFollowingYQueryVariables = Exact<{
+  xPubKey: Scalars['String'];
+  yPubKey: Scalars['String'];
+}>;
+
+
+export type IsXFollowingYQuery = { __typename?: 'query_root', is_x_following_y: { __typename?: 'graph_connections_aggregate', evaluation?: { __typename?: 'graph_connections_aggregate_fields', result: number } | null } };
 
 export type ProfileInfoFragment = { __typename?: 'twitter_handle_name_services', twitter_handle: string, wallet_address: string, images?: { __typename?: 'Profile', bannerImageUrl: string, profileImageUrlHighres: string, profileImageUrlLowres: string } | null };
 
@@ -3136,6 +3151,30 @@ export const NftPageDocument = gql`
   }
 }
     `;
+export const GetProfileFollowerOverviewDocument = gql`
+    query getProfileFollowerOverview($pubKey: String!) {
+  to: graph_connections_aggregate(where: {from_account: {_eq: $pubKey}}) {
+    aggregate {
+      count
+    }
+  }
+  from: graph_connections_aggregate(where: {to_account: {_eq: $pubKey}}) {
+    aggregate {
+      count
+    }
+  }
+  to_brief: graph_connections(
+    where: {to_account: {_eq: $pubKey}}
+    limit: 4
+    order_by: {from_account_twitter_handle_name_services: {twitter_handle: asc}}
+  ) {
+    pubKey: from_account
+    profileInfo: from_account_twitter_handle_name_services {
+      ...ProfileInfo
+    }
+  }
+}
+    ${ProfileInfoFragmentDoc}`;
 export const GetProfileInfoFromPubKeyDocument = gql`
     query getProfileInfoFromPubKey($pubKey: String!) {
   profileInfo: twitter_handle_name_services(
@@ -3154,6 +3193,17 @@ export const GetProfileInfoFromTwitterHandleDocument = gql`
   }
 }
     ${ProfileInfoFragmentDoc}`;
+export const IsXFollowingYDocument = gql`
+    query isXFollowingY($xPubKey: String!, $yPubKey: String!) {
+  is_x_following_y: graph_connections_aggregate(
+    where: {from_account: {_eq: $xPubKey}, _and: {to_account: {_eq: $yPubKey}}}
+  ) {
+    evaluation: aggregate {
+      result: count
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -3174,11 +3224,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     nftPage(variables: NftPageQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<NftPageQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<NftPageQuery>(NftPageDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'nftPage', 'query');
     },
+    getProfileFollowerOverview(variables: GetProfileFollowerOverviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileFollowerOverviewQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProfileFollowerOverviewQuery>(GetProfileFollowerOverviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileFollowerOverview', 'query');
+    },
     getProfileInfoFromPubKey(variables: GetProfileInfoFromPubKeyQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileInfoFromPubKeyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProfileInfoFromPubKeyQuery>(GetProfileInfoFromPubKeyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileInfoFromPubKey', 'query');
     },
     getProfileInfoFromTwitterHandle(variables: GetProfileInfoFromTwitterHandleQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileInfoFromTwitterHandleQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProfileInfoFromTwitterHandleQuery>(GetProfileInfoFromTwitterHandleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileInfoFromTwitterHandle', 'query');
+    },
+    isXFollowingY(variables: IsXFollowingYQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<IsXFollowingYQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<IsXFollowingYQuery>(IsXFollowingYDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'isXFollowingY', 'query');
     }
   };
 }

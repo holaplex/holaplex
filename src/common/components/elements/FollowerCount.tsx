@@ -1,18 +1,12 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
-import styled, { css } from 'styled-components';
-import cx from 'classnames';
-import Image from 'next/image';
-import { Unpacked } from '@/types/Unpacked';
-import { getPFPFromPublicKey } from '@/modules/utils/image';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
-import Link from 'next/link';
+import styled from 'styled-components';
+import { useIsXFollowingYQuery } from 'src/graphql/indexerTypes';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { FollowerBubble } from './FollowerBubble';
+import { useProfileData } from '@/common/context/ProfileData';
 
 type FollowerCountProps = {
   profile: IProfile;
@@ -54,91 +48,66 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, walletConnectionPair);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, walletConnectionPair);
-
-  if (allConnectionsTo.error) {
-    console.error(allConnectionsTo.error);
-    return <div>Error</div>;
-  }
-  if (allConnectionsFrom.error) {
-    console.error(allConnectionsFrom.error);
-    return <div>Error</div>;
-  }
-
-  const allConnectionsToLoading = !allConnectionsTo.data && !allConnectionsTo.error;
-  const allConnectionsFromLoading = !allConnectionsFrom.data && !allConnectionsFrom.error;
-
-  const isLoading = allConnectionsToLoading || allConnectionsFromLoading;
-
-  if (isLoading) return <FollowerCountSkeleton />;
+  const { followers, following } = useProfileData();
+  const { data, loading } = useIsXFollowingYQuery({
+    variables: {
+      xPubKey: wallet.publicKey.toBase58(),
+      yPubKey: pubkey,
+    },
+  });
+  if (loading) return <FollowerCountSkeleton />;
   const isSameWallet = wallet.publicKey.equals(new PublicKey(pubkey));
 
-  const amIFollowing = (allConnectionsTo.data ?? []).some((i) =>
-    i.account.from.equals(wallet.publicKey)
-  );
+  const amIFollowing = data?.is_x_following_y.evaluation?.result === 1;
 
   return (
-    <>
-      <div className="flex flex-col">
-        <div className="mt-10 flex justify-between md:justify-start">
-          <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-            <div className="text-left font-semibold">{allConnectionsTo.data?.length ?? 0}</div>
-            <div className="text-sm font-medium text-gray-200">Followers</div>
-          </button>
-          <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
-            <div className="text-left font-semibold">{allConnectionsFrom.data?.length ?? 0}</div>
-            <div className="text-sm font-medium text-gray-200">Following</div>
-          </button>
-          <div className="ml-10">
-            {isSameWallet ? null : (
-              <FollowUnfollowButton
-                source="profileButton"
-                walletConnectionPair={walletConnectionPair}
-                toProfile={profile}
-                type={amIFollowing ? 'Unfollow' : 'Follow'}
-              />
-            )}
-          </div>
+    <div className="flex flex-col">
+      <div className="mt-10 flex justify-between md:justify-start">
+        <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
+          <div className="text-left font-semibold">{followers}</div>
+          <div className="text-sm font-medium text-gray-200">Followers</div>
+        </button>
+        <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
+          <div className="text-left font-semibold">{following}</div>
+          <div className="text-sm font-medium text-gray-200">Following</div>
+        </button>
+        <div className="ml-10">
+          {isSameWallet ? null : (
+            <FollowUnfollowButton
+              source="profileButton"
+              walletConnectionPair={walletConnectionPair}
+              toProfile={profile}
+              type={amIFollowing ? 'Unfollow' : 'Follow'}
+            />
+          )}
         </div>
-        {allConnectionsTo.data?.length ? (
-          <FollowedBy
-            onOtherFollowersClick={() => setShowFollowsModal('followers')}
-            followers={allConnectionsTo.data}
-          />
-        ) : null}
       </div>
-    </>
+      {followers ? (
+        <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
+      ) : null}
+    </div>
   );
 };
 
-export type Followers = ReturnType<typeof useGetAllConnectionsToWithTwitter>['data'];
-export type Follower = NonNullable<Unpacked<Followers>>;
-
 type FollowedByProps = {
-  followers: Followers;
   onOtherFollowersClick?: VoidFunction;
 };
 
-const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) => {
-  const followerLength = followers?.length ?? 0;
+const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
+  const { followers, topFollowers } = useProfileData();
   return (
     <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2  flex flex-row">
-        {(followers ?? []).slice(0, 4).map((follower, i) => (
-          <FollowerBubble
-            key={follower.publicKey.toBase58()}
-            isFirst={i === 0}
-            follower={follower}
-          />
+        {topFollowers.map((follower, i) => (
+          <FollowerBubble isFirst={i === 0} key={follower.pubKey} follower={follower} />
         ))}
-        {followerLength > 4 ? (
+        {followers > 4 ? (
           <OtherFollowersNumberBubble
             onClick={onOtherFollowersClick}
             className="z-10 ml-[-8px] flex h-8 w-8 flex-col items-center justify-center rounded-full"
           >
-            +{followerLength - 4}
+            +{followers - 4}
           </OtherFollowersNumberBubble>
         ) : null}
       </div>

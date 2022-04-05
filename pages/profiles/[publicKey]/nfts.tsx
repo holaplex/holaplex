@@ -13,7 +13,7 @@ import Link from 'next/link';
 import TextInput2 from '@/common/components/elements/TextInput2';
 import { Avatar } from '../../nfts/[address]';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
@@ -22,7 +22,7 @@ import { imgOpt } from '../../../src/common/utils';
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+  getProfileServerSideProps(context);
 
 const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   const creatorsCopy = [...nft.creators];

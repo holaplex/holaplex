@@ -11,7 +11,10 @@ const memcmpFn = (publicKey: string) => ({
   bytes: new PublicKey(publicKey).toBase58(),
 });
 
-export const useGetAllConnectionsTo = (
+/**
+ * @deprecated Use graphql queries instead. Keeping source for reference.
+ */
+export const DEPRECATED_useGetAllConnectionsTo = (
   pubKey: string,
   walletAndConnection: { connection: Connection; wallet: AnchorWallet }
 ) =>
@@ -21,7 +24,10 @@ export const useGetAllConnectionsTo = (
     ])
   );
 
-export const useGetAllConnectionsToWithTwitter = (
+/**
+ * @deprecated Use graphql queries instead.
+ */
+export const DEPRECATED_useGetAllConnectionsToWithTwitter = (
   pubKey: string,
   walletAndConnection: { connection: Connection; wallet: AnchorWallet }
 ) =>

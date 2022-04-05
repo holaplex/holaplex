@@ -1,0 +1,25 @@
+#import "./profileInfo.graphql"
+
+query getProfileFollowerOverview($pubKey: String!) {
+  to: graph_connections_aggregate(where: { from_account: { _eq: $pubKey } }) {
+    aggregate {
+      count
+    }
+  }
+  from: graph_connections_aggregate(where: { to_account: { _eq: $pubKey } }) {
+    aggregate {
+      count
+    }
+  }
+  to_brief: graph_connections(
+    where: { to_account: { _eq: $pubKey } }
+    limit: 4
+    # To-do: Implement a closeness interaction graph or some sort of scoring system.
+    order_by: { from_account_twitter_handle_name_services: { twitter_handle: asc } }
+  ) {
+    pubKey: from_account
+    profileInfo: from_account_twitter_handle_name_services {
+      ...ProfileInfo
+    }
+  }
+}

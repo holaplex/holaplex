@@ -4,6 +4,8 @@ import { getPublicKeyFromTwitterHandle, getTwitterHandle } from '@/common/hooks/
 import { getSdk, ProfileInfoFragment } from 'src/graphql/indexerTypes.ssr';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '../utils/image';
+import { initializeApollo } from 'src/graphql/apollo';
+import { GetProfileFollowerOverviewDocument } from 'src/graphql/indexerTypes';
 
 export const getPublicKey = (input: string) => {
   try {
@@ -93,7 +95,7 @@ export const getPropsForWalletOrUsernameDeprecated: GetServerSideProps<
   };
 };
 
-export const getPropsForWalletOrUsername: GetServerSideProps<WalletDependantPageProps> = async (
+export const getProfileServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (
   ctx
 ) => {
   // Keeping this out of apollo since this isn't modified in-app.
@@ -127,14 +129,25 @@ export const getPropsForWalletOrUsername: GetServerSideProps<WalletDependantPage
     return { notFound: true };
   }
 
+  const apolloClient = initializeApollo();
+  await apolloClient.query({
+    query: GetProfileFollowerOverviewDocument,
+    variables: { pubKey: publicKey!.toBase58() },
+  });
+
+  const profileServerSideProps = {
+    publicKey: publicKey!.toBase58(),
+    twitterHandle: profileInfo?.twitter_handle ?? null,
+    profilePicture:
+      profileInfo?.images?.profileImageUrlHighres?.replace('_normal', '') ??
+      getPFPFromPublicKey(publicKey!),
+    banner: profileInfo?.images?.bannerImageUrl ?? getBannerFromPublicKey(publicKey!),
+  };
+
   return {
     props: {
-      publicKey: publicKey!.toBase58(),
-      twitterHandle: profileInfo?.twitter_handle ?? null,
-      profilePicture:
-        profileInfo?.images?.profileImageUrlHighres?.replace('_normal', '') ??
-        getPFPFromPublicKey(publicKey!),
-      banner: profileInfo?.images?.bannerImageUrl ?? getBannerFromPublicKey(publicKey!),
+      ...profileServerSideProps,
+      initialApolloState: apolloClient.cache.extract(),
     },
   };
 };
