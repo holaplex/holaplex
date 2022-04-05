@@ -3,6 +3,7 @@ query isXFollowingY($xPubKey: String!, $yPubKey: String!) {
     where: { from_account: { _eq: $xPubKey }, _and: { to_account: { _eq: $yPubKey } } }
   ) {
     evaluation: aggregate {
+      # 1 = true, 0 = false
       result: count
     }
   }
