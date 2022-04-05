@@ -51,6 +51,7 @@ import { StorefrontContext } from '@/modules/storefront';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -395,6 +396,7 @@ export default function Home({
   initialSearchBy,
 }: HomeProps) {
   const { setVisible } = useWalletModal();
+  const router = useRouter();
   const { storefront, searching } = useContext(StorefrontContext);
   const { connected, connecting } = useWallet();
   const { looking } = useContext(WalletContext);
@@ -472,11 +474,6 @@ export default function Home({
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
 
-      console.log('applyListingFilterAndSort2', {
-        filterBy,
-        searchBy,
-        sortBy,
-      });
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
@@ -506,13 +503,13 @@ export default function Home({
       return;
     }
 
-    console.log('applyListingFilterAndSort1', {
-      filterBy,
-      searchBy,
-      sortBy,
-    });
     setDisplayedListings(applyListingFilterAndSort(allListings));
     setShow(16);
+    router.replace(
+      router.pathname +
+        `?filter=${filterBy}&sort=${sortBy}` +
+        (searchBy.length ? `&search=${searchBy.join(',')}` : '')
+    );
   }, [filterBy, sortBy, searchBy]);
 
   return (
