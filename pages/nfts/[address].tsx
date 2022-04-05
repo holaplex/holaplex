@@ -28,9 +28,10 @@ import {
   LoadingBox,
   LoadingContainer,
   LoadingLine,
-} from '@/common/components/elements/LoadingPlaceholders';
-import { Tag } from '../../src/common/components/icons/Tag';
-import Button from '../../src/common/components/elements/Button';
+} from '@/components/elements/LoadingPlaceholders';
+import { Tag } from '@/components/icons/Tag';
+import Button from '@/components/elements/Button';
+import { HOLAPLEX_MARKETPLACE_ADDRESS } from '../../src/common/constants/marketplace';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -79,7 +80,7 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
     </Tooltip>
   );
 };
-const OverlappingCircles = ({
+export const OverlappingCircles = ({
   creators,
 }: {
   creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
@@ -179,9 +180,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function NftByAddress({ address }: { address: string }) {
+  const { publicKey } = useWallet();
+
   const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
   const [imgLoaded, setImgLoaded] = useState(false);
   const nft = data?.nft;
+  const hasDefaultListing = Boolean(
+    nft?.listings.find(
+      (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    )
+  );
+  const hasAddedOffer = Boolean(nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58()));
+  console.log(hasAddedOffer);
 
   const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
@@ -295,21 +305,24 @@ export default function NftByAddress({ address }: { address: string }) {
               </div>
             </div>
             <div className={`grid grid-cols-1 gap-10`}>
-              <div
-                className={`flex h-24 w-full items-center justify-between rounded-md bg-gray-800 p-6`}
-              >
-                <div className={`flex items-center`}>
-                  <Tag className={`mr-2`} />
-                  <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
+              {!hasDefaultListing && (
+                <div
+                  className={`flex h-24 w-full items-center justify-between rounded-md bg-gray-800 p-6`}
+                >
+                  <div className={`flex items-center`}>
+                    <Tag className={`mr-2`} />
+                    <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
+                  </div>
+                  <div>
+                    <Link href={`/nfts/${nft?.address}/offers/new`}>
+                      <a>
+                        <Button>Make offer</Button>
+                      </a>
+                    </Link>
+                  </div>
                 </div>
-                <div>
-                  <Link href={`/nfts/${nft?.address}/offers/new`}>
-                    <a>
-                      <Button>Make offer</Button>
-                    </a>
-                  </Link>
-                </div>
-              </div>
+              )}
+
               {nft?.attributes && nft.attributes.length > 0 && (
                 <Accordion title="Attributes">
                   <div className="mt-8 grid grid-cols-2 gap-6">

@@ -38,6 +38,9 @@
     "@holaplex/js": "^4.3.2",
     "@holaplex/mpl-auction-house": "^0.0.3",
     "@holaplex/ui": "^0.0.31",
+    "@hookform/resolvers": "^2.8.8",
+    "@metaplex-foundation/mpl-auction-house": "^1.1.1",
+    "@metaplex-foundation/mpl-token-metadata": "^1.2.5",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^3.9.2",
     "@project-serum/anchor": "^0.20.1",
@@ -84,7 +87,7 @@
     "react-color": "^2.19.3",
     "react-device-detect": "^1.17.0",
     "react-dom": "17.0.2",
-    "react-hook-form": "^7.17.1",
+    "react-hook-form": "^7.29.0",
     "react-infinite-scroll-hook": "^4.0.1",
     "react-intersection-observer": "^8.33.1",
     "react-loader-spinner": "^5.1.4",
@@ -97,7 +100,8 @@
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
     "uuid": "^8.3.2",
-    "yarn": "^1.22.10"
+    "yarn": "^1.22.10",
+    "zod": "^3.14.4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.4.0",
