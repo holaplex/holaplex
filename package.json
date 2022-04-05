@@ -37,7 +37,7 @@
     "@holaplex/graph-program": "^0.1.1",
     "@holaplex/js": "^4.3.2",
     "@holaplex/mpl-auction-house": "^0.0.3",
-    "@holaplex/ui": "^0.0.31",
+    "@holaplex/ui": "^0.0.37",
     "@metaplex/js": "^4.2.0",
     "@prisma/client": "^3.9.2",
     "@project-serum/anchor": "^0.20.1",
