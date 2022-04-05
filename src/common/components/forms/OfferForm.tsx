@@ -24,7 +24,7 @@ interface OfferFormSchema {
   amount: string;
 }
 
-type None = {};
+export type None = {};
 
 interface OfferFormProps {
   nft?: Nft | null;

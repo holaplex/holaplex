@@ -5,7 +5,11 @@ import { Close } from '@/components/icons/Close';
 
 type ModalProps = {
   open: Boolean;
-  setOpen: Dispatch<SetStateAction<Boolean>> | ((open: Boolean) => void);
+  // for whatever reason big B and little B are diff to TS...
+  setOpen:
+    | Dispatch<SetStateAction<boolean>>
+    | Dispatch<SetStateAction<Boolean>>
+    | ((open: Boolean) => void);
   children: ReactNode;
   title: String;
 };
