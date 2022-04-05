@@ -185,13 +185,14 @@ export default function NftByAddress({ address }: { address: string }) {
   const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
   const [imgLoaded, setImgLoaded] = useState(false);
   const nft = data?.nft;
+
+  // has listed via default Holaplex marketplace (disregards others)
   const hasDefaultListing = Boolean(
     nft?.listings.find(
       (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
     )
   );
   const hasAddedOffer = Boolean(nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58()));
-  console.log(hasAddedOffer);
 
   const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;

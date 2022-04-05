@@ -190,7 +190,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
       router.push(`/nfts/${nft.address}`);
       return;
     }
-  }, [publicKey, nft, router.push]);
+  }, [publicKey, nft, router.push, router]);
 
   return (
     <form className={`grow text-left`} onSubmit={handleSubmit(makeOfferTx)}>
