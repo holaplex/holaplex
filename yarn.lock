@@ -1740,6 +1740,11 @@
     react-toastify "^8.1.0"
     use-onclickoutside "^0.4.0"
 
+"@hookform/resolvers@^2.8.8":
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.8.8.tgz#17cf806485435877fdafce9f3bee6ff68f7f87b6"
+  integrity sha512-meAEDur1IJBfKyTo9yPYAuzjIfrxA7m9Ov+1nxaW/YupsqMeseWifoUjWK03+hz/RJizsVQAaUjVxFEkyu0GWg==
+
 "@iarna/toml@^2.2.5":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
@@ -1832,7 +1837,7 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@metaplex-foundation/beet-solana@0.0.6":
+"@metaplex-foundation/beet-solana@0.0.6", "@metaplex-foundation/beet-solana@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet-solana/-/beet-solana-0.0.6.tgz#64dc7bb5a0f5938f25da11bb2a44729ee806a0d9"
   integrity sha512-MMwqCd51q+dZFtpjuUkGN/jX/gO5fiRuf+uyZ2fVAUcnZCmVWwSEeeSISffvR0mmhc/JSWkJ7Pi0s+FkYVB7dA==
@@ -1858,6 +1863,26 @@
     bn.js "^5.2.0"
     debug "^4.3.3"
 
+"@metaplex-foundation/beet@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet/-/beet-0.0.8.tgz#c0d6cfc4e9804ec863efc2e05302cc5d89d144cd"
+  integrity sha512-OI4V/ASqqR802GivPLBLrihDj99xX2yceTvZt20gn2A3tlPg0ygV8brTHE5LZey/ud3Guh8t54GRwD6XcqStZg==
+  dependencies:
+    ansicolors "^0.3.2"
+    bn.js "^5.2.0"
+    debug "^4.3.3"
+
+"@metaplex-foundation/mpl-auction-house@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-auction-house/-/mpl-auction-house-1.1.1.tgz#9c4ef47d13ff766bf9606868099dc1489477f77c"
+  integrity sha512-47dGB74A+VB0cmzfzfrIUTn7cScKkbHzPioUR+YSC+4jkNW+d5OjNJWaE5lIP8JrzZUfPRfuzCxOyvwNtNM1Tg==
+  dependencies:
+    "@metaplex-foundation/beet" "^0.0.8"
+    "@metaplex-foundation/beet-solana" "^0.0.6"
+    "@metaplex-foundation/mpl-core" "0.0.4"
+    "@solana/web3.js" "^1.35.1"
+    bn.js "^5.2.0"
+
 "@metaplex-foundation/mpl-auction@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-auction/-/mpl-auction-0.0.2.tgz#3de3c982e88d6a88f0ef05be73453cf3cfaccf26"
@@ -1873,6 +1898,14 @@
   integrity sha512-uafYM6ZzjLENba5+35eDhCgkNe7ukOU/1Lkqv5GSGAZsgwrXWGPrRd5rD8+k0pP17FGs7tVHab7n7La8bSvTKQ==
   dependencies:
     "@solana/web3.js" "^1.31.0"
+    bs58 "^4.0.1"
+
+"@metaplex-foundation/mpl-core@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-core/-/mpl-core-0.0.4.tgz#af7c518b1283f91fa98e8c38ab97fd3f7d18984f"
+  integrity sha512-lrWdbufDgPw+GmSJpd6PP4QaThoHTkWKD9309vQ9Wkq2cABzv1g6VA83zIIkn/kwDRLcDaEjiiAKIfIck/09GQ==
+  dependencies:
+    "@solana/web3.js" "^1.33.0"
     bs58 "^4.0.1"
 
 "@metaplex-foundation/mpl-core@^0.0.2":
@@ -1904,7 +1937,7 @@
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.31.0"
 
-"@metaplex-foundation/mpl-token-metadata@^1.1.0":
+"@metaplex-foundation/mpl-token-metadata@^1.1.0", "@metaplex-foundation/mpl-token-metadata@^1.2.5":
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-token-metadata/-/mpl-token-metadata-1.2.5.tgz#1a927b1c7d30cd634a1e4782022712a02f6865c2"
   integrity sha512-pxRG53JsTSwXpiJJMHNulJhH8kO3hHztQ3QxslUoKw2hBYKXsg9TGsiHgNIhN2MPZGBJ2pDeK6kNGv0sd54HhA==
@@ -2152,6 +2185,13 @@
   dependencies:
     buffer "~6.0.3"
 
+"@solana/buffer-layout@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@solana/buffer-layout/-/buffer-layout-4.0.0.tgz#75b1b11adc487234821c81dfae3119b73a5fd734"
+  integrity sha512-lR0EMP2HC3+Mxwd4YcnZb0smnaDw7Bl2IQWZiTevRH5ZZBZn6VRWn3/92E3qdU4SSImJkA6IDHawOHAnx/qUvQ==
+  dependencies:
+    buffer "~6.0.3"
+
 "@solana/spl-name-service@^0.1.3":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@solana/spl-name-service/-/spl-name-service-0.1.3.tgz#33659ac84a4ef2e8498a56e9b220786ee70abd9b"
@@ -2393,6 +2433,26 @@
     "@solana/buffer-layout" "^3.0.0"
     bn.js "^5.0.0"
     borsh "^0.4.0"
+    bs58 "^4.0.1"
+    buffer "6.0.1"
+    cross-fetch "^3.1.4"
+    jayson "^3.4.4"
+    js-sha3 "^0.8.0"
+    rpc-websockets "^7.4.2"
+    secp256k1 "^4.0.2"
+    superstruct "^0.14.2"
+    tweetnacl "^1.0.0"
+
+"@solana/web3.js@^1.33.0", "@solana/web3.js@^1.35.1":
+  version "1.37.1"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.37.1.tgz#5a4d30a4cf79c4598e0a437e841c7942e31be74c"
+  integrity sha512-1zm1blRU6ANb8bOfONibKkNKoMyzE1e0Z88MagyRLF1AmfHc+18lFvqxSQKUdazLMHcioZ28h+GfyAaeCT63iA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@ethersproject/sha2" "^5.5.0"
+    "@solana/buffer-layout" "^4.0.0"
+    bn.js "^5.0.0"
+    borsh "^0.7.0"
     bs58 "^4.0.1"
     buffer "6.0.1"
     cross-fetch "^3.1.4"
@@ -3696,6 +3756,15 @@ borsh@^0.4.0:
   dependencies:
     "@types/bn.js" "^4.11.5"
     bn.js "^5.0.0"
+    bs58 "^4.0.0"
+    text-encoding-utf-8 "^1.0.2"
+
+borsh@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/borsh/-/borsh-0.7.0.tgz#6e9560d719d86d90dc589bca60ffc8a6c51fec2a"
+  integrity sha512-CLCsZGIBCFnPtkNnieW/a8wmreDmfUtjU2m9yHrzPXIlNbqVs0AQrSatSG6vdNYUqdc83tkQi2eHfF98ubzQLA==
+  dependencies:
+    bn.js "^5.2.0"
     bs58 "^4.0.0"
     text-encoding-utf-8 "^1.0.2"
 
@@ -9255,10 +9324,10 @@ react-dom@17.0.2:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
-react-hook-form@^7.17.1:
-  version "7.28.0"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.28.0.tgz#40f385da1f31a3c26bb7491d7d77c111b6ad6909"
-  integrity sha512-mmLpT86BkMGPr0r6ca8zxV0WH4Y1FW5MKs7Rq1+uHLVeeg5pSWbF5Z/qLCnM5vPVblHNM6lRBRRotnfEAf0ALA==
+react-hook-form@^7.29.0:
+  version "7.29.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.29.0.tgz#5e7e41a483b70731720966ed8be52163ea1fecf1"
+  integrity sha512-NcJqWRF6el5HMW30fqZRt27s+lorvlCCDbTpAyHoodQeYWXgQCvZJJQLC1kRMKdrJknVH0NIg3At6TUzlZJFOQ==
 
 react-infinite-scroll-hook@^4.0.1:
   version "4.0.2"
@@ -11544,6 +11613,11 @@ zen-observable@0.8.15:
   version "0.8.15"
   resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
+
+zod@^3.14.4:
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.14.4.tgz#e678fe9e5469f4663165a5c35c8f3dc66334a5d6"
+  integrity sha512-U9BFLb2GO34Sfo9IUYp0w3wJLlmcyGoMd75qU9yf+DrdGA4kEx6e+l9KOkAlyUO0PSQzZCa3TR4qVlcmwqSDuw==
 
 zscroller@~0.4.0:
   version "0.4.8"
