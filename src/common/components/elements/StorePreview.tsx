@@ -78,8 +78,8 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
         }
       />
       <Row justify="space-between">
-        {metadata.map((url) => (
-          <Metadata span={11} key={imgOpt(url, 600)}>
+        {metadata.map((url, i) => (
+          <Metadata span={11} key={url + i}>
             <img src={imgOpt(url, 600)} alt="featured nft image" className="aspect-square " />
           </Metadata>
         ))}

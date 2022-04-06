@@ -49,7 +49,7 @@ function MoreDropdown({ address }: { address: string }) {
               <Popover.Panel
                 static
                 as="ul"
-                className=" absolute right-5 top-12 z-10 w-56 rounded bg-gray-800 p-4 shadow-lg"
+                className="absolute z-10 w-56 p-4 bg-gray-800 rounded shadow-lg right-5 top-12"
               >
                 <li>
                   {linkCopied ? (
@@ -70,6 +70,7 @@ function MoreDropdown({ address }: { address: string }) {
                   <a
                     href={`https://explorer.solana.com/address/${address}`}
                     className="flex items-center hover:text-gray-300"
+                    target="_blank"
                   >
                     <ExplorerIcon />
                     <span className="pl-5">View on Explorer</span>
@@ -79,6 +80,7 @@ function MoreDropdown({ address }: { address: string }) {
                   <a
                     href={`https://solscan.io/account/${address}`}
                     className="flex items-center hover:text-gray-300"
+                    target="_blank"
                   >
                     <SolscanIcon />
                     <span className="pl-5">View on SolScan</span>
