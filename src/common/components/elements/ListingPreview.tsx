@@ -12,6 +12,7 @@ import { FilterOptions, SortOptions } from 'pages';
 import Price from '@/common/components/elements/Price';
 import { maybeCDN, imgOpt } from '@/common/utils';
 import AuctionCountdown from './Countdown';
+import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
 
 const Square = styled(Row)`
   position: relative;
@@ -66,21 +67,24 @@ const StyledSkeletonImage = styled(Skeleton.Image)`
 export function SkeletonListing() {
   return (
     <div className="mb-12 pt-1 ">
-      <Square>
+      {/* <Square>
         <StyledSkeletonImage className="skeleton-animation !h-full !w-full rounded-t-lg" />
-      </Square>
+      </Square> */}
+      <div className="aspect-square">
+        <LoadingContainer className="h-full w-full !rounded-b-none" />
+      </div>
 
       <div className="border-x border-gray-800 px-4 py-6">
-        <div className="flex h-10 w-full items-center justify-between rounded-md bg-[#bebebe33]"></div>
+        <LoadingLine $height="42px" />
       </div>
       <div
         className={classNames(
-          'flex items-center justify-between rounded-b-md px-4 py-4',
-          'border border-gray-800 '
+          'flex items-center  rounded-b-md px-4 py-4',
+          'space-x-8 border border-gray-800'
         )}
       >
-        <div className="h-[42px] w-32  rounded-md bg-[#bebebe33]"></div>
-        <div className="h-[42px] w-32  rounded-md bg-[#bebebe33]"></div>
+        <LoadingLine $height="42px" />
+        <LoadingLine $height="42px" />
       </div>
     </div>
   );

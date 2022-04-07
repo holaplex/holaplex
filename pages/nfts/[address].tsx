@@ -4,7 +4,7 @@ import {
   Creator,
   ListingReceipt,
   NftCreator,
-  useNftPageLazyQuery,
+  useNftMarketplaceLazyQuery,
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
@@ -28,7 +28,20 @@ import {
   LoadingBox,
   LoadingContainer,
   LoadingLine,
-} from '@/common/components/elements/LoadingPlaceholders';
+} from '@/components/elements/LoadingPlaceholders';
+import { Tag } from '@/components/icons/Tag';
+import Button from '@/components/elements/Button';
+import {
+  HOLAPLEX_MARKETPLACE_ADDRESS,
+  HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+} from '@/constants/marketplace';
+import { DisplaySOL } from '@/components/CurrencyHelpers';
+import Modal from '@/components/elements/Modal';
+import CancelOfferForm from '@/components/forms/CancelOfferForm';
+import { Marketplace, Nft, Offer } from '@/types/types';
+import { useRouter } from 'next/router';
+
+const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
 // import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
@@ -75,7 +88,7 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
     </Tooltip>
   );
 };
-const OverlappingCircles = ({
+export const OverlappingCircles = ({
   creators,
 }: {
   creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
@@ -175,9 +188,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function NftByAddress({ address }: { address: string }) {
-  const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
+  const { publicKey } = useWallet();
+  const router = useRouter();
+
+  const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [offerModalVisibility, setOfferModalVisibility] = useState(false);
   const nft = data?.nft;
+  const marketplace = data?.marketplace;
+
+  // has listed via default Holaplex marketplace (disregards others)
+  const hasDefaultListing = Boolean(
+    nft?.listings.find(
+      (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    )
+  );
+  const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
+  const hasAddedOffer = Boolean(offer);
+
+  const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
 
   useEffect(() => {
@@ -186,6 +215,7 @@ export default function NftByAddress({ address }: { address: string }) {
     try {
       queryNft({
         variables: {
+          subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
           address,
         },
       });
@@ -194,6 +224,10 @@ export default function NftByAddress({ address }: { address: string }) {
       // Bugsnag.notify(error);
     }
   }, [address, queryNft]);
+
+  useEffect(() => {
+    refetch();
+  }, [router, router.push, refetch]);
 
   if (called && !data?.nft && !loading) {
     return <Custom404 />;
@@ -288,32 +322,69 @@ export default function NftByAddress({ address }: { address: string }) {
                 </div>
               </div>
             </div>
-            {nft?.attributes && nft.attributes.length > 0 && (
-              <Accordion title="Attributes">
-                <div className="mt-8 grid grid-cols-2 gap-6">
-                  {loading ? (
-                    <div>
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
+            <div className={`grid grid-cols-1 gap-10`}>
+              {!hasDefaultListing && (
+                <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
+                  <div className={`flex h-24 w-full items-center justify-between`}>
+                    <div className={`flex items-center`}>
+                      <Tag className={`mr-2`} />
+                      <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
                     </div>
-                  ) : (
-                    nft?.attributes.map((a) => (
-                      <div
-                        key={a.traitType}
-                        className="max-h-[300px] rounded border border-gray-700 p-6"
-                      >
-                        <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
-                        <p className="truncate text-ellipsis" title={a.value}>
-                          {a.value}
-                        </p>
+                    {!hasAddedOffer && (
+                      <div>
+                        <Link href={`/nfts/${nft?.address}/offers/new`}>
+                          <a>
+                            <Button>Make offer</Button>
+                          </a>
+                        </Link>
                       </div>
-                    ))
+                    )}
+                  </div>
+                  {offer && (
+                    <div
+                      className={`flex items-center justify-between border-t border-gray-700 pt-6`}
+                    >
+                      <ul className={`flex flex-col`}>
+                        <li className={`text-base text-gray-300`}>Your offer </li>
+                        <DisplaySOL amount={offer?.price} />
+                      </ul>
+                      <div>
+                        <Button secondary onClick={() => setOfferModalVisibility(true)}>
+                          Cancel offer
+                        </Button>
+                      </div>
+                    </div>
                   )}
                 </div>
-              </Accordion>
-            )}
+              )}
+
+              {nft?.attributes && nft.attributes.length > 0 && (
+                <Accordion title="Attributes">
+                  <div className="mt-8 grid grid-cols-2 gap-6">
+                    {loading ? (
+                      <div>
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                      </div>
+                    ) : (
+                      nft?.attributes.map((a) => (
+                        <div
+                          key={a.traitType}
+                          className="max-h-[300px] rounded border border-gray-700 p-6"
+                        >
+                          <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
+                          <p className="truncate text-ellipsis" title={a.value}>
+                            {a.value}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </Accordion>
+              )}
+            </div>
           </div>
         </div>
         {/* {loading ? (
@@ -344,6 +415,17 @@ export default function NftByAddress({ address }: { address: string }) {
           )
         )} */}
       </div>
+      {nft && (
+        <Modal open={offerModalVisibility} setOpen={setOfferModalVisibility} title={`Cancel offer`}>
+          <CancelOfferForm
+            nft={nft as Nft | any}
+            marketplace={marketplace as Marketplace}
+            refetch={refetch}
+            offer={offer as Offer}
+            setOpen={setOfferModalVisibility}
+          />
+        </Modal>
+      )}
     </CenteredContentCol>
   );
 }

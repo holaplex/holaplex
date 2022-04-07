@@ -1,5 +1,5 @@
-const withImages = require('next-images');
 const withPlugins = require('next-compose-plugins');
+const withImages = require('next-images');
 const withLess = require('next-with-less');
 
 const plugins = [
@@ -29,5 +29,9 @@ module.exports = withPlugins(plugins, {
       'assets3.holaplex.tools',
       'assets4.holaplex.tools',
     ],
+  },
+  compiler: {
+    // ssr and displayName are configured by default
+    styledComponents: true,
   },
 });

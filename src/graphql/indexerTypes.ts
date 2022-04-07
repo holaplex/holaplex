@@ -23,6 +23,7 @@ export type Scalars = {
   Volume: any;
   bigint: any;
   timestamp: any;
+  token_standard: any;
   uuid: any;
 };
 
@@ -1198,6 +1199,7 @@ export type Metadatas = {
   primary_sale_happened: Scalars['Boolean'];
   seller_fee_basis_points: Scalars['Int'];
   symbol: Scalars['String'];
+  token_standard?: Maybe<Scalars['token_standard']>;
   update_authority_address: Scalars['String'];
   uri: Scalars['String'];
 };
@@ -1324,6 +1326,7 @@ export type Metadatas_Bool_Exp = {
   primary_sale_happened?: InputMaybe<Boolean_Comparison_Exp>;
   seller_fee_basis_points?: InputMaybe<Int_Comparison_Exp>;
   symbol?: InputMaybe<String_Comparison_Exp>;
+  token_standard?: InputMaybe<Token_Standard_Comparison_Exp>;
   update_authority_address?: InputMaybe<String_Comparison_Exp>;
   uri?: InputMaybe<String_Comparison_Exp>;
 };
@@ -1354,6 +1357,7 @@ export type Metadatas_Insert_Input = {
   primary_sale_happened?: InputMaybe<Scalars['Boolean']>;
   seller_fee_basis_points?: InputMaybe<Scalars['Int']>;
   symbol?: InputMaybe<Scalars['String']>;
+  token_standard?: InputMaybe<Scalars['token_standard']>;
   update_authority_address?: InputMaybe<Scalars['String']>;
   uri?: InputMaybe<Scalars['String']>;
 };
@@ -1449,6 +1453,7 @@ export type Metadatas_Order_By = {
   primary_sale_happened?: InputMaybe<Order_By>;
   seller_fee_basis_points?: InputMaybe<Order_By>;
   symbol?: InputMaybe<Order_By>;
+  token_standard?: InputMaybe<Order_By>;
   update_authority_address?: InputMaybe<Order_By>;
   uri?: InputMaybe<Order_By>;
 };
@@ -1479,6 +1484,8 @@ export enum Metadatas_Select_Column {
   /** column name */
   Symbol = 'symbol',
   /** column name */
+  TokenStandard = 'token_standard',
+  /** column name */
   UpdateAuthorityAddress = 'update_authority_address',
   /** column name */
   Uri = 'uri'
@@ -1495,6 +1502,7 @@ export type Metadatas_Set_Input = {
   primary_sale_happened?: InputMaybe<Scalars['Boolean']>;
   seller_fee_basis_points?: InputMaybe<Scalars['Int']>;
   symbol?: InputMaybe<Scalars['String']>;
+  token_standard?: InputMaybe<Scalars['token_standard']>;
   update_authority_address?: InputMaybe<Scalars['String']>;
   uri?: InputMaybe<Scalars['String']>;
 };
@@ -1571,6 +1579,8 @@ export enum Metadatas_Update_Column {
   SellerFeeBasisPoints = 'seller_fee_basis_points',
   /** column name */
   Symbol = 'symbol',
+  /** column name */
+  TokenStandard = 'token_standard',
   /** column name */
   UpdateAuthorityAddress = 'update_authority_address',
   /** column name */
@@ -2736,6 +2746,19 @@ export type Token_Accounts_Variance_Fields = {
   slot?: Maybe<Scalars['Float']>;
 };
 
+/** Boolean expression to compare columns of type "token_standard". All fields are combined with logical 'AND'. */
+export type Token_Standard_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['token_standard']>;
+  _gt?: InputMaybe<Scalars['token_standard']>;
+  _gte?: InputMaybe<Scalars['token_standard']>;
+  _in?: InputMaybe<Array<Scalars['token_standard']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['token_standard']>;
+  _lte?: InputMaybe<Scalars['token_standard']>;
+  _neq?: InputMaybe<Scalars['token_standard']>;
+  _nin?: InputMaybe<Array<Scalars['token_standard']>>;
+};
+
 /** columns and relationships of "twitter_handle_name_services" */
 export type Twitter_Handle_Name_Services = {
   __typename?: 'twitter_handle_name_services';
@@ -2976,6 +2999,14 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'query_root', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type NftMarketplaceQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+  address: Scalars['String'];
+}>;
+
+
+export type NftMarketplaceQuery = { __typename?: 'query_root', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, auctionHouse: string, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
+
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -3182,6 +3213,119 @@ export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export const NftMarketplaceDocument = gql`
+    query nftMarketplace($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftMarketplaceQuery__
+ *
+ * To run a query within a React component, call `useNftMarketplaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftMarketplaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftMarketplaceQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useNftMarketplaceQuery(baseOptions: Apollo.QueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(NftMarketplaceDocument, options);
+      }
+export function useNftMarketplaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(NftMarketplaceDocument, options);
+        }
+export type NftMarketplaceQueryHookResult = ReturnType<typeof useNftMarketplaceQuery>;
+export type NftMarketplaceLazyQueryHookResult = ReturnType<typeof useNftMarketplaceLazyQuery>;
+export type NftMarketplaceQueryResult = Apollo.QueryResult<NftMarketplaceQuery, NftMarketplaceQueryVariables>;
 export const NftPageDocument = gql`
     query nftPage($address: String!) {
   nft(address: $address) {

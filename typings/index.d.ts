@@ -6,4 +6,5 @@ declare module NodeJS {
 
 interface Window {
   gtag: (...args: any[]) => void;
+  fbq: (...args: any[]) => void;
 }

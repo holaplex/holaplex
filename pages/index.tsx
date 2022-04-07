@@ -50,6 +50,8 @@ import SocialLinks from '@/common/components/elements/SocialLinks';
 import { StorefrontContext } from '@/modules/storefront';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -334,21 +336,49 @@ const sorts = {
   [SortOptions.Trending]: [descend(prop('totalUncancelledBids')), ascend(prop('endsAt'))],
 };
 
-export async function getStaticProps() {
+// export async function getStaticProps() {
+//   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
+//   const selectedDaoSubdomains = await DAOStoreFrontList();
+
+//   return {
+//     props: {
+//       featuredStorefronts,
+//       selectedDaoSubdomains,
+//     },
+//   };
+// }
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (context) => {
   const featuredStorefronts = await FeaturedStoreSDK.lookup(FEATURED_STOREFRONTS_URL);
   const selectedDaoSubdomains = await DAOStoreFrontList();
 
+  const initialFilterBy: string | undefined =
+    Object.values(FilterOptions).includes(context.query.filter || '') && context.query.filter;
+
+  const initialSortBy: string | undefined =
+    Object.values(SortOptions).includes(context.query.sort || '') && context.query.sort;
+
+  const initialSearchBy: string[] | undefined = context.query.search
+    ?.split(',')
+    .map((term) => term.toLowerCase());
+
   return {
     props: {
+      initialFilterBy: initialFilterBy || FilterOptions.Auctions,
+      initialSortBy: initialSortBy || SortOptions.Trending,
+      initialSearchBy: initialSearchBy || [],
       featuredStorefronts,
       selectedDaoSubdomains,
     },
   };
-}
+};
 
 interface HomeProps {
   featuredStorefronts: StorefrontFeature[];
   selectedDaoSubdomains: String[];
+  initialSortBy: SortOptions;
+  initialFilterBy: FilterOptions;
+  initialSearchBy: string[];
 }
 
 const getDefaultFilter = () => {
@@ -358,8 +388,15 @@ const getDefaultFilter = () => {
   return FilterOptions.Auctions;
 };
 
-export default function Home({ featuredStorefronts, selectedDaoSubdomains }: HomeProps) {
+export default function Home({
+  featuredStorefronts,
+  selectedDaoSubdomains,
+  initialSortBy,
+  initialFilterBy,
+  initialSearchBy,
+}: HomeProps) {
   const { setVisible } = useWalletModal();
+  const router = useRouter();
   const { storefront, searching } = useContext(StorefrontContext);
   const { connected, connecting } = useWallet();
   const { looking } = useContext(WalletContext);
@@ -373,8 +410,12 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
       .map((_, i) => generateListingShell(i))
   );
   const [displayedListings, setDisplayedListings] = useState<Listing[]>([]);
-  const [filterBy, setFilterBy] = useState<FilterOptions>(getDefaultFilter());
-  const [sortBy, setSortBy] = useState<SortOptions>(SortOptions.Trending);
+  const [filterBy, setFilterBy] = useState<FilterOptions>(
+    // getDefaultFilter()
+    WHICHDAO ? FilterOptions.All : initialFilterBy
+  );
+  const [sortBy, setSortBy] = useState<SortOptions>(initialSortBy);
+  const [searchBy, setSearchBy] = useState<string[]>(initialSearchBy);
   const listingsTopRef = useRef<HTMLInputElement>(null);
 
   const scrollToListingTop = () => {
@@ -407,6 +448,13 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
 
   const applyListingFilterAndSort = compose<Listing[], Listing[], Listing[]>(
     filter(filters[filterBy]),
+    filter(
+      (l: Listing) =>
+        !searchBy.length ||
+        [l.storeTitle, l.subdomain, l.items.map((i) => i.name)]
+          .flat()
+          .some((w) => searchBy.some((term) => w.toLowerCase().includes(term)))
+    ),
     //@ts-ignore
     sortWith(sorts[sortBy])
   );
@@ -425,6 +473,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
 
       setAllListings(daoFilteredListings);
       setFeaturedListings(daoFilteredListings.slice(0, 5));
+
       setDisplayedListings(applyListingFilterAndSort(daoFilteredListings));
 
       setLoading(false);
@@ -456,7 +505,12 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
 
     setDisplayedListings(applyListingFilterAndSort(allListings));
     setShow(16);
-  }, [filterBy, sortBy]);
+    router.replace(
+      router.pathname +
+        `?filter=${filterBy}&sort=${sortBy}` +
+        (searchBy.length ? `&search=${searchBy.join(',')}` : '')
+    );
+  }, [filterBy, sortBy, searchBy]);
 
   return (
     <Row className="mt-10">
@@ -562,6 +616,7 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                         sortBy,
                         nrOfListingsOnDisplay: displayedListings.length,
                       });
+                      setSearchBy([]);
                       setFilterBy(filter);
                       // only reset sortBy if it does not work in the new filter
                       if (!sortOptions[filter].find((s) => s.key === sortBy)) {
@@ -589,8 +644,9 @@ export default function Home({ featuredStorefronts, selectedDaoSubdomains }: Hom
                         filterBy,
                         nrOfListingsOnDisplay: displayedListings.length,
                       });
-
+                      setSearchBy([]);
                       setSortBy(sort);
+
                       scrollToListingTop();
                     }}
                   >

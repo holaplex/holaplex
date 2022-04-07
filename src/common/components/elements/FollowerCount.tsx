@@ -15,14 +15,7 @@ type FollowerCountProps = {
 
 export const FollowerCount: FC<FollowerCountProps> = ({ profile, setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
-  if (!wallet)
-    return (
-      <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 md:mr-4">
-        <span className="text-center text-xl">
-          Connect to see <b>Followers</b> and <b>Following</b>{' '}
-        </span>
-      </div>
-    );
+  if (!wallet) return null;
   return (
     <FollowerCountContent
       wallet={wallet}
