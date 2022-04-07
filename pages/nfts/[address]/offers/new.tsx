@@ -40,7 +40,7 @@ const NewNFTOffer = ({ address }: { address: string }) => {
   const router = useRouter();
 
   const goBack = () => {
-    router.push(`/nft/${address}`);
+    router.push(`/nfts/${address}`);
   };
 
   if (called && !data?.nft && !loading) {
