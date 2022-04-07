@@ -4,7 +4,7 @@ import { Avatar, OverlappingCircles } from '../../../../pages/nfts/[address]';
 import { imgOpt } from '../../utils';
 import Link from 'next/link';
 import { Nft } from '../../../graphql/indexerTypes';
-import { AvatarSkeleton, OverlappingAvatarSkeleton, TextSkeleton } from './Skeletons';
+import { OverlappingAvatarSkeleton, TextSkeleton } from './Skeletons';
 
 const LoadingPreview = () => {
   return (
