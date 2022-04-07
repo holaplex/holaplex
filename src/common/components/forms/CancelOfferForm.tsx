@@ -17,6 +17,7 @@ interface CancelOfferFormProps {
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
+  updateOffer: () => void;
 }
 
 const { createCancelInstruction, createCancelBidReceiptInstruction, createWithdrawInstruction } =
@@ -28,6 +29,7 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
   marketplace,
   refetch,
   setOpen,
+  updateOffer,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -160,7 +162,7 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
           </Button>
         </div>
         <div>
-          <Button className={`w-full`} disabled={loading}>
+          <Button className={`w-full`} disabled={loading} onClick={updateOffer}>
             Update offer
           </Button>
         </div>

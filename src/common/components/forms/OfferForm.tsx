@@ -41,7 +41,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
     amount: zod
       .string()
       .nonempty({ message: `Must enter an amount` })
-      .regex(/[0-9]/, { message: `Must be a number` }),
+      .regex(/^[0-9.]*$/, { message: `Must be a number` }),
   });
 
   const {
@@ -211,8 +211,8 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
         </div>
         <div className={`w-full`}>
           <Button
-            disabled={loading}
-            loading={loading}
+            disabled={loading || isSubmitting}
+            loading={loading || isSubmitting}
             htmlType={`submit`}
             block
             className={`w-full`}

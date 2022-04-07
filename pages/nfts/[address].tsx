@@ -40,6 +40,7 @@ import Modal from '@/components/elements/Modal';
 import CancelOfferForm from '@/components/forms/CancelOfferForm';
 import { Marketplace, Nft, Offer } from '@/types/types';
 import { useRouter } from 'next/router';
+import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -194,6 +195,7 @@ export default function NftByAddress({ address }: { address: string }) {
   const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
   const [imgLoaded, setImgLoaded] = useState(false);
   const [offerModalVisibility, setOfferModalVisibility] = useState(false);
+  const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
   const nft = data?.nft;
   const marketplace = data?.marketplace;
 
@@ -208,6 +210,11 @@ export default function NftByAddress({ address }: { address: string }) {
 
   const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
+
+  const openOfferUpdateModal = () => {
+    setOfferModalVisibility(false);
+    setOfferUpdateModalVisibility(true);
+  };
 
   useEffect(() => {
     if (!address) return;
@@ -416,15 +423,36 @@ export default function NftByAddress({ address }: { address: string }) {
         )} */}
       </div>
       {nft && (
-        <Modal open={offerModalVisibility} setOpen={setOfferModalVisibility} title={`Cancel offer`}>
-          <CancelOfferForm
-            nft={nft as Nft | any}
-            marketplace={marketplace as Marketplace}
-            refetch={refetch}
-            offer={offer as Offer}
+        <>
+          <Modal
+            open={offerModalVisibility}
             setOpen={setOfferModalVisibility}
-          />
-        </Modal>
+            title={`Cancel offer`}
+          >
+            <CancelOfferForm
+              nft={nft as Nft | any}
+              marketplace={marketplace as Marketplace}
+              refetch={refetch}
+              offer={offer as Offer}
+              setOpen={setOfferModalVisibility}
+              updateOffer={openOfferUpdateModal}
+            />
+          </Modal>
+          <Modal
+            open={offerUpdateModalVisibility}
+            setOpen={setOfferUpdateModalVisibility}
+            title={`Update offer`}
+          >
+            <UpdateOfferForm
+              setOpen={setOfferUpdateModalVisibility}
+              nft={nft as Nft | any}
+              marketplace={marketplace as Marketplace}
+              refetch={refetch}
+              loading={loading}
+              hasListing={hasDefaultListing}
+            />
+          </Modal>
+        </>
       )}
     </CenteredContentCol>
   );

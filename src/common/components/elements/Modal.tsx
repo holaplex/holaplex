@@ -18,6 +18,10 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title }) => {
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setOpen(false));
 
+  if (!open) {
+    return null;
+  }
+
   return (
     <div
       role="dialog"
@@ -36,7 +40,7 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title }) => {
     >
       <div
         ref={modalRef}
-        className="relative flex h-full max-h-screen w-full flex-col rounded-xl bg-gray-900 p-6 text-white shadow-md sm:max-h-[30rem] sm:max-w-lg"
+        className="relative flex h-full max-h-screen w-full flex-col rounded-xl bg-gray-900 p-6 text-white shadow-md sm:h-auto sm:max-h-[30rem] sm:max-w-lg"
       >
         <button
           onClick={() => setOpen(false)}
