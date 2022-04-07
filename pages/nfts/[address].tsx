@@ -38,9 +38,11 @@ import {
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
 import CancelOfferForm from '@/components/forms/CancelOfferForm';
-import { Marketplace, Nft, Offer } from '@/types/types';
+import { Listing, Marketplace, Nft, Offer } from '@/types/types';
 import { useRouter } from 'next/router';
 import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
+import SellForm from '../../src/common/components/forms/SellForm';
+import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -196,15 +198,16 @@ export default function NftByAddress({ address }: { address: string }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [offerModalVisibility, setOfferModalVisibility] = useState(false);
   const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
+  const [sellModalVisibility, setSellModalVisibility] = useState(false);
+  const [sellCancelModalVisibility, setSellCancelModalVisibility] = useState(false);
   const nft = data?.nft;
   const marketplace = data?.marketplace;
 
   // has listed via default Holaplex marketplace (disregards others)
-  const hasDefaultListing = Boolean(
-    nft?.listings.find(
-      (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
-    )
+  const defaultListing = nft?.listings.find(
+    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
+  const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
 
@@ -332,7 +335,7 @@ export default function NftByAddress({ address }: { address: string }) {
             <div className={`grid grid-cols-1 gap-10`}>
               {!hasDefaultListing && (
                 <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
-                  <div className={`flex h-24 w-full items-center justify-between`}>
+                  <div className={`flex w-full items-center justify-between`}>
                     <div className={`flex items-center`}>
                       <Tag className={`mr-2`} />
                       <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
@@ -346,7 +349,9 @@ export default function NftByAddress({ address }: { address: string }) {
                         </Link>
                       </div>
                     )}
-                    {isOwner && <Button>List NFT</Button>}
+                    {isOwner && (
+                      <Button onClick={() => setSellModalVisibility(true)}>List NFT</Button>
+                    )}
                   </div>
                   {offer && (
                     <div
@@ -363,6 +368,22 @@ export default function NftByAddress({ address }: { address: string }) {
                       </div>
                     </div>
                   )}
+                </div>
+              )}
+              {hasDefaultListing && (
+                <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
+                  <div className={`flex w-full items-center justify-between`}>
+                    <div>
+                      <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                      <DisplaySOL amount={defaultListing?.price} />
+                    </div>
+                    <div className={`grid grid-cols-2 gap-4`}>
+                      <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
+                        Cancel listing
+                      </Button>
+                      <Button>Update price</Button>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -451,6 +472,33 @@ export default function NftByAddress({ address }: { address: string }) {
               refetch={refetch}
               loading={loading}
               hasListing={hasDefaultListing}
+            />
+          </Modal>
+          <Modal
+            open={sellModalVisibility}
+            setOpen={setSellModalVisibility}
+            title={`List NFT for sale`}
+          >
+            <SellForm
+              setOpen={setSellModalVisibility}
+              nft={nft as Nft | any}
+              refetch={refetch}
+              loading={loading}
+              marketplace={marketplace as Marketplace}
+            />
+          </Modal>
+          <Modal
+            open={sellCancelModalVisibility}
+            setOpen={setSellCancelModalVisibility}
+            title={`Cancel listing`}
+          >
+            <CancelSellForm
+              nft={nft as Nft | any}
+              refetch={refetch}
+              marketplace={marketplace as Marketplace}
+              listing={defaultListing as Listing}
+              setOpen={setSellCancelModalVisibility}
+              updateListing={() => {}}
             />
           </Modal>
         </>
