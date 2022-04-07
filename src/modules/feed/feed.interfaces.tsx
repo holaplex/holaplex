@@ -64,7 +64,7 @@ export enum LISTING_ACTIVITY_E {
 export interface IProfile {
   pfp?: string;
   pubkey: string;
-  handle?: string;
+  handle?: string | null;
   followers?: number;
   following?: number;
   nfts?: NFT[];
@@ -83,10 +83,19 @@ export interface IFeedItem {
   id: string;
   timestamp: string; // ISO Date // at
   type: ActivityType;
-  from?: IProfile; // if from is empty, defualt to creator
+  sourceUser?: IProfile; // if from is empty, defualt to creator
   // creator?: string; // creator can be empty if the activity is not related to an NFT (like following)
-  to?: IProfile;
+  toUser?: IProfile;
   solAmount?: number;
+
+  nft?: NFT;
+  misc?: {
+    bidCancelled?: boolean;
+    wonListing?: boolean;
+    // hasUncancelledBid
+    // showClaimUncancelledBid
+  };
+  // not sure if these should make it
   listing?: {
     // TODO Source form grapql
     address: string;
@@ -102,12 +111,5 @@ export interface IFeedItem {
     faviconUrl: string;
     logoUrl: string;
     bannerUrl: string;
-  };
-  nft?: NFT;
-  misc?: {
-    bidCancelled?: boolean;
-    wonListing?: boolean;
-    // hasUncancelledBid
-    // showClaimUncancelledBid
   };
 }

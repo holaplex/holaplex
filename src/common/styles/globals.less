@@ -115,6 +115,19 @@ input[type='checkbox'] {
   box-sizing: inherit;
 }
 
+.sol-input {
+  @apply relative;
+}
+
+.sol-input .input {
+  @apply pl-10;
+}
+
+.sol-input:before {
+  content: '◎';
+  @apply h-full absolute px-4 flex items-center text-gray-500;
+}
+
 .select-inline-dropdown .ant-select-item {
   font-size: 12px;
 

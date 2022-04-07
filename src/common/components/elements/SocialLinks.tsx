@@ -5,7 +5,9 @@ import Image from 'next/image';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import DiscordLogo from '@/assets/images/discord-logo.svg';
-import { useAnalytics } from '@/modules/ganalytics/AnalyticsProvider';
+import MediumLogo from '@/assets/images/medium-blog-logo.svg';
+
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 const Container = styled.div`
   ${sv.flexRow};
@@ -30,7 +32,7 @@ const SocialLink = styled.a`
 const SocialLinks = () => {
   const { track } = useAnalytics();
 
-  function trackSocialLink(network: 'Twitter' | 'Github' | 'Discord') {
+  function trackSocialLink(network: 'Twitter' | 'Medium' | 'Github' | 'Discord') {
     track('Social link Click', {
       event_category: 'Misc',
       event_label: network,
@@ -67,12 +69,20 @@ const SocialLinks = () => {
         <FeatherIcon icon="github" />
       </SocialLink>
       <SocialLink
-        href="https://discord.com/invite/TEu7Qx5ux3"
+        href="https://discord.com/invite/holaplex"
         target="_blank"
         rel="noreferrer"
         onClick={() => trackSocialLink('Discord')}
       >
         <Image width={24} height={24} src={DiscordLogo} alt="discord" />
+      </SocialLink>
+      <SocialLink
+        href=" https://medium.com/holaplex"
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => trackSocialLink('Medium')}
+      >
+        <Image width={24} height={24} src={MediumLogo} alt="medium blog" />
       </SocialLink>
     </Container>
   );

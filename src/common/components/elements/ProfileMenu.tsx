@@ -6,20 +6,18 @@ import Link from 'next/link';
 import cx from 'classnames';
 import React from 'react';
 import { Tab } from '@headlessui/react';
-
-interface Props {
-  wallet: string;
-}
+import { useProfileData } from '@/common/context/ProfileData';
 
 enum TabRoute {
   OWNED,
   ACTIVITY,
 }
 
-export const ProfileMenu: FC<Props> = ({ wallet }) => {
+export const ProfileMenu: FC = () => {
+  const { publicKey } = useProfileData();
   const router = useRouter();
   const path = router.asPath;
-  const routeIndex = path.includes('/nfts') ? TabRoute.OWNED : TabRoute.ACTIVITY;
+  const routeIndex = path.includes('/activity') ? TabRoute.ACTIVITY : TabRoute.OWNED;
   const [selectedIndex, setSelectedIndex] = useState(routeIndex);
 
   return (
@@ -29,9 +27,9 @@ export const ProfileMenu: FC<Props> = ({ wallet }) => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                onClick={() => router.push(`/profiles/${wallet}/nfts`)}
+                onClick={() => router.push(`/profiles/${publicKey}/nfts`)}
                 className={cx(
-                  'flex h-full w-40 items-center justify-center',
+                  'flex h-full w-1/2 items-center justify-center sm:w-40',
                   selected ? 'border-b-2 border-white' : 'text-gray-300'
                 )}
               >
@@ -43,9 +41,9 @@ export const ProfileMenu: FC<Props> = ({ wallet }) => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                onClick={() => router.push(`/profiles/${wallet}`)}
+                onClick={() => router.push(`/profiles/${publicKey}/activity`)}
                 className={cx(
-                  'flex h-full w-40 items-center justify-center align-middle',
+                  'flex h-full w-1/2 items-center justify-center align-middle sm:w-40',
                   selected ? 'border-b-2 border-white' : 'text-gray-300'
                 )}
               >

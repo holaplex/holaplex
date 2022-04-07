@@ -4,7 +4,7 @@ import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useActivityPageLazyQuery } from 'src/graphql/indexerTypes';
+import { useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
@@ -17,61 +17,23 @@ import Bugsnag from '@bugsnag/js';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { ActivityType, IFeedItem } from '@/modules/feed/feed.interfaces';
+import { IFeedItem } from '@/modules/feed/feed.interfaces';
 import { ActivityCard } from './ActivityCard';
-import { Combobox } from '@headlessui/react';
-import { classNames } from './ListingPreview';
+import { useProfileData } from '@/common/context/ProfileData';
+import { LoadingBox, LoadingLine } from './LoadingPlaceholders';
 
-const randomBetween = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
-
-export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) => {
-  // const { data: twitterHandle } = useTwitterHandle(publicKey);
-  const [didPerformInitialLoad, setDidPerformInitialLoad] = useState(false);
+export const ActivityContent = () => {
+  const { publicKey: pk } = useProfileData();
+  const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
-  const [queryActivityPage, activityPage] = useActivityPageLazyQuery();
-  const { publicKey: connectedPubkey } = useWallet();
+  const [searchFocused, setSearchFocused] = useState(false);
+  const activityPage = useActivityPageQuery({
+    variables: {
+      address: publicKey.toBase58(),
+    },
+  });
 
-  useEffect(() => {
-    if (!publicKey) return;
-    setDidPerformInitialLoad(true);
-
-    try {
-      queryActivityPage({
-        variables: {
-          address: publicKey.toString(),
-        },
-      });
-    } catch (error: any) {
-      console.error(error);
-      console.log('faield to query activity for pubkey', publicKey.toString());
-      Bugsnag.notify(error);
-    }
-  }, [publicKey, queryActivityPage]);
-
-  const isLoading = !didPerformInitialLoad || activityPage.loading;
-
-  // const hasItems = !!activityPage.data?.wallet?.bids.length;
-
-  // const bids =
-  //   activityPage.data?.wallet?.bids.slice() ||
-  //   // .sort(
-  //   //   (a, b) =>
-  //   //     DateTime.fromFormat(b.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis() -
-  //   //     DateTime.fromFormat(a.lastBidTime, RUST_ISO_UTC_DATE_FORMAT).toMillis()
-  //   // )
-  //   [];
-
-  const isYou = connectedPubkey?.toBase58() === publicKey?.toBase58();
-
-  // const getDisplayName = (twitterHandle?: string, pubKey?: PublicKey | null) => {
-  //   if (isYou) return 'You';
-
-  //   if (twitterHandle) return twitterHandle;
-  //   if (pubKey) return showFirstAndLastFour(pubKey.toBase58());
-  //   return 'Loading';
-  // };
+  const isLoading = activityPage.loading;
 
   const activityItems = useMemo(
     () =>
@@ -87,7 +49,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
 
         const itemBase: Partial<IFeedItem> = {
           id: bid.bidderAddress + bid.listingAddress,
-          from: {
+          sourceUser: {
             pubkey: bid.bidderAddress,
             // handle // fetch async?
           },
@@ -117,7 +79,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             id: itemBase.id + activityType,
             type: activityType,
             timestamp: listing.bids[0].lastBidTime, // more or less
-            to:
+            toUser:
               activityType === 'LISTING_LOST'
                 ? {
                     pubkey: listing.bids[0].bidderAddress,
@@ -137,7 +99,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
             id: itemBase.id + activityType,
             type: activityType,
             timestamp: listing.bids[0].lastBidTime, // more or less
-            to: {
+            toUser: {
               pubkey: listing.bids[toIdx].bidderAddress,
             },
             solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
@@ -175,7 +137,15 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
           hideLabel
           value={activityFilter}
           onChange={(e) => setActivityFilter(e.target.value)}
-          leadingIcon={<FeatherIcon icon="search" aria-hidden="true" />}
+          onFocus={() => setSearchFocused(true)}
+          onBlur={() => setSearchFocused(false)}
+          leadingIcon={
+            <FeatherIcon
+              icon="search"
+              aria-hidden="true"
+              className={searchFocused ? 'text-white' : 'text-gray-500'}
+            />
+          }
           placeholder="Search"
         />
       </div>
@@ -189,6 +159,7 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
       <div className="space-y-4">
         {isLoading ? (
           <>
+            <LoadingActivitySkeletonBoxCircleLong />
             <LoadingActivitySkeletonBoxSquareShort />
             <LoadingActivitySkeletonBoxCircleLong />
             <LoadingActivitySkeletonBoxSquareShort />
@@ -201,14 +172,14 @@ export const ActivityContent = ({ publicKey }: { publicKey: PublicKey | null }) 
         ) : filteredActivityItems.length ? (
           filteredActivityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
         ) : (
-          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4">
-            <NoActivityTitle>
+          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+            <span className="text-center text-2xl font-semibold">
               No activity
               {!!activityItems.length && !filteredActivityItems.length && ' for this filter'}
-            </NoActivityTitle>
-            <NoActivityText>
+            </span>
+            <span className="mt-2 text-gray-300 ">
               Activity associated with this user’s wallet will show up here
-            </NoActivityText>
+            </span>
           </div>
         )}
       </div>
@@ -220,12 +191,12 @@ const LoadingActivitySkeletonBoxSquareShort = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingBox $borderRadius="4px" />
+        <LoadingBox $borderRadius="8px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
           <LoadingLine $width="60%" />
-          <LoadingLine $width="25%" />
+          <LoadingLine $width="25%" $height="16px" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
@@ -236,93 +207,21 @@ const LoadingActivitySkeletonBoxCircleLong = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
-        <LoadingBox $borderRadius="100%" />
+        <LoadingBox $borderRadius="8px" />
       </CenteredCol>
       <ContentContainer>
         <LoadingLinesContainer>
           <LoadingLine $width="100%" />
-          <LoadingLine $width="25%" />
+          <LoadingLine $width="25%" $height="16px" />
         </LoadingLinesContainer>
       </ContentContainer>
     </ActivityBoxContainer>
   );
 };
 
-const LoadingBox = styled.div<{ $borderRadius: '4px' | '100%' }>`
-  width: 52px;
-  height: 52px;
-  background: #707070;
-  border-radius: ${({ $borderRadius }) => $borderRadius};
-  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/300% 100%;
-  animation: shimmer 2.5s infinite;
-  @keyframes shimmer {
-    100% {
-      -webkit-mask-position: left;
-    }
-  }
-`;
-
 const LoadingLinesContainer = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const LoadingLine = styled.div<{ $width: string }>`
-  width: ${({ $width }) => $width};
-  height: 16px;
-  background: #707070;
-  border-radius: 4px;
-  margin-top: 8px;
-  -webkit-mask: linear-gradient(-60deg, #000 30%, #000a, #000 70%) right/400% 100%;
-  animation: shimmer 2.5s infinite;
-  @keyframes shimmer {
-    100% {
-      -webkit-mask-position: left;
-    }
-  }
-`;
-
-type ActivityBoxProps = {
-  relatedImageUrl: string;
-  content: React.ReactElement;
-  action: React.ReactElement;
-  href: string;
-  isPFPImage?: boolean;
-};
-
-const ShowOnMobile = styled.div<{ display: string }>`
-  display: ${(props) => props.display};
-  ${mq('sm')} {
-    display: none;
-  }
-`;
-
-const HideOnMobile = styled.div<{ display: string }>`
-  display: none;
-  ${mq('sm')} {
-    display: ${(props) => props.display};
-  }
-`;
-
-const ChevronRightContainer = styled.div`
-  display: flex;
-  align-items: center;
-  ${mq('sm')} {
-    display: none;
-  }
-`;
-
-const ActivityButton = styled(AnchorButton)`
-  display: none;
-  ${mq('sm')} {
-    display: inline-flex;
-  }
-`;
-
-const NoActivityContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 `;
 
 const NoActivityTitle = styled.span`
@@ -362,6 +261,7 @@ const ContentContainer = styled.div`
   flex: 1;
   margin-left: 16px;
   margin-right: 16px;
+  align-items: center;
 `;
 
 const CenteredCol = styled(Col)`
@@ -370,15 +270,10 @@ const CenteredCol = styled(Col)`
   justify-content: center;
 `;
 
-const ContentCol = styled(CenteredCol)`
-  height: 100%;
-  justify-content: center;
-`;
-
 const ActivityBoxContainer = styled.div`
   display: flex;
   flex: 1;
-  padding: 10px;
+  padding: 16px;
   border: 1px solid #262626;
   box-sizing: border-box;
   border-radius: 8px;
@@ -394,22 +289,4 @@ const NFTImage = styled(Image)<{ $isPFPImage: boolean }>`
       : css`
           border-radius: 2px;
         `}
-`;
-
-const TimeText = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 16px;
-  color: #707070;
-`;
-
-const ItemText = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 16px;
-  color: #a8a8a8;
 `;

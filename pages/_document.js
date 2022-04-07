@@ -1,6 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import { OLD_GOOGLE_ANALYTICS_ID, GA4_ID } from '../src/modules/ganalytics/AnalyticsProvider';
+import { OLD_GOOGLE_ANALYTICS_ID, GA4_ID, META_ID } from '../src/common/context/AnalyticsProvider';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -32,6 +32,8 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* meta .dev verification. Will remove in future */}
+          <meta name="facebook-domain-verification" content={'pvzsx7s3k2om21tjz7kmt6gpr0vaun'} />
           {(OLD_GOOGLE_ANALYTICS_ID || GA4_ID) && (
             <>
               <script
@@ -53,6 +55,19 @@ export default class MyDocument extends Document {
                 }}
               />
             </>
+          )}
+          {META_ID && (
+            <noscript>
+              <img
+                height="1"
+                width="1"
+                alt="t"
+                style={{
+                  display: 'none',
+                }}
+                src={`https://www.facebook.com/tr?id=${META_ID}&ev=PageView&noscript=1`}
+              />
+            </noscript>
           )}
         </Head>
         <body>

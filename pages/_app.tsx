@@ -16,7 +16,7 @@ import {
   AnalyticsProvider,
   OLD_GOOGLE_ANALYTICS_ID,
   GA4_ID,
-} from '@/modules/ganalytics/AnalyticsProvider';
+} from '@/common/context/AnalyticsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -103,6 +103,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         defaultOptions: {
           queries: {
             retry: false,
+            // retry: (failureCount, error) => {
+            //   console.log('failure count', failureCount, error);
+            //   return failureCount < 4;
+            //   // return 3;
+            // },
           },
         },
       }),
@@ -121,14 +126,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <QueryClientProvider client={queryClient}>
-        <ToastContainer
-          autoClose={5000}
-          hideProgressBar={true}
-          position={'bottom-center'}
-          className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
-          toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
-          closeButton={() => <Close color="#fff" />}
-        />
         <ToastContainer
           autoClose={5000}
           hideProgressBar={true}

@@ -7,35 +7,48 @@ query nftPage($address: String!) {
     description
     image
     primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+
     creators {
       address
       verified
     }
-    # owner {
-    #   address
-    # }
-    # listings {
-    #   address
-    #   tradeState
-    #   seller
-    #   metadata
-    #   auctionHouse
-    #   price
-    #   tradeStateBump
-    #   createdAt
-    #   canceledAt
-    # }
-    # offers {
-    #   address
-    #   tradeState
-    #   buyer
-    #   metadata
-    #   auctionHouse
-    #   price
-    #   tradeStateBump
-    #   tokenAccount
-    #   createdAt
-    #   canceledAt
-    # }
+    owner {
+      address
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
   }
 }
