@@ -212,12 +212,20 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
       <div className={`mt-8 flex items-start justify-between`}>
         <div className={`flex flex-col justify-start`}>
           <p className={`text-base font-medium text-gray-300`}>Floor price</p>
-          <DisplaySOL className={`font-medium`} amount={Number(LAMPORTS_PER_SOL)} />
+          <DisplaySOL
+            className={`font-medium`}
+            amount={Number(marketplace.auctionHouse.stats?.floor) / LAMPORTS_PER_SOL}
+          />
         </div>
         <div className={`flex flex-col justify-end`}>
           <p className={`text-base font-medium text-gray-300`}>Average sale price</p>
           <div className={`ml-2`}>
-            <DisplaySOL className={`font-medium`} amount={Number(LAMPORTS_PER_SOL)} />
+            <DisplaySOL
+              className={`font-medium`}
+              amount={Number(
+                Number(marketplace.auctionHouse.stats?.average) || 0 / LAMPORTS_PER_SOL
+              )}
+            />
           </div>
         </div>
       </div>

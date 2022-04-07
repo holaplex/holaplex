@@ -348,6 +348,21 @@ export default function NftByAddress({ address }: { address: string }) {
               {/* Not listed */}
               {!hasDefaultListing && (
                 <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
+                  {isOwner && hasOffers && (
+                    <div
+                      className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6`}
+                    >
+                      <div>
+                        <h3 className={`text-base font-medium text-gray-300`}>Highest offer</h3>
+                        <DisplaySOL amount={topOffer?.price} />
+                      </div>
+                      <div className={`flex w-1/2 sm:flex`}>
+                        <Button secondary className={`w-full bg-gray-900 text-white`}>
+                          Accept offer
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                   <div className={`flex w-full items-center justify-between`}>
                     <div className={`flex items-center`}>
                       <Tag className={`mr-2`} />
