@@ -28,4 +28,8 @@ module.exports = withPlugins(plugins, {
       'assets4.holaplex.tools',
     ],
   },
+  compiler: {
+    // ssr and displayName are configured by default
+    styledComponents: true,
+  },
 });
