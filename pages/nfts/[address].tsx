@@ -210,9 +210,14 @@ export default function NftByAddress({ address }: { address: string }) {
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
+  const offers = nft?.offers;
 
   const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
+
+  const topOffers = offers?.sort((a, b) => a.price - b.price);
+  const topOffer = topOffers?.[0];
+  const hasOffers = Boolean(topOffer);
 
   const openOfferUpdateModal = () => {
     setOfferModalVisibility(false);
@@ -321,7 +326,9 @@ export default function NftByAddress({ address }: { address: string }) {
                 })}
               >
                 <div className="flex flex-1 flex-col items-end">
-                  <div className="label mb-1 self-end text-gray-300">Owned by</div>
+                  <div className="label mb-1 self-end text-gray-300">
+                    {hasDefaultListing ? `Listed by` : `Owned by`}
+                  </div>
                   {nft?.owner?.address && (
                     <Link href={`/profiles/${nft?.owner?.address}`}>
                       <a>
@@ -340,6 +347,12 @@ export default function NftByAddress({ address }: { address: string }) {
                       <Tag className={`mr-2`} />
                       <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
                     </div>
+                    {hasAddedOffer && (
+                      <ul className={`flex flex-col sm:hidden`}>
+                        <li className={`text-base text-gray-300`}>Your offer </li>
+                        <DisplaySOL amount={offer?.price} />
+                      </ul>
+                    )}
                     {!hasAddedOffer && !isOwner && (
                       <div>
                         <Link href={`/nfts/${nft?.address}/offers/new`}>
@@ -355,15 +368,18 @@ export default function NftByAddress({ address }: { address: string }) {
                   </div>
                   {offer && (
                     <div
-                      className={`flex items-center justify-between border-t border-gray-700 pt-6`}
+                      className={`mt-6 flex items-center justify-center border-t border-gray-700 pt-6 sm:justify-between`}
                     >
-                      <ul className={`flex flex-col`}>
+                      <ul className={`mb-0 hidden flex-col sm:flex`}>
                         <li className={`text-base text-gray-300`}>Your offer </li>
                         <DisplaySOL amount={offer?.price} />
                       </ul>
-                      <div>
+                      <div className={`grid w-full grid-cols-2 gap-4 sm:w-auto`}>
                         <Button secondary onClick={() => setOfferModalVisibility(true)}>
                           Cancel offer
+                        </Button>
+                        <Button onClick={() => setOfferUpdateModalVisibility(true)}>
+                          Update offer
                         </Button>
                       </div>
                     </div>
@@ -372,18 +388,86 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
               {hasDefaultListing && (
                 <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
+                  {isOwner && hasOffers && (
+                    <div
+                      className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6`}
+                    >
+                      <div>
+                        <h3 className={`text-base font-medium text-gray-300`}>Highest offer</h3>
+                        <DisplaySOL amount={topOffer?.price} />
+                      </div>
+                      <div className={`hidden w-1/2 sm:flex`}>
+                        <Button className={`w-full`}>Accept offer</Button>
+                      </div>
+                      <div className={`sm:hidden`}>
+                        <h3 className={`flex text-base font-medium text-gray-300`}>Price</h3>
+                        <DisplaySOL amount={defaultListing?.price} />
+                      </div>
+                    </div>
+                  )}
                   <div className={`flex w-full items-center justify-between`}>
-                    <div>
+                    <div className={`hidden sm:inline-block`}>
                       <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
                       <DisplaySOL amount={defaultListing?.price} />
                     </div>
-                    <div className={`grid grid-cols-2 gap-4`}>
-                      <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
-                        Cancel listing
-                      </Button>
-                      <Button>Update price</Button>
-                    </div>
+                    {isOwner ? (
+                      <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
+                        <div className={`col-span-2 sm:hidden`}>
+                          <Button className={`w-full`}>Accept offer</Button>
+                        </div>
+                        <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
+                          Cancel listing
+                        </Button>
+                        <Button secondary className={`sm:bg-white sm:text-black`}>
+                          Update price
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <ul className={`mb-0 flex flex-col items-center sm:hidden`}>
+                          <li className={`text-base text-gray-300`}>Your offer </li>
+                          <DisplaySOL amount={offer?.price} />
+                        </ul>
+                        <div
+                          className={` ${
+                            hasAddedOffer ? `w-1/2` : `grid grid-cols-2`
+                          } hidden gap-4 sm:flex`}
+                        >
+                          {!hasAddedOffer && (
+                            <Link href={`/nfts/${nft?.address}/offers/new`}>
+                              <a>
+                                <Button secondary>Make offer</Button>
+                              </a>
+                            </Link>
+                          )}
+                          <Button className={`w-full`}>Buy now</Button>
+                        </div>
+                      </>
+                    )}
                   </div>
+                  {offer && (
+                    <div
+                      className={`mt-6 flex items-center justify-center border-t border-gray-700 pt-6 sm:justify-between`}
+                    >
+                      <ul className={`mb-0 hidden flex-col items-center sm:flex`}>
+                        <li className={`text-base text-gray-300`}>Your offer </li>
+                        <DisplaySOL amount={offer?.price} />
+                      </ul>
+                      <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
+                        <Button className={`col-span-2 w-full sm:hidden`}>Buy now</Button>
+                        <Button secondary onClick={() => setOfferModalVisibility(true)}>
+                          Cancel offer
+                        </Button>
+                        <Button
+                          onClick={() => setOfferUpdateModalVisibility(true)}
+                          secondary
+                          className={`sm:bg-white sm:text-black`}
+                        >
+                          Update offer
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
