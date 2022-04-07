@@ -249,7 +249,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
               amount={auctionHouseFee}
             />
 
-            <li className={`mt-5 border-t border-gray-700 pt-3`}>
+            <div className={`mt-5 border-t border-gray-700 pt-3`}>
               <FeeItem
                 result={true}
                 title={`You will receive`}
@@ -258,7 +258,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
                 }
                 amount={listPrice - royalties - auctionHouseFee}
               />
-            </li>
+            </div>
           </ul>
           <div className={`mt-12 w-full`}>
             <Button
