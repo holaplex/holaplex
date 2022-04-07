@@ -1,5 +1,5 @@
 import React, { Dispatch, FC, SetStateAction } from 'react';
-import { Nft, Marketplace } from '@/types/types';
+import { Nft, Marketplace, Listing } from '@/types/types';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '../elements/NFTPreview';
@@ -32,6 +32,7 @@ interface UpdateOfferFormProps {
   ) => Promise<ApolloQueryResult<None>>;
   loading: boolean;
   hasListing: boolean;
+  listing: Listing;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
 
@@ -57,6 +58,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   refetch,
   loading = false,
   hasListing = false,
+  listing,
   setOpen,
 }) => {
   const { publicKey, signTransaction, signAllTransactions } = useWallet();
@@ -270,7 +272,15 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
     <div>
       {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
       <div className={`mt-8 flex items-start justify-between`}>
-        {!hasListing && (
+        {hasListing ? (
+          <div className={`flex flex-col justify-start`}>
+            <p className={`mb-2 text-left text-base font-medium text-gray-300`}>Price</p>
+            <DisplaySOL
+              className={`justify-start text-right font-medium`}
+              amount={Number(listing?.price)}
+            />
+          </div>
+        ) : (
           <div className={`flex items-center`}>
             <Tag className={`mr-2`} />
             <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>

@@ -44,6 +44,7 @@ import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
 import SellForm from '../../src/common/components/forms/SellForm';
 import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
 import BuyForm from '../../src/common/components/forms/BuyForm';
+import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -196,11 +197,14 @@ export default function NftByAddress({ address }: { address: string }) {
   const router = useRouter();
 
   const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
+
   const [imgLoaded, setImgLoaded] = useState(false);
   const [offerModalVisibility, setOfferModalVisibility] = useState(false);
   const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
   const [sellModalVisibility, setSellModalVisibility] = useState(false);
   const [sellCancelModalVisibility, setSellCancelModalVisibility] = useState(false);
+  const [sellUpdateModalVisibility, setSellUpdateModalVisibility] = useState(false);
+
   const nft = data?.nft;
   const marketplace = data?.marketplace;
 
@@ -213,7 +217,6 @@ export default function NftByAddress({ address }: { address: string }) {
   const hasAddedOffer = Boolean(offer);
   const offers = nft?.offers;
 
-  const isListed = nft?.listings.find((listing) => listing.auctionHouse);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
   const topOffers = offers?.sort((a, b) => a.price - b.price);
@@ -341,6 +344,8 @@ export default function NftByAddress({ address }: { address: string }) {
               </div>
             </div>
             <div className={`grid grid-cols-1 gap-10`}>
+              {/* TODO: cleanup this conditional mess in favor of a component that handles all the different states */}
+              {/* Not listed */}
               {!hasDefaultListing && (
                 <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
                   <div className={`flex w-full items-center justify-between`}>
@@ -406,22 +411,68 @@ export default function NftByAddress({ address }: { address: string }) {
                       </div>
                     </div>
                   )}
+                  {!hasOffers && (
+                    <div
+                      className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6 sm:hidden`}
+                    >
+                      <div>
+                        <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                        <DisplaySOL amount={defaultListing?.price} />
+                      </div>
+                      <div>
+                        <Button
+                          className={`w-full`}
+                          onClick={() => setSellUpdateModalVisibility(true)}
+                        >
+                          Update price
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   <div className={`flex w-full items-center justify-between`}>
                     <div className={`hidden sm:inline-block`}>
                       <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
                       <DisplaySOL amount={defaultListing?.price} />
                     </div>
+
                     {isOwner ? (
                       <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
-                        <div className={`col-span-2 sm:hidden`}>
-                          <Button className={`w-full`}>Accept offer</Button>
-                        </div>
-                        <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
-                          Cancel listing
-                        </Button>
-                        <Button secondary className={`sm:bg-white sm:text-black`}>
-                          Update price
-                        </Button>
+                        {hasOffers && (
+                          <>
+                            <div className={`col-span-2 sm:hidden`}>
+                              <Button className={`w-full`}>Accept offer</Button>
+                            </div>
+                            <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
+                              Cancel listing
+                            </Button>
+                            <Button
+                              secondary
+                              className={`sm:bg-white sm:text-black`}
+                              onClick={() => setSellUpdateModalVisibility(true)}
+                            >
+                              Update price
+                            </Button>
+                          </>
+                        )}
+                        {!hasOffers && hasDefaultListing && (
+                          <div className={`col-span-2 sm:flex`}>
+                            <Button
+                              secondary
+                              onClick={() => setSellCancelModalVisibility(true)}
+                              className={`w-full sm:mr-4`}
+                            >
+                              Cancel listing
+                            </Button>
+                            <Button
+                              secondary
+                              className={`hidden sm:flex sm:bg-white sm:text-black`}
+                              onClick={() => setSellUpdateModalVisibility(true)}
+                            >
+                              Update price
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <>
@@ -612,6 +663,7 @@ export default function NftByAddress({ address }: { address: string }) {
             title={`Update offer`}
           >
             <UpdateOfferForm
+              listing={defaultListing as Listing}
               setOpen={setOfferUpdateModalVisibility}
               nft={nft as Nft | any}
               marketplace={marketplace as Marketplace}
@@ -645,6 +697,20 @@ export default function NftByAddress({ address }: { address: string }) {
               listing={defaultListing as Listing}
               setOpen={setSellCancelModalVisibility}
               updateListing={() => {}}
+            />
+          </Modal>
+          <Modal
+            open={sellUpdateModalVisibility}
+            setOpen={setSellUpdateModalVisibility}
+            title={`Update listing price`}
+          >
+            <UpdateSellForm
+              nft={nft as Nft | any}
+              refetch={refetch}
+              marketplace={marketplace as Marketplace}
+              listing={defaultListing as Listing}
+              setOpen={setSellUpdateModalVisibility}
+              offer={topOffer as Offer}
             />
           </Modal>
         </>

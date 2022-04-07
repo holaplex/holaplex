@@ -44,7 +44,7 @@ const schema = zod.object({
     .regex(/^[0-9.]*$/, { message: `Must be a number` }),
 });
 
-const FeeItem = ({
+export const FeeItem = ({
   sellerFeeBasisPoints,
   amount,
   title,

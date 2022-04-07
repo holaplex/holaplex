@@ -253,6 +253,10 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
     }
   };
 
+  if (isOwner) {
+    return null;
+  }
+
   return (
     <form className={`flex w-full ${className}`} onSubmit={handleSubmit(buyTx)}>
       <Button

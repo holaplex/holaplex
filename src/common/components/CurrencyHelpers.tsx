@@ -23,3 +23,20 @@ export const DisplaySOL: FC<DisplaySOLProps> = ({
       {iconVariants[iconVariant]} {amount / LAMPORTS_PER_SOL}
     </b>
   ) : null;
+
+export const PriceDisplay = ({
+  price,
+  title,
+  className,
+}: {
+  price: number;
+  title: string;
+  className?: string;
+}) => {
+  return (
+    <div className={className}>
+      <h3 className={`text-base font-medium text-gray-300`}>{title}</h3>
+      <DisplaySOL amount={price} />
+    </div>
+  );
+};
