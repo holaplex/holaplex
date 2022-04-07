@@ -25,6 +25,7 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
+  GlowWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import {
   ConnectionProvider,
@@ -32,7 +33,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -93,6 +94,7 @@ const HolaplexApp = ({ Component, pageProps }: AppProps) => {
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
+      new GlowWalletAdapter()
     ],
     [network]
   );
@@ -102,7 +104,7 @@ const HolaplexApp = ({ Component, pageProps }: AppProps) => {
     []
   );
 
-  const apolloClient = useApollo(pageProps.initialApolloState);
+  const apolloClient = useApollo(pageProps.initialApolloState as NormalizedCacheObject | undefined | null);
 
   return (
     <>
@@ -116,14 +118,6 @@ const HolaplexApp = ({ Component, pageProps }: AppProps) => {
       </Head>
 
       <QueryClientProvider client={queryClient}>
-        <ToastContainer
-          autoClose={5000}
-          hideProgressBar={true}
-          position={'bottom-center'}
-          className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
-          toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
-          closeButton={() => <Close color="#fff" />}
-        />
         <ToastContainer
           autoClose={5000}
           hideProgressBar={true}
