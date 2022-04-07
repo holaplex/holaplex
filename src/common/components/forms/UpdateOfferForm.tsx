@@ -25,7 +25,7 @@ interface UpdateOfferFormSchema {
 }
 
 interface UpdateOfferFormProps {
-  nft?: Nft | null;
+  nft?: Nft;
   marketplace: Marketplace;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -44,6 +44,13 @@ const {
   createDepositInstruction,
 } = AuctionHouseProgram.instructions;
 
+const schema = zod.object({
+  amount: zod
+    .string()
+    .nonempty({ message: `Must be an amount` })
+    .regex(/^[0-9.]*$/, { message: `Must be a number` }),
+});
+
 const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   nft,
   marketplace,
@@ -57,13 +64,6 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
 
   const currOffer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasCurrOffer = Boolean(currOffer);
-
-  const schema = zod.object({
-    amount: zod
-      .string()
-      .nonempty({ message: `Must be an amount` })
-      .regex(/^[0-9.]*$/, { message: `Must be a number` }),
-  });
 
   const {
     handleSubmit,
