@@ -238,8 +238,6 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
       await connection.confirmTransaction(signature, `confirmed`);
 
-      toast.success(`Update listing confirmed`);
-
       await refetch();
 
       toast.success('Update listing confirmed.');
