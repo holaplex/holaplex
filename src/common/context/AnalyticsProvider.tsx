@@ -78,7 +78,6 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const pubkey = wallet.publicKey?.toBase58();
 
   useEffect(() => {
-    console.log('host', window.location.host);
     if (pubkey) {
       track('Wallet Connection Made', {
         event_category: 'Global',
