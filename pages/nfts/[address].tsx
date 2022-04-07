@@ -43,6 +43,7 @@ import { useRouter } from 'next/router';
 import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
 import SellForm from '../../src/common/components/forms/SellForm';
 import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
+import BuyForm from '../../src/common/components/forms/BuyForm';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -424,10 +425,46 @@ export default function NftByAddress({ address }: { address: string }) {
                       </div>
                     ) : (
                       <>
-                        <ul className={`mb-0 flex flex-col items-center sm:hidden`}>
-                          <li className={`text-base text-gray-300`}>Your offer </li>
-                          <DisplaySOL amount={offer?.price} />
-                        </ul>
+                        {hasAddedOffer ? (
+                          <>
+                            <ul className={`mb-0 flex flex-col items-center sm:hidden`}>
+                              <li className={`text-base text-gray-300`}>Your offer </li>
+                              <DisplaySOL amount={offer?.price} />
+                            </ul>
+                            <ul className={`mb-0 flex flex-col  justify-end text-right sm:hidden`}>
+                              <li className={`text-right text-base text-gray-300`}>Price</li>
+                              <DisplaySOL amount={defaultListing?.price} />
+                            </ul>
+                          </>
+                        ) : (
+                          <div className={`flex w-full flex-col sm:hidden`}>
+                            <div className={`flex w-full items-center justify-between`}>
+                              <ul className={`mb-0 flex flex-col items-center sm:hidden`}>
+                                <li className={`text-base text-gray-300`}>Price</li>
+                                <DisplaySOL amount={defaultListing?.price} />
+                              </ul>
+                              <div className={`w-1/2 sm:hidden`}>
+                                <BuyForm
+                                  nft={nft as Nft | any}
+                                  marketplace={marketplace as Marketplace}
+                                  listing={defaultListing as Listing}
+                                  refetch={refetch}
+                                  className={`w-full`}
+                                />
+                              </div>
+                            </div>
+                            <div className={`mt-4 flex w-full border-t border-gray-700 pt-4`}>
+                              <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                <a className={`w-full`}>
+                                  <Button className={`w-full`} secondary>
+                                    Make offer
+                                  </Button>
+                                </a>
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+
                         <div
                           className={` ${
                             hasAddedOffer ? `w-1/2` : `grid grid-cols-2`
@@ -440,7 +477,13 @@ export default function NftByAddress({ address }: { address: string }) {
                               </a>
                             </Link>
                           )}
-                          <Button className={`w-full`}>Buy now</Button>
+                          <BuyForm
+                            nft={nft as Nft | any}
+                            marketplace={marketplace as Marketplace}
+                            listing={defaultListing as Listing}
+                            refetch={refetch}
+                            className={`w-full`}
+                          />
                         </div>
                       </>
                     )}
@@ -449,22 +492,41 @@ export default function NftByAddress({ address }: { address: string }) {
                     <div
                       className={`mt-6 flex items-center justify-center border-t border-gray-700 pt-6 sm:justify-between`}
                     >
-                      <ul className={`mb-0 hidden flex-col items-center sm:flex`}>
-                        <li className={`text-base text-gray-300`}>Your offer </li>
-                        <DisplaySOL amount={offer?.price} />
-                      </ul>
+                      {hasAddedOffer && (
+                        <ul className={`mb-0 hidden flex-col items-center sm:flex`}>
+                          <li className={`whitespace-nowrap text-base text-gray-300`}>
+                            Your offer
+                          </li>
+                          <DisplaySOL amount={offer?.price} />
+                        </ul>
+                      )}
+
                       <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
-                        <Button className={`col-span-2 w-full sm:hidden`}>Buy now</Button>
-                        <Button secondary onClick={() => setOfferModalVisibility(true)}>
-                          Cancel offer
-                        </Button>
-                        <Button
-                          onClick={() => setOfferUpdateModalVisibility(true)}
-                          secondary
-                          className={`sm:bg-white sm:text-black`}
+                        <BuyForm
+                          nft={nft as Nft | any}
+                          marketplace={marketplace as Marketplace}
+                          listing={defaultListing as Listing}
+                          refetch={refetch}
+                          className={`col-span-2 w-full sm:hidden`}
+                        />
+                        <div
+                          className={`col-span-2 grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}
                         >
-                          Update offer
-                        </Button>
+                          <Button
+                            secondary
+                            className={`w-full`}
+                            onClick={() => setOfferModalVisibility(true)}
+                          >
+                            Cancel offer
+                          </Button>
+                          <Button
+                            onClick={() => setOfferUpdateModalVisibility(true)}
+                            secondary
+                            className={`w-full sm:bg-white sm:text-black`}
+                          >
+                            Update offer
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}
