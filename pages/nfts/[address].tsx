@@ -209,7 +209,7 @@ export default function NftByAddress({ address }: { address: string }) {
   const hasAddedOffer = Boolean(offer);
 
   const isListed = nft?.listings.find((listing) => listing.auctionHouse);
-  // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
+  const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
   const openOfferUpdateModal = () => {
     setOfferModalVisibility(false);
@@ -337,7 +337,7 @@ export default function NftByAddress({ address }: { address: string }) {
                       <Tag className={`mr-2`} />
                       <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
                     </div>
-                    {!hasAddedOffer && (
+                    {!hasAddedOffer && !isOwner && (
                       <div>
                         <Link href={`/nfts/${nft?.address}/offers/new`}>
                           <a>
@@ -346,6 +346,7 @@ export default function NftByAddress({ address }: { address: string }) {
                         </Link>
                       </div>
                     )}
+                    {isOwner && <Button>List NFT</Button>}
                   </div>
                   {offer && (
                     <div
