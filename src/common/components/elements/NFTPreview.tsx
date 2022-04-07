@@ -4,6 +4,25 @@ import { Avatar, OverlappingCircles } from '../../../../pages/nfts/[address]';
 import { imgOpt } from '../../utils';
 import Link from 'next/link';
 import { Nft } from '../../../graphql/indexerTypes';
+import { AvatarSkeleton, OverlappingAvatarSkeleton, TextSkeleton } from './Skeletons';
+
+const LoadingPreview = () => {
+  return (
+    <div className={`mt-8 flex w-full justify-start`}>
+      <div className={`relative aspect-square h-14 w-14`}>
+        <LoadingContainer
+          className={`block aspect-square w-full rounded-lg border-none object-cover `}
+        />
+      </div>
+      <div className={`ml-5`}>
+        <TextSkeleton />
+        <ul className={`mt-2`}>
+          <OverlappingAvatarSkeleton />
+        </ul>
+      </div>
+    </div>
+  );
+};
 
 interface NFTPreviewProps {
   loading: boolean;
@@ -12,13 +31,14 @@ interface NFTPreviewProps {
 
 const NFTPreview: FC<NFTPreviewProps> = ({ loading, nft }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
+
+  if (loading) {
+    return <LoadingPreview />;
+  }
+
   return (
     <div className={`mt-8 flex w-full justify-start`}>
       <div className={`relative aspect-square h-14 w-14`}>
-        {loading ||
-          (!imgLoaded && (
-            <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
-          ))}
         {nft?.image && (
           <img
             onLoad={() => setImgLoaded(true)}
