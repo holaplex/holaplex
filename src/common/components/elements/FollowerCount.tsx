@@ -92,14 +92,14 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
   return (
     <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
-      <div className="relative mt-2  flex flex-row">
+      <div className="relative mt-2 flex flex-row -space-x-2">
         {topFollowers.map((follower, i) => (
           <FollowerBubble isFirst={i === 0} key={follower.from.address as string} follower={follower} />
         ))}
         {followers > 4 ? (
           <OtherFollowersNumberBubble
             onClick={onOtherFollowersClick}
-            className="z-10 ml-[-8px] flex h-8 w-8 flex-col items-center justify-center rounded-full"
+            className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
           >
             +{followers - 4}
           </OtherFollowersNumberBubble>

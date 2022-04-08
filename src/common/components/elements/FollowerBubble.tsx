@@ -16,7 +16,7 @@ export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) =
     <Link href={`/profiles/${follower.from.address as string}`} passHref>
       <a
         className={cx({
-          'ml-[-8px] block': !isFirst,
+          'block': !isFirst,
         })}
       >
         <FollowedByImage
