@@ -98,8 +98,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
     const [escrowPaymentAccount, escrowPaymentBump] =
       await AuctionHouseProgram.findEscrowPaymentAccountAddress(auctionHouse, publicKey);
 
-    const cancelTxt = new Transaction();
-    const updateTxt = new Transaction();
+    const updateOfferTx = new Transaction();
 
     // cancel old offer
     const cancelInstructionAccounts = {
@@ -221,21 +220,21 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       }
     );
 
-    cancelTxt.add(cancelBidInstruction).add(cancelBidReceiptInstruction).add(withdrawInstruction);
-    cancelTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    cancelTxt.feePayer = publicKey;
-
-    updateTxt.add(depositInstruction).add(publicBuyInstruction).add(printBidReceiptInstruction);
-    updateTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    updateTxt.feePayer = publicKey;
+    updateOfferTx
+      .add(cancelBidInstruction)
+      .add(cancelBidReceiptInstruction)
+      .add(withdrawInstruction)
+      .add(depositInstruction)
+      .add(publicBuyInstruction)
+      .add(printBidReceiptInstruction);
+    updateOfferTx.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    updateOfferTx.feePayer = publicKey;
 
     // TODO: turn into signAll
-    let signedCancel: Transaction | undefined = undefined;
-    let signedUpdate: Transaction | undefined = undefined;
+    let signedUpdateOffer: Transaction | undefined = undefined;
 
     try {
-      signedCancel = await signTransaction(cancelTxt);
-      signedUpdate = await signTransaction(updateTxt);
+      signedUpdateOffer = await signTransaction(updateOfferTx);
     } catch (err: any) {
       toast.error(err.message);
       return;
@@ -244,17 +243,9 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
     let signature: string | undefined = undefined;
 
     try {
-      toast('Sending the cancel offer transaction to Solana.');
+      toast('Sending the update offer transaction to Solana.');
 
-      signature = await connection.sendRawTransaction(signedCancel.serialize());
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
-      toast.success('Cancel offer confirmed.');
-
-      toast('Sending updated offer transaction to Solana');
-
-      signature = await connection.sendRawTransaction(signedUpdate.serialize());
+      signature = await connection.sendRawTransaction(signedUpdateOffer.serialize());
 
       await connection.confirmTransaction(signature, 'confirmed');
 

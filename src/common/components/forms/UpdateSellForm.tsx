@@ -19,6 +19,7 @@ import {
 import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
 import { FeeItem } from './SellForm';
+import AcceptOfferForm from './AcceptOfferForm';
 
 const {
   createCancelListingReceiptInstruction,
@@ -57,7 +58,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   setOpen,
   offer,
 }) => {
-  const { publicKey, signTransaction } = useWallet();
+  const { publicKey, signTransaction, signAllTransactions } = useWallet();
   const { connection } = useConnection();
 
   const {
@@ -79,7 +80,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const auctionHouseFee = (listPrice * marketplace.auctionHouse.sellerFeeBasisPoints) / 10000;
 
   const updateSellTx = async ({ amount }: UpdateSellFormSchema) => {
-    if (!listing || !amount || !nft || !signTransaction || !publicKey) {
+    if (!listing || !amount || !nft || !signTransaction || !publicKey || !signAllTransactions) {
       return;
     }
 
@@ -130,12 +131,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       cancelListingReceiptAccounts
     );
 
-    const cancelTxt = new Transaction();
-
-    cancelTxt.add(cancelInstruction).add(cancelListingReceiptInstruction);
-
-    cancelTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    cancelTxt.feePayer = publicKey;
+    const updateListingTxt = new Transaction();
 
     // update listing
     const updatedPrice = Number(amount) * LAMPORTS_PER_SOL;
@@ -165,8 +161,6 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       0,
       1
     );
-
-    const updateTxt = new Transaction();
 
     const sellInstructionArgs = {
       tradeStateBump,
@@ -205,18 +199,19 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       }
     );
 
-    updateTxt.add(sellInstruction).add(printListingReceiptInstruction);
+    updateListingTxt
+      .add(cancelInstruction)
+      .add(cancelListingReceiptInstruction)
+      .add(sellInstruction)
+      .add(printListingReceiptInstruction);
 
-    updateTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    updateTxt.feePayer = publicKey;
+    updateListingTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    updateListingTxt.feePayer = publicKey;
 
-    // TODO: turn into sign all
-    let signedCancelListing: Transaction | undefined = undefined;
-    let signedUpdateListing: Transaction | undefined = undefined;
+    let signedUpdateSellListing: Transaction | undefined = undefined;
 
     try {
-      signedCancelListing = await signTransaction(cancelTxt);
-      signedUpdateListing = await signTransaction(updateTxt);
+      signedUpdateSellListing = await signTransaction(updateListingTxt);
     } catch (err: any) {
       toast.error(err.message);
       return;
@@ -224,17 +219,9 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
     let signature: string | undefined = undefined;
     try {
-      toast('Sending the cancel listing transaction to Solana.');
+      toast('Sending the update listing transaction to Solana.');
 
-      signature = await connection.sendRawTransaction(signedCancelListing.serialize());
-
-      await connection.confirmTransaction(signature, `confirmed`);
-
-      toast.success(`Cancel listing confirmed`);
-
-      toast(`Sending update listing transaction to Solana`);
-
-      signature = await connection.sendRawTransaction(signedUpdateListing.serialize());
+      signature = await connection.sendRawTransaction(signedUpdateSellListing.serialize());
 
       await connection.confirmTransaction(signature, `confirmed`);
 
@@ -248,6 +235,10 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     }
   };
 
+  const acceptOffer = () => {
+    setOpen(false);
+  };
+
   return (
     <div>
       {nft && <NFTPreview nft={nft as Nft | any} loading={false} />}
@@ -255,7 +246,16 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       {hasOffer && (
         <div className={`mt-8 flex items-center justify-between`}>
           <PriceDisplay price={Number(offer.price)} title={`Highest offer`} />
-          <Button htmlType={`button`}>Accept Offer</Button>
+          <div>
+            <AcceptOfferForm
+              nft={nft}
+              offer={offer}
+              listing={listing}
+              marketplace={marketplace}
+              refetch={refetch}
+              closeOuter={acceptOffer}
+            />
+          </div>
         </div>
       )}
       <div className={`mt-8`}>

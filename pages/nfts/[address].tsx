@@ -45,6 +45,7 @@ import SellForm from '../../src/common/components/forms/SellForm';
 import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
 import BuyForm from '../../src/common/components/forms/BuyForm';
 import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
+import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -357,9 +358,14 @@ export default function NftByAddress({ address }: { address: string }) {
                         <DisplaySOL amount={topOffer?.price} />
                       </div>
                       <div className={`flex w-1/2 sm:flex`}>
-                        <Button secondary className={`w-full bg-gray-900 text-white`}>
-                          Accept offer
-                        </Button>
+                        <AcceptOfferForm
+                          nft={nft as Nft | any}
+                          offer={topOffer as Offer}
+                          listing={defaultListing as Listing}
+                          marketplace={marketplace as Marketplace}
+                          refetch={refetch}
+                          className={`w-full bg-gray-900 text-white`}
+                        />
                       </div>
                     </div>
                   )}
@@ -418,7 +424,14 @@ export default function NftByAddress({ address }: { address: string }) {
                         <DisplaySOL amount={topOffer?.price} />
                       </div>
                       <div className={`hidden w-1/2 sm:flex`}>
-                        <Button className={`w-full`}>Accept offer</Button>
+                        <AcceptOfferForm
+                          nft={nft as Nft | any}
+                          offer={topOffer as Offer}
+                          listing={defaultListing as Listing}
+                          marketplace={marketplace as Marketplace}
+                          refetch={refetch}
+                          className={`w-full`}
+                        />
                       </div>
                       <div className={`sm:hidden`}>
                         <h3 className={`flex text-base font-medium text-gray-300`}>Price</h3>
@@ -426,7 +439,7 @@ export default function NftByAddress({ address }: { address: string }) {
                       </div>
                     </div>
                   )}
-                  {!hasOffers && (
+                  {!hasOffers && isOwner && (
                     <div
                       className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6 sm:hidden`}
                     >
@@ -456,7 +469,14 @@ export default function NftByAddress({ address }: { address: string }) {
                         {hasOffers && (
                           <>
                             <div className={`col-span-2 sm:hidden`}>
-                              <Button className={`w-full`}>Accept offer</Button>
+                              <AcceptOfferForm
+                                nft={nft as Nft | any}
+                                offer={topOffer as Offer}
+                                listing={defaultListing as Listing}
+                                marketplace={marketplace as Marketplace}
+                                refetch={refetch}
+                                className={`w-full`}
+                              />
                             </div>
                             <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
                               Cancel listing
