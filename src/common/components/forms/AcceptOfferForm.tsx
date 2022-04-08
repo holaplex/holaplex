@@ -56,7 +56,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   className,
   closeOuter = () => {},
 }) => {
-  const { publicKey, signTransaction } = useWallet();
+  const { publicKey, signTransaction, signAllTransactions } = useWallet();
   const { connection } = useConnection();
 
   const {
@@ -71,11 +71,9 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   });
 
   const acceptOfferTx = async ({ amount }: AcceptOfferFormSchema) => {
-    if (!publicKey || !signTransaction || !offer || !nft) {
+    if (!publicKey || !signTransaction || !offer || !nft || !signAllTransactions) {
       return;
     }
-
-    console.log(amount);
 
     const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
     const authority = new PublicKey(marketplace.auctionHouse.authority);
@@ -221,9 +219,10 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
       executePrintPurchaseReceiptInstructionArgs
     );
 
-    const txt = new Transaction();
+    const acceptOfferTxt = new Transaction();
+    const cancelListingTxt = new Transaction();
 
-    txt
+    acceptOfferTxt
       .add(createListingInstruction)
       .add(createPrintListingInstruction)
       .add(
@@ -271,16 +270,19 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         cancelListingReceiptAccounts
       );
 
-      txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction);
+      cancelListingTxt.add(cancelListingInstruction).add(cancelListingReceiptInstruction);
     }
 
-    txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    txt.feePayer = publicKey;
+    acceptOfferTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    acceptOfferTxt.feePayer = publicKey;
 
-    let signed: Transaction | undefined = undefined;
+    cancelListingTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    cancelListingTxt.feePayer = publicKey;
+
+    let signed: Transaction[] | undefined = undefined;
 
     try {
-      signed = await signTransaction(txt);
+      signed = await signAllTransactions([acceptOfferTxt, cancelListingTxt]);
     } catch (e: any) {
       toast.error(e.message);
       return;
@@ -289,16 +291,24 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
     let signature: string | undefined = undefined;
 
     try {
-      toast('Sending the transaction to Solana.');
+      toast('Sending accept offer transaction to Solana.');
 
-      signature = await connection.sendRawTransaction(signed.serialize());
+      signature = await connection.sendRawTransaction(signed[0].serialize());
+
+      await connection.confirmTransaction(signature, 'confirmed');
+
+      toast.success('Accept offer was confirmed.');
+
+      toast('Sending cancel listing transaction to Solana.');
+
+      signature = await connection.sendRawTransaction(signed[1].serialize());
 
       await connection.confirmTransaction(signature, 'confirmed');
 
       await refetch();
       closeOuter();
 
-      toast.success('The transaction was confirmed.');
+      toast.success('Confirmed accept offer.');
     } catch (e: any) {
       toast.error(e.message);
     }

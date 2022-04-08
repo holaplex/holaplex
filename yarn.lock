@@ -1721,10 +1721,10 @@
     crypto-hash "^1.3.0"
     form-data "^4.0.0"
 
-"@holaplex/marketplace-js-sdk@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@holaplex/marketplace-js-sdk/-/marketplace-js-sdk-0.1.4.tgz#bda97ce4e2eea8f0ff04cef03e9f457bc52401f9"
-  integrity sha512-GyODpcIC/ObSV4bV9VW3d77XjRwTr6tUMZZj4dX0bd2Ie04URMhW6gelIKv1cQjmk+Gb72jmGbuQyFiTkjjNrw==
+"@holaplex/marketplace-js-sdk@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@holaplex/marketplace-js-sdk/-/marketplace-js-sdk-0.1.6.tgz#add7b0e4b7ef2cf2cd3846531216ffa412c1466d"
+  integrity sha512-4/AhySgSNf5tVNeskqgovUv5SAeL7XH63kJZLbjXTuZpRN7QmbYVJel3N2WRIfSPhJ4W+WyGpqDlcqPI1LJSEw==
   dependencies:
     "@metaplex-foundation/mpl-auction-house" "^1.1.1"
     "@metaplex/js" "^4.12.0"
