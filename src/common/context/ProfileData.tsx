@@ -1,13 +1,11 @@
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { WalletDependantPageProps } from '@/modules/server-side/getProfile';
+import { Unpacked } from '@/types/Unpacked';
 import React, { FC, useContext, useMemo } from 'react';
 import { useGetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes';
-import { ProfileInfoFragment } from 'src/graphql/indexerTypes.ssr';
+import { GetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes.ssr';
 
-export type TopFollower = {
-  pubKey: string;
-  profileInfo?: ProfileInfoFragment;
-};
+export type TopFollower = Unpacked<GetProfileFollowerOverviewQuery['connections']>;
 
 interface ProfileData extends WalletDependantPageProps {
   followers: number;
@@ -25,21 +23,21 @@ export const ProfileDataProvider: FC<{
       pubKey: profileData.publicKey,
     },
   }); // At the beginning loading is not true, because of SSR preloading. ;)
+  console.log({data})
   const profileFollowerOverview = data!;
-  
 
   const returnValue: ProfileData = useMemo(
     () => ({
       ...profileData,
-      followers: profileFollowerOverview.from.aggregate?.count ?? 0,
-      following: profileFollowerOverview.to.aggregate?.count ?? 0,
-      topFollowers: profileFollowerOverview.to_brief as TopFollower[],
+      followers: profileFollowerOverview.wallet?.connectionCounts?.toCount ?? 0,
+      following: profileFollowerOverview.wallet?.connectionCounts?.fromCount ?? 0,
+      topFollowers: profileFollowerOverview.connections,
     }),
     [
       profileData,
-      profileFollowerOverview.from.aggregate?.count,
-      profileFollowerOverview.to.aggregate?.count,
-      profileFollowerOverview.to_brief,
+      profileFollowerOverview.connections,
+      profileFollowerOverview.wallet?.connectionCounts?.fromCount,
+      profileFollowerOverview.wallet?.connectionCounts?.toCount,
     ]
   );
   return <ProfileDataContext.Provider value={returnValue}>{children}</ProfileDataContext.Provider>;

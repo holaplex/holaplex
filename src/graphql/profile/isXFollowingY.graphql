@@ -1,10 +1,6 @@
-query isXFollowingY($xPubKey: String!, $yPubKey: String!) {
-  is_x_following_y: graph_connections_aggregate(
-    where: { from_account: { _eq: $xPubKey }, _and: { to_account: { _eq: $yPubKey } } }
-  ) {
-    evaluation: aggregate {
-      # 1 = true, 0 = false
-      result: count
-    }
+query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
+  # If !!length
+  connections(from: [$xPubKey], to: [$yPubKey], limit:1, offset:0) {
+    address
   }
 }

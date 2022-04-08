@@ -10,7 +10,7 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 
 const createApolloClient = () =>
   new ApolloClient({
-    uri: process.env.NEXT_PUBLIC_HASURA_GRAPHQL_URL,
+    uri: process.env.NEXT_PUBLIC_INDEXER_GRAPHQL_URL,
     ssrMode: typeof window === 'undefined',
     cache: new InMemoryCache(),
   });

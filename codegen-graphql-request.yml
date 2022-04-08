@@ -1,7 +1,4 @@
-schema:
-  - ${NEXT_PUBLIC_HASURA_GRAPHQL_URL}:
-      headers:
-        x-hasura-admin-secret: ${HASURA_GRAPHQL_ADMIN_SECRET}
+schema: ${NEXT_PUBLIC_INDEXER_GRAPHQL_URL}
 documents: './src/graphql/**/*.graphql'
 generates:
   ./src/graphql/indexerTypes.ssr.ts:

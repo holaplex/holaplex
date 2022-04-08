@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { PublicKey, Connection } from '@solana/web3.js';
 import { getPublicKeyFromTwitterHandle, getTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { getSdk, ProfileInfoFragment } from 'src/graphql/indexerTypes.ssr';
+import { getSdk } from 'src/graphql/indexerTypes.ssr';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '../utils/image';
 import { initializeApollo } from 'src/graphql/apollo';
@@ -110,15 +110,20 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
 
   let publicKey = getPublicKey(input);
 
-  let profileInfo: ProfileInfoFragment | null = null;
+  let profileInfo: {
+    walletAddress?: string | null;
+    handle: string;
+    profileImageUrl: string;
+    bannerImageUrl: string;
+  } | null = null;
   if (publicKey) {
     const result = await getProfileInfoFromPubKey({ pubKey: publicKey.toBase58() });
-    profileInfo = result?.profileInfo?.[0] ?? null;
+    profileInfo = result?.wallet?.profile ?? null;
   } else if (isTwitterUsername(input)) {
     const result = await getProfileInfoFromTwitterHandle({ handle: input });
-    profileInfo = result?.profileInfo?.[0] ?? null;
-    if (profileInfo) {
-      publicKey = getPublicKey(profileInfo!.wallet_address);
+    profileInfo = result?.profile ?? null;
+    if (profileInfo?.walletAddress) {
+      publicKey = getPublicKey(profileInfo.walletAddress);
     }
   } /* It's not a pubkey or a twitter profile. */ else {
     return { notFound: true };
@@ -137,11 +142,10 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
 
   const profileServerSideProps = {
     publicKey: publicKey!.toBase58(),
-    twitterHandle: profileInfo?.twitter_handle ?? null,
+    twitterHandle: profileInfo?.handle ?? null,
     profilePicture:
-      profileInfo?.images?.profileImageUrlHighres?.replace('_normal', '') ??
-      getPFPFromPublicKey(publicKey!),
-    banner: profileInfo?.images?.bannerImageUrl ?? getBannerFromPublicKey(publicKey!),
+      profileInfo?.profileImageUrl?.replace('_normal', '') ?? getPFPFromPublicKey(publicKey!),
+    banner: profileInfo?.bannerImageUrl ?? getBannerFromPublicKey(publicKey!),
   };
 
   return {

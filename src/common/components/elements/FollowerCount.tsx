@@ -51,7 +51,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   if (loading) return <FollowerCountSkeleton />;
   const isSameWallet = wallet.publicKey.equals(new PublicKey(pubkey));
 
-  const amIFollowing = data?.is_x_following_y.evaluation?.result === 1;
+  const amIFollowing = data?.connections?.length ?? 0 > 0;
 
   return (
     <div className="flex flex-col">
@@ -88,12 +88,13 @@ type FollowedByProps = {
 
 const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
   const { followers, topFollowers } = useProfileData();
+  if (!followers) return null;
   return (
     <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2  flex flex-row">
         {topFollowers.map((follower, i) => (
-          <FollowerBubble isFirst={i === 0} key={follower.pubKey} follower={follower} />
+          <FollowerBubble isFirst={i === 0} key={follower.from.address as string} follower={follower} />
         ))}
         {followers > 4 ? (
           <OtherFollowersNumberBubble

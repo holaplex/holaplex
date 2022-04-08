@@ -13,7 +13,7 @@ type FollowerBubbleProps = {
 
 export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
   return (
-    <Link href={`/profiles/${follower.pubKey}`} passHref>
+    <Link href={`/profiles/${follower.from.address as string}`} passHref>
       <a
         className={cx({
           'ml-[-8px] block': !isFirst,
@@ -22,8 +22,8 @@ export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) =
         <FollowedByImage
           className="h-8 w-8 rounded-full"
           src={
-            follower.profileInfo?.images?.profileImageUrlLowres ??
-            getPFPFromPublicKey(follower.pubKey)
+            follower.from?.profile?.profileImageUrl ??
+            getPFPFromPublicKey(follower.from.address!)
           }
           width={32}
           height={32}

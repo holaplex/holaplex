@@ -1,9 +1,0 @@
-fragment ProfileInfo on twitter_handle_name_services {
-  twitter_handle
-  wallet_address
-  images: twitter_handle_profile_data {
-    bannerImageUrl
-    profileImageUrlHighres
-    profileImageUrlLowres
-  }
-}
