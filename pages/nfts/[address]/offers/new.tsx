@@ -14,6 +14,7 @@ import Custom404 from '../../../404';
 import NftByAddress, { Avatar, OverlappingCircles } from '../../[address]';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import NFTPreview from '../../../../src/common/components/elements/NFTPreview';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -34,6 +35,8 @@ const NewNFTOffer = ({ address }: { address: string }) => {
     },
   });
 
+  const { publicKey } = useWallet();
+
   const nft = data?.nft;
   const marketplace = data?.marketplace;
 
@@ -45,6 +48,10 @@ const NewNFTOffer = ({ address }: { address: string }) => {
 
   if (called && !data?.nft && !loading) {
     return <Custom404 />;
+  }
+
+  if (!publicKey) {
+    goBack();
   }
 
   return (
