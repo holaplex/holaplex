@@ -2,17 +2,47 @@ import WhoToFollowList from './WhoToFollowList';
 import { Tab } from '@headlessui/react';
 import classNames from 'classnames';
 import FollowingFeed from './FollowingFeed';
+import { useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { useMemo } from 'react';
+import { getActivityItemsFromBids } from '../elements/ActivityContent';
+import { ActivityCard } from '../elements/ActivityCard';
+import Link from 'next/link';
 
 function DiscoveryFeed() {
   return <div>DiscoveryFeed</div>;
 }
 
 function MyActivityList() {
+  const mypubkey = 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H';
+  const activityPage = useActivityPageQuery({
+    variables: {
+      address: mypubkey,
+    },
+  });
+
+  const isLoading = activityPage.loading;
+
+  const activityItems = useMemo(
+    () =>
+      activityPage.data?.wallet?.bids
+        ? getActivityItemsFromBids(activityPage.data.wallet.bids!)
+        : [],
+
+    [activityPage.data?.wallet?.bids]
+  );
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
         <h3 className="m-0 text-base font-medium text-white">Your activity</h3>
-        <button className="text-base text-gray-300">See more</button>
+        <Link href={`/profiles/${mypubkey}/activity`} passHref>
+          <a className="text-base text-gray-300">See more</a>
+        </Link>
+      </div>
+      <div className="space-y-4">
+        {activityItems.slice(0, 3).map((item) => (
+          <ActivityCard activity={item} key={item.id} />
+        ))}
       </div>
     </div>
   );
@@ -94,7 +124,7 @@ export default function FeedContainer() {
           </Tab.Panels>
         </Tab.Group>
       </div>
-      <div className="w-full max-w-md space-y-7">
+      <div className="mt-10 w-full max-w-md space-y-7">
         <WhoToFollowList />
         <MyActivityList />
       </div>

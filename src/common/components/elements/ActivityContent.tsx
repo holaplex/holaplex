@@ -4,7 +4,7 @@ import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useActivityPageLazyQuery, useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { Bid, useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
@@ -22,110 +22,111 @@ import { ActivityCard } from './ActivityCard';
 import { useProfileData } from '@/common/context/ProfileData';
 import { LoadingBox, LoadingLine } from './LoadingPlaceholders';
 
+export function getActivityItemsFromBids(bids: Bid[]) {
+  return (
+    bids.reduce((items, bid) => {
+      const listing = bid.listing;
+      const storefront = bid.listing?.storefront;
+      if (!listing || !storefront) return items;
+
+      const nft = bid.listing?.nfts[0];
+
+      const listingEnded = listing.ended;
+      const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
+
+      const itemBase: Partial<IFeedItem> = {
+        id: bid.bidderAddress + bid.listingAddress,
+        sourceUser: {
+          pubkey: bid.bidderAddress,
+          // handle // fetch async?
+        },
+        nft: nft && {
+          address: nft.address,
+          imageURL: nft.image,
+          storeSubdomain: storefront.subdomain,
+          name: nft.name,
+          listingAddress: listing.address,
+          // creator
+        },
+        misc: {
+          bidCancelled: bid.cancelled,
+          wonListing: listingEnded && hasHighestBid,
+        },
+        listing: {
+          address: listing.address,
+          ended: listing.ended,
+        },
+        storefront: storefront!,
+      };
+
+      if (listingEnded) {
+        const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
+        items.push({
+          ...itemBase,
+          id: itemBase.id + activityType,
+          type: activityType,
+          timestamp: listing.bids[0].lastBidTime, // more or less
+          toUser:
+            activityType === 'LISTING_LOST'
+              ? {
+                  pubkey: listing.bids[0].bidderAddress,
+                }
+              : undefined,
+          solAmount: listing.bids[0].lastBidAmount,
+        });
+      }
+
+      if (listing.bids.length > 1) {
+        const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
+        const activityType =
+          listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
+        const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
+        items.push({
+          ...itemBase,
+          id: itemBase.id + activityType,
+          type: activityType,
+          timestamp: listing.bids[0].lastBidTime, // more or less
+          toUser: {
+            pubkey: listing.bids[toIdx].bidderAddress,
+          },
+          solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
+        });
+      }
+
+      items.push({
+        ...itemBase,
+        id: itemBase.id + 'BID_MADE',
+        solAmount: bid.lastBidAmount,
+        type: 'BID_MADE',
+        timestamp: bid.lastBidTime,
+      });
+
+      return items;
+    }, [] as IFeedItem[]) || []
+  );
+}
+
 export const ActivityContent = () => {
   const { publicKey: pk } = useProfileData();
   const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
-  const [q, activityPage] = useActivityPageLazyQuery({
+  const activityPage = useActivityPageQuery({
     variables: {
       address: publicKey.toBase58(),
     },
   });
 
-  const isLoading = false; // activityPage.loading;
+  const isLoading = activityPage.loading;
 
   const activityItems = useMemo(
     () =>
-      activityPage.data?.wallet?.bids.reduce((items, bid) => {
-        const listing = bid.listing;
-        const storefront = bid.listing?.storefront;
-        if (!listing || !storefront) return items;
+      activityPage.data?.wallet?.bids
+        ? getActivityItemsFromBids(activityPage.data.wallet.bids!)
+        : [],
 
-        const nft = bid.listing?.nfts[0];
-
-        const listingEnded = listing.ended;
-        const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
-
-        const itemBase: Partial<IFeedItem> = {
-          id: bid.bidderAddress + bid.listingAddress,
-          sourceUser: {
-            pubkey: bid.bidderAddress,
-            // handle // fetch async?
-          },
-          nft: nft && {
-            address: nft.address,
-            imageURL: nft.image,
-            storeSubdomain: storefront.subdomain,
-            name: nft.name,
-            listingAddress: listing.address,
-            // creator
-          },
-          misc: {
-            bidCancelled: bid.cancelled,
-            wonListing: listingEnded && hasHighestBid,
-          },
-          listing: {
-            address: listing.address,
-            ended: listing.ended,
-          },
-          storefront,
-        };
-
-        if (listingEnded) {
-          const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
-          items.push({
-            ...itemBase,
-            id: itemBase.id + activityType,
-            type: activityType,
-            timestamp: listing.bids[0].lastBidTime, // more or less
-            toUser:
-              activityType === 'LISTING_LOST'
-                ? {
-                    pubkey: listing.bids[0].bidderAddress,
-                  }
-                : undefined,
-            solAmount: listing.bids[0].lastBidAmount,
-          });
-        }
-
-        if (listing.bids.length > 1) {
-          const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
-          const activityType =
-            listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
-          const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
-          items.push({
-            ...itemBase,
-            id: itemBase.id + activityType,
-            type: activityType,
-            timestamp: listing.bids[0].lastBidTime, // more or less
-            toUser: {
-              pubkey: listing.bids[toIdx].bidderAddress,
-            },
-            solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
-          });
-        }
-
-        items.push({
-          ...itemBase,
-          id: itemBase.id + 'BID_MADE',
-          solAmount: bid.lastBidAmount,
-          type: 'BID_MADE',
-          timestamp: bid.lastBidTime,
-        });
-
-        return items;
-      }, [] as IFeedItem[]) || [],
     [activityPage.data?.wallet?.bids]
   );
-
-  console.log('activity', {
-    bids: activityPage.data?.wallet?.bids,
-    activityItems,
-    w: activityPage.data,
-    publicKey: publicKey.toBase58(),
-    d: activityPage.data,
-  });
 
   const filteredActivityItems = activityItems.filter((i) => {
     return (

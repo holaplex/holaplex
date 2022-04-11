@@ -30,6 +30,28 @@ export function generateContent(fi: IFeedItem) {
   }
 }
 
+// function FeedItemContent() {
+
+//   const from = (fi.sourceUser || fi.nft?.creator) as IProfile;
+
+//   const fromDisplay = from.handle || showFirstAndLastFour(from.pubkey);
+//   const toDisplay = fi.toUser ? fi.toUser.handle || showFirstAndLastFour(fi.toUser.pubkey) : '';
+
+//   switch (fi.type) {
+//     case 'OUTBID':
+//       return `${fromDisplay} outbid ${toDisplay} on ${fi.nft?.name} with a bid of SOL${fi.solAmount}`;
+
+//     case 'BID_MADE':
+//       return `${fromDisplay} placed a bid of SOL${fi.solAmount} on ${fi.nft?.name} `;
+
+//     case 'SALE_PRIMARY':
+//       return `${fromDisplay} sold ${fi.nft?.name} for SOL${fi.solAmount}`;
+//     default:
+//       return 'No content for this activity';
+//   }
+
+// }
+
 export default function FeedItem(props: { fi: IFeedItem }) {
   const fi = props.fi;
   const from = (fi.sourceUser || fi.nft?.creator) as IProfile;
@@ -37,11 +59,13 @@ export default function FeedItem(props: { fi: IFeedItem }) {
   const content = generateContent(fi);
   return (
     <div>
-      <div className="mb-2 flex">
+      <div className="mb-6 flex items-center text-base">
         <ProfilePFP profile={from} size="md" />
         <div className="ml-6">
-          <div>{content}</div>
-          <div> {DateTime.fromISO(fi.timestamp).toRelative()} </div>
+          <div className="text-gray-300">{content}</div>
+          <div className="mt-2 text-sm text-gray-500">
+            {DateTime.fromISO(fi.timestamp).toRelative()}
+          </div>
         </div>
       </div>
       {fi.nft && (
@@ -52,10 +76,12 @@ export default function FeedItem(props: { fi: IFeedItem }) {
             alt={fi.nft?.name}
           />
           {fi.nft.creator && (
-            <div className="flex justify-between">
-              <div className="flex">
+            <div className="mt-6 flex justify-between">
+              <div className="flex items-center text-base">
                 <ProfilePFP profile={fi.nft.creator} />
-                <div>{fi.nft.creator.handle || showFirstAndLastFour(fi.nft.creator.pubkey)}</div>
+                <div className="ml-2">
+                  {fi.nft.creator.handle || showFirstAndLastFour(fi.nft.creator.pubkey)}
+                </div>
               </div>
               <ShareMenu />
             </div>
@@ -90,7 +116,7 @@ function ShareMenu() {
 function ProfilePFP({ profile, size = 'sm' }: { profile: IProfile; size?: 'sm' | 'md' }) {
   return profile.pfp ? (
     <img
-      className={classNames('rounded-full', size === 'sm' ? 'h-8 w-8' : 'h-16 w-16')}
+      className={classNames('rounded-full', size === 'sm' ? 'h-6 w-6' : 'h-16 w-16')}
       src={profile.pfp}
       alt={'profile picture for ' + profile.handle || profile.pubkey}
     />
