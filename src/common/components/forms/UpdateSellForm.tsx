@@ -131,6 +131,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       cancelListingReceiptAccounts
     );
 
+    const cancelListingTxt = new Transaction();
     const updateListingTxt = new Transaction();
 
     // update listing
@@ -199,19 +200,18 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       }
     );
 
-    updateListingTxt
-      .add(cancelInstruction)
-      .add(cancelListingReceiptInstruction)
-      .add(sellInstruction)
-      .add(printListingReceiptInstruction);
+    cancelListingTxt.add(cancelInstruction).add(cancelListingReceiptInstruction);
+    cancelListingTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    cancelListingTxt.feePayer = publicKey;
 
+    updateListingTxt.add(sellInstruction).add(printListingReceiptInstruction);
     updateListingTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
     updateListingTxt.feePayer = publicKey;
 
-    let signedUpdateSellListing: Transaction | undefined = undefined;
+    let signedUpdateSellListing: Transaction[] | undefined = undefined;
 
     try {
-      signedUpdateSellListing = await signTransaction(updateListingTxt);
+      signedUpdateSellListing = await signAllTransactions([cancelListingTxt, updateListingTxt]);
     } catch (err: any) {
       toast.error(err.message);
       return;
@@ -219,9 +219,15 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
     let signature: string | undefined = undefined;
     try {
-      toast('Sending the update listing transaction to Solana.');
+      toast('Sending the update listing (cancel listing) transaction to Solana.');
 
-      signature = await connection.sendRawTransaction(signedUpdateSellListing.serialize());
+      signature = await connection.sendRawTransaction(signedUpdateSellListing[0].serialize());
+
+      await connection.confirmTransaction(signature, `confirmed`);
+
+      toast('Sending the update listing (new listing) transaction to Solana.');
+
+      signature = await connection.sendRawTransaction(signedUpdateSellListing[1].serialize());
 
       await connection.confirmTransaction(signature, `confirmed`);
 

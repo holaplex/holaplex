@@ -249,6 +249,11 @@ export default function NftByAddress({ address }: { address: string }) {
     refetch();
   }, [router, router.push, refetch]);
 
+  const updateListingFromCancel = () => {
+    setSellCancelModalVisibility(false);
+    setSellUpdateModalVisibility(true);
+  };
+
   if (called && !data?.nft && !loading) {
     return <Custom404 />;
   }
@@ -731,7 +736,7 @@ export default function NftByAddress({ address }: { address: string }) {
               marketplace={marketplace as Marketplace}
               listing={defaultListing as Listing}
               setOpen={setSellCancelModalVisibility}
-              updateListing={() => {}}
+              updateListing={updateListingFromCancel}
             />
           </Modal>
           <Modal
