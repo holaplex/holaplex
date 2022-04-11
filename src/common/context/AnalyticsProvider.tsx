@@ -28,7 +28,7 @@ interface AnalyticsUserProperties {
   pubkey: string; // same as user_id, but for use in custom reports
 }
 
-const debugAnalytics = true;
+const debugAnalytics = false;
 
 export interface TrackingAttributes {
   event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile';
@@ -102,7 +102,9 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       window.fbq('init', META_ID);
     }
 
-    console.log('tracking initialized', integrations);
+    if (debugAnalytics) {
+      console.log('tracking initialized', integrations);
+    }
 
     pageview();
 
