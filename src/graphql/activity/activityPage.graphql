@@ -1,4 +1,4 @@
-query activityPage($address: String!) {
+query activityPage($address: PublicKey!) {
   wallet(address: $address) {
     __typename
     address
