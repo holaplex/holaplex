@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Avatar, Card, Image, Row, Col } from 'antd';
 import { Storefront } from '@/modules/storefront/types';
 import { imgOpt } from '@/common/utils';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 const PreviewCard = styled(Card)`
   .ant-card-meta-detail {
@@ -56,6 +57,8 @@ type StorePreviewProps = {
 export default function StorePreview({ storefront, metadata }: StorePreviewProps) {
   const domain = `${storefront.subdomain}.holaplex.com`;
 
+  const { track } = useAnalytics();
+
   return (
     <PreviewCard>
       <Card.Meta
@@ -72,18 +75,39 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
         }
         title={storefront.meta.title}
         description={
-          <a href={`https://${domain}`} rel="nofollow noreferrer" target="_blank">
+          <a
+            href={`https://${domain}`}
+            rel="nofollow noreferrer"
+            target="_blank"
+            onClick={() => {
+              track('Featured Storefront Selected', {
+                event_category: 'Discovery',
+                event_label: domain,
+                storefrontDomain: domain,
+              });
+            }}
+          >
             {domain}
           </a>
         }
       />
-      <Row justify="space-between">
+      {/* <Row justify="space-between">
         {metadata.map((url, i) => (
           <Metadata span={11} key={url + i}>
             <img src={imgOpt(url, 600)} alt="featured nft image" className="aspect-square " />
           </Metadata>
         ))}
-      </Row>
+      </Row> */}
+      <div className="grid grid-cols-2 gap-4">
+        {metadata.map((url, i) => (
+          <img
+            key={url + i}
+            src={imgOpt(url, 600)}
+            alt="featured nft image"
+            className="aspect-square "
+          />
+        ))}
+      </div>
     </PreviewCard>
   );
 }
