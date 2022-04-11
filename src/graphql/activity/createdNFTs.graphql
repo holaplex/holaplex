@@ -1,0 +1,15 @@
+query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!) {
+  nfts(creators: [$creator], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+    }
+  }
+}

@@ -90,6 +90,7 @@ export type Creator = {
   address: Scalars['String'];
   attributeGroups: Array<AttributeGroup>;
   counts: CreatorCounts;
+  profile?: Maybe<TwitterProfile>;
   stats: Array<MintStats>;
 };
 
@@ -107,6 +108,13 @@ export type Denylist = {
   __typename?: 'Denylist';
   listings: Array<Scalars['PublicKey']>;
   storefronts: Array<Scalars['PublicKey']>;
+};
+
+export type GraphConnection = {
+  __typename?: 'GraphConnection';
+  address: Scalars['String'];
+  from: Wallet;
+  to: Wallet;
 };
 
 export type Listing = {
@@ -250,6 +258,7 @@ export type PurchaseReceipt = {
 
 export type QueryRoot = {
   __typename?: 'QueryRoot';
+  connections: Array<GraphConnection>;
   creator: Creator;
   denylist: Denylist;
   listings: Array<Listing>;
@@ -261,7 +270,15 @@ export type QueryRoot = {
   /** A storefront */
   storefront?: Maybe<Storefront>;
   storefronts: Array<Storefront>;
-  wallet?: Maybe<Wallet>;
+  wallet: Wallet;
+};
+
+
+export type QueryRootConnectionsArgs = {
+  from?: InputMaybe<Array<Scalars['PublicKey']>>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  to?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 
@@ -337,6 +354,7 @@ export type Wallet = {
   __typename?: 'Wallet';
   address: Scalars['String'];
   bids: Array<Bid>;
+  profile?: Maybe<TwitterProfile>;
 };
 
 export type ActivityPageQueryVariables = Exact<{
@@ -344,7 +362,16 @@ export type ActivityPageQueryVariables = Exact<{
 }>;
 
 
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet?: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } | null };
+export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } };
+
+export type CreatedNfTsQueryVariables = Exact<{
+  creator: Scalars['PublicKey'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type CreatedNfTsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number }> }> };
 
 export type OwnedNfTsQueryVariables = Exact<{
   address: Scalars['PublicKey'];
@@ -418,6 +445,23 @@ export const ActivityPageDocument = gql`
           listingAddress
         }
       }
+    }
+  }
+}
+    `;
+export const CreatedNfTsDocument = gql`
+    query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!) {
+  nfts(creators: [$creator], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
     }
   }
 }
@@ -598,6 +642,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     activityPage(variables: ActivityPageQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ActivityPageQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ActivityPageQuery>(ActivityPageDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'activityPage', 'query');
+    },
+    createdNFTs(variables: CreatedNfTsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreatedNfTsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreatedNfTsQuery>(CreatedNfTsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createdNFTs', 'query');
     },
     ownedNFTs(variables: OwnedNfTsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<OwnedNfTsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<OwnedNfTsQuery>(OwnedNfTsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'ownedNFTs', 'query');

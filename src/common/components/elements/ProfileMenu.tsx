@@ -10,6 +10,7 @@ import { useProfileData } from '@/common/context/ProfileData';
 
 enum TabRoute {
   OWNED,
+  CREATED,
   ACTIVITY,
 }
 
@@ -34,7 +35,21 @@ export const ProfileMenu: FC = () => {
                 )}
               >
                 <FeatherIcon height={16} width={16} icon="image" className="mr-4" />
-                Owned
+                Collected
+              </button>
+            )}
+          </Tab>
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <button
+                onClick={() => router.push(`/profiles/${publicKey}/created`)}
+                className={cx(
+                  'flex h-full w-1/2 items-center justify-center sm:w-40',
+                  selected ? 'border-b-2 border-white' : 'text-gray-300'
+                )}
+              >
+                <FeatherIcon height={16} width={16} icon="plus-square" className="mr-4" />
+                Created
               </button>
             )}
           </Tab>

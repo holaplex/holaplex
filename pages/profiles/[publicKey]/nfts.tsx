@@ -24,7 +24,7 @@ type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getPropsForWalletOrUsername(context);
 
-const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
+export const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
@@ -51,7 +51,7 @@ const NFTCard = ({ nft }: { nft: OwnedNFT }) => {
   );
 };
 
-const NFTGrid = ({ nfts, gridView }: { nfts: OwnedNFT[]; gridView: '2x2' | '3x3' }) => {
+export const NFTGrid = ({ nfts, gridView }: { nfts: OwnedNFT[]; gridView: '2x2' | '3x3' }) => {
   return (
     <div
       className={cx(
