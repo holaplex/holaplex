@@ -275,7 +275,21 @@ export function ListingPreview({
             </div>
           </div>
         </a>
-        <a href={storeHref} target="_blank" rel="noreferrer" className="z-10">
+        <a
+          href={storeHref}
+          target="_blank"
+          rel="noreferrer"
+          className="z-10"
+          onClick={(e) => {
+            track('Storefront Selected', {
+              event_category: 'Discovery',
+              event_label: nftMetadata.name,
+              ...meta,
+              ...addListingToTrackCall(listing),
+            });
+            e.stopPropagation();
+          }}
+        >
           <div className="flex items-center">
             {listing.logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
