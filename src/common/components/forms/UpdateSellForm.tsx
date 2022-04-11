@@ -225,6 +225,10 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
       await connection.confirmTransaction(signature, `confirmed`);
 
+      toast(
+        `Successfully canceled old listing at: ${Number(listing.price) / LAMPORTS_PER_SOL} SOL`
+      );
+
       toast('Sending the update listing (new listing) transaction to Solana.');
 
       signature = await connection.sendRawTransaction(signedUpdateSellListing[1].serialize());
