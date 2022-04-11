@@ -4,7 +4,7 @@ import { AnchorButton } from '@/components/elements/Button';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { useActivityPageLazyQuery, useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
@@ -27,13 +27,13 @@ export const ActivityContent = () => {
   const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
-  const activityPage = useActivityPageQuery({
+  const [q, activityPage] = useActivityPageLazyQuery({
     variables: {
       address: publicKey.toBase58(),
     },
   });
 
-  const isLoading = activityPage.loading;
+  const isLoading = false; // activityPage.loading;
 
   const activityItems = useMemo(
     () =>
@@ -118,6 +118,14 @@ export const ActivityContent = () => {
       }, [] as IFeedItem[]) || [],
     [activityPage.data?.wallet?.bids]
   );
+
+  console.log('activity', {
+    bids: activityPage.data?.wallet?.bids,
+    activityItems,
+    w: activityPage.data,
+    publicKey: publicKey.toBase58(),
+    d: activityPage.data,
+  });
 
   const filteredActivityItems = activityItems.filter((i) => {
     return (
