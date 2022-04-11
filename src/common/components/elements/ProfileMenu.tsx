@@ -1,4 +1,4 @@
-import { FC, Fragment, useState } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { useRouter } from 'next/router';
@@ -18,8 +18,23 @@ export const ProfileMenu: FC = () => {
   const { publicKey } = useProfileData();
   const router = useRouter();
   const path = router.asPath;
-  const routeIndex = path.includes('/activity') ? TabRoute.ACTIVITY : TabRoute.OWNED;
+  const pathName = router.pathname;
+  const routeIndex = TabRoute.OWNED;
   const [selectedIndex, setSelectedIndex] = useState(routeIndex);
+
+  useEffect(() => {
+    switch (pathName) {
+      case `/profiles/[publicKey]/created`:
+        setSelectedIndex(TabRoute.CREATED);
+        break;
+      case `/profiles/[publicKey]/activity`:
+        setSelectedIndex(TabRoute.ACTIVITY);
+        break;
+      default:
+        setSelectedIndex(TabRoute.OWNED);
+        break;
+    }
+  }, [pathName, path]);
 
   return (
     <div className="mb-6  border-b-2  border-gray-800">
