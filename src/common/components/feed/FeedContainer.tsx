@@ -54,7 +54,10 @@ function ProfileCard() {
 
 function BackToTopBtn() {
   return (
-    <button className="absolute right-8 bottom-8 rounded-full bg-gray-900">
+    <button
+      onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
+      className="absolute right-8 bottom-8 rounded-full bg-gray-900"
+    >
       <svg
         width="14"
         height="14"
