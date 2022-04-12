@@ -369,7 +369,7 @@ export default function NftByAddress({ address }: { address: string }) {
                           listing={defaultListing as Listing}
                           marketplace={marketplace as Marketplace}
                           refetch={refetch}
-                          className={`w-full bg-gray-900 text-white`}
+                          className={`w-full bg-gray-900 `}
                         />
                       </div>
                     </div>

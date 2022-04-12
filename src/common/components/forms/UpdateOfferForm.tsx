@@ -1,5 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from 'react';
-import { Nft, Marketplace, Listing } from '@/types/types';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '../elements/NFTPreview';
@@ -19,13 +18,16 @@ import {
 } from '@solana/web3.js';
 import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
+import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
+import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 interface UpdateOfferFormSchema {
   amount: string;
 }
 
 interface UpdateOfferFormProps {
-  nft?: Nft;
+  nft: Nft;
   marketplace: Marketplace;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -35,15 +37,6 @@ interface UpdateOfferFormProps {
   listing: Listing;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
-
-const {
-  createCancelInstruction,
-  createCancelBidReceiptInstruction,
-  createWithdrawInstruction,
-  createPublicBuyInstruction,
-  createPrintBidReceiptInstruction,
-  createDepositInstruction,
-} = AuctionHouseProgram.instructions;
 
 const schema = zod.object({
   amount: zod
@@ -62,10 +55,29 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   setOpen,
 }) => {
   const { publicKey, signTransaction, signAllTransactions } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
 
-  const currOffer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
+  const currOffer = nft?.offers?.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasCurrOffer = Boolean(currOffer);
+
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { runActions, actions, hasActionPending, hasRemainingActions, retryActions } =
+    useContext(MultiTransactionContext);
+
+  const onCancelOffer = async () => {
+    if (currOffer) {
+      toast(`Canceling current offer of ${Number(currOffer.price)}`);
+      await sdk.offers(marketplace.auctionHouse).cancel({ nft, offer: currOffer, amount: 1 });
+    }
+  };
+
+  const onUpdateOffer = async ({ amount }: { amount: number }) => {
+    if (amount) {
+      toast(`Updating current offer to: ${amount} SOL`);
+      await sdk.offers(marketplace.auctionHouse).make({ amount, nft });
+    }
+  };
 
   const {
     handleSubmit,
@@ -80,183 +92,37 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       return;
     }
 
-    // currOffer
-    const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
-    const authority = new PublicKey(marketplace.auctionHouse.authority);
-    const auctionHouseFeeAccount = new PublicKey(marketplace.auctionHouse.auctionHouseFeeAccount);
-    const tokenMint = new PublicKey(nft.mintAddress);
-    const receipt = new PublicKey(currOffer.address);
-    const buyerPrice = Number(currOffer.price);
-    const tradeState = new PublicKey(currOffer.tradeState);
-    const owner = new PublicKey(nft.owner.address);
-    const treasuryMint = new PublicKey(marketplace.auctionHouse.treasuryMint);
-    const tokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
+    const numAmount = Number(amount);
 
-    // updated offer
-    const updatedPrice = Number(amount) * LAMPORTS_PER_SOL;
-
-    const [escrowPaymentAccount, escrowPaymentBump] =
-      await AuctionHouseProgram.findEscrowPaymentAccountAddress(auctionHouse, publicKey);
-
-    const updateOfferTx = new Transaction();
-
-    // cancel old offer
-    const cancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount,
-      tokenMint,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-      tradeState,
-    };
-
-    const cancelInstructionArgs = {
-      buyerPrice,
-      tokenSize: 1,
-    };
-
-    const cancelBidReceiptInstructionAccounts = {
-      receipt: receipt,
-      instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-    };
-
-    const cancelBidInstruction = createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    );
-
-    const cancelBidReceiptInstruction = createCancelBidReceiptInstruction(
-      cancelBidReceiptInstructionAccounts
-    );
-
-    const withdrawInstructionAccounts = {
-      receiptAccount: publicKey,
-      wallet: publicKey,
-      escrowPaymentAccount,
-      auctionHouse,
-      authority,
-      treasuryMint,
-      auctionHouseFeeAccount,
-    };
-
-    const withdrawInstructionArgs = {
-      escrowPaymentBump,
-      amount: buyerPrice,
-    };
-
-    const withdrawInstruction = createWithdrawInstruction(
-      withdrawInstructionAccounts,
-      withdrawInstructionArgs
-    );
-
-    // new offer
-    const [buyerTradeState, tradeStateBump] =
-      await AuctionHouseProgram.findPublicBidTradeStateAddress(
-        publicKey,
-        auctionHouse,
-        treasuryMint,
-        tokenMint,
-        updatedPrice,
-        1
-      );
-
-    const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint);
-
-    const depositInstructionAccounts = {
-      wallet: publicKey,
-      paymentAccount: publicKey,
-      transferAuthority: publicKey,
-      treasuryMint,
-      escrowPaymentAccount,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-    };
-    const depositInstructionArgs = {
-      escrowPaymentBump,
-      amount: updatedPrice,
-    };
-
-    const depositInstruction = createDepositInstruction(
-      depositInstructionAccounts,
-      depositInstructionArgs
-    );
-
-    const publicBuyInstruction = createPublicBuyInstruction(
+    const newActions: Action[] = [
       {
-        wallet: publicKey,
-        paymentAccount: publicKey,
-        transferAuthority: publicKey,
-        treasuryMint,
-        tokenAccount,
-        metadata,
-        escrowPaymentAccount,
-        authority,
-        auctionHouse,
-        auctionHouseFeeAccount,
-        buyerTradeState,
+        name: `Cancel offer`,
+        id: `cancelOffer`,
+        action: onCancelOffer,
+        param: undefined,
       },
       {
-        escrowPaymentBump,
-        tradeStateBump,
-        tokenSize: 1,
-        buyerPrice: updatedPrice,
-      }
-    );
-
-    const [bidReceipt, receiptBump] = await AuctionHouseProgram.findBidReceiptAddress(
-      buyerTradeState
-    );
-
-    const printBidReceiptInstruction = createPrintBidReceiptInstruction(
-      {
-        receipt: bidReceipt,
-        bookkeeper: publicKey,
-        instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
+        name: `Update new offer`,
+        id: `updateOffer`,
+        action: onUpdateOffer,
+        param: { amount: numAmount },
       },
-      {
-        receiptBump,
-      }
-    );
+    ];
 
-    updateOfferTx
-      .add(cancelBidInstruction)
-      .add(cancelBidReceiptInstruction)
-      .add(withdrawInstruction)
-      .add(depositInstruction)
-      .add(publicBuyInstruction)
-      .add(printBidReceiptInstruction);
-    updateOfferTx.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    updateOfferTx.feePayer = publicKey;
-
-    // TODO: turn into signAll
-    let signedUpdateOffer: Transaction | undefined = undefined;
-
-    try {
-      signedUpdateOffer = await signTransaction(updateOfferTx);
-    } catch (err: any) {
-      toast.error(err.message);
-      return;
-    }
-
-    let signature: string | undefined = undefined;
-
-    try {
-      toast('Sending the update offer transaction to Solana.');
-
-      signature = await connection.sendRawTransaction(signedUpdateOffer.serialize());
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
-      await refetch();
-
-      toast.success('Update offer confirmed.');
-    } catch (e: any) {
-      toast.error(e.message);
-    } finally {
-      setOpen(false);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+      },
+      onComplete: async () => {
+        await refetch();
+        setOpen(false);
+      },
+      onActionFailure: async () => {
+        await refetch();
+        // retry transactions
+        // retryActions()
+      },
+    });
   };
 
   return (
@@ -304,8 +170,8 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
             </div>
             <div className={`mt-8 w-full`}>
               <Button
-                disabled={loading || isSubmitting}
-                loading={loading || isSubmitting}
+                disabled={loading || isSubmitting || hasActionPending}
+                loading={loading || isSubmitting || hasActionPending}
                 htmlType={`submit`}
                 block
                 className={`w-full`}

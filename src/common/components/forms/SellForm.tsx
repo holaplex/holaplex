@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from 'react';
+import React, { Dispatch, FC, SetStateAction, useMemo } from 'react';
 import { Nft, Marketplace } from '@/types/types';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
@@ -19,6 +19,8 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
+import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
+import { Wallet } from '@metaplex/js';
 
 const { createSellInstruction, createPrintListingReceiptInstruction } =
   AuctionHouseProgram.instructions;
@@ -74,8 +76,10 @@ export const FeeItem = ({
 
 const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOpen }) => {
   const { publicKey, signTransaction } = useWallet();
-
+  const wallet = useWallet();
   const { connection } = useConnection();
+
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
 
   const {
     handleSubmit,
@@ -95,112 +99,24 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
   const royalties = (listPrice * nft?.sellerFeeBasisPoints) / 10000;
   const auctionHouseFee = (listPrice * marketplace.auctionHouse.sellerFeeBasisPoints) / 10000;
 
+  const onSell = async (amount: number) => {
+    if (amount && nft) {
+      await sdk.listings(marketplace.auctionHouse).post({ amount, nft });
+    }
+  };
+
   const sellTx = async ({ amount }: SellFormSchema) => {
     if (!publicKey || !signTransaction || !nft || !amount) {
       return;
     }
-
-    const buyerPrice = Number(amount) * LAMPORTS_PER_SOL;
-    const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
-    const authority = new PublicKey(marketplace.auctionHouse.authority);
-    const auctionHouseFeeAccount = new PublicKey(marketplace.auctionHouse.auctionHouseFeeAccount);
-    const treasuryMint = new PublicKey(marketplace.auctionHouse.treasuryMint);
-    const tokenMint = new PublicKey(nft.mintAddress);
-
-    const associatedTokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
-
-    const [sellerTradeState, tradeStateBump] = await AuctionHouseProgram.findTradeStateAddress(
-      publicKey,
-      auctionHouse,
-      associatedTokenAccount,
-      treasuryMint,
-      tokenMint,
-      buyerPrice,
-      1
-    );
-
-    const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint);
-
-    const [programAsSigner, programAsSignerBump] =
-      await AuctionHouseProgram.findAuctionHouseProgramAsSignerAddress();
-
-    const [freeTradeState, freeTradeBump] = await AuctionHouseProgram.findTradeStateAddress(
-      publicKey,
-      auctionHouse,
-      associatedTokenAccount,
-      treasuryMint,
-      tokenMint,
-      0,
-      1
-    );
-
-    const txt = new Transaction();
-
-    const sellInstructionArgs = {
-      tradeStateBump,
-      freeTradeStateBump: freeTradeBump,
-      programAsSignerBump: programAsSignerBump,
-      buyerPrice,
-      tokenSize: 1,
-    };
-
-    const sellInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount: associatedTokenAccount,
-      metadata: metadata,
-      authority: authority,
-      auctionHouse: auctionHouse,
-      auctionHouseFeeAccount: auctionHouseFeeAccount,
-      sellerTradeState: sellerTradeState,
-      freeSellerTradeState: freeTradeState,
-      programAsSigner: programAsSigner,
-    };
-
-    const sellInstruction = createSellInstruction(sellInstructionAccounts, sellInstructionArgs);
-
-    const [receipt, receiptBump] = await AuctionHouseProgram.findListingReceiptAddress(
-      sellerTradeState
-    );
-
-    const printListingReceiptInstruction = createPrintListingReceiptInstruction(
-      {
-        receipt,
-        bookkeeper: publicKey,
-        instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-      },
-      {
-        receiptBump,
-      }
-    );
-
-    txt.add(sellInstruction).add(printListingReceiptInstruction);
-
-    txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    txt.feePayer = publicKey;
-
-    let signed: Transaction | undefined = undefined;
-
+    const sellAmount = Number(amount);
     try {
-      signed = await signTransaction(txt);
-    } catch (e: any) {
-      toast.error(e.message);
-      return;
-    }
-
-    let signature: string | undefined = undefined;
-
-    try {
-      toast('Sending the transaction to Solana.');
-
-      signature = await connection.sendRawTransaction(signed.serialize());
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
+      await onSell(sellAmount);
+      toast.success(`Confirmed listing success`);
       await refetch();
-
-      toast.success('The transaction was confirmed.');
-    } catch (e: any) {
-      toast.error(e.message);
+      return;
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setOpen(false);
     }

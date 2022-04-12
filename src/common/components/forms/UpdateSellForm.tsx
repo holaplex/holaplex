@@ -1,5 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from 'react';
-import { Nft, Marketplace, Listing, Offer } from '@/types/types';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '../elements/NFTPreview';
@@ -10,23 +9,13 @@ import { useForm } from 'react-hook-form';
 import * as zod from 'zod';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import {
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SYSVAR_INSTRUCTIONS_PUBKEY,
-  Transaction,
-} from '@solana/web3.js';
-import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { FeeItem } from './SellForm';
 import AcceptOfferForm from './AcceptOfferForm';
-
-const {
-  createCancelListingReceiptInstruction,
-  createCancelInstruction,
-  createSellInstruction,
-  createPrintListingReceiptInstruction,
-} = AuctionHouseProgram.instructions;
+import { initMarketplaceSDK, Nft, Marketplace, Listing, Offer } from '@holaplex/marketplace-js-sdk';
+import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 interface UpdateSellFormProps {
   nft: Nft;
@@ -59,6 +48,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   offer,
 }) => {
   const { publicKey, signTransaction, signAllTransactions } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
 
   const {
@@ -72,172 +62,68 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
   const hasOffer = Boolean(offer);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
-  const currPrice = String(Number(listing.price) / LAMPORTS_PER_SOL);
+  const currPrice = String(Number(listing?.price) / LAMPORTS_PER_SOL);
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
+  const sellerFee = nft?.sellerFeeBasisPoints || 1000;
+  const auctionHouseSellerFee = marketplace?.auctionHouse?.sellerFeeBasisPoints || 200;
 
-  const royalties = (listPrice * nft?.sellerFeeBasisPoints) / 10000;
-  const auctionHouseFee = (listPrice * marketplace.auctionHouse.sellerFeeBasisPoints) / 10000;
+  const royalties = (listPrice * sellerFee) / 10000;
+  const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
+
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { runActions, hasActionPending, clearActions } = useContext(MultiTransactionContext);
+
+  const onCancelListing = async () => {
+    if (listing && isOwner && nft) {
+      toast(`Canceling listing for ${nft.name}`);
+      await sdk.listings(marketplace.auctionHouse).cancel({ nft, listing });
+    }
+  };
+
+  const onUpdateListing = async ({ amount }: { amount: number }) => {
+    if (amount && nft) {
+      toast(`Updating current listing to ${amount} SOL`);
+      await sdk.listings(marketplace.auctionHouse).post({ amount, nft });
+    }
+  };
 
   const updateSellTx = async ({ amount }: UpdateSellFormSchema) => {
     if (!listing || !amount || !nft || !signTransaction || !publicKey || !signAllTransactions) {
       return;
     }
 
-    // cancel listing
-    const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
-    const authority = new PublicKey(marketplace.auctionHouse.authority);
-    const auctionHouseFeeAccount = new PublicKey(marketplace.auctionHouse.auctionHouseFeeAccount);
-    const tokenMint = new PublicKey(nft.mintAddress);
-    const treasuryMint = new PublicKey(marketplace.auctionHouse.treasuryMint);
-    const receipt = new PublicKey(listing.address);
-    const tokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
-    const buyerPrice = Number(listing.price);
-
-    const [tradeState] = await AuctionHouseProgram.findTradeStateAddress(
-      publicKey,
-      auctionHouse,
-      tokenAccount,
-      treasuryMint,
-      tokenMint,
-      buyerPrice,
-      1
-    );
-
-    const cancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount,
-      tokenMint,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-      tradeState,
-    };
-    const cancelInstructionArgs = {
-      buyerPrice,
-      tokenSize: 1,
-    };
-
-    const cancelListingReceiptAccounts = {
-      receipt,
-      instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-    };
-
-    const cancelInstruction = createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    );
-    const cancelListingReceiptInstruction = createCancelListingReceiptInstruction(
-      cancelListingReceiptAccounts
-    );
-
-    const cancelListingTxt = new Transaction();
-    const updateListingTxt = new Transaction();
-
-    // update listing
-    const updatedPrice = Number(amount) * LAMPORTS_PER_SOL;
-    const associatedTokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
-
-    const [sellerTradeState, tradeStateBump] = await AuctionHouseProgram.findTradeStateAddress(
-      publicKey,
-      auctionHouse,
-      associatedTokenAccount,
-      treasuryMint,
-      tokenMint,
-      updatedPrice,
-      1
-    );
-
-    const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint);
-
-    const [programAsSigner, programAsSignerBump] =
-      await AuctionHouseProgram.findAuctionHouseProgramAsSignerAddress();
-
-    const [freeTradeState, freeTradeBump] = await AuctionHouseProgram.findTradeStateAddress(
-      publicKey,
-      auctionHouse,
-      associatedTokenAccount,
-      treasuryMint,
-      tokenMint,
-      0,
-      1
-    );
-
-    const sellInstructionArgs = {
-      tradeStateBump,
-      freeTradeStateBump: freeTradeBump,
-      programAsSignerBump: programAsSignerBump,
-      buyerPrice: updatedPrice,
-      tokenSize: 1,
-    };
-
-    const sellInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount: associatedTokenAccount,
-      metadata: metadata,
-      authority: authority,
-      auctionHouse: auctionHouse,
-      auctionHouseFeeAccount: auctionHouseFeeAccount,
-      sellerTradeState: sellerTradeState,
-      freeSellerTradeState: freeTradeState,
-      programAsSigner: programAsSigner,
-    };
-
-    const sellInstruction = createSellInstruction(sellInstructionAccounts, sellInstructionArgs);
-
-    const [listReceipt, receiptBump] = await AuctionHouseProgram.findListingReceiptAddress(
-      sellerTradeState
-    );
-
-    const printListingReceiptInstruction = createPrintListingReceiptInstruction(
+    const numAmount = Number(amount);
+    const newActions: Action[] = [
       {
-        receipt: listReceipt,
-        bookkeeper: publicKey,
-        instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
+        name: `Cancel listing`,
+        id: `cancelListing`,
+        action: onCancelListing,
+        param: undefined,
       },
       {
-        receiptBump,
-      }
-    );
-
-    cancelListingTxt.add(cancelInstruction).add(cancelListingReceiptInstruction);
-    cancelListingTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    cancelListingTxt.feePayer = publicKey;
-
-    updateListingTxt.add(sellInstruction).add(printListingReceiptInstruction);
-    updateListingTxt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    updateListingTxt.feePayer = publicKey;
-
-    let signedUpdateSellListing: Transaction[] | undefined = undefined;
+        name: `Update listing`,
+        id: `updateListing`,
+        action: onUpdateListing,
+        param: { amount: numAmount },
+      },
+    ];
 
     try {
-      signedUpdateSellListing = await signAllTransactions([cancelListingTxt, updateListingTxt]);
-    } catch (err: any) {
-      toast.error(err.message);
-      return;
-    }
-
-    let signature: string | undefined = undefined;
-    try {
-      toast('Sending the update listing (cancel listing) transaction to Solana.');
-
-      signature = await connection.sendRawTransaction(signedUpdateSellListing[0].serialize());
-
-      await connection.confirmTransaction(signature, `confirmed`);
-
-      toast(
-        `Successfully canceled old listing at: ${Number(listing.price) / LAMPORTS_PER_SOL} SOL`
-      );
-
-      toast('Sending the update listing (new listing) transaction to Solana.');
-
-      signature = await connection.sendRawTransaction(signedUpdateSellListing[1].serialize());
-
-      await connection.confirmTransaction(signature, `confirmed`);
-
-      await refetch();
-
-      toast.success('Update listing confirmed.');
+      await runActions(newActions, {
+        onActionSuccess: async () => {
+          await refetch();
+        },
+        onComplete: async () => {
+          await refetch();
+          setOpen(false);
+        },
+        onActionFailure: async () => {
+          await refetch();
+          // retry transactions
+          // retryActions()
+        },
+      });
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -288,12 +174,12 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
             <ul className={`mt-6 flex w-full flex-col`}>
               <FeeItem
                 title={`Creator royalty`}
-                sellerFeeBasisPoints={nft?.sellerFeeBasisPoints}
+                sellerFeeBasisPoints={sellerFee}
                 amount={royalties}
               />
               <FeeItem
                 title={`Transaction fees`}
-                sellerFeeBasisPoints={marketplace.auctionHouse.sellerFeeBasisPoints}
+                sellerFeeBasisPoints={auctionHouseSellerFee}
                 amount={auctionHouseFee}
               />
 
@@ -301,20 +187,16 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
                 <FeeItem
                   result={true}
                   title={`You will receive`}
-                  sellerFeeBasisPoints={
-                    10000 -
-                    nft?.sellerFeeBasisPoints -
-                    marketplace.auctionHouse.sellerFeeBasisPoints
-                  }
+                  sellerFeeBasisPoints={10000 - sellerFee - auctionHouseSellerFee}
                   amount={listPrice - royalties - auctionHouseFee}
                 />
               </div>
             </ul>
             <div className={`mt-8 w-full`}>
               <Button
-                disabled={isSubmitting}
+                disabled={isSubmitting || hasActionPending}
                 secondary
-                loading={isSubmitting}
+                loading={isSubmitting || hasActionPending}
                 htmlType={`submit`}
                 block
                 className={`w-full`}
