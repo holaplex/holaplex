@@ -73,7 +73,6 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
             disabled={isSubmitting}
             htmlType={`submit`}
             secondary
-            onClick={cancelOfferTx}
           >
             Cancel offer
           </Button>

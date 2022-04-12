@@ -78,7 +78,7 @@ const NFTCard = ({
     <>
       <div className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-[300ms] hover:scale-[1.02]">
         <Link href={`/nfts/${nft.address}`} passHref>
-          <a>
+          <div className={`cursor-pointer`}>
             <div className={`relative `}>
               <img
                 src={imgOpt(nft.image, 600)}
@@ -107,7 +107,7 @@ const NFTCard = ({
                 {nft.name}
               </p>
             </div>
-          </a>
+          </div>
         </Link>
         <div className={`h-20`}>
           <div className={`flex w-full items-center justify-between p-5`}>
