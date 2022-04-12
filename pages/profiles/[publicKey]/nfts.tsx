@@ -154,7 +154,11 @@ const NFTCard = ({
               </div>
             )}
             {!isOwner && hasAddedOffer && (
-              <Button secondary onClick={() => setUpdateOfferVisibility(true)}>
+              <Button
+                secondary
+                className={`bg-gray-800`}
+                onClick={() => setUpdateOfferVisibility(true)}
+              >
                 Update offer
               </Button>
             )}
