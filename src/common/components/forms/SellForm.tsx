@@ -1,5 +1,4 @@
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react';
-import { Nft, Marketplace } from '@/types/types';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { LoadingBox, LoadingContainer } from '../elements/LoadingPlaceholders';
@@ -19,7 +18,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 
 const { createSellInstruction, createPrintListingReceiptInstruction } =
@@ -96,8 +95,10 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
-  const royalties = (listPrice * nft?.sellerFeeBasisPoints) / 10000;
-  const auctionHouseFee = (listPrice * marketplace.auctionHouse.sellerFeeBasisPoints) / 10000;
+  const sellerFee = nft?.sellerFeeBasisPoints || 1000;
+  const auctionHouseSellerFee = marketplace?.auctionHouse?.sellerFeeBasisPoints || 200;
+  const royalties = (listPrice * sellerFee) / 10000;
+  const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
   const onSell = async (amount: number) => {
     if (amount && nft) {
@@ -164,12 +165,12 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
           <ul className={`mt-6 flex w-full flex-col`}>
             <FeeItem
               title={`Creator royalty`}
-              sellerFeeBasisPoints={nft?.sellerFeeBasisPoints}
+              sellerFeeBasisPoints={sellerFee}
               amount={royalties}
             />
             <FeeItem
               title={`Transaction fees`}
-              sellerFeeBasisPoints={marketplace.auctionHouse.sellerFeeBasisPoints}
+              sellerFeeBasisPoints={auctionHouseSellerFee}
               amount={auctionHouseFee}
             />
 
@@ -177,9 +178,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
               <FeeItem
                 result={true}
                 title={`You will receive`}
-                sellerFeeBasisPoints={
-                  10000 - nft?.sellerFeeBasisPoints - marketplace.auctionHouse.sellerFeeBasisPoints
-                }
+                sellerFeeBasisPoints={10000 - sellerFee - auctionHouseSellerFee}
                 amount={listPrice - royalties - auctionHouseFee}
               />
             </div>

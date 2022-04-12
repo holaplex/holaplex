@@ -149,7 +149,13 @@ const Activities = ({
   );
 };
 
-export const Avatar = ({ address }: { address: string }) => {
+export const Avatar = ({
+  address,
+  showAddress = true,
+}: {
+  address: string;
+  showAddress?: boolean;
+}) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
   const { publicKey } = useWallet();
@@ -179,9 +185,11 @@ export const Avatar = ({ address }: { address: string }) => {
         alt="Profile Picture"
         className="h-6 w-6 rounded-full"
       />
-      <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
-        {displayName}
-      </div>
+      {showAddress && (
+        <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
+          {displayName}
+        </div>
+      )}
     </div>
   );
 };
@@ -220,7 +228,7 @@ export default function NftByAddress({ address }: { address: string }) {
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
-  const topOffers = offers?.sort((a, b) => a.price - b.price);
+  const topOffers = offers?.sort((a, b) => Number(a.price) - Number(b.price));
   const topOffer = topOffers?.[0];
   const hasOffers = Boolean(topOffer);
 

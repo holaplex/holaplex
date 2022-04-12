@@ -118,9 +118,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
           await action.action(action.param);
           settings?.onActionSuccess?.(action.id);
           // clear action
-          console.log(action.id);
           const filtered = newActionsWithIds.filter((x) => x.id !== action.id);
-          console.log(filtered);
           setActions(filtered);
         }
       } catch (err: any) {

@@ -47,7 +47,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      amount: Number(listing.price),
+      amount: Number(listing?.price),
     },
   });
 
@@ -56,7 +56,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
 
   const onBuy = async () => {
-    if (listing && isOwner && nft) {
+    if (listing && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
       await sdk.listings(marketplace.auctionHouse).buy({ listing, nft });
     }
