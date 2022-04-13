@@ -85,6 +85,12 @@ export type BidReceipt = {
   tradeStateBump: Scalars['Int'];
 };
 
+export type ConnectionCounts = {
+  __typename?: 'ConnectionCounts';
+  fromCount: Scalars['Int'];
+  toCount: Scalars['Int'];
+};
+
 export type Creator = {
   __typename?: 'Creator';
   address: Scalars['String'];
@@ -130,6 +136,7 @@ export type Listing = {
   storefront?: Maybe<Storefront>;
 };
 
+/** An NFT listing receipt */
 export type ListingReceipt = {
   __typename?: 'ListingReceipt';
   address: Scalars['String'];
@@ -218,6 +225,17 @@ export type NftAttribute = {
   value: Scalars['String'];
 };
 
+export type NftCount = {
+  __typename?: 'NftCount';
+  listed: Scalars['Int'];
+  total: Scalars['Int'];
+};
+
+
+export type NftCountListedArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
 export type NftCreator = {
   __typename?: 'NftCreator';
   address: Scalars['String'];
@@ -243,6 +261,7 @@ export type Profile = {
   handle: Scalars['String'];
   profileImageUrlHighres: Scalars['String'];
   profileImageUrlLowres: Scalars['String'];
+  walletAddress?: Maybe<Scalars['String']>;
 };
 
 /** auction house bid receipt */
@@ -265,6 +284,7 @@ export type QueryRoot = {
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
   nft?: Maybe<Nft>;
+  nftCounts: NftCount;
   nfts: Array<Nft>;
   profile?: Maybe<Profile>;
   /** A storefront */
@@ -297,6 +317,11 @@ export type QueryRootNftArgs = {
 };
 
 
+export type QueryRootNftCountsArgs = {
+  creators: Array<Scalars['PublicKey']>;
+};
+
+
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
@@ -319,7 +344,7 @@ export type QueryRootStorefrontArgs = {
 
 
 export type QueryRootWalletArgs = {
-  address: Scalars['String'];
+  address: Scalars['PublicKey'];
 };
 
 export type StoreCreator = {
@@ -352,17 +377,41 @@ export type TwitterProfile = {
 
 export type Wallet = {
   __typename?: 'Wallet';
-  address: Scalars['String'];
+  address: Scalars['PublicKey'];
   bids: Array<Bid>;
+  connectionCounts: ConnectionCounts;
+  nftCounts: WalletNftCount;
   profile?: Maybe<TwitterProfile>;
 };
 
+
+export type WalletNftCountsArgs = {
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type WalletNftCount = {
+  __typename?: 'WalletNftCount';
+  listed: Scalars['Int'];
+  offered: Scalars['Int'];
+  owned: Scalars['Int'];
+};
+
+
+export type WalletNftCountListedArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+
+export type WalletNftCountOfferedArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
 export type ActivityPageQueryVariables = Exact<{
-  address: Scalars['String'];
+  address: Scalars['PublicKey'];
 }>;
 
 
-export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet: { __typename: 'Wallet', address: string, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } };
+export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet: { __typename: 'Wallet', address: any, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } };
 
 export type CreatedNfTsQueryVariables = Exact<{
   creator: Scalars['PublicKey'];
@@ -406,7 +455,7 @@ export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft
 
 
 export const ActivityPageDocument = gql`
-    query activityPage($address: String!) {
+    query activityPage($address: PublicKey!) {
   wallet(address: $address) {
     __typename
     address
