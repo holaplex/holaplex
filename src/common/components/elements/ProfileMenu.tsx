@@ -1,8 +1,7 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import { FC, Fragment } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import cx from 'classnames';
 import React from 'react';
 import { Tab } from '@headlessui/react';
