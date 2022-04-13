@@ -96,13 +96,13 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     const numAmount = Number(amount);
     const newActions: Action[] = [
       {
-        name: `Cancel listing`,
+        name: `Canceling your original listing...`,
         id: `cancelListing`,
         action: onCancelListing,
         param: undefined,
       },
       {
-        name: `Update listing`,
+        name: `Creating your updated listing...`,
         id: `updateListing`,
         action: onUpdateListing,
         param: { amount: numAmount },

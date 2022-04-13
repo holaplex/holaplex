@@ -96,13 +96,13 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
 
     const newActions: Action[] = [
       {
-        name: `Cancel offer`,
+        name: `Canceling your original offer...`,
         id: `cancelOffer`,
         action: onCancelOffer,
         param: undefined,
       },
       {
-        name: `Update new offer`,
+        name: `Creating your updated offer...`,
         id: `updateOffer`,
         action: onUpdateOffer,
         param: { amount: numAmount },

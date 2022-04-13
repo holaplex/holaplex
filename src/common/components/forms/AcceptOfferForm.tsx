@@ -6,29 +6,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
-import {
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SYSVAR_INSTRUCTIONS_PUBKEY,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
-import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
-import { concat } from 'ramda';
 import { toast } from 'react-toastify';
 import { Nft, Marketplace, Offer, Listing, initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { MultiTransactionContext } from '../../context/MultiTransaction';
-
-const {
-  createSellInstruction,
-  createPrintListingReceiptInstruction,
-  createExecuteSaleInstruction,
-  createPrintPurchaseReceiptInstruction,
-  createCancelInstruction,
-  createCancelListingReceiptInstruction,
-} = AuctionHouseProgram.instructions;
 
 interface AcceptOfferFormProps {
   nft: Nft;
@@ -75,7 +57,6 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   });
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
-  const { runActions, hasActionPending, retryActions } = useContext(MultiTransactionContext);
 
   const onAcceptOffer = async () => {
     if (offer) {
