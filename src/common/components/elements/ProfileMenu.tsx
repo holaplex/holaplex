@@ -9,7 +9,7 @@ import { Tab } from '@headlessui/react';
 import { useProfileData } from '@/common/context/ProfileData';
 
 enum TabRoute {
-  OWNED,
+  COLLECTED,
   CREATED,
   ACTIVITY,
 }
@@ -17,28 +17,17 @@ enum TabRoute {
 export const ProfileMenu: FC = () => {
   const { publicKey } = useProfileData();
   const router = useRouter();
-  const path = router.asPath;
-  const pathName = router.pathname;
-  const routeIndex = TabRoute.OWNED;
-  const [selectedIndex, setSelectedIndex] = useState(routeIndex);
 
-  useEffect(() => {
-    switch (pathName) {
-      case `/profiles/[publicKey]/created`:
-        setSelectedIndex(TabRoute.CREATED);
-        break;
-      case `/profiles/[publicKey]/activity`:
-        setSelectedIndex(TabRoute.ACTIVITY);
-        break;
-      default:
-        setSelectedIndex(TabRoute.OWNED);
-        break;
-    }
-  }, [pathName, path]);
+  const defaultTabIndex =
+    router.pathname === '/profiles/[publicKey]/activity'
+      ? TabRoute.ACTIVITY
+      : `/profiles/[publicKey]/created`
+      ? TabRoute.CREATED
+      : TabRoute.COLLECTED;
 
   return (
     <div className="mb-6  border-b-2  border-gray-800">
-      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+      <Tab.Group defaultIndex={defaultTabIndex}>
         <Tab.List className="-mb-px flex h-14 w-full justify-between sm:w-auto sm:justify-start ">
           <Tab as={Fragment}>
             {({ selected }) => (
