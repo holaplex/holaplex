@@ -136,6 +136,7 @@ export type Listing = {
   storefront?: Maybe<Storefront>;
 };
 
+/** An NFT listing receipt */
 export type ListingReceipt = {
   __typename?: 'ListingReceipt';
   address: Scalars['String'];
@@ -224,6 +225,17 @@ export type NftAttribute = {
   value: Scalars['String'];
 };
 
+export type NftCount = {
+  __typename?: 'NftCount';
+  listed: Scalars['Int'];
+  total: Scalars['Int'];
+};
+
+
+export type NftCountListedArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
 export type NftCreator = {
   __typename?: 'NftCreator';
   address: Scalars['String'];
@@ -272,6 +284,7 @@ export type QueryRoot = {
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
   nft?: Maybe<Nft>;
+  nftCounts: NftCount;
   nfts: Array<Nft>;
   profile?: Maybe<Profile>;
   /** A storefront */
@@ -301,6 +314,11 @@ export type QueryRootMarketplaceArgs = {
 
 export type QueryRootNftArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryRootNftCountsArgs = {
+  creators: Array<Scalars['PublicKey']>;
 };
 
 
@@ -355,7 +373,6 @@ export type TwitterProfile = {
   description: Scalars['String'];
   handle: Scalars['String'];
   profileImageUrl: Scalars['String'];
-  walletAddress?: Maybe<Scalars['String']>;
 };
 
 export type Wallet = {
@@ -363,7 +380,30 @@ export type Wallet = {
   address: Scalars['PublicKey'];
   bids: Array<Bid>;
   connectionCounts: ConnectionCounts;
+  nftCounts: WalletNftCount;
   profile?: Maybe<TwitterProfile>;
+};
+
+
+export type WalletNftCountsArgs = {
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type WalletNftCount = {
+  __typename?: 'WalletNftCount';
+  listed: Scalars['Int'];
+  offered: Scalars['Int'];
+  owned: Scalars['Int'];
+};
+
+
+export type WalletNftCountListedArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+
+export type WalletNftCountOfferedArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 export type ActivityPageQueryVariables = Exact<{
@@ -404,6 +444,22 @@ export type NftPageQueryVariables = Exact<{
 
 export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, auctionHouse: string, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
 
+export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null };
+
+export type AllConnectionsFromQueryVariables = Exact<{
+  from: Scalars['PublicKey'];
+}>;
+
+
+export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } }> };
+
+export type AllConnectionsToQueryVariables = Exact<{
+  to: Scalars['PublicKey'];
+}>;
+
+
+export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } }> };
+
 export type GetProfileFollowerOverviewQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
 }>;
@@ -433,7 +489,15 @@ export type IsXFollowingYQueryVariables = Exact<{
 
 export type IsXFollowingYQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', address: string }> };
 
-
+export const ConnectionNodeFragmentDoc = gql`
+    fragment ConnectionNode on Wallet {
+  address
+  profile {
+    handle
+    profileImageUrl
+  }
+}
+    `;
 export const ActivityPageDocument = gql`
     query activityPage($address: PublicKey!) {
   wallet(address: $address) {
@@ -787,6 +851,80 @@ export function useNftPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Nf
 export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
 export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
 export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;
+export const AllConnectionsFromDocument = gql`
+    query allConnectionsFrom($from: PublicKey!) {
+  connections(from: [$from], limit: 1000, offset: 0) {
+    to {
+      ...ConnectionNode
+    }
+  }
+}
+    ${ConnectionNodeFragmentDoc}`;
+
+/**
+ * __useAllConnectionsFromQuery__
+ *
+ * To run a query within a React component, call `useAllConnectionsFromQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllConnectionsFromQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllConnectionsFromQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *   },
+ * });
+ */
+export function useAllConnectionsFromQuery(baseOptions: Apollo.QueryHookOptions<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(AllConnectionsFromDocument, options);
+      }
+export function useAllConnectionsFromLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(AllConnectionsFromDocument, options);
+        }
+export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnectionsFromQuery>;
+export type AllConnectionsFromLazyQueryHookResult = ReturnType<typeof useAllConnectionsFromLazyQuery>;
+export type AllConnectionsFromQueryResult = Apollo.QueryResult<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>;
+export const AllConnectionsToDocument = gql`
+    query allConnectionsTo($to: PublicKey!) {
+  connections(to: [$to], limit: 1000, offset: 0) {
+    from {
+      ...ConnectionNode
+    }
+  }
+}
+    ${ConnectionNodeFragmentDoc}`;
+
+/**
+ * __useAllConnectionsToQuery__
+ *
+ * To run a query within a React component, call `useAllConnectionsToQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllConnectionsToQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllConnectionsToQuery({
+ *   variables: {
+ *      to: // value for 'to'
+ *   },
+ * });
+ */
+export function useAllConnectionsToQuery(baseOptions: Apollo.QueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(AllConnectionsToDocument, options);
+      }
+export function useAllConnectionsToLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(AllConnectionsToDocument, options);
+        }
+export type AllConnectionsToQueryHookResult = ReturnType<typeof useAllConnectionsToQuery>;
+export type AllConnectionsToLazyQueryHookResult = ReturnType<typeof useAllConnectionsToLazyQuery>;
+export type AllConnectionsToQueryResult = Apollo.QueryResult<AllConnectionsToQuery, AllConnectionsToQueryVariables>;
 export const GetProfileFollowerOverviewDocument = gql`
     query getProfileFollowerOverview($pubKey: PublicKey!) {
   wallet(address: $pubKey) {

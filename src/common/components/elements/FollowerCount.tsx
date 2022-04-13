@@ -2,27 +2,23 @@ import { FC, useMemo } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import styled from 'styled-components';
-import { useIsXFollowingYQuery } from 'src/graphql/indexerTypes';
+import {
+  useGetProfileFollowerOverviewQuery,
+  useIsXFollowingYQuery,
+} from 'src/graphql/indexerTypes';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { FollowerBubble } from './FollowerBubble';
 import { useProfileData } from '@/common/context/ProfileData';
 
 type FollowerCountProps = {
-  profile: IProfile;
   setShowFollowsModal: (s: FollowsModalState) => void;
 };
 
-export const FollowerCount: FC<FollowerCountProps> = ({ profile, setShowFollowsModal }) => {
+export const FollowerCount: FC<FollowerCountProps> = ({ setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
   if (!wallet) return null;
-  return (
-    <FollowerCountContent
-      wallet={wallet}
-      profile={profile}
-      setShowFollowsModal={setShowFollowsModal}
-    />
-  );
+  return <FollowerCountContent wallet={wallet} setShowFollowsModal={setShowFollowsModal} />;
 };
 
 type FollowerCountContentProps = FollowerCountProps & {
@@ -32,27 +28,29 @@ type FollowerCountContentProps = FollowerCountProps & {
 type FollowsModalState = 'hidden' | 'followers' | 'following';
 
 export const FollowerCountContent: FC<FollowerCountContentProps> = ({
-  profile,
   wallet,
   setShowFollowsModal,
 }) => {
-  const { pubkey } = profile;
-
+  const { publicKey } = useProfileData();
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  const { followers, following } = useProfileData();
-  const { data, loading } = useIsXFollowingYQuery({
+  const profileFollowerOverview = useGetProfileFollowerOverviewQuery({
+    variables: { pubKey: publicKey },
+  });
+  const isXFollowingY = useIsXFollowingYQuery({
     variables: {
       xPubKey: wallet.publicKey.toBase58(),
-      yPubKey: pubkey,
+      yPubKey: publicKey,
     },
   });
-  if (loading) return <FollowerCountSkeleton />;
-  const isSameWallet = wallet.publicKey.equals(new PublicKey(pubkey));
 
-  const amIFollowing = data?.connections?.length ?? 0 > 0;
+  if (profileFollowerOverview.loading || isXFollowingY.loading) return <FollowerCountSkeleton />;
+  const isSameWallet = wallet.publicKey.equals(new PublicKey(publicKey));
 
+  const followers = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
+  const following = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
+  const amIFollowingThisAccount = isXFollowingY.data?.connections?.length ?? 0 > 0;
   return (
     <div className="flex flex-col">
       <div className="mt-10 flex justify-between md:justify-start">
@@ -69,8 +67,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
             <FollowUnfollowButton
               source="profileButton"
               walletConnectionPair={walletConnectionPair}
-              toProfile={profile}
-              type={amIFollowing ? 'Unfollow' : 'Follow'}
+              type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
             />
           )}
         </div>
@@ -87,14 +84,23 @@ type FollowedByProps = {
 };
 
 const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
-  const { followers, topFollowers } = useProfileData();
+  const { publicKey } = useProfileData();
+  const { data, loading } = useGetProfileFollowerOverviewQuery({
+    variables: { pubKey: publicKey },
+  });
+  if (loading) return null;
+  const followers = data?.wallet.connectionCounts.fromCount ?? 0;
   if (!followers) return null;
   return (
     <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2 flex flex-row -space-x-2">
-        {topFollowers.map((follower, i) => (
-          <FollowerBubble isFirst={i === 0} key={follower.from.address as string} follower={follower} />
+        {data?.connections.map((follower, i) => (
+          <FollowerBubble
+            isFirst={i === 0}
+            key={follower.from.address as string}
+            follower={follower}
+          />
         ))}
         {followers > 4 ? (
           <OtherFollowersNumberBubble

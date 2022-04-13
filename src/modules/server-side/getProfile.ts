@@ -134,11 +134,12 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
     return { notFound: true };
   }
 
-  const apolloClient = initializeApollo();
-  await apolloClient.query({
-    query: GetProfileFollowerOverviewDocument,
-    variables: { pubKey: publicKey!.toBase58() },
-  });
+  // Disabling SSR Pre-Fetch for UX purposes.
+  // const apolloClient = initializeApollo();
+  // await apolloClient.query({
+  //   query: GetProfileFollowerOverviewDocument,
+  //   variables: { pubKey: publicKey!.toBase58() },
+  // });
 
   const profileServerSideProps = {
     publicKey: publicKey!.toBase58(),
@@ -151,7 +152,6 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
   return {
     props: {
       ...profileServerSideProps,
-      initialApolloState: apolloClient.cache.extract(),
     },
   };
 };

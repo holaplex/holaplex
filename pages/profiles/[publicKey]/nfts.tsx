@@ -86,8 +86,6 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
 
-  // const [selectedNFT, setSelectedNFT] = useState(nfts[0]);
-
   const GridSelector = () => {
     return (
       <div className="ml-4 hidden rounded-lg border-2 border-solid border-gray-800 md:flex">

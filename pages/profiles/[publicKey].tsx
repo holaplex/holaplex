@@ -17,9 +17,7 @@ export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = 
     return result;
   } else {
     const { props } = result as { props: WalletDependantPageProps };
-    return {
-      redirect: { destination: `/profiles/${props.publicKey}/nfts`, statusCode: 302 },
-    };
+    return { redirect: { destination: `/profiles/${props.publicKey}/nfts`, statusCode: 302 } };
   }
 }; // Do server side redirection for SEO purposes.
 
@@ -27,6 +25,8 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
   const router = useRouter();
   useEffect(() => {
     router.replace(`/profiles/${publicKey}/nfts`);
+    // Run once if client-side
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <ProfileDataProvider profileData={{ publicKey, ...props }}>

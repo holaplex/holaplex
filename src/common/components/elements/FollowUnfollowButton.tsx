@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
+import { useProfileData } from '@/common/context/ProfileData';
 
 type FollowUnfollowButtonProps = {
   source: 'modalFrom' | 'modalTo' | 'profileButton';
@@ -18,21 +19,20 @@ type FollowUnfollowButtonProps = {
     wallet: AnchorWallet;
     connection: Connection;
   };
-  toProfile: IProfile;
   type: 'Follow' | 'Unfollow';
 };
 
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   source,
   walletConnectionPair,
-  toProfile,
   type,
 }) => {
+  const toProfile = useProfileData();
   const { track } = useAnalytics();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); // TODO: Remove
   const { connection, wallet } = walletConnectionPair;
   const myWallet = wallet.publicKey.toBase58();
-  const toWallet = toProfile.pubkey;
+  const toWallet = toProfile.publicKey;
 
   const sharedTrackingParams = {
     source,
@@ -79,7 +79,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>
       );
     },
-    onError: (error, toWallet) => {
+    onError: (error) => {
       console.error(error);
       trackError();
       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
@@ -120,7 +120,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>
       );
     },
-    onError: (error, toWallet) => {
+    onError: (error) => {
       console.error(error);
       trackError();
       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);

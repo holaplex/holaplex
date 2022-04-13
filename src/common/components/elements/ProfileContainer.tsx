@@ -12,8 +12,7 @@ import { useProfileData, asProfile } from '@/common/context/ProfileData';
 import { CenteredContentCol } from 'pages';
 
 export const ProfileContainer: FC = ({ children }) => {
-  const profileData = useProfileData();
-  const { banner, profilePicture } = profileData;
+  const { banner, profilePicture } = useProfileData();
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
@@ -37,7 +36,6 @@ export const ProfileContainer: FC = ({ children }) => {
             <ProfileDisplayName />
           </div>
           <FollowerCount
-            profile={asProfile(profileData)}
             setShowFollowsModal={setShowFollowsModal}
           />
         </div>
@@ -49,7 +47,6 @@ export const ProfileContainer: FC = ({ children }) => {
           <FollowModal
             visibility={showFollowsModal}
             setVisibility={setShowFollowsModal}
-            profile={asProfile(profileData)}
             wallet={anchorWallet}
           />
         ) : null}
