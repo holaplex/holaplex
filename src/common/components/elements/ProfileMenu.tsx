@@ -21,7 +21,7 @@ export const ProfileMenu: FC = () => {
   const defaultTabIndex =
     router.pathname === '/profiles/[publicKey]/activity'
       ? TabRoute.ACTIVITY
-      : `/profiles/[publicKey]/created`
+      : router.pathname === `/profiles/[publicKey]/created`
       ? TabRoute.CREATED
       : TabRoute.COLLECTED;
 
