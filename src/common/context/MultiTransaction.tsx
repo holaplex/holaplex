@@ -1,9 +1,10 @@
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { isEmpty } from 'ramda';
-import React, { FC, createContext, useState, useMemo } from 'react';
+import React, { FC, createContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { v4 } from 'uuid';
+import Modal from '../components/elements/Modal';
 import { None } from '../components/forms/OfferForm';
 
 type AsyncFunction = (arg?: any) => Promise<void>;
@@ -44,16 +45,10 @@ export const MultiTransactionContext = createContext<MultiTransactionState>(defa
 
 export const MultiTransactionProvider: FC = ({ children }) => {
   const [hasActionPending, setHasActionPending] = useState(false);
-  const hasRemaining = (actions: Action[]) => {
-    if (actions.length > 0 && !isEmpty(actions)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   const [actions, setActions] = useState<Action[]>([]);
   const [numActions, setNumActions] = useState(0);
-  const hasRemainingActions = useMemo(() => hasRemaining(actions), [actions]);
+  const [hasRemainingActions, setHasRemainingActions] = useState(false);
+  const [message, setMessage] = useState<string>(`Sign the message in your wallet to continue`);
 
   const clearActions = () => {
     setActions([]);
@@ -71,13 +66,16 @@ export const MultiTransactionProvider: FC = ({ children }) => {
     if (!hasActionPending) {
       try {
         setHasActionPending(true);
+        let filtered = actions;
         for (const action of actions) {
           await action.action(action.param);
           settings?.onActionSuccess?.(action.id);
           // clear action
-          const filtered = actions.filter((x) => x.id !== action.id);
+          filtered = filtered.filter((x) => x.id !== action.id);
           setActions(filtered);
         }
+        setHasRemainingActions(false);
+        setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
         if (errorMsg.includes(`User rejected the request`)) {
@@ -113,18 +111,22 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         return;
       }
       try {
+        setHasRemainingActions(true);
         setHasActionPending(true);
+        let filtered = newActionsWithIds;
         for (const action of newActionsWithIds) {
           await action.action(action.param);
           settings?.onActionSuccess?.(action.id);
           // clear action
-          const filtered = newActionsWithIds.filter((x) => x.id !== action.id);
+          filtered = filtered.filter((x) => x.id !== action.id);
           setActions(filtered);
         }
+        setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
         if (errorMsg.includes(`User rejected the request`)) {
           setActions([]);
+          setHasRemainingActions(false);
         }
         toast.error(err.message);
         settings?.onActionFailure?.();
@@ -137,6 +139,8 @@ export const MultiTransactionProvider: FC = ({ children }) => {
   };
 
   const completedActions = numActions - actions.length;
+  const percentage =
+    completedActions > 0 && numActions > 0 ? (completedActions / numActions) * 100 : 0;
 
   return (
     <MultiTransactionContext.Provider
@@ -149,7 +153,32 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         clearActions,
       }}
     >
-      {hasRemainingActions && (
+      <Modal
+        title={`Please wait`}
+        open={hasRemainingActions}
+        setOpen={setHasRemainingActions}
+        priority={true}
+      >
+        <div className={`mt-8`}>
+          <p className={`text-center`}>{message}</p>
+        </div>
+        <div className={`mt-8`}>
+          <div className={`h-2 w-full rounded-full bg-gray-800`}>
+            <div
+              className={`relative flex h-full rounded-full`}
+              style={{ width: `${percentage}%` }}
+            >
+              <div
+                className={`relative flex h-full animate-loading rounded-full bg-gray-300`}
+              ></div>
+            </div>
+          </div>
+          <p className={`mt-4 text-center text-gray-300`}>
+            {completedActions} of {numActions}
+          </p>
+        </div>
+      </Modal>
+      {/* {hasRemainingActions && (
         <div className={`fixed bottom-0 flex h-8 w-screen bg-gray-700`} style={{ zIndex: 2001 }}>
           <div
             className={`relative animate-pulse rounded-r-md bg-green-400 ease-in`}
@@ -174,7 +203,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {children}
     </MultiTransactionContext.Provider>

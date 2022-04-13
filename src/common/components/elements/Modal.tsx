@@ -12,9 +12,10 @@ type ModalProps = {
     | ((open: Boolean) => void);
   children: ReactNode;
   title: String;
+  priority?: boolean;
 };
 
-export const Modal: FC<ModalProps> = ({ open, setOpen, children, title }) => {
+export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority = false }) => {
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setOpen(false));
 
@@ -26,7 +27,7 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title }) => {
     <div
       role="dialog"
       className={cx(
-        'fixed top-0 left-0 right-0 bottom-0 z-20',
+        'fixed top-0 left-0 right-0 bottom-0',
         'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
         'transition-opacity duration-500 ease-in-out',
         'flex flex-col items-center justify-center',
@@ -35,6 +36,8 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title }) => {
           'opacity-0': !open,
           'pointer-events-auto': open,
           'pointer-events-none': !open,
+          'z-50': priority,
+          'z-20': !priority,
         }
       )}
     >

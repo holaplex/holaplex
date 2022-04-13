@@ -27,6 +27,16 @@ module.exports = {
         sans: ['Inter ', ...defaultTheme.fontFamily.sans],
         mono: ['Space_Mono', ...defaultTheme.fontFamily.mono],
       },
+      keyframes: {
+        loadingbar: {
+          '0%': { left: 0, width: 0 },
+          '50%': { left: 0, width: '100%' },
+          '100%': { left: '100%', width: 0 },
+        },
+      },
+      animation: {
+        loading: 'loadingbar ease-in-out 4s infinite',
+      },
     },
   },
   extend: {},
