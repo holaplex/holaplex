@@ -75,7 +75,6 @@ export const MultiTransactionProvider: FC = ({ children }) => {
           setActions(filtered);
         }
         setHasRemainingActions(false);
-        setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
         if (errorMsg.includes(`User rejected the request`)) {
@@ -115,6 +114,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasActionPending(true);
         let filtered = newActionsWithIds;
         for (const action of newActionsWithIds) {
+          setMessage(action.name);
           await action.action(action.param);
           settings?.onActionSuccess?.(action.id);
           // clear action
@@ -140,7 +140,9 @@ export const MultiTransactionProvider: FC = ({ children }) => {
 
   const completedActions = numActions - actions.length;
   const percentage =
-    completedActions > 0 && numActions > 0 ? (completedActions / numActions) * 100 : 0;
+    numActions > 0 && completedActions < numActions
+      ? ((completedActions + 1) / numActions) * 100
+      : 0;
 
   return (
     <MultiTransactionContext.Provider
@@ -169,7 +171,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
               style={{ width: `${percentage}%` }}
             >
               <div
-                className={`relative flex h-full animate-loading rounded-full bg-gray-300`}
+                className={`relative flex h-full w-full animate-loading rounded-full bg-gray-300`}
               ></div>
             </div>
           </div>

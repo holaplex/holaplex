@@ -17,7 +17,7 @@ type ModalProps = {
 
 export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority = false }) => {
   const modalRef = useRef<HTMLDivElement>(null!);
-  useOutsideAlerter(modalRef, () => setOpen(false));
+  useOutsideAlerter(modalRef, () => setOpen(priority)); // disable outside alerter if priority (require clicking close)
 
   if (!open) {
     return null;
