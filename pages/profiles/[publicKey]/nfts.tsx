@@ -86,7 +86,7 @@ export const NFTCard = ({
                 className="aspect-square w-full rounded-lg object-cover"
               />
               {shownCreatorAddress && (
-                <div className={`absolute left-0 top-0 flex flex-row items-center pl-4 pt-4`}>
+                <div className={`absolute left-0 top-0 flex flex-row items-center p-4`}>
                   <Link href={`/profiles/${shownCreatorAddress}`}>
                     <a className="text-gray-300">
                       <Avatar address={shownCreatorAddress} showAddress={false} border={true} />
