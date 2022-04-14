@@ -112,8 +112,10 @@ export const NFTCard = ({
             </div>
           </div>
         </Link>
-        <div className={`h-20`}>
-          <div className={`flex w-full items-center justify-between p-4`}>
+        <div className={`h-20 md:h-36 xl:h-20`}>
+          <div
+            className={`flex h-full w-full items-center justify-between p-4 md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+          >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
                 <li className={`text-sm font-bold text-gray-300`}>Price</li>
@@ -139,42 +141,52 @@ export const NFTCard = ({
             )}
 
             {isOwner && !hasDefaultListing && (
-              <Button fixedWidth={true} onClick={() => setListNFTVisibility(true)}>
-                List NFT
-              </Button>
+              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
+                <Button className={`md:w-full xl:w-32`} onClick={() => setListNFTVisibility(true)}>
+                  List NFT
+                </Button>
+              </div>
             )}
             {isOwner && hasDefaultListing && (
-              <Button fixedWidth={true} onClick={() => setUpdateListingVisibility(true)}>
-                Update
-              </Button>
+              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
+                <Button
+                  className={`md:w-full xl:w-32`}
+                  onClick={() => setUpdateListingVisibility(true)}
+                >
+                  Update
+                </Button>
+              </div>
             )}
             {!isOwner && !hasAddedOffer && hasDefaultListing && (
-              <div>
+              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-auto`}>
                 <BuyForm
                   nft={nft as Nft | any}
                   marketplace={marketplace}
                   listing={defaultListing as Listing}
                   refetch={refetch}
-                  className={`w-32`}
+                  className={`w-32 md:w-full xl:w-32`}
                 />
               </div>
             )}
             {!isOwner && hasAddedOffer && (
-              <Button
-                secondary
-                className={`bg-gray-800`}
-                onClick={() => setUpdateOfferVisibility(true)}
-                fixedWidth={true}
-              >
-                Update
-              </Button>
+              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
+                <Button
+                  secondary
+                  className={`bg-gray-800 md:w-full xl:w-32`}
+                  onClick={() => setUpdateOfferVisibility(true)}
+                >
+                  Update
+                </Button>
+              </div>
             )}
             {!isOwner && !hasAddedOffer && !hasDefaultListing && (
-              <Link href={`/nfts/${nft?.address}/offers/new`}>
-                <a>
-                  <Button fixedWidth={true}>Make offer</Button>
-                </a>
-              </Link>
+              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
+                <Link href={`/nfts/${nft?.address}/offers/new`}>
+                  <a>
+                    <Button className={`md:w-full xl:w-32`}>Make offer</Button>
+                  </a>
+                </Link>
+              </div>
             )}
           </div>
         </div>
