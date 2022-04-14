@@ -11,7 +11,7 @@ interface Props {
 
 function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props }: Props) {
   return (
-    <Disclosure {...props}>
+    <Disclosure defaultOpen={defaultOpen} {...props}>
       {({ open }) => (
         <>
           <Disclosure.Button className="flex h-[71px] w-full items-center justify-between rounded-t border border-gray-700 p-6">

@@ -639,36 +639,38 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
 
               {nft?.attributes && nft.attributes.length > 0 && (
-                <Accordion title="Attributes">
-                  <div className="mt-8 grid grid-cols-2 gap-6">
-                    {loading ? (
-                      <div>
-                        <div className="h-16 rounded bg-gray-800" />
-                        <div className="h-16 rounded bg-gray-800" />
-                        <div className="h-16 rounded bg-gray-800" />
-                        <div className="h-16 rounded bg-gray-800" />
-                      </div>
-                    ) : (
-                      nft?.attributes.map((a) => (
-                        <div
-                          key={a.traitType}
-                          className="max-h-[300px] rounded border border-gray-700 p-6"
-                        >
-                          <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
-                          <p className="truncate text-ellipsis" title={a.value}>
-                            {a.value}
-                          </p>
+                <div>
+                  <Accordion title="Attributes">
+                    <div className="grid grid-cols-2 gap-6">
+                      {loading ? (
+                        <div>
+                          <div className="h-16 rounded bg-gray-800" />
+                          <div className="h-16 rounded bg-gray-800" />
+                          <div className="h-16 rounded bg-gray-800" />
+                          <div className="h-16 rounded bg-gray-800" />
                         </div>
-                      ))
-                    )}
-                  </div>
-                </Accordion>
+                      ) : (
+                        nft?.attributes.map((a) => (
+                          <div
+                            key={a.traitType}
+                            className="max-h-[300px] rounded border border-gray-700 p-6"
+                          >
+                            <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
+                            <p className="truncate text-ellipsis" title={a.value}>
+                              {a.value}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </Accordion>
+                </div>
               )}
             </div>
           </div>
         </div>
         <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
-          <Accordion title={`Offers`}>
+          <Accordion title={`Offers`} defaultOpen>
             <section className={`w-full`}>
               {hasOffers && (
                 <header
