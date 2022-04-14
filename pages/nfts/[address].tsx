@@ -653,7 +653,7 @@ export default function NftByAddress({ address }: { address: string }) {
                         nft?.attributes.map((a) => (
                           <div
                             key={a.traitType}
-                            className="max-h-[300px] rounded border border-gray-700 p-6"
+                            className="max-h-[300px] rounded border border-gray-800 p-6"
                           >
                             <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
                             <p className="truncate text-ellipsis" title={a.value}>
