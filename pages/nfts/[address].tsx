@@ -24,11 +24,7 @@ import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { CenteredContentCol } from 'pages';
-import {
-  LoadingBox,
-  LoadingContainer,
-  LoadingLine,
-} from '@/components/elements/LoadingPlaceholders';
+import { LoadingContainer } from '@/components/elements/LoadingPlaceholders';
 import { Tag } from '@/components/icons/Tag';
 import Button from '@/components/elements/Button';
 import {
@@ -46,6 +42,7 @@ import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
 import BuyForm from '../../src/common/components/forms/BuyForm';
 import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
 import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
+import { format as formatTime } from 'timeago.js';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -233,11 +230,11 @@ export default function NftByAddress({ address }: { address: string }) {
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
-  const offers = nft?.offers;
+  const offers = nft?.offers || [];
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
-  const topOffers = offers?.sort((a, b) => Number(a.price) - Number(b.price));
+  const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
   const topOffer = topOffers?.[0];
   const hasOffers = Boolean(topOffer);
 
@@ -669,6 +666,63 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
             </div>
           </div>
+        </div>
+        <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
+          <h3 className={`mb-4 text-xl font-bold md:text-2xl`}>Offers</h3>
+          <section className={`w-full`}>
+            <header
+              className={`mb-2 grid ${
+                isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
+              } items-center px-4`}
+            >
+              <span className={`text-xs text-gray-300`}>FROM</span>
+              <span className={`text-xs text-gray-300`}>PRICE</span>
+              <span className={`text-xs text-gray-300`}>WHEN</span>
+              {isOwner && <span className={`text-xs text-gray-300`}></span>}
+            </header>
+            {hasOffers &&
+              offers?.map((o: Offer) => (
+                <article
+                  key={o.address}
+                  className={`mb-4 grid rounded border border-gray-700 p-4 ${
+                    isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
+                  }`}
+                >
+                  <div className={`flex items-center`}>
+                    <Link href={`/profiles/${o.buyer}`}>
+                      <a rel={`nofollower`}>{shortenAddress(o.address)}</a>
+                    </Link>
+                  </div>
+                  <div className={`flex items-center`}>
+                    <DisplaySOL amount={Number(o.price)} />
+                  </div>
+                  <div className={`flex items-center`}>{formatTime(o.createdAt, `en_US`)}</div>
+                  {(hasAddedOffer || isOwner) && (
+                    <div className={`flex w-full items-center justify-end gap-2`}>
+                      {o.buyer === (publicKey?.toBase58() as string) && !isOwner && (
+                        <Button
+                          secondary
+                          className={`w-full`}
+                          onClick={() => setOfferModalVisibility(true)}
+                        >
+                          Cancel offer
+                        </Button>
+                      )}
+                      {isOwner && (
+                        <AcceptOfferForm
+                          nft={nft as Nft | any}
+                          offer={o as Offer}
+                          listing={defaultListing as Listing}
+                          marketplace={marketplace as Marketplace}
+                          refetch={refetch}
+                          className={`w-full`}
+                        />
+                      )}
+                    </div>
+                  )}
+                </article>
+              ))}
+          </section>
         </div>
         {/* {loading ? (
           <div className="mb-4 grid grid-cols-4 gap-6 ">
