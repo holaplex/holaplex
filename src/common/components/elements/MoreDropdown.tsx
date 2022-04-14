@@ -49,7 +49,7 @@ function MoreDropdown({ address }: { address: string }) {
               <Popover.Panel
                 static
                 as="ul"
-                className="absolute right-0 top-12 z-10 w-56 rounded-lg bg-gray-800 p-4 text-base shadow-lg"
+                className="absolute right-0 top-12 z-10 w-56 rounded-lg bg-gray-900 p-4 text-base shadow-lg"
               >
                 <li>
                   {linkCopied ? (
