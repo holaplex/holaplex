@@ -83,7 +83,7 @@ export const NFTCard = ({
               <img
                 src={imgOpt(nft.image, 600)}
                 alt={nft.name}
-                className="aspect-square h-80 w-full rounded-lg object-cover"
+                className="aspect-square w-full rounded-lg object-cover"
               />
               {shownCreatorAddress && (
                 <div className={`absolute left-0 top-0 flex flex-row items-center pl-4 pt-4`}>
