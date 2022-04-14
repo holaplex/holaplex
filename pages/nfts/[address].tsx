@@ -351,7 +351,7 @@ export default function NftByAddress({ address }: { address: string }) {
               >
                 <div className="flex flex-1 flex-col items-end">
                   <div className="label mb-1 self-end text-gray-300">
-                    {hasDefaultListing ? `Listed by` : `Owned by`}
+                    {hasDefaultListing ? `Listed by` : `Collected by`}
                   </div>
                   {nft?.owner?.address && (
                     <Link href={`/profiles/${nft?.owner?.address}`}>
