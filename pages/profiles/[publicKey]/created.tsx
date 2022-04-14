@@ -16,6 +16,8 @@ import { showFirstAndLastFour } from '../../../src/modules/utils/string';
 import { ProfileContainer } from '../../../src/common/components/elements/ProfileContainer';
 import TextInput2 from '../../../src/common/components/elements/TextInput2';
 import { NFTGrid } from './nfts';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
+import { Marketplace } from '@holaplex/marketplace-js-sdk';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
 
@@ -29,11 +31,14 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const createdNFTs = useCreatedNfTsQuery({
     variables: {
       creator: publicKey,
+      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
       limit: 100,
       offset: 0,
     },
   });
   const nfts = createdNFTs?.data?.nfts || [];
+  const marketplace = createdNFTs?.data?.marketplace;
+  const refetch = createdNFTs.refetch;
 
   const [query, setQuery] = useState('');
 
@@ -99,7 +104,13 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           />
           <GridSelector />
         </div>
-        <NFTGrid nfts={nftsToShow} gridView={gridView} />
+        <NFTGrid
+          nfts={nftsToShow}
+          gridView={gridView}
+          refetch={refetch}
+          loading={createdNFTs.loading}
+          marketplace={marketplace as Marketplace}
+        />
       </ProfileContainer>
     </ProfileDataProvider>
   );

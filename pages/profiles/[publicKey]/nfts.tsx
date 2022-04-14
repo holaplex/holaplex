@@ -217,7 +217,7 @@ export const NFTCard = ({
   );
 };
 
-const NFTGrid = ({
+export const NFTGrid = ({
   nfts,
   marketplace,
   gridView,
