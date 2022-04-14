@@ -670,16 +670,25 @@ export default function NftByAddress({ address }: { address: string }) {
         <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
           <Accordion title={`Offers`}>
             <section className={`w-full`}>
-              <header
-                className={`mb-2 grid ${
-                  isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
-                } items-center px-4`}
-              >
-                <span className={`text-xs text-gray-300`}>WALLET</span>
-                <span className={`text-xs text-gray-300`}>PRICE</span>
-                <span className={`text-xs text-gray-300`}>TIME</span>
-                {isOwner && <span className={`text-xs text-gray-300`}></span>}
-              </header>
+              {hasOffers && (
+                <header
+                  className={`mb-2 grid ${
+                    isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
+                  } items-center px-4`}
+                >
+                  <span className={`text-xs text-gray-300`}>WALLET</span>
+                  <span className={`text-xs text-gray-300`}>PRICE</span>
+                  <span className={`text-xs text-gray-300`}>TIME</span>
+                  {isOwner && <span className={`text-xs text-gray-300`}></span>}
+                </header>
+              )}
+
+              {!hasOffers && (
+                <div className="w-full rounded-lg border border-gray-800 p-10 text-center">
+                  <h3>No offers found</h3>
+                  <p className="mt- text-gray-500">There are currently no offers on this NFT.</p>
+                </div>
+              )}
               {hasOffers &&
                 offers?.map((o: Offer) => (
                   <article
