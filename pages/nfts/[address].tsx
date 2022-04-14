@@ -4,7 +4,7 @@ import {
   Creator,
   ListingReceipt,
   NftCreator,
-  useNftPageLazyQuery,
+  useNftMarketplaceLazyQuery,
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
@@ -28,7 +28,26 @@ import {
   LoadingBox,
   LoadingContainer,
   LoadingLine,
-} from '@/common/components/elements/LoadingPlaceholders';
+} from '@/components/elements/LoadingPlaceholders';
+import { Tag } from '@/components/icons/Tag';
+import Button from '@/components/elements/Button';
+import {
+  HOLAPLEX_MARKETPLACE_ADDRESS,
+  HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+} from '@/constants/marketplace';
+import { DisplaySOL } from '@/components/CurrencyHelpers';
+import Modal from '@/components/elements/Modal';
+import CancelOfferForm from '@/components/forms/CancelOfferForm';
+import { Listing, Marketplace, Nft, Offer } from '@/types/types';
+import { useRouter } from 'next/router';
+import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
+import SellForm from '../../src/common/components/forms/SellForm';
+import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
+import BuyForm from '../../src/common/components/forms/BuyForm';
+import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
+import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
+
+const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
 // import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
@@ -75,7 +94,7 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
     </Tooltip>
   );
 };
-const OverlappingCircles = ({
+export const OverlappingCircles = ({
   creators,
 }: {
   creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
@@ -175,10 +194,40 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function NftByAddress({ address }: { address: string }) {
-  const [queryNft, { data, loading, called }] = useNftPageLazyQuery();
+  const { publicKey } = useWallet();
+  const router = useRouter();
+
+  const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
+
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [offerModalVisibility, setOfferModalVisibility] = useState(false);
+  const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
+  const [sellModalVisibility, setSellModalVisibility] = useState(false);
+  const [sellCancelModalVisibility, setSellCancelModalVisibility] = useState(false);
+  const [sellUpdateModalVisibility, setSellUpdateModalVisibility] = useState(false);
+
   const nft = data?.nft;
-  // const isOwner = equals(data?.nft.owner.address, publicKey?.toBase58()) || null;
+  const marketplace = data?.marketplace;
+
+  // has listed via default Holaplex marketplace (disregards others)
+  const defaultListing = nft?.listings.find(
+    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+  );
+  const hasDefaultListing = Boolean(defaultListing);
+  const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
+  const hasAddedOffer = Boolean(offer);
+  const offers = nft?.offers;
+
+  const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
+
+  const topOffers = offers?.sort((a, b) => a.price - b.price);
+  const topOffer = topOffers?.[0];
+  const hasOffers = Boolean(topOffer);
+
+  const openOfferUpdateModal = () => {
+    setOfferModalVisibility(false);
+    setOfferUpdateModalVisibility(true);
+  };
 
   useEffect(() => {
     if (!address) return;
@@ -186,6 +235,7 @@ export default function NftByAddress({ address }: { address: string }) {
     try {
       queryNft({
         variables: {
+          subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
           address,
         },
       });
@@ -194,6 +244,15 @@ export default function NftByAddress({ address }: { address: string }) {
       // Bugsnag.notify(error);
     }
   }, [address, queryNft]);
+
+  useEffect(() => {
+    refetch();
+  }, [router, router.push, refetch]);
+
+  const updateListingFromCancel = () => {
+    setSellCancelModalVisibility(false);
+    setSellUpdateModalVisibility(true);
+  };
 
   if (called && !data?.nft && !loading) {
     return <Custom404 />;
@@ -277,7 +336,9 @@ export default function NftByAddress({ address }: { address: string }) {
                 })}
               >
                 <div className="flex flex-1 flex-col items-end">
-                  <div className="label mb-1 self-end text-gray-300">Owned by</div>
+                  <div className="label mb-1 self-end text-gray-300">
+                    {hasDefaultListing ? `Listed by` : `Owned by`}
+                  </div>
                   {nft?.owner?.address && (
                     <Link href={`/profiles/${nft?.owner?.address}`}>
                       <a>
@@ -288,32 +349,308 @@ export default function NftByAddress({ address }: { address: string }) {
                 </div>
               </div>
             </div>
-            {nft?.attributes && nft.attributes.length > 0 && (
-              <Accordion title="Attributes">
-                <div className="mt-8 grid grid-cols-2 gap-6">
-                  {loading ? (
-                    <div>
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                      <div className="h-16 rounded bg-gray-800" />
-                    </div>
-                  ) : (
-                    nft?.attributes.map((a) => (
-                      <div
-                        key={a.traitType}
-                        className="max-h-[300px] rounded border border-gray-700 p-6"
-                      >
-                        <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
-                        <p className="truncate text-ellipsis" title={a.value}>
-                          {a.value}
-                        </p>
+            <div className={`grid grid-cols-1 gap-10`}>
+              {/* TODO: cleanup this conditional mess in favor of a component that handles all the different states */}
+              {/* Not listed */}
+              {!hasDefaultListing && (
+                <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
+                  {isOwner && hasOffers && (
+                    <div
+                      className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6`}
+                    >
+                      <div>
+                        <h3 className={`text-base font-medium text-gray-300`}>Highest offer</h3>
+                        <DisplaySOL amount={topOffer?.price} />
                       </div>
-                    ))
+                      <div className={`flex w-1/2 sm:flex`}>
+                        <AcceptOfferForm
+                          nft={nft as Nft | any}
+                          offer={topOffer as Offer}
+                          listing={defaultListing as Listing}
+                          marketplace={marketplace as Marketplace}
+                          refetch={refetch}
+                          className={`w-full bg-gray-900 text-white`}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className={`flex w-full items-center justify-between`}>
+                    <div className={`flex items-center`}>
+                      <Tag className={`mr-2`} />
+                      <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
+                    </div>
+                    {hasAddedOffer && (
+                      <ul className={`flex flex-col sm:hidden`}>
+                        <li className={`text-base text-gray-300`}>Your offer </li>
+                        <DisplaySOL amount={offer?.price} />
+                      </ul>
+                    )}
+                    {!hasAddedOffer && !isOwner && (
+                      <div>
+                        <Link href={`/nfts/${nft?.address}/offers/new`}>
+                          <a>
+                            <Button>Make offer</Button>
+                          </a>
+                        </Link>
+                      </div>
+                    )}
+                    {isOwner && (
+                      <Button onClick={() => setSellModalVisibility(true)}>List NFT</Button>
+                    )}
+                  </div>
+                  {offer && (
+                    <div
+                      className={`mt-6 flex items-center justify-center border-t border-gray-700 pt-6 sm:justify-between`}
+                    >
+                      <ul className={`mb-0 hidden flex-col sm:flex`}>
+                        <li className={`text-base text-gray-300`}>Your offer </li>
+                        <DisplaySOL amount={offer?.price} />
+                      </ul>
+                      <div className={`grid w-full grid-cols-2 gap-4 sm:w-auto`}>
+                        <Button secondary onClick={() => setOfferModalVisibility(true)}>
+                          Cancel offer
+                        </Button>
+                        <Button onClick={() => setOfferUpdateModalVisibility(true)}>
+                          Update offer
+                        </Button>
+                      </div>
+                    </div>
                   )}
                 </div>
-              </Accordion>
-            )}
+              )}
+              {hasDefaultListing && (
+                <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
+                  {isOwner && hasOffers && (
+                    <div
+                      className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6`}
+                    >
+                      <div>
+                        <h3 className={`text-base font-medium text-gray-300`}>Highest offer</h3>
+                        <DisplaySOL amount={topOffer?.price} />
+                      </div>
+                      <div className={`hidden w-1/2 sm:flex`}>
+                        <AcceptOfferForm
+                          nft={nft as Nft | any}
+                          offer={topOffer as Offer}
+                          listing={defaultListing as Listing}
+                          marketplace={marketplace as Marketplace}
+                          refetch={refetch}
+                          className={`w-full`}
+                        />
+                      </div>
+                      <div className={`sm:hidden`}>
+                        <h3 className={`flex text-base font-medium text-gray-300`}>Price</h3>
+                        <DisplaySOL amount={defaultListing?.price} />
+                      </div>
+                    </div>
+                  )}
+                  {!hasOffers && isOwner && (
+                    <div
+                      className={`mb-6 flex w-full items-center justify-between border-b border-gray-700 pb-6 sm:hidden`}
+                    >
+                      <div>
+                        <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                        <DisplaySOL amount={defaultListing?.price} />
+                      </div>
+                      <div>
+                        <Button
+                          className={`w-full`}
+                          onClick={() => setSellUpdateModalVisibility(true)}
+                        >
+                          Update price
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className={`flex w-full items-center justify-between`}>
+                    <div className={`hidden sm:inline-block`}>
+                      <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                      <DisplaySOL amount={defaultListing?.price} />
+                    </div>
+
+                    {isOwner ? (
+                      <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
+                        {hasOffers && (
+                          <>
+                            <div className={`col-span-2 sm:hidden`}>
+                              <AcceptOfferForm
+                                nft={nft as Nft | any}
+                                offer={topOffer as Offer}
+                                listing={defaultListing as Listing}
+                                marketplace={marketplace as Marketplace}
+                                refetch={refetch}
+                                className={`w-full`}
+                              />
+                            </div>
+                            <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
+                              Cancel listing
+                            </Button>
+                            <Button
+                              secondary
+                              className={`sm:bg-white sm:text-black`}
+                              onClick={() => setSellUpdateModalVisibility(true)}
+                            >
+                              Update price
+                            </Button>
+                          </>
+                        )}
+                        {!hasOffers && hasDefaultListing && (
+                          <div className={`col-span-2 sm:flex`}>
+                            <Button
+                              secondary
+                              onClick={() => setSellCancelModalVisibility(true)}
+                              className={`w-full sm:mr-4`}
+                            >
+                              Cancel listing
+                            </Button>
+                            <Button
+                              secondary
+                              className={`hidden sm:flex sm:bg-white sm:text-black`}
+                              onClick={() => setSellUpdateModalVisibility(true)}
+                            >
+                              Update price
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        {hasAddedOffer ? (
+                          <>
+                            <ul className={`mb-0 flex flex-col items-center sm:hidden`}>
+                              <li className={`text-base text-gray-300`}>Your offer </li>
+                              <DisplaySOL amount={offer?.price} />
+                            </ul>
+                            <ul className={`mb-0 flex flex-col  justify-end text-right sm:hidden`}>
+                              <li className={`text-right text-base text-gray-300`}>Price</li>
+                              <DisplaySOL amount={defaultListing?.price} />
+                            </ul>
+                          </>
+                        ) : (
+                          <div className={`flex w-full flex-col sm:hidden`}>
+                            <div className={`flex w-full items-center justify-between`}>
+                              <ul className={`mb-0 flex flex-col items-center sm:hidden`}>
+                                <li className={`text-base text-gray-300`}>Price</li>
+                                <DisplaySOL amount={defaultListing?.price} />
+                              </ul>
+                              <div className={`w-1/2 sm:hidden`}>
+                                <BuyForm
+                                  nft={nft as Nft | any}
+                                  marketplace={marketplace as Marketplace}
+                                  listing={defaultListing as Listing}
+                                  refetch={refetch}
+                                  className={`w-full`}
+                                />
+                              </div>
+                            </div>
+                            <div className={`mt-4 flex w-full border-t border-gray-700 pt-4`}>
+                              <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                <a className={`w-full`}>
+                                  <Button className={`w-full`} secondary>
+                                    Make offer
+                                  </Button>
+                                </a>
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+
+                        <div
+                          className={` ${
+                            hasAddedOffer ? `w-1/2` : `grid grid-cols-2`
+                          } hidden gap-4 sm:flex`}
+                        >
+                          {!hasAddedOffer && (
+                            <Link href={`/nfts/${nft?.address}/offers/new`}>
+                              <a>
+                                <Button secondary>Make offer</Button>
+                              </a>
+                            </Link>
+                          )}
+                          <BuyForm
+                            nft={nft as Nft | any}
+                            marketplace={marketplace as Marketplace}
+                            listing={defaultListing as Listing}
+                            refetch={refetch}
+                            className={`w-full`}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  {offer && (
+                    <div
+                      className={`mt-6 flex items-center justify-center border-t border-gray-700 pt-6 sm:justify-between`}
+                    >
+                      {hasAddedOffer && (
+                        <ul className={`mb-0 hidden flex-col items-center sm:flex`}>
+                          <li className={`whitespace-nowrap text-base text-gray-300`}>
+                            Your offer
+                          </li>
+                          <DisplaySOL amount={offer?.price} />
+                        </ul>
+                      )}
+
+                      <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
+                        <BuyForm
+                          nft={nft as Nft | any}
+                          marketplace={marketplace as Marketplace}
+                          listing={defaultListing as Listing}
+                          refetch={refetch}
+                          className={`col-span-2 w-full sm:hidden`}
+                        />
+                        <div
+                          className={`col-span-2 grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}
+                        >
+                          <Button
+                            secondary
+                            className={`w-full`}
+                            onClick={() => setOfferModalVisibility(true)}
+                          >
+                            Cancel offer
+                          </Button>
+                          <Button
+                            onClick={() => setOfferUpdateModalVisibility(true)}
+                            secondary
+                            className={`w-full sm:bg-white sm:text-black`}
+                          >
+                            Update offer
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {nft?.attributes && nft.attributes.length > 0 && (
+                <Accordion title="Attributes">
+                  <div className="mt-8 grid grid-cols-2 gap-6">
+                    {loading ? (
+                      <div>
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                        <div className="h-16 rounded bg-gray-800" />
+                      </div>
+                    ) : (
+                      nft?.attributes.map((a) => (
+                        <div
+                          key={a.traitType}
+                          className="max-h-[300px] rounded border border-gray-700 p-6"
+                        >
+                          <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
+                          <p className="truncate text-ellipsis" title={a.value}>
+                            {a.value}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </Accordion>
+              )}
+            </div>
           </div>
         </div>
         {/* {loading ? (
@@ -344,6 +681,80 @@ export default function NftByAddress({ address }: { address: string }) {
           )
         )} */}
       </div>
+      {nft && (
+        <>
+          <Modal
+            open={offerModalVisibility}
+            setOpen={setOfferModalVisibility}
+            title={`Cancel offer`}
+          >
+            <CancelOfferForm
+              nft={nft as Nft | any}
+              marketplace={marketplace as Marketplace}
+              refetch={refetch}
+              offer={offer as Offer}
+              setOpen={setOfferModalVisibility}
+              updateOffer={openOfferUpdateModal}
+            />
+          </Modal>
+          <Modal
+            open={offerUpdateModalVisibility}
+            setOpen={setOfferUpdateModalVisibility}
+            title={`Update offer`}
+          >
+            <UpdateOfferForm
+              listing={defaultListing as Listing}
+              setOpen={setOfferUpdateModalVisibility}
+              nft={nft as Nft | any}
+              marketplace={marketplace as Marketplace}
+              refetch={refetch}
+              loading={loading}
+              hasListing={hasDefaultListing}
+            />
+          </Modal>
+          <Modal
+            open={sellModalVisibility}
+            setOpen={setSellModalVisibility}
+            title={`List NFT for sale`}
+          >
+            <SellForm
+              setOpen={setSellModalVisibility}
+              nft={nft as Nft | any}
+              refetch={refetch}
+              loading={loading}
+              marketplace={marketplace as Marketplace}
+            />
+          </Modal>
+          <Modal
+            open={sellCancelModalVisibility}
+            setOpen={setSellCancelModalVisibility}
+            title={`Cancel listing`}
+          >
+            <CancelSellForm
+              nft={nft as Nft | any}
+              refetch={refetch}
+              marketplace={marketplace as Marketplace}
+              listing={defaultListing as Listing}
+              setOpen={setSellCancelModalVisibility}
+              updateListing={updateListingFromCancel}
+            />
+          </Modal>
+          <Modal
+            open={sellUpdateModalVisibility}
+            setOpen={setSellUpdateModalVisibility}
+            title={`Update listing price`}
+          >
+            <UpdateSellForm
+              nft={nft as Nft | any}
+              refetch={refetch}
+              marketplace={marketplace as Marketplace}
+              listing={defaultListing as Listing}
+              setOpen={setSellUpdateModalVisibility}
+              offer={topOffer as Offer}
+            />
+          </Modal>
+        </>
+      )}
     </CenteredContentCol>
   );
 }

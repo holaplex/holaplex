@@ -1,0 +1,82 @@
+query nftMarketplace($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+}

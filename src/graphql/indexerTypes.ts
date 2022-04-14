@@ -429,6 +429,14 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type NftMarketplaceQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+  address: Scalars['String'];
+}>;
+
+
+export type NftMarketplaceQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, auctionHouse: string, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
+
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -594,6 +602,119 @@ export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export const NftMarketplaceDocument = gql`
+    query nftMarketplace($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftMarketplaceQuery__
+ *
+ * To run a query within a React component, call `useNftMarketplaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftMarketplaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftMarketplaceQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useNftMarketplaceQuery(baseOptions: Apollo.QueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(NftMarketplaceDocument, options);
+      }
+export function useNftMarketplaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(NftMarketplaceDocument, options);
+        }
+export type NftMarketplaceQueryHookResult = ReturnType<typeof useNftMarketplaceQuery>;
+export type NftMarketplaceLazyQueryHookResult = ReturnType<typeof useNftMarketplaceLazyQuery>;
+export type NftMarketplaceQueryResult = Apollo.QueryResult<NftMarketplaceQuery, NftMarketplaceQueryVariables>;
 export const NftPageDocument = gql`
     query nftPage($address: String!) {
   nft(address: $address) {

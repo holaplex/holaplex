@@ -14,15 +14,13 @@ import Script from 'next/script';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID || 'G-HLNC4C2YKN';
+export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 export const META_ID = process.env.NEXT_PUBLIC_META_ID;
 // Reference implementation https://github.com/vercel/next.js/tree/canary/examples/with-facebook-pixel
 
-type GoogleRecommendedEvent = 'login' | 'sign_up' | 'select_content';
-type GoogleEcommerceEvent = 'view_item_list' | 'view_item' | 'select_item';
-type AnalyticsAction = GoogleEcommerceEvent | GoogleRecommendedEvent | string; // TODO: will remove string in future
+type AnalyticsAction = string; // TODO: will remove string in future
 
 interface AnalyticsUserProperties {
   // user dimensions
@@ -30,17 +28,14 @@ interface AnalyticsUserProperties {
   pubkey: string; // same as user_id, but for use in custom reports
 }
 
-interface CustomEventDimensions {
-  // event dimensions
-  // network: string; // mainnet, devnet, etc.
-  // metrics
-  sol_value?: number;
-}
+const debugAnalytics = false;
 
-export interface TrackingAttributes extends CustomEventDimensions {
+export interface TrackingAttributes {
   event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile';
   event_label?: string;
   value?: number;
+  sol_value?: number;
+
   [key: string]: string | number | boolean | any[] | null | undefined;
 }
 
@@ -77,42 +72,41 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   const wallet = useWallet();
   const pubkey = wallet.publicKey?.toBase58();
 
-  useEffect(() => {
-    console.log('host', window.location.host);
-    if (pubkey) {
-      track('Wallet Connection Made', {
-        event_category: 'Global',
-        pubkey,
-      });
-    } else if (!pubkey && lastPubkeyConnected) {
-      track('Wallet Connection Broken', {
-        event_category: 'Global',
-        pubkey: lastPubkeyConnected,
-      });
-    }
-    setLastPubkeyConnected(pubkey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pubkey]);
-
   let solPrice = 0;
 
   function initializeTracking() {
+    const integrations = {
+      mixpanel: !!MIXPANEL_TOKEN,
+      meta: META_ID && typeof window !== 'undefined' && !!window.fbq,
+      ga4: GA4_ID && typeof window !== 'undefined' && !!window.gtag,
+    };
+
     new Coingecko().getRate([Currency.SOL], Currency.USD).then((rates) => {
       const solRate = rates[0].rate;
       solPrice = solRate;
     });
 
-    if (GA4_ID && window.gtag) {
+    if (integrations.ga4) {
       window.gtag('config', GA4_ID, {
-        send_page_view: true,
+        send_page_view: false,
       });
     }
 
     if (MIXPANEL_TOKEN) {
       mixpanel.init(MIXPANEL_TOKEN, {
-        debug: true,
+        debug: !window.location.host.includes('.com'),
       });
     }
+
+    if (META_ID && window.fbq && !trackingInitialized) {
+      window.fbq('init', META_ID);
+    }
+
+    if (debugAnalytics) {
+      console.log('tracking initialized', integrations);
+    }
+
+    pageview();
 
     if (BUGSNAG_API_KEY) {
       const devEnv = process.env.NEXT_PUBLIC_ENVIRONMENT;
@@ -132,17 +126,26 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }
 
   function identify() {
-    if (window.gtag && pubkey) {
+    const integrations = {
+      mixpanel: !!MIXPANEL_TOKEN,
+      meta: META_ID && typeof window !== 'undefined' && !!window.fbq,
+      ga4: GA4_ID && typeof window !== 'undefined' && !!window.gtag,
+    };
+    // only runs if pubkey is set
+    if (integrations.ga4) {
       window.gtag('set', 'user_properties', {
         user_id: pubkey,
         pubkey: pubkey,
       });
     }
-    if (MIXPANEL_TOKEN && pubkey) {
+    if (integrations.mixpanel) {
       mixpanel.identify(pubkey);
       mixpanel.people.set_once({
         pubkey,
       });
+    }
+    if (debugAnalytics) {
+      console.log('identify', pubkey, integrations);
     }
   }
 
@@ -154,35 +157,40 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     mixpanel.reset();
   }
 
-  function pageview(path: string) {
+  function pageview() {
     // @ts-ignore // need ignore here to enforce event_category and event_label elsewhere
     track('page_view', {
-      page_path: path,
+      page_path: router.pathname,
     });
-    if (window.fbq && META_ID) {
-      window.fbq('track', 'PageView');
-    }
   }
 
   // initialize (goes first no matter what)
   useEffect(() => {
-    if (META_ID && window.fbq && !trackingInitialized) {
-      window.fbq('init', META_ID);
-      window.fbq('track', 'PageView');
-    }
     if (trackingAccepted && !trackingInitialized) {
       initializeTracking();
-    } else {
-      // resetTracking();
+    } else if (trackingInitialized && !trackingAccepted) {
+      resetTracking();
     }
   }, [trackingInitialized, trackingAccepted]);
 
   useEffect(() => {
-    identify();
-  }, [pubkey]);
+    if (trackingInitialized && trackingAccepted) {
+      if (pubkey) {
+        identify();
+        track('Wallet Connection Made', {
+          event_category: 'Global',
+          pubkey,
+        });
+      } else if (!pubkey && lastPubkeyConnected) {
+        track('Wallet Connection Broken', {
+          event_category: 'Global',
+          pubkey: lastPubkeyConnected,
+        });
+      }
+      setLastPubkeyConnected(pubkey);
+    }
+  }, [pubkey, trackingInitialized, trackingAccepted]);
 
-  // don't entiery trust google to track route changes
-  // PS: This does not conflict with the event listner in _app because it is a different function
   useEffect(() => {
     router.events.on('routeChangeComplete', pageview);
 
@@ -192,6 +200,12 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
   }, [router.events]);
 
   function track(action: AnalyticsAction, attributes: TrackingAttributes) {
+    const integrations = {
+      mixpanel: !!MIXPANEL_TOKEN,
+      meta: META_ID && typeof window !== 'undefined' && !!window.fbq,
+      ga4: GA4_ID && typeof window !== 'undefined' && !!window.gtag,
+    };
+
     try {
       const { value, sol_value, ...otherAttributes } = attributes;
 
@@ -210,18 +224,25 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       };
 
       // ga4
-      if (GA4_ID) {
+      if (integrations.ga4) {
         ga4Event(action, attrs);
       }
 
-      if (MIXPANEL_TOKEN) {
+      if (integrations.mixpanel) {
         mixpanel.track(action, {
           ...attrs,
-          // need to attach additional these here as Mixpanel does not support super properties without persitence
         });
       }
-      if (META_ID && window.fbq && action !== 'page_view') {
-        window.fbq('trackCustom', action, attrs);
+      if (integrations.meta) {
+        if (action === 'page_view') {
+          window.fbq('track', 'PageView', attrs);
+        } else {
+          window.fbq('trackCustom', action, attrs);
+        }
+      }
+
+      if (debugAnalytics) {
+        console.log('track', action, attrs, integrations);
       }
     } catch (error) {
       console.error(error);
