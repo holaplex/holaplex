@@ -76,41 +76,44 @@ const NFTCard = ({
 
   return (
     <>
-      <div className="transform overflow-hidden rounded-lg border-gray-800 shadow-2xl transition duration-[300ms] hover:scale-[1.02]">
+      <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black transition duration-[300ms] hover:scale-[1.02]">
         <Link href={`/nfts/${nft.address}`} passHref>
           <div className={`cursor-pointer`}>
             <div className={`relative `}>
               <img
                 src={imgOpt(nft.image, 600)}
                 alt={nft.name}
-                className="aspect-square h-80 w-full object-cover"
+                className="aspect-square h-80 w-full rounded-lg object-cover"
               />
               {shownCreatorAddress && (
-                <div className={`absolute left-0 top-0 flex flex-row items-center pl-5 pt-5`}>
+                <div className={`absolute left-0 top-0 flex flex-row items-center pl-4 pt-4`}>
                   <Link href={`/profiles/${shownCreatorAddress}`}>
                     <a className="text-gray-300">
-                      <Avatar address={shownCreatorAddress} showAddress={false} />
+                      <Avatar address={shownCreatorAddress} showAddress={false} border={true} />
                     </a>
                   </Link>
 
                   {offers.length > 0 && (
-                    <div className={`ml-2 rounded-full bg-gray-800 px-2 py-1 font-mono text-sm`}>
-                      {offers.length} OFFERS
+                    <div
+                      className={`ml-2 flex h-6 items-center rounded-full bg-gray-900 bg-opacity-60 px-2 font-mono text-sm`}
+                      style={{ backdropFilter: `blur(10px)` }}
+                    >
+                      {offers.length} OFFER{offers.length > 1 && `S`}
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            <div className="h-24 bg-gray-900 py-6 px-4">
-              <p className="w-max-fit m-0 mb-2 min-h-[28px] truncate text-lg font-bold">
+            <div className="flex h-24 items-center bg-gray-900 py-6 px-4">
+              <p className="w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold">
                 {nft.name}
               </p>
             </div>
           </div>
         </Link>
         <div className={`h-20`}>
-          <div className={`flex w-full items-center justify-between p-5`}>
+          <div className={`flex w-full items-center justify-between p-4`}>
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
                 <li className={`text-sm font-bold text-gray-300`}>Price</li>
@@ -124,10 +127,9 @@ const NFTCard = ({
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
-              <div className={`flex items-center`}>
-                <Tag className={`mr-2`} />
-                <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
-              </div>
+              <ul className={`mb-0 flex flex-col`}>
+                <li className={`text-sm font-bold text-gray-300`}>Not listed</li>
+              </ul>
             )}
             {!hasDefaultListing && hasAddedOffer && (
               <ul className={`mb-0 flex flex-col`}>
@@ -137,10 +139,14 @@ const NFTCard = ({
             )}
 
             {isOwner && !hasDefaultListing && (
-              <Button onClick={() => setListNFTVisibility(true)}>List NFT</Button>
+              <Button fixedWidth={true} onClick={() => setListNFTVisibility(true)}>
+                List NFT
+              </Button>
             )}
             {isOwner && hasDefaultListing && (
-              <Button onClick={() => setUpdateListingVisibility(true)}>Update listing</Button>
+              <Button fixedWidth={true} onClick={() => setUpdateListingVisibility(true)}>
+                Update
+              </Button>
             )}
             {!isOwner && !hasAddedOffer && hasDefaultListing && (
               <div>
@@ -149,7 +155,7 @@ const NFTCard = ({
                   marketplace={marketplace}
                   listing={defaultListing as Listing}
                   refetch={refetch}
-                  className={`w-full`}
+                  className={`w-32`}
                 />
               </div>
             )}
@@ -158,14 +164,15 @@ const NFTCard = ({
                 secondary
                 className={`bg-gray-800`}
                 onClick={() => setUpdateOfferVisibility(true)}
+                fixedWidth={true}
               >
-                Update offer
+                Update
               </Button>
             )}
             {!isOwner && !hasAddedOffer && !hasDefaultListing && (
               <Link href={`/nfts/${nft?.address}/offers/new`}>
                 <a>
-                  <Button>Make offer</Button>
+                  <Button fixedWidth={true}>Make offer</Button>
                 </a>
               </Link>
             )}

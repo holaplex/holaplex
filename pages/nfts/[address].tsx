@@ -152,7 +152,9 @@ const Activities = ({
 export const Avatar = ({
   address,
   showAddress = true,
+  border = false,
 }: {
+  border?: boolean;
   address: string;
   showAddress?: boolean;
 }) => {
@@ -180,11 +182,18 @@ export const Avatar = ({
 
   return (
     <div className="flex items-center">
-      <img
-        src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-        alt="Profile Picture"
-        className="h-6 w-6 rounded-full"
-      />
+      <div
+        className={`flex h-6 w-6 rounded-full ${
+          border && `border-2 border-gray-900 border-opacity-60`
+        }`}
+      >
+        <img
+          src={profilePictureUrl ?? getPFPFromPublicKey(address)}
+          alt="Profile Picture"
+          className="rounded-full"
+        />
+      </div>
+
       {showAddress && (
         <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
           {displayName}
