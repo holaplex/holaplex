@@ -39,7 +39,7 @@ function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props 
             leaveTo="transform scale-95 opacity-0"
           >
             <div
-              className={cx('rounded-b border border-t-0 border-gray-700 p-6', {
+              className={cx('rounded-b border border-t-0 border-gray-800 p-6', {
                 'overflow-x-auto': allowHorizOverflow,
               })}
             >
