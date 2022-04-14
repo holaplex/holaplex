@@ -40,7 +40,7 @@ type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getPropsForWalletOrUsername(context);
 
-const NFTCard = ({
+export const NFTCard = ({
   nft,
   marketplace,
   refetch,
@@ -217,7 +217,7 @@ const NFTCard = ({
   );
 };
 
-const NFTGrid = ({
+export const NFTGrid = ({
   nfts,
   marketplace,
   gridView,
