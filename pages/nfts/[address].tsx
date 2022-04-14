@@ -149,7 +149,15 @@ const Activities = ({
   );
 };
 
-export const Avatar = ({ address }: { address: string }) => {
+export const Avatar = ({
+  address,
+  showAddress = true,
+  border = false,
+}: {
+  border?: boolean;
+  address: string;
+  showAddress?: boolean;
+}) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
   const { publicKey } = useWallet();
@@ -174,14 +182,23 @@ export const Avatar = ({ address }: { address: string }) => {
 
   return (
     <div className="flex items-center">
-      <img
-        src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-        alt="Profile Picture"
-        className="h-6 w-6 rounded-full"
-      />
-      <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
-        {displayName}
+      <div
+        className={`flex h-6 w-6 rounded-full ${
+          border && `border-2 border-gray-900 border-opacity-60`
+        }`}
+      >
+        <img
+          src={profilePictureUrl ?? getPFPFromPublicKey(address)}
+          alt="Profile Picture"
+          className="rounded-full"
+        />
       </div>
+
+      {showAddress && (
+        <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
+          {displayName}
+        </div>
+      )}
     </div>
   );
 };
@@ -220,7 +237,7 @@ export default function NftByAddress({ address }: { address: string }) {
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
-  const topOffers = offers?.sort((a, b) => a.price - b.price);
+  const topOffers = offers?.sort((a, b) => Number(a.price) - Number(b.price));
   const topOffer = topOffers?.[0];
   const hasOffers = Boolean(topOffer);
 
@@ -369,7 +386,7 @@ export default function NftByAddress({ address }: { address: string }) {
                           listing={defaultListing as Listing}
                           marketplace={marketplace as Marketplace}
                           refetch={refetch}
-                          className={`w-full bg-gray-900 text-white`}
+                          className={`w-full bg-gray-900 `}
                         />
                       </div>
                     </div>

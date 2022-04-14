@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Nft, Marketplace } from '@/types/types';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,8 @@ import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
+import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
+import { Wallet } from '@metaplex/js';
 
 const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
   AuctionHouseProgram.instructions;
@@ -53,130 +55,35 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
   });
 
   const { publicKey, signTransaction } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
 
   const router = useRouter();
 
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+
+  const onOffer = async (amount: number) => {
+    if (nft) {
+      await sdk.offers(marketplace.auctionHouse).make({ amount, nft });
+    }
+  };
+
   const makeOfferTx = async ({ amount }: OfferFormSchema) => {
-    if (!publicKey || !signTransaction) {
-      return;
-    }
-    if (!nft) {
+    if (!publicKey || !signTransaction || !nft) {
       return;
     }
 
-    const buyerPrice = Number(amount) * LAMPORTS_PER_SOL;
-    const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
-    const authority = new PublicKey(marketplace.auctionHouse.authority);
-    const auctionHouseFeeAccount = new PublicKey(marketplace.auctionHouse.auctionHouseFeeAccount);
-    const treasuryMint = new PublicKey(marketplace.auctionHouse.treasuryMint);
-    const tokenMint = new PublicKey(nft.mintAddress);
-    const tokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
-
-    const [escrowPaymentAccount, escrowPaymentBump] =
-      await AuctionHouseProgram.findEscrowPaymentAccountAddress(auctionHouse, publicKey);
-
-    const [buyerTradeState, tradeStateBump] =
-      await AuctionHouseProgram.findPublicBidTradeStateAddress(
-        publicKey,
-        auctionHouse,
-        treasuryMint,
-        tokenMint,
-        buyerPrice,
-        1
-      );
-
-    const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint);
-
-    const txt = new Transaction();
-
-    const depositInstructionAccounts = {
-      wallet: publicKey,
-      paymentAccount: publicKey,
-      transferAuthority: publicKey,
-      treasuryMint,
-      escrowPaymentAccount,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-    };
-    const depositInstructionArgs = {
-      escrowPaymentBump,
-      amount: buyerPrice,
-    };
-
-    const depositInstruction = createDepositInstruction(
-      depositInstructionAccounts,
-      depositInstructionArgs
-    );
-
-    const publicBuyInstruction = createPublicBuyInstruction(
-      {
-        wallet: publicKey,
-        paymentAccount: publicKey,
-        transferAuthority: publicKey,
-        treasuryMint,
-        tokenAccount,
-        metadata,
-        escrowPaymentAccount,
-        authority,
-        auctionHouse,
-        auctionHouseFeeAccount,
-        buyerTradeState,
-      },
-      {
-        escrowPaymentBump,
-        tradeStateBump,
-        tokenSize: 1,
-        buyerPrice,
-      }
-    );
-
-    const [receipt, receiptBump] = await AuctionHouseProgram.findBidReceiptAddress(buyerTradeState);
-
-    const printBidReceiptInstruction = createPrintBidReceiptInstruction(
-      {
-        receipt,
-        bookkeeper: publicKey,
-        instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-      },
-      {
-        receiptBump,
-      }
-    );
-
-    txt.add(depositInstruction).add(publicBuyInstruction).add(printBidReceiptInstruction);
-
-    txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    txt.feePayer = publicKey;
-
-    let signed: Transaction | undefined = undefined;
+    const offerAmount = Number(amount);
 
     try {
-      signed = await signTransaction(txt);
+      await onOffer(offerAmount);
+      await refetch();
+      toast.success(`Confirmed offer success`);
+      return;
     } catch (err: any) {
       toast.error(err.message);
       return;
-    }
-
-    let signature: string | undefined = undefined;
-
-    try {
-      toast('Sending the transaction to Solana.');
-      setLoading(true);
-
-      signature = await connection.sendRawTransaction(signed.serialize());
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
-      setLoading(false);
-      await refetch();
-
-      toast.success('The transaction was confirmed.');
-    } catch (e: any) {
-      toast.error(e.message);
     } finally {
-      setLoading(false);
       router.push(`/nfts/${nft.address}`);
     }
   };

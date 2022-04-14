@@ -14,6 +14,7 @@ interface ButtonProps {
   block?: boolean;
   size?: string;
   skeleton?: boolean;
+  fixedWidth?: boolean;
   onClick?: () => any;
 }
 
@@ -27,6 +28,7 @@ const Button = ({
   block = false,
   size = 'medium',
   skeleton = false,
+  fixedWidth = false,
   onClick,
 }: ButtonProps) => {
   const sizes = size === 'small' ? 'text-[85%] h-9 max-h-9 px-4' : 'h12 max-h-12 px-6';
@@ -45,7 +47,9 @@ const Button = ({
 
   return (
     <button
-      className={`${sizes} ${colors} ${display} ${focusAndHover} items-center justify-center rounded-full border-[3px] border-transparent py-1 opacity-90 transition-all ${className} whitespace-nowrap border-opacity-10`}
+      className={`${sizes} ${colors} ${display} ${focusAndHover} items-center justify-center rounded-full border-[3px] border-transparent py-1 opacity-90 transition-all ${className} ${
+        fixedWidth && `w-32`
+      } whitespace-nowrap border-opacity-10`}
       disabled={disabled}
       type={htmlType}
       onClick={onClick}
