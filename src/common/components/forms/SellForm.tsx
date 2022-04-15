@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useMemo } from 'react';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { LoadingBox, LoadingContainer } from '../elements/LoadingPlaceholders';
@@ -20,6 +20,7 @@ import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 const { createSellInstruction, createPrintListingReceiptInstruction } =
   AuctionHouseProgram.instructions;
@@ -89,9 +90,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     resolver: zodResolver(schema),
   });
 
-  if (!nft || !marketplace) {
-    return null;
-  }
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
@@ -111,17 +110,40 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
       return;
     }
     const sellAmount = Number(amount);
+
+    const newActions: Action[] = [
+      {
+        name: `Listing your NFT...`,
+        id: `listNFT`,
+        action: onSell,
+        param: sellAmount,
+      },
+    ];
+
     try {
-      await onSell(sellAmount);
-      toast.success(`Confirmed listing success`);
-      await refetch();
-      return;
+      await runActions(newActions, {
+        onActionSuccess: async () => {
+          await refetch();
+          toast.success(`Confirmed listing success`);
+        },
+        onActionFailure: async (err) => {
+          toast.error(err.message);
+          await refetch();
+        },
+        onComplete: async () => {
+          await refetch();
+        },
+      });
     } catch (err: any) {
       toast.error(err.message);
     } finally {
       setOpen(false);
     }
   };
+
+  if (!nft || !marketplace) {
+    return null;
+  }
 
   return (
     <div>

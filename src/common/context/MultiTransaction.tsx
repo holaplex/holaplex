@@ -18,7 +18,7 @@ export type Action = {
 interface ActionSettings {
   onComplete?: () => void;
   onActionSuccess?: (txName: string) => void;
-  onActionFailure?: () => void;
+  onActionFailure?: (err: any) => void;
 }
 
 interface MultiTransactionState {
@@ -81,7 +81,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
           setActions([]);
         }
         toast.error(err.message);
-        settings?.onActionFailure?.();
+        settings?.onActionFailure?.(err);
         setHasActionPending(false);
       } finally {
         setHasActionPending(false);
@@ -129,7 +129,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
           setHasRemainingActions(false);
         }
         toast.error(err.message);
-        settings?.onActionFailure?.();
+        settings?.onActionFailure?.(err);
         setHasActionPending(false);
       } finally {
         setHasActionPending(false);
@@ -156,7 +156,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
       }}
     >
       <Modal
-        title={`Please wait`}
+        title={`Please wait...`}
         open={hasRemainingActions}
         setOpen={setHasRemainingActions}
         priority={true}

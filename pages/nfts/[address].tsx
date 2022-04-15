@@ -641,7 +641,7 @@ export default function NftByAddress({ address }: { address: string }) {
               {nft?.attributes && nft.attributes.length > 0 && (
                 <div>
                   <Accordion title="Attributes">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-4">
                       {loading ? (
                         <div>
                           <div className="h-16 rounded bg-gray-800" />
@@ -653,10 +653,12 @@ export default function NftByAddress({ address }: { address: string }) {
                         nft?.attributes.map((a) => (
                           <div
                             key={a.traitType}
-                            className="max-h-[300px] rounded border border-gray-800 p-6"
+                            className="max-h-[300px] rounded border border-gray-800 p-4"
                           >
-                            <p className="label truncate uppercase text-gray-500">{a.traitType}</p>
-                            <p className="truncate text-ellipsis" title={a.value}>
+                            <p className="label mb-1 truncate text-base font-medium text-gray-300">
+                              {a.traitType}
+                            </p>
+                            <p className="mb-0 truncate text-ellipsis" title={a.value}>
                               {a.value}
                             </p>
                           </div>
