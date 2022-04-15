@@ -25,6 +25,11 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       sellerFeeBasisPoints
       requiresSignOff
       canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
+      }
     }
   }
   nft(address: $address) {

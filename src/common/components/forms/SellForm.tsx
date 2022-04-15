@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useMemo } from 'react';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { LoadingBox, LoadingContainer } from '../elements/LoadingPlaceholders';
@@ -20,6 +20,7 @@ import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 const { createSellInstruction, createPrintListingReceiptInstruction } =
   AuctionHouseProgram.instructions;
@@ -89,9 +90,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     resolver: zodResolver(schema),
   });
 
-  if (!nft || !marketplace) {
-    return null;
-  }
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
@@ -111,11 +110,30 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
       return;
     }
     const sellAmount = Number(amount);
+
+    const newActions: Action[] = [
+      {
+        name: `Listing your NFT...`,
+        id: `listNFT`,
+        action: onSell,
+        param: sellAmount,
+      },
+    ];
+
     try {
-      await onSell(sellAmount);
-      toast.success(`Confirmed listing success`);
-      await refetch();
-      return;
+      await runActions(newActions, {
+        onActionSuccess: async () => {
+          await refetch();
+          toast.success(`Confirmed listing success`);
+        },
+        onActionFailure: async (err) => {
+          toast.error(err.message);
+          await refetch();
+        },
+        onComplete: async () => {
+          await refetch();
+        },
+      });
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -123,28 +141,38 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     }
   };
 
+  if (!nft || !marketplace) {
+    return null;
+  }
+
   return (
     <div>
       {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
       <div className={`mt-8 flex items-start justify-between`}>
-        <div className={`flex flex-col justify-start`}>
-          <p className={`text-base font-medium text-gray-300`}>Floor price</p>
-          <DisplaySOL
-            className={`font-medium`}
-            amount={Number(marketplace.auctionHouse.stats?.floor) / LAMPORTS_PER_SOL}
-          />
-        </div>
-        <div className={`flex flex-col justify-end`}>
-          <p className={`text-base font-medium text-gray-300`}>Average sale price</p>
-          <div className={`ml-2`}>
+        {Number(marketplace?.auctionHouse?.stats?.floor) > 0 ? (
+          <div className={`flex flex-col justify-start`}>
+            <p className={`text-base font-medium text-gray-300`}>Floor price</p>
             <DisplaySOL
               className={`font-medium`}
-              amount={Number(
-                Number(marketplace.auctionHouse.stats?.average) || 0 / LAMPORTS_PER_SOL
-              )}
+              amount={Number(marketplace.auctionHouse.stats?.floor)}
             />
           </div>
-        </div>
+        ) : (
+          <div className={`flex w-full`} />
+        )}
+        {Number(marketplace.auctionHouse.stats?.average) > 0 ? (
+          <div className={`flex flex-col justify-end`}>
+            <p className={`text-base font-medium text-gray-300`}>Average sale price</p>
+            <div className={`ml-2`}>
+              <DisplaySOL
+                className={`font-medium`}
+                amount={Number(marketplace.auctionHouse.stats?.average)}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className={`flex w-full`} />
+        )}
       </div>
       <div className={`mt-8`}>
         <form className={`grow text-left`} onSubmit={handleSubmit(sellTx)}>

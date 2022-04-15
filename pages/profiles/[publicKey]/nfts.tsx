@@ -281,7 +281,9 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
     },
   });
   const refetch = ownedNFTs.refetch;
-  const nfts = ownedNFTs?.data?.nfts || [];
+  const actualOwnedNFTs = ownedNFTs?.data?.nfts || [];
+
+  const nfts = actualOwnedNFTs.filter((item) => item?.owner?.address === pk);
   const marketplace = ownedNFTs?.data?.marketplace;
 
   const [query, setQuery] = useState('');

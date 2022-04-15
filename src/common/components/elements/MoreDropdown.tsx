@@ -49,7 +49,7 @@ function MoreDropdown({ address }: { address: string }) {
               <Popover.Panel
                 static
                 as="ul"
-                className="absolute z-10 w-56 p-4 bg-gray-800 rounded shadow-lg right-5 top-12"
+                className="absolute right-0 top-12 z-10 w-56 rounded-lg bg-gray-900 p-4 text-base shadow-lg"
               >
                 <li>
                   {linkCopied ? (
@@ -61,7 +61,7 @@ function MoreDropdown({ address }: { address: string }) {
                       onClick={handleCopyClick}
                       className="flex items-center hover:text-gray-300"
                     >
-                      <FeatherIcon icon="copy" />
+                      <FeatherIcon width={16} height={16} icon="copy" />
                       <span className="pl-5">Copy link to NFT</span>
                     </button>
                   )}
@@ -69,20 +69,22 @@ function MoreDropdown({ address }: { address: string }) {
                 <li>
                   <a
                     href={`https://explorer.solana.com/address/${address}`}
-                    className="flex items-center hover:text-gray-300"
+                    className="flex items-center pt-4 hover:text-gray-300"
                     target="_blank"
+                    rel="noreferrer"
                   >
-                    <ExplorerIcon />
+                    <ExplorerIcon width={16} height={16} />
                     <span className="pl-5">View on Explorer</span>
                   </a>
                 </li>
                 <li>
                   <a
                     href={`https://solscan.io/account/${address}`}
-                    className="flex items-center hover:text-gray-300"
+                    className="flex items-center pt-4 hover:text-gray-300"
                     target="_blank"
+                    rel="noreferrer"
                   >
-                    <SolscanIcon />
+                    <SolscanIcon width={16} height={16} />
                     <span className="pl-5">View on SolScan</span>
                   </a>
                 </li>
