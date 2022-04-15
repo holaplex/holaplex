@@ -24,11 +24,7 @@ import { SolIcon } from '../../src/common/components/elements/Price';
 import { Tooltip } from 'antd';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { CenteredContentCol } from 'pages';
-import {
-  LoadingBox,
-  LoadingContainer,
-  LoadingLine,
-} from '@/components/elements/LoadingPlaceholders';
+import { LoadingContainer } from '@/components/elements/LoadingPlaceholders';
 import { Tag } from '@/components/icons/Tag';
 import Button from '@/components/elements/Button';
 import {
@@ -46,6 +42,7 @@ import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
 import BuyForm from '../../src/common/components/forms/BuyForm';
 import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
 import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
+import { format as formatTime } from 'timeago.js';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -149,7 +146,15 @@ const Activities = ({
   );
 };
 
-export const Avatar = ({ address }: { address: string }) => {
+export const Avatar = ({
+  address,
+  showAddress = true,
+  border = false,
+}: {
+  border?: boolean;
+  address: string;
+  showAddress?: boolean;
+}) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
   const { publicKey } = useWallet();
@@ -174,14 +179,23 @@ export const Avatar = ({ address }: { address: string }) => {
 
   return (
     <div className="flex items-center">
-      <img
-        src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-        alt="Profile Picture"
-        className="h-6 w-6 rounded-full"
-      />
-      <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
-        {displayName}
+      <div
+        className={`flex h-6 w-6 rounded-full ${
+          border && `border-2 border-gray-900 border-opacity-60`
+        }`}
+      >
+        <img
+          src={profilePictureUrl ?? getPFPFromPublicKey(address)}
+          alt="Profile Picture"
+          className="rounded-full"
+        />
       </div>
+
+      {showAddress && (
+        <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
+          {displayName}
+        </div>
+      )}
     </div>
   );
 };
@@ -216,11 +230,11 @@ export default function NftByAddress({ address }: { address: string }) {
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
-  const offers = nft?.offers;
+  const offers = nft?.offers || [];
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
-  const topOffers = offers?.sort((a, b) => a.price - b.price);
+  const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
   const topOffer = topOffers?.[0];
   const hasOffers = Boolean(topOffer);
 
@@ -369,7 +383,7 @@ export default function NftByAddress({ address }: { address: string }) {
                           listing={defaultListing as Listing}
                           marketplace={marketplace as Marketplace}
                           refetch={refetch}
-                          className={`w-full bg-gray-900 text-white`}
+                          className={`w-full bg-gray-900 `}
                         />
                       </div>
                     </div>
@@ -652,6 +666,69 @@ export default function NftByAddress({ address }: { address: string }) {
               )}
             </div>
           </div>
+        </div>
+        <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
+          <Accordion title={`Offers`}>
+            <section className={`w-full`}>
+              {hasOffers && (
+                <header
+                  className={`mb-2 grid ${
+                    isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
+                  } items-center px-4`}
+                >
+                  <span className={`text-xs text-gray-300`}>WALLET</span>
+                  <span className={`text-xs text-gray-300`}>PRICE</span>
+                  <span className={`text-xs text-gray-300`}>TIME</span>
+                  {isOwner && <span className={`text-xs text-gray-300`}></span>}
+                </header>
+              )}
+
+              {!hasOffers && (
+                <div className="w-full rounded-lg border border-gray-800 p-10 text-center">
+                  <h3>No offers found</h3>
+                  <p className="mt- text-gray-500">There are currently no offers on this NFT.</p>
+                </div>
+              )}
+              {hasOffers &&
+                offers?.map((o: Offer) => (
+                  <article
+                    key={o.address}
+                    className={`mb-4 grid rounded border border-gray-700 p-4 ${
+                      isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
+                    }`}
+                  >
+                    <div className={`flex items-center`}>
+                      <Link href={`/profiles/${o.buyer}`}>
+                        <a rel={`nofollower`}>{shortenAddress(o.buyer)}</a>
+                      </Link>
+                    </div>
+                    <div className={`flex items-center`}>
+                      <DisplaySOL amount={Number(o.price)} />
+                    </div>
+                    <div className={`flex items-center`}>{formatTime(o.createdAt, `en_US`)}</div>
+                    {(hasAddedOffer || isOwner) && (
+                      <div className={`flex w-full items-center justify-end gap-2`}>
+                        {o.buyer === (publicKey?.toBase58() as string) && !isOwner && (
+                          <Button secondary onClick={() => setOfferModalVisibility(true)}>
+                            Cancel offer
+                          </Button>
+                        )}
+                        {isOwner && (
+                          <AcceptOfferForm
+                            nft={nft as Nft | any}
+                            offer={o as Offer}
+                            listing={defaultListing as Listing}
+                            marketplace={marketplace as Marketplace}
+                            refetch={refetch}
+                            className={`justify-end`}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </article>
+                ))}
+            </section>
+          </Accordion>
         </div>
         {/* {loading ? (
           <div className="mb-4 grid grid-cols-4 gap-6 ">

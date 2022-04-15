@@ -1,5 +1,5 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react';
-import { Listing, Nft, Marketplace } from '@/types/types';
+import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
+import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import Button from '../elements/Button';
@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, Transaction } from '@solana/web3.js';
 import { toast } from 'react-toastify';
+import { Wallet } from '@metaplex/js';
 
 interface CancelSellFormProps {
   listing: Listing;
@@ -20,9 +21,6 @@ interface CancelSellFormProps {
   updateListing: () => void;
 }
 
-const { createCancelListingReceiptInstruction, createCancelInstruction } =
-  AuctionHouseProgram.instructions;
-
 const CancelSellForm: FC<CancelSellFormProps> = ({
   listing,
   nft,
@@ -33,6 +31,7 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const { publicKey, signTransaction } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
 
   const {
@@ -42,88 +41,25 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+
+  const onCancelListing = async () => {
+    if (listing && isOwner && nft) {
+      toast(`Canceling listing for ${nft.name}`);
+      await sdk.listings(marketplace.auctionHouse).cancel({ listing, nft });
+    }
+  };
+
   const cancelListingTx = async () => {
     if (!listing || !isOwner || !nft || !publicKey || !signTransaction) {
       return;
     }
-
-    const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
-    const authority = new PublicKey(marketplace.auctionHouse.authority);
-    const auctionHouseFeeAccount = new PublicKey(marketplace.auctionHouse.auctionHouseFeeAccount);
-    const tokenMint = new PublicKey(nft.mintAddress);
-    const treasuryMint = new PublicKey(marketplace.auctionHouse.treasuryMint);
-    const receipt = new PublicKey(listing.address);
-    const tokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
-
-    const buyerPrice = Number(listing.price);
-
-    const [tradeState] = await AuctionHouseProgram.findTradeStateAddress(
-      publicKey,
-      auctionHouse,
-      tokenAccount,
-      treasuryMint,
-      tokenMint,
-      buyerPrice,
-      1
-    );
-
-    const cancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount,
-      tokenMint,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-      tradeState,
-    };
-    const cancelInstructionArgs = {
-      buyerPrice,
-      tokenSize: 1,
-    };
-
-    const cancelListingReceiptAccounts = {
-      receipt,
-      instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-    };
-
-    const cancelInstruction = createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    );
-    const cancelListingReceiptInstruction = createCancelListingReceiptInstruction(
-      cancelListingReceiptAccounts
-    );
-
-    const txt = new Transaction();
-
-    txt.add(cancelInstruction).add(cancelListingReceiptInstruction);
-
-    txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    txt.feePayer = publicKey;
-
-    let signed: Transaction | undefined = undefined;
-
     try {
-      signed = await signTransaction(txt);
-    } catch (e: any) {
-      toast.error(e.message);
-      return;
-    }
-
-    let signature: string | undefined = undefined;
-
-    try {
-      toast('Sending the transaction to Solana.');
-
-      signature = await connection.sendRawTransaction(signed.serialize());
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
+      await onCancelListing();
       await refetch();
-
-      toast.success('The transaction was confirmed.');
-    } catch (e: any) {
-      toast.error(e.message);
+      toast.success(`Confirmed cancel listing success`);
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setOpen(false);
     }

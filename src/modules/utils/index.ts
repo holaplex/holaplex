@@ -1,4 +1,6 @@
 import { Fields, Files } from 'formidable';
+import BN from 'bn.js';
+import { constructN, ifElse, isNil } from 'ramda';
 
 /** Helper for formidable. */
 export interface FormData {
@@ -15,3 +17,5 @@ export class ApiError extends Error {
     this.json = typeof message === 'string' ? { message } : message;
   }
 }
+
+export const asBN = ifElse(isNil, () => new BN(0), constructN(1, BN));

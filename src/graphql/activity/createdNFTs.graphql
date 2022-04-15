@@ -1,4 +1,4 @@
-query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
+query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
   marketplace(subdomain: $subdomain) {
     subdomain
     name
@@ -27,7 +27,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       canChangeSalePrice
     }
   }
-  nfts(owners: [$address], limit: $limit, offset: $offset) {
+  nfts(creators: [$creator], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
