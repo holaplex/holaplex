@@ -1,6 +1,7 @@
 import React, { FC, VFC } from 'react';
 import SocialLinks from '../elements/SocialLinks';
 
+
 const Footer: VFC = () => {
     return (
         <footer className="bg-gray-800 p-10">
