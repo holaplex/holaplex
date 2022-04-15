@@ -43,7 +43,6 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
   });
   const marketplace = data?.marketplace;
   const receivedOffers = data?.receivedOffers;
-  console.log(receivedOffers);
   const sentOffers = data?.sentOffers;
 
   const OfferCard = ({ nft }: { nft: Nft }) => {};
