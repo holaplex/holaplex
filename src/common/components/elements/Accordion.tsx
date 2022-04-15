@@ -11,10 +11,14 @@ interface Props {
 
 function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props }: Props) {
   return (
-    <Disclosure {...props}>
+    <Disclosure defaultOpen={defaultOpen} {...props}>
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex h-[71px] w-full justify-between rounded-t border border-gray-700 p-6">
+          <Disclosure.Button
+            className={`flex h-[71px] w-full items-center justify-between ${
+              open ? `rounded-t-lg` : `rounded-lg`
+            } border border-gray-800 p-6`}
+          >
             <p className="m-0"> {title}</p>
 
             <ChevronRight
@@ -35,7 +39,7 @@ function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props 
             leaveTo="transform scale-95 opacity-0"
           >
             <div
-              className={cx('rounded-b border border-t-0 border-gray-700 p-6', {
+              className={cx('rounded-b border border-t-0 border-gray-800 p-6', {
                 'overflow-x-auto': allowHorizOverflow,
               })}
             >

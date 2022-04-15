@@ -1,4 +1,4 @@
-query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
+query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
   marketplace(subdomain: $subdomain) {
     subdomain
     name
@@ -32,7 +32,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       }
     }
   }
-  nfts(owners: [$address], limit: $limit, offset: $offset) {
+  sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -40,9 +40,65 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
     description
     image
     primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
     creators {
       address
-      share
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+  receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
       verified
     }
     owner {
