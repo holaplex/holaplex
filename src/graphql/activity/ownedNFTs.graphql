@@ -25,6 +25,11 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       sellerFeeBasisPoints
       requiresSignOff
       canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
+      }
     }
   }
   nfts(owners: [$address], limit: $limit, offset: $offset) {
