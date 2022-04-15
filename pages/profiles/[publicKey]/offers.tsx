@@ -72,7 +72,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
               >
                 <div className={`flex items-center justify-start`}>
                   <img
-                    src={imgOpt(receivedOffer?.image, 400)!}
+                    src={imgOpt(receivedOffer?.image, 800)!}
                     className={`h-20 rounded-lg`}
                     alt={receivedOffer?.name}
                   />
