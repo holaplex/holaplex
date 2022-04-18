@@ -86,13 +86,13 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
     return (
       <div
         onClick={() => setFilter(filterToCheck)}
-        className={`flex  flex-row items-center justify-between rounded-lg ${
+        className={`flex  flex-row items-center justify-between rounded-lg font-medium ${
           filter === filterToCheck
             ? `bg-gray-800`
             : `cursor-pointer bg-gray-900 text-gray-300 hover:bg-gray-800`
         } p-1`}
       >
-        <p className={`mb-0 border-r border-gray-300 px-2 text-base`}>{title}</p>
+        <p className={`mb-0 border-r-2 border-gray-300 px-2 text-base`}>{title}</p>
         <p className={`mb-0 px-2 text-base`}>{count}</p>
       </div>
     );
@@ -109,7 +109,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
         />
       </Head>
       <ProfileContainer>
-        <div className={`mb-8 mt-6 grid grid-cols-3 gap-8 lg:flex`}>
+        <div className={`mb-8 mt-6 grid grid-cols-3 gap-6 lg:flex`}>
           <OfferFilter title={`All`} count={offerCount} filterToCheck={OfferFilters.ALL} />
           <OfferFilter title={`Made`} count={sentCount} filterToCheck={OfferFilters.MADE} />
           <OfferFilter
@@ -273,6 +273,18 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                 </div>
               ));
             })}
+          {offerCount <= 0 && (
+            <div>
+              <div
+                className={`flex flex-col justify-center rounded-lg border-2 border-gray-800 p-4`}
+              >
+                <span className={`text-center text-2xl font-semibold`}>No offers</span>
+                <span className={`mt-2 text-center text-gray-300`}>
+                  Offers associated with this wallet will show up here
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </ProfileContainer>
     </ProfileDataProvider>
