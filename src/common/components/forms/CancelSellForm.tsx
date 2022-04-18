@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react';
 import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
@@ -9,6 +9,7 @@ import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, Transaction } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 interface CancelSellFormProps {
   listing: Listing;
@@ -43,6 +44,8 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
 
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
+
   const onCancelListing = async () => {
     if (listing && isOwner && nft) {
       toast(`Canceling listing for ${nft.name}`);
@@ -54,12 +57,33 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
     if (!listing || !isOwner || !nft || !publicKey || !signTransaction) {
       return;
     }
+
+    const newActions: Action[] = [
+      {
+        name: `Canceling listing for ${nft.name}...`,
+        id: `cancelListing`,
+        action: onCancelListing,
+        param: undefined,
+      },
+    ];
+
     try {
-      await onCancelListing();
-      await refetch();
-      toast.success(`Confirmed cancel listing success`);
+      await runActions(newActions, {
+        onActionSuccess: async () => {
+          await refetch();
+          toast.success(`Confirmed cancel listing success`);
+        },
+        onComplete: async () => {
+          await refetch();
+          setOpen(false);
+        },
+        onActionFailure: async (err) => {
+          await refetch();
+          // toast.error(err.message);
+        },
+      });
     } catch (err: any) {
-      toast.error(err.message);
+      // toast.error(err.message);
     } finally {
       setOpen(false);
     }
@@ -72,8 +96,8 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
         <form onSubmit={handleSubmit(cancelListingTx)}>
           <Button
             className={`w-full`}
-            loading={isSubmitting}
-            disabled={isSubmitting}
+            loading={isSubmitting || hasActionPending}
+            disabled={isSubmitting || hasActionPending}
             secondary
             htmlType={`submit`}
           >
@@ -81,7 +105,11 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
           </Button>
         </form>
         <div>
-          <Button className={`w-full`} disabled={isSubmitting} onClick={updateListing}>
+          <Button
+            className={`w-full`}
+            disabled={isSubmitting || hasActionPending}
+            onClick={updateListing}
+          >
             Update price
           </Button>
         </div>

@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,7 @@ import {
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 interface BuyFormProps {
   nft: Nft;
@@ -53,6 +54,8 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
+
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
 
   const onBuy = async () => {
@@ -69,11 +72,29 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
     if (!listing || isOwner || !nft || !marketplace) {
       return;
     }
+
+    const newActions: Action[] = [
+      {
+        name: `Buying ${nft.name}...`,
+        id: `buyNFT`,
+        action: onBuy,
+        param: undefined,
+      },
+    ];
+
     try {
-      await onBuy();
-      toast.success(`Confirmed buy success`);
-      await refetch();
-      return;
+      await runActions(newActions, {
+        onActionSuccess: async () => {
+          await refetch();
+          toast.success(`Confirmed buy success`);
+        },
+        onComplete: async () => {
+          await refetch();
+        },
+        onActionFailure: async () => {
+          await refetch();
+        },
+      });
     } catch (err: any) {
       toast.error(err.message);
       return;
