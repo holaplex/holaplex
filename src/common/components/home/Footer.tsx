@@ -37,8 +37,8 @@ const Footer: VFC = () => {
                         <span className="text-white text-base font-medium">Community</span>
                         <ul className="mt-4 space-y-2">
                             <li><FooterLink newTab href="https://github.com/holaplex">GitHub Repos</FooterLink></li>
-                            <li><FooterLink newTab href="https://airtable.com/shrXoZ9qU9g4oeM81">Hola Collective</FooterLink></li>
-                            <li><FooterLink href="#">HolaListings</FooterLink></li>
+                            <li><FooterLink newTab href="#">Hola Collective</FooterLink></li>
+                            <li><FooterLink href="https://mobile.twitter.com/holalistings">HolaListings</FooterLink></li>
                         </ul>
                     </div>
                     <div className="justify-start">
