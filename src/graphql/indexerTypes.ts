@@ -451,6 +451,8 @@ export type NftMarketplaceQuery = { __typename?: 'QueryRoot', marketplace?: { __
 export type OffersPageQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['PublicKey'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 }>;
 
 
@@ -462,6 +464,14 @@ export type NftPageQueryVariables = Exact<{
 
 
 export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, auctionHouse: string, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: string, metadata: string, auctionHouse: string, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
+
+export type ShareNftQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+  address: Scalars['String'];
+}>;
+
+
+export type ShareNftQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, auctionHouse?: { __typename?: 'AuctionHouse', address: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: string, price: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, price: any }>, offers: Array<{ __typename?: 'BidReceipt', address: string, buyer: string, price: any }> } | null };
 
 
 export const ActivityPageDocument = gql`
@@ -920,7 +930,7 @@ export type NftMarketplaceQueryHookResult = ReturnType<typeof useNftMarketplaceQ
 export type NftMarketplaceLazyQueryHookResult = ReturnType<typeof useNftMarketplaceLazyQuery>;
 export type NftMarketplaceQueryResult = Apollo.QueryResult<NftMarketplaceQuery, NftMarketplaceQueryVariables>;
 export const OffersPageDocument = gql`
-    query offersPage($subdomain: String!, $address: PublicKey!) {
+    query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
   marketplace(subdomain: $subdomain) {
     subdomain
     name
@@ -954,7 +964,7 @@ export const OffersPageDocument = gql`
       }
     }
   }
-  sentOffers: nfts(offerers: [$address], limit: 100, offset: 0) {
+  sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -1006,7 +1016,7 @@ export const OffersPageDocument = gql`
       canceledAt
     }
   }
-  receivedOffers: nfts(owners: [$address], limit: 100, offset: 0) {
+  receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -1075,6 +1085,8 @@ export const OffersPageDocument = gql`
  *   variables: {
  *      subdomain: // value for 'subdomain'
  *      address: // value for 'address'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
@@ -1172,3 +1184,87 @@ export function useNftPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Nf
 export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
 export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
 export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;
+export const ShareNftDocument = gql`
+    query shareNFT($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    auctionHouse {
+      address
+      stats {
+        floor
+        average
+        volume24hr
+      }
+    }
+  }
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      price
+    }
+    listings {
+      address
+      price
+    }
+    offers {
+      address
+      buyer
+      price
+    }
+  }
+}
+    `;
+
+/**
+ * __useShareNftQuery__
+ *
+ * To run a query within a React component, call `useShareNftQuery` and pass it any options that fit your needs.
+ * When your component renders, `useShareNftQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useShareNftQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useShareNftQuery(baseOptions: Apollo.QueryHookOptions<ShareNftQuery, ShareNftQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
+      }
+export function useShareNftLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ShareNftQuery, ShareNftQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
+        }
+export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
+export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
+export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;

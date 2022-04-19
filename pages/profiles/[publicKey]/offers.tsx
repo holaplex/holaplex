@@ -37,6 +37,8 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
 
   const { data, loading, refetch } = useOffersPageQuery({
     variables: {
+      limit: 100,
+      offset: 0,
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
       address: publicKey,
     },
