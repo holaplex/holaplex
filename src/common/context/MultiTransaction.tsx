@@ -26,7 +26,7 @@ interface MultiTransactionState {
   hasActionPending: boolean;
   hasRemainingActions: boolean;
   actions: Action[];
-  runActions: (actions: Omit<Action, 'id'>[], settings?: ActionSettings) => Promise<void>;
+  runActions: (actions: Action[], settings?: ActionSettings) => Promise<void>;
   retryActions: (settings?: ActionSettings) => Promise<void>;
   clearActions: () => void;
   onFinished?: () => void;
@@ -96,14 +96,13 @@ export const MultiTransactionProvider: FC = ({ children }) => {
     }
   };
 
-  const runActions = async (newActions: Omit<Action, 'id'>[], settings?: ActionSettings) => {
+  const runActions = async (newActions: Action[], settings?: ActionSettings) => {
     if (hasRemainingActions) {
       throw new Error(`Has pending actions from a previous transaction`);
     }
     const newActionsWithIds: Action[] = newActions.map((action) => {
       return {
         ...action,
-        id: v4(),
       };
     });
 
@@ -188,7 +187,13 @@ export const MultiTransactionProvider: FC = ({ children }) => {
           </p>
           {hasError && (
             <div className={`flex w-full px-4`}>
-              <Button className={`w-full`} size={`small`} onClick={retryActions}>
+              <Button
+                className={`w-full`}
+                disabled={hasActionPending}
+                loading={hasActionPending}
+                size={`small`}
+                onClick={retryActions}
+              >
                 Retry?
               </Button>
             </div>

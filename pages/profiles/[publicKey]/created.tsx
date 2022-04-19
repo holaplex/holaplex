@@ -32,7 +32,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
     variables: {
       creator: publicKey,
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      limit: 100,
+      limit: 500,
       offset: 0,
     },
   });

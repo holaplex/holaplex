@@ -48,6 +48,8 @@ import { apolloClient } from '../../src/graphql/apollo';
 import { gql } from '@apollo/client';
 import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
 import Head from 'next/head';
+import { TwitterNFTCard } from '../../src/common/components/forms/DownloadableNFTCard';
+import * as htmlToImage from 'html-to-image';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -220,6 +222,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const listings = data.nft?.listings || [];
   const topListings = listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
   const topListing = topListings?.[0];
+
   return {
     props: {
       address: nftAddress,
@@ -324,10 +327,11 @@ export default function NftByAddress({
         <meta itemProp="description" content={description} />
         <meta itemProp="image" content={image} />
         {/* Twitter */}
-        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${name} NFT | Holaplex`} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image:src" content={image} />
+        <meta name="twitter:site" content="@holaplex" />
         {/* Open Graph */}
         <meta name="og-title" content={`${name} NFT | Holaplex`} />
         <meta name="og-description" content={description} />
