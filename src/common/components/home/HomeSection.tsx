@@ -1,0 +1,14 @@
+import { FC } from "react";
+
+interface HomeSectionProps {
+    title: string;
+}
+
+const HomeSection: FC<HomeSectionProps> = props => {
+    return <div className="border border-white">
+        <h1>{props.title}</h1>
+        {props.children}
+    </div>;
+}
+
+export default HomeSection;

@@ -48,6 +48,9 @@ import { SelectValue } from 'antd/lib/select';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import SocialLinks from '@/common/components/elements/SocialLinks';
 import Footer from '@/common/components/home/Footer';
+import MarketplacePreview from '@/common/components/home/MarketplacePreview';
+import HomeSection from '@/common/components/home/HomeSection';
+import { useNftMarketplaceQuery } from 'src/graphql/indexerTypes';
 import { StorefrontContext } from '@/modules/storefront';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
@@ -513,6 +516,15 @@ export default function Home({
     );
   }, [filterBy, sortBy, searchBy]);
 
+  const marketplaceQuery = useNftMarketplaceQuery({
+    variables: {
+        subdomain: 'junglecats',
+        //TODO what to do here since there isnt an address?
+        address: ''
+    },
+  });
+  const data = marketplaceQuery?.data?.marketplace || [];
+
   return (
     <><Row className="mt-10">
       <CenteredContentCol>
@@ -661,9 +673,6 @@ export default function Home({
               ]}
             />
             <Row gutter={24}>
-              {/* <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6}>
-                <SkeletonListing />
-              </Col> */}
               {take(show, displayedListings).map((listing: Listing, i) => (
                 <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
                   <ListingPreview
@@ -677,6 +686,11 @@ export default function Home({
                   />
                 </Col>
               ))}
+            </Row>
+            <Row>
+              <HomeSection>
+                <MarketplacePreview loading={false} data={data} />
+              </HomeSection>
             </Row>
           </Col>
         </Section>

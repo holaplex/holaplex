@@ -91,10 +91,11 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
     </Tooltip>
   );
 };
+
 export const OverlappingCircles = ({
   creators,
 }: {
-  creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
+  creators: {address: string}[];
 }) => {
   return (
     <div className="relative">
