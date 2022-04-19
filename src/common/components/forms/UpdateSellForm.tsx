@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useRef, useState } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '../elements/NFTPreview';
-import { PriceDisplay } from '../CurrencyHelpers';
+import { DisplaySOL, PriceDisplay } from '../CurrencyHelpers';
 import Button from '../elements/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,16 @@ import AcceptOfferForm from './AcceptOfferForm';
 import { initMarketplaceSDK, Nft, Marketplace, Listing, Offer } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import Modal from '../elements/Modal';
+import { imgOpt } from '../../utils';
+import { Avatar } from '../../../../pages/nfts/[address]';
+import { shortenAddress } from '../../../modules/utils/string';
+//@ts-ignore
+import FeatherIcon from 'feather-icons-react';
+import * as htmlToImage from 'html-to-image';
+
+import Link from 'next/link';
+import DownloadNFTCard from './DownloadableNFTCard';
 
 interface UpdateSellFormProps {
   nft: Nft;
@@ -71,6 +81,29 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
+  const [showShare, setShowShare] = useState(false);
+  const [updatedPrice, setUpdatePrice] = useState(Number(currPrice));
+  const openShareListing = () => {
+    setShowShare(true);
+  };
+  const closeShoreListing = () => {
+    setShowShare(false);
+    setOpen(false);
+  };
+  const downloadRef = useRef(null);
+  const downloadSharableImage = async () => {
+    if (window) {
+      const data = await htmlToImage.toPng(document.getElementById(`shareNFTCard`) as HTMLElement);
+      const link = document.createElement('a');
+      link.href = data;
+      link.download = `${nft.address}-shared.png`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { runActions, hasActionPending, clearActions } = useContext(MultiTransactionContext);
 
@@ -94,6 +127,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     }
 
     const numAmount = Number(amount);
+    setUpdatePrice(numAmount);
     const newActions: Action[] = [
       {
         name: `Canceling your original listing...`,
@@ -110,12 +144,15 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     ];
 
     await runActions(newActions, {
-      onActionSuccess: async () => {
+      onActionSuccess: async (tx) => {
+        console.log(tx);
         await refetch();
+        if (tx === `updateListing`) {
+          openShareListing();
+        }
       },
       onComplete: async () => {
         await refetch();
-        setOpen(false);
       },
       onActionFailure: async (err) => {
         await refetch();
@@ -202,6 +239,19 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
           </div>
         </form>
       </div>
+      <Modal title={`Your listing was updated!`} open={true} setOpen={closeShoreListing}>
+        <div className={`mt-10 mb-16 text-center text-base text-gray-300`}>
+          You just updated the price of {nft.name}.<p className={`mb-0`}>Let people know!</p>
+        </div>
+
+        <DownloadNFTCard
+          listing={listing}
+          nft={nft}
+          marketplace={marketplace}
+          updatedPrice={updatedPrice * LAMPORTS_PER_SOL}
+          offer={offer}
+        />
+      </Modal>
     </div>
   );
 };
