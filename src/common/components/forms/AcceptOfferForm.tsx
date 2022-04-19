@@ -11,6 +11,7 @@ import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { toast } from 'react-toastify';
 import { Nft, Marketplace, Offer, Listing, initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 interface AcceptOfferFormProps {
   nft: Nft;
@@ -56,11 +57,12 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
     },
   });
 
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
+
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
 
   const onAcceptOffer = async () => {
     if (offer) {
-      toast(`Accepting offer for ${Number(offer.price) / LAMPORTS_PER_SOL}`);
       if (listing) {
         await sdk.offers(marketplace.auctionHouse).accept({ offer, nft, cancel: [listing] });
       } else {
@@ -73,14 +75,30 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
     if (!publicKey || !signTransaction || !offer || !nft) {
       return;
     }
-    try {
-      await onAcceptOffer();
-      toast.success(`Confirmed accept offer success`);
-      await refetch();
-      closeOuter();
-    } catch (err: any) {
-      toast.error(err.message);
-    }
+
+    const newActions: Action[] = [
+      {
+        name: `Accepting offer...`,
+        id: `acceptOffer`,
+        action: onAcceptOffer,
+        param: undefined,
+      },
+    ];
+
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed accept offer success`);
+      },
+      onComplete: async () => {
+        await refetch();
+        closeOuter();
+      },
+      onActionFailure: async (err) => {
+        await refetch();
+        toast.error(err.message);
+      },
+    });
   };
 
   return (

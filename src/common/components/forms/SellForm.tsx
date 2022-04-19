@@ -120,25 +120,19 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          await refetch();
-          toast.success(`Confirmed listing success`);
-        },
-        onActionFailure: async (err) => {
-          toast.error(err.message);
-          await refetch();
-        },
-        onComplete: async () => {
-          await refetch();
-        },
-      });
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setOpen(false);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+      },
+      onActionFailure: async (err) => {
+        toast.error(err.message);
+        await refetch();
+      },
+      onComplete: async () => {
+        await refetch();
+        setOpen(false);
+      },
+    });
   };
 
   if (!nft || !marketplace) {

@@ -113,14 +113,12 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       onActionSuccess: async () => {
         await refetch();
       },
+      onActionFailure: async () => {
+        await refetch();
+      },
       onComplete: async () => {
         await refetch();
         setOpen(false);
-      },
-      onActionFailure: async () => {
-        await refetch();
-        // retry transactions
-        // retryActions()
       },
     });
   };
