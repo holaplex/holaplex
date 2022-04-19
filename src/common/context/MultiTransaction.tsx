@@ -122,7 +122,6 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         let filtered = newActionsWithIds;
         for (const action of newActionsWithIds) {
           setMessage(action.name);
-          throw new Error(`Fuck`);
           await action.action(action.param);
           settings?.onActionSuccess?.(action.id);
           // clear action
