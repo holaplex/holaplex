@@ -47,37 +47,37 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ loading, data }) => {
         </div>
     </div>;
 
-    return (
-        <div className={`mt-8 flex w-full justify-start`}>
-            <div className={`relative aspect-square h-14 w-14`}>
-                {data?.bannerUrl && (
-                    <img
-                        src={imgOpt(data?.bannerUrl, 400)}
-                        alt="marketplace-banner"
-                        className={`block aspect-square w-full rounded-lg border-none object-cover `}
-                    />
-                )}
-            </div>
-            <div className={`ml-5`}>
-                <p className={`mb-0 text-base font-medium`}>{data?.name}</p>
-                <ul className={`mt-2`}>
-                {loading ? (
-                    <></>
-                ) : data?.creators?.length === 1 ? (
-                    <Link href={`/profiles/${data?.creators[0].creatorAddress}`}>
-                    <a>
-                        <Avatar address={data?.creators[0].creatorAddress} />
-                    </a>
-                    </Link>
-                ) : (
-                    <div>
-                        <OverlappingCircles creators={data?.creators?.map(c => {return {address: c.creatorAddress}}) || []} />
-                    </div>
-                )}
-                </ul>
-            </div>
-        </div>
-    );
+    // return (
+    //     <div className={`mt-8 flex w-full justify-start`}>
+    //         <div className={`relative aspect-square h-14 w-14`}>
+    //             {data?.bannerUrl && (
+    //                 <img
+    //                     src={imgOpt(data?.bannerUrl, 400)}
+    //                     alt="marketplace-banner"
+    //                     className={`block aspect-square w-full rounded-lg border-none object-cover `}
+    //                 />
+    //             )}
+    //         </div>
+    //         <div className={`ml-5`}>
+    //             <p className={`mb-0 text-base font-medium`}>{data?.name}</p>
+    //             <ul className={`mt-2`}>
+    //             {loading ? (
+    //                 <></>
+    //             ) : data?.creators?.length === 1 ? (
+    //                 <Link href={`/profiles/${data?.creators[0].creatorAddress}`}>
+    //                 <a>
+    //                     <Avatar address={data?.creators[0].creatorAddress} />
+    //                 </a>
+    //                 </Link>
+    //             ) : (
+    //                 <div>
+    //                     <OverlappingCircles creators={data?.creators?.map(c => {return {address: c.creatorAddress}}) || []} />
+    //                 </div>
+    //             )}
+    //             </ul>
+    //         </div>
+    //     </div>
+    // );
 };
   
   export default MarketplacePreview;
