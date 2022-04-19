@@ -82,23 +82,19 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          await refetch();
-          toast.success(`Confirmed buy success`);
-        },
-        onComplete: async () => {
-          await refetch();
-        },
-        onActionFailure: async () => {
-          await refetch();
-        },
-      });
-    } catch (err: any) {
-      toast.error(err.message);
-      return;
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed buy success`);
+      },
+      onComplete: async () => {
+        await refetch();
+      },
+      onActionFailure: async (err) => {
+        await refetch();
+        toast.error(err.message);
+      },
+    });
   };
 
   if (isOwner) {
@@ -109,8 +105,8 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
     <form className={`flex w-full ${className}`} onSubmit={handleSubmit(buyTx)}>
       <Button
         htmlType={`submit`}
-        disabled={isSubmitting}
-        loading={isSubmitting}
+        disabled={isSubmitting || hasActionPending}
+        loading={isSubmitting || hasActionPending}
         className={className}
       >
         Buy now

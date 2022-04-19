@@ -101,8 +101,6 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
         },
       });
     } catch (err: any) {
-      toast.error(err.message);
-      return;
     } finally {
       router.push(`/nfts/${nft.address}`);
     }

@@ -109,26 +109,21 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          await refetch();
-        },
-        onComplete: async () => {
-          await refetch();
-          setOpen(false);
-        },
-        onActionFailure: async () => {
-          await refetch();
-          // retry transactions
-          // retryActions()
-        },
-      });
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setOpen(false);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+      },
+      onComplete: async () => {
+        await refetch();
+        setOpen(false);
+      },
+      onActionFailure: async (err) => {
+        await refetch();
+        toast.error(err.message);
+        // retry transactions
+        // retryActions()
+      },
+    });
   };
 
   const acceptOffer = () => {

@@ -85,23 +85,20 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          await refetch();
-          toast.success(`Confirmed accept offer success`);
-        },
-        onComplete: async () => {
-          await refetch();
-          closeOuter();
-        },
-        onActionFailure: async () => {
-          await refetch();
-        },
-      });
-    } catch (err: any) {
-      toast.error(err.message);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed accept offer success`);
+      },
+      onComplete: async () => {
+        await refetch();
+        closeOuter();
+      },
+      onActionFailure: async (err) => {
+        await refetch();
+        toast.error(err.message);
+      },
+    });
   };
 
   return (

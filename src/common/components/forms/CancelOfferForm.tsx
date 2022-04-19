@@ -62,26 +62,20 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          toast.success(`Confirmed cancel offer success`);
-          await refetch();
-        },
-        onActionFailure: async (err) => {
-          toast.error(err.message);
-          await refetch();
-        },
-        onComplete: async () => {
-          refetch();
-          setOpen(false);
-        },
-      });
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setOpen(false);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        toast.success(`Confirmed cancel offer success`);
+        await refetch();
+      },
+      onActionFailure: async (err) => {
+        toast.error(err.message);
+        await refetch();
+      },
+      onComplete: async () => {
+        refetch();
+        setOpen(false);
+      },
+    });
   };
 
   return (

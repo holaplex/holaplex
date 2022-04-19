@@ -67,25 +67,19 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          await refetch();
-          toast.success(`Confirmed cancel listing success`);
-        },
-        onComplete: async () => {
-          await refetch();
-          setOpen(false);
-        },
-        onActionFailure: async (err) => {
-          await refetch();
-        },
-      });
-    } catch (err: any) {
-      return;
-    } finally {
-      setOpen(false);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed cancel listing success`);
+      },
+      onComplete: async () => {
+        await refetch();
+        setOpen(false);
+      },
+      onActionFailure: async (err) => {
+        await refetch();
+      },
+    });
   };
 
   return (
