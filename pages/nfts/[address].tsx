@@ -249,7 +249,6 @@ export default function NftByAddress({
 }) {
   const { publicKey } = useWallet();
   const router = useRouter();
-  console.log(image);
 
   const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
 
