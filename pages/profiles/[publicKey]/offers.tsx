@@ -9,7 +9,7 @@ import {
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
 import TextInput2 from '../../../src/common/components/elements/TextInput2';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useOffersPageQuery } from '../../../src/graphql/indexerTypes';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
@@ -53,24 +53,15 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
   const receivedOffers = data?.receivedOffers;
   const sentOffers = data?.sentOffers;
 
-  let receivedCount = 0;
-  let sentCount = 0;
+  const receivedCount = useMemo(
+    () => receivedOffers?.reduce((acc, nft) => acc + nft.offers.filter((o) => o).length, 0) || 0,
+    [receivedOffers]
+  );
 
-  receivedOffers?.forEach((nft) => {
-    nft.offers.forEach((offer) => {
-      if (offer) {
-        receivedCount += 1;
-      }
-    });
-  });
-
-  sentOffers?.forEach((nft) => {
-    nft.offers.forEach((offer) => {
-      if (offer) {
-        sentCount += 1;
-      }
-    });
-  });
+  const sentCount = useMemo(
+    () => sentOffers?.reduce((acc, nft) => acc + nft.offers.filter((o) => o).length, 0) || 0,
+    [sentOffers]
+  );
 
   const offerCount = receivedCount + sentCount;
 
