@@ -15,6 +15,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
+export const GOOGLE_OPTIMIZE_ID = 'OPT-P5577X5';
+// export const GA3_ID = 'UA-203056887-2'; // process.env.NEXT_PUBLIC_GA3_ID
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 export const META_ID = process.env.NEXT_PUBLIC_META_ID;
@@ -39,17 +41,23 @@ export interface TrackingAttributes {
   [key: string]: string | number | boolean | any[] | null | undefined;
 }
 
-export const ga4Event = (
+export const gaEvent = (
   action: AnalyticsAction,
   { event_category, event_label, value, page_path, ...otherAttributes }: TrackingAttributes
 ) => {
-  window.gtag('event', action, {
-    event_category,
-    event_label,
-    value,
-    page_path,
-    ...otherAttributes,
-  });
+  window.gtag(
+    'event',
+    action,
+    {
+      event_category,
+      event_label,
+      value,
+      page_path,
+      ...otherAttributes,
+      send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
+    },
+    {}
+  );
 };
 
 export type TrackingFunctionSignature = (
@@ -79,6 +87,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       mixpanel: !!MIXPANEL_TOKEN,
       meta: META_ID && typeof window !== 'undefined' && !!window.fbq,
       ga4: GA4_ID && typeof window !== 'undefined' && !!window.gtag,
+      ga3: OLD_GOOGLE_ANALYTICS_ID && typeof window !== 'undefined' && !!window.gtag,
     };
 
     new Coingecko().getRate([Currency.SOL], Currency.USD).then((rates) => {
@@ -88,6 +97,11 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
     if (integrations.ga4) {
       window.gtag('config', GA4_ID, {
+        send_page_view: false,
+      });
+    }
+    if (integrations.ga3) {
+      window.gtag('config', OLD_GOOGLE_ANALYTICS_ID, {
         send_page_view: false,
       });
     }
@@ -204,6 +218,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       mixpanel: !!MIXPANEL_TOKEN,
       meta: META_ID && typeof window !== 'undefined' && !!window.fbq,
       ga4: GA4_ID && typeof window !== 'undefined' && !!window.gtag,
+      ga3: OLD_GOOGLE_ANALYTICS_ID && typeof window !== 'undefined' && !!window.gtag,
     };
 
     try {
@@ -225,7 +240,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
       // ga4
       if (integrations.ga4) {
-        ga4Event(action, attrs);
+        gaEvent(action, attrs);
       }
 
       if (integrations.mixpanel) {

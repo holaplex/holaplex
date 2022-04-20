@@ -57,7 +57,6 @@ export default function New() {
   const { solana, wallet, looking } = useContext(WalletContext);
   const { setVisible } = useWalletModal();
   const { storefront, searching } = useContext(StorefrontContext);
-
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['pubkey'], value: '' },
@@ -99,7 +98,10 @@ export default function New() {
   const subdomainUniqueness = validateSubdomainUniqueness(ar);
 
   const onSubmit = submitCallback({
-    track,
+    trackingFunction: () =>
+      track('Storefront Created', {
+        event_category: 'Storefront',
+      }),
     router,
     solana,
     values,
@@ -119,7 +121,6 @@ export default function New() {
           {e && ` (${e})`}
         </>
       ),
-    trackEvent: 'Storefront Created',
   });
 
   const textColor = getTextColor(values.theme.backgroundColor);
