@@ -440,6 +440,13 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type MarketplacePreviewQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+}>;
+
+
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
+
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['String'];
@@ -451,6 +458,8 @@ export type NftMarketplaceQuery = { __typename?: 'QueryRoot', marketplace?: { __
 export type OffersPageQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['PublicKey'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 }>;
 
 
@@ -683,6 +692,25 @@ export const WalletProfileDocument = gql`
   }
 }
     `;
+export const MarketplacePreviewDocument = gql`
+    query marketplacePreview($subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    bannerUrl
+    stats {
+      nfts
+    }
+    name
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    creators {
+      creatorAddress
+    }
+  }
+}
+    `;
 export const NftMarketplaceDocument = gql`
     query nftMarketplace($subdomain: String!, $address: String!) {
   marketplace(subdomain: $subdomain) {
@@ -773,7 +801,7 @@ export const NftMarketplaceDocument = gql`
 }
     `;
 export const OffersPageDocument = gql`
-    query offersPage($subdomain: String!, $address: PublicKey!) {
+    query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
   marketplace(subdomain: $subdomain) {
     subdomain
     name
@@ -807,7 +835,7 @@ export const OffersPageDocument = gql`
       }
     }
   }
-  sentOffers: nfts(offerers: [$address], limit: 100, offset: 0) {
+  sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -859,7 +887,7 @@ export const OffersPageDocument = gql`
       canceledAt
     }
   }
-  receivedOffers: nfts(owners: [$address], limit: 100, offset: 0) {
+  receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -987,6 +1015,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     walletProfile(variables: WalletProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WalletProfileQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WalletProfileQuery>(WalletProfileDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'walletProfile', 'query');
+    },
+    marketplacePreview(variables: MarketplacePreviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MarketplacePreviewQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MarketplacePreviewQuery>(MarketplacePreviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'marketplacePreview', 'query');
     },
     nftMarketplace(variables: NftMarketplaceQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<NftMarketplaceQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<NftMarketplaceQuery>(NftMarketplaceDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'nftMarketplace', 'query');

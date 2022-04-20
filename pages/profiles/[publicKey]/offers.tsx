@@ -39,6 +39,8 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
     variables: {
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
       address: publicKey,
+      limit: 100,
+      offset: 0
     },
   });
   const marketplace = data?.marketplace;

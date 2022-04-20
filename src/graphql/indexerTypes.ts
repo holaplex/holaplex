@@ -440,6 +440,13 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type MarketplacePreviewQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+}>;
+
+
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
+
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['String'];
@@ -451,6 +458,8 @@ export type NftMarketplaceQuery = { __typename?: 'QueryRoot', marketplace?: { __
 export type OffersPageQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['PublicKey'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 }>;
 
 
@@ -801,6 +810,53 @@ export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export const MarketplacePreviewDocument = gql`
+    query marketplacePreview($subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    bannerUrl
+    stats {
+      nfts
+    }
+    name
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    creators {
+      creatorAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useMarketplacePreviewQuery__
+ *
+ * To run a query within a React component, call `useMarketplacePreviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMarketplacePreviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMarketplacePreviewQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *   },
+ * });
+ */
+export function useMarketplacePreviewQuery(baseOptions: Apollo.QueryHookOptions<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>(MarketplacePreviewDocument, options);
+      }
+export function useMarketplacePreviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>(MarketplacePreviewDocument, options);
+        }
+export type MarketplacePreviewQueryHookResult = ReturnType<typeof useMarketplacePreviewQuery>;
+export type MarketplacePreviewLazyQueryHookResult = ReturnType<typeof useMarketplacePreviewLazyQuery>;
+export type MarketplacePreviewQueryResult = Apollo.QueryResult<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>;
 export const NftMarketplaceDocument = gql`
     query nftMarketplace($subdomain: String!, $address: String!) {
   marketplace(subdomain: $subdomain) {
@@ -920,7 +976,7 @@ export type NftMarketplaceQueryHookResult = ReturnType<typeof useNftMarketplaceQ
 export type NftMarketplaceLazyQueryHookResult = ReturnType<typeof useNftMarketplaceLazyQuery>;
 export type NftMarketplaceQueryResult = Apollo.QueryResult<NftMarketplaceQuery, NftMarketplaceQueryVariables>;
 export const OffersPageDocument = gql`
-    query offersPage($subdomain: String!, $address: PublicKey!) {
+    query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
   marketplace(subdomain: $subdomain) {
     subdomain
     name
@@ -954,7 +1010,7 @@ export const OffersPageDocument = gql`
       }
     }
   }
-  sentOffers: nfts(offerers: [$address], limit: 100, offset: 0) {
+  sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -1006,7 +1062,7 @@ export const OffersPageDocument = gql`
       canceledAt
     }
   }
-  receivedOffers: nfts(owners: [$address], limit: 100, offset: 0) {
+  receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -1075,6 +1131,8 @@ export const OffersPageDocument = gql`
  *   variables: {
  *      subdomain: // value for 'subdomain'
  *      address: // value for 'address'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
