@@ -44,16 +44,11 @@ export const gaEvent = (
   action: AnalyticsAction,
   { event_category, event_label, ...otherAttributes }: TrackingAttributes
 ) => {
-  window.gtag(
-    'event',
-    action,
-    {
-      event_category,
-      event_label,
-      ...otherAttributes,
-    },
-    {}
-  );
+  window.gtag('event', action, {
+    event_category,
+    event_label,
+    ...otherAttributes,
+  });
 };
 
 export type TrackingFunctionSignature = (
