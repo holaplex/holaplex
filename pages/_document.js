@@ -42,9 +42,10 @@ export default class MyDocument extends Document {
           {/* <meta name="facebook-domain-verification" content={'pvzsx7s3k2om21tjz7kmt6gpr0vaun'} /> */}
           <meta name="facebook-domain-verification" content="1shmkwfy1aajm8cbbwwe91f30j8ihi" />
           {GOOGLE_OPTIMIZE_ID && (
-            <Script
+            // eslint-disable-next-line @next/next/no-sync-scripts
+            <script
               src={`https://www.googleoptimize.com/optimize.js?id=${GOOGLE_OPTIMIZE_ID}`}
-            ></Script>
+            ></script>
           )}
           {(GA4_ID || OLD_GOOGLE_ANALYTICS_ID) && (
             <>
