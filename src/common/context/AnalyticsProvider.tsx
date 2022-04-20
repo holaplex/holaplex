@@ -29,7 +29,7 @@ interface AnalyticsUserProperties {
   pubkey: string; // same as user_id, but for use in custom reports
 }
 
-const debugAnalytics = false;
+const debugAnalytics = true;
 
 export interface TrackingAttributes {
   event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile';
