@@ -67,6 +67,11 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
 
   const offerCount = receivedCount + sentCount;
 
+  function byDate(a: any, b: any) {
+    //chronologically by year, month, then day
+    return new Date(a.createdAt).valueOf() - new Date(b.createdAt).valueOf(); //timestamps
+  }
+
   const OfferFilter = ({
     filterToCheck,
     count = 0,
@@ -117,154 +122,162 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
               const defaultListing = receivedOffer?.listings.find(
                 (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
               );
-              return receivedOffer.offers?.map((offer) => (
-                <div
-                  key={offer.address}
-                  className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
-                >
-                  <div className={`flex items-center justify-start`}>
-                    <img
-                      src={imgOpt(receivedOffer?.image, 800)!}
-                      className={`h-20 rounded-lg`}
-                      alt={receivedOffer?.name}
-                    />
-                    <div>
-                      <div className={`ml-4 flex flex-col justify-center`}>
-                        <p className={`mb-0 text-base text-gray-300`}>
-                          <Link href={`/profiles/${offer.buyer}/offers`}>
-                            <a className={`text-white hover:text-gray-300`}>
-                              {offer.buyer === userPK?.toBase58()
-                                ? `You`
-                                : `@${shortenAddress(offer.buyer)}`}
-                            </a>
-                          </Link>{' '}
-                          offered{' '}
-                          <span className={`text-white`}>
-                            <DisplaySOL amount={offer.price} iconVariant={`small`} />
-                          </span>{' '}
-                          for{' '}
-                          <Link href={`/nfts/${receivedOffer.address}`}>
-                            <a className={`text-white hover:text-gray-300`}>{receivedOffer.name}</a>
-                          </Link>
-                        </p>
-                        <p className={`mb-0 mt-2 text-base text-gray-500`}>
-                          {formatTime(offer.createdAt, `en_US`)}
-                        </p>
+              return receivedOffer.offers
+                ?.sort(byDate)
+                .reverse()
+                .map((offer) => (
+                  <div
+                    key={offer.address}
+                    className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
+                  >
+                    <div className={`flex items-center justify-start`}>
+                      <img
+                        src={imgOpt(receivedOffer?.image, 800)!}
+                        className={`h-20 rounded-lg`}
+                        alt={receivedOffer?.name}
+                      />
+                      <div>
+                        <div className={`ml-4 flex flex-col justify-center`}>
+                          <p className={`mb-0 text-base text-gray-300`}>
+                            <Link href={`/profiles/${offer.buyer}/offers`}>
+                              <a className={`text-white hover:text-gray-300`}>
+                                {offer.buyer === userPK?.toBase58()
+                                  ? `You`
+                                  : `@${shortenAddress(offer.buyer)}`}
+                              </a>
+                            </Link>{' '}
+                            offered{' '}
+                            <span className={`text-white`}>
+                              <DisplaySOL amount={offer.price} iconVariant={`small`} />
+                            </span>{' '}
+                            for{' '}
+                            <Link href={`/nfts/${receivedOffer.address}`}>
+                              <a className={`text-white hover:text-gray-300`}>
+                                {receivedOffer.name}
+                              </a>
+                            </Link>
+                          </p>
+                          <p className={`mb-0 mt-2 text-base text-gray-500`}>
+                            {formatTime(offer.createdAt, `en_US`)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className={`flex items-center`}>
-                    {Boolean(receivedOffer?.owner?.address === userPK?.toBase58()) && (
-                      <AcceptOfferForm
-                        nft={receivedOffer as Nft | any}
-                        offer={offer as Offer}
-                        listing={defaultListing as Listing}
-                        marketplace={marketplace as Marketplace}
-                        refetch={refetch}
-                      />
-                    )}
+                    <div className={`flex items-center`}>
+                      {Boolean(receivedOffer?.owner?.address === userPK?.toBase58()) && (
+                        <AcceptOfferForm
+                          nft={receivedOffer as Nft | any}
+                          offer={offer as Offer}
+                          listing={defaultListing as Listing}
+                          marketplace={marketplace as Marketplace}
+                          refetch={refetch}
+                        />
+                      )}
 
-                    {Boolean(offer.buyer === userPK?.toBase58()) && (
-                      <div>
-                        <Button
-                          onClick={() => setShowUpdateOfferModal(true)}
-                          secondary
-                          className={`bg-gray-800 ease-in hover:bg-gray-700`}
-                        >
-                          Update offer
-                        </Button>
-                        <Modal
-                          open={showUpdateOfferModal}
-                          setOpen={setShowUpdateOfferModal}
-                          title={`Update offer`}
-                        >
-                          <UpdateOfferForm
-                            listing={defaultListing as Listing}
+                      {Boolean(offer.buyer === userPK?.toBase58()) && (
+                        <div>
+                          <Button
+                            onClick={() => setShowUpdateOfferModal(true)}
+                            secondary
+                            className={`bg-gray-800 ease-in hover:bg-gray-700`}
+                          >
+                            Update offer
+                          </Button>
+                          <Modal
+                            open={showUpdateOfferModal}
                             setOpen={setShowUpdateOfferModal}
-                            nft={receivedOffer as Nft | any}
-                            marketplace={marketplace as Marketplace}
-                            refetch={refetch}
-                            loading={loading}
-                            hasListing={Boolean(defaultListing)}
-                          />
-                        </Modal>
-                      </div>
-                    )}
+                            title={`Update offer`}
+                          >
+                            <UpdateOfferForm
+                              listing={defaultListing as Listing}
+                              setOpen={setShowUpdateOfferModal}
+                              nft={receivedOffer as Nft | any}
+                              marketplace={marketplace as Marketplace}
+                              refetch={refetch}
+                              loading={loading}
+                              hasListing={Boolean(defaultListing)}
+                            />
+                          </Modal>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ));
+                ));
             })}
           {(filter === OfferFilters.ALL || filter === OfferFilters.MADE) &&
             sentOffers?.map((sentOffer) => {
               const defaultListing = sentOffer?.listings.find(
                 (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
               );
-              return sentOffer.offers?.map((offer) => (
-                <div
-                  key={offer.address}
-                  className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
-                >
-                  <div className={`flex items-center justify-start`}>
-                    <img
-                      src={imgOpt(sentOffer?.image, 400)!}
-                      className={`h-20 rounded-lg`}
-                      alt={sentOffer?.name}
-                    />
-                    <div>
-                      <div className={`ml-4 flex flex-col justify-center`}>
-                        <p className={`mb-0 text-base text-gray-300`}>
-                          <Link href={`/profiles/${offer.buyer}/offers`}>
-                            <a className={`text-white hover:text-gray-300`}>
-                              {offer.buyer === userPK?.toBase58()
-                                ? `You`
-                                : `@${shortenAddress(offer.buyer)}`}{' '}
-                            </a>
-                          </Link>{' '}
-                          offered{' '}
-                          <span className={`text-white`}>
-                            <DisplaySOL amount={offer.price} iconVariant={`small`} />
-                          </span>{' '}
-                          for{' '}
-                          <Link href={`/nfts/${sentOffer.address}`}>
-                            <a className={`text-white hover:text-gray-300`}>{sentOffer.name}</a>
-                          </Link>
-                        </p>
-                        <p className={`mb-0 mt-2 text-base text-gray-500`}>
-                          {formatTime(offer.createdAt, `en_US`)}
-                        </p>
+              return sentOffer.offers
+                ?.sort(byDate)
+                .reverse()
+                .map((offer) => (
+                  <div
+                    key={offer.address}
+                    className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
+                  >
+                    <div className={`flex items-center justify-start`}>
+                      <img
+                        src={imgOpt(sentOffer?.image, 400)!}
+                        className={`h-20 rounded-lg`}
+                        alt={sentOffer?.name}
+                      />
+                      <div>
+                        <div className={`ml-4 flex flex-col justify-center`}>
+                          <p className={`mb-0 text-base text-gray-300`}>
+                            <Link href={`/profiles/${offer.buyer}/offers`}>
+                              <a className={`text-white hover:text-gray-300`}>
+                                {offer.buyer === userPK?.toBase58()
+                                  ? `You`
+                                  : `@${shortenAddress(offer.buyer)}`}{' '}
+                              </a>
+                            </Link>{' '}
+                            offered{' '}
+                            <span className={`text-white`}>
+                              <DisplaySOL amount={offer.price} iconVariant={`small`} />
+                            </span>{' '}
+                            for{' '}
+                            <Link href={`/nfts/${sentOffer.address}`}>
+                              <a className={`text-white hover:text-gray-300`}>{sentOffer.name}</a>
+                            </Link>
+                          </p>
+                          <p className={`mb-0 mt-2 text-base text-gray-500`}>
+                            {formatTime(offer.createdAt, `en_US`)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className={`flex items-center`}>
-                    {Boolean(offer.buyer === userPK?.toBase58()) && (
-                      <div>
-                        <Button
-                          onClick={() => setShowUpdateOfferModal(true)}
-                          secondary
-                          className={`bg-gray-800 ease-in hover:bg-gray-700`}
-                        >
-                          Update offer
-                        </Button>
-                        <Modal
-                          open={showUpdateOfferModal}
-                          setOpen={setShowUpdateOfferModal}
-                          title={`Update offer`}
-                        >
-                          <UpdateOfferForm
-                            listing={defaultListing as Listing}
+                    <div className={`flex items-center`}>
+                      {Boolean(offer.buyer === userPK?.toBase58()) && (
+                        <div>
+                          <Button
+                            onClick={() => setShowUpdateOfferModal(true)}
+                            secondary
+                            className={`bg-gray-800 ease-in hover:bg-gray-700`}
+                          >
+                            Update offer
+                          </Button>
+                          <Modal
+                            open={showUpdateOfferModal}
                             setOpen={setShowUpdateOfferModal}
-                            nft={sentOffer as Nft | any}
-                            marketplace={marketplace as Marketplace}
-                            refetch={refetch}
-                            loading={loading}
-                            hasListing={Boolean(defaultListing)}
-                          />
-                        </Modal>
-                      </div>
-                    )}
+                            title={`Update offer`}
+                          >
+                            <UpdateOfferForm
+                              listing={defaultListing as Listing}
+                              setOpen={setShowUpdateOfferModal}
+                              nft={sentOffer as Nft | any}
+                              marketplace={marketplace as Marketplace}
+                              refetch={refetch}
+                              loading={loading}
+                              hasListing={Boolean(defaultListing)}
+                            />
+                          </Modal>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ));
+                ));
             })}
           {offerCount <= 0 && (
             <div>
