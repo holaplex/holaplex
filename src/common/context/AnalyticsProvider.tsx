@@ -15,7 +15,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
-export const GOOGLE_OPTIMIZE_ID = 'OPT-P5577X5';
+export const GOOGLE_OPTIMIZE_ID = process.env.NEXT_PUBLIC_GOOGLE_OPTIMIZE_ID;
 // export const GA3_ID = 'UA-203056887-2'; // process.env.NEXT_PUBLIC_GA3_ID
 const BUGSNAG_API_KEY = process.env.NEXT_PUBLIC_BUGSNAG_API_KEY;
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
@@ -97,12 +97,12 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
     if (integrations.ga4) {
       window.gtag('config', GA4_ID, {
-        send_page_view: false,
+        send_page_view: true,
       });
     }
     if (integrations.ga3) {
       window.gtag('config', OLD_GOOGLE_ANALYTICS_ID, {
-        send_page_view: false,
+        send_page_view: true,
       });
     }
 
@@ -171,10 +171,11 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     mixpanel.reset();
   }
 
-  function pageview() {
+  function pageview(opts?: { initialPageview?: boolean }) {
     // @ts-ignore // need ignore here to enforce event_category and event_label elsewhere
     track('page_view', {
       page_path: router.pathname,
+      initialPageview: opts?.initialPageview,
     });
   }
 
@@ -239,7 +240,8 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       };
 
       // ga4
-      if (integrations.ga4) {
+      if (integrations.ga4 && !attributes.initialPageview) {
+        // GA tracks initial page view on initialization
         gaEvent(action, attrs);
       }
 
