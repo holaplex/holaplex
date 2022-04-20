@@ -139,6 +139,7 @@ export default function Edit() {
     trackingFunction: () =>
       track('Storefront Updated', {
         event_category: 'Storefront',
+        event_label: wallet?.pubkey,
       }),
     router,
     solana,

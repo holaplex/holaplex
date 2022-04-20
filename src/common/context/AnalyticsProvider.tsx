@@ -21,8 +21,6 @@ const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 export const META_ID = process.env.NEXT_PUBLIC_META_ID;
 // Reference implementation https://github.com/vercel/next.js/tree/canary/examples/with-facebook-pixel
 
-const GA_TARGETS = [OLD_GOOGLE_ANALYTICS_ID, GA4_ID].filter((id) => id);
-
 type AnalyticsAction = string; // TODO: will remove string in future
 
 interface AnalyticsUserProperties {
@@ -35,7 +33,7 @@ const debugAnalytics = true;
 
 export interface TrackingAttributes {
   event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile';
-  event_label?: string;
+  event_label: string;
   value?: number;
   sol_value?: number;
 
@@ -44,7 +42,7 @@ export interface TrackingAttributes {
 
 export const gaEvent = (
   action: AnalyticsAction,
-  { event_category, event_label, value, page_path, ...otherAttributes }: TrackingAttributes
+  { event_category, event_label, ...otherAttributes }: TrackingAttributes
 ) => {
   window.gtag(
     'event',
@@ -52,10 +50,7 @@ export const gaEvent = (
     {
       event_category,
       event_label,
-      value,
-      page_path,
       ...otherAttributes,
-      send_to: GA_TARGETS,
     },
     {}
   );
@@ -195,11 +190,13 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         identify();
         track('Wallet Connection Made', {
           event_category: 'Global',
+          event_label: pubkey,
           pubkey,
         });
       } else if (!pubkey && lastPubkeyConnected) {
         track('Wallet Connection Broken', {
           event_category: 'Global',
+          event_label: lastPubkeyConnected,
           pubkey: lastPubkeyConnected,
         });
       }
@@ -240,13 +237,19 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         ...otherAttributes,
       };
 
-      // ga4
-      if (
-        integrations.ga4
-        // && !attributes.initialPageview
-      ) {
-        // GA tracks initial page view on initialization
-        gaEvent(action, attrs);
+      if (integrations.ga4) {
+        gaEvent(action, {
+          ...attrs,
+          send_to: [GA4_ID],
+        });
+      }
+
+      if (integrations.ga3) {
+        gaEvent(action, {
+          event_category: attrs.event_category,
+          event_label: attrs.event_label || '',
+          send_to: [OLD_GOOGLE_ANALYTICS_ID],
+        });
       }
 
       if (integrations.mixpanel) {

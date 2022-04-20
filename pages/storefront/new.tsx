@@ -101,6 +101,7 @@ export default function New() {
     trackingFunction: () =>
       track('Storefront Created', {
         event_category: 'Storefront',
+        event_label: wallet?.pubkey,
       }),
     router,
     solana,
