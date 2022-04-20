@@ -5,6 +5,7 @@ import {
   ListingReceipt,
   NftCreator,
   useNftMarketplaceLazyQuery,
+  useNftMarketplaceQuery,
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
@@ -43,6 +44,12 @@ import BuyForm from '../../src/common/components/forms/BuyForm';
 import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
 import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
+import { apolloClient } from '../../src/graphql/apollo';
+import { gql } from '@apollo/client';
+import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
+import Head from 'next/head';
+import { TwitterNFTCard } from '../../src/common/components/forms/DownloadableNFTCard';
+import * as htmlToImage from 'html-to-image';
 
 const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
 
@@ -201,14 +208,49 @@ export const Avatar = ({
   );
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const nftAddress = context?.params?.address ?? '';
+  const { data } = await apolloClient.query<ShareNftQuery>({
+    query: ShareNftDocument,
+    variables: {
+      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+      address: context?.params?.address,
+    },
+  });
+  const offers = data.nft?.offers || [];
+  const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+  const topOffer = topOffers?.[0];
+
+  const listings = data.nft?.listings || [];
+  const topListings = listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+  const topListing = topListings?.[0];
+
   return {
     props: {
-      address: context?.params?.address ?? '',
+      address: nftAddress,
+      name: data.nft?.name || nftAddress,
+      description: data.nft?.description || '',
+      image: data.nft?.image || `/images/gradients/gradient-1.png`,
+      listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
+      offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
     },
   };
 };
 
-export default function NftByAddress({ address }: { address: string }) {
+export default function NftByAddress({
+  address,
+  name,
+  description,
+  image,
+  listedPrice,
+  offerPrice,
+}: {
+  address: string;
+  name?: string;
+  description?: string;
+  image?: string;
+  listedPrice?: number;
+  offerPrice?: number;
+}) {
   const { publicKey } = useWallet();
   const router = useRouter();
 
@@ -275,6 +317,30 @@ export default function NftByAddress({ address }: { address: string }) {
 
   return (
     <CenteredContentCol>
+      <Head>
+        <meta charSet={`utf-8`} />
+        <title>{name} NFT | Holaplex</title>
+        {/* Search Engine */}
+        <meta property="description" key="description" content={description} />
+        <meta property="image" key="image" content={image} />
+        {/* Schema */}
+        <meta itemProp="name" content={`${name} NFT | Holaplex`} />
+        <meta itemProp="description" content={description} />
+        <meta itemProp="image" content={image} />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${name} NFT | Holaplex`} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image:src" content={image} />
+        <meta name="twitter:site" content="@holaplex" />
+        {/* Open Graph */}
+        <meta name="og-title" content={`${name} NFT | Holaplex`} />
+        <meta name="og-description" content={description} />
+        <meta name="og-image" content={image} />
+        <meta name="og-url" content={`https://holaplex.com/nfts/${address}`} />
+        <meta name="og-site_name" content="Holaplex" />
+        <meta name="og-type" content="product" />
+      </Head>
       <div className=" text-white">
         <div className="mt-12 mb-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           <div className="mb-4 block lg:mb-0 lg:flex lg:items-center lg:justify-center ">
