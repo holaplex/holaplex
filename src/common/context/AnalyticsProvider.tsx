@@ -21,6 +21,8 @@ const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 export const META_ID = process.env.NEXT_PUBLIC_META_ID;
 // Reference implementation https://github.com/vercel/next.js/tree/canary/examples/with-facebook-pixel
 
+const GA_TARGETS = [OLD_GOOGLE_ANALYTICS_ID, GA4_ID].filter((id) => id);
+
 type AnalyticsAction = string; // TODO: will remove string in future
 
 interface AnalyticsUserProperties {
@@ -53,7 +55,7 @@ export const gaEvent = (
       value,
       page_path,
       ...otherAttributes,
-      send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
+      send_to: GA_TARGETS,
     },
     {}
   );
