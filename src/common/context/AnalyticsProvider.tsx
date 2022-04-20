@@ -240,15 +240,15 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
       if (integrations.ga4) {
         gaEvent(action, {
           ...attrs,
-          send_to: [GA4_ID],
+          send_to: GA4_ID,
         });
       }
 
       if (integrations.ga3) {
         gaEvent(action, {
-          event_category: attrs.event_category,
+          event_category: attrs.event_category || '',
           event_label: attrs.event_label || '',
-          send_to: [OLD_GOOGLE_ANALYTICS_ID],
+          send_to: OLD_GOOGLE_ANALYTICS_ID,
         });
       }
 
