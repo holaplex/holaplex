@@ -40,6 +40,8 @@ export interface TrackingAttributes {
   [key: string]: string | number | boolean | any[] | null | undefined;
 }
 
+const GA_TARGETS = [GA4_ID, OLD_GOOGLE_ANALYTICS_ID].filter((id) => id);
+
 export const gaEvent = (
   action: AnalyticsAction,
   { event_category, event_label, ...otherAttributes }: TrackingAttributes
@@ -48,6 +50,7 @@ export const gaEvent = (
     event_category,
     event_label,
     ...otherAttributes,
+    send_to: GA_TARGETS,
   });
 };
 
@@ -239,13 +242,13 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
         });
       }
 
-      if (integrations.ga3) {
-        gaEvent(action, {
-          event_category: attrs.event_category || '',
-          event_label: attrs.event_label || '',
-          send_to: OLD_GOOGLE_ANALYTICS_ID,
-        });
-      }
+      // if (integrations.ga3) {
+      //   gaEvent(action, {
+      //     event_category: attrs.event_category || '',
+      //     event_label: attrs.event_label || '',
+      //     send_to: OLD_GOOGLE_ANALYTICS_ID,
+      //   });
+      // }
 
       if (integrations.mixpanel) {
         mixpanel.track(action, {
