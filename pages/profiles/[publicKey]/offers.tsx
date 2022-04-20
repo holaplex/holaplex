@@ -49,8 +49,6 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
       offset: 0,
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
       address: publicKey,
-      limit: 100,
-      offset: 0
     },
   });
   const marketplace = data?.marketplace;
