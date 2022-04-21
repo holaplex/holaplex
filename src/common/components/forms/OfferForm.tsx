@@ -1,5 +1,6 @@
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
-import { Nft, Marketplace } from '@/types/types';
+// import { Nft, Marketplace } from '@/types/types';
+import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -19,6 +20,7 @@ import Button from '../elements/Button';
 import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
   AuctionHouseProgram.instructions;
@@ -62,7 +64,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
   const router = useRouter();
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
-
+  const { track, trackNFTOffer } = useAnalytics();
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
@@ -87,11 +89,14 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
       },
     ];
 
+    trackNFTOffer('NFT Offer Made Init', offerAmount, nft);
+
     try {
       await runActions(newActions, {
         onActionSuccess: async () => {
           await refetch();
           toast.success(`Confirmed offer success`);
+          trackNFTOffer('NFT Offer Made Success', offerAmount, nft);
         },
         onComplete: async () => {
           await refetch();

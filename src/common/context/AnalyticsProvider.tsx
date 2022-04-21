@@ -12,6 +12,7 @@ import {
 import mixpanel from 'mixpanel-browser';
 import Script from 'next/script';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { Nft } from '@holaplex/marketplace-js-sdk';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
@@ -29,15 +30,17 @@ interface AnalyticsUserProperties {
   pubkey: string; // same as user_id, but for use in custom reports
 }
 
-const debugAnalytics = false;
+const debugAnalytics = true;
 
-export interface TrackingAttributes {
-  event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile';
+interface GenericTrackingAttributes {
+  [key: string]: string | number | boolean | any[] | null | undefined;
+}
+
+export interface TrackingAttributes extends GenericTrackingAttributes {
+  event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile' | 'Offers';
   event_label: string;
   value?: number;
   sol_value?: number;
-
-  [key: string]: string | number | boolean | any[] | null | undefined;
 }
 
 const GA_TARGETS = [GA4_ID, OLD_GOOGLE_ANALYTICS_ID].filter((id) => id);
@@ -54,6 +57,16 @@ export const gaEvent = (
   });
 };
 
+type NFTOfferAction =
+  | 'NFT Offer Made Init'
+  | 'NFT Offer Made Success'
+  | 'NFT Offer Accepted Init'
+  | 'NFT Offer Accepted Success'
+  | 'NFT Offer Updated Init'
+  | 'NFT Offer Updated Success'
+  | 'NFT Offer Cancelled Init'
+  | 'NFT Offer Cancelled Success';
+
 export type TrackingFunctionSignature = (
   action: AnalyticsAction,
   attributes: TrackingAttributes
@@ -61,6 +74,12 @@ export type TrackingFunctionSignature = (
 
 interface IAnalyticsContext {
   track: TrackingFunctionSignature;
+  trackNFTOffer: (
+    action: NFTOfferAction,
+    offerAmount: number,
+    nft: Nft,
+    otherAttributes?: GenericTrackingAttributes
+  ) => void;
 }
 
 const AnalyticsContext = React.createContext<IAnalyticsContext | null>(null);
@@ -210,6 +229,21 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     };
   }, [router.events]);
 
+  function trackNFTOffer(
+    action: NFTOfferAction,
+    offerAmount: number,
+    nft: Nft,
+    otherAttributes: GenericTrackingAttributes = {}
+  ) {
+    track(action, {
+      event_category: 'Offers',
+      event_label: nft.name,
+      sol_value: offerAmount,
+      ...addNFTToTrackCall(nft),
+      ...otherAttributes,
+    });
+  }
+
   function track(action: AnalyticsAction, attributes: TrackingAttributes) {
     const integrations = {
       mixpanel: !!MIXPANEL_TOKEN,
@@ -275,6 +309,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     <AnalyticsContext.Provider
       value={{
         track,
+        trackNFTOffer,
       }}
     >
       <Script
@@ -325,14 +360,11 @@ export function addListingToTrackCall(listing: Listing) {
   };
 }
 
-function addListingsToTrackCall(listings: Listing[], listId: string) {
-  return listings.map((l, i) => ({
-    item_id: l.listingAddress,
-    item_name: l.items[0]?.name,
-    affiliation: l.subdomain,
-    index: i,
-    item_list_id: listId,
-    item_list_name: listId,
-    ...addListingToTrackCall(l),
-  }));
+export function addNFTToTrackCall(nft: Nft) {
+  return {
+    nftAddress: nft.address,
+    offerNr: nft.offers?.length,
+    purchaseNr: nft.purchases?.length,
+    image: nft.image,
+  };
 }

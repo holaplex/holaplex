@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { Nft, Marketplace, Offer, Listing, initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface AcceptOfferFormProps {
   nft: Nft;
@@ -60,7 +61,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
-
+  const { trackNFTOffer } = useAnalytics();
   const onAcceptOffer = async () => {
     if (offer) {
       if (listing) {
@@ -84,11 +85,13 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         param: undefined,
       },
     ];
+    trackNFTOffer('NFT Offer Accepted Init', Number(amount), nft);
 
     await runActions(newActions, {
       onActionSuccess: async () => {
         await refetch();
         toast.success(`Confirmed accept offer success`);
+        trackNFTOffer('NFT Offer Accepted Success', Number(amount), nft);
       },
       onComplete: async () => {
         await refetch();
