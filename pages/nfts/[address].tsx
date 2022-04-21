@@ -180,6 +180,13 @@ export default function NftByAddress({
   }, [address, queryNft]);
 
   useEffect(() => {
+    window.scroll({
+      top: 0,
+      left: 0,
+    });
+  }, []);
+
+  useEffect(() => {
     refetch();
   }, [router, router.push, refetch]);
 
@@ -228,7 +235,7 @@ export default function NftByAddress({
                 <>
                   <div className="flex items-center justify-between">
                     <h1 className="!mb-4 !text-2xl !font-semibold">{nft?.name}</h1>
-                    <MoreDropdown address={nft?.address || ''} />
+                    <MoreDropdown address={nft?.mintAddress || ''} />
                   </div>
 
                   <p className="text-lg">{nft?.description}</p>
@@ -257,7 +264,7 @@ export default function NftByAddress({
                 <>
                   <div className="flex justify-between">
                     <h1 className="mb-4 text-2xl font-semibold">{nft?.name}</h1>
-                    <MoreDropdown address={nft?.address || ''} />
+                    <MoreDropdown address={nft?.mintAddress || ''} />
                   </div>
 
                   <p className="text-lg">{nft?.description}</p>
@@ -584,7 +591,7 @@ export default function NftByAddress({
 
               {nft?.attributes && nft.attributes.length > 0 && (
                 <div>
-                  <Accordion title="Attributes">
+                  <Accordion title="Attributes" amount={nft.attributes.length}>
                     <div className="grid grid-cols-2 gap-4">
                       {loading ? (
                         <div>
@@ -616,7 +623,7 @@ export default function NftByAddress({
           </div>
         </div>
         <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
-          <Accordion title={`Offers`} defaultOpen>
+          <Accordion title={`Offers`} amount={offers.length} defaultOpen>
             <section className={`w-full`}>
               {hasOffers && (
                 <header

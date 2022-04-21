@@ -9,6 +9,7 @@ import { initMarketplaceSDK, Nft, Marketplace, Offer } from '@holaplex/marketpla
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface CancelOfferFormProps {
   offer: Offer;
@@ -40,7 +41,7 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
-
+  const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
     if (offer && nft) {
       toast(`Canceling current offer of ${Number(offer.price) / LAMPORTS_PER_SOL}`);
@@ -53,6 +54,8 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
       return;
     }
 
+    const offerAmount = Number(offer.price) / LAMPORTS_PER_SOL;
+
     const newActions: Action[] = [
       {
         name: `Canceling offer for ${Number(offer.price) / LAMPORTS_PER_SOL} SOL...`,
@@ -62,10 +65,13 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
       },
     ];
 
+    trackNFTEvent('NFT Offer Cancelled Init', offerAmount, nft);
+
     await runActions(newActions, {
       onActionSuccess: async () => {
-        toast.success(`Confirmed cancel offer success`);
         await refetch();
+        toast.success(`Confirmed cancel offer success`);
+        trackNFTEvent('NFT Offer Cancelled Success', offerAmount, nft);
       },
       onActionFailure: async (err) => {
         toast.error(err.message);

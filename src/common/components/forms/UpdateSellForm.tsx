@@ -80,7 +80,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const openShareListing = () => {
     setShowShare(true);
   };
-  const closeShoreListing = () => {
+  const closeShareListing = () => {
     setShowShare(false);
     setOpen(false);
   };
@@ -233,7 +233,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
           </div>
         </form>
       </div>
-      <Modal title={`Your listing was updated!`} open={true} setOpen={closeShoreListing}>
+      <Modal title={`Your listing was updated!`} open={showShare} setOpen={closeShareListing}>
         <div className={`mt-10 mb-16 text-center text-base text-gray-300`}>
           You just updated the price of {nft.name}.<p className={`mb-0`}>Let people know!</p>
         </div>

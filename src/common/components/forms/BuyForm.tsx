@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface BuyFormProps {
   nft: Nft;
@@ -57,6 +58,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { trackNFTEvent } = useAnalytics();
 
   const onBuy = async () => {
     if (listing && !isOwner && nft) {
@@ -82,10 +84,12 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
       },
     ];
 
+    trackNFTEvent('NFT Bought Init', Number(amount), nft);
     await runActions(newActions, {
       onActionSuccess: async () => {
         await refetch();
         toast.success(`Confirmed buy success`);
+        trackNFTEvent('NFT Bought Success', Number(amount), nft);
       },
       onComplete: async () => {
         await refetch();

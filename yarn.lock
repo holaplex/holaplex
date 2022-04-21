@@ -9531,10 +9531,10 @@ react-intersection-observer-hook@^2.0.3:
   resolved "https://registry.yarnpkg.com/react-intersection-observer-hook/-/react-intersection-observer-hook-2.0.3.tgz#de6a1fb00ffac1acee651e908e7e17e0eff1e8b6"
   integrity sha512-6LcrY/oUtZqn7HbwLTgSk43/KdZD5LZJsWUOwQB11aMPi3OkjyDcm2dwAQ1ydlbrSDlL4fHUNXisNt4B470UJg==
 
-react-intersection-observer@^8.33.1:
-  version "8.33.1"
-  resolved "https://registry.yarnpkg.com/react-intersection-observer/-/react-intersection-observer-8.33.1.tgz#8e6442cac7052ed63056e191b7539e423e7d5c64"
-  integrity sha512-3v+qaJvp3D1MlGHyM+KISVg/CMhPiOlO6FgPHcluqHkx4YFCLuyXNlQ/LE6UkbODXlQcLOppfX6UMxCEkUhDLw==
+react-intersection-observer@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/react-intersection-observer/-/react-intersection-observer-9.0.0.tgz#8d4c7ed51f98fb4cfdd80b35c8fdecd929f3a683"
+  integrity sha512-rVJ9ZTPnHk/rgMsNmWWLLz9DeUil8+2cR/wG2RAoOlJihmuxAfMVGnPYfy17kuKA1imCDfqIHjsy56fwGbtlTQ==
 
 react-is@^16.12.0, react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"

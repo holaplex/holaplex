@@ -6,10 +6,6 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { AvatarIcons } from '../elements/Avatar';
 
-// TODO include export for SkeletonMarketplacePreview
-// TODO marketplace data for inactive/coming-soon
-// TODO figure out data needs for profiles and other sections
-
 const LoadingPreview = () => {
   return (
     <Container>
@@ -34,7 +30,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ loading, data }) => {
   const onClickMarketplaceLink = useCallback(() => {
     track('Marketplace Selected', {
       event_category: 'Discovery',
-      event_label: data?.subdomain,
+      event_label: data ? data.subdomain : "unknown-subdomain",
     });
   }, [data, track]);
 

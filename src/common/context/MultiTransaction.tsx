@@ -52,6 +52,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
   const [message, setMessage] = useState<string>(`Sign the message in your wallet to continue`);
   const [hasError, setHasError] = useState(false);
 
+  const closeModal = () => {
+    setHasRemainingActions(false);
+    setActions([]);
+  };
+
   const clearActions = () => {
     setActions([]);
     setHasActionPending(false);
@@ -107,7 +112,9 @@ export const MultiTransactionProvider: FC = ({ children }) => {
     });
 
     if (!hasActionPending && !hasRemainingActions) {
-      setActions(actions.concat(newActionsWithIds));
+      // clears old actions if running without retry
+      clearActions();
+      setActions(newActionsWithIds);
       setNumActions(newActionsWithIds.length);
 
       if (newActionsWithIds.length <= 0) {
@@ -165,7 +172,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
       <Modal
         title={`Please wait...`}
         open={hasRemainingActions || actions.length > 0}
-        setOpen={setHasRemainingActions}
+        setOpen={closeModal}
         priority={true}
       >
         <div className={`mt-8`}>
