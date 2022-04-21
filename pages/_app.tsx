@@ -64,19 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 
   const queryClient = useMemo(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-            // retry: (failureCount, error) => {
-            //   console.log('failure count', failureCount, error);
-            //   return failureCount < 4;
-            //   // return 3;
-            // },
-          },
-        },
-      }),
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
 
@@ -101,7 +89,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           closeButton={() => <Close color="#fff" />}
         />
         <ApolloProvider client={apolloClient}>
-          <ConnectionProvider endpoint={endpoint}>
+          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
                 <WalletProvider>
