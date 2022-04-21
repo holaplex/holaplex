@@ -1,5 +1,6 @@
 query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {
+    subdomain
     bannerUrl
     stats {
       nfts

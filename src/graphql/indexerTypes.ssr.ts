@@ -286,6 +286,7 @@ export type QueryRoot = {
   nft?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
+  offers: Array<BidReceipt>;
   profile?: Maybe<Profile>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
@@ -333,6 +334,11 @@ export type QueryRootNftsArgs = {
 };
 
 
+export type QueryRootOffersArgs = {
+  address: Scalars['String'];
+};
+
+
 export type QueryRootProfileArgs = {
   handle: Scalars['String'];
 };
@@ -350,8 +356,11 @@ export type QueryRootWalletArgs = {
 export type StoreCreator = {
   __typename?: 'StoreCreator';
   creatorAddress: Scalars['String'];
+  nftCount?: Maybe<Scalars['Int']>;
   preview: Array<Nft>;
+  profile?: Maybe<TwitterProfile>;
   storeConfigAddress: Scalars['String'];
+  twitterHandle?: Maybe<Scalars['String']>;
 };
 
 /** A Metaplex storefront */
@@ -445,7 +454,7 @@ export type MarketplacePreviewQueryVariables = Exact<{
 }>;
 
 
-export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -703,6 +712,7 @@ export const WalletProfileDocument = gql`
 export const MarketplacePreviewDocument = gql`
     query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {
+    subdomain
     bannerUrl
     stats {
       nfts
