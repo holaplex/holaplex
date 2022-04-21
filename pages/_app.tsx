@@ -12,11 +12,7 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { Close } from '@/common/components/icons/Close';
-import {
-  AnalyticsProvider,
-  OLD_GOOGLE_ANALYTICS_ID,
-  GA4_ID,
-} from '@/common/context/AnalyticsProvider';
+import { AnalyticsProvider } from '@/common/context/AnalyticsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -50,38 +46,7 @@ const getSolanaNetwork = () => {
     : WalletAdapterNetwork.Mainnet;
 };
 
-const track = (category: string, action: string) => {
-  if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-    return;
-  }
-
-  window.gtag('event', action, {
-    event_category: category,
-    send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
-  });
-};
-
 function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-
-  const onRouteChanged = (path: string) => {
-    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-      return;
-    }
-
-    window.gtag('config', OLD_GOOGLE_ANALYTICS_ID, { page_path: path });
-  };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' || !OLD_GOOGLE_ANALYTICS_ID) {
-      return;
-    }
-    router.events.on('routeChangeComplete', onRouteChanged);
-    return () => {
-      router.events.off('routeChangeComplete', onRouteChanged);
-    };
-  }, [router.events]);
-
   const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
@@ -163,7 +128,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                                     <AppHeader />
                                     <AppContent>
                                       <ContentWrapper>
-                                        <Component {...pageProps} track={track} />
+                                        <Component {...pageProps} />
                                       </ContentWrapper>
                                     </AppContent>
                                   </AppLayout>
