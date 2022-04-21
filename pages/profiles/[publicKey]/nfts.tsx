@@ -11,7 +11,6 @@ import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
 import Link from 'next/link';
 import TextInput2 from '@/common/components/elements/TextInput2';
-import { Avatar } from '../../nfts/[address]';
 import {
   getPropsForWalletOrUsername,
   WalletDependantPageProps,
@@ -32,8 +31,8 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
 import BuyForm from '@/components/forms/BuyForm';
-import { Tag } from '@/components/icons/Tag';
 import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferForm';
+import { Avatar } from '@/common/components/elements/Avatar';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
