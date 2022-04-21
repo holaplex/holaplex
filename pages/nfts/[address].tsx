@@ -350,7 +350,7 @@ export default function NftByAddress({
                 <>
                   <div className="flex items-center justify-between">
                     <h1 className="!mb-4 !text-2xl !font-semibold">{nft?.name}</h1>
-                    <MoreDropdown address={nft?.address || ''} />
+                    <MoreDropdown address={nft?.mintAddress || ''} />
                   </div>
 
                   <p className="text-lg">{nft?.description}</p>
@@ -379,7 +379,7 @@ export default function NftByAddress({
                 <>
                   <div className="flex justify-between">
                     <h1 className="mb-4 text-2xl font-semibold">{nft?.name}</h1>
-                    <MoreDropdown address={nft?.address || ''} />
+                    <MoreDropdown address={nft?.mintAddress || ''} />
                   </div>
 
                   <p className="text-lg">{nft?.description}</p>
