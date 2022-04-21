@@ -18,6 +18,7 @@ import TextInput2 from '../../../src/common/components/elements/TextInput2';
 import { NFTGrid } from './nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
+import { isEmpty } from 'ramda';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
 
@@ -28,17 +29,20 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey } = props;
   const [searchFocused, setSearchFocused] = useState(false);
   const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
+  const variables = {
+    subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+    creator: publicKey,
+    limit: 100,
+    offset: 0,
+  };
   const createdNFTs = useCreatedNfTsQuery({
-    variables: {
-      creator: publicKey,
-      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      limit: 500,
-      offset: 0,
-    },
+    variables: variables,
   });
   const nfts = createdNFTs?.data?.nfts || [];
   const marketplace = createdNFTs?.data?.marketplace;
   const refetch = createdNFTs.refetch;
+  const fetchMore = createdNFTs.fetchMore;
+  const [hasMore, setHasMore] = useState(true);
 
   const [query, setQuery] = useState('');
 
@@ -105,6 +109,32 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           <GridSelector />
         </div>
         <NFTGrid
+          hasMore={hasMore}
+          onLoadMore={async (inView) => {
+            if (!inView) {
+              return;
+            }
+
+            const { data: newData } = await fetchMore({
+              variables: {
+                ...variables,
+                offset: nftsToShow.length + 100,
+              },
+              updateQuery: (prev, { fetchMoreResult }) => {
+                if (!fetchMoreResult) return prev;
+                const prevNfts = prev.nfts;
+                const moreNfts = fetchMoreResult.nfts;
+
+                fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+
+                return { ...fetchMoreResult };
+              },
+            });
+
+            if (isEmpty(newData.nfts)) {
+              setHasMore(false);
+            }
+          }}
           nfts={nftsToShow}
           gridView={gridView}
           refetch={refetch}
