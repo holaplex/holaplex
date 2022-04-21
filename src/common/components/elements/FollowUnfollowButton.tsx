@@ -62,7 +62,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>,
         { autoClose: 13_000 }
       );
-      await connection.confirmTransaction(txId, 'finalized');
+      await connection.confirmTransaction(txId, 'confirmed');
       await queryClient.invalidateQueries();
       trackSuccess();
       toast(
@@ -102,7 +102,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>,
         { autoClose: 13_000 }
       );
-      await connection.confirmTransaction(txId, 'finalized');
+      await connection.confirmTransaction(txId, 'confirmed');
       await queryClient.invalidateQueries();
 
       trackSuccess();
