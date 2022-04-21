@@ -10,7 +10,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 export const AvatarIcons = ({ creators }: { creators: { address: string }[] }) => {
   return (
-    <div className="relative border border-white">
+    <div className="relative">
       {creators.map(({ address }, i) => (
         <AvatarIcon address={address} index={i} key={address} />
       ))}
