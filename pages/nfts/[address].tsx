@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import {
-  Creator,
   ListingReceipt,
-  NftCreator,
   useNftMarketplaceLazyQuery,
-  useNftMarketplaceQuery,
   useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
@@ -45,15 +42,9 @@ import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
 import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
 import { apolloClient } from '../../src/graphql/apollo';
-import { gql } from '@apollo/client';
 import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
 import Head from 'next/head';
-import { TwitterNFTCard } from '../../src/common/components/forms/DownloadableNFTCard';
-import * as htmlToImage from 'html-to-image';
 
-const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
-
-// import Bugsnag from '@bugsnag/js';
 const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
@@ -84,7 +75,7 @@ const HoverAvatar = ({ address, index }: { address: string; index: number }) => 
       }}
     >
       {/* // Need to use style prop for dynamic style application, Tailwind does not support */}
-      <li className="absolute transition hover:z-10 hover:scale-125" style={{ left: leftPos }}>
+      <li className="absolute transition hover:z-10 hover:scale-125 list-none" style={{ left: leftPos }}>
         <Link href={`/profiles/${address}`}>
           <a>
             <img
