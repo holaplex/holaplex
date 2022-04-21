@@ -745,7 +745,7 @@ export default function NftByAddress({
           </div>
         </div>
         <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
-          <Accordion title={`Offers`} amount={offers.length}>
+          <Accordion title={`Offers`} amount={offers.length} defaultOpen>
             <section className={`w-full`}>
               {hasOffers && (
                 <header
