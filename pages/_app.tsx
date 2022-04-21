@@ -89,7 +89,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           closeButton={() => <Close color="#fff" />}
         />
         <ApolloProvider client={apolloClient}>
-          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'confirmed' }}>
+          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
                 <WalletProvider>
