@@ -3,7 +3,6 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Col, Row } from 'antd';
 import styled from 'styled-components';
-import { WalletLabel } from './WalletIndicator';
 
 export const MiniWallet = () => {
   const { connected } = useWallet();

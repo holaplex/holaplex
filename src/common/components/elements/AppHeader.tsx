@@ -38,7 +38,7 @@ export function AppHeader() {
   const { setVisible } = useWalletModal();
 
   const handleViewProfile = useCallback(() => {
-    router.push(`/profiles/${publicKey!.toBase58()}`);
+    router.push(`/profiles/${publicKey!.toBase58()}/nfts`);
   }, [publicKey, router]);
 
   useEffect(() => {

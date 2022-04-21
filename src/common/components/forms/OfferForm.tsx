@@ -1,5 +1,6 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Nft, Marketplace } from '@/types/types';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+// import { Nft, Marketplace } from '@/types/types';
+import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -18,6 +19,8 @@ import * as zod from 'zod';
 import Button from '../elements/Button';
 import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
   AuctionHouseProgram.instructions;
@@ -61,6 +64,8 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
   const router = useRouter();
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { track, trackNFTEvent } = useAnalytics();
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
     if (nft) {
@@ -75,14 +80,32 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
 
     const offerAmount = Number(amount);
 
+    const newActions: Action[] = [
+      {
+        name: `Making offer of ${amount} SOL for ${nft.name}...`,
+        id: `makeOffer`,
+        action: onOffer,
+        param: offerAmount,
+      },
+    ];
+
+    trackNFTEvent('NFT Offer Made Init', offerAmount, nft);
+
     try {
-      await onOffer(offerAmount);
-      await refetch();
-      toast.success(`Confirmed offer success`);
-      return;
+      await runActions(newActions, {
+        onActionSuccess: async () => {
+          await refetch();
+          toast.success(`Confirmed offer success`);
+          trackNFTEvent('NFT Offer Made Success', offerAmount, nft);
+        },
+        onComplete: async () => {
+          await refetch();
+        },
+        onActionFailure: async () => {
+          await refetch();
+        },
+      });
     } catch (err: any) {
-      toast.error(err.message);
-      return;
     } finally {
       router.push(`/nfts/${nft.address}`);
     }
@@ -118,8 +141,8 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
         </div>
         <div className={`w-full`}>
           <Button
-            disabled={loading || isSubmitting}
-            loading={loading || isSubmitting}
+            disabled={loading || isSubmitting || hasActionPending}
+            loading={loading || isSubmitting || hasActionPending}
             htmlType={`submit`}
             block
             className={`w-full`}

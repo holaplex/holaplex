@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,8 @@ import {
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface BuyFormProps {
   nft: Nft;
@@ -53,7 +55,10 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
+
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { trackNFTEvent } = useAnalytics();
 
   const onBuy = async () => {
     if (listing && !isOwner && nft) {
@@ -69,15 +74,31 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
     if (!listing || isOwner || !nft || !marketplace) {
       return;
     }
-    try {
-      await onBuy();
-      toast.success(`Confirmed buy success`);
-      await refetch();
-      return;
-    } catch (err: any) {
-      toast.error(err.message);
-      return;
-    }
+
+    const newActions: Action[] = [
+      {
+        name: `Buying ${nft.name}...`,
+        id: `buyNFT`,
+        action: onBuy,
+        param: undefined,
+      },
+    ];
+
+    trackNFTEvent('NFT Bought Init', Number(amount), nft);
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed buy success`);
+        trackNFTEvent('NFT Bought Success', Number(amount), nft);
+      },
+      onComplete: async () => {
+        await refetch();
+      },
+      onActionFailure: async (err) => {
+        await refetch();
+        toast.error(err.message);
+      },
+    });
   };
 
   if (isOwner) {
@@ -88,8 +109,8 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
     <form className={`flex w-full ${className}`} onSubmit={handleSubmit(buyTx)}>
       <Button
         htmlType={`submit`}
-        disabled={isSubmitting}
-        loading={isSubmitting}
+        disabled={isSubmitting || hasActionPending}
+        loading={isSubmitting || hasActionPending}
         className={className}
       >
         Buy now

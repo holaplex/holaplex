@@ -6,11 +6,13 @@ import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-import { WalletLabel, WalletPill } from '@/common/components/elements/WalletIndicator';
+import { WalletLabel } from '@/common/components/elements/WalletIndicator';
 import { SolBalance } from '@/common/components/SolBalance';
 import { DisconnectWalletButton } from '@/common/components/elements/Button';
 
 import { getPFPFromPublicKey } from '@/modules/utils/image';
+import { ChevronRightIcon } from '@heroicons/react/outline';
+import Link from 'next/link';
 
 export const ProfilePopover = forwardRef<HTMLDivElement>((_, ref) => {
   return (
@@ -52,14 +54,13 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
             src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
             alt="Profile Picture"
           />
-          <div className="ml-5">
-            <WalletPill
-              onClick={onViewProfile}
-              disableBackground
-              textOverride={'View profile'}
-              publicKey={publicKey}
-            />
-          </div>
+          <Link href={'/profiles/' + publicKey?.toBase58() + '/nfts'} passHref>
+            <a className="ml-5 flex cursor-pointer items-center text-base hover:text-gray-300">
+              <span className="">View profile</span>
+              &nbsp;
+              <ChevronRightIcon className="h-5 w-5" />
+            </a>
+          </Link>
         </div>
       </FirstRow>
       <div className="mt-6 flex w-full items-center justify-between">

@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface UpdateOfferFormSchema {
   amount: string;
@@ -64,7 +65,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { runActions, actions, hasActionPending, hasRemainingActions, retryActions } =
     useContext(MultiTransactionContext);
-
+  const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
     if (currOffer) {
       toast(`Canceling current offer of ${Number(currOffer.price)}`);
@@ -92,7 +93,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       return;
     }
 
-    const numAmount = Number(amount);
+    const offerAmount = Number(amount);
 
     const newActions: Action[] = [
       {
@@ -105,22 +106,24 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
         name: `Creating your updated offer...`,
         id: `updateOffer`,
         action: onUpdateOffer,
-        param: { amount: numAmount },
+        param: { amount: offerAmount },
       },
     ];
 
+    trackNFTEvent('NFT Offer Updated Init', offerAmount, nft);
+
     await runActions(newActions, {
       onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed offer update success`);
+        trackNFTEvent('NFT Offer Updated Success', offerAmount, nft);
+      },
+      onActionFailure: async () => {
         await refetch();
       },
       onComplete: async () => {
         await refetch();
         setOpen(false);
-      },
-      onActionFailure: async () => {
-        await refetch();
-        // retry transactions
-        // retryActions()
       },
     });
   };

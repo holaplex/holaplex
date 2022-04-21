@@ -21,6 +21,10 @@ module.exports = {
           800: '#262626',
           900: '#171717',
         },
+        sharable: {
+          nftCard: '#F1C1AA',
+          divider: '#EAB196'
+        },
         'hola-black': '#262626',
       },
       fontFamily: {

@@ -136,7 +136,11 @@ export default function Edit() {
   const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet?.pubkey);
 
   const onSubmit = submitCallback({
-    track,
+    trackingFunction: () =>
+      track('Storefront Updated', {
+        event_category: 'Storefront',
+        event_label: wallet?.pubkey,
+      }),
     router,
     solana,
     values,
@@ -156,7 +160,6 @@ export default function Edit() {
           {e && ` (${e})`}
         </>
       ),
-    trackEvent: 'Storefront Updated',
   });
 
   const textColor = getTextColor(values.theme.backgroundColor);

@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 const { createSellInstruction, createPrintListingReceiptInstruction } =
   AuctionHouseProgram.instructions;
@@ -80,6 +81,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
   const { connection } = useConnection();
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { trackNFTEvent } = useAnalytics();
 
   const {
     handleSubmit,
@@ -120,25 +122,23 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
       },
     ];
 
-    try {
-      await runActions(newActions, {
-        onActionSuccess: async () => {
-          await refetch();
-          toast.success(`Confirmed listing success`);
-        },
-        onActionFailure: async (err) => {
-          toast.error(err.message);
-          await refetch();
-        },
-        onComplete: async () => {
-          await refetch();
-        },
-      });
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setOpen(false);
-    }
+    trackNFTEvent('NFT Listed Init', sellAmount, nft);
+
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        toast.success(`Confirmed listing success`);
+        trackNFTEvent('NFT Listed Success', sellAmount, nft);
+        await refetch();
+      },
+      onActionFailure: async (err) => {
+        toast.error(err.message);
+        await refetch();
+      },
+      onComplete: async () => {
+        await refetch();
+        setOpen(false);
+      },
+    });
   };
 
   if (!nft || !marketplace) {
