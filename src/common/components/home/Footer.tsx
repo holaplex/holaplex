@@ -16,7 +16,7 @@ const Footer: VFC = () => {
                     </div>
                     <SocialLinks/>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 justify-center md:justify-start border border-green">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 justify-center md:justify-start">
                     <div className="justify-center md:justify-start text-center md:text-left">
                         <span className="text-white text-base font-medium">About</span>
                         <ul className="mt-4 space-y-2">
