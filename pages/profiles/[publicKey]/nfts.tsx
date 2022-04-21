@@ -375,7 +375,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         <NFTGrid
           hasMore={hasMore}
           onLoadMore={async (inView) => {
-            if (!inView) {
+            if (!inView || loading) {
               return;
             }
 

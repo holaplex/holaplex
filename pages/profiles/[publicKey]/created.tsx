@@ -39,6 +39,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
     variables: variables,
   });
   const nfts = createdNFTs?.data?.nfts || [];
+  const loading = createdNFTs.loading;
   const marketplace = createdNFTs?.data?.marketplace;
   const refetch = createdNFTs.refetch;
   const fetchMore = createdNFTs.fetchMore;
@@ -111,7 +112,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
         <NFTGrid
           hasMore={hasMore}
           onLoadMore={async (inView) => {
-            if (!inView) {
+            if (!inView || loading) {
               return;
             }
 
