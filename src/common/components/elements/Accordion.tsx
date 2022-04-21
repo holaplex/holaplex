@@ -7,9 +7,10 @@ interface Props {
   children: React.ReactNode;
   allowHorizOverflow?: boolean;
   defaultOpen?: boolean;
+  amount?: number;
 }
 
-function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props }: Props) {
+function Accordion({ title, children, allowHorizOverflow, defaultOpen, amount, ...props }: Props) {
   return (
     <Disclosure defaultOpen={defaultOpen} {...props}>
       {({ open }) => (
@@ -19,7 +20,14 @@ function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props 
               open ? `rounded-t-lg` : `rounded-lg`
             } border border-gray-800 p-6`}
           >
-            <p className="m-0"> {title}</p>
+            <div className={`flex items-center gap-4`}>
+              <p className="m-0"> {title}</p>
+              {amount && (
+                <div className={`flex h-6 w-6 items-center justify-center rounded-md bg-gray-800`}>
+                  {amount}
+                </div>
+              )}
+            </div>
 
             <ChevronRight
               color="#fff"
