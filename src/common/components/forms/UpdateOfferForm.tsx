@@ -65,7 +65,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { runActions, actions, hasActionPending, hasRemainingActions, retryActions } =
     useContext(MultiTransactionContext);
-  const { trackNFTOffer } = useAnalytics();
+  const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
     if (currOffer) {
       toast(`Canceling current offer of ${Number(currOffer.price)}`);
@@ -110,13 +110,13 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       },
     ];
 
-    trackNFTOffer('NFT Offer Updated Init', offerAmount, nft);
+    trackNFTEvent('NFT Offer Updated Init', offerAmount, nft);
 
     await runActions(newActions, {
       onActionSuccess: async () => {
         await refetch();
         toast.success(`Confirmed offer update success`);
-        trackNFTOffer('NFT Offer Updated Success', offerAmount, nft);
+        trackNFTEvent('NFT Offer Updated Success', offerAmount, nft);
       },
       onActionFailure: async () => {
         await refetch();

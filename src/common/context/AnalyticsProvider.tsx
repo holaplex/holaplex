@@ -37,7 +37,7 @@ interface GenericTrackingAttributes {
 }
 
 export interface TrackingAttributes extends GenericTrackingAttributes {
-  event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile' | 'Offers';
+  event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile' | 'NFTs';
   event_label: string;
   value?: number;
   sol_value?: number;
@@ -57,7 +57,7 @@ export const gaEvent = (
   });
 };
 
-type NFTOfferAction =
+type NFTEvent =
   | 'NFT Offer Made Init'
   | 'NFT Offer Made Success'
   | 'NFT Offer Accepted Init'
@@ -65,7 +65,11 @@ type NFTOfferAction =
   | 'NFT Offer Updated Init'
   | 'NFT Offer Updated Success'
   | 'NFT Offer Cancelled Init'
-  | 'NFT Offer Cancelled Success';
+  | 'NFT Offer Cancelled Success'
+  | 'NFT Listed Init'
+  | 'NFT Listed Success'
+  | 'NFT Bought Init'
+  | 'NFT Bought Success';
 
 export type TrackingFunctionSignature = (
   action: AnalyticsAction,
@@ -74,8 +78,8 @@ export type TrackingFunctionSignature = (
 
 interface IAnalyticsContext {
   track: TrackingFunctionSignature;
-  trackNFTOffer: (
-    action: NFTOfferAction,
+  trackNFTEvent: (
+    action: NFTEvent,
     offerAmount: number,
     nft: Nft,
     otherAttributes?: GenericTrackingAttributes
@@ -229,14 +233,14 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     };
   }, [router.events]);
 
-  function trackNFTOffer(
-    action: NFTOfferAction,
+  function trackNFTEvent(
+    action: NFTEvent,
     offerAmount: number,
     nft: Nft,
     otherAttributes: GenericTrackingAttributes = {}
   ) {
     track(action, {
-      event_category: 'Offers',
+      event_category: 'NFTs',
       event_label: nft.name,
       sol_value: offerAmount,
       ...addNFTToTrackCall(nft),
@@ -309,7 +313,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     <AnalyticsContext.Provider
       value={{
         track,
-        trackNFTOffer,
+        trackNFTEvent,
       }}
     >
       <Script

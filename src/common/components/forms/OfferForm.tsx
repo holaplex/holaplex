@@ -64,7 +64,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
   const router = useRouter();
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
-  const { track, trackNFTOffer } = useAnalytics();
+  const { track, trackNFTEvent } = useAnalytics();
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
@@ -89,14 +89,14 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
       },
     ];
 
-    trackNFTOffer('NFT Offer Made Init', offerAmount, nft);
+    trackNFTEvent('NFT Offer Made Init', offerAmount, nft);
 
     try {
       await runActions(newActions, {
         onActionSuccess: async () => {
           await refetch();
           toast.success(`Confirmed offer success`);
-          trackNFTOffer('NFT Offer Made Success', offerAmount, nft);
+          trackNFTEvent('NFT Offer Made Success', offerAmount, nft);
         },
         onComplete: async () => {
           await refetch();
