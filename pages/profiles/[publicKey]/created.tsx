@@ -126,15 +126,15 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
                 const prevNfts = prev.nfts;
                 const moreNfts = fetchMoreResult.nfts;
 
+                if (isEmpty(moreNfts)) {
+                  setHasMore(false);
+                }
+
                 fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
 
                 return { ...fetchMoreResult };
               },
             });
-
-            if (isEmpty(newData.nfts)) {
-              setHasMore(false);
-            }
           }}
           nfts={nftsToShow}
           gridView={gridView}
