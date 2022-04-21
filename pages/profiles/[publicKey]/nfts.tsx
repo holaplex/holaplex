@@ -45,6 +45,28 @@ type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getPropsForWalletOrUsername(context);
 
+export const LoadingNFTCard = () => {
+  return (
+    <div
+      className={`overflow-hidden, animate-pulse rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+    >
+      <div className={`aspect-square w-full rounded-lg bg-gray-800`} />
+      <div className={`flex h-24 items-center py-6 px-4`}>
+        <div className={`h-5 w-36 animate-pulse rounded-md bg-gray-700`} />
+      </div>
+      <div className={`h-20 md:h-36 xl:h-20`}>
+        <div
+          className={`flex h-full w-full items-center justify-between p-4 md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+        >
+          <div className={`h-5 w-16 animate-pulse rounded-md bg-gray-700`} />
+
+          <div className={`h-10 w-36 animate-pulse rounded-full bg-gray-700`} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const NFTCard = ({
   nft,
   marketplace,
@@ -262,21 +284,33 @@ export const NFTGrid: FC<NFTGridProps> = ({
         gridView === '2x2' ? 'md:grid-cols-2' : 'md:grid-cols-3'
       )}
     >
-      {nfts.map((nft) => (
-        <NFTCard
-          key={nft.address}
-          nft={nft}
-          refetch={refetch}
-          loading={loading}
-          marketplace={marketplace}
-        />
-      ))}
-      {hasMore && (
-        <div>
-          <InView threshold={0.1} onChange={onLoadMore}>
-            <LoadingContainer />
-          </InView>
-        </div>
+      {loading ? (
+        <>
+          <LoadingNFTCard />
+          <LoadingNFTCard />
+          <LoadingNFTCard />
+        </>
+      ) : (
+        <>
+          {nfts.map((nft) => (
+            <NFTCard
+              key={nft.address}
+              nft={nft}
+              refetch={refetch}
+              loading={loading}
+              marketplace={marketplace}
+            />
+          ))}
+          {hasMore && (
+            <div>
+              <InView threshold={0.1} onChange={onLoadMore}>
+                <LoadingNFTCard />
+                <LoadingNFTCard />
+                <LoadingNFTCard />
+              </InView>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
