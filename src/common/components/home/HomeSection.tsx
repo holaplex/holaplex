@@ -5,7 +5,7 @@ interface HomeSectionProps {
 }
 
 const HomeSection: FC<HomeSectionProps> = props => {
-    return <div className="border border-white">
+    return <div>
         <h1>{props.title}</h1>
         {props.children}
     </div>;
