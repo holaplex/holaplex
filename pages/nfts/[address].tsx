@@ -200,7 +200,7 @@ export default function NftByAddress({
   }
 
   return (
-    <CenteredContentCol>
+    <div className="container mx-auto px-6 md:px-12">
       <Head>
         <meta charSet={`utf-8`} />
         <title>{name} NFT | Holaplex</title>
@@ -787,6 +787,6 @@ export default function NftByAddress({
           </Modal>
         </>
       )}
-    </CenteredContentCol>
+    </div>
   );
 }

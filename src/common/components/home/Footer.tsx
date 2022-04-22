@@ -1,80 +1,126 @@
+import Link from 'next/link';
 import React, { FC, VFC } from 'react';
 import SocialLinks from '../elements/SocialLinks';
 
 const Footer: VFC = () => {
-    return (
-        <footer className="bg-gray-800 p-10">
-            <div className="flex flex-row flex-wrap justify-center md:justify-between">
-                <div className="flex flex-col max-w-md space-y-7 mb-7 items-center md:items-start">
-                    <div className="flex flex-nowrap items-center text-center text-2xl">
-                        <div className="w-10 h-10 flex items-center justify-center">👋</div>
-                        <span className="text-gray-25 font-medium">Holaplex</span>
-                    </div>
-                    <div className="text-base text-gray-300 text-center md:text-left">
-                        The only truly open-sourced, decentralized & 
-                        community-governed NFT platform on Solana.
-                    </div>
-                    <SocialLinks/>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 justify-center md:justify-start">
-                    <div className="justify-center md:justify-start text-center md:text-left">
-                        <span className="text-white text-base font-medium">About</span>
-                        <ul className="mt-4 space-y-2">
-                            <li><FooterLink href="/about">About Holaplex</FooterLink></li>
-                            <li><FooterLink newTab href="https://docs.google.com/document/d/1jskpoCdDm7DU2IbeXwRhhl5LGiNhonAx2HsmfJlDsEs">Terms of Service</FooterLink></li>
-                            <li><FooterLink newTab href="https://docs.google.com/document/d/12uQU7LbLUd0bY7Nz13-F9cua5Wk8mnRNBlyDzF6gRmo">Privacy Policy</FooterLink></li>
-                        </ul>
-                    </div>
-                    <div className="justify-center md:justify-start text-center md:text-left">
-                        <span className="text-white text-base font-medium">Create</span>
-                        <ul className="mt-4 space-y-2">
-                            <li><FooterLink href="/nfts/new">Mint NFTs</FooterLink></li>
-                            <li><FooterLink href="/marketplace/new"><TaggedNew>Marketplaces</TaggedNew></FooterLink></li>
-                            <li><FooterLink href="/storefront/new">Set up a storefront</FooterLink></li>
-                        </ul>
-                    </div>
-                    <div className="justify-center md:justify-start text-center md:text-left">
-                        <span className="text-white text-base font-medium">Community</span>
-                        <ul className="mt-4 space-y-2">
-                            <li><FooterLink newTab href="https://github.com/holaplex">GitHub Repos</FooterLink></li>
-                            <li><FooterLink newTab href="#">Hola Collective</FooterLink></li>
-                            <li><FooterLink href="https://mobile.twitter.com/holalistings">HolaListings</FooterLink></li>
-                        </ul>
-                    </div>
-                    <div className="justify-center md:justify-start text-center md:text-left">
-                        <span className="text-white text-base font-medium">Help</span>
-                        <ul className="mt-4 space-y-2">
-                            <li><FooterLink newTab href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407417107475-FAQ">FAQs</FooterLink></li>
-                            <li><FooterLink newTab href="https://holaplex-support.zendesk.com/hc/en-us/requests/new">Support</FooterLink></li>
-                            <li><FooterLink newTab href="https://twitter.com/holastatus">HolaStatus</FooterLink></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
-}
-
+  return (
+    <footer className="bg-gray-800 p-10">
+      <div className="flex flex-row flex-wrap justify-center md:justify-between">
+        <div className="mb-7 flex max-w-md flex-col items-center space-y-7 md:items-start">
+          <div className="flex flex-nowrap items-center text-center text-2xl">
+            <div className="flex h-10 w-10 items-center justify-center">👋</div>
+            <span className="font-medium text-gray-25">Holaplex</span>
+          </div>
+          <div className="text-center text-base text-gray-300 md:text-left">
+            The only truly open-sourced, decentralized & community-governed NFT platform on Solana.
+          </div>
+          <SocialLinks />
+        </div>
+        <div className="grid grid-cols-1 justify-center gap-12 md:grid-cols-4 md:justify-start">
+          <div className="justify-center text-center md:justify-start md:text-left">
+            <span className="text-base font-medium text-white">About</span>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <InternalLink href="/about">About Holaplex</InternalLink>
+              </li>
+              <li>
+                <ExternalLink href="https://docs.google.com/document/d/1jskpoCdDm7DU2IbeXwRhhl5LGiNhonAx2HsmfJlDsEs">
+                  Terms of Service
+                </ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href="https://docs.google.com/document/d/12uQU7LbLUd0bY7Nz13-F9cua5Wk8mnRNBlyDzF6gRmo">
+                  Privacy Policy
+                </ExternalLink>
+              </li>
+            </ul>
+          </div>
+          <div className="justify-center text-center md:justify-start md:text-left">
+            <span className="text-base font-medium text-white">Create</span>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <InternalLink href="/nfts/new">Mint NFTs</InternalLink>
+              </li>
+              <li>
+                <InternalLink href="/marketplace/new">
+                  <TaggedNew>Marketplaces</TaggedNew>
+                </InternalLink>
+              </li>
+              <li>
+                <InternalLink href="/storefront/new">Set up a storefront</InternalLink>
+              </li>
+            </ul>
+          </div>
+          <div className="justify-center text-center md:justify-start md:text-left">
+            <span className="text-base font-medium text-white">Community</span>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <ExternalLink href="https://github.com/holaplex">GitHub Repos</ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href="#">Hola Collective</ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href="https://mobile.twitter.com/holalistings">
+                  HolaListings
+                </ExternalLink>
+              </li>
+            </ul>
+          </div>
+          <div className="justify-center text-center md:justify-start md:text-left">
+            <span className="text-base font-medium text-white">Help</span>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <ExternalLink href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407417107475-FAQ">
+                  FAQs
+                </ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href="https://holaplex-support.zendesk.com/hc/en-us/requests/new">
+                  Support
+                </ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href="https://twitter.com/holastatus">HolaStatus</ExternalLink>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 interface LinkProps {
-    href: string;
-    newTab?: boolean;
+  href: string;
 }
 
-const FooterLink: FC<LinkProps> = props => {
-    return <a href={props.href} target={props.newTab ? "_blank" : undefined}  rel="noreferrer" className="text-base text-gray-300 font-medium">{props.children}</a>
-}
+const InternalLink: FC<LinkProps> = ({ href, children }) => (
+  <a href={href} className="text-base font-medium text-gray-300">
+    {children}
+  </a>
+);
 
-const TaggedNew: FC = props => {
-    return <div className="flex justify-center">
-        <div className="relative">
-            {props.children}
-            {/* position absolute to avoid affecting other child elements
+const ExternalLink: FC<LinkProps> = ({ href, children }) => (
+  <Link href={href} passHref>
+    <a href={href} target="_blank" rel="noreferrer" className="text-base font-medium text-gray-300">
+      {children}
+    </a>
+  </Link>
+);
+
+const TaggedNew: FC = ({ children }) => (
+  <div className="flex justify-center md:justify-start">
+    <div className="relative">
+      {children}
+      {/* position absolute to avoid affecting other child elements
             position vertically centered by translating 50% from top
             position to the right of the last child by translating 100% and adding a right offset */}
-            <div className="absolute -right-3 translate-x-full top-1/2 -translate-y-1/2 bg-gray-900 rounded text-white text-sm text-center p-1 font-medium">New</div>
-        </div>
-    </div>;
-}
+      <div className="absolute -right-3 top-1/2 translate-x-full -translate-y-1/2 rounded bg-gray-900 p-1 text-center text-sm font-medium text-white">
+        New
+      </div>
+    </div>
+  </div>
+);
 
 export default Footer;
