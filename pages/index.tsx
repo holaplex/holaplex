@@ -579,7 +579,7 @@ export default function Home({
           ))}
         </div>
       </section>
-      <section>
+      <section className="mt-10">
         <div ref={listingsTopRef} />
         <ListingsHeader
           ghost={false}
