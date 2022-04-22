@@ -64,19 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 
   const queryClient = useMemo(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-            // retry: (failureCount, error) => {
-            //   console.log('failure count', failureCount, error);
-            //   return failureCount < 4;
-            //   // return 3;
-            // },
-          },
-        },
-      }),
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
 
@@ -101,7 +89,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           closeButton={() => <Close color="#fff" />}
         />
         <ApolloProvider client={apolloClient}>
-          <ConnectionProvider endpoint={endpoint}>
+          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
                 <WalletProvider>
@@ -113,25 +101,19 @@ function MyApp({ Component, pageProps }: AppProps) {
                             <MarketplaceProvider wallet={wallet}>
                               {() => (
                                 <AnalyticsProvider>
-                                  <AppLayout>
-                                    <div className="w-full items-center justify-center bg-[#005BBB] p-6 text-[#FFD500] sm:flex">
-                                      Help the people of Ukraine through SOL donations.
-                                      <a
-                                        href="https://donate.metaplex.com/"
-                                        className="ml-4 inline items-center justify-center underline transition-transform sm:flex sm:h-10 sm:rounded-full sm:bg-[#FFD500] sm:px-6 sm:text-[#005BBB] sm:no-underline sm:hover:scale-[1.02] sm:hover:text-[#005BBB]"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                      >
-                                        Learn more
-                                      </a>
-                                    </div>
-                                    <AppHeader />
-                                    <AppContent>
-                                      <ContentWrapper>
-                                        <Component {...pageProps} />
-                                      </ContentWrapper>
-                                    </AppContent>
-                                  </AppLayout>
+                                  <div className="w-full items-center justify-center bg-[#005BBB] p-6 text-[#FFD500] sm:flex">
+                                    Help the people of Ukraine through SOL donations.
+                                    <a
+                                      href="https://donate.metaplex.com/"
+                                      className="ml-4 inline items-center justify-center underline transition-transform sm:flex sm:h-10 sm:rounded-full sm:bg-[#FFD500] sm:px-6 sm:text-[#005BBB] sm:no-underline sm:hover:scale-[1.02] sm:hover:text-[#005BBB]"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      Learn more
+                                    </a>
+                                  </div>
+                                  <AppHeader />
+                                  <Component {...pageProps} />
                                 </AnalyticsProvider>
                               )}
                             </MarketplaceProvider>
@@ -151,17 +133,3 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
-
-const AppContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const ContentWrapper = styled.div`
-  padding-bottom: 3rem;
-`;
-
-const AppLayout = styled(Layout)`
-  overflow-y: auto;
-`;

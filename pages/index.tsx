@@ -160,8 +160,7 @@ const ListingsHeader = styled(PageHeader)`
   top: 0;
   z-index: 1;
   background: #161616f3;
-  width: calc(100% + 60px);
-  margin-left: -30px;
+  margin: 0 -30px;
   padding: 12px 30px;
   backdrop-filter: blur(10px);
   h3 {
@@ -513,189 +512,165 @@ export default function Home({
   }, [filterBy, sortBy, searchBy]);
 
   return (
-    <Row className="mt-10">
-      <CenteredContentCol>
-        <Section>
-          <Marketing xs={22} lg={12} xl={16}>
-            <HeroTitle>
-              Discover, explore, and collect NFTs from incredible creators on Solana
-            </HeroTitle>
-            <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
+    <div className="container mx-auto px-6 md:px-12">
+      <Section>
+        <Marketing xs={22} lg={12} xl={16}>
+          <HeroTitle>
+            Discover, explore, and collect NFTs from incredible creators on Solana
+          </HeroTitle>
+          <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
 
-            {connected ? (
-              <div className="flex flex-wrap gap-4">
-                <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
-                  <a>
-                    <Button skeleton={looking || searching} className="min-w-[13rem]">
-                      {storefront ? 'Edit your store' : 'Create your store'}
-                    </Button>
-                  </a>
-                </Link>
-              </div>
-            ) : (
-              <div>
-                <Button loading={connecting} onClick={() => setVisible(true)}>
-                  Connect
-                </Button>
-              </div>
-            )}
-            <div className="mt-[2.5rem]">
-              <SocialLinks />
-            </div>
-          </Marketing>
-          <HeroCol xs={24} lg={12} xl={8}>
-            <div className="sm:px-4">
-              <Text className="mb-0" strong>
-                Trending Listings
-              </Text>
-            </div>
-            <HeroCarousel
-              autoplay={true}
-              dots={{ className: 'carousel-dots' }}
-              dotPosition="top"
-              effect="fade"
-              className="home-carousel"
-            >
-              {featuredListings.map((listing, i) => (
-                <div key={listing.listingAddress} className="sm:px-4">
-                  <ListingPreview
-                    listing={listing}
-                    meta={{
-                      index: i,
-                      list: 'featured-listings',
-                      sortBy: sortBy,
-                      filterBy: filterBy,
-                    }}
-                  />
-                </div>
-              ))}
-            </HeroCarousel>
-          </HeroCol>
-        </Section>
-        {!process.env.NEXT_PUBLIC_WHICHDAO && (
-          <StorefrontSection>
-            <Col xs={24}>
-              <Title level={3}>Featured Creators</Title>
-              <FeaturedStores
-                grid={{ xs: 1, sm: 2, md: 2, lg: 2, xl: 4, xxl: 4, gutter: 24 }}
-                dataSource={featuredStorefronts.slice(0, 4)}
-                renderItem={(feature) => (
-                  // @ts-ignore
-                  <List.Item key={feature.storefront.subdomain}>
-                    {/* @ts-ignore */}
-                    <StorePreview {...feature} />
-                  </List.Item>
-                )}
-              />
-            </Col>
-          </StorefrontSection>
-        )}
-        <Section>
-          <Col xs={24}>
-            <div ref={listingsTopRef} />
-            <ListingsHeader
-              ghost={false}
-              title={
-                <a onClick={scrollToTop} tabIndex={0} role="button">
-                  Current listings
+          {connected ? (
+            <div className="flex flex-wrap gap-4">
+              <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
+                <a>
+                  <Button skeleton={looking || searching} className="min-w-[13rem]">
+                    {storefront ? 'Edit your store' : 'Create your store'}
+                  </Button>
                 </a>
-              }
-              extra={[
-                <Space key="options" direction="horizontal">
-                  <SelectInline
-                    dropdownClassName="select-inline-dropdown"
-                    value={filterBy}
-                    label="Filter"
-                    onChange={(nextFilterBy) => {
-                      const filter = nextFilterBy as FilterOptions;
-                      track('Filter Update', {
-                        event_category: 'Discovery',
-                        event_label: filter,
-                        from: filterBy,
-                        to: filter,
-                        sortBy,
-                        nrOfListingsOnDisplay: displayedListings.length,
-                      });
-                      setSearchBy([]);
-                      setFilterBy(filter);
-                      // only reset sortBy if it does not work in the new filter
-                      if (!sortOptions[filter].find((s) => s.key === sortBy)) {
-                        setSortBy(sortOptions[filter][0].key);
-                      }
-                      scrollToListingTop();
-                    }}
-                  >
-                    <Option value={FilterOptions.All}>All listings</Option>
-                    <Option value={FilterOptions.Auctions}>Auctions</Option>
-                    <Option value={FilterOptions.InstantSale}>Buy now</Option>
-                    <Option value={FilterOptions.Secondary}>Secondary</Option>
-                  </SelectInline>
-                  <SelectInline
-                    label="Sort"
-                    dropdownClassName="select-inline-dropdown"
-                    value={sortBy}
-                    onChange={(nextSortBy) => {
-                      const sort = nextSortBy as SortOptions;
-                      track('Sort Update', {
-                        event_category: 'Discovery',
-                        event_label: sort,
-                        from: sortBy,
-                        to: sort,
-                        filterBy,
-                        nrOfListingsOnDisplay: displayedListings.length,
-                      });
-                      setSearchBy([]);
-                      setSortBy(sort);
+              </Link>
+            </div>
+          ) : (
+            <div>
+              <Button loading={connecting} onClick={() => setVisible(true)}>
+                Connect
+              </Button>
+            </div>
+          )}
+          <div className="mt-[2.5rem]">
+            <SocialLinks />
+          </div>
+        </Marketing>
+        <HeroCol xs={24} lg={12} xl={8} className="max-w-[600px]">
+          <div className="sm:px-4">
+            <Text className="mb-0" strong>
+              Trending Listings
+            </Text>
+          </div>
+          <HeroCarousel
+            autoplay={true}
+            dots={{ className: 'carousel-dots' }}
+            dotPosition="top"
+            effect="fade"
+            className="home-carousel"
+          >
+            {featuredListings.map((listing, i) => (
+              <div key={listing.listingAddress} className="sm:px-4">
+                <ListingPreview
+                  listing={listing}
+                  meta={{
+                    index: i,
+                    list: 'featured-listings',
+                    sortBy: sortBy,
+                    filterBy: filterBy,
+                  }}
+                />
+              </div>
+            ))}
+          </HeroCarousel>
+        </HeroCol>
+      </Section>
 
-                      scrollToListingTop();
-                    }}
-                  >
-                    {sortOptions[filterBy].map(({ label, key }) => (
-                      <Option key={key} value={key}>
-                        {label}
-                      </Option>
-                    ))}
-                  </SelectInline>
-                </Space>,
-              ]}
+      <section>
+        <Title level={3}>Featured Creators</Title>
+        <div className="mt-16 grid gap-x-6 gap-y-16 sm:grid-cols-2 xl:grid-cols-4">
+          {featuredStorefronts.slice(0, 4).map((storefront) => (
+            <StorePreview {...storefront} key={storefront.storefront.subdomain} />
+          ))}
+        </div>
+      </section>
+      <section>
+        <div ref={listingsTopRef} />
+        <ListingsHeader
+          ghost={false}
+          title={
+            <a onClick={scrollToTop} tabIndex={0} role="button">
+              Current listings
+            </a>
+          }
+          extra={[
+            <Space key="options" direction="horizontal">
+              <SelectInline
+                dropdownClassName="select-inline-dropdown"
+                value={filterBy}
+                label="Filter"
+                onChange={(nextFilterBy) => {
+                  const filter = nextFilterBy as FilterOptions;
+                  track('Filter Update', {
+                    event_category: 'Discovery',
+                    event_label: filter,
+                    from: filterBy,
+                    to: filter,
+                    sortBy,
+                    nrOfListingsOnDisplay: displayedListings.length,
+                  });
+                  setSearchBy([]);
+                  setFilterBy(filter);
+                  // only reset sortBy if it does not work in the new filter
+                  if (!sortOptions[filter].find((s) => s.key === sortBy)) {
+                    setSortBy(sortOptions[filter][0].key);
+                  }
+                  scrollToListingTop();
+                }}
+              >
+                <Option value={FilterOptions.All}>All listings</Option>
+                <Option value={FilterOptions.Auctions}>Auctions</Option>
+                <Option value={FilterOptions.InstantSale}>Buy now</Option>
+                <Option value={FilterOptions.Secondary}>Secondary</Option>
+              </SelectInline>
+              <SelectInline
+                label="Sort"
+                dropdownClassName="select-inline-dropdown"
+                value={sortBy}
+                onChange={(nextSortBy) => {
+                  const sort = nextSortBy as SortOptions;
+                  track('Sort Update', {
+                    event_category: 'Discovery',
+                    event_label: sort,
+                    from: sortBy,
+                    to: sort,
+                    filterBy,
+                    nrOfListingsOnDisplay: displayedListings.length,
+                  });
+                  setSearchBy([]);
+                  setSortBy(sort);
+
+                  scrollToListingTop();
+                }}
+              >
+                {sortOptions[filterBy].map(({ label, key }) => (
+                  <Option key={key} value={key}>
+                    {label}
+                  </Option>
+                ))}
+              </SelectInline>
+            </Space>,
+          ]}
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {take(show, displayedListings).map((listing: Listing, i) => (
+            <ListingPreview
+              key={listing?.listingAddress}
+              listing={listing}
+              meta={{
+                index: i,
+                list: 'current-listings',
+                sortBy: sortBy,
+                filterBy: filterBy,
+              }}
             />
-            <Row gutter={24}>
-              {/* <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6}>
-                <SkeletonListing />
-              </Col> */}
-              {take(show, displayedListings).map((listing: Listing, i) => (
-                <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key={listing?.listingAddress}>
-                  <ListingPreview
-                    listing={listing}
-                    meta={{
-                      index: i,
-                      list: 'current-listings',
-                      sortBy: sortBy,
-                      filterBy: filterBy,
-                    }}
-                  />
-                </Col>
-              ))}
-              {(hasNextPage || loading) && (
-                <>
-                  <Col ref={sentryRef} xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-0">
-                    <SkeletonListing />
-                  </Col>
-                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-1">
-                    <SkeletonListing />
-                  </Col>
-                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-2">
-                    <SkeletonListing />
-                  </Col>
-                  <Col xs={24} sm={12} md={12} lg={8} xl={6} xxl={6} key="shell-3">
-                    <SkeletonListing />
-                  </Col>
-                </>
-              )}
-            </Row>
-          </Col>
-        </Section>
-      </CenteredContentCol>
-    </Row>
+          ))}
+          {(hasNextPage || loading) && (
+            <>
+              <SkeletonListing />
+              <SkeletonListing />
+              <SkeletonListing />
+              <SkeletonListing />
+            </>
+          )}
+        </div>
+        <div ref={sentryRef}></div>
+      </section>
+    </div>
   );
 }

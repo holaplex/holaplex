@@ -2,16 +2,16 @@ import { ProfileContainer } from '@/common/components/elements/ProfileContainer'
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
+import { SingleGrid } from '@/common/components/icons/SingleGrid';
 import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
 import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
 import Link from 'next/link';
 import TextInput2 from '@/common/components/elements/TextInput2';
-import { Avatar } from '../../nfts/[address]';
 import {
   getPropsForWalletOrUsername,
   WalletDependantPageProps,
@@ -32,13 +32,37 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
 import BuyForm from '@/components/forms/BuyForm';
-import { Tag } from '@/components/icons/Tag';
 import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferForm';
+import { Avatar } from '@/common/components/elements/Avatar';
+import { InView } from 'react-intersection-observer';
+import { isEmpty } from 'ramda';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getPropsForWalletOrUsername(context);
+
+export const LoadingNFTCard = () => {
+  return (
+    <div
+      className={`overflow-hidden, animate-pulse rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+    >
+      <div className={`aspect-square w-full rounded-lg bg-gray-800`} />
+      <div className={`flex h-24 items-center py-6 px-4`}>
+        <div className={`h-5 w-36 animate-pulse rounded-md bg-gray-700`} />
+      </div>
+      <div className={`h-20 md:h-36 xl:h-20`}>
+        <div
+          className={`flex h-full w-full items-center justify-between p-4 md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+        >
+          <div className={`h-5 w-16 animate-pulse rounded-md bg-gray-700`} />
+
+          <div className={`h-10 w-36 animate-pulse rounded-full bg-gray-700`} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const NFTCard = ({
   nft,
@@ -77,7 +101,7 @@ export const NFTCard = ({
   return (
     <>
       <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black transition duration-[300ms] hover:scale-[1.02]">
-        <Link href={`/nfts/${nft.address}`} passHref>
+        <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
           <div className={`cursor-pointer`}>
             <div className={`relative `}>
               <img
@@ -229,37 +253,64 @@ export const NFTCard = ({
   );
 };
 
-export const NFTGrid = ({
+interface NFTGridProps {
+  nfts: OwnedNFT[];
+  marketplace: Marketplace;
+  gridView: '1x1' | '2x2' | '3x3';
+  refetch: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<None>>;
+  onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
+  hasMore: boolean;
+  loading?: boolean;
+}
+
+export const NFTGrid: FC<NFTGridProps> = ({
   nfts,
   marketplace,
   gridView,
   refetch,
+  onLoadMore,
+  hasMore,
   loading = false,
-}: {
-  nfts: OwnedNFT[];
-  marketplace: Marketplace;
-  gridView: '2x2' | '3x3';
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
-  loading?: boolean;
 }) => {
   return (
     <div
       className={cx(
         'grid grid-cols-1 gap-6',
-        gridView === '2x2' ? 'md:grid-cols-2' : 'md:grid-cols-3'
+        gridView === '1x1'
+          ? 'grid-cols-1 md:grid-cols-2'
+          : gridView === '2x2'
+          ? 'sm:grid-cols-2'
+          : 'md:grid-cols-3'
       )}
     >
-      {nfts.map((nft) => (
-        <NFTCard
-          key={nft.address}
-          nft={nft}
-          refetch={refetch}
-          loading={loading}
-          marketplace={marketplace}
-        />
-      ))}
+      {loading ? (
+        <>
+          <LoadingNFTCard />
+          <LoadingNFTCard />
+          <LoadingNFTCard />
+        </>
+      ) : (
+        <>
+          {nfts.map((nft) => (
+            <NFTCard
+              key={nft.address}
+              nft={nft}
+              refetch={refetch}
+              loading={loading}
+              marketplace={marketplace}
+            />
+          ))}
+          {hasMore && (
+            <div>
+              <InView threshold={0.1} onChange={onLoadMore}>
+                <LoadingNFTCard />
+              </InView>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
@@ -271,16 +322,20 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   // const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
   // const [showSearchField, toggleSearchField] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
+  const [gridView, setGridView] = useState<'1x1' | '2x2' | '3x3'>('3x3');
+  const [hasMore, setHasMore] = useState(true);
+  const variables = {
+    subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+    address: pk,
+    limit: 100,
+    offset: 0,
+  };
   const ownedNFTs = useOwnedNfTsQuery({
-    variables: {
-      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      address: pk,
-      limit: 500,
-      offset: 0,
-    },
+    variables: variables,
   });
   const refetch = ownedNFTs.refetch;
+  const loading = ownedNFTs.loading;
+  const fetchMore = ownedNFTs.fetchMore;
   const actualOwnedNFTs = ownedNFTs?.data?.nfts || [];
 
   const nfts = actualOwnedNFTs.filter((item) => item?.owner?.address === pk);
@@ -293,11 +348,24 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
 
-  // const [selectedNFT, setSelectedNFT] = useState(nfts[0]);
-
   const GridSelector = () => {
     return (
-      <div className="ml-4 hidden rounded-lg border-2 border-solid border-gray-800 md:flex">
+      <div className="ml-4  hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
+        <button
+          className={cx(
+            'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
+            {
+              'bg-gray-800': gridView === '1x1',
+            }
+          )}
+          onClick={() => setGridView('1x1')}
+        >
+          <SingleGrid
+            className={gridView !== '1x1' ? 'transition hover:scale-110 ' : ''}
+            color={gridView === '1x1' ? 'white' : '#707070'}
+          />
+        </button>
+
         <button
           className={cx('flex w-10 items-center justify-center', {
             'bg-gray-800': gridView === '2x2',
@@ -311,9 +379,12 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         </button>
 
         <button
-          className={cx('flex w-10 items-center justify-center', {
-            'bg-gray-800': gridView === '3x3',
-          })}
+          className={cx(
+            'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
+            {
+              'bg-gray-800': gridView === '3x3',
+            }
+          )}
           onClick={() => setGridView('3x3')}
         >
           <TripleGrid
@@ -353,6 +424,31 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
           <GridSelector />
         </div>
         <NFTGrid
+          hasMore={hasMore}
+          onLoadMore={async (inView) => {
+            if (!inView || loading) {
+              return;
+            }
+
+            const { data: newData } = await fetchMore({
+              variables: {
+                ...variables,
+                offset: nftsToShow.length + 100,
+              },
+              updateQuery: (prev, { fetchMoreResult }) => {
+                if (!fetchMoreResult) return prev;
+                const prevNfts = prev.nfts;
+                const moreNfts = fetchMoreResult.nfts;
+                if (isEmpty(moreNfts)) {
+                  setHasMore(false);
+                }
+
+                fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+
+                return { ...fetchMoreResult };
+              },
+            });
+          }}
           nfts={nftsToShow}
           gridView={gridView}
           refetch={refetch}

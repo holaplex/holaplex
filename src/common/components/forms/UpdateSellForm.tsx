@@ -2,12 +2,11 @@ import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useRef, useSt
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '../elements/NFTPreview';
-import { DisplaySOL, PriceDisplay } from '../CurrencyHelpers';
+import { PriceDisplay } from '../CurrencyHelpers';
 import Button from '../elements/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as zod from 'zod';
-import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
@@ -17,14 +16,9 @@ import { initMarketplaceSDK, Nft, Marketplace, Listing, Offer } from '@holaplex/
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import Modal from '../elements/Modal';
-import { imgOpt } from '../../utils';
-import { Avatar } from '../../../../pages/nfts/[address]';
-import { shortenAddress } from '../../../modules/utils/string';
 //@ts-ignore
-import FeatherIcon from 'feather-icons-react';
 import * as htmlToImage from 'html-to-image';
 
-import Link from 'next/link';
 import DownloadNFTCard from './DownloadableNFTCard';
 
 interface UpdateSellFormProps {

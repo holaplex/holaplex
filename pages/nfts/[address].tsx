@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import {
-  Creator,
   ListingReceipt,
-  NftCreator,
   useNftMarketplaceLazyQuery,
-  useNftMarketplaceQuery,
-  useWalletProfileLazyQuery,
 } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
-import { shortenAddress, showFirstAndLastFour } from '../../src/modules/utils/string';
-import { useTwitterHandle } from '../../src/common/hooks/useTwitterHandle';
+import { shortenAddress } from '../../src/modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
-import { getPFPFromPublicKey } from '../../src/modules/utils/image';
 import Accordion from '../../src/common/components/elements/Accordion';
 import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
 import { imgOpt } from '../../src/common/utils';
@@ -22,7 +16,6 @@ import FeatherIcon from 'feather-icons-react';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
-import { Tooltip } from 'antd';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { CenteredContentCol } from 'pages';
 import { LoadingContainer } from '@/components/elements/LoadingPlaceholders';
@@ -45,72 +38,9 @@ import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
 import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
 import { apolloClient } from '../../src/graphql/apollo';
-import { gql } from '@apollo/client';
 import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
 import Head from 'next/head';
-import { TwitterNFTCard } from '../../src/common/components/forms/DownloadableNFTCard';
-import * as htmlToImage from 'html-to-image';
-
-const DEFAULT_MARKETPLACE_ADDRESS = `EsrVUnwaqmsq8aDyZ3xLf8f5RmpcHL6ym5uTzwCRLqbE`;
-
-// import Bugsnag from '@bugsnag/js';
-const HoverAvatar = ({ address, index }: { address: string; index: number }) => {
-  const { data: twitterHandle } = useTwitterHandle(null, address);
-  const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
-  const leftPosPixls = 12;
-  const leftPos = index * leftPosPixls;
-
-  useEffect(() => {
-    if (!twitterHandle) return;
-    queryWalletProfile({
-      variables: {
-        handle: twitterHandle,
-      },
-    });
-  }, [queryWalletProfile, twitterHandle]);
-
-  useEffect(() => {}, [twitterHandle]);
-  const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
-  return (
-    // Using antd tooltip since no tailwind supported component, replace when better alternative is available
-    <Tooltip
-      key={address}
-      title={twitterHandle || shortenAddress(address)}
-      mouseEnterDelay={0.09}
-      overlayStyle={{
-        fontSize: '0.75rem',
-        fontWeight: 600,
-        color: 'white',
-      }}
-    >
-      {/* // Need to use style prop for dynamic style application, Tailwind does not support */}
-      <li className="absolute transition hover:z-10 hover:scale-125" style={{ left: leftPos }}>
-        <Link href={`/profiles/${address}`}>
-          <a>
-            <img
-              src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-              alt="Profile Picture"
-              className="h-6 w-6 rounded-full"
-            />
-          </a>
-        </Link>
-      </li>
-    </Tooltip>
-  );
-};
-export const OverlappingCircles = ({
-  creators,
-}: {
-  creators: Omit<NftCreator, 'metadataAddress' | 'share'>[];
-}) => {
-  return (
-    <div className="relative">
-      {creators.map(({ address }, i) => (
-        <HoverAvatar address={address} index={i} key={address} />
-      ))}
-    </div>
-  );
-};
+import { Avatar, AvatarIcons } from '@/common/components/elements/Avatar';
 
 const Activities = ({
   listings,
@@ -153,59 +83,7 @@ const Activities = ({
   );
 };
 
-export const Avatar = ({
-  address,
-  showAddress = true,
-  border = false,
-}: {
-  border?: boolean;
-  address: string;
-  showAddress?: boolean;
-}) => {
-  const { data: twitterHandle } = useTwitterHandle(null, address);
-  const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
-  const { publicKey } = useWallet();
-  const isYou = publicKey?.toBase58() === address;
-  const displayName = isYou
-    ? 'You'
-    : twitterHandle
-    ? `@${twitterHandle}`
-    : showFirstAndLastFour(address);
 
-  useEffect(() => {
-    if (!twitterHandle) return;
-    queryWalletProfile({
-      variables: {
-        handle: twitterHandle,
-      },
-    });
-  }, [queryWalletProfile, twitterHandle]);
-
-  useEffect(() => {}, [twitterHandle]);
-  const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
-
-  return (
-    <div className="flex items-center">
-      <div
-        className={`flex h-6 w-6 rounded-full ${
-          border && `border-2 border-gray-900 border-opacity-60`
-        }`}
-      >
-        <img
-          src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-          alt="Profile Picture"
-          className="rounded-full"
-        />
-      </div>
-
-      {showAddress && (
-        <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
-          {displayName}
-        </div>
-      )}
-    </div>
-  );
-};
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
   const { data } = await apolloClient.query<ShareNftQuery>({
@@ -302,6 +180,13 @@ export default function NftByAddress({
   }, [address, queryNft]);
 
   useEffect(() => {
+    window.scroll({
+      top: 0,
+      left: 0,
+    });
+  }, []);
+
+  useEffect(() => {
     refetch();
   }, [router, router.push, refetch]);
 
@@ -315,7 +200,7 @@ export default function NftByAddress({
   }
 
   return (
-    <CenteredContentCol>
+    <div className="container mx-auto px-6 md:px-12">
       <Head>
         <meta charSet={`utf-8`} />
         <title>{name} NFT | Holaplex</title>
@@ -350,7 +235,7 @@ export default function NftByAddress({
                 <>
                   <div className="flex items-center justify-between">
                     <h1 className="!mb-4 !text-2xl !font-semibold">{nft?.name}</h1>
-                    <MoreDropdown address={nft?.address || ''} />
+                    <MoreDropdown address={nft?.mintAddress || ''} />
                   </div>
 
                   <p className="text-lg">{nft?.description}</p>
@@ -379,7 +264,7 @@ export default function NftByAddress({
                 <>
                   <div className="flex justify-between">
                     <h1 className="mb-4 text-2xl font-semibold">{nft?.name}</h1>
-                    <MoreDropdown address={nft?.address || ''} />
+                    <MoreDropdown address={nft?.mintAddress || ''} />
                   </div>
 
                   <p className="text-lg">{nft?.description}</p>
@@ -404,7 +289,7 @@ export default function NftByAddress({
                     </Link>
                   ) : (
                     <div>
-                      <OverlappingCircles creators={nft?.creators || []} />
+                      <AvatarIcons creators={nft?.creators || []} />
                     </div>
                   )}
                 </ul>
@@ -706,7 +591,7 @@ export default function NftByAddress({
 
               {nft?.attributes && nft.attributes.length > 0 && (
                 <div>
-                  <Accordion title="Attributes">
+                  <Accordion title="Attributes" amount={nft.attributes.length}>
                     <div className="grid grid-cols-2 gap-4">
                       {loading ? (
                         <div>
@@ -738,7 +623,7 @@ export default function NftByAddress({
           </div>
         </div>
         <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
-          <Accordion title={`Offers`} defaultOpen>
+          <Accordion title={`Offers`} amount={offers.length} defaultOpen>
             <section className={`w-full`}>
               {hasOffers && (
                 <header
@@ -902,6 +787,6 @@ export default function NftByAddress({
           </Modal>
         </>
       )}
-    </CenteredContentCol>
+    </div>
   );
 }
