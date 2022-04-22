@@ -1,10 +1,9 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { mq } from '@/common/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { ConnectTwitterButton, WalletIdentityProvider } from '@cardinal/namespaces-components';
-import { PublicKey, Cluster, clusterApiUrl } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useState } from 'react';
 import styled from 'styled-components';
@@ -24,14 +23,6 @@ export const ProfileContainer: FC = ({ children }) => {
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
 
-  const network = WalletAdapterNetwork.Mainnet
-
-  const CLUSTER_API_URL = 'https://holaplex.rpcpool.com' //'http://api.devnet.solana.com'
-
-  const clusterApiUrl = (cluster: Cluster): string => CLUSTER_API_URL
-
-  
-  
   return (
     <WalletIdentityProvider
     appName="App Name"
@@ -58,7 +49,7 @@ export const ProfileContainer: FC = ({ children }) => {
               address={new PublicKey(profileData.publicKey)}
               connection={connection}
               wallet={anchorWallet}
-              cluster={clusterApiUrl(network)}
+              cluster={"mainnet-beta"}
             />}
             </div>
           </div>
