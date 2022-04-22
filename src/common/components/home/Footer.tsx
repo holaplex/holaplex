@@ -96,17 +96,17 @@ interface LinkProps {
 }
 
 const InternalLink: FC<LinkProps> = ({ href, children }) => (
-  <a href={href} className="text-base font-medium text-gray-300">
-    {children}
-  </a>
-);
-
-const ExternalLink: FC<LinkProps> = ({ href, children }) => (
   <Link href={href} passHref>
-    <a href={href} target="_blank" rel="noreferrer" className="text-base font-medium text-gray-300">
+    <a href={href} className="text-base font-medium text-gray-300">
       {children}
     </a>
   </Link>
+);
+
+const ExternalLink: FC<LinkProps> = ({ href, children }) => (
+  <a href={href} target="_blank" rel="noreferrer" className="text-base font-medium text-gray-300">
+    {children}
+  </a>
 );
 
 const TaggedNew: FC = ({ children }) => (
