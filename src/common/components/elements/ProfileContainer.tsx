@@ -24,61 +24,67 @@ export const ProfileContainer: FC = ({ children }) => {
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
 
-  const network = WalletAdapterNetwork.Mainnet;
+  const network = WalletAdapterNetwork.Mainnet
 
-  const CLUSTER_API_URL = 'https://holaplex.rpcpool.com'; //'http://api.devnet.solana.com'
+  const CLUSTER_API_URL = 'https://holaplex.rpcpool.com' //'http://api.devnet.solana.com'
 
-  const clusterApiUrl = (cluster: Cluster): string => CLUSTER_API_URL;
+  const clusterApiUrl = (cluster: Cluster): string => CLUSTER_API_URL
 
+  
+  
   return (
-    <WalletIdentityProvider appName='App Name' appTwitter='@cardinal_labs'>
-      <div>
-        <header>
-          <Banner className='h-40 md:h-64 ' style={{ backgroundImage: `url(${banner})` }} />
-        </header>
-        <CenteredContentCol className='lg:flex'>
-          <div className='relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs '>
-            <div className='flex flex-row justify-center -mt-12 lg:justify-start'>
-              <ProfilePicture
-                src={profilePicture}
-                className='bg-gray-900'
-                width={PFP_SIZE}
-                height={PFP_SIZE}
-              />
-              {anchorWallet && (
-                <ConnectTwitterButton
-                  address={new PublicKey(profileData.publicKey)}
-                  connection={connection}
-                  wallet={anchorWallet}
-                  cluster={clusterApiUrl(network)}
-                />
-              )}
-            </div>
-            <div className='flex justify-center mt-10 lg:justify-start'>
-              <ProfileDisplayName />
-            </div>
-            <FollowerCount
-              profile={asProfile(profileData)}
-              setShowFollowsModal={setShowFollowsModal}
+    <WalletIdentityProvider
+    appName="App Name"
+    appTwitter="@cardinal_labs"
+  >
+    <div>
+      <header>
+        <Banner className='h-40 md:h-64 ' style={{ backgroundImage: `url(${banner})` }} />
+      </header>
+      <CenteredContentCol className='lg:flex'>
+        <div className='relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs '>
+          <div className='flex flex-row justify-center -mt-12 lg:justify-start'>
+            <div>
+            <ProfilePicture
+              src={profilePicture}
+              className='bg-gray-900'
+              width={PFP_SIZE}
+              height={PFP_SIZE}
             />
+            </div>
+            <div className='mt-[75px] ml-10 grow'>
+            { anchorWallet && 
+            <ConnectTwitterButton
+              address={new PublicKey(profileData.publicKey)}
+              connection={connection}
+              wallet={anchorWallet}
+              cluster={clusterApiUrl(network)}
+            />}
+            </div>
           </div>
-          <div className='w-full mt-10'>
-            <ProfileMenu />
-            {children}
+          <div className='flex justify-center mt-10 lg:justify-start'>
+            <ProfileDisplayName />
           </div>
-          <div className='mt-10'>
-            {anchorWallet ? (
-              <FollowModal
-                visibility={showFollowsModal}
-                setVisibility={setShowFollowsModal}
-                profile={asProfile(profileData)}
-                wallet={anchorWallet}
-              />
-            ) : null}
-          </div>
-        </CenteredContentCol>
-        <Footer />
-      </div>
+          <FollowerCount
+            profile={asProfile(profileData)}
+            setShowFollowsModal={setShowFollowsModal}
+          />
+        </div>
+        <div className='w-full mt-10'>
+          <ProfileMenu />
+          {children}
+        </div>
+        {anchorWallet ? (
+          <FollowModal
+            visibility={showFollowsModal}
+            setVisibility={setShowFollowsModal}
+            profile={asProfile(profileData)}
+            wallet={anchorWallet}
+          />
+        ) : null}
+      </CenteredContentCol>
+      <Footer />
+    </div>
     </WalletIdentityProvider>
   );
 };
