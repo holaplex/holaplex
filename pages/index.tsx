@@ -71,97 +71,13 @@ const DAOStoreFrontList = async () => {
   return [];
 };
 
-const HeroTitle = styled.h1`
-  font-weight: 600;
-  font-size: calc(0.25vw + 0.25vh + 3rem);
-  line-height: auto;
-  @media screen and (max-width: 1250px) {
-    font-size: calc(0.25vw + 0.25vh + 2.5rem);
-  }
-  @media screen and (max-width: 1150px) {
-    font-size: calc(0.25vw + 0.25vh + 2.25rem);
-  }
-  @media screen and (max-width: 550px) {
-    line-height: auto;
-    text-align: left;
-  }
-`;
-
-const Marketing = styled(Col)`
-  padding-right: 5rem;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: calc(0.5vw + 0.5vh + 2rem);
-  justify-content: center;
-  @media screen and (max-width: 900px) {
-    padding-right: 2.5rem;
-  }
-  @media screen and (max-width: 768px) {
-    padding-right: 0;
-  }
-`;
-
-const Pitch = styled.h2`
-  font-size: calc(0.35vw + 0.35vh + 1rem);
-  line-height: 1.4;
-  letter-spacing: 0.2px;
-  font-weight: 300;
-  margin: calc(0.25vw + 0.25vh + 1rem) 0 calc(0.25vw + 0.25vh + 2rem);
-
-  @media screen and (max-width: 900px) {
-    font-size: calc(0.35vw + 0.35vh + 0.85rem);
-  }
-`;
-
-const Section = styled(Row)`
-  margin-top: calc(0.5vw + 0.5vh + 0.5rem);
-`;
-
-const StorefrontSection = styled(Section)`
-  h3 {
-    &.ant-typography {
-      margin: 0 0 62px 0;
-    }
-  }
-`;
-
-const FeaturedStores = styled(List)<ListProps<StorefrontFeature>>`
-  .ant-list-item {
-    margin-bottom: 66px !important;
-
-    .ant-card {
-      border-radius: 8px !important;
-    }
-  }
-
-  .ant-list-grid {
-    .ant-col > .ant-list-item {
-      margin-bottom: 66px;
-    }
-    .ant-card-meta-title {
-      line-height: 20px;
-    }
-  }
-`;
-
-export const CenteredContentCol = styled.div`
-  margin: 0 auto;
-  width: calc(1400px + 3rem);
-  max-width: 100vw;
-  padding: 0 3rem;
-
-  @media screen and (max-width: 600px) {
-    padding: 0 1.5rem;
-  }
-`;
-
 const ListingsHeader = styled(PageHeader)`
   position: sticky;
   top: 0;
   z-index: 1;
   background: #161616f3;
-  margin: 0 -30px;
-  padding: 12px 30px;
+  margin: 0 0px;
+  padding: 12px 0px;
   backdrop-filter: blur(10px);
   h3 {
     &.ant-typography {
@@ -235,7 +151,7 @@ const HeroCarousel = styled(Carousel)`
   }
 `;
 
-const HeroCol = styled(Col)`
+const HeroCol = styled.div`
   .ant-typography {
     display: block;
     margin: 0 0 0.5rem 0;
@@ -512,13 +428,16 @@ export default function Home({
   }, [filterBy, sortBy, searchBy]);
 
   return (
-    <div className="container mx-auto px-6 md:px-12">
-      <Section>
-        <Marketing xs={22} lg={12} xl={16}>
-          <HeroTitle>
+    <div className="container mx-auto mt-12 px-6 pb-20  ">
+      <section className="flex flex-wrap items-center justify-between ">
+        <div className="w-full max-w-xl  md:max-w-3xl">
+          <h1 className="text-4xl font-semibold leading-[1.3] md:text-5xl">
             Discover, explore, and collect NFTs from incredible creators on Solana
-          </HeroTitle>
-          <Pitch>Tools built by creators, for creators, owned by creators.</Pitch>
+          </h1>
+
+          <h2 className="mb-8 mt-4 text-xl font-light md:text-2xl">
+            Tools built by creators, for creators, owned by creators.
+          </h2>
 
           {connected ? (
             <div className="flex flex-wrap gap-4">
@@ -537,16 +456,14 @@ export default function Home({
               </Button>
             </div>
           )}
-          <div className="mt-[2.5rem]">
+          <div className="my-10">
             <SocialLinks />
           </div>
-        </Marketing>
-        <HeroCol xs={24} lg={12} xl={8} className="max-w-[600px]">
-          <div className="sm:px-4">
-            <Text className="mb-0" strong>
-              Trending Listings
-            </Text>
-          </div>
+        </div>
+        <HeroCol className="max-w-full  md:max-w-md">
+          <Text className="mb-0" strong>
+            Trending Listings
+          </Text>
           <HeroCarousel
             autoplay={true}
             dots={{ className: 'carousel-dots' }}
@@ -555,7 +472,7 @@ export default function Home({
             className="home-carousel"
           >
             {featuredListings.map((listing, i) => (
-              <div key={listing.listingAddress} className="sm:px-4">
+              <div key={listing.listingAddress} className="max-w-full  md:max-w-md">
                 <ListingPreview
                   listing={listing}
                   meta={{
@@ -569,7 +486,7 @@ export default function Home({
             ))}
           </HeroCarousel>
         </HeroCol>
-      </Section>
+      </section>
 
       <section>
         <Title level={3}>Featured Creators</Title>
@@ -589,7 +506,7 @@ export default function Home({
             </a>
           }
           extra={[
-            <Space key="options" direction="horizontal">
+            <div key="options" className="grid grid-cols-2  gap-4">
               <SelectInline
                 dropdownClassName="select-inline-dropdown"
                 value={filterBy}
@@ -644,7 +561,7 @@ export default function Home({
                   </Option>
                 ))}
               </SelectInline>
-            </Space>,
+            </div>,
           ]}
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
