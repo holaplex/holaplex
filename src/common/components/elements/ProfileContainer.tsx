@@ -1,6 +1,10 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { mq } from '@/common/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { ConnectTwitterButton, WalletIdentityProvider } from '@cardinal/namespaces-components';
+import { PublicKey, Cluster, clusterApiUrl } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useState } from 'react';
 import styled from 'styled-components';
@@ -18,45 +22,64 @@ export const ProfileContainer: FC = ({ children }) => {
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
+  const { connection } = useConnection();
+
+  const network = WalletAdapterNetwork.Mainnet;
+
+  const CLUSTER_API_URL = 'https://holaplex.rpcpool.com'; //'http://api.devnet.solana.com'
+
+  const clusterApiUrl = (cluster: Cluster): string => CLUSTER_API_URL;
 
   return (
-    <div>
-      <header>
-        <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
-      </header>
-      <CenteredContentCol className="lg:flex">
-        <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
-          <div className="-mt-12 flex justify-center lg:justify-start">
-            <ProfilePicture
-              src={profilePicture}
-              className="bg-gray-900"
-              width={PFP_SIZE}
-              height={PFP_SIZE}
+    <WalletIdentityProvider appName='App Name' appTwitter='@cardinal_labs'>
+      <div>
+        <header>
+          <Banner className='h-40 md:h-64 ' style={{ backgroundImage: `url(${banner})` }} />
+        </header>
+        <CenteredContentCol className='lg:flex'>
+          <div className='relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs '>
+            <div className='flex flex-row justify-center -mt-12 lg:justify-start'>
+              <ProfilePicture
+                src={profilePicture}
+                className='bg-gray-900'
+                width={PFP_SIZE}
+                height={PFP_SIZE}
+              />
+              {anchorWallet && (
+                <ConnectTwitterButton
+                  address={new PublicKey(profileData.publicKey)}
+                  connection={connection}
+                  wallet={anchorWallet}
+                  cluster={clusterApiUrl(network)}
+                />
+              )}
+            </div>
+            <div className='flex justify-center mt-10 lg:justify-start'>
+              <ProfileDisplayName />
+            </div>
+            <FollowerCount
+              profile={asProfile(profileData)}
+              setShowFollowsModal={setShowFollowsModal}
             />
           </div>
-          <div className="mt-10 flex justify-center  lg:justify-start">
-            <ProfileDisplayName />
+          <div className='w-full mt-10'>
+            <ProfileMenu />
+            {children}
           </div>
-          <FollowerCount
-            profile={asProfile(profileData)}
-            setShowFollowsModal={setShowFollowsModal}
-          />
-        </div>
-        <div className="mt-10 w-full">
-          <ProfileMenu />
-          {children}
-        </div>
-        {anchorWallet ? (
-          <FollowModal
-            visibility={showFollowsModal}
-            setVisibility={setShowFollowsModal}
-            profile={asProfile(profileData)}
-            wallet={anchorWallet}
-          />
-        ) : null}
-      </CenteredContentCol>
-      <Footer />
-    </div>
+          <div className='mt-10'>
+            {anchorWallet ? (
+              <FollowModal
+                visibility={showFollowsModal}
+                setVisibility={setShowFollowsModal}
+                profile={asProfile(profileData)}
+                wallet={anchorWallet}
+              />
+            ) : null}
+          </div>
+        </CenteredContentCol>
+        <Footer />
+      </div>
+    </WalletIdentityProvider>
   );
 };
 
@@ -73,24 +96,24 @@ const ProfileDisplayName: FC = () => {
   };
 
   return (
-    <div className="flex items-center text-2xl font-medium">
+    <div className='flex items-center text-2xl font-medium'>
       {twitterHandle ? (
         <a
-          className="hover:text-gray-300"
-          target="_blank"
+          className='hover:text-gray-300'
+          target='_blank'
           href={'https://www.twitter.com/' + twitterHandle}
-          rel="noreferrer"
+          rel='noreferrer'
         >
           @{twitterHandle}
         </a>
       ) : (
-        <span className="font-mono ">{shortenAddress(publicKey)}</span>
+        <span className='font-mono '>{shortenAddress(publicKey)}</span>
       )}
       {copied ? (
-        <CheckIcon className="ml-4 h-7 w-7  hover:text-gray-300" />
+        <CheckIcon className='ml-4 h-7 w-7 hover:text-gray-300' />
       ) : (
         <DuplicateIcon
-          className="ml-4 h-7 w-7 cursor-pointer  hover:text-gray-300"
+          className='ml-4 cursor-pointer h-7 w-7 hover:text-gray-300'
           onClick={copyPubKey}
         />
       )}
