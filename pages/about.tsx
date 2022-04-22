@@ -7,6 +7,7 @@ import RoadmapImage from '@/assets/images/roadmap-v1.svg';
 import investorData from '@/assets/investors/investors-stub';
 import { List, Space, Row, Col, Typography, Card } from 'antd';
 import SocialLinks from '@/common/components/elements/SocialLinks';
+import Footer from '@/common/components/home/Footer';
 
 const { Title, Paragraph } = Typography;
 
@@ -236,14 +237,15 @@ export default function About() {
           </Investors>
         </ContentCol>
       </BackedBy>
-      <Row justify="center">
+      {/* <Row justify="center">
         <ContentCol xs={22} md={20}>
           <Title level={2}>Get in touch</Title>
           <SocialWrapper>
             <SocialLinks />
           </SocialWrapper>
         </ContentCol>
-      </Row>
+      </Row> */}
+      <Footer />
     </>
   );
 }

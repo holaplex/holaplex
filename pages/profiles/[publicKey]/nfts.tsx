@@ -6,6 +6,7 @@ import { FC, useEffect, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
+import { SingleGrid } from '@/common/components/icons/SingleGrid';
 import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
 import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
@@ -259,7 +260,7 @@ export const NFTCard = ({
 interface NFTGridProps {
   nfts: OwnedNFT[];
   marketplace: Marketplace;
-  gridView: '2x2' | '3x3';
+  gridView: '1x1' | '2x2' | '3x3';
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -281,7 +282,11 @@ export const NFTGrid: FC<NFTGridProps> = ({
     <div
       className={cx(
         'grid grid-cols-1 gap-6',
-        gridView === '2x2' ? 'md:grid-cols-2' : 'md:grid-cols-3'
+        gridView === '1x1'
+          ? 'grid-cols-1 md:grid-cols-2'
+          : gridView === '2x2'
+          ? 'sm:grid-cols-2'
+          : 'md:grid-cols-3'
       )}
     >
       {loading ? (
@@ -321,7 +326,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   // const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
   // const [showSearchField, toggleSearchField] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
+  const [gridView, setGridView] = useState<'1x1' | '2x2' | '3x3'>('3x3');
   const [hasMore, setHasMore] = useState(true);
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
@@ -349,7 +354,22 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
 
   const GridSelector = () => {
     return (
-      <div className="ml-4 hidden rounded-lg border-2 border-solid border-gray-800 md:flex">
+      <div className="ml-4  hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
+        <button
+          className={cx(
+            'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
+            {
+              'bg-gray-800': gridView === '1x1',
+            }
+          )}
+          onClick={() => setGridView('1x1')}
+        >
+          <SingleGrid
+            className={gridView !== '1x1' ? 'transition hover:scale-110 ' : ''}
+            color={gridView === '1x1' ? 'white' : '#707070'}
+          />
+        </button>
+
         <button
           className={cx('flex w-10 items-center justify-center', {
             'bg-gray-800': gridView === '2x2',
@@ -363,9 +383,12 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         </button>
 
         <button
-          className={cx('flex w-10 items-center justify-center', {
-            'bg-gray-800': gridView === '3x3',
-          })}
+          className={cx(
+            'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
+            {
+              'bg-gray-800': gridView === '3x3',
+            }
+          )}
           onClick={() => setGridView('3x3')}
         >
           <TripleGrid

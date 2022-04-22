@@ -65,7 +65,7 @@ export const ProfileMenu: FC = () => {
                 <button
                   onClick={() => router.push(tab.path)}
                   className={cx(
-                    'flex h-full w-40 flex-shrink-0 items-center justify-center',
+                    'flex h-full w-40 flex-shrink-0 items-center justify-center md:w-1/4',
                     selected ? 'border-b-2 border-white' : 'text-gray-300'
                   )}
                 >
