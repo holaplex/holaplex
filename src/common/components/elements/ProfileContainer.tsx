@@ -25,8 +25,8 @@ export const ProfileContainer: FC = ({ children }) => {
 
   return (
     <WalletIdentityProvider
-    appName="App Name"
-    appTwitter="@cardinal_labs"
+    appName="Holaplex"
+    appTwitter="@holaplex"
   >
     <div>
       <header>
@@ -44,7 +44,7 @@ export const ProfileContainer: FC = ({ children }) => {
             />
             </div>
             <div className='mt-[75px] ml-10 grow'>
-            { anchorWallet && 
+            { anchorWallet?.publicKey.toString() == profileData.publicKey.toString()  && 
             <ConnectTwitterButton
               address={new PublicKey(profileData.publicKey)}
               connection={connection}
