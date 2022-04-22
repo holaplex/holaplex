@@ -16,7 +16,7 @@ type HomeSectionSubtypes = {
 
 /**
  * Compound component for preview sections in the v2 homepage. Contains a title,
- * call to action, and body, e.g.
+ * linked call to action, and body, e.g.
  * 
  * ```
  *  <HomeSection>
@@ -64,7 +64,7 @@ const HomeSectionHeaderAction: HeaderAction<HeaderActionProps> = ({ href, newTab
     >
         {children}
         {/* using stroke class above to color same as text and change on hover */}
-        <ChevronRight color=""/>
+        <ChevronRight/>
     </a>
 );
 HomeSection.HeaderAction = HomeSectionHeaderAction;
