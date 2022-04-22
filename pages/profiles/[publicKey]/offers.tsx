@@ -67,6 +67,14 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
 
   const offerCount = receivedCount + sentCount;
 
+  function byDate(
+    a: { createdAt: string | number | Date },
+    b: { createdAt: string | number | Date }
+  ) {
+    //chronologically by year, month, then day
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); //timestamps
+  }
+
   const OfferFilter = ({
     filterToCheck,
     count = 0,
@@ -117,7 +125,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
               const defaultListing = receivedOffer?.listings.find(
                 (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
               );
-              return receivedOffer.offers?.map((offer) => (
+              return receivedOffer.offers?.sort(byDate).map((offer) => (
                 <div
                   key={offer.address}
                   className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
@@ -199,7 +207,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
               const defaultListing = sentOffer?.listings.find(
                 (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
               );
-              return sentOffer.offers?.map((offer) => (
+              return sentOffer.offers?.sort(byDate).map((offer) => (
                 <div
                   key={offer.address}
                   className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
