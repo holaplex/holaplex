@@ -286,6 +286,7 @@ export type QueryRoot = {
   nft?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
+  offers: Array<BidReceipt>;
   profile?: Maybe<Profile>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
@@ -333,6 +334,11 @@ export type QueryRootNftsArgs = {
 };
 
 
+export type QueryRootOffersArgs = {
+  address: Scalars['String'];
+};
+
+
 export type QueryRootProfileArgs = {
   handle: Scalars['String'];
 };
@@ -350,8 +356,11 @@ export type QueryRootWalletArgs = {
 export type StoreCreator = {
   __typename?: 'StoreCreator';
   creatorAddress: Scalars['String'];
+  nftCount?: Maybe<Scalars['Int']>;
   preview: Array<Nft>;
+  profile?: Maybe<TwitterProfile>;
   storeConfigAddress: Scalars['String'];
+  twitterHandle?: Maybe<Scalars['String']>;
 };
 
 /** A Metaplex storefront */
@@ -439,6 +448,13 @@ export type WalletProfileQueryVariables = Exact<{
 
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
+
+export type MarketplacePreviewQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+}>;
+
+
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -690,6 +706,26 @@ export const WalletProfileDocument = gql`
     profileImageUrlLowres
     profileImageUrlHighres
     bannerImageUrl
+  }
+}
+    `;
+export const MarketplacePreviewDocument = gql`
+    query marketplacePreview($subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    bannerUrl
+    stats {
+      nfts
+    }
+    name
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    creators {
+      creatorAddress
+    }
   }
 }
     `;
@@ -1052,6 +1088,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     walletProfile(variables: WalletProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WalletProfileQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WalletProfileQuery>(WalletProfileDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'walletProfile', 'query');
+    },
+    marketplacePreview(variables: MarketplacePreviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MarketplacePreviewQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MarketplacePreviewQuery>(MarketplacePreviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'marketplacePreview', 'query');
     },
     nftMarketplace(variables: NftMarketplaceQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<NftMarketplaceQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<NftMarketplaceQuery>(NftMarketplaceDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'nftMarketplace', 'query');

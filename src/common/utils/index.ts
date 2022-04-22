@@ -52,3 +52,7 @@ export const imgOpt = (uri?: string, width: IMAGE_SIZE = 0) => {
 };
 
 export const RUST_ISO_UTC_DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+
+export function isTouchScreenOnly(): boolean {
+  return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}

@@ -4,11 +4,11 @@ import Button from '../elements/Button';
 import FeatherIcon from 'feather-icons-react';
 import * as htmlToImage from 'html-to-image';
 import { shortenAddress } from '../../../modules/utils/string';
-import { Avatar } from '../../../../pages/nfts/[address]';
 import { DisplaySOL } from '../CurrencyHelpers';
 import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import Link from 'next/link';
+import { Avatar } from '@/common/components/elements/Avatar';
 
 interface DownloadNFTCardProps {
   nft: Nft;

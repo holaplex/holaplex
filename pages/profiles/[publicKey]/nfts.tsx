@@ -2,7 +2,7 @@ import { ProfileContainer } from '@/common/components/elements/ProfileContainer'
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
@@ -12,7 +12,6 @@ import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
 import Link from 'next/link';
 import TextInput2 from '@/common/components/elements/TextInput2';
-import { Avatar } from '../../nfts/[address]';
 import {
   getPropsForWalletOrUsername,
   WalletDependantPageProps,
@@ -34,11 +33,8 @@ import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
 import BuyForm from '@/components/forms/BuyForm';
 import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferForm';
+import { Avatar } from '@/common/components/elements/Avatar';
 import { InView } from 'react-intersection-observer';
-import {
-  LoadingBox,
-  LoadingContainer,
-} from '../../../src/common/components/elements/LoadingPlaceholders';
 import { isEmpty } from 'ramda';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
