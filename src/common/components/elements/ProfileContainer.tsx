@@ -1,8 +1,8 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { mq } from '@/common/styles/MediaQuery';
-import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import Image from 'next/image';
-import { FC, useState } from 'react';
+import { FC, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { FollowerCount } from './FollowerCount';
 import { FollowModal, FollowModalVisibility } from './FollowModal';
@@ -10,13 +10,20 @@ import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData, asProfile } from '@/common/context/ProfileData';
 import { CenteredContentCol } from 'pages';
-
+import { MessageButton } from '@/common/components/elements/MessageButton';
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
   const { banner, profilePicture } = profileData;
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
+  const { connection } = useConnection();
+  const wallet = useAnchorWallet()!;
+  console.log('wallet: ', wallet);
+  const walletConnectionPair = useMemo(() => ({
+    wallet, connection
+    }),
+    [wallet, connection]);
 
   return (
     <div>
@@ -40,6 +47,12 @@ export const ProfileContainer: FC = ({ children }) => {
             profile={asProfile(profileData)}
             setShowFollowsModal={setShowFollowsModal}
           />
+          <MessageButton
+            source="profileButton"
+            toProfile={asProfile(profileData)}
+            type={'Follow'}
+          />
+
         </div>
         <ContentWrapper>
           <ProfileMenu />
