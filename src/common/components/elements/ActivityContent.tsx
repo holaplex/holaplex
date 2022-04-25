@@ -231,26 +231,6 @@ const LoadingLinesContainer = styled.div`
   flex-direction: column;
 `;
 
-const NoActivityTitle = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 24px;
-  line-height: 32px;
-  text-align: center;
-`;
-
-const NoActivityText = styled.span`
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 24px;
-  color: #a8a8a8;
-  margin-top: 8px;
-  text-align: center;
-`;
-
 const ActivityContainer = styled.main`
   flex: 1;
   margin-top: 16px;
@@ -284,16 +264,4 @@ const ActivityBoxContainer = styled.div`
   border: 1px solid #262626;
   box-sizing: border-box;
   border-radius: 8px;
-`;
-
-const NFTImage = styled(Image)<{ $isPFPImage: boolean }>`
-  object-fit: contain;
-  ${({ $isPFPImage }) =>
-    $isPFPImage
-      ? css`
-          border-radius: 50%;
-        `
-      : css`
-          border-radius: 2px;
-        `}
 `;

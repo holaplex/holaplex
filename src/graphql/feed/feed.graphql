@@ -1,0 +1,73 @@
+query feed($address: PublicKey!) {
+  feedEvents(wallet: $address, limit: 1000, offset: 0) {
+    ... on MintEvent {
+      feedEventId
+      createdAt
+      nft {
+        name
+        image
+        description
+      }
+    }
+    ... on FollowEvent {
+      feedEventId
+      graphConnectionAddress
+      createdAt
+      connection {
+        address
+        from {
+          address
+          profile {
+            handle
+          }
+        }
+        to {
+          address
+          profile {
+            handle
+          }
+        }
+      }
+    }
+    ... on PurchaseEvent {
+      feedEventId
+      createdAt
+      purchase {
+        buyer
+        seller
+        price
+        nft {
+          name
+          image
+          description
+        }
+      }
+    }
+    ... on ListingEvent {
+      feedEventId
+      createdAt
+      listing {
+        seller
+        price
+        nft {
+          name
+          image
+          description
+        }
+      }
+    }
+    ... on OfferEvent {
+      feedEventId
+      createdAt
+      offer {
+        buyer
+        price
+        nft {
+          name
+          image
+          description
+        }
+      }
+    }
+  }
+}

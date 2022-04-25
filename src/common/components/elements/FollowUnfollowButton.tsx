@@ -13,7 +13,7 @@ import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 
 type FollowUnfollowButtonProps = {
-  source: 'modalFrom' | 'modalTo' | 'profileButton';
+  source: 'modalFrom' | 'modalTo' | 'profileButton' | 'feed';
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;

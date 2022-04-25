@@ -74,7 +74,7 @@ export interface IProfile {
 }
 
 interface NFT {
-  creator?: IProfile;
+  creators?: IProfile[];
   name: string;
   storeSubdomain: string;
   imageURL: string;
