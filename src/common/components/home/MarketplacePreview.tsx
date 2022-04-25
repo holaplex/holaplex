@@ -5,6 +5,7 @@ import { SolIcon } from '../elements/Price';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { AvatarIcons } from '../elements/Avatar';
+import { useMarketplacePreviewQuery } from 'src/graphql/indexerTypes';
 
 const LoadingPreview = () => {
   return (
@@ -15,18 +16,25 @@ const LoadingPreview = () => {
 };
 
 interface MarketplacePreviewProps {
-  loading: boolean;
-  data?: MarketplacePreviewData;
+  subdomain: string;
 }
 
-const MarketplacePreview: FC<MarketplacePreviewProps> = ({ loading, data }) => {
-  const [showDetails, setShowDetails] = useState(false);
+const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
   const { track } = useAnalytics();
-
+  
+  const [showDetails, setShowDetails] = useState(false);
   useEffect(() => setShowDetails(isTouchScreenOnly()), []);
-
   const onMouseEnter = useCallback(() => setShowDetails(true), []);
   const onMouseLeave = useCallback(() => setShowDetails(isTouchScreenOnly()), []);
+
+  const marketplaceQuery = useMarketplacePreviewQuery({
+    variables: {
+      subdomain: subdomain
+    },
+  });
+  let data: MarketplacePreviewData | undefined = marketplaceQuery?.data?.marketplace ? (marketplaceQuery.data.marketplace as MarketplacePreviewData) : undefined;
+  const loading: boolean = marketplaceQuery?.loading;
+
   const onClickMarketplaceLink = useCallback(() => {
     track('Marketplace Selected', {
       event_category: 'Discovery',

@@ -1,5 +1,6 @@
-import { FC } from "react";
-import { ChevronRight } from "../icons/ChevronRight";
+import { ChevronRightIcon } from '@heroicons/react/outline';
+import { FC } from 'react';
+import { ExternalLink, HomeLinkProps, InternalLink } from './HomeLink';
 
 type Header = FC;
 type Title = FC;
@@ -7,17 +8,16 @@ type HeaderAction<T> = FC<T>;
 type Body = FC;
 
 type HomeSectionSubtypes = {
-    Header: Header;
-    Title: Title;
-    HeaderAction: HeaderAction<HeaderActionProps>;
-    Body: Body;
-}
-
+  Header: Header;
+  Title: Title;
+  HeaderAction: HeaderAction<HeaderActionProps>;
+  Body: Body;
+};
 
 /**
  * Compound component for preview sections in the v2 homepage. Contains a title,
  * linked call to action, and body, e.g.
- * 
+ *
  * ```
  *  <HomeSection>
  *      <HomeSection.Header>
@@ -30,46 +30,42 @@ type HomeSectionSubtypes = {
  *  </HomeSection>
  * ```
  */
-const HomeSection: FC & HomeSectionSubtypes = ({children}) => (
-    <div className="w-full border border-white">
-        {children}
-    </div>
+const HomeSection: FC & HomeSectionSubtypes = ({ children }) => (
+  <div>{children}</div>
 );
 
-
 const HomeSectionHeader: Header = ({ children }) => (
-    <div className="flex flex-row justify-between items-center p-2 border-b border-gray-800 mb-8">
-        {children}
-    </div>
+  <div className="mb-4 flex flex-row items-center justify-between border-b border-gray-800 p-2">
+    {children}
+  </div>
 );
 HomeSection.Header = HomeSectionHeader;
 
-
-const HomeSectionTitle: Title = ({ children }) => <span className="text-lg font-medium text-white">{children}</span>;
+const HomeSectionTitle: Title = ({ children }) => (
+  <span className="text-lg font-medium text-white">{children}</span>
+);
 HomeSection.Title = HomeSectionTitle;
 
-
 interface HeaderActionProps {
-    href: string;
-    newTab?: boolean;
+  href: string;
+  external?: boolean;
 }
 
-
-const HomeSectionHeaderAction: HeaderAction<HeaderActionProps> = ({ href, newTab, children }) => (
-    <a 
-        href={href} 
-        target={newTab ? "_blank" : undefined}  
-        rel="noreferrer" 
-        className="text-sm text-gray-300 stroke-gray-300 hover:stroke-white font-medium flex flex-nowrap items-center hover:scale-105 hover:transition"
-    >
-        {children}
-        {/* using stroke class above to color same as text and change on hover */}
-        <ChevronRight/>
-    </a>
-);
+const HomeSectionHeaderAction: HeaderAction<HeaderActionProps> = ({ href, external, children }) => {
+  const LinkComponent: FC<HomeLinkProps> = external ? ExternalLink : InternalLink;
+  return (
+    <LinkComponent href={href}>
+      {children}
+      <ChevronRightIcon className="h-4 ml-2" />
+    </LinkComponent>
+  );
+};
 HomeSection.HeaderAction = HomeSectionHeaderAction;
 
 
+/**
+ * Container for main body of each home section. Add whatever content you want as children.
+ */
 const HomeSectionBody: Body = ({ children }) => <div>{children}</div>;
 HomeSection.Body = HomeSectionBody;
 
