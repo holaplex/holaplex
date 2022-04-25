@@ -43,13 +43,15 @@ export const ProfileContainer: FC = ({ children }) => {
               height={PFP_SIZE}
             />
             </div>
-            <div className='mt-[75px] ml-10 grow'>
+            <div className='mt-[70px] ml-4 grow'>
             { anchorWallet?.publicKey.toString() == profileData.publicKey.toString()  && 
             <ConnectTwitterButton
               address={new PublicKey(profileData.publicKey)}
               connection={connection}
               wallet={anchorWallet}
               cluster={"mainnet-beta"}
+              variant={"secondary"}
+              style={{"background": "rgb(33,33,33)", "height":"37px", "borderRadius": "18px"}}
             />}
             </div>
           </div>
