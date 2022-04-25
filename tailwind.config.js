@@ -23,7 +23,7 @@ module.exports = {
         },
         sharable: {
           nftCard: '#F1C1AA',
-          divider: '#EAB196'
+          divider: '#EAB196',
         },
         'hola-black': '#262626',
       },

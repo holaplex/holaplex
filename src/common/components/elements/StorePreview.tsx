@@ -11,7 +11,10 @@ const PreviewCard = styled(Card)`
   }
 
   .ant-card-meta {
-    margin: 40px 0 20px;
+    margin: 40px 0 20px 0;
+  }
+
+  .ant-card-meta-title {
   }
 
   .ant-avatar-lg {
@@ -20,28 +23,6 @@ const PreviewCard = styled(Card)`
     left: -40px;
     margin: 0 0 0 50%;
     border: 2px solid #f4f4f4;
-  }
-`;
-
-const Metadata = styled(Col)`
-  position: relative;
-  overflow: hidden;
-  &:after {
-    content: '';
-    display: block;
-    padding-bottom: 100%;
-  }
-  .ant-image {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
   }
 `;
 
@@ -73,6 +54,7 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
             }
           />
         }
+        className=""
         title={storefront.meta.title}
         description={
           <a
@@ -91,13 +73,24 @@ export default function StorePreview({ storefront, metadata }: StorePreviewProps
           </a>
         }
       />
-      {/* <Row justify="space-between">
-        {metadata.map((url, i) => (
-          <Metadata span={11} key={url + i}>
-            <img src={imgOpt(url, 600)} alt="featured nft image" className="aspect-square " />
-          </Metadata>
-        ))}
-      </Row> */}
+      {/* <div className="">
+        <div className="mb-2 truncate text-xl font-medium">{storefront.meta.title}</div>
+        <a
+          className="text-lg text-[#ffffff73]"
+          href={`https://${domain}`}
+          rel="nofollow noreferrer"
+          target="_blank"
+          onClick={() => {
+            track('Featured Storefront Selected', {
+              event_category: 'Discovery',
+              event_label: domain,
+              storefrontDomain: domain,
+            });
+          }}
+        >
+          {domain}
+        </a>
+      </div> */}
       <div className="grid grid-cols-2 gap-4">
         {metadata.map((url, i) => (
           <img

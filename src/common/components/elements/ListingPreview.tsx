@@ -21,7 +21,6 @@ const NFTPreview = styled(Image)<{ $show: boolean }>`
   border-top-right-radius: 8px;
   width: 100%;
   height: 100%;
-  /* border: solid 1px rgba(255, 255, 255, 0.1); */
 `;
 
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
@@ -158,7 +157,10 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className="mb-12 rounded-t-lg pt-1 shadow-black transition sm:hover:scale-[1.02] sm:hover:shadow-xl"
+      className={classNames(
+        'mb-12 rounded-t-lg pt-1 shadow-black transition',
+        meta.list === 'current-listings' ? 'sm:hover:scale-[1.02] sm:hover:shadow-xl' : ''
+      )}
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
