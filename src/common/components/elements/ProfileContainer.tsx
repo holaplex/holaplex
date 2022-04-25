@@ -12,7 +12,7 @@ import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData, asProfile } from '@/common/context/ProfileData';
-import { CenteredContentCol } from 'pages';
+
 import Footer from '../home/Footer';
 
 export const ProfileContainer: FC = ({ children }) => {
@@ -32,10 +32,9 @@ export const ProfileContainer: FC = ({ children }) => {
       <header>
         <Banner className='h-40 md:h-64 ' style={{ backgroundImage: `url(${banner})` }} />
       </header>
-      <CenteredContentCol className='lg:flex'>
-        <div className='relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs '>
-          <div className='flex flex-row justify-center -mt-12 lg:justify-start'>
-            <div>
+      <div className="container mx-auto px-6 pb-20 md:px-12 lg:flex">
+        <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
+          <div className="-mt-12 flex justify-center lg:justify-start">
             <ProfilePicture
               src={profilePicture}
               className='bg-gray-900'
@@ -75,7 +74,7 @@ export const ProfileContainer: FC = ({ children }) => {
             wallet={anchorWallet}
           />
         ) : null}
-      </CenteredContentCol>
+      </div>
       <Footer />
     </div>
     </WalletIdentityProvider>
