@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
+import '@dialectlabs/react-ui/index.css';
 import '@/styles/globals.less';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';

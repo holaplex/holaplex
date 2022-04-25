@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
 import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import DialectNotificationsButton from './DialectNotificationsButton';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -158,7 +159,7 @@ export function AppHeader() {
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
-
+            <DialectNotificationsButton />
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
