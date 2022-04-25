@@ -112,8 +112,8 @@ const HeroCarousel = styled(Carousel)`
     position: absolute;
     top: 0;
     right: 0;
-    margin-top: -18px;
-    margin-right: 16px;
+    margin-top: -24px;
+    margin-right: -2px;
     justify-content: flex-end;
 
     @media screen and (max-width: 575px) {
@@ -469,10 +469,10 @@ export default function Home({
             dots={{ className: 'carousel-dots' }}
             dotPosition="top"
             effect="fade"
-            className="home-carousel"
+            className="home-carousel max-w-full "
           >
             {featuredListings.map((listing, i) => (
-              <div key={listing.listingAddress} className="max-w-full  md:max-w-md">
+              <div key={listing.listingAddress} className="  max-w-full md:max-w-md ">
                 <ListingPreview
                   listing={listing}
                   meta={{
@@ -490,7 +490,7 @@ export default function Home({
 
       <section>
         <Title level={3}>Featured Creators</Title>
-        <div className="mt-16 grid gap-x-6 gap-y-16 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-16 grid max-w-full grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 xl:grid-cols-4">
           {featuredStorefronts.slice(0, 4).map((storefront) => (
             <StorePreview {...storefront} key={storefront.storefront.subdomain} />
           ))}
@@ -564,7 +564,7 @@ export default function Home({
             </div>,
           ]}
         />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid max-w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {take(show, displayedListings).map((listing: Listing, i) => (
             <ListingPreview
               key={listing?.listingAddress}
