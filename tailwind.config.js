@@ -21,11 +21,25 @@ module.exports = {
           800: '#262626',
           900: '#171717',
         },
+        sharable: {
+          nftCard: '#F1C1AA',
+          divider: '#EAB196',
+        },
         'hola-black': '#262626',
       },
       fontFamily: {
         sans: ['Inter ', ...defaultTheme.fontFamily.sans],
         mono: ['Space_Mono', ...defaultTheme.fontFamily.mono],
+      },
+      keyframes: {
+        loadingbar: {
+          '0%': { left: 0, width: 0, opacity: 0.5 },
+          '50%': { left: 0, width: '100%' },
+          '100%': { left: '100%', width: 0 },
+        },
+      },
+      animation: {
+        loading: 'loadingbar ease-in-out 4s infinite',
       },
     },
   },

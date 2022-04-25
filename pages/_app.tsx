@@ -12,11 +12,7 @@ import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { Close } from '@/common/components/icons/Close';
-import {
-  AnalyticsProvider,
-  OLD_GOOGLE_ANALYTICS_ID,
-  GA4_ID,
-} from '@/common/context/AnalyticsProvider';
+import { AnalyticsProvider } from '@/common/context/AnalyticsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -40,6 +36,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
+import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
 
 const { Content } = Layout;
 
@@ -49,38 +46,7 @@ const getSolanaNetwork = () => {
     : WalletAdapterNetwork.Mainnet;
 };
 
-const track = (category: string, action: string) => {
-  if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-    return;
-  }
-
-  window.gtag('event', action, {
-    event_category: category,
-    send_to: [OLD_GOOGLE_ANALYTICS_ID, GA4_ID],
-  });
-};
-
 function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-
-  const onRouteChanged = (path: string) => {
-    if (isNil(OLD_GOOGLE_ANALYTICS_ID)) {
-      return;
-    }
-
-    window.gtag('config', OLD_GOOGLE_ANALYTICS_ID, { page_path: path });
-  };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' || !OLD_GOOGLE_ANALYTICS_ID) {
-      return;
-    }
-    router.events.on('routeChangeComplete', onRouteChanged);
-    return () => {
-      router.events.off('routeChangeComplete', onRouteChanged);
-    };
-  }, [router.events]);
-
   const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
@@ -98,19 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 
   const queryClient = useMemo(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-            // retry: (failureCount, error) => {
-            //   console.log('failure count', failureCount, error);
-            //   return failureCount < 4;
-            //   // return 3;
-            // },
-          },
-        },
-      }),
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
 
@@ -135,23 +89,23 @@ function MyApp({ Component, pageProps }: AppProps) {
           closeButton={() => <Close color="#fff" />}
         />
         <ApolloProvider client={apolloClient}>
-          <ConnectionProvider endpoint={endpoint}>
+          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
                 <WalletProvider>
                   {({ wallet }) => (
-                    <StorefrontProvider wallet={wallet}>
-                      {({}) => {
-                        return (
-                          <MarketplaceProvider wallet={wallet}>
-                            {() => (
-                              <AnalyticsProvider>
-                                <AppLayout>
-                                  <div className="w-full items-center justify-center bg-[#005BBB] p-6 text-[#FFD500] sm:flex">
+                    <MultiTransactionProvider>
+                      <StorefrontProvider wallet={wallet}>
+                        {({}) => {
+                          return (
+                            <MarketplaceProvider wallet={wallet}>
+                              {() => (
+                                <AnalyticsProvider>
+                                  <div className="w-full items-center justify-center bg-[#005BBB] p-2 text-base text-[#FFD500] sm:flex">
                                     Help the people of Ukraine through SOL donations.
                                     <a
                                       href="https://donate.metaplex.com/"
-                                      className="ml-4 inline items-center justify-center underline transition-transform sm:flex sm:h-10 sm:rounded-full sm:bg-[#FFD500] sm:px-6 sm:text-[#005BBB] sm:no-underline sm:hover:scale-[1.02] sm:hover:text-[#005BBB]"
+                                      className="ml-4 inline items-center justify-center underline transition-transform sm:flex sm:h-8 sm:rounded-full sm:bg-[#FFD500] sm:px-4 sm:text-[#005BBB] sm:no-underline sm:hover:scale-[1.02] sm:hover:text-[#005BBB]"
                                       target="_blank"
                                       rel="noreferrer"
                                     >
@@ -159,18 +113,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                                     </a>
                                   </div>
                                   <AppHeader />
-                                  <AppContent>
-                                    <ContentWrapper>
-                                      <Component {...pageProps} track={track} />
-                                    </ContentWrapper>
-                                  </AppContent>
-                                </AppLayout>
-                              </AnalyticsProvider>
-                            )}
-                          </MarketplaceProvider>
-                        );
-                      }}
-                    </StorefrontProvider>
+                                  <Component {...pageProps} />
+                                </AnalyticsProvider>
+                              )}
+                            </MarketplaceProvider>
+                          );
+                        }}
+                      </StorefrontProvider>
+                    </MultiTransactionProvider>
                   )}
                 </WalletProvider>
               </WalletModalProvider>
@@ -183,17 +133,3 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
-
-const AppContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const ContentWrapper = styled.div`
-  padding-bottom: 3rem;
-`;
-
-const AppLayout = styled(Layout)`
-  overflow-y: auto;
-`;

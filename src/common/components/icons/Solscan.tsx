@@ -1,11 +1,16 @@
 import { FC } from 'react';
 
-export const SolscanIcon: FC = () => (
+interface SolscanIconProps {
+  width?: number;
+  height?: number;
+}
+
+export const SolscanIcon: FC<SolscanIconProps> = ({ width = 24, height = 24 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     version="1.1"
-    width="24"
-    height="24"
+    width={width}
+    height={height}
     viewBox="0, 0, 400,398.7341772151899"
   >
     <g id="svgg">

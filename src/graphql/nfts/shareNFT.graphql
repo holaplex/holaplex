@@ -1,0 +1,54 @@
+query shareNFT($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+
+    auctionHouse {
+      address
+      stats {
+        floor
+        average
+        volume24hr
+      }
+    }
+  }
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      price
+    }
+    listings {
+      address
+      price
+    }
+    offers {
+      address
+      buyer
+      price
+    }
+  }
+}

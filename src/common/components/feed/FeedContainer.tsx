@@ -25,7 +25,8 @@ function MyActivityList() {
   const activityItems = useMemo(
     () =>
       activityPage.data?.wallet?.bids
-        ? getActivityItemsFromBids(activityPage.data.wallet.bids!)
+        ? // @ts-ignore
+          getActivityItemsFromBids(activityPage.data.wallet.bids!)
         : [],
 
     [activityPage.data?.wallet?.bids]

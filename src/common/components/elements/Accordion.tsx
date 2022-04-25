@@ -7,15 +7,27 @@ interface Props {
   children: React.ReactNode;
   allowHorizOverflow?: boolean;
   defaultOpen?: boolean;
+  amount?: number;
 }
 
-function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props }: Props) {
+function Accordion({ title, children, allowHorizOverflow, defaultOpen, amount, ...props }: Props) {
   return (
-    <Disclosure {...props}>
+    <Disclosure defaultOpen={defaultOpen} {...props}>
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex h-[71px] w-full justify-between rounded-t border border-gray-700 p-6">
-            <p className="m-0"> {title}</p>
+          <Disclosure.Button
+            className={`flex h-[71px] w-full items-center justify-between ${
+              open ? `rounded-t-lg` : `rounded-lg`
+            } border border-gray-800 p-6`}
+          >
+            <div className={`flex items-center gap-4`}>
+              <p className="m-0"> {title}</p>
+              {amount && (
+                <div className={`flex h-6 w-6 items-center justify-center rounded-md bg-gray-800`}>
+                  {amount}
+                </div>
+              )}
+            </div>
 
             <ChevronRight
               color="#fff"
@@ -35,7 +47,7 @@ function Accordion({ title, children, allowHorizOverflow, defaultOpen, ...props 
             leaveTo="transform scale-95 opacity-0"
           >
             <div
-              className={cx('rounded-b border border-t-0 border-gray-700 p-6', {
+              className={cx('rounded-b border border-t-0 border-gray-800 p-6', {
                 'overflow-x-auto': allowHorizOverflow,
               })}
             >

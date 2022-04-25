@@ -14,6 +14,7 @@ interface BuySellFormProps {
 }
 
 // TODO: WIP move things to here once all methods are implemented and clean everything up
+// TODO: Don't forget to add analytics as well useAnalytics()
 
 const BuySellForm: FC<BuySellFormProps> = ({ nft, marketplace }) => {
   const { publicKey } = useWallet();

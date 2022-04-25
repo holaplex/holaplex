@@ -4,12 +4,14 @@ import { SolIcon } from './elements/Price';
 
 interface DisplaySOLProps extends HTMLAttributes<HTMLParagraphElement> {
   amount: number;
-  iconVariant?: `small` | `large`;
+  iconVariant?: `small` | `large` | `smallB` | `largeB`;
 }
 
 const iconVariants = {
   small: <SolIcon className="mr-1 h-3 w-3" stroke={`grey`} />,
   large: <SolIcon className="mr-2 h-5 w-5" stroke={`grey`} />,
+  smallB: <SolIcon className="mr-1 h-3 w-3" stroke={`black`} />,
+  largeB: <SolIcon className="mr-1 h-5 w-5" stroke={`black`} />,
 };
 
 export const DisplaySOL: FC<DisplaySOLProps> = ({

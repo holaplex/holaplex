@@ -14,32 +14,6 @@ import { maybeCDN, imgOpt } from '@/common/utils';
 import AuctionCountdown from './Countdown';
 import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
 
-const Square = styled(Row)`
-  position: relative;
-  flex-basis: calc(33.333% - 10px);
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-
-  &:before {
-    content: '';
-    display: block;
-    padding-top: 100%;
-  }
-
-  > * {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-  }
-
-  .ant-image-mask {
-    background: rgba(0, 0, 0, 0) !important;
-  }
-`;
-
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
   object-fit: cover;
@@ -47,20 +21,6 @@ const NFTPreview = styled(Image)<{ $show: boolean }>`
   border-top-right-radius: 8px;
   width: 100%;
   height: 100%;
-  /* border: solid 1px rgba(255, 255, 255, 0.1); */
-`;
-
-// adds the active loading animation to the antd skeleton image
-const StyledSkeletonImage = styled(Skeleton.Image)`
-  background-size: 400% 100%;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-
-  > .ant-skeleton-image > svg {
-    display: none;
-  }
-  width: 100% !important;
-  height: 100% !important;
 `;
 
 // Going with a full replace of the listing during loading for now, but might revert to swapping individual parts of the component below with its loading state. (as done in a previous commit)
@@ -197,7 +157,10 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className="mb-12 rounded-t-lg pt-1 shadow-black transition sm:hover:scale-[1.02] sm:hover:shadow-xl"
+      className={classNames(
+        'mb-12 rounded-t-lg pt-1 shadow-black transition',
+        meta.list === 'current-listings' ? 'sm:hover:scale-[1.02] sm:hover:shadow-xl' : ''
+      )}
       onClick={() => {
         track('Listing Selected', {
           event_category: 'Discovery',
@@ -208,38 +171,37 @@ export function ListingPreview({
       }}
     >
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
-        <Square>
-          <NFTPreview
-            $show={inView}
-            src={imgOpt(nft?.image || '', 600)}
-            preview={{
-              visible: showArtPreview,
-              mask: (
-                <CustomImageMask
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setShowArtPreview(true);
-                    track('Listing Preview Expanded', {
-                      event_category: 'Discovery',
-                      event_label: nftMetadata.name,
-                      ...meta,
-                      ...addListingToTrackCall(listing),
-                    });
-                  }}
-                >
-                  <CustomExpandIcon />
-                </CustomImageMask>
-              ),
-              onVisibleChange: (visible, prevVisible) => {
-                prevVisible && setShowArtPreview(visible);
-              },
-              destroyOnClose: true,
-            }}
-            alt={nftMetadata?.name + ' preview'}
-            fallback={NFTFallbackImage}
-          />
-        </Square>
+        <NFTPreview
+          className="aspect-square"
+          $show={inView}
+          src={imgOpt(nft?.image || '', 600)}
+          preview={{
+            visible: showArtPreview,
+            mask: (
+              <CustomImageMask
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setShowArtPreview(true);
+                  track('Listing Preview Expanded', {
+                    event_category: 'Discovery',
+                    event_label: nftMetadata.name,
+                    ...meta,
+                    ...addListingToTrackCall(listing),
+                  });
+                }}
+              >
+                <CustomExpandIcon />
+              </CustomImageMask>
+            ),
+            onVisibleChange: (visible, prevVisible) => {
+              prevVisible && setShowArtPreview(visible);
+            },
+            destroyOnClose: true,
+          }}
+          alt={nftMetadata?.name + ' preview'}
+          fallback={NFTFallbackImage}
+        />
       </a>
       <div className="border-x border-gray-800 px-4 pt-4 pb-5">
         <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">

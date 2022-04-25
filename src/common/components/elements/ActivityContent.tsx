@@ -52,11 +52,8 @@ export function getActivityItemsFromBids(bids: Bid[]) {
           bidCancelled: bid.cancelled,
           wonListing: listingEnded && hasHighestBid,
         },
-        listing: {
-          address: listing.address,
-          ended: listing.ended,
-        },
-        storefront: storefront!,
+        listing: listing,
+        storefront: storefront,
       };
 
       if (listingEnded) {
@@ -122,7 +119,8 @@ export const ActivityContent = () => {
   const activityItems = useMemo(
     () =>
       activityPage.data?.wallet?.bids
-        ? getActivityItemsFromBids(activityPage.data.wallet.bids!)
+        ? // @ts-ignore
+          getActivityItemsFromBids(activityPage.data.wallet.bids)
         : [],
 
     [activityPage.data?.wallet?.bids]

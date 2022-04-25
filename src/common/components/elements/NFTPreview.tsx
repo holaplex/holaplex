@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react';
 import { LoadingContainer } from './LoadingPlaceholders';
-import { Avatar, OverlappingCircles } from '../../../../pages/nfts/[address]';
 import { imgOpt } from '../../utils';
 import Link from 'next/link';
 import { Nft } from '../../../graphql/indexerTypes';
 import { OverlappingAvatarSkeleton, TextSkeleton } from './Skeletons';
+import { Avatar, AvatarIcons } from './Avatar';
 
 const LoadingPreview = () => {
   return (
@@ -61,7 +61,7 @@ const NFTPreview: FC<NFTPreviewProps> = ({ loading, nft }) => {
             </Link>
           ) : (
             <div>
-              <OverlappingCircles creators={nft?.creators || []} />
+              <AvatarIcons creators={nft?.creators || []} />
             </div>
           )}
         </ul>

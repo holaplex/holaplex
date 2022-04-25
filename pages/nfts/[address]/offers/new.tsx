@@ -1,17 +1,14 @@
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { LoadingContainer } from '@/components/elements/LoadingPlaceholders';
+import { useEffect, useState } from 'react';
 import Modal from '@/components/elements/Modal';
 import OfferForm from '@/components/forms/OfferForm';
 import BlurPage from '@/components/layouts/BlurPage';
-import { imgOpt } from '@/common/utils';
-import { useNftMarketplaceQuery, useNftPageQuery } from '../../../../src/graphql/indexerTypes';
+import { useNftMarketplaceQuery } from '../../../../src/graphql/indexerTypes';
 import { Nft, Marketplace } from '@/types/types';
 
 import Custom404 from '../../../404';
-import NftByAddress, { Avatar, OverlappingCircles } from '../../[address]';
+import NftByAddress from '../../[address]';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import NFTPreview from '../../../../src/common/components/elements/NFTPreview';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -39,6 +36,7 @@ const NewNFTOffer = ({ address }: { address: string }) => {
 
   const nft = data?.nft;
   const marketplace = data?.marketplace;
+  const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
   const router = useRouter();
 
@@ -46,12 +44,18 @@ const NewNFTOffer = ({ address }: { address: string }) => {
     router.push(`/nfts/${address}`);
   };
 
-  if (called && !data?.nft && !loading) {
-    return <Custom404 />;
+  useEffect(() => {
+    if (!publicKey || (isOwner && router)) {
+      goBack();
+    }
+  }, [publicKey, isOwner, router, goBack]);
+
+  if (!publicKey || (isOwner && router)) {
+    return null;
   }
 
-  if (!publicKey) {
-    goBack();
+  if (called && !data?.nft && !loading) {
+    return <Custom404 />;
   }
 
   return (

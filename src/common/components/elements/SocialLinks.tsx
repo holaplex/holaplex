@@ -5,7 +5,7 @@ import Image from 'next/image';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import DiscordLogo from '@/assets/images/discord-logo.svg';
-import MediumLogo from '@/assets/images/medium-blog-logo.svg';
+import MediumLogo from '@/assets/images/medium-logo.svg';
 
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
@@ -26,13 +26,13 @@ const SocialLink = styled.a`
     /* color: ${sv.colors.cta}; */
     opacity: 1;
   }
-  transform: scale(1.2);
+  transform: scale(1);
 `;
 
 const SocialLinks = () => {
   const { track } = useAnalytics();
 
-  function trackSocialLink(network: 'Twitter' | 'Medium' | 'Github' | 'Discord') {
+  function trackSocialLink(network: 'Twitter' | 'Medium' | 'Github' | 'Discord' | 'YouTube') {
     track('Social link Click', {
       event_category: 'Misc',
       event_label: network,
@@ -61,6 +61,14 @@ const SocialLinks = () => {
         <FeatherIcon icon="instagram" />
       </SocialLink> */}
       <SocialLink
+        href="https://discord.com/invite/holaplex"
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => trackSocialLink('Discord')}
+      >
+        <Image width={24} height={24} src={DiscordLogo} alt="discord" />
+      </SocialLink>
+      <SocialLink
         href="https://github.com/holaplex"
         target="_blank"
         rel="noreferrer"
@@ -69,12 +77,12 @@ const SocialLinks = () => {
         <FeatherIcon icon="github" />
       </SocialLink>
       <SocialLink
-        href="https://discord.com/invite/holaplex"
+        href="https://www.youtube.com/channel/UCHcdpZiDj7LiBifxetVH29Q"
         target="_blank"
         rel="noreferrer"
-        onClick={() => trackSocialLink('Discord')}
+        onClick={() => trackSocialLink('YouTube')}
       >
-        <Image width={24} height={24} src={DiscordLogo} alt="discord" />
+        <FeatherIcon icon="youtube" />
       </SocialLink>
       <SocialLink
         href=" https://medium.com/holaplex"

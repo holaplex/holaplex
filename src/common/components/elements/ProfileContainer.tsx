@@ -9,7 +9,8 @@ import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData, asProfile } from '@/common/context/ProfileData';
-import { CenteredContentCol } from 'pages';
+
+import Footer from '../home/Footer';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
@@ -23,9 +24,9 @@ export const ProfileContainer: FC = ({ children }) => {
       <header>
         <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
       </header>
-      <CenteredContentCol className="md:flex">
-        <div className="relative md:sticky md:top-24 md:h-96 md:w-full md:max-w-xs ">
-          <div className="-mt-12 flex justify-center md:justify-start">
+      <div className="container mx-auto px-6 pb-20 md:px-12 lg:flex">
+        <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
+          <div className="-mt-12 flex justify-center lg:justify-start">
             <ProfilePicture
               src={profilePicture}
               className="bg-gray-900"
@@ -33,7 +34,7 @@ export const ProfileContainer: FC = ({ children }) => {
               height={PFP_SIZE}
             />
           </div>
-          <div className="mt-10 flex justify-center  md:justify-start">
+          <div className="mt-10 flex justify-center  lg:justify-start">
             <ProfileDisplayName />
           </div>
           <FollowerCount
@@ -41,10 +42,10 @@ export const ProfileContainer: FC = ({ children }) => {
             setShowFollowsModal={setShowFollowsModal}
           />
         </div>
-        <ContentWrapper>
+        <div className="mt-10 w-full">
           <ProfileMenu />
           {children}
-        </ContentWrapper>
+        </div>
         {anchorWallet ? (
           <FollowModal
             visibility={showFollowsModal}
@@ -53,7 +54,8 @@ export const ProfileContainer: FC = ({ children }) => {
             wallet={anchorWallet}
           />
         ) : null}
-      </CenteredContentCol>
+      </div>
+      <Footer />
     </div>
   );
 };
@@ -97,36 +99,10 @@ const ProfileDisplayName: FC = () => {
 };
 
 export const PFP_SIZE = 100;
-const BOX_SIZE = 1400;
-
-const ContentWrapper = styled.section`
-  margin-top: ${PFP_SIZE / 2}px;
-  width: 100%;
-`;
 
 const ProfilePicture = styled(Image)`
   border-radius: 50%;
   border: 5px solid #161616 !important;
-`;
-
-const ContentCol = styled.div`
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  padding-left: 20px;
-  padding-right: 20px;
-  ${mq('md')} {
-    padding-left: ${PFP_SIZE - 40}px;
-    padding-right: ${PFP_SIZE - 40}px;
-    max-width: ${BOX_SIZE}px;
-    flex-direction: row;
-  }
-  ${mq('lg')} {
-    padding-left: ${PFP_SIZE - 20}px;
-    padding-right: ${PFP_SIZE - 20}px;
-  }
 `;
 
 const Banner = styled.div`

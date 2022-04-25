@@ -74,7 +74,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   return (
     <>
       <div className="flex flex-col">
-        <div className="mt-10 flex justify-between md:justify-start">
+        <div className="mt-10 flex justify-between lg:justify-start">
           <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
             <div className="text-left font-semibold">{allConnectionsTo.data?.length ?? 0}</div>
             <div className="text-sm font-medium text-gray-200">Followers</div>
@@ -116,7 +116,7 @@ type FollowedByProps = {
 const FollowedBy: FC<FollowedByProps> = ({ followers, onOtherFollowersClick }) => {
   const followerLength = followers?.length ?? 0;
   return (
-    <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
+    <div className="mt-2 flex  items-center justify-center space-x-2 lg:justify-start lg:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2  flex flex-row">
         {(followers ?? []).slice(0, 4).map((follower, i) => (
