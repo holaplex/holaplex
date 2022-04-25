@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
-import { MouseEventHandler, MutableRefObject, UIEvent, UIEventHandler, useRef, useState, VFC } from 'react';
+import { MouseEventHandler, MutableRefObject, UIEvent, UIEventHandler, useEffect, useRef, useState, VFC } from 'react';
 import HomeSection from './HomeSection';
 import MarketplacePreview from './MarketplacePreview';
 
@@ -45,6 +45,9 @@ const FeaturedMarkeplacesSection: VFC = () => {
       else setCanScrollRight(true);
     }
   }
+
+
+  useEffect(updateFromScrolling);
 
 
   return (
