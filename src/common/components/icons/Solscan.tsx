@@ -3,10 +3,12 @@ import { FC } from 'react';
 interface SolscanIconProps {
   width?: number;
   height?: number;
+  className?: string;
 }
 
-export const SolscanIcon: FC<SolscanIconProps> = ({ width = 24, height = 24 }) => (
+export const SolscanIcon: FC<SolscanIconProps> = ({ width = 24, height = 24, className }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     version="1.1"
     width={width}
