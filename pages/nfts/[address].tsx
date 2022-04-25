@@ -11,7 +11,7 @@ import { imgOpt } from '../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { DateTime } from 'luxon';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
@@ -39,6 +39,7 @@ import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.
 import Head from 'next/head';
 import { Avatar, AvatarIcons } from '@/common/components/elements/Avatar';
 import Footer from '@/common/components/home/Footer';
+import { seededRandomBetween } from '../../src/modules/utils/random';
 
 const Activities = ({
   listings,
@@ -103,7 +104,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       address: nftAddress,
       name: data.nft?.name || nftAddress,
       description: data.nft?.description || '',
-      image: data.nft?.image || `/images/gradients/gradient-1.png`,
+      image:
+        data.nft?.image ||
+        `/images/gradients/gradient-${seededRandomBetween(
+          new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
+          1,
+          8
+        )}.png`,
       listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
       offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
     },
@@ -214,6 +221,7 @@ export default function NftByAddress({
           <meta name="twitter:title" content={`${name} NFT | Holaplex`} />
           <meta name="twitter:description" content={description} />
           <meta name="twitter:image:src" content={image} />
+          <meta name="twitter:image" content={image} />
           <meta name="twitter:site" content="@holaplex" />
           {/* Open Graph */}
           <meta name="og-title" content={`${name} NFT | Holaplex`} />
