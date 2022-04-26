@@ -21,7 +21,7 @@ interface MarketplacePreviewProps {
 
 const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
   const { track } = useAnalytics();
-  
+
   const [showDetails, setShowDetails] = useState(false);
   useEffect(() => setShowDetails(isTouchScreenOnly()), []);
   const onMouseEnter = useCallback(() => setShowDetails(true), []);
@@ -29,16 +29,18 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
 
   const marketplaceQuery = useMarketplacePreviewQuery({
     variables: {
-      subdomain: subdomain
+      subdomain: subdomain,
     },
   });
-  let data: MarketplacePreviewData | undefined = marketplaceQuery?.data?.marketplace ? (marketplaceQuery.data.marketplace as MarketplacePreviewData) : undefined;
+  let data: MarketplacePreviewData | undefined = marketplaceQuery?.data?.marketplace
+    ? (marketplaceQuery.data.marketplace as MarketplacePreviewData)
+    : undefined;
   const loading: boolean = marketplaceQuery?.loading;
 
   const onClickMarketplaceLink = useCallback(() => {
     track('Marketplace Selected', {
       event_category: 'Discovery',
-      event_label: data ? data.subdomain : "unknown-subdomain",
+      event_label: data ? data.subdomain : 'unknown-subdomain',
     });
   }, [data, track]);
 
@@ -55,26 +57,31 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
 
   const marketplaceUrl: string = `https://${data.subdomain}.holaplex.market`;
   const nftVolumeStr: string = Number.parseInt(data.stats.nfts).toLocaleString();
-  const floorPriceSol: number = Number.parseFloat(data.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
+  const floorPriceSol: number =
+    Number.parseFloat(data.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
 
   try {
-
     return (
       <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         {/* preview image */}
-        <div className="flex relative overflow-clip">
-          <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
+        <div className="relative flex">
+          <a
+            href={marketplaceUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={onClickMarketplaceLink}
+          >
             <img
-              src={imgOpt(data.bannerUrl, 600)}
+              src={imgOpt(data.bannerUrl, 800)}
               alt={`${data.name}`}
-              className="object-cover h-full w-full"
+              className="aspect-video min-h-full min-w-full object-cover"
             />
           </a>
-  
+
           {/* preview gradient overlay */}
           <div className="pointer-events-none absolute h-full w-full bg-gradient-to-b from-black/20 to-black/70" />
         </div>
-  
+
         {/* creator icons
               allow pointer events through the container div for clickable preview image while also allowing
               pointer events on the creator icons */}
@@ -89,11 +96,11 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             />
           </div>
         </div>
-  
+
         {/* marketplace name, NFT volume, and floor price section */}
         <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
           <span className="text-xl font-semibold text-white">{data.name}</span>
-  
+
           {/* NFT volume and floor price row container
                   Using height and opacity (rather than 'display') to animate bottom-text appearing */}
           <div
@@ -102,7 +109,11 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             } flex flex-row items-center justify-between overflow-hidden duration-150`}
           >
             <span className="text-left text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
-            <div className={`${floorPriceSol == 0 ? "hidden" : ""} flex flex-row text-right text-base font-medium`}>
+            <div
+              className={`${
+                floorPriceSol == 0 ? 'hidden' : ''
+              } flex flex-row text-right text-base font-medium`}
+            >
               <span className="mr-3">Floor price:</span>
               <Price priceSol={floorPriceSol} />
             </div>
@@ -113,7 +124,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
   } catch (e) {
     console.error(e);
     console.log(data);
-    return <LoadingPreview/>;
+    return <LoadingPreview />;
   }
 };
 
@@ -145,7 +156,7 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02]"
+      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02]"
       {...props}
     />
   );
