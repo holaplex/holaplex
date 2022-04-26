@@ -29,6 +29,7 @@
     "@aws-sdk/types": "^3.29.0",
     "@bugsnag/js": "^7.14.1",
     "@bugsnag/plugin-react": "^7.14.0",
+    "@cardinal/namespaces-components": "^3.0.0",
     "@fontsource/material-icons": "^4.5.2",
     "@google/model-viewer": "^1.9.2",
     "@graphql-codegen/typescript-graphql-request": "^4.4.4",

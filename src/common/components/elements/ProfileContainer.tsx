@@ -1,6 +1,9 @@
 import { ProfileMenu } from '@/common/components/elements/ProfileMenu';
 import { mq } from '@/common/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { ConnectTwitterButton, WalletIdentityProvider } from '@cardinal/namespaces-components';
+import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
 import { FC, useState } from 'react';
 import styled from 'styled-components';
@@ -14,27 +17,46 @@ import Footer from '../home/Footer';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
-  const { banner, profilePicture } = profileData;
+  const { banner, profilePicture, twitterHandle } = profileData;
+
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
+  const { connection } = useConnection();
 
   return (
+    <WalletIdentityProvider
+    appName="Holaplex"
+    appTwitter="@holaplex"
+  >
     <div>
       <header>
-        <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
+        <Banner className='h-40 md:h-64 ' style={{ backgroundImage: `url(${banner})` }} />
       </header>
-      <div className="container mx-auto px-6 pb-20 md:px-12 lg:flex">
+      <div className="container px-6 pb-20 mx-auto md:px-12 lg:flex">
         <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
-          <div className="-mt-12 flex justify-center lg:justify-start">
+          <div className="flex-col justify-center -mt-12 text-center lg:justify-start">
+            <div>
             <ProfilePicture
               src={profilePicture}
-              className="bg-gray-900"
+              className='bg-gray-900'
               width={PFP_SIZE}
               height={PFP_SIZE}
             />
+            </div>
+            <div className='mt-2 ml-4'>
+            { anchorWallet?.publicKey.toString() == profileData.publicKey.toString() && !twitterHandle && 
+            <ConnectTwitterButton
+              address={new PublicKey(profileData.publicKey)}
+              connection={connection}
+              wallet={anchorWallet}
+              cluster={"mainnet-beta"}
+              variant={"secondary"}
+              style={{"background": "rgb(33,33,33)", "height":"37px", "borderRadius": "18px"}}
+            />}
+            </div>
           </div>
-          <div className="mt-10 flex justify-center  lg:justify-start">
+          <div className='flex justify-center mt-10 lg:justify-start'>
             <ProfileDisplayName />
           </div>
           <FollowerCount
@@ -42,7 +64,7 @@ export const ProfileContainer: FC = ({ children }) => {
             setShowFollowsModal={setShowFollowsModal}
           />
         </div>
-        <div className="mt-10 w-full">
+        <div className='w-full mt-10'>
           <ProfileMenu />
           {children}
         </div>
@@ -57,6 +79,7 @@ export const ProfileContainer: FC = ({ children }) => {
       </div>
       <Footer />
     </div>
+    </WalletIdentityProvider>
   );
 };
 
@@ -73,24 +96,24 @@ const ProfileDisplayName: FC = () => {
   };
 
   return (
-    <div className="flex items-center text-2xl font-medium">
+    <div className='flex items-center text-2xl font-medium'>
       {twitterHandle ? (
         <a
-          className="hover:text-gray-300"
-          target="_blank"
+          className='hover:text-gray-300'
+          target='_blank'
           href={'https://www.twitter.com/' + twitterHandle}
-          rel="noreferrer"
+          rel='noreferrer'
         >
           @{twitterHandle}
         </a>
       ) : (
-        <span className="font-mono ">{shortenAddress(publicKey)}</span>
+        <span className='font-mono '>{shortenAddress(publicKey)}</span>
       )}
       {copied ? (
-        <CheckIcon className="ml-4 h-7 w-7  hover:text-gray-300" />
+        <CheckIcon className='ml-4 h-7 w-7 hover:text-gray-300' />
       ) : (
         <DuplicateIcon
-          className="ml-4 h-7 w-7 cursor-pointer  hover:text-gray-300"
+          className='ml-4 cursor-pointer h-7 w-7 hover:text-gray-300'
           onClick={copyPubKey}
         />
       )}
