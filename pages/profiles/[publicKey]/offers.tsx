@@ -88,14 +88,14 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
     return (
       <div
         onClick={() => setFilter(filterToCheck)}
-        className={`flex  flex-row items-center justify-between rounded-lg font-medium ${
+        className={`flex w-28 flex-row items-center justify-center gap-2 rounded-full p-2 font-medium ${
           filter === filterToCheck
             ? `bg-gray-800`
-            : `cursor-pointer bg-gray-900 text-gray-300 hover:bg-gray-800`
-        } p-1`}
+            : `cursor-pointer border border-gray-800 bg-gray-900 text-gray-300 hover:bg-gray-800`
+        }`}
       >
-        <p className={`mb-0 border-r-2 border-gray-300 px-2 text-base`}>{title}</p>
-        <p className={`mb-0 px-2 text-base`}>{count}</p>
+        <p className={`mb-0 first-letter:text-base`}>{title}</p>
+        <p className={`mb-0 text-base`}>{count}</p>
       </div>
     );
   };
@@ -111,14 +111,16 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
         />
       </Head>
       <ProfileContainer>
-        <div className={`mb-8 mt-6 grid grid-cols-3 gap-6 lg:flex`}>
-          <OfferFilter title={`All`} count={offerCount} filterToCheck={OfferFilters.ALL} />
-          <OfferFilter title={`Made`} count={sentCount} filterToCheck={OfferFilters.MADE} />
-          <OfferFilter
-            title={`Received`}
-            count={receivedCount}
-            filterToCheck={OfferFilters.RECEIVED}
-          />
+        <div className="sticky top-0 z-30 mb-2 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
+          <div className={`flex w-full justify-start gap-4 lg:items-center`}>
+            <OfferFilter title={`All`} count={offerCount} filterToCheck={OfferFilters.ALL} />
+            <OfferFilter title={`Made`} count={sentCount} filterToCheck={OfferFilters.MADE} />
+            <OfferFilter
+              title={`Received`}
+              count={receivedCount}
+              filterToCheck={OfferFilters.RECEIVED}
+            />
+          </div>
         </div>
         <div className={`grid grid-cols-1 gap-4`}>
           {(filter === OfferFilters.ALL || filter === OfferFilters.RECEIVED) &&

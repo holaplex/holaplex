@@ -13,9 +13,9 @@ import { TripleGrid } from '@/components/icons/TripleGrid';
 import { ProfileDataProvider } from '../../../src/common/context/ProfileData';
 import Head from 'next/head';
 import { showFirstAndLastFour } from '../../../src/modules/utils/string';
-import { ProfileContainer } from '../../../src/common/components/elements/ProfileContainer';
-import TextInput2 from '../../../src/common/components/elements/TextInput2';
-import { NFTGrid } from './nfts';
+import { ProfileContainer } from '@/components/elements/ProfileContainer';
+import TextInput2 from '@/components/elements/TextInput2';
+import { INFINITE_SCROLL_AMOUNT_INCREMENT, NFTGrid } from './nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty } from 'ramda';
@@ -146,7 +146,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
         <meta property="description" key="description" content="View owned and created NFTs" />
       </Head>
       <ProfileContainer>
-        <div className="mb-4 flex flex-col items-center gap-6 lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-30 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -182,7 +182,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore}
+          hasMore={hasMore && nftsToShow.length > 99}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;
@@ -191,7 +191,8 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
             const { data: newData } = await fetchMore({
               variables: {
                 ...variables,
-                offset: nftsToShow.length + 100,
+                limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+                offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
               },
               updateQuery: (prev, { fetchMoreResult }) => {
                 if (!fetchMoreResult) return prev;
