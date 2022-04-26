@@ -11,7 +11,7 @@ import { imgOpt } from '../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { DateTime } from 'luxon';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
@@ -39,6 +39,9 @@ import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.
 import Head from 'next/head';
 import { Avatar, AvatarIcons } from '@/common/components/elements/Avatar';
 import Footer from '@/common/components/home/Footer';
+import { seededRandomBetween } from '../../src/modules/utils/random';
+import { SolscanIcon } from '../../src/common/components/icons/Solscan';
+import { ExplorerIcon } from '../../src/common/components/icons/Explorer';
 
 const Activities = ({
   listings,
@@ -103,7 +106,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       address: nftAddress,
       name: data.nft?.name || nftAddress,
       description: data.nft?.description || '',
-      image: data.nft?.image || `/images/gradients/gradient-1.png`,
+      image:
+        data.nft?.image ||
+        `/images/gradients/gradient-${seededRandomBetween(
+          new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
+          1,
+          8
+        )}.png`,
       listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
       offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
     },
@@ -192,6 +201,29 @@ export default function NftByAddress({
     setSellUpdateModalVisibility(true);
   };
 
+  const DetailAddressRow = ({ address, title }: { address?: string; title: string }) => (
+    <div className={`flex items-center justify-between`}>
+      <p className={`m-0 text-base font-normal text-gray-300`}>{title}</p>
+      <div className={`flex flex-row items-center justify-end gap-2`}>
+        <Link href={`https://explorer.solana.com/address/${address}`}>
+          <a target={`_blank`}>
+            <ExplorerIcon
+              width={16}
+              height={16}
+              className={`ease-in-out hover:bg-gradient-to-tr hover:from-purple-500 hover:to-green-500 hover:bg-clip-text hover:text-purple-300`}
+            />
+          </a>
+        </Link>
+        <Link href={`https://solscan.io/account/${address}`}>
+          <a target={`_blank`}>
+            <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-teal-300`} />
+          </a>
+        </Link>
+        <p className={`m-0 text-base font-normal text-gray-300`}>{shortenAddress(address)}</p>
+      </div>
+    </div>
+  );
+
   if (called && !data?.nft && !loading) {
     return <Custom404 />;
   }
@@ -214,6 +246,7 @@ export default function NftByAddress({
           <meta name="twitter:title" content={`${name} NFT | Holaplex`} />
           <meta name="twitter:description" content={description} />
           <meta name="twitter:image:src" content={image} />
+          <meta name="twitter:image" content={image} />
           <meta name="twitter:site" content="@holaplex" />
           {/* Open Graph */}
           <meta name="og-title" content={`${name} NFT | Holaplex`} />
@@ -233,7 +266,7 @@ export default function NftByAddress({
                   <>
                     <div className="flex items-center justify-between">
                       <h1 className="!mb-4 !text-2xl !font-semibold">{nft?.name}</h1>
-                      <MoreDropdown address={nft?.mintAddress || ''} />
+                      <MoreDropdown address={nft?.address || ''} />
                     </div>
 
                     <p className="text-lg">{nft?.description}</p>
@@ -262,7 +295,7 @@ export default function NftByAddress({
                   <>
                     <div className="flex justify-between">
                       <h1 className="mb-4 text-2xl font-semibold">{nft?.name}</h1>
-                      <MoreDropdown address={nft?.mintAddress || ''} />
+                      <MoreDropdown address={nft?.address || ''} />
                     </div>
 
                     <p className="text-lg">{nft?.description}</p>
@@ -615,6 +648,37 @@ export default function NftByAddress({
                             </div>
                           ))
                         )}
+                      </div>
+                    </Accordion>
+                  </div>
+                )}
+
+                {nft?.mintAddress && nft.address && (
+                  <div>
+                    <Accordion title={`Details`}>
+                      <div className={`grid grid-cols-1 gap-4`}>
+                        <DetailAddressRow title={`Mint address`} address={nft.mintAddress} />
+                        <DetailAddressRow title={`Token address`} address={nft.address} />
+                        <DetailAddressRow
+                          title={`Auction house`}
+                          address={defaultListing?.address}
+                        />
+                        <div className={`flex items-center justify-between`}>
+                          <p className={`m-0 text-base font-normal text-gray-300`}>
+                            Creator royalties
+                          </p>
+                          <p className={`m-0 text-base font-normal text-gray-300`}>
+                            {Number(nft.sellerFeeBasisPoints) / 100}%
+                          </p>
+                        </div>
+                        <div className={`flex items-center justify-between`}>
+                          <p className={`m-0 text-base font-normal text-gray-300`}>
+                            Transaction fee
+                          </p>
+                          <p className={`m-0 text-base font-normal text-gray-300`}>
+                            {Number(marketplace?.auctionHouse?.sellerFeeBasisPoints) / 100}%
+                          </p>
+                        </div>
                       </div>
                     </Accordion>
                   </div>

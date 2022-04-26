@@ -42,6 +42,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
 
   const [showUpdateOfferModal, setShowUpdateOfferModal] = useState(false);
   const [filter, setFilter] = useState(OfferFilters.ALL);
+  const [currNFT, setCurrNFT] = useState<Nft>();
 
   const { data, loading, refetch } = useOffersPageQuery({
     variables: {
@@ -175,7 +176,10 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                     {Boolean(offer.buyer === userPK?.toBase58()) && (
                       <div>
                         <Button
-                          onClick={() => setShowUpdateOfferModal(true)}
+                          onClick={() => {
+                            setCurrNFT(receivedOffer as Nft | any);
+                            setShowUpdateOfferModal(true);
+                          }}
                           secondary
                           className={`bg-gray-800 ease-in hover:bg-gray-700`}
                         >
@@ -189,7 +193,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                           <UpdateOfferForm
                             listing={defaultListing as Listing}
                             setOpen={setShowUpdateOfferModal}
-                            nft={receivedOffer as Nft | any}
+                            nft={currNFT as Nft | any}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             loading={loading}
@@ -207,6 +211,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
               const defaultListing = sentOffer?.listings.find(
                 (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
               );
+
               return sentOffer.offers?.sort(byDate).map((offer) => (
                 <div
                   key={offer.address}
@@ -247,13 +252,17 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                     {Boolean(offer.buyer === userPK?.toBase58()) && (
                       <div>
                         <Button
-                          onClick={() => setShowUpdateOfferModal(true)}
+                          onClick={() => {
+                            setCurrNFT(sentOffer as Nft | any);
+                            setShowUpdateOfferModal(true);
+                          }}
                           secondary
                           className={`bg-gray-800 ease-in hover:bg-gray-700`}
                         >
                           Update offer
                         </Button>
                         <Modal
+                          key={sentOffer.address}
                           open={showUpdateOfferModal}
                           setOpen={setShowUpdateOfferModal}
                           title={`Update offer`}
@@ -261,7 +270,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                           <UpdateOfferForm
                             listing={defaultListing as Listing}
                             setOpen={setShowUpdateOfferModal}
-                            nft={sentOffer as Nft | any}
+                            nft={currNFT as Nft | any}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             loading={loading}
