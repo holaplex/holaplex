@@ -363,10 +363,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   );
 
   const totalCount = useMemo(() => nftsToShow.length, [nftsToShow]);
-  const listedCount = useMemo(
-    () => listedNfts?.reduce((acc, nft) => acc + nft.listings.filter((o) => o).length, 0) || 0,
-    [listedNfts]
-  );
+  const listedCount = useMemo(() => listedNfts.length || 0, [listedNfts]);
 
   const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
 
