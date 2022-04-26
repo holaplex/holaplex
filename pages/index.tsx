@@ -472,7 +472,7 @@ export default function Home({
             className="home-carousel max-w-full "
           >
             {featuredListings.map((listing, i) => (
-              <div key={listing.listingAddress} className="  max-w-full md:max-w-md ">
+              <div key={listing.listingAddress} className="max-w-full md:max-w-md">
                 <ListingPreview
                   listing={listing}
                   meta={{
@@ -564,7 +564,7 @@ export default function Home({
             </div>,
           ]}
         />
-        <div className="grid max-w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid max-w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {take(show, displayedListings).map((listing: Listing, i) => (
             <ListingPreview
               key={listing?.listingAddress}
