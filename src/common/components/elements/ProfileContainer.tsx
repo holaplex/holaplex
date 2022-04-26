@@ -110,7 +110,6 @@ const Banner = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   ${mq('lg')} {
-    background-attachment: fixed;
     background-size: 100%;
   }
 `;
