@@ -28,11 +28,17 @@ function MoreDropdown({ address }: { address: string }) {
         <>
           <Popover.Button
             className={cx(
-              'flex h-10 w-10 items-center justify-center rounded-full ',
+              'flex h-10 w-36 items-center justify-center gap-2 rounded-full ',
               open ? 'bg-white' : ''
             )}
           >
-            <FeatherIcon icon="more-horizontal" className={open ? 'stroke-black' : ''} />
+            <span className={`${open ? 'text-black' : ''} text-lg font-medium`}>Share</span>
+            <FeatherIcon
+              icon="share"
+              className={open ? 'stroke-black' : ''}
+              width={20}
+              height={20}
+            />
           </Popover.Button>
 
           {open && (
@@ -68,24 +74,16 @@ function MoreDropdown({ address }: { address: string }) {
                 </li>
                 <li>
                   <a
-                    href={`https://explorer.solana.com/address/${address}`}
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                      `Checkout this amazing NFT`
+                    )}&hashtags=holaplex&url=${encodeURI(`https://holaplex.com/nfts/${address}`)}`}
                     className="flex items-center pt-4 hover:text-gray-300"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <ExplorerIcon width={16} height={16} />
-                    <span className="pl-5">View on Explorer</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`https://solscan.io/account/${address}`}
-                    className="flex items-center pt-4 hover:text-gray-300"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <SolscanIcon width={16} height={16} />
-                    <span className="pl-5">View on SolScan</span>
+                    <FeatherIcon height={16} width={16} icon={`twitter`} />
+
+                    <span className="pl-5"> Share to Twitter</span>
                   </a>
                 </li>
               </Popover.Panel>
