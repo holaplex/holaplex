@@ -6,6 +6,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { AvatarIcons } from '../elements/Avatar';
 import { useMarketplacePreviewQuery } from 'src/graphql/indexerTypes';
+import { getFallbackImage } from '@/modules/utils/image';
 
 const LoadingPreview = () => {
   return (
@@ -44,10 +45,6 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
     });
   }, [data, track]);
 
-  if (!loading && !dataAreSufficient(data)) {
-    console.log(`${subdomain} is done loading, but data are incomplete`, data);
-  }
-
   if (loading || !dataAreSufficient(data)) {
     return <LoadingPreview />;
   }
@@ -60,72 +57,72 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
   const floorPriceSol: number =
     Number.parseFloat(data.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
 
-  try {
-    return (
-      <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        {/* preview image */}
-        <div className="relative flex">
-          <a
-            href={marketplaceUrl}
-            target="_blank"
-            rel="noreferrer"
-            onClick={onClickMarketplaceLink}
-          >
-            <img
-              src={imgOpt(data.bannerUrl, 800)}
-              alt={`${data.name}`}
-              className="aspect-video min-h-full min-w-full object-cover"
-            />
-          </a>
+  return (
+    <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      {/* preview image */}
+      <div className="relative flex">
+        <a
+          href={marketplaceUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={onClickMarketplaceLink}
+        >
+          <img
+            src={imgOpt(data.bannerUrl, 800)}
+            alt={`${data.name}`}
+            className="min-h-full min-w-full object-cover"
+            // provide a fallback image in case the banner isnt found
+            onError={({currentTarget}) => {
+              // null onerror to prevent looping in worst case
+              currentTarget.onerror = null;
+              currentTarget.src = getFallbackImage();
+            }}
+          />
+        </a>
 
-          {/* preview gradient overlay */}
-          <div className="pointer-events-none absolute h-full w-full bg-gradient-to-b from-black/20 to-black/70" />
+        {/* preview gradient overlay */}
+        <div className="pointer-events-none absolute h-full w-full bg-gradient-to-b from-black/20 to-black/70" />
+      </div>
+
+      {/* creator icons
+            allow pointer events through the container div for clickable preview image while also allowing
+            pointer events on the creator icons */}
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
+        <div className="pointer-events-auto">
+          <AvatarIcons
+            creators={
+              data.creators.map((c) => {
+                return { address: c.creatorAddress };
+              }) || []
+            }
+          />
         </div>
+      </div>
 
-        {/* creator icons
-              allow pointer events through the container div for clickable preview image while also allowing
-              pointer events on the creator icons */}
-        <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
-          <div className="pointer-events-auto">
-            <AvatarIcons
-              creators={
-                data.creators.map((c) => {
-                  return { address: c.creatorAddress };
-                }) || []
-              }
-            />
-          </div>
-        </div>
+      {/* marketplace name, NFT volume, and floor price section */}
+      <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
+        <span className="text-xl font-semibold text-white">{data.name}</span>
 
-        {/* marketplace name, NFT volume, and floor price section */}
-        <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-          <span className="text-xl font-semibold text-white">{data.name}</span>
-
-          {/* NFT volume and floor price row container
-                  Using height and opacity (rather than 'display') to animate bottom-text appearing */}
+        {/* NFT volume and floor price row container
+                Using height and opacity (rather than 'display') to animate bottom-text appearing */}
+        <div
+          className={`${
+            showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
+          } flex flex-row items-center justify-between overflow-hidden duration-150`}
+        >
+          <span className="text-left text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
           <div
             className={`${
-              showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
-            } flex flex-row items-center justify-between overflow-hidden duration-150`}
+              floorPriceSol == 0 ? 'hidden' : ''
+            } flex flex-row text-right text-base font-medium`}
           >
-            <span className="text-left text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
-            <div
-              className={`${
-                floorPriceSol == 0 ? 'hidden' : ''
-              } flex flex-row text-right text-base font-medium`}
-            >
-              <span className="mr-3">Floor price:</span>
-              <Price priceSol={floorPriceSol} />
-            </div>
+            <span className="mr-3">Floor price:</span>
+            <Price priceSol={floorPriceSol} />
           </div>
         </div>
-      </Container>
-    );
-  } catch (e) {
-    console.error(e);
-    console.log(data);
-    return <LoadingPreview />;
-  }
+      </div>
+    </Container>
+  );
 };
 
 function dataAreSufficient(data?: MarketplacePreviewData): boolean {

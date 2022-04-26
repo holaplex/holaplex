@@ -5,9 +5,9 @@ import MarketplacePreview from './MarketplacePreview';
 import Carousel from 'react-grid-carousel';
 
 const previewSubdomains: string[] = [
+  'skeletoncrew',
   'junglecats',
   'monkedao',
-  'skeletoncrew',
   'ursmarket',
   '0xbanana',
   'blake',
