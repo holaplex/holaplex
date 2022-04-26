@@ -526,7 +526,7 @@ export type FeedQueryVariables = Exact<{
 }>;
 
 
-export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename?: 'FollowEvent', feedEventId: string, graphConnectionAddress: any, createdAt: any, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null } } | null } | { __typename?: 'ListingEvent', feedEventId: string, createdAt: any, listing?: { __typename?: 'ListingReceipt', seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string } | null } | null } | { __typename?: 'MintEvent', feedEventId: string, createdAt: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string } | null } | { __typename?: 'OfferEvent', feedEventId: string, createdAt: any, offer?: { __typename?: 'BidReceipt', buyer: string, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string } | null } | null } | { __typename?: 'PurchaseEvent', feedEventId: string, createdAt: any, purchase?: { __typename?: 'PurchaseReceipt', buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string } | null } | null }> };
+export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, graphConnectionAddress: any, createdAt: any, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, listing?: { __typename?: 'ListingReceipt', seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, offer?: { __typename?: 'BidReceipt', buyer: string, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, purchase?: { __typename?: 'PurchaseReceipt', buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | null }> };
 
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -909,6 +909,7 @@ export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, Wa
 export const FeedDocument = gql`
     query feed($address: PublicKey!) {
   feedEvents(wallet: $address, limit: 1000, offset: 0) {
+    __typename
     ... on MintEvent {
       feedEventId
       createdAt
@@ -916,6 +917,13 @@ export const FeedDocument = gql`
         name
         image
         description
+        creators {
+          address
+          position
+          twitterHandle
+        }
+        address
+        mintAddress
       }
     }
     ... on FollowEvent {
@@ -949,6 +957,13 @@ export const FeedDocument = gql`
           name
           image
           description
+          creators {
+            address
+            position
+            twitterHandle
+          }
+          address
+          mintAddress
         }
       }
     }
@@ -962,6 +977,13 @@ export const FeedDocument = gql`
           name
           image
           description
+          creators {
+            address
+            position
+            twitterHandle
+          }
+          address
+          mintAddress
         }
       }
     }
@@ -975,6 +997,13 @@ export const FeedDocument = gql`
           name
           image
           description
+          creators {
+            address
+            position
+            twitterHandle
+          }
+          address
+          mintAddress
         }
       }
     }

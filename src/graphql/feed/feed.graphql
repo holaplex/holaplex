@@ -1,5 +1,6 @@
 query feed($address: PublicKey!) {
   feedEvents(wallet: $address, limit: 1000, offset: 0) {
+    __typename
     ... on MintEvent {
       feedEventId
       createdAt
@@ -7,6 +8,13 @@ query feed($address: PublicKey!) {
         name
         image
         description
+        creators {
+          address
+          position
+          twitterHandle
+        }
+        address
+        mintAddress
       }
     }
     ... on FollowEvent {
@@ -40,12 +48,20 @@ query feed($address: PublicKey!) {
           name
           image
           description
+          creators {
+            address
+            position
+            twitterHandle
+          }
+          address
+          mintAddress
         }
       }
     }
     ... on ListingEvent {
       feedEventId
       createdAt
+      lifecycle
       listing {
         seller
         price
@@ -53,12 +69,20 @@ query feed($address: PublicKey!) {
           name
           image
           description
+          creators {
+            address
+            position
+            twitterHandle
+          }
+          address
+          mintAddress
         }
       }
     }
     ... on OfferEvent {
       feedEventId
       createdAt
+      lifecycle
       offer {
         buyer
         price
@@ -66,6 +90,13 @@ query feed($address: PublicKey!) {
           name
           image
           description
+          creators {
+            address
+            position
+            twitterHandle
+          }
+          address
+          mintAddress
         }
       }
     }

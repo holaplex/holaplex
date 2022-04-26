@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -37,6 +37,7 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
+import { NextPage } from 'next';
 
 const { Content } = Layout;
 
@@ -44,6 +45,14 @@ const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
     ? WalletAdapterNetwork.Devnet
     : WalletAdapterNetwork.Mainnet;
+};
+
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -67,6 +76,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
+
+  const getLayout = Component.getLayout || ((page) => page);
 
   return (
     <>
@@ -113,7 +124,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                                     </a>
                                   </div>
                                   <AppHeader />
-                                  <Component {...pageProps} />
+                                  {getLayout(<Component {...pageProps} />)}
                                 </AnalyticsProvider>
                               )}
                             </MarketplaceProvider>
