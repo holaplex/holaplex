@@ -32,9 +32,10 @@ export const ProfileContainer: FC = ({ children }) => {
       <header>
         <Banner className='h-40 md:h-64 ' style={{ backgroundImage: `url(${banner})` }} />
       </header>
-      <div className="container mx-auto px-6 pb-20 md:px-12 lg:flex">
+      <div className="container px-6 pb-20 mx-auto md:px-12 lg:flex">
         <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
-          <div className="-mt-12 flex justify-center lg:justify-start">
+          <div className="flex-col justify-center -mt-12 text-center lg:justify-start">
+            <div>
             <ProfilePicture
               src={profilePicture}
               className='bg-gray-900'
@@ -42,7 +43,7 @@ export const ProfileContainer: FC = ({ children }) => {
               height={PFP_SIZE}
             />
             </div>
-            <div className='mt-[70px] ml-4 grow'>
+            <div className='mt-2 ml-4'>
             { anchorWallet?.publicKey.toString() == profileData.publicKey.toString()  && 
             <ConnectTwitterButton
               address={new PublicKey(profileData.publicKey)}
