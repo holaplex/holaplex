@@ -3,10 +3,12 @@ import { FC } from 'react';
 interface ExplorerIconProps {
   width?: number;
   height?: number;
+  className?: string;
 }
 
-export const ExplorerIcon: FC<ExplorerIconProps> = ({ width = 24, height = 20 }) => (
+export const ExplorerIcon: FC<ExplorerIconProps> = ({ width = 24, height = 20, className }) => (
   <svg
+    className={className}
     width={width}
     height={height}
     viewBox="0 0 24 20"
