@@ -1,7 +1,7 @@
 import { seededRandomBetween } from '@/modules/utils/random';
 import { PublicKey } from '@solana/web3.js';
 
-export const getPFPFromPublicKey = (publicKey: string | PublicKey | null): string => {
+export const getPFPFromPublicKey = (publicKey?: string | PublicKey | null): string => {
   if (!publicKey) {
     return `/images/gradients/gradient-${seededRandomBetween(0, 1, 8)}.png`;
   }
@@ -12,10 +12,10 @@ export const getPFPFromPublicKey = (publicKey: string | PublicKey | null): strin
       8
     )}.png`;
   }
-  return getPFPFromPublicKey(new PublicKey(publicKey));
+  return getPFPFromPublicKey(makePublicKeySilent(publicKey));
 };
 
-export const getBannerFromPublicKey = (publicKey: string | PublicKey | null): string => {
+export const getBannerFromPublicKey = (publicKey?: string | PublicKey | null): string => {
   if (!publicKey) {
     return `/images/gradients/gradient-${seededRandomBetween(1, 1, 8)}.png`;
   }
@@ -26,5 +26,16 @@ export const getBannerFromPublicKey = (publicKey: string | PublicKey | null): st
       8
     )}.png`;
   }
-  return getBannerFromPublicKey(new PublicKey(publicKey));
+  return getBannerFromPublicKey(makePublicKeySilent(publicKey));
 };
+
+
+function makePublicKeySilent(publicKey?: any): PublicKey | null {
+  try {
+    return new PublicKey(publicKey);
+
+  } catch (e) {
+    console.error(`Invalid public key ${publicKey}, returning random image`, e);
+    return null;
+  }
+}

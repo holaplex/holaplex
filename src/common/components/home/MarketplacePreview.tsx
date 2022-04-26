@@ -42,76 +42,85 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
     });
   }, [data, track]);
 
-  if (loading || !dataAreComplete(data)) {
+  if (!loading && !dataAreSufficient(data)) {
+    console.log(`${subdomain} is done loading, but data are incomplete`, data);
+  }
+
+  if (loading || !dataAreSufficient(data)) {
     return <LoadingPreview />;
   }
 
-  // all required data are available after checking dataAreComplete()
+  // sufficient data are available after checking dataAreSufficient()
   data = data!;
 
   const marketplaceUrl: string = `https://${data.subdomain}.holaplex.market`;
   const nftVolumeStr: string = Number.parseInt(data.stats.nfts).toLocaleString();
-  const priceSol: number = Number.parseFloat(data.auctionHouse.stats.floor) / LAMPORTS_PER_SOL;
+  const floorPriceSol: number = Number.parseFloat(data.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
 
-  return (
-    <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      {/* preview image */}
-      <div className="relative h-full w-full">
-        <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
-          <img
-            src={imgOpt(data.bannerUrl, 600)}
-            alt={`${data.name}`}
-            className="absolute w-full object-cover"
-          />
-        </a>
+  try {
 
-        {/* preview gradient overlay */}
-        <div className="pointer-events-none absolute h-full w-full bg-gradient-to-b from-black/20 to-black/70" />
-      </div>
-
-      {/* creator icons
-            allow pointer events through the container div for clickable preview image while also allowing
-            pointer events on the creator icons */}
-      <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
-        <div className="pointer-events-auto">
-          <AvatarIcons
-            creators={
-              data.creators.map((c) => {
-                return { address: c.creatorAddress };
-              }) || []
-            }
-          />
+    return (
+      <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        {/* preview image */}
+        <div className="flex relative overflow-clip">
+          <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
+            <img
+              src={imgOpt(data.bannerUrl, 600)}
+              alt={`${data.name}`}
+              className="object-cover h-full w-full"
+            />
+          </a>
+  
+          {/* preview gradient overlay */}
+          <div className="pointer-events-none absolute h-full w-full bg-gradient-to-b from-black/20 to-black/70" />
         </div>
-      </div>
-
-      {/* marketplace name, NFT volume, and floor price section */}
-      <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-xl font-semibold text-white">{data.name}</span>
-
-        {/* NFT volume and floor price row container
-                Using height and opacity (rather than 'display') to animate bottom-text appearing */}
-        <div
-          className={`${
-            showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
-          } flex flex-row items-center justify-between overflow-hidden duration-150`}
-        >
-          <span className="text-left text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
-          <div className="flex flex-row text-right text-base font-medium">
-            <span className="mr-3">Floor price:</span>
-            <Price priceSol={priceSol} />
+  
+        {/* creator icons
+              allow pointer events through the container div for clickable preview image while also allowing
+              pointer events on the creator icons */}
+        <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
+          <div className="pointer-events-auto">
+            <AvatarIcons
+              creators={
+                data.creators.map((c) => {
+                  return { address: c.creatorAddress };
+                }) || []
+              }
+            />
           </div>
         </div>
-      </div>
-    </Container>
-  );
+  
+        {/* marketplace name, NFT volume, and floor price section */}
+        <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
+          <span className="text-xl font-semibold text-white">{data.name}</span>
+  
+          {/* NFT volume and floor price row container
+                  Using height and opacity (rather than 'display') to animate bottom-text appearing */}
+          <div
+            className={`${
+              showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
+            } flex flex-row items-center justify-between overflow-hidden duration-150`}
+          >
+            <span className="text-left text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
+            <div className={`${floorPriceSol == 0 ? "hidden" : ""} flex flex-row text-right text-base font-medium`}>
+              <span className="mr-3">Floor price:</span>
+              <Price priceSol={floorPriceSol} />
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
+  } catch (e) {
+    console.error(e);
+    console.log(data);
+    return <LoadingPreview/>;
+  }
 };
 
-function dataAreComplete(data?: MarketplacePreviewData): boolean {
+function dataAreSufficient(data?: MarketplacePreviewData): boolean {
   return (
     data != undefined &&
     data.auctionHouse != undefined &&
-    data.auctionHouse.stats != undefined &&
-    data.auctionHouse.stats.floor != undefined &&
     data.bannerUrl != undefined &&
     data.creators != undefined &&
     data.name != undefined &&
