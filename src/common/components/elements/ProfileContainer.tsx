@@ -17,7 +17,8 @@ import Footer from '../home/Footer';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
-  const { banner, profilePicture } = profileData;
+  const { banner, profilePicture, twitterHandle } = profileData;
+
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
@@ -44,7 +45,7 @@ export const ProfileContainer: FC = ({ children }) => {
             />
             </div>
             <div className='mt-2 ml-4'>
-            { anchorWallet?.publicKey.toString() == profileData.publicKey.toString()  && 
+            { anchorWallet?.publicKey.toString() == profileData.publicKey.toString() && !twitterHandle && 
             <ConnectTwitterButton
               address={new PublicKey(profileData.publicKey)}
               connection={connection}
