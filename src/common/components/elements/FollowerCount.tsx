@@ -1,15 +1,10 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import { PublicKey } from '@solana/web3.js';
+import { FC, useMemo } from 'react';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
 import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
-import styled, { css } from 'styled-components';
-import cx from 'classnames';
-import Image from 'next/image';
+import styled from 'styled-components';
 import { Unpacked } from '@/types/Unpacked';
-import { getPFPFromPublicKey } from '@/modules/utils/image';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
-import Link from 'next/link';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { FollowerBubble } from './FollowerBubble';
@@ -21,7 +16,6 @@ type FollowerCountProps = {
 
 export const FollowerCount: FC<FollowerCountProps> = ({ profile, setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
-  if (!wallet) return null;
   return (
     <FollowerCountContent
       wallet={wallet}
@@ -32,7 +26,7 @@ export const FollowerCount: FC<FollowerCountProps> = ({ profile, setShowFollowsM
 };
 
 type FollowerCountContentProps = FollowerCountProps & {
-  wallet: AnchorWallet;
+  wallet?: AnchorWallet;
 };
 
 type FollowsModalState = 'hidden' | 'followers' | 'following';
@@ -47,8 +41,8 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, walletConnectionPair);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, walletConnectionPair);
+  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, connection);
+  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, connection);
 
   if (allConnectionsTo.error) {
     console.error(allConnectionsTo.error);
@@ -65,11 +59,11 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const isLoading = allConnectionsToLoading || allConnectionsFromLoading;
 
   if (isLoading) return <FollowerCountSkeleton />;
-  const isSameWallet = wallet.publicKey.equals(new PublicKey(pubkey));
+  const isSameWallet = !!wallet?.publicKey.equals(new PublicKey(pubkey));
 
-  const amIFollowing = (allConnectionsTo.data ?? []).some((i) =>
-    i.account.from.equals(wallet.publicKey)
-  );
+  const amIFollowing = !wallet
+    ? false
+    : (allConnectionsTo.data ?? []).some((i) => i.account.from.equals(wallet.publicKey));
 
   return (
     <>
@@ -84,10 +78,15 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
             <div className="text-sm font-medium text-gray-200">Following</div>
           </button>
           <div className="ml-10">
-            {isSameWallet ? null : (
+            {isSameWallet || !wallet ? null : (
               <FollowUnfollowButton
                 source="profileButton"
-                walletConnectionPair={walletConnectionPair}
+                walletConnectionPair={
+                  walletConnectionPair as {
+                    wallet: AnchorWallet;
+                    connection: Connection;
+                  }
+                }
                 toProfile={profile}
                 type={amIFollowing ? 'Unfollow' : 'Follow'}
               />

@@ -23,7 +23,7 @@ type ConnectionItem =
 
 type FollowModalProps = {
   profile: IProfile;
-  wallet: AnchorWallet;
+  wallet?: AnchorWallet;
   visibility: FollowModalVisibility;
   setVisibility:
     | Dispatch<SetStateAction<FollowModalVisibility>>
@@ -38,9 +38,9 @@ export const FollowModal: FC<FollowModalProps> = ({
 }) => {
   const { connection } = useConnection();
   const { pubkey } = profile;
-  const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, walletConnectionPair);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, walletConnectionPair);
+
+  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, connection);
+  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, connection);
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -98,7 +98,8 @@ export const FollowModal: FC<FollowModalProps> = ({
           {visibility === 'followers'
             ? (allConnectionsTo.data ?? []).map((item) => (
                 <FollowItem
-                  walletConnectionPair={walletConnectionPair}
+                  wallet={wallet}
+                  connection={connection}
                   key={item.publicKey.toBase58()}
                   item={item}
                   side={'allConnectionsFrom'}
@@ -108,7 +109,8 @@ export const FollowModal: FC<FollowModalProps> = ({
           {visibility === 'following'
             ? (allConnectionsFrom.data ?? []).map((item) => (
                 <FollowItem
-                  walletConnectionPair={walletConnectionPair}
+                  wallet={wallet}
+                  connection={connection}
                   key={item.publicKey.toBase58()}
                   item={item}
                   side={'allConnectionsTo'}
@@ -123,15 +125,12 @@ export const FollowModal: FC<FollowModalProps> = ({
 
 type FollowItemProps = {
   item: ConnectionItem;
-  walletConnectionPair: {
-    wallet: AnchorWallet;
-    connection: Connection;
-  };
+  wallet?: AnchorWallet;
+  connection: Connection;
   side: 'allConnectionsTo' | 'allConnectionsFrom';
 };
 
-const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) => {
-  const { wallet } = walletConnectionPair;
+const FollowItem: FC<FollowItemProps> = ({ item, side, connection, wallet }) => {
   const itemToReferTo = side === 'allConnectionsTo' ? item.account.to : item.account.from;
   const twitterHandle =
     side === 'allConnectionsTo' ? item.twitter.toHandle : item.twitter.fromHandle;
@@ -143,28 +142,28 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
     },
   });
 
-  // const [copied, setCopeied] = useState(false);
   const copyPubKey = async () => {
     if (itemToReferTo) {
       await navigator.clipboard.writeText(itemToReferTo.toBase58());
-      // setCopeied(true);
-      // setTimeout(() => setCopeied(false), 2000);
     }
   };
 
   const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
-    wallet.publicKey.toBase58(),
-    walletConnectionPair
+    wallet?.publicKey.toBase58() ?? null,
+    connection
   );
 
-  const itemIsMyWallet =
-    (side === 'allConnectionsFrom' &&
-      item.account.from.toBase58() === wallet.publicKey.toBase58()) ||
-    (side === 'allConnectionsTo' && item.account.to.toBase58() === wallet.publicKey.toBase58());
+  const itemIsMyWallet = !wallet
+    ? false
+    : (side === 'allConnectionsFrom' &&
+        item.account.from.toBase58() === wallet.publicKey.toBase58()) ||
+      (side === 'allConnectionsTo' && item.account.to.toBase58() === wallet.publicKey.toBase58());
 
-  const amIFollowingThisAccount = (allConnectionsFromWallet.data ?? []).some(
-    (connectionFromWallet) => connectionFromWallet.account.to.equals(itemToReferTo)
-  );
+  const amIFollowingThisAccount = !wallet
+    ? false
+    : (allConnectionsFromWallet.data ?? []).some((connectionFromWallet) =>
+        connectionFromWallet.account.to.equals(itemToReferTo)
+      );
 
   return (
     <div className={cx('flex h-10')}>
@@ -193,11 +192,11 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
           </Link>
         </div>
         <div className="flex items-center">
-          {itemIsMyWallet ? null : (
+          {itemIsMyWallet || !wallet ? null : (
             <FollowUnfollowButton
               source={side === 'allConnectionsTo' ? 'modalTo' : 'modalFrom'}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
-              walletConnectionPair={walletConnectionPair}
+              walletConnectionPair={{ wallet, connection }}
               toProfile={{
                 pubkey: itemToReferTo.toBase58(),
                 handle: twitterHandle,

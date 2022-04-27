@@ -1870,12 +1870,12 @@
   resolved "https://registry.yarnpkg.com/@heroicons/react/-/react-1.0.6.tgz#35dd26987228b39ef2316db3b1245c42eb19e324"
   integrity sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==
 
-"@holaplex/graph-program@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@holaplex/graph-program/-/graph-program-0.1.1.tgz#65b51857811dd43985b32628fa8d30189e89b918"
-  integrity sha512-84sIj/GbidtsVhtf8X1ZhUVMZmiMSDpGSiASljvCVLXEKi97XCvUgaSJwVUHJHtpMEYj+UiNu7IGzfW+LjkwFQ==
+"@holaplex/graph-program@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@holaplex/graph-program/-/graph-program-1.2.0.tgz#b5fd48016213d05e12e0c469852e144f2834b054"
+  integrity sha512-6aBO0/qFwEyi0Uh20kRsje7zlVTZUG1sANnIB2srrHijgebRb5Zt77OTfIOB0waqBWPmWW6pS5zC6W4VnxDJUQ==
   dependencies:
-    "@project-serum/anchor" "^0.22.1"
+    "@project-serum/anchor" "^0.24.2"
 
 "@holaplex/js@^4.3.2", "@holaplex/js@^4.3.3":
   version "4.3.3"
@@ -2341,13 +2341,13 @@
     snake-case "^3.0.4"
     toml "^3.0.0"
 
-"@project-serum/anchor@^0.22.1":
-  version "0.22.1"
-  resolved "https://registry.yarnpkg.com/@project-serum/anchor/-/anchor-0.22.1.tgz#698a9620f94691de0a12bbc650a5c8380e2f0e8a"
-  integrity sha512-5pHeyvQhzLahIQ8aZymmDMZJAJFklN0joZdI+YIqFkK2uU/mlKr6rBLQjxysf/j1mLLiNG00tdyLfUtTAdQz7w==
+"@project-serum/anchor@^0.24.2":
+  version "0.24.2"
+  resolved "https://registry.yarnpkg.com/@project-serum/anchor/-/anchor-0.24.2.tgz#a3c52a99605c80735f446ca9b3a4885034731004"
+  integrity sha512-0/718g8/DnEuwAidUwh5wLYphUYXhUbiClkuRNhvNoa+1Y8a4g2tJyxoae+emV+PG/Gikd/QUBNMkIcimiIRTA==
   dependencies:
     "@project-serum/borsh" "^0.2.5"
-    "@solana/web3.js" "^1.17.0"
+    "@solana/web3.js" "^1.36.0"
     base64-js "^1.5.1"
     bn.js "^5.1.2"
     bs58 "^4.0.1"
@@ -2356,7 +2356,6 @@
     cross-fetch "^3.1.5"
     crypto-hash "^1.3.0"
     eventemitter3 "^4.0.7"
-    find "^0.3.0"
     js-sha256 "^0.9.0"
     pako "^2.0.3"
     snake-case "^3.0.4"
