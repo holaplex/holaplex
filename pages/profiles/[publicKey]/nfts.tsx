@@ -36,6 +36,7 @@ import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferFor
 import { Avatar } from '@/common/components/elements/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty } from 'ramda';
+import { TailSpin } from 'react-loader-spinner';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -275,43 +276,47 @@ export const NFTGrid: FC<NFTGridProps> = ({
   loading = false,
 }) => {
   return (
-    <div
-      className={cx(
-        'grid grid-cols-1 gap-6',
-        gridView === '1x1'
-          ? 'grid-cols-1 md:grid-cols-2'
-          : gridView === '2x2'
-          ? 'sm:grid-cols-2'
-          : 'md:grid-cols-3'
-      )}
-    >
-      {loading ? (
-        <>
-          <LoadingNFTCard />
-          <LoadingNFTCard />
-          <LoadingNFTCard />
-        </>
-      ) : (
-        <>
-          {nfts.map((nft) => (
-            <NFTCard
-              key={nft.address}
-              nft={nft}
-              refetch={refetch}
-              loading={loading}
-              marketplace={marketplace}
-            />
-          ))}
-          {hasMore && (
-            <div>
-              <InView threshold={0.1} onChange={onLoadMore}>
-                <LoadingNFTCard />
-              </InView>
+    <>
+      <div
+        className={cx(
+          'grid grid-cols-1 gap-6',
+          gridView === '1x1'
+            ? 'grid-cols-1 md:grid-cols-2'
+            : gridView === '2x2'
+            ? 'sm:grid-cols-2'
+            : 'md:grid-cols-3'
+        )}
+      >
+        {loading ? (
+          <>
+            <LoadingNFTCard />
+            <LoadingNFTCard />
+            <LoadingNFTCard />
+          </>
+        ) : (
+          <>
+            {nfts.map((nft) => (
+              <NFTCard
+                key={nft.address}
+                nft={nft}
+                refetch={refetch}
+                loading={loading}
+                marketplace={marketplace}
+              />
+            ))}
+          </>
+        )}
+      </div>
+      {hasMore && (
+        <div>
+          <InView threshold={0.1} onChange={onLoadMore}>
+            <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+              <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
             </div>
-          )}
-        </>
+          </InView>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -322,6 +327,8 @@ enum ListingFilters {
   LISTED,
   UNLISTED,
 }
+
+export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
 
 const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
@@ -363,10 +370,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   );
 
   const totalCount = useMemo(() => nftsToShow.length, [nftsToShow]);
-  const listedCount = useMemo(
-    () => listedNfts?.reduce((acc, nft) => acc + nft.listings.filter((o) => o).length, 0) || 0,
-    [listedNfts]
-  );
+  const listedCount = useMemo(() => listedNfts.length || 0, [listedNfts]);
 
   const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
 
@@ -458,7 +462,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         <meta property="description" key="description" content="View owned and created NFTs" />
       </Head>
       <ProfileContainer>
-        <div className="mb-4 flex flex-col items-center gap-6 lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-30 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -494,7 +498,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore}
+          hasMore={hasMore && nftsToShow.length > 99}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;
@@ -503,7 +507,8 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
             const { data: newData } = await fetchMore({
               variables: {
                 ...variables,
-                offset: nftsToShow.length + 100,
+                limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+                offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
               },
               updateQuery: (prev, { fetchMoreResult }) => {
                 if (!fetchMoreResult) return prev;

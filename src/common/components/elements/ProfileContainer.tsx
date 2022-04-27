@@ -66,14 +66,12 @@ export const ProfileContainer: FC = ({ children }) => {
             <ProfileMenu />
             {children}
           </div>
-          {anchorWallet ? (
-            <FollowModal
-              visibility={showFollowsModal}
-              setVisibility={setShowFollowsModal}
-              profile={asProfile(profileData)}
-              wallet={anchorWallet}
-            />
-          ) : null}
+          <FollowModal
+            visibility={showFollowsModal}
+            setVisibility={setShowFollowsModal}
+            profile={asProfile(profileData)}
+            wallet={anchorWallet}
+          />
         </div>
         <Footer />
       </div>
