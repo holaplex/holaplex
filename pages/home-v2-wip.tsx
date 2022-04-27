@@ -5,7 +5,7 @@ import { FC } from 'react';
 const Home: FC = () => {
   return (
     <>
-      <div className="container mx-auto pb-48 w-3/4">
+      <div className="container mx-auto pb-48 w-[80%]">
         <FeaturedMarkeplacesSection />
       </div>
       <Footer />

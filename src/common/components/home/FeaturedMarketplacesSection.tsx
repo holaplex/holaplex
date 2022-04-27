@@ -5,40 +5,10 @@ import MarketplacePreview from './MarketplacePreview';
 import Carousel from 'react-grid-carousel';
 
 const previewSubdomains: string[] = [
-  'skeletoncrew',
   'junglecats',
-  'monkedao',
-  'ursmarket',
-  '0xbanana',
-  'blake',
-  'bluntdao',
   'cityshop',
-  'collective',
-  'datawisp',
-  'desolatespace',
-  'dykare',
-  'enklucloud',
-  'espisol',
-  'fluxuscollective',
-  'haus',
-  'kurumanft',
-  'levitatedemo',
-  'mango',
-  'mortuary',
-  'mymonk',
-  'nightracers',
-  'onlyhands',
-  'paragon',
-  'pixelbands',
-  'polymath',
-  'scoby1',
-  'shiguardians',
-  'shoebox',
-  'solanafloor',
-  'stacc',
-  'swick',
   'thechimpions',
-  'thislooksrare',
+  'skeletoncrew'
 ];
 
 const PageLeftButton = (
