@@ -34,7 +34,14 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
+FROM runner AS frontend
 EXPOSE 3000
 ENV PORT 3000
 ENV NEXT_SHARP_PATH /app/node_modules/sharp
+
 CMD ["npx", "next", "start"]
+
+FROM runner AS signer
+COPY --from=builder /app/tasks ./tasks
+COPY --from=builder /app/src/modules ./src/modules
+CMD ["yarn", "run", "consumers:sign-metadata"]

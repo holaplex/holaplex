@@ -10,11 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build Holaplex image and deploy
+      - name: Build frontend
         uses: gonuit/heroku-docker-deploy@v1.3.3
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: holaplex-builder-staging
           dockerfile_name: Dockerfile
+          docker_options: '--target frontend'
           process_type: web
+
+      - name: Build Sign-metadata
+        uses: gonuit/heroku-docker-deploy@v1.3.3
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: holaplex-builder-staging
+          dockerfile_name: Dockerfile
+          docker_options: '--target signer'
+          process_type: worker
