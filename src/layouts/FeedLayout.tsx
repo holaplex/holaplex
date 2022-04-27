@@ -1,5 +1,7 @@
+import SocialLinks from '@/common/components/elements/SocialLinks';
 import { MyActivityList } from '@/common/components/feed/MyActivityList';
 import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
+import { SmallFooter } from '@/common/components/home/Footer';
 import { Tab } from '@headlessui/react';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -13,32 +15,33 @@ export default function FeedLayout({ children }: { children: any }) {
   const router = useRouter();
   const feedTabSelected = !router.pathname.includes('discovery');
 
-  const Tab = ({ url, selected, title }) => (
-    <Link href={url} passHref>
+  const Tab = (props: { url: string; selected: boolean; title: string }) => (
+    <Link href={props.url} passHref>
       <a
         className={classNames(
           'w-full  py-2.5 text-center text-sm font-medium text-white ',
-          selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
+          props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
         )}
       >
-        {title}
+        {props.title}
       </a>
     </Link>
   );
 
   return (
-    <div className="container mx-auto mt-12 px-6 pb-20  ">
+    <div className="container mx-auto mt-20 px-6 pb-20  ">
       <div className="mt-12 flex justify-between">
         <div className="w-full max-w-2xl">
-          <div className="flex space-x-1   p-1">
+          {/* <div className="flex space-x-1   p-1">
             <Tab title={'Feed'} selected={feedTabSelected} url="/feed" />
             <Tab title={'Discovery'} selected={!feedTabSelected} url="/feed/discovery" />
-          </div>
+          </div> */}
           {children}
         </div>
-        <div className="mt-10 w-full max-w-md space-y-7">
+        <div className="hidden w-full max-w-md space-y-7 xl:block">
           <WhoToFollowList />
           <MyActivityList />
+          <SmallFooter />
         </div>
         <BackToTopBtn />
       </div>
@@ -50,7 +53,7 @@ function BackToTopBtn() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
-      className="absolute right-8 bottom-8 rounded-full bg-gray-900"
+      className="fixed right-8 bottom-8 rounded-full bg-gray-900"
     >
       <svg
         width="14"

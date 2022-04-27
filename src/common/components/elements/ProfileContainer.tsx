@@ -55,7 +55,7 @@ export const ProfileContainer: FC = ({ children }) => {
           />
         ) : null}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

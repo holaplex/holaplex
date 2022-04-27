@@ -844,7 +844,7 @@ export default function NftByAddress({
           </>
         )}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

@@ -12,6 +12,7 @@ import { FeedEvent, useNftMarketplaceQuery } from 'src/graphql/indexerTypes';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import Modal from '../elements/Modal';
+import MoreDropdown from '../elements/MoreDropdown';
 import NFTPreview from '../elements/NFTPreview';
 import OfferForm from '../forms/OfferForm';
 
@@ -39,6 +40,7 @@ type FeedCardAttributes =
       toUser?: User;
       solAmount?: number;
       nft?: {
+        address: string;
         name: string;
         image: string;
         description: string;
@@ -47,7 +49,10 @@ type FeedCardAttributes =
     }
   | undefined;
 
-function generateFeedCardAtributes(event: FeedEvent): FeedCardAttributes {
+function generateFeedCardAtributes(
+  event: FeedEvent,
+  myFollowingList?: string[]
+): FeedCardAttributes {
   const base = {
     id: event.feedEventId,
     timestamp: event.createdAt,
@@ -73,7 +78,9 @@ function generateFeedCardAtributes(event: FeedEvent): FeedCardAttributes {
       return {
         ...base,
         type: 'FollowEvent',
-        content: 'Followed ' + shortenAddress(event.connection?.to.address),
+        content: myFollowingList?.includes(event.connection?.to.address)
+          ? 'Was followed by ' + getHandle(event.connection?.to!)
+          : 'Followed ' + getHandle(event.connection?.to!),
         sourceUser: {
           address: event.connection?.from.address,
           profile: null,
@@ -102,16 +109,34 @@ function generateFeedCardAtributes(event: FeedEvent): FeedCardAttributes {
         },
         nft: event.purchase?.nft,
       };
+    case 'OfferEvent':
+      solAmount = event.offer?.price / LAMPORTS_PER_SOL;
+      return {
+        ...base,
+        content: 'Offered ' + solAmount + ' SOL',
+        sourceUser: {
+          address: event.offer?.buyer!,
+          profile: null,
+        },
+        nft: event.offer?.nft,
+      };
   }
 }
 
 export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
-  const attrs = generateFeedCardAtributes(props.event);
+  const myFollowingList = [
+    'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
+    '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
+    'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS',
+    '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR',
+  ]; // ideally gotten from a context hook or something
+
+  const attrs = generateFeedCardAtributes(props.event, myFollowingList);
   console.log('Feed card', {
     event: props.event,
     attrs,
   });
-  if (!attrs) return <div>Can not describe event</div>;
+  if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
   if (props.event.__typename === 'FollowEvent')
     return <FollowCard attrs={attrs} anchorWallet={props.anchorWallet} event={props.event} />;
@@ -120,12 +145,16 @@ export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }
 
   return (
     <div className="group relative transition-all  hover:scale-[1.02] ">
-      <img
-        className="aspect-square w-full rounded-lg "
-        src={attrs.nft?.image}
-        alt={attrs.nft?.name}
-      />
-      <ShareMenu className="absolute top-4 right-4 " />
+      <Link href={'/nfts/' + attrs.nft.address} passHref>
+        <a>
+          <img
+            className="aspect-square w-full rounded-lg "
+            src={attrs.nft?.image}
+            alt={attrs.nft?.name}
+          />
+        </a>
+      </Link>
+      <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
         <FeedActionBanner event={props.event} />
       </div>
@@ -184,11 +213,11 @@ function getHandle(u: User) {
 function FeedActionBanner(props: { event: FeedEvent }) {
   const attrs = generateFeedCardAtributes(props.event);
 
-  if (!attrs?.sourceUser) return <div>Can not describe event</div>;
+  if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
   return (
     <>
-      <div className="flex w-full  rounded-full bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900">
+      <div className="flex w-full items-center rounded-full bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900">
         <ProfilePFP user={attrs.sourceUser} />
         <div className="ml-2">
           <div className="text-base font-semibold">{attrs.content}</div>
@@ -247,18 +276,27 @@ function ProfilePFP({ user }: { user: User }) {
   );
 }
 
-function ShareMenu(props: { className: string }) {
+function ShareMenu(props: { address: string; className: string }) {
   return (
     <div className={props.className}>
-      <Popover className="relative">
-        <Popover.Button className="rounded-full bg-gray-900/40 p-4 backdrop-blur-3xl group-hover:bg-gray-900">
-          <ShareIcon className="h-4 w-4" />
-        </Popover.Button>
-        <Popover.Panel className="absolute z-10 w-64 -translate-y-32 transform space-y-8  bg-gray-900 px-4 text-white sm:px-0">
-          <div>Share NFT to Twitter</div>
-          <div>Copy link to NFT</div>
-        </Popover.Panel>
-      </Popover>
+      <MoreDropdown
+        address={props.address}
+        triggerButtonExtraClassNames="bg-gray-900/40 backdrop-blur-3xl group-hover:bg-gray-900"
+      />
     </div>
   );
+
+  // return (
+  //   <div className={props.className}>
+  //     <Popover className="relative">
+  //       <Popover.Button className="rounded-full bg-gray-900/40 p-4 backdrop-blur-3xl group-hover:bg-gray-900">
+  //         <ShareIcon className="h-4 w-4" />
+  //       </Popover.Button>
+  //       <Popover.Panel className="absolute z-10 w-64 -translate-y-32 transform space-y-8  bg-gray-900 px-4 text-white sm:px-0">
+  //         <div>Share NFT to Twitter</div>
+  //         <div>Copy link to NFT</div>
+  //       </Popover.Panel>
+  //     </Popover>
+  //   </div>
+  // );
 }

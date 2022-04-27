@@ -85,6 +85,25 @@ const FEED_EVENTS = [
     },
   },
   {
+    __typename: 'FollowEvent',
+    feedEventId: '4dd91759-9f97-4984-9666-b71e33c9ffsab',
+    graphConnectionAddress: '4fM9YQhdvavfPViNbm7AxwWGjmyTCnTbEMYdCQTadiLSo',
+    createdAt: '2022-04-27T14:47:44.819201+00:00',
+    connection: {
+      address: '4fM9YQhdvavfPViNbm7AxwWGjmyTCnTbEMYdCQTdiLSo',
+      from: {
+        address: '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR',
+        profile: null,
+      },
+      to: {
+        address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H',
+        profile: {
+          handle: 'belle__sol',
+        },
+      },
+    },
+  },
+  {
     __typename: 'OfferEvent',
     feedEventId: '94d2a65b-6547-4b09-ad02-ee8dba82da79',
     createdAt: '2022-04-25T20:39:53.332329+00:00',
@@ -92,9 +111,11 @@ const FEED_EVENTS = [
       buyer: 'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS',
       price: 250000000,
       nft: {
-        name: 'My NFT',
+        address: '4SET3vVDsCHYCYQaRrWrDHBJojkLtAxvMe18suPr7Ycf',
+        name: 'DreamerKid',
         image:
-          'https://assets.holaplex.tools/ipfs/bafybeich4igoclnufqimgeghk3blqpqhdjzu6ilhuvd4hje5kcvlh2wpiu?width=600',
+          'https://assets2.holaplex.tools/ipfs/bafkreiahhvowe5lfdtdjsltyvvgy6emen3lfrzfrszv5g5jzmapalw2mda?width=600',
+        // 'https://assets.holaplex.tools/ipfs/bafybeich4igoclnufqimgeghk3blqpqhdjzu6ilhuvd4hje5kcvlh2wpiu?width=600',
         description: 'my description',
         creators: [
           {
@@ -102,7 +123,6 @@ const FEED_EVENTS = [
             twitterHandle: 'fffffff',
           },
         ],
-        address: 'asdfasdf',
         mintAddress: 'fasdfasdfsaf',
       },
     },
@@ -175,7 +195,7 @@ const FeedPage = () => {
         />
       </Head>
 
-      <div className="space-y-24">
+      <div className="space-y-20">
         {/* {loading && (
         <div className="flex h-96 w-full items-center justify-center">
           <Spinner />
