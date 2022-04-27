@@ -101,7 +101,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
 
       {/* marketplace name, NFT volume, and floor price section */}
       <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-xl font-semibold text-white">{data.name}</span>
+        <span className="text-sm lg:text-xl font-semibold text-white">{data.name}</span>
 
         {/* NFT volume and floor price row container
                 Using height and opacity (rather than 'display') to animate bottom-text appearing */}
@@ -110,13 +110,13 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
           } flex flex-row items-center justify-between overflow-hidden duration-150`}
         >
-          <span className="text-left text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
+          <span className="text-left text-xs lg:text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
           <div
             className={`${
               floorPriceSol == 0 ? 'hidden' : ''
-            } flex flex-row text-right text-base font-medium`}
+            } flex flex-row text-right text-xs lg:text-base font-medium`}
           >
-            <span className="mr-3">Floor price:</span>
+            <span className="mr-1 lg:mr-3">Floor price:</span>
             <Price priceSol={floorPriceSol} />
           </div>
         </div>
