@@ -17,6 +17,7 @@ export const AvatarIcons = ({ creators }: { creators: { address: string }[] }) =
           <AvatarIcon address={address} index={i} />
         </div>
       ))}
+      {/* show how many additional creators there are when there are more than 4 */}
       {
         <div
           className={`${

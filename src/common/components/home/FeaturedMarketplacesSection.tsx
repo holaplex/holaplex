@@ -46,7 +46,7 @@ const FeaturedMarkeplacesSection: VFC = () => {
         >
           {previewSubdomains.map((s) => (
             <Carousel.Item key={s}>
-              <div key={s} className="aspect-[16/10] w-full p-4 overflow:visible">
+              <div key={s} className="aspect-[16/10] w-full p-4">
                 <MarketplacePreview subdomain={s} />
               </div>
             </Carousel.Item>
