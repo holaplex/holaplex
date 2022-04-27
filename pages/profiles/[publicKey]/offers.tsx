@@ -95,7 +95,6 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
         }`}
       >
         <p className={`mb-0 first-letter:text-base`}>{title}</p>
-        <p className={`mb-0 text-base`}>{count}</p>
       </div>
     );
   };

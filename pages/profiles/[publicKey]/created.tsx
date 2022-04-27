@@ -104,7 +104,6 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
         }`}
       >
         <p className={`mb-0 first-letter:text-base`}>{title}</p>
-        <p className={`mb-0 text-base`}>{count}</p>
       </div>
     );
   };
@@ -182,7 +181,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore && nftsToShow.length > 99}
+          hasMore={hasMore && filteredNfts.length > 99}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;
