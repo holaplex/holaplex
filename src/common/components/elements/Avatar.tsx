@@ -10,10 +10,22 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 export const AvatarIcons = ({ creators }: { creators: { address: string }[] }) => {
   return (
-    <div className="relative">
-      {creators.map(({ address }, i) => (
-        <AvatarIcon address={address} index={i} key={address} />
+    // wrap the avatars in a container with a small, colored background
+    <div className={`inline-flex items-center rounded-full bg-gray-600 bg-opacity-70 p-1`}>
+      {creators.slice(0, 4).map(({ address }, i) => (
+        <div key={address} className={`h-6 w-6 ${i > 0 ? '-ml-3' : ''}`}>
+          <AvatarIcon address={address} index={i} />
+        </div>
       ))}
+      {
+        <div
+          className={`${
+            creators.length < 5 ? 'hidden' : ''
+          } -ml-3 flex h-6 items-center rounded-full bg-gray-800 px-1 text-sm text-gray-400 hover:scale-125`}
+        >
+          {`+${creators.length - 4}`}
+        </div>
+      }
     </div>
   );
 };
@@ -48,8 +60,8 @@ export const AvatarIcon = ({ address, index }: { address: string; index: number 
       }}
     >
       {/* // Need to use style prop for dynamic style application, Tailwind does not support */}
-      <li
-        className="absolute list-none transition hover:z-10 hover:scale-125"
+      <div
+        className="h-full w-full transition hover:z-10 hover:scale-125"
         style={{ left: leftPos }}
       >
         <Link href={`/profiles/${address}`}>
@@ -57,11 +69,11 @@ export const AvatarIcon = ({ address, index }: { address: string; index: number 
             <img
               src={profilePictureUrl ?? getPFPFromPublicKey(address)}
               alt="Profile Picture"
-              className="h-6 w-6 rounded-full"
+              className="rounded-full"
             />
           </a>
         </Link>
-      </li>
+      </div>
     </Tooltip>
   );
 };
