@@ -52,6 +52,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import FeaturedMarkeplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -489,12 +490,7 @@ export default function Home({
       </section>
 
       <section>
-        <Title level={3}>Featured Creators</Title>
-        <div className="mt-16 grid max-w-full grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 xl:grid-cols-4">
-          {featuredStorefronts.slice(0, 4).map((storefront) => (
-            <StorePreview {...storefront} key={storefront.storefront.subdomain} />
-          ))}
-        </div>
+        <FeaturedMarkeplacesSection/>
       </section>
       <section className="mt-10">
         <div ref={listingsTopRef} />
