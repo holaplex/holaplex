@@ -6,7 +6,7 @@ import { Tab } from '@headlessui/react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 type FeedType = 'Following' | 'Discovery';
 const Feeds: FeedType[] = ['Following', 'Discovery'];
@@ -38,7 +38,7 @@ export default function FeedLayout({ children }: { children: any }) {
           </div> */}
           {children}
         </div>
-        <div className="hidden w-full max-w-md space-y-7 xl:block">
+        <div className="sticky top-0 hidden w-full max-w-md space-y-7 xl:block">
           <WhoToFollowList />
           <MyActivityList />
           <SmallFooter />
@@ -50,10 +50,31 @@ export default function FeedLayout({ children }: { children: any }) {
 }
 
 function BackToTopBtn() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
-      className="fixed right-8 bottom-8 rounded-full bg-gray-900"
+      className={classNames(
+        'fixed right-8 bottom-8 rounded-full bg-gray-900',
+        scrollY === 0 && 'hidden'
+      )}
     >
       <svg
         width="14"

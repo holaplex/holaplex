@@ -63,6 +63,7 @@ import { FeedCard } from '@/common/components/feed/FeedCard';
 // 2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4 // ghostfried
 // GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS // kayla
 // 2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR // belle
+// NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H // kris
 
 const FEED_EVENTS = [
   {
@@ -203,8 +204,7 @@ const FeedPage = () => {
       )} */}
         {
           // @ts-ignore
-          // data?.feedEvents.concat(FEED_EVENTS)
-          FEED_EVENTS.map((fEvent) => (
+          data?.feedEvents.map((fEvent) => (
             // @ts-ignore
             <FeedCard key={fEvent.feedEventId} event={fEvent} anchorWallet={anchorWallet} />
           ))
