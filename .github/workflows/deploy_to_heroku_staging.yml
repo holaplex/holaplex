@@ -1,0 +1,20 @@
+name: Heroku - Build and deploy (dev)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Holaplex image and deploy
+        uses: gonuit/heroku-docker-deploy@v1.3.3
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: holaplex-builder-staging
+          dockerfile_name: Dockerfile
+          process_type: web
