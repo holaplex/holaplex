@@ -43,17 +43,17 @@ const previewSubdomains: string[] = [
 
 const PageLeftButton = (
   <button
-    className="absolute left-0 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black hover:scale-105"
+    className="flex items-center justify-center absolute left-0 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black hover:scale-125 transition"
   >
-    <ChevronLeftIcon />
+    <ChevronLeftIcon className="h-4 w-4" />
   </button>
 );
 
 const PageRightButton = (
   <button
-    className="absolute right-0 top-1/2 h-10 w-10 translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black hover:scale-105"
+    className="flex items-center justify-center absolute right-0 top-1/2 h-10 w-10 translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black hover:scale-125 transition"
   >
-    <ChevronRightIcon />
+    <ChevronRightIcon className="h-4 w-4" />
   </button>
 );
 
