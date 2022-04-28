@@ -1,4 +1,3 @@
-import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Head from 'next/head';
 import { GetServerSideProps, NextPage } from 'next';
 import { showFirstAndLastFour } from '@/modules/utils/string';
