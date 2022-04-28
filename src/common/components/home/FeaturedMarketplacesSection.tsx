@@ -48,7 +48,7 @@ const FeaturedMarkeplacesSection: VFC = () => {
         <Carousel
           cols={3}
           rows={2}
-          gap={10}
+          gap={0}
           arrowLeft={PageLeftButton}
           arrowRight={PageRightButton}
         >
