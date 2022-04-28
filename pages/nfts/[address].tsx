@@ -42,6 +42,7 @@ import Footer from '@/common/components/home/Footer';
 import { seededRandomBetween } from '../../src/modules/utils/random';
 import { SolscanIcon } from '../../src/common/components/icons/Solscan';
 import { ExplorerIcon } from '../../src/common/components/icons/Explorer';
+import NFTImage from '../../src/common/components/elements/NFTImage';
 
 const Activities = ({
   listings,
@@ -278,7 +279,7 @@ export default function NftByAddress({
                   <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
                 )}
                 {nft?.image && (
-                  <img
+                  <NFTImage
                     onLoad={() => setImgLoaded(true)}
                     src={imgOpt(nft?.image, 800)!}
                     className="block aspect-square  w-full rounded-lg border-none object-cover shadow"

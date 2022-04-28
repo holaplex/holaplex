@@ -130,16 +130,16 @@ export const NFTCard = ({
               )}
             </div>
 
-            <div className="flex h-24 items-center bg-gray-900 py-6 px-4">
+            <div className="flex h-24 items-center bg-gray-900 py-6">
               <p className="w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold">
                 {nft.name}
               </p>
             </div>
           </div>
         </Link>
-        <div className={`h-20 md:h-36 xl:h-20`}>
+        <div className={`h-20 md:h-28 xl:h-20`}>
           <div
-            className={`flex h-full w-full items-center justify-between p-4 md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+            className={`flex h-full w-full items-center justify-between md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
           >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
