@@ -20,7 +20,7 @@ const NFTImage: FC<NFTImageProps> = ({ src, onLoad, className, alt }) => {
         <div className={`absolute bottom-4 right-4`}>
           <button
             onClick={() => setExpanded(true)}
-            className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 bg-opacity-20 transition ease-in-out hover:scale-110`}
+            className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 bg-opacity-20 backdrop-blur-sm transition ease-in-out hover:scale-110`}
           >
             <FeatherIcon height={16} width={16} icon="maximize" />
           </button>
