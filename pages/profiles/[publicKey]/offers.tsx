@@ -95,7 +95,6 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
         }`}
       >
         <p className={`mb-0 first-letter:text-base`}>{title}</p>
-        <p className={`mb-0 text-base`}>{count}</p>
       </div>
     );
   };
@@ -111,7 +110,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
         />
       </Head>
       <ProfileContainer>
-        <div className="sticky top-0 z-30 mb-2 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 mb-2 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <OfferFilter title={`All`} count={offerCount} filterToCheck={OfferFilters.ALL} />
             <OfferFilter title={`Made`} count={sentCount} filterToCheck={OfferFilters.MADE} />

@@ -104,7 +104,6 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
         }`}
       >
         <p className={`mb-0 first-letter:text-base`}>{title}</p>
-        <p className={`mb-0 text-base`}>{count}</p>
       </div>
     );
   };
@@ -146,7 +145,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
         <meta property="description" key="description" content="View owned and created NFTs" />
       </Head>
       <ProfileContainer>
-        <div className="sticky top-0 z-30 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -182,7 +181,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore && nftsToShow.length > 99}
+          hasMore={hasMore && filteredNfts.length > 99}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;
