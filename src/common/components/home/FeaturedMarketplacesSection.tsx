@@ -8,7 +8,15 @@ const previewSubdomains: string[] = [
   'junglecats',
   'cityshop',
   'thechimpions',
-  'skeletoncrew'
+  'skeletoncrew',
+  'monkedao',
+  'ursmarket',
+  'pixelbands',
+  'thislooksrare',
+  'shiguardians',
+  'mortuary',
+  'kurumanft',
+  'paragon',
 ];
 
 const PageLeftButton = (
@@ -38,7 +46,7 @@ const FeaturedMarkeplacesSection: VFC = () => {
       </HomeSection.Header>
       <HomeSection.Body>
         <Carousel
-          cols={2}
+          cols={3}
           rows={2}
           gap={10}
           arrowLeft={PageLeftButton}
@@ -46,7 +54,7 @@ const FeaturedMarkeplacesSection: VFC = () => {
         >
           {previewSubdomains.map((s) => (
             <Carousel.Item key={s}>
-              <div key={s} className="aspect-[16/10] w-full p-4">
+              <div key={s} className="aspect-[16/10] w-full p-2">
                 <MarketplacePreview subdomain={s} />
               </div>
             </Carousel.Item>
