@@ -27,15 +27,22 @@ const previewSubdomains: string[] = [
 const FeaturedMarkeplacesSection: VFC = () => {
   return (
     <HomeSection>
-      <HomeSection.Header>
+      {/* <HomeSection.Header>
         <HomeSection.Title>Marketplaces</HomeSection.Title>
         <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
           Join waitlist
         </HomeSection.HeaderAction>
-      </HomeSection.Header>
-      <HomeSection.Body>
+      </HomeSection.Header> */}
+      <div className="flex justify-between">
+        <HomeSection.Title>Marketplaces</HomeSection.Title>
+        <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
+          Join waitlist
+        </HomeSection.HeaderAction>
+      </div>
+      <HomeSection.Body></HomeSection.Body>
+      <div className="-ml-[2%] w-[104%] ">
         <HomeSectionCarousel cols={3} rows={2}>
-        {previewSubdomains.map((s) => (
+          {previewSubdomains.map((s) => (
             <HomeSectionCarousel.Item key={s}>
               <div key={s} className="aspect-[16/10] w-full p-2">
                 <MarketplacePreview subdomain={s} />
@@ -43,12 +50,10 @@ const FeaturedMarkeplacesSection: VFC = () => {
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
-      </HomeSection.Body>
+      </div>
     </HomeSection>
   );
 };
-
-
 
 const LoadingPreview = () => {
   return (
@@ -103,18 +108,13 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {/* preview image */}
       <div className="relative flex">
-        <a
-          href={marketplaceUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={onClickMarketplaceLink}
-        >
+        <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
           <img
             src={imgOpt(data.bannerUrl, 800)}
             alt={`${data.name}`}
             className="min-h-full min-w-full object-cover"
             // provide a fallback image in case the banner isnt found
-            onError={({currentTarget}) => {
+            onError={({ currentTarget }) => {
               // null onerror to prevent looping in worst case
               currentTarget.onerror = null;
               currentTarget.src = getFallbackImage();
@@ -143,7 +143,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
 
       {/* marketplace name, NFT volume, and floor price section */}
       <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-sm lg:text-xl font-semibold text-white">{data.name}</span>
+        <span className="text-sm font-semibold text-white lg:text-xl">{data.name}</span>
 
         {/* NFT volume and floor price row container
                 Using height and opacity (rather than 'display') to animate bottom-text appearing */}
@@ -152,13 +152,13 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
           } flex flex-row items-center justify-between overflow-hidden duration-150`}
         >
-          <span className="text-left text-xs lg:text-base font-medium">{`${nftVolumeStr} NFTs`}</span>
+          <span className="text-left text-xs font-medium lg:text-base">{`${nftVolumeStr} NFTs`}</span>
           <div
             className={`${
               floorPriceSol == 0 ? 'hidden' : ''
-            } flex flex-row text-right text-xs lg:text-base font-medium`}
+            } flex flex-row text-right text-xs  font-medium lg:text-base`}
           >
-            <span className="mr-1 lg:mr-3">Floor price:</span>
+            <span className="mr-1 lg:mr-3">Floor price</span>
             <Price priceSol={floorPriceSol} />
           </div>
         </div>
