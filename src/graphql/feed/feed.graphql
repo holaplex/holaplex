@@ -30,12 +30,14 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
           address
           profile {
             handle
+            profileImageUrl
           }
         }
         to {
           address
           profile {
             handle
+            profileImageUrl
           }
         }
       }

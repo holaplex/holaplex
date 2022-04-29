@@ -2,11 +2,11 @@ import SocialLinks from '@/common/components/elements/SocialLinks';
 import { MyActivityList } from '@/common/components/feed/MyActivityList';
 import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import { SmallFooter } from '@/common/components/home/Footer';
-import { Tab } from '@headlessui/react';
 import classNames from 'classnames';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { Tab } from '@headlessui/react';
 
 type FeedType = 'Following' | 'Discovery';
 const Feeds: FeedType[] = ['Following', 'Discovery'];

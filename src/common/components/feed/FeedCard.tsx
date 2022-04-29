@@ -30,7 +30,7 @@ interface User {
 type FeedCardAttributes =
   | {
       id: string;
-      timestamp: string;
+      createdAt: string;
       type:
         | 'ListingEvent'
         | 'FollowEvent'
@@ -58,7 +58,7 @@ export function generateFeedCardAtributes(
 ): FeedCardAttributes {
   const base = {
     id: event.feedEventId,
-    timestamp: event.createdAt,
+    createdAt: event.createdAt,
     type: event.__typename,
   };
   let solAmount: number | undefined;
@@ -84,14 +84,8 @@ export function generateFeedCardAtributes(
         content: myFollowingList?.includes(event.connection?.to.address)
           ? 'Was followed by ' + getHandle(event.connection?.to!)
           : 'Followed ' + getHandle(event.connection?.to!),
-        sourceUser: {
-          address: event.connection?.from.address,
-          profile: null,
-        },
-        toUser: {
-          address: event.connection?.to.address,
-          profile: null,
-        },
+        sourceUser: event.connection?.from!,
+        toUser: event.connection?.to!,
       };
 
     case 'MintEvent':
@@ -130,7 +124,7 @@ export function generateFeedCardAtributes(
   }
 }
 
-function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
+export function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
   const myFollowingList = [
     'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
     '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
@@ -149,24 +143,27 @@ function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedEvent
   if (props.event.__typename === 'FollowEvent')
     return <FollowCard attrs={attrs} anchorWallet={props.anchorWallet} event={props.event} />;
 
-  if (!attrs.nft) return <div>Event is malformed</div>;
+  if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
 
   return (
     <FeedCard2
-      content={<div>{attrs.content}</div>}
+      content={attrs.content}
       sourceUser={attrs.sourceUser}
-      timestamp={attrs.timestamp}
+      createdAt={attrs.createdAt}
       nft={attrs.nft}
     />
   );
 }
 
-function FeedCard2(props: {
-  content: any;
+interface FeedCardProps {
+  content: string;
   sourceUser: { address: string };
   nft: { address: string; image: string; name: string };
-  timestamp: string;
-}) {
+  createdAt: string;
+}
+
+function FeedCard2(props: FeedCardProps) {
+  // needs a way to encapsulate various actions. Could be as simple as "children"
   return (
     <div className="group relative transition-all  hover:scale-[1.02] ">
       <Link href={'/nfts/' + props.nft.address} passHref>
@@ -184,12 +181,12 @@ function FeedCard2(props: {
         <div className="flex w-full items-center rounded-full bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900">
           <ProfilePFP user={props.sourceUser} />
           <div className="ml-2">
-            <div className="text-base font-semibold">{attrs.content}</div>
+            <div className="text-base font-semibold">{props.content}</div>
             <div className="flex text-sm">
               {/* {getHandle(attrs.sourceUser)}  */}
               <ProfileHandle address={props.sourceUser.address} />
               &nbsp;
-              {DateTime.fromISO(props.timestamp).toRelative()}
+              {DateTime.fromISO(props.createdAt).toRelative()}
             </div>
           </div>
           <div className="ml-auto">
@@ -201,7 +198,26 @@ function FeedCard2(props: {
   );
 }
 
-export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
+interface IFeedEvent {
+  id: string;
+  createdAt: string;
+  type:
+    | 'ListingEvent'
+    | 'FollowEvent'
+    | 'MintEvent'
+    | 'PurchaseEvent'
+    | 'OfferEvent'
+    | 'AggregateEvent';
+}
+
+export interface AggregateEvent {
+  id: string;
+  __typename: 'AggregateEvent';
+  createdAt: string;
+  eventsAggregated: FeedEvent[];
+}
+
+export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent | AggregateEvent }) {
   const myFollowingList = [
     'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
     '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
@@ -209,8 +225,9 @@ export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }
     '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR',
   ]; // ideally gotten from a context hook or something
 
-  if (props.event.__typename === 'Aggregate')
-    return <div>and {props.event.eventsAggregated} similar events</div>;
+  if (props.event.__typename === 'AggregateEvent') {
+    return <div>and {props.event.eventsAggregated.length} similar events</div>;
+  }
 
   const attrs = generateFeedCardAtributes(props.event, myFollowingList);
   console.log('Feed card', {
@@ -259,7 +276,12 @@ function FollowCard(props: {
   if (!attrs) return <div>Not enough data</div>;
 
   return (
-    <div className="flex items-center rounded-full bg-gray-800 p-4 shadow-lg ">
+    <div
+      className={classNames(
+        'flex items-center rounded-full bg-gray-800 p-4 shadow-lg',
+        false && 'hover:scale-[1.02]'
+      )}
+    >
       <ProfilePFP user={attrs.sourceUser} />
       <div className="ml-4">
         <div className="text-base font-semibold">
@@ -271,7 +293,7 @@ function FollowCard(props: {
           <Link href={'/profiles/' + attrs.sourceUser.address + '/nfts'} passHref>
             <a>{attrs.sourceUser.profile?.handle || shortenAddress(attrs.sourceUser.address)}</a>
           </Link>
-          <span>{DateTime.fromISO(attrs.timestamp).toRelative()}</span>
+          <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
       </div>
       <div className="ml-auto">
@@ -313,7 +335,7 @@ function FeedActionBanner(props: { event: FeedEvent }) {
             {/* {getHandle(attrs.sourceUser)}  */}
             <ProfileHandle address={attrs.sourceUser.address} />
             &nbsp;
-            {DateTime.fromISO(attrs.timestamp).toRelative()}
+            {DateTime.fromISO(attrs.createdAt).toRelative()}
           </div>
         </div>
         <div className="ml-auto">
@@ -356,6 +378,7 @@ function MakeOfferButton(props: { nft: any }) {
 }
 
 function ProfilePFP({ user }: { user: User }) {
+  // some of these hooks could probably be lifted up, but keeping it here for simplicity
   const { data: twitterHandle } = useTwitterHandle(null, user.address);
   const walletProfile = useWalletProfileQuery({
     variables: {
@@ -370,16 +393,6 @@ function ProfilePFP({ user }: { user: User }) {
       alt={'profile picture for ' + user.profile?.handle || user.address}
     />
   );
-
-  // user.profile?.pfp ? (
-  //   <img
-  //     className={classNames('rounded-full', 'h-10 w-10')}
-  //     src={walletProfile.data?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
-  //     alt={'profile picture for ' + user.profile.handle || user.address}
-  //   />
-  // ) : (
-  //   <div className={classNames('rounded-full bg-gray-700', 'h-10 w-10')}></div>
-  // );
 }
 
 function ShareMenu(props: { address: string; className: string }) {
@@ -391,18 +404,4 @@ function ShareMenu(props: { address: string; className: string }) {
       />
     </div>
   );
-
-  // return (
-  //   <div className={props.className}>
-  //     <Popover className="relative">
-  //       <Popover.Button className="rounded-full bg-gray-900/40 p-4 backdrop-blur-3xl group-hover:bg-gray-900">
-  //         <ShareIcon className="h-4 w-4" />
-  //       </Popover.Button>
-  //       <Popover.Panel className="absolute z-10 w-64 -translate-y-32 transform space-y-8  bg-gray-900 px-4 text-white sm:px-0">
-  //         <div>Share NFT to Twitter</div>
-  //         <div>Copy link to NFT</div>
-  //       </Popover.Panel>
-  //     </Popover>
-  //   </div>
-  // );
 }
