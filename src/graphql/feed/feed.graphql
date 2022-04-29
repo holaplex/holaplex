@@ -1,20 +1,23 @@
-query feed($address: PublicKey!) {
-  feedEvents(wallet: $address, limit: 1000, offset: 0) {
+query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+  feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
       feedEventId
       createdAt
       nft {
+        address
+        mintAddress
         name
         image
         description
         creators {
           address
           position
-          twitterHandle
+          profile {
+            profileImageUrl
+            handle
+          }
         }
-        address
-        mintAddress
       }
     }
     ... on FollowEvent {
@@ -45,16 +48,19 @@ query feed($address: PublicKey!) {
         seller
         price
         nft {
+          address
+          mintAddress
           name
           image
           description
           creators {
             address
             position
-            twitterHandle
+            profile {
+              profileImageUrl
+              handle
+            }
           }
-          address
-          mintAddress
         }
       }
     }
@@ -66,16 +72,19 @@ query feed($address: PublicKey!) {
         seller
         price
         nft {
+          address
+          mintAddress
           name
           image
           description
           creators {
             address
             position
-            twitterHandle
+            profile {
+              profileImageUrl
+              handle
+            }
           }
-          address
-          mintAddress
         }
       }
     }
@@ -87,16 +96,19 @@ query feed($address: PublicKey!) {
         buyer
         price
         nft {
+          address
+          mintAddress
           name
           image
           description
           creators {
             address
             position
-            twitterHandle
+            profile {
+              profileImageUrl
+              handle
+            }
           }
-          address
-          mintAddress
         }
       }
     }

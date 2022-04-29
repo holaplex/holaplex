@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
@@ -10,6 +10,8 @@ import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import FeedLayout from '@/layouts/FeedLayout';
 import { useFeedQuery } from 'src/graphql/indexerTypes';
 import { FeedCard } from '@/common/components/feed/FeedCard';
+import { InView } from 'react-intersection-observer';
+import { TailSpin } from 'react-loader-spinner';
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 //   return {
 //     props: {
@@ -166,17 +168,23 @@ const FEED_EVENTS = [
   },
 ];
 
+export const INFINITE_SCROLL_AMOUNT_INCREMENT = 2;
+
 const FeedPage = () => {
   const anchorWallet = useAnchorWallet();
-
   const myPubkey = anchorWallet?.publicKey.toBase58();
-
-  const { data, loading, called, refetch } = useFeedQuery({
+  const { data, loading, called, fetchMore } = useFeedQuery({
     fetchPolicy: `no-cache`,
     variables: {
       address: myPubkey,
+      offset: 0,
+      limit: 1000,
     },
   });
+
+  const [hasMore, setHasMore] = useState(true);
+  // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
+  const feedEvents = data?.feedEvents ?? [];
 
   if (!myPubkey) return null;
 
@@ -184,6 +192,91 @@ const FeedPage = () => {
     data,
     loading,
   });
+
+  async function loadMore(inView: boolean) {
+    console.log('load more feed', {
+      inView,
+      loading,
+      feeedEvetnsN: feedEvents.length,
+    });
+    if (!inView || loading || feedEvents.length <= 0) {
+      return;
+    }
+
+    const { data: newData } = await fetchMore({
+      variables: {
+        address: myPubkey,
+        limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+        offset: feedEvents.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        const prevFeedEvents = feedEvents; // prev.feedEvents;
+        const moreFeedEvents = fetchMoreResult.feedEvents;
+        if (moreFeedEvents.length === 0) {
+          setHasMore(false);
+        }
+
+        console.log('update query', {
+          prevFeedEventsN: prevFeedEvents?.length,
+          moreFeedEventsN: moreFeedEvents?.length,
+        });
+
+        fetchMoreResult.feedEvents = prevFeedEvents.concat(moreFeedEvents);
+
+        return { ...fetchMoreResult };
+      },
+    });
+    // setFeedEvents(newData.feedEvents);
+    console.log('newData', {
+      feedEvents,
+      newData,
+      feedEventsN: feedEvents.length,
+      newDataN: newData.feedEvents.length,
+    });
+  }
+
+  function getFeedItems(feedEvents: typeof data.feedEvents) {
+    const feedItems = [];
+    let i = 0;
+    while (i < feedEvents.length) {
+      const cur = feedEvents[i];
+      const next = feedEvents[i + 1];
+      feedItems.push(cur);
+
+      if (
+        cur.__typename === 'MintEvent' &&
+        next.__typename === 'MintEvent' &&
+        cur.nft?.creators[0].address === next.nft?.creators[0].address
+      ) {
+        const aggregateEvent = { items: [] };
+        let j = i + 1;
+        while (
+          feedEvents[j] &&
+          feedEvents[j].__typename === 'MintEvent' &&
+          feedEvents[j].nft.creators[0].address === cur.nft?.creators[0].address
+        ) {
+          aggregateEvent.items.push(feedEvents[j]);
+          j++;
+        }
+        feedItems.push({
+          id: 'agg_' + cur.feedEventId,
+          createdAt: cur.createdAt,
+          __typename: 'Aggregate',
+          ...aggregateEvent,
+          eventsAggregated: aggregateEvent.items.length,
+        });
+        i = j;
+      } else {
+        i++;
+      }
+    }
+
+    return feedItems;
+  }
+
+  // const feedItems = data?.feedEvents.reduce((acc, feedEvent, i) => {}, []);
+  const feedItems = getFeedItems(data?.feedEvents || []);
 
   return (
     <>
@@ -197,19 +290,23 @@ const FeedPage = () => {
       </Head>
 
       <div className="space-y-20">
-        {/* {loading && (
-        <div className="flex h-96 w-full items-center justify-center">
-          <Spinner />
-        </div>
-      )} */}
         {
           // @ts-ignore
-          data?.feedEvents.map((fEvent) => (
+          feedItems.map((fEvent) => (
             // @ts-ignore
             <FeedCard key={fEvent.feedEventId} event={fEvent} anchorWallet={anchorWallet} />
           ))
         }
       </div>
+      {hasMore && (
+        <div>
+          <InView threshold={0.1} onChange={loadMore}>
+            <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+              <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
+            </div>
+          </InView>
+        </div>
+      )}
     </>
   );
 };

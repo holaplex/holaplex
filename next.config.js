@@ -18,6 +18,9 @@ const plugins = [
 
 module.exports = withPlugins(plugins, {
   reactStrictMode: false,
+  experimental: {
+    outputStandalone: true,
+  },
   images: {
     domains: [
       'pbs.twimg.com',

@@ -243,6 +243,16 @@ export type Nft = {
   name: Scalars['String'];
   offers: Array<BidReceipt>;
   owner?: Maybe<NftOwner>;
+  /**
+   * The JSON parser with which the NFT was processed by the indexer
+   *
+   * - `"full"` indicates the full Metaplex standard-compliant parser was
+   *   used.
+   * - `"minimal"` (provided with an optional description of an error)
+   *   indicates the full model failed to parse and a more lenient fallback
+   *   parser with fewer fields was used instead.
+   */
+  parser?: Maybe<Scalars['String']>;
   primarySaleHappened: Scalars['Boolean'];
   purchases: Array<PurchaseReceipt>;
   sellerFeeBasisPoints: Scalars['Int'];
@@ -443,6 +453,7 @@ export type QueryRootNftCountsArgs = {
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
+  collection?: InputMaybe<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
   listed?: InputMaybe<Array<Scalars['PublicKey']>>;
@@ -569,10 +580,12 @@ export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typen
 
 export type FeedQueryVariables = Exact<{
   address: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, graphConnectionAddress: any, createdAt: any, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, lifecycle: string, listing?: { __typename?: 'ListingReceipt', seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, lifecycle: string, offer?: { __typename?: 'BidReceipt', buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, purchase?: { __typename?: 'PurchaseReceipt', buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, twitterHandle?: string | null }> } | null } | null }> };
+export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, graphConnectionAddress: any, createdAt: any, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, lifecycle: string, listing?: { __typename?: 'ListingReceipt', seller: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, lifecycle: string, offer?: { __typename?: 'BidReceipt', buyer: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, purchase?: { __typename?: 'PurchaseReceipt', buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null }> };
 
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -835,23 +848,26 @@ export const WalletProfileDocument = gql`
 }
     `;
 export const FeedDocument = gql`
-    query feed($address: PublicKey!) {
-  feedEvents(wallet: $address, limit: 1000, offset: 0) {
+    query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+  feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
       feedEventId
       createdAt
       nft {
+        address
+        mintAddress
         name
         image
         description
         creators {
           address
           position
-          twitterHandle
+          profile {
+            profileImageUrl
+            handle
+          }
         }
-        address
-        mintAddress
       }
     }
     ... on FollowEvent {
@@ -882,16 +898,19 @@ export const FeedDocument = gql`
         seller
         price
         nft {
+          address
+          mintAddress
           name
           image
           description
           creators {
             address
             position
-            twitterHandle
+            profile {
+              profileImageUrl
+              handle
+            }
           }
-          address
-          mintAddress
         }
       }
     }
@@ -903,16 +922,19 @@ export const FeedDocument = gql`
         seller
         price
         nft {
+          address
+          mintAddress
           name
           image
           description
           creators {
             address
             position
-            twitterHandle
+            profile {
+              profileImageUrl
+              handle
+            }
           }
-          address
-          mintAddress
         }
       }
     }
@@ -924,16 +946,19 @@ export const FeedDocument = gql`
         buyer
         price
         nft {
+          address
+          mintAddress
           name
           image
           description
           creators {
             address
             position
-            twitterHandle
+            profile {
+              profileImageUrl
+              handle
+            }
           }
-          address
-          mintAddress
         }
       }
     }

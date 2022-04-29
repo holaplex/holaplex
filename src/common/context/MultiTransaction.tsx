@@ -4,6 +4,7 @@ import { isEmpty } from 'ramda';
 import React, { FC, createContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { v4 } from 'uuid';
+import { errorCodeHelper } from '../../modules/utils/marketplace';
 import Button from '../components/elements/Button';
 import Modal from '../components/elements/Modal';
 import { None } from '../components/forms/OfferForm';
@@ -143,7 +144,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         } else {
           setHasError(true);
         }
-        settings?.onActionFailure?.(err);
+        settings?.onActionFailure?.(errorCodeHelper(err.message));
         setHasActionPending(false);
       } finally {
         setHasActionPending(false);

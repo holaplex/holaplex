@@ -73,7 +73,7 @@ export function AppHeader() {
         </HeaderTitle>
         {!WHICHDAO && (
           <LinkRow size="large">
-            <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/feed'}>
+            <HeaderLinkWrapper key="feed" active={router.pathname === '/feed'}>
               <Link href="/feed" passHref>
                 <a className="hover:underline focus:underline">Feed</a>
               </Link>

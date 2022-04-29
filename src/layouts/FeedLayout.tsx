@@ -12,21 +12,21 @@ type FeedType = 'Following' | 'Discovery';
 const Feeds: FeedType[] = ['Following', 'Discovery'];
 
 export default function FeedLayout({ children }: { children: any }) {
-  const router = useRouter();
-  const feedTabSelected = !router.pathname.includes('discovery');
+  // const router = useRouter();
+  // const feedTabSelected = !router.pathname.includes('discovery');
 
-  const Tab = (props: { url: string; selected: boolean; title: string }) => (
-    <Link href={props.url} passHref>
-      <a
-        className={classNames(
-          'w-full  py-2.5 text-center text-sm font-medium text-white ',
-          props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
-        )}
-      >
-        {props.title}
-      </a>
-    </Link>
-  );
+  // const Tab = (props: { url: string; selected: boolean; title: string }) => (
+  //   <Link href={props.url} passHref>
+  //     <a
+  //       className={classNames(
+  //         'w-full  py-2.5 text-center text-sm font-medium text-white ',
+  //         props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
+  //       )}
+  //     >
+  //       {props.title}
+  //     </a>
+  //   </Link>
+  // );
 
   return (
     <div className="container mx-auto mt-20 px-6 pb-20  ">

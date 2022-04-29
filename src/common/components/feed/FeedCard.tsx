@@ -1,4 +1,6 @@
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
+import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
 import { Popover } from '@headlessui/react';
 import { ShareIcon } from '@heroicons/react/outline';
@@ -8,7 +10,8 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { FeedEvent, useNftMarketplaceQuery } from 'src/graphql/indexerTypes';
+import { FeedEvent, useNftMarketplaceQuery, useWalletProfileQuery } from 'src/graphql/indexerTypes';
+import { JsxElement } from 'typescript';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import Modal from '../elements/Modal';
@@ -49,7 +52,7 @@ type FeedCardAttributes =
     }
   | undefined;
 
-function generateFeedCardAtributes(
+export function generateFeedCardAtributes(
   event: FeedEvent,
   myFollowingList?: string[]
 ): FeedCardAttributes {
@@ -92,10 +95,14 @@ function generateFeedCardAtributes(
       };
 
     case 'MintEvent':
+      const creator = event.nft?.creators[0]!;
       return {
         ...base,
         content: 'Created',
-        sourceUser: event.nft?.creators[0]!,
+        sourceUser: {
+          address: creator.address,
+          profile: creator.profile,
+        },
         nft: event.nft,
       };
     case 'PurchaseEvent':
@@ -123,7 +130,7 @@ function generateFeedCardAtributes(
   }
 }
 
-export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
+function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
   const myFollowingList = [
     'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
     '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
@@ -136,6 +143,81 @@ export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }
     event: props.event,
     attrs,
   });
+
+  if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
+
+  if (props.event.__typename === 'FollowEvent')
+    return <FollowCard attrs={attrs} anchorWallet={props.anchorWallet} event={props.event} />;
+
+  if (!attrs.nft) return <div>Event is malformed</div>;
+
+  return (
+    <FeedCard2
+      content={<div>{attrs.content}</div>}
+      sourceUser={attrs.sourceUser}
+      timestamp={attrs.timestamp}
+      nft={attrs.nft}
+    />
+  );
+}
+
+function FeedCard2(props: {
+  content: any;
+  sourceUser: { address: string };
+  nft: { address: string; image: string; name: string };
+  timestamp: string;
+}) {
+  return (
+    <div className="group relative transition-all  hover:scale-[1.02] ">
+      <Link href={'/nfts/' + props.nft.address} passHref>
+        <a>
+          <img
+            className="aspect-square w-full rounded-lg "
+            src={props.nft?.image}
+            alt={props.nft?.name}
+          />
+        </a>
+      </Link>
+      <ShareMenu className="absolute top-4 right-4 " address={props.nft.address} />
+      <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
+        {/* <FeedActionBanner event={props.event} /> */}
+        <div className="flex w-full items-center rounded-full bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900">
+          <ProfilePFP user={props.sourceUser} />
+          <div className="ml-2">
+            <div className="text-base font-semibold">{attrs.content}</div>
+            <div className="flex text-sm">
+              {/* {getHandle(attrs.sourceUser)}  */}
+              <ProfileHandle address={props.sourceUser.address} />
+              &nbsp;
+              {DateTime.fromISO(props.timestamp).toRelative()}
+            </div>
+          </div>
+          <div className="ml-auto">
+            <Button5 v="primary">Make offer</Button5>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
+  const myFollowingList = [
+    'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
+    '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
+    'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS',
+    '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR',
+  ]; // ideally gotten from a context hook or something
+
+  if (props.event.__typename === 'Aggregate')
+    return <div>and {props.event.eventsAggregated} similar events</div>;
+
+  const attrs = generateFeedCardAtributes(props.event, myFollowingList);
+  console.log('Feed card', {
+    event: props.event,
+    attrs,
+  });
+
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
   if (props.event.__typename === 'FollowEvent')
@@ -210,6 +292,12 @@ function getHandle(u: User) {
   return (u.profile?.handle && '@' + u.profile?.handle) || shortenAddress(u.address);
 }
 
+const ProfileHandle = (props: { address: string }) => {
+  const { data: twitterHandle } = useTwitterHandle(null, props.address);
+
+  return <span>{(twitterHandle && '@' + twitterHandle) || shortenAddress(props.address)}</span>;
+};
+
 function FeedActionBanner(props: { event: FeedEvent }) {
   const attrs = generateFeedCardAtributes(props.event);
 
@@ -222,7 +310,10 @@ function FeedActionBanner(props: { event: FeedEvent }) {
         <div className="ml-2">
           <div className="text-base font-semibold">{attrs.content}</div>
           <div className="flex text-sm">
-            {getHandle(attrs.sourceUser)} {DateTime.fromISO(attrs.timestamp).toRelative()}
+            {/* {getHandle(attrs.sourceUser)}  */}
+            <ProfileHandle address={attrs.sourceUser.address} />
+            &nbsp;
+            {DateTime.fromISO(attrs.timestamp).toRelative()}
           </div>
         </div>
         <div className="ml-auto">
@@ -265,15 +356,30 @@ function MakeOfferButton(props: { nft: any }) {
 }
 
 function ProfilePFP({ user }: { user: User }) {
-  return user.profile?.pfp ? (
+  const { data: twitterHandle } = useTwitterHandle(null, user.address);
+  const walletProfile = useWalletProfileQuery({
+    variables: {
+      handle: twitterHandle ?? '',
+    },
+  });
+
+  return (
     <img
       className={classNames('rounded-full', 'h-10 w-10')}
-      src={user.profile.pfp}
-      alt={'profile picture for ' + user.profile.handle || user.address}
+      src={walletProfile.data?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
+      alt={'profile picture for ' + user.profile?.handle || user.address}
     />
-  ) : (
-    <div className={classNames('rounded-full bg-gray-700', 'h-10 w-10')}></div>
   );
+
+  // user.profile?.pfp ? (
+  //   <img
+  //     className={classNames('rounded-full', 'h-10 w-10')}
+  //     src={walletProfile.data?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
+  //     alt={'profile picture for ' + user.profile.handle || user.address}
+  //   />
+  // ) : (
+  //   <div className={classNames('rounded-full bg-gray-700', 'h-10 w-10')}></div>
+  // );
 }
 
 function ShareMenu(props: { address: string; className: string }) {
