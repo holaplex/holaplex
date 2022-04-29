@@ -11,17 +11,17 @@ import { getFallbackImage } from '@/modules/utils/image';
 
 const previewSubdomains: string[] = [
   'junglecats',
-  'cityshop',
-  'thechimpions',
-  'skeletoncrew',
-  'monkedao',
-  'ursmarket',
   'pixelbands',
-  'thislooksrare',
-  'shiguardians',
-  'mortuary',
-  'kurumanft',
-  'paragon',
+  'skeletoncrew',
+  'thechimpions',
+  'monkedao',
+  'cityshop',
+  // 'ursmarket',
+  // 'thislooksrare',
+  // 'shiguardians',
+  // 'mortuary',
+  // 'kurumanft',
+  // 'paragon',
 ];
 
 const FeaturedMarkeplacesSection: VFC = () => {
