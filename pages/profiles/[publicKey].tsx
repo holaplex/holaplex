@@ -29,7 +29,7 @@ export const ProfilePageHead = (props: {
     : showFirstAndLastFour(props.publicKey);
 
   const description = props.description;
-  const title = `${handle}&apos;s profile | Holaplex`;
+  const title = `${handle}'s profile | Holaplex`;
   return (
     <Head>
       <title>{handle}&apos;s profile | Holaplex</title>
