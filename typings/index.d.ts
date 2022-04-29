@@ -8,3 +8,6 @@ interface Window {
   gtag: (...args: any[]) => void;
   fbq: (...args: any[]) => void;
 }
+
+
+declare module 'react-grid-carousel';
