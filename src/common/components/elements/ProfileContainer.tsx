@@ -30,7 +30,7 @@ export const ProfileContainer: FC = ({ children }) => {
         <header>
           <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
         </header>
-        <div className="container  px-6 pb-20 md:px-12 lg:flex">
+        <div className="container  mx-auto px-6 pb-20 md:px-12 lg:flex">
           <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
             <div className="-mt-12 flex justify-center text-center lg:justify-start">
               <div className=" max-w-fit rounded-full border-4 border-gray-900 ">
