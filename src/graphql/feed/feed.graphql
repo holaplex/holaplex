@@ -46,6 +46,7 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       feedEventId
       createdAt
       purchase {
+        address
         buyer
         seller
         price
@@ -71,6 +72,7 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       createdAt
       lifecycle
       listing {
+        address
         seller
         price
         nft {
@@ -95,6 +97,7 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       createdAt
       lifecycle
       offer {
+        address
         buyer
         price
         nft {

@@ -37,7 +37,7 @@ const FeedPage = () => {
     variables: {
       address: myPubkey,
       offset: 0,
-      limit: 1000,
+      limit: 15,
     },
   });
 
@@ -111,8 +111,8 @@ const FeedPage = () => {
       feedItems.push(cur as FeedEvent);
 
       if (
-        cur.__typename === 'MintEvent' &&
-        next.__typename === 'MintEvent' &&
+        cur?.__typename === 'MintEvent' &&
+        next?.__typename === 'MintEvent' &&
         cur.nft?.creators[0].address === next.nft?.creators[0].address
       ) {
         // const aggregateEvent = { items: [] };

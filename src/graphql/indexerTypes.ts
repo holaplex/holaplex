@@ -585,7 +585,7 @@ export type FeedQueryVariables = Exact<{
 }>;
 
 
-export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, graphConnectionAddress: any, createdAt: any, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, lifecycle: string, listing?: { __typename?: 'ListingReceipt', seller: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, lifecycle: string, offer?: { __typename?: 'BidReceipt', buyer: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, purchase?: { __typename?: 'PurchaseReceipt', buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null }> };
+export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, graphConnectionAddress: any, createdAt: any, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, lifecycle: string, listing?: { __typename?: 'ListingReceipt', address: string, seller: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, lifecycle: string, offer?: { __typename?: 'BidReceipt', address: string, buyer: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, purchase?: { __typename?: 'PurchaseReceipt', address: string, buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', address: string, mintAddress: string, name: string, image: string, description: string, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }> } | null } | null }> };
 
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -998,12 +998,14 @@ export const FeedDocument = gql`
           address
           profile {
             handle
+            profileImageUrl
           }
         }
         to {
           address
           profile {
             handle
+            profileImageUrl
           }
         }
       }
@@ -1012,6 +1014,7 @@ export const FeedDocument = gql`
       feedEventId
       createdAt
       purchase {
+        address
         buyer
         seller
         price
@@ -1037,6 +1040,7 @@ export const FeedDocument = gql`
       createdAt
       lifecycle
       listing {
+        address
         seller
         price
         nft {
@@ -1061,6 +1065,7 @@ export const FeedDocument = gql`
       createdAt
       lifecycle
       offer {
+        address
         buyer
         price
         nft {
