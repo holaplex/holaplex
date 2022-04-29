@@ -52,7 +52,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import FeaturedMarkeplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedMarkeplacesSection from '@/common/components/home/HomeV1FeaturedMarketplacesSection';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;

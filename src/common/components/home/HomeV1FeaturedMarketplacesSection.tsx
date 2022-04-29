@@ -1,4 +1,3 @@
-import Footer from '@/common/components/home/Footer';
 import MarketplacePreview from '@/common/components/home/MarketplacePreview';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
@@ -20,11 +19,8 @@ const featuredMarketplaces: string[] = [
   'paragon',
 ];
 
-const Home: FC = () => {
+const FeaturedMarkeplacesSection: FC = () => {
   return (
-    <>
-      <div className="container mx-auto w-[80%] pb-48">
-        {/* featured marketplaces */}
         <div>
 
           {/* header  */}
@@ -52,9 +48,6 @@ const Home: FC = () => {
         </Carousel>
           </div>
         </div>
-      </div>
-      <Footer />
-    </>
   );
 };
 
@@ -102,4 +95,4 @@ const PageRightButton = (
 );
 
 
-export default Home;
+export default FeaturedMarkeplacesSection;
