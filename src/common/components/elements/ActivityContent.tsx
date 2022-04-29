@@ -1,19 +1,10 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { AnchorButton } from '@/components/elements/Button';
-import { Col, Row } from 'antd';
+import { Col } from 'antd';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useActivityPageQuery } from 'src/graphql/indexerTypes';
-import { DateTime } from 'luxon';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
-import { showFirstAndLastFour } from '@/modules/utils/string';
+import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/common/styles/MediaQuery';
-import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
-import { ChevronRight } from '../icons/ChevronRight';
-import { Unpacked } from '@/types/Unpacked';
-import Bugsnag from '@bugsnag/js';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';

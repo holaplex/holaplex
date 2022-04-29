@@ -1,12 +1,5 @@
-import { ButtonReset } from '@/common/styles/ButtonReset';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import Link from 'next/link';
-import { FC } from 'react';
-import styled, { css } from 'styled-components';
-import { ChevronRight } from '../icons/ChevronRight';
-import { Copy } from '../icons/Copy';
 import cx from 'classnames';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';

@@ -30,7 +30,7 @@ export interface MarketplacePreviewData {
     creatorAddress: string;
   }[]
   auctionHouse: {
-    stats: {
+    stats?: {
       floor: string;
     }
   };
