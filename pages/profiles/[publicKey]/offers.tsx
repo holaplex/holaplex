@@ -26,6 +26,7 @@ import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferFor
 import { useWallet } from '@solana/wallet-adapter-react';
 import Modal from '../../../src/common/components/elements/Modal';
 import { TextSkeleton } from '../../../src/common/components/elements/Skeletons';
+import { ProfilePageHead } from '../[publicKey]';
 
 enum OfferFilters {
   ALL,
@@ -101,14 +102,15 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
 
   return (
     <ProfileDataProvider profileData={{ publicKey, ...props }}>
-      <Head>
-        <title>{showFirstAndLastFour(publicKey)}&apos;s offers | Holaplex</title>
-        <meta
-          property="description"
-          key="description"
-          content="View offers for this, or any other pubkey, in the Holaplex ecosystem."
-        />
-      </Head>
+      <ProfilePageHead
+        publicKey={publicKey}
+        twitterProfile={{
+          twitterHandle: props.twitterHandle,
+          banner: props.banner,
+          pfp: props.profilePicture,
+        }}
+        description="View offers for this, or any other pubkey, in the Holaplex ecosystem."
+      />
       <ProfileContainer>
         <div className="sticky top-0 z-10 mb-2 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
