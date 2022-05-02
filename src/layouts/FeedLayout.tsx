@@ -66,7 +66,7 @@ export default function FeedLayout({ children }: { children: any }) {
           </div> */}
           {children}
         </div>
-        <div className="sticky top-40 hidden h-fit w-full max-w-md space-y-7 xl:block ">
+        <div className="sticky top-10 hidden h-fit w-full max-w-md space-y-7 xl:block ">
           <WhoToFollowList />
           {/* <MyActivityList /> */}
           <div>
