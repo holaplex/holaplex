@@ -38,7 +38,7 @@ import { LoadingFeedCard, LoadingFeedItem } from '../../src/common/components/fe
 // 2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR // belle
 // NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H // kris
 // 7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F && alex
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 2;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 5;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -53,11 +53,10 @@ const FeedPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
   const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
   const { data, loading, called, fetchMore, refetch } = useFeedQuery({
-    fetchPolicy: `no-cache`,
     variables: {
       address: myPubkey,
       offset: 0,
-      limit: 50,
+      limit: 25,
     },
   });
 
@@ -85,20 +84,20 @@ const FeedPage = ({ address }: { address: string }) => {
   )
     return null;
 
-  console.log('feed', {
-    myPubkey,
-    data,
-    loading,
-    allConnectionsFrom,
-  });
+  // console.log('feed', {
+  //   myPubkey,
+  //   data,
+  //   loading,
+  //   allConnectionsFrom,
+  // });
 
   async function loadMore(inView: boolean) {
-    console.log('load more feed', {
-      inView,
-      loading,
-      feeedEvetnsN: feedEvents.length,
-      allConnectionsFrom,
-    });
+    // console.log('load more feed', {
+    //   inView,
+    //   loading,
+    //   feedEventsN: feedEvents.length,
+    //   allConnectionsFrom,
+    // });
     if (!inView || loading || feedEvents.length <= 0) {
       return;
     }
@@ -208,7 +207,7 @@ const FeedPage = ({ address }: { address: string }) => {
           />
         ))}
       </div>
-      {hasMore && (
+      {hasMore && !loading && feedEvents.length > 0 && (
         <div>
           <InView threshold={0.1} onChange={loadMore}>
             <div className={`my-6 flex w-full items-center justify-center font-bold`}>

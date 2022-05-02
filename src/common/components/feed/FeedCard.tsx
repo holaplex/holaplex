@@ -47,10 +47,10 @@ export function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: Fe
   ]; // ideally gotten from a context hook or something
 
   const attrs = generateFeedCardAtributes(props.event, myFollowingList);
-  console.log('Feed card', {
-    event: props.event,
-    attrs,
-  });
+  // console.log('Feed card', {
+  //   event: props.event,
+  //   attrs,
+  // });
 
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -182,10 +182,10 @@ export function FeedCard(props: {
   }
 
   const attrs = generateFeedCardAtributes(props.event, myFollowingList);
-  console.log('Feed card', props.event.feedEventId, {
-    event: props.event,
-    attrs,
-  });
+  // console.log('Feed card', props.event.feedEventId, {
+  //   event: props.event,
+  //   attrs,
+  // });
 
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
