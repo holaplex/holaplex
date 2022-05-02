@@ -68,7 +68,7 @@ export function generateFeedCardAtributes(
         solAmount,
         nft: event.listing?.nft,
         // listing: event.listing,
-        content: `Listed at ${event.listing} for ${solAmount} SOL`,
+        content: `Listed for ${solAmount} SOL`,
       };
 
     case 'FollowEvent':

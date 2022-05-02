@@ -52,7 +52,7 @@ const FeedPage = () => {
   // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
   const feedEvents =
     data?.feedEvents.filter((fe, i) => {
-      return data.feedEvents.findIndex((e) => fe.feedEventId == e.feedEventId) !== i;
+      return data.feedEvents.findIndex((e) => fe.feedEventId === e.feedEventId) === i;
     }) ?? [];
 
   if (!anchorWallet || !myPubkey) return null;
