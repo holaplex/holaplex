@@ -42,6 +42,7 @@ import Footer from '@/common/components/home/Footer';
 import { seededRandomBetween } from '../../src/modules/utils/random';
 import { SolscanIcon } from '../../src/common/components/icons/Solscan';
 import { ExplorerIcon } from '../../src/common/components/icons/Explorer';
+import NFTImage from '../../src/common/components/elements/NFTImage';
 
 const Activities = ({
   listings,
@@ -207,19 +208,17 @@ export default function NftByAddress({
       <div className={`flex flex-row items-center justify-end gap-2`}>
         <Link href={`https://explorer.solana.com/address/${address}`}>
           <a target={`_blank`}>
-            <ExplorerIcon
-              width={16}
-              height={16}
-              className={`ease-in-out hover:bg-gradient-to-tr hover:from-purple-500 hover:to-green-500 hover:bg-clip-text hover:text-purple-300`}
-            />
+            <ExplorerIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
           </a>
         </Link>
         <Link href={`https://solscan.io/account/${address}`}>
           <a target={`_blank`}>
-            <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-teal-300`} />
+            <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
           </a>
         </Link>
-        <p className={`m-0 text-base font-normal text-gray-300`}>{shortenAddress(address)}</p>
+        <p className={`m-0 w-24 text-left text-base font-normal text-gray-300`}>
+          {shortenAddress(address)}
+        </p>
       </div>
     </div>
   );
@@ -278,7 +277,7 @@ export default function NftByAddress({
                   <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
                 )}
                 {nft?.image && (
-                  <img
+                  <NFTImage
                     onLoad={() => setImgLoaded(true)}
                     src={imgOpt(nft?.image, 800)!}
                     className="block aspect-square  w-full rounded-lg border-none object-cover shadow"
