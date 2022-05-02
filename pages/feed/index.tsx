@@ -23,6 +23,7 @@ import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllCon
 import { FeedItem, FeedQueryEvent, shouldAggregate } from '@/common/components/feed/feed.utils';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
+import { LoadingFeedCard, LoadingFeedItem } from '../../src/common/components/feed/LoadingFeed';
 
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 //   return {
@@ -56,7 +57,7 @@ const FeedPage = ({ address }: { address: string }) => {
     variables: {
       address: myPubkey,
       offset: 0,
-      limit: 1000,
+      limit: 50,
     },
   });
 
@@ -190,6 +191,13 @@ const FeedPage = ({ address }: { address: string }) => {
       </Head>
 
       <div className="space-y-20 xl:max-w-[600px]">
+        {loading && (
+          <>
+            <LoadingFeedCard />
+            <LoadingFeedItem />
+            <LoadingFeedCard />
+          </>
+        )}
         {feedItems.map((fEvent) => (
           <FeedCard
             key={fEvent.feedEventId}
