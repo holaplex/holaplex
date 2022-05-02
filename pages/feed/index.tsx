@@ -24,6 +24,7 @@ import { FeedItem, FeedQueryEvent, shouldAggregate } from '@/common/components/f
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { LoadingFeedCard, LoadingFeedItem } from '../../src/common/components/feed/LoadingFeed';
+import NoFeed from '../../src/common/components/feed/NoFeed';
 
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 //   return {
@@ -197,6 +198,7 @@ const FeedPage = ({ address }: { address: string }) => {
             <LoadingFeedCard />
           </>
         )}
+        {feedItems.length === 0 && <NoFeed />}
         {feedItems.map((fEvent) => (
           <FeedCard
             key={fEvent.feedEventId}
