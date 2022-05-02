@@ -124,7 +124,7 @@ function BackToTopBtn() {
     <button
       onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
       className={classNames(
-        'fixed right-8 bottom-8 rounded-full bg-gray-900',
+        'fixed right-8 bottom-8 rounded-full bg-gray-900 p-4',
         scrollY === 0 && 'hidden'
       )}
     >

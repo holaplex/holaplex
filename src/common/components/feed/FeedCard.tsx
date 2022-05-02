@@ -134,12 +134,14 @@ function AggregateCard(props: { event: AggregateEvent; anchorWallet: AnchorWalle
   return (
     <div
       className={classNames(
-        'flex items-center rounded-full bg-gray-800 p-4 shadow-lg',
+        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-lg',
         false && 'hover:scale-[1.02]'
       )}
     >
-      <div>and {props.event.eventsAggregated.length - 1} similar events</div>
-      <Button5 className="ml-auto" v="ghost" onClick={() => setModalOpen(true)}>
+      <div className="mx-auto flex justify-center sm:mx-0">
+        and {props.event.eventsAggregated.length - 1} similar events
+      </div>
+      <Button5 className="ml-auto w-full sm:w-auto" v="ghost" onClick={() => setModalOpen(true)}>
         View all
       </Button5>
       <Modal
@@ -241,10 +243,10 @@ function FollowCard(props: {
           <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
       </div>
-      <div className="w-full md:ml-auto md:w-auto ">
+      <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
         <FollowUnfollowButton
           source="feed"
-          className="w-full md:ml-auto md:w-auto"
+          className="!w-full sm:ml-auto sm:w-auto"
           walletConnectionPair={walletConnectionPair}
           toProfile={{
             address: attrs.toUser!.address,
@@ -273,7 +275,7 @@ function FeedActionBanner(props: { event: FeedItem }) {
 
   return (
     <>
-      <div className="flex w-full items-center rounded-full bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900">
+      <div className="flex w-full flex-wrap items-center rounded-lg bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
         <ProfilePFP user={attrs.sourceUser} />
         <div className="ml-2">
           <div className="text-base font-semibold">{attrs.content}</div>
@@ -284,8 +286,10 @@ function FeedActionBanner(props: { event: FeedItem }) {
             {DateTime.fromISO(attrs.createdAt).toRelative()}
           </div>
         </div>
-        <div className="ml-auto">
-          <Button5 v="primary">Make offer</Button5>
+        <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
+          <Button5 v="primary" className="w-full sm:w-auto">
+            Make offer
+          </Button5>
         </div>
       </div>
     </>
