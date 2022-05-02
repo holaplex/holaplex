@@ -256,7 +256,7 @@ function FollowCard(props: {
   );
 }
 
-const ProfileHandle = (props: { address: string }) => {
+export const ProfileHandle = (props: { address: string }) => {
   const { data: twitterHandle } = useTwitterHandle(null, props.address);
 
   return (
@@ -323,7 +323,7 @@ function MakeOfferButton(props: { nft: any }) {
   );
 }
 
-function ProfilePFP({ user }: { user: User }) {
+export function ProfilePFP({ user }: { user: User }) {
   // some of these hooks could probably be lifted up, but keeping it here for simplicity
   const { data: twitterHandle } = useTwitterHandle(null, user.address);
   const walletProfile = useWalletProfileQuery({

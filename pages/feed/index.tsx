@@ -28,12 +28,21 @@ import { FeedItem, FeedQueryEvent, shouldAggregate } from '@/common/components/f
 // GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS // kayla
 // 2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR // belle
 // NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H // kris
+// 7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F && alex
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 2;
 
-const FeedPage = () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+      address: context.query?.address || null,
+    },
+  };
+};
+
+const FeedPage = ({ address }: { address: string }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
-  const myPubkey = anchorWallet?.publicKey.toBase58() ?? null;
+  const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
   const { data, loading, called, fetchMore } = useFeedQuery({
     fetchPolicy: `no-cache`,
     variables: {
@@ -58,6 +67,7 @@ const FeedPage = () => {
   if (!anchorWallet || !myPubkey) return null;
 
   console.log('feed', {
+    myPubkey,
     data,
     loading,
     allConnectionsFrom,
