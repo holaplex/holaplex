@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useActivityPageQuery, useFeedQuery } from 'src/graphql/indexerTypes';
 import { ActivityCard } from '../elements/ActivityCard';
 import { getActivityItemsFromBids } from '../elements/ActivityContent';
-import { generateFeedCardAtributes } from './FeedCard';
+import { generateFeedCardAtributes } from './feed.utils';
 
 export function MyActivityList() {
   const anchorWallet = useAnchorWallet();
@@ -19,34 +19,34 @@ export function MyActivityList() {
 
   const isLoading = activityPage.loading;
 
-  const { data, loading, called, refetch } = useFeedQuery({
-    // fetchPolicy: `cache-and-network`,
-    fetchPolicy: 'no-cache',
-    variables: {
-      address: myPubkey,
-    },
-  });
+  // const { data, loading, called, refetch } = useFeedQuery({
+  //   // fetchPolicy: `cache-and-network`,
+  //   fetchPolicy: 'no-cache',
+  //   variables: {
+  //     address: myPubkey,
+  //   },
+  // });
 
-  const myFeedItems = useMemo(
-    () =>
-      activityPage.data?.wallet?.bids
-        ? // @ts-ignore
-          data?.feedEvents
-            .map((e) => generateFeedCardAtributes(e))
-            .filter((a) => a?.sourceUser.address === myPubkey)
-        : [],
+  // const myFeedItems = useMemo(
+  //   () =>
+  //     activityPage.data?.wallet?.bids
+  //       ? // @ts-ignore
+  //         data?.feedEvents
+  //           .map((e) => generateFeedCardAtributes(e))
+  //           .filter((a) => a?.sourceUser.address === myPubkey)
+  //       : [],
 
-    [data?.feedEvents]
-  );
+  //   [data?.feedEvents]
+  // );
 
-  const myFeedActivityItems: IFeedItem[] = myFeedItems?.map((i) => ({
-    id: i?.id,
-    timestamp: i?.timestamp,
-    type: i?.type,
-    sourceUser: i?.sourceUser,
-    nft: i?.nft,
-    solAmount: i?.solAmount,
-  }));
+  // const myFeedActivityItems: IFeedItem[] = myFeedItems.map((i) => ({
+  //   id: i?.id,
+  //   timestamp: i?.createdAt,
+  //   type: i?.type,
+  //   sourceUser: i?.sourceUser,
+  //   nft: i?.nft,
+  //   solAmount: i?.solAmount,
+  // }));
 
   const activityItems = useMemo(
     () =>
@@ -58,11 +58,11 @@ export function MyActivityList() {
     [activityPage.data?.wallet?.bids]
   );
 
-  console.log('My activity', {
-    myFeedItems,
-    myFeedActivityItems,
-    activityItems,
-  });
+  // console.log('My activity', {
+  //   myFeedItems,
+  //   myFeedActivityItems,
+  //   activityItems,
+  // });
 
   return (
     <div>
@@ -74,8 +74,8 @@ export function MyActivityList() {
       </div>
       <div className="space-y-4">
         {activityItems
-          .concat(myFeedActivityItems)
-          .slice(0, 5)
+          // .concat(myFeedActivityItems)
+          .slice(0, 3)
           .map((item: any) => (
             <ActivityCard activity={item} key={item.id} />
           ))}

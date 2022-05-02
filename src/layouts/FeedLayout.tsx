@@ -40,7 +40,12 @@ export default function FeedLayout({ children }: { children: any }) {
         </div>
         <div className="sticky top-40 hidden h-fit w-full max-w-md space-y-7 xl:block ">
           <WhoToFollowList />
-          <MyActivityList />
+          {/* <MyActivityList /> */}
+          <div className="relative  py-10 ">
+            <div className="absolute  inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-gray-800" />
+            </div>
+          </div>
           <SmallFooter />
         </div>
         <BackToTopBtn />

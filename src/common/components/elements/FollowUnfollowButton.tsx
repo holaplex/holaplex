@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
+import classNames from 'classnames';
 
 type FollowUnfollowButtonProps = {
   source: 'modalFrom' | 'modalTo' | 'profileButton' | 'feed';
@@ -20,6 +21,7 @@ type FollowUnfollowButtonProps = {
   };
   toProfile: IProfile;
   type: 'Follow' | 'Unfollow';
+  className?: string;
 };
 
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
@@ -27,12 +29,13 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   walletConnectionPair,
   toProfile,
   type,
+  className,
 }) => {
   const { track } = useAnalytics();
   const queryClient = useQueryClient();
   const { connection, wallet } = walletConnectionPair;
   const myWallet = wallet.publicKey.toBase58();
-  const toWallet = toProfile.pubkey;
+  const toWallet = toProfile.address;
 
   const sharedTrackingParams = {
     source,
@@ -153,11 +156,21 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
   return type === 'Follow' ? (
-    <Button5 v="primary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
+    <Button5
+      v="primary"
+      className={classNames('h-10 w-28', className)}
+      onClick={() => handleClick()}
+      loading={loading}
+    >
       Follow
     </Button5>
   ) : (
-    <Button5 v="secondary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
+    <Button5
+      v="secondary"
+      className={classNames('h-10 w-28', className)}
+      onClick={() => handleClick()}
+      loading={loading}
+    >
       Unfollow
     </Button5>
   );

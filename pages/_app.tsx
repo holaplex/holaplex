@@ -55,7 +55,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 

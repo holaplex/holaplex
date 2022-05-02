@@ -29,7 +29,7 @@ export function getActivityItemsFromBids(bids: Bid[]) {
       const itemBase: Partial<IFeedItem> = {
         id: bid.bidderAddress + bid.listingAddress,
         sourceUser: {
-          pubkey: bid.bidderAddress,
+          address: bid.bidderAddress,
           // handle // fetch async?
         },
         nft: nft && {
@@ -38,6 +38,7 @@ export function getActivityItemsFromBids(bids: Bid[]) {
           storeSubdomain: storefront.subdomain,
           name: nft.name,
           listingAddress: listing.address,
+          creators: nft.creators,
           // creator
         },
         misc: {
@@ -58,7 +59,7 @@ export function getActivityItemsFromBids(bids: Bid[]) {
           toUser:
             activityType === 'LISTING_LOST'
               ? {
-                  pubkey: listing.bids[0].bidderAddress,
+                  address: listing.bids[0].bidderAddress,
                 }
               : undefined,
           solAmount: listing.bids[0].lastBidAmount,
@@ -76,7 +77,7 @@ export function getActivityItemsFromBids(bids: Bid[]) {
           type: activityType,
           timestamp: listing.bids[0].lastBidTime, // more or less
           toUser: {
-            pubkey: listing.bids[toIdx].bidderAddress,
+            address: listing.bids[toIdx].bidderAddress,
           },
           solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
         });

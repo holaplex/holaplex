@@ -15,7 +15,7 @@ function FollowListItem({ profile }: { profile: IProfile }) {
             <img
               className="h-8 w-8 rounded-full"
               src={profile.pfp}
-              alt={'profile picture for ' + profile.handle || profile.pubkey}
+              alt={'profile picture for ' + profile.handle || profile.address}
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-gray-700"></div>
@@ -31,13 +31,13 @@ function FollowListItem({ profile }: { profile: IProfile }) {
 const WHO_TO_FOLLOW: IProfile[] = [
   {
     pfp: 'https://pbs.twimg.com/profile_images/1502268999316525059/nZNPG8GX_bigger.jpg',
-    pubkey: '',
+    address: 'asdf',
     handle: '@kristianeboe',
   },
-  { pubkey: '', handle: '@anafescandon' },
-  { pubkey: '', handle: 'damiandotsol' },
-  { pubkey: '', handle: 'kaylakane' },
-  { pubkey: '', handle: 'belle_belle.sol' },
+  { address: 'xv', handle: '@anafescandon' },
+  { address: 'z', handle: 'damiandotsol' },
+  { address: '123', handle: 'kaylakane' },
+  { address: 'gahh', handle: 'belle_belle.sol' },
 ];
 
 export default function WhoToFollowList() {

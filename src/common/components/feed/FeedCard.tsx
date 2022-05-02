@@ -10,7 +10,13 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { FeedEvent, useNftMarketplaceQuery, useWalletProfileQuery } from 'src/graphql/indexerTypes';
+import {
+  FeedEvent,
+  FeedQuery,
+  useNftMarketplaceQuery,
+  useWalletProfileQuery,
+  Wallet,
+} from 'src/graphql/indexerTypes';
 import { JsxElement } from 'typescript';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
@@ -18,113 +24,15 @@ import Modal from '../elements/Modal';
 import MoreDropdown from '../elements/MoreDropdown';
 import NFTPreview from '../elements/NFTPreview';
 import OfferForm from '../forms/OfferForm';
+import {
+  AggregateEvent,
+  FeedCardAttributes,
+  FeedItem,
+  generateFeedCardAtributes,
+  User,
+} from './feed.utils';
 
-interface User {
-  address: string;
-  profile?: {
-    handle: string;
-    pfp?: string;
-  } | null;
-}
-
-type FeedCardAttributes =
-  | {
-      id: string;
-      createdAt: string;
-      type:
-        | 'ListingEvent'
-        | 'FollowEvent'
-        | 'MintEvent'
-        | 'OfferEvent'
-        | 'PurchaseEvent'
-        | undefined;
-      content: string;
-      sourceUser: User;
-      toUser?: User;
-      solAmount?: number;
-      nft?: {
-        address: string;
-        name: string;
-        image: string;
-        description: string;
-        creators: User[];
-      } | null;
-    }
-  | undefined;
-
-export function generateFeedCardAtributes(
-  event: FeedEvent,
-  myFollowingList?: string[]
-): FeedCardAttributes {
-  const base = {
-    id: event.feedEventId,
-    createdAt: event.createdAt,
-    type: event.__typename,
-  };
-  let solAmount: number | undefined;
-  switch (event.__typename) {
-    case 'ListingEvent':
-      solAmount = event.listing?.price / LAMPORTS_PER_SOL;
-      return {
-        ...base,
-        sourceUser: {
-          address: event.listing?.seller,
-          profile: null,
-        },
-        solAmount,
-        nft: event.listing?.nft,
-        // listing: event.listing,
-        content: `Listed at ${event.listing} for ${solAmount} SOL`,
-      };
-
-    case 'FollowEvent':
-      return {
-        ...base,
-        type: 'FollowEvent',
-        content: myFollowingList?.includes(event.connection?.to.address)
-          ? 'Was followed by ' + getHandle(event.connection?.to!)
-          : 'Followed ' + getHandle(event.connection?.to!),
-        sourceUser: event.connection?.from!,
-        toUser: event.connection?.to!,
-      };
-
-    case 'MintEvent':
-      const creator = event.nft?.creators[0]!;
-      return {
-        ...base,
-        content: 'Created',
-        sourceUser: {
-          address: creator.address,
-          profile: creator.profile,
-        },
-        nft: event.nft,
-      };
-    case 'PurchaseEvent':
-      solAmount = event.purchase?.price / LAMPORTS_PER_SOL;
-
-      return {
-        ...base,
-        content: 'Bought for ' + solAmount + ' SOL',
-        sourceUser: {
-          address: event.purchase?.buyer,
-        },
-        nft: event.purchase?.nft,
-      };
-    case 'OfferEvent':
-      solAmount = event.offer?.price / LAMPORTS_PER_SOL;
-      return {
-        ...base,
-        content: 'Offered ' + solAmount + ' SOL',
-        sourceUser: {
-          address: event.offer?.buyer!,
-          profile: null,
-        },
-        nft: event.offer?.nft,
-      };
-  }
-}
-
-export function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedEvent }) {
+export function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedItem }) {
   const myFollowingList = [
     'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
     '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
@@ -198,39 +106,71 @@ function FeedCard2(props: FeedCardProps) {
   );
 }
 
-interface IFeedEvent {
-  id: string;
-  createdAt: string;
-  type:
-    | 'ListingEvent'
-    | 'FollowEvent'
-    | 'MintEvent'
-    | 'PurchaseEvent'
-    | 'OfferEvent'
-    | 'AggregateEvent';
+function AggregateCard(props: { event: AggregateEvent; anchorWallet: AnchorWallet }) {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // return (
+  //   <div className="relative  flex -space-x-96 -space-y-4  ">
+  //     {props.event.eventsAggregated.slice(1, 5).map((e, i, l) => (
+  //       // <FeedCard
+  //       //   event={e}
+  //       //   key={e.feedEventId}
+  //       //   anchorWallet={props.anchorWallet}
+  //       //   className={` hover:z-50 z-${(l.length - i) * 10}  `}
+  //       // />
+  //       <img
+  //         key={e.feedEventId}
+  //         className={classNames(
+  //           ` hover:z-50 z-${(l.length - i) * 10}  `,
+  //           'aspect-square w-full rounded-lg '
+  //         )}
+  //         src={e.nft?.image}
+  //         alt={e.nft?.name}
+  //       />
+  //     ))}
+  //   </div>
+  // );
+
+  return (
+    <div
+      className={classNames(
+        'flex items-center rounded-full bg-gray-800 p-4 shadow-lg',
+        false && 'hover:scale-[1.02]'
+      )}
+    >
+      <div>and {props.event.eventsAggregated.length - 1} similar events</div>
+      <Button5 className="ml-auto" v="ghost" onClick={() => setModalOpen(true)}>
+        View all
+      </Button5>
+      <Modal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
+      >
+        <div className="space-y-10 p-4">
+          {props.event.eventsAggregated.map((e) => (
+            <FeedCard event={e} anchorWallet={props.anchorWallet} key={e.feedEventId} />
+          ))}
+        </div>
+      </Modal>
+    </div>
+  );
 }
 
-export interface AggregateEvent {
-  id: string;
-  __typename: 'AggregateEvent';
-  createdAt: string;
-  eventsAggregated: FeedEvent[];
-}
-
-export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent | AggregateEvent }) {
-  const myFollowingList = [
-    'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
-    '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
-    'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS',
-    '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR',
-  ]; // ideally gotten from a context hook or something
+export function FeedCard(props: {
+  anchorWallet: AnchorWallet;
+  event: FeedItem;
+  myFollowingList?: string[];
+  className?: string;
+}) {
+  const myFollowingList = props.myFollowingList || [];
 
   if (props.event.__typename === 'AggregateEvent') {
-    return <div>and {props.event.eventsAggregated.length} similar events</div>;
+    return <AggregateCard event={props.event} anchorWallet={props.anchorWallet} />;
   }
 
   const attrs = generateFeedCardAtributes(props.event, myFollowingList);
-  console.log('Feed card', {
+  console.log('Feed card', props.event.feedEventId, {
     event: props.event,
     attrs,
   });
@@ -240,10 +180,13 @@ export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent |
   if (props.event.__typename === 'FollowEvent')
     return <FollowCard attrs={attrs} anchorWallet={props.anchorWallet} event={props.event} />;
 
-  if (!attrs.nft) return <div>Event is malformed</div>;
+  if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
 
   return (
-    <div className="group relative transition-all  hover:scale-[1.02] ">
+    <div
+      id={props.event.feedEventId}
+      className={classNames('group relative transition-all  hover:scale-[1.02] ', props.className)}
+    >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
           <img
@@ -263,8 +206,9 @@ export function FeedCard(props: { anchorWallet: AnchorWallet; event: FeedEvent |
 
 function FollowCard(props: {
   anchorWallet: AnchorWallet;
-  event: FeedEvent;
+  event: FeedItem;
   attrs: FeedCardAttributes;
+  className?: string;
 }) {
   const attrs = props.attrs;
   const { connection } = useConnection();
@@ -278,8 +222,9 @@ function FollowCard(props: {
   return (
     <div
       className={classNames(
-        'flex items-center rounded-full bg-gray-800 p-4 shadow-lg',
-        false && 'hover:scale-[1.02]'
+        'flex flex-wrap items-center rounded-lg bg-gray-800 p-4 shadow-lg',
+        false && 'hover:scale-[1.02]',
+        props.className
       )}
     >
       <ProfilePFP user={attrs.sourceUser} />
@@ -296,12 +241,13 @@ function FollowCard(props: {
           <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
       </div>
-      <div className="ml-auto">
+      <div className="w-full md:ml-auto md:w-auto ">
         <FollowUnfollowButton
           source="feed"
+          className="w-full md:ml-auto md:w-auto"
           walletConnectionPair={walletConnectionPair}
           toProfile={{
-            pubkey: attrs.toUser!.address,
+            address: attrs.toUser!.address,
           }}
           type="Follow" // needs to be dynamic
         />
@@ -310,17 +256,17 @@ function FollowCard(props: {
   );
 }
 
-function getHandle(u: User) {
-  return (u.profile?.handle && '@' + u.profile?.handle) || shortenAddress(u.address);
-}
-
 const ProfileHandle = (props: { address: string }) => {
   const { data: twitterHandle } = useTwitterHandle(null, props.address);
 
-  return <span>{(twitterHandle && '@' + twitterHandle) || shortenAddress(props.address)}</span>;
+  return (
+    <Link href={'/profiles/' + props.address + '/nfts'} passHref>
+      <a>{(twitterHandle && '@' + twitterHandle) || shortenAddress(props.address)}</a>
+    </Link>
+  );
 };
 
-function FeedActionBanner(props: { event: FeedEvent }) {
+function FeedActionBanner(props: { event: FeedItem }) {
   const attrs = generateFeedCardAtributes(props.event);
 
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
@@ -387,11 +333,17 @@ function ProfilePFP({ user }: { user: User }) {
   });
 
   return (
-    <img
-      className={classNames('rounded-full', 'h-10 w-10')}
-      src={walletProfile.data?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
-      alt={'profile picture for ' + user.profile?.handle || user.address}
-    />
+    <Link href={'/profiles/' + user.address + '/nfts'} passHref>
+      <a target="_blank">
+        <img
+          className={classNames('rounded-full', 'h-10 w-10')}
+          src={
+            walletProfile.data?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)
+          }
+          alt={'profile picture for ' + user.profile?.handle || user.address}
+        />
+      </a>
+    </Link>
   );
 }
 

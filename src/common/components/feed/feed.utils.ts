@@ -1,0 +1,128 @@
+import { shortenAddress } from '@/modules/utils/string';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { FeedQuery, FollowEvent } from 'src/graphql/indexerTypes';
+
+type FeedEventTypes = FeedItem['__typename'];
+
+export type FeedQueryEvent = FeedQuery['feedEvents'][0];
+
+export interface User {
+  address: string;
+  profile?: {
+    handle: string;
+    pfp?: string;
+  } | null;
+}
+
+export interface AggregateEvent {
+  feedEventId: string;
+  __typename: 'AggregateEvent';
+  createdAt: string;
+  eventsAggregated: FeedQueryEvent[];
+}
+
+export type FeedItem = FeedQueryEvent | AggregateEvent;
+
+export type FeedCardAttributes =
+  | {
+      id: string;
+      createdAt: string;
+      type: FeedEventTypes;
+      content: string;
+      sourceUser: User;
+      toUser?: User;
+      solAmount?: number;
+      nft?: {
+        address: string;
+        name: string;
+        image: string;
+        description: string;
+        creators: User[];
+      } | null;
+    }
+  | undefined;
+
+function getHandle(u: User) {
+  return (u.profile?.handle && '@' + u.profile?.handle) || shortenAddress(u.address);
+}
+
+export function generateFeedCardAtributes(
+  event: FeedItem,
+  myFollowingList?: string[]
+): FeedCardAttributes {
+  const base = {
+    id: event.feedEventId,
+    createdAt: event.createdAt,
+    type: event.__typename,
+  };
+  let solAmount: number | undefined;
+  switch (event.__typename) {
+    case 'ListingEvent':
+      solAmount = event.listing?.price / LAMPORTS_PER_SOL;
+      return {
+        ...base,
+        sourceUser: {
+          address: event.listing?.seller,
+          profile: null,
+        },
+        solAmount,
+        nft: event.listing?.nft,
+        // listing: event.listing,
+        content: `Listed at ${event.listing} for ${solAmount} SOL`,
+      };
+
+    case 'FollowEvent':
+      return {
+        ...base,
+        type: 'FollowEvent',
+        content: myFollowingList?.includes(event.connection?.to.address)
+          ? 'Was followed by ' + getHandle(event.connection?.to!)
+          : 'Followed ' + getHandle(event.connection?.to!),
+        sourceUser: event.connection?.from!,
+        toUser: event.connection?.to!,
+      };
+
+    case 'MintEvent':
+      const creator = event.nft?.creators[0]!;
+      return {
+        ...base,
+        content: 'Created ' + shortenAddress(event.nft?.address),
+        sourceUser: {
+          address: creator.address,
+          profile: creator.profile,
+        },
+        nft: event.nft,
+      };
+    case 'PurchaseEvent':
+      solAmount = event.purchase?.price / LAMPORTS_PER_SOL;
+
+      return {
+        ...base,
+        content: 'Bought for ' + solAmount + ' SOL',
+        sourceUser: {
+          address: event.purchase?.buyer,
+        },
+        nft: event.purchase?.nft,
+      };
+    case 'OfferEvent':
+      solAmount = event.offer?.price / LAMPORTS_PER_SOL;
+      return {
+        ...base,
+        content: 'Offered ' + solAmount + ' SOL',
+        sourceUser: {
+          address: event.offer?.buyer!,
+          profile: null,
+        },
+        nft: event.offer?.nft,
+      };
+  }
+}
+
+export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent) {
+  if (!e1 || !e2) return false;
+  return (
+    e1.__typename === 'MintEvent' &&
+    e2.__typename === 'MintEvent' &&
+    e1.nft?.creators[0].address === e2.nft?.creators[0].address
+  );
+}

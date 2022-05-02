@@ -11,10 +11,10 @@ import { showFirstAndLastFour } from '@/modules/utils/string';
 import { IFeedItem, IProfile } from '@/modules/feed/feed.interfaces';
 
 export function generateContent(fi: IFeedItem) {
-  const from = (fi.sourceUser || fi.nft?.creator) as IProfile;
+  const from = (fi.sourceUser || fi.nft?.creators?.[0]) as IProfile;
 
-  const fromDisplay = from.handle || showFirstAndLastFour(from.pubkey);
-  const toDisplay = fi.toUser ? fi.toUser.handle || showFirstAndLastFour(fi.toUser.pubkey) : '';
+  const fromDisplay = from.handle || showFirstAndLastFour(from.address);
+  const toDisplay = fi.toUser ? fi.toUser.handle || showFirstAndLastFour(fi.toUser.address) : '';
 
   switch (fi.type) {
     case 'OUTBID':
@@ -54,8 +54,8 @@ export function generateContent(fi: IFeedItem) {
 
 export default function FeedItem(props: { fi: IFeedItem }) {
   const fi = props.fi;
-  const from = (fi.sourceUser || fi.nft?.creator) as IProfile;
-
+  const creator = fi.nft?.creators?.[0];
+  const from = (fi.sourceUser || creator) as IProfile;
   const content = generateContent(fi);
   return (
     <div>
@@ -75,12 +75,12 @@ export default function FeedItem(props: { fi: IFeedItem }) {
             src={fi.nft?.imageURL}
             alt={fi.nft?.name}
           />
-          {fi.nft.creator && (
+          {creator && (
             <div className="mt-6 flex justify-between">
               <div className="flex items-center text-base">
-                <ProfilePFP profile={fi.nft.creator} />
+                <ProfilePFP profile={creator} />
                 <div className="ml-2">
-                  {fi.nft.creator.handle || showFirstAndLastFour(fi.nft.creator.pubkey)}
+                  {creator.handle || showFirstAndLastFour(creator.address)}
                 </div>
               </div>
               <ShareMenu />
@@ -118,7 +118,7 @@ function ProfilePFP({ profile, size = 'sm' }: { profile: IProfile; size?: 'sm' |
     <img
       className={classNames('rounded-full', size === 'sm' ? 'h-6 w-6' : 'h-16 w-16')}
       src={profile.pfp}
-      alt={'profile picture for ' + profile.handle || profile.pubkey}
+      alt={'profile picture for ' + profile.handle || profile.address}
     />
   ) : (
     <div
