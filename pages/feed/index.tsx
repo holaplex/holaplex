@@ -181,7 +181,7 @@ const FeedPage = ({ address }: { address: string }) => {
   return (
     <>
       <Head>
-        <title>Personal feed | Holaplex</title>
+        <title>Feed | Holaplex</title>
         <meta
           property="description"
           key="description"
