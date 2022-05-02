@@ -467,7 +467,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
       />
       <ProfileContainer>
-        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 px-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
