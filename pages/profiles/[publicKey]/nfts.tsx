@@ -330,6 +330,7 @@ enum ListingFilters {
 }
 
 export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+export const INITIAL_FETCH = 25;
 
 const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
@@ -340,7 +341,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     address: pk,
-    limit: 100,
+    limit: INITIAL_FETCH,
     offset: 0,
   };
   const ownedNFTs = useOwnedNfTsQuery({
