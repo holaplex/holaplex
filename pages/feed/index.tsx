@@ -8,13 +8,21 @@ import { ProfileContainer } from '@/common/components/elements/ProfileContainer'
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 import FeedLayout from '@/layouts/FeedLayout';
-import { MintEvent, useFeedQuery, FeedQuery } from 'src/graphql/indexerTypes';
+import {
+  MintEvent,
+  useFeedQuery,
+  FeedQuery,
+  useNftMarketplaceQuery,
+  useMarketplacePreviewQuery,
+} from 'src/graphql/indexerTypes';
 import { FeedCard, FeedCardContainer } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 import { FeedEvent } from 'src/graphql/indexerTypes.ssr';
 import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import { FeedItem, FeedQueryEvent, shouldAggregate } from '@/common/components/feed/feed.utils';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
+import { Marketplace } from '@holaplex/marketplace-js-sdk';
 
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 //   return {
@@ -43,12 +51,18 @@ const FeedPage = ({ address }: { address: string }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
-  const { data, loading, called, fetchMore } = useFeedQuery({
+  const { data, loading, called, fetchMore, refetch } = useFeedQuery({
     fetchPolicy: `no-cache`,
     variables: {
       address: myPubkey,
       offset: 0,
       limit: 1000,
+    },
+  });
+
+  const marketplaceQuery = useMarketplacePreviewQuery({
+    variables: {
+      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     },
   });
 
@@ -64,7 +78,11 @@ const FeedPage = ({ address }: { address: string }) => {
       return data.feedEvents.findIndex((e) => fe.feedEventId === e.feedEventId) === i;
     }) ?? [];
 
-  if (!anchorWallet || !myPubkey) return null;
+  if (
+    // !anchorWallet || will be readded for prod
+    !myPubkey
+  )
+    return null;
 
   console.log('feed', {
     myPubkey,
@@ -171,12 +189,13 @@ const FeedPage = ({ address }: { address: string }) => {
         />
       </Head>
 
-      <div className="max-w-[600px] space-y-20">
+      <div className="space-y-20 xl:max-w-[600px]">
         {feedItems.map((fEvent) => (
           <FeedCard
             key={fEvent.feedEventId}
             event={fEvent}
-            anchorWallet={anchorWallet}
+            marketplace={marketplaceQuery.data as Marketplace}
+            refetch={refetch}
             myFollowingList={myFollowingList}
           />
         ))}

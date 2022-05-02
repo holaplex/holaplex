@@ -1,10 +1,13 @@
+import ReactDom from 'react-dom';
+
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
 import { Popover } from '@headlessui/react';
 import { ShareIcon } from '@heroicons/react/outline';
-import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { Marketplace } from '@holaplex/marketplace-js-sdk';
+import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
@@ -13,10 +16,12 @@ import { useMemo, useState } from 'react';
 import {
   FeedEvent,
   FeedQuery,
+  Nft,
   useNftMarketplaceQuery,
   useWalletProfileQuery,
   Wallet,
 } from 'src/graphql/indexerTypes';
+import { FollowEvent } from 'src/graphql/indexerTypes.ssr';
 import { JsxElement } from 'typescript';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
@@ -28,6 +33,7 @@ import {
   AggregateEvent,
   FeedCardAttributes,
   FeedItem,
+  FeedQueryEvent,
   generateFeedCardAtributes,
   User,
 } from './feed.utils';
@@ -49,7 +55,7 @@ export function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: Fe
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
   if (props.event.__typename === 'FollowEvent')
-    return <FollowCard attrs={attrs} anchorWallet={props.anchorWallet} event={props.event} />;
+    return <FollowCard attrs={attrs} event={props.event} />;
 
   if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
 
@@ -106,7 +112,7 @@ function FeedCard2(props: FeedCardProps) {
   );
 }
 
-function AggregateCard(props: { event: AggregateEvent; anchorWallet: AnchorWallet }) {
+function AggregateCard(props: { event: AggregateEvent }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // return (
@@ -144,31 +150,35 @@ function AggregateCard(props: { event: AggregateEvent; anchorWallet: AnchorWalle
       <Button5 className="ml-auto w-full sm:w-auto" v="ghost" onClick={() => setModalOpen(true)}>
         View all
       </Button5>
-      <Modal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
-      >
-        <div className="space-y-10 p-4">
-          {props.event.eventsAggregated.map((e) => (
-            <FeedCard event={e} anchorWallet={props.anchorWallet} key={e.feedEventId} />
-          ))}
-        </div>
-      </Modal>
+      {ReactDom.createPortal(
+        <Modal
+          open={modalOpen}
+          setOpen={setModalOpen}
+          title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
+        >
+          <div className="space-y-10 p-4">
+            {props.event.eventsAggregated.map((e) => (
+              <FeedCard event={e} key={e.feedEventId} />
+            ))}
+          </div>
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
     </div>
   );
 }
 
 export function FeedCard(props: {
-  anchorWallet: AnchorWallet;
   event: FeedItem;
+  marketplace?: Marketplace;
   myFollowingList?: string[];
   className?: string;
+  refetch?: any;
 }) {
   const myFollowingList = props.myFollowingList || [];
 
   if (props.event.__typename === 'AggregateEvent') {
-    return <AggregateCard event={props.event} anchorWallet={props.anchorWallet} />;
+    return <AggregateCard event={props.event} />;
   }
 
   const attrs = generateFeedCardAtributes(props.event, myFollowingList);
@@ -180,7 +190,7 @@ export function FeedCard(props: {
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
   if (props.event.__typename === 'FollowEvent')
-    return <FollowCard attrs={attrs} anchorWallet={props.anchorWallet} event={props.event} />;
+    return <FollowCard attrs={attrs} event={props.event} />;
 
   if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
 
@@ -200,23 +210,23 @@ export function FeedCard(props: {
       </Link>
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
-        <FeedActionBanner event={props.event} />
+        <FeedActionBanner
+          event={props.event}
+          marketplace={props.marketplace}
+          refetch={props.refetch}
+        />
       </div>
     </div>
   );
 }
 
-function FollowCard(props: {
-  anchorWallet: AnchorWallet;
-  event: FeedItem;
-  attrs: FeedCardAttributes;
-  className?: string;
-}) {
+function FollowCard(props: { event: FeedItem; attrs: FeedCardAttributes; className?: string }) {
   const attrs = props.attrs;
   const { connection } = useConnection();
+  const anchorWallet = useAnchorWallet();
   const walletConnectionPair = useMemo(
-    () => ({ wallet: props.anchorWallet, connection }),
-    [props.anchorWallet, connection]
+    () => ({ wallet: anchorWallet!, connection }),
+    [anchorWallet, connection]
   );
 
   if (!attrs) return <div>Not enough data</div>;
@@ -243,17 +253,19 @@ function FollowCard(props: {
           <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
       </div>
-      <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
-        <FollowUnfollowButton
-          source="feed"
-          className="!w-full sm:ml-auto sm:w-auto"
-          walletConnectionPair={walletConnectionPair}
-          toProfile={{
-            address: attrs.toUser!.address,
-          }}
-          type="Follow" // needs to be dynamic
-        />
-      </div>
+      {walletConnectionPair.wallet && (
+        <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
+          <FollowUnfollowButton
+            source="feed"
+            className="!w-full sm:ml-auto sm:w-auto"
+            walletConnectionPair={walletConnectionPair}
+            toProfile={{
+              address: attrs.toUser!.address,
+            }}
+            type="Follow" // needs to be dynamic
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -268,8 +280,13 @@ export const ProfileHandle = (props: { address: string }) => {
   );
 };
 
-function FeedActionBanner(props: { event: FeedItem }) {
+function FeedActionBanner(props: {
+  event: FeedItem; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
+  marketplace?: Marketplace;
+  refetch?: any;
+}) {
   const attrs = generateFeedCardAtributes(props.event);
+  const [modelOpen, setModalOpen] = useState(false);
 
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -287,9 +304,28 @@ function FeedActionBanner(props: { event: FeedItem }) {
           </div>
         </div>
         <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
-          <Button5 v="primary" className="w-full sm:w-auto">
-            Make offer
-          </Button5>
+          <Link href={'/nfts/' + attrs.nft?.address + '/offers/new'}>
+            <a target="_blank">
+              <Button5 v="primary" className="w-full sm:w-auto">
+                Make offer
+              </Button5>
+            </a>
+          </Link>
+          {/* {props.marketplace && props.refetch && (
+            <Modal title={`Make an offer`} open={modelOpen} setOpen={setModalOpen}>
+              {props.event.nft! && (
+                <NFTPreview loading={false} nft={props.event.nft as Nft | any} />
+              )}
+        
+              <div className={`mt-8 flex w-full`}>
+                <OfferForm
+                  nft={props.event.nft as any}
+                  marketplace={props.marketplace as Marketplace}
+                  refetch={props.refetch}
+                />
+              </div>
+            </Modal>
+          )} */}
         </div>
       </div>
     </>

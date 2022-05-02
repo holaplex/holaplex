@@ -5,19 +5,26 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       feedEventId
       createdAt
       nft {
-        address
-        mintAddress
         name
         image
         description
+        owner {
+          address
+          associatedTokenAccountAddress
+          twitterHandle
+        }
+        sellerFeeBasisPoints
+        primarySaleHappened
         creators {
           address
           position
           profile {
-            profileImageUrl
             handle
+            profileImageUrl
           }
         }
+        address
+        mintAddress
       }
     }
     ... on FollowEvent {
@@ -51,19 +58,26 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
         seller
         price
         nft {
-          address
-          mintAddress
           name
           image
           description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
           creators {
             address
             position
             profile {
-              profileImageUrl
               handle
+              profileImageUrl
             }
           }
+          address
+          mintAddress
         }
       }
     }
@@ -76,19 +90,26 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
         seller
         price
         nft {
-          address
-          mintAddress
           name
           image
           description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
           creators {
             address
             position
             profile {
-              profileImageUrl
               handle
+              profileImageUrl
             }
           }
+          address
+          mintAddress
         }
       }
     }
@@ -101,19 +122,26 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
         buyer
         price
         nft {
-          address
-          mintAddress
           name
           image
           description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
           creators {
             address
             position
             profile {
-              profileImageUrl
               handle
+              profileImageUrl
             }
           }
+          address
+          mintAddress
         }
       }
     }
