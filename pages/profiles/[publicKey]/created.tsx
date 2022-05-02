@@ -19,6 +19,7 @@ import { INFINITE_SCROLL_AMOUNT_INCREMENT, NFTGrid } from './nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty } from 'ramda';
+import { ProfilePageHead } from '../[publicKey]';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
 
@@ -104,7 +105,6 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
         }`}
       >
         <p className={`mb-0 first-letter:text-base`}>{title}</p>
-        <p className={`mb-0 text-base`}>{count}</p>
       </div>
     );
   };
@@ -141,10 +141,15 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
 
   return (
     <ProfileDataProvider profileData={props}>
-      <Head>
-        <title>{showFirstAndLastFour(publicKey)}&apos;s NFTs | Holaplex</title>
-        <meta property="description" key="description" content="View owned and created NFTs" />
-      </Head>
+      <ProfilePageHead
+        publicKey={publicKey}
+        twitterProfile={{
+          twitterHandle: props.twitterHandle,
+          banner: props.banner,
+          pfp: props.profilePicture,
+        }}
+        description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
+      />
       <ProfileContainer>
         <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
@@ -182,7 +187,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore && nftsToShow.length > 99}
+          hasMore={hasMore && filteredNfts.length > 99}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;

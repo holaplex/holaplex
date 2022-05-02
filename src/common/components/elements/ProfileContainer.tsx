@@ -4,7 +4,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { ConnectTwitterButton, WalletIdentityProvider } from '@cardinal/namespaces-components';
 import { PublicKey } from '@solana/web3.js';
-import Image from 'next/image';
+
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { FollowerCount } from './FollowerCount';
@@ -14,6 +14,7 @@ import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData, asProfile } from '@/common/context/ProfileData';
 
 import Footer from '../home/Footer';
+import { imgOpt } from '@/common/utils';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
@@ -29,30 +30,30 @@ export const ProfileContainer: FC = ({ children }) => {
         <header>
           <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
         </header>
-        <div className="container mx-auto px-6 pb-20 md:px-12 lg:flex">
+        <div className="container  mx-auto px-6 pb-20 md:px-12 lg:flex">
           <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
-            <div className="-mt-12 flex-col justify-center text-center lg:justify-start">
-              <div>
-                <ProfilePicture
+            <div className="-mt-12 flex justify-center text-center lg:justify-start">
+              <div className=" max-w-fit rounded-full border-4 border-gray-900 ">
+                <img
                   src={profilePicture}
-                  className="bg-gray-900"
-                  width={PFP_SIZE}
-                  height={PFP_SIZE}
+                  // imgOpt(, 400)
+                  className="h-24 w-24 rounded-full  bg-gray-900 "
+                  alt="profile picture"
                 />
               </div>
-              <div className="mt-2 ml-4">
-                {anchorWallet?.publicKey.toString() == profileData.publicKey.toString() &&
-                  !twitterHandle && (
-                    <ConnectTwitterButton
-                      address={new PublicKey(profileData.publicKey)}
-                      connection={connection}
-                      wallet={anchorWallet}
-                      cluster={'mainnet-beta'}
-                      variant={'secondary'}
-                      style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
-                    />
-                  )}
-              </div>
+            </div>
+            <div className="mt-2 flex justify-center lg:justify-start">
+              {anchorWallet?.publicKey.toString() == profileData.publicKey.toString() &&
+                !twitterHandle && (
+                  <ConnectTwitterButton
+                    address={new PublicKey(profileData.publicKey)}
+                    connection={connection}
+                    wallet={anchorWallet}
+                    cluster={'mainnet-beta'}
+                    variant={'secondary'}
+                    style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
+                  />
+                )}
             </div>
             <div className="mt-10 flex justify-center lg:justify-start">
               <ProfileDisplayName />
@@ -73,7 +74,7 @@ export const ProfileContainer: FC = ({ children }) => {
             wallet={anchorWallet}
           />
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </WalletIdentityProvider>
   );
@@ -118,11 +119,6 @@ const ProfileDisplayName: FC = () => {
 };
 
 export const PFP_SIZE = 100;
-
-const ProfilePicture = styled(Image)`
-  border-radius: 50%;
-  border: 5px solid #161616 !important;
-`;
 
 const Banner = styled.div`
   width: 100%;
