@@ -66,10 +66,10 @@ const FeedPage = ({ address }: { address: string }) => {
     },
   });
 
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
+  // const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
 
-  const myFollowingList =
-    allConnectionsFrom.data?.map((account) => account.publicKey.toBase58()) || [];
+  const myFollowingList: string[] = [];
+  // allConnectionsFrom.data?.map((account) => account.publicKey.toBase58()) || [];
 
   const [hasMore, setHasMore] = useState(true);
   // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
@@ -84,20 +84,20 @@ const FeedPage = ({ address }: { address: string }) => {
   )
     return null;
 
-  // console.log('feed', {
-  //   myPubkey,
-  //   data,
-  //   loading,
-  //   allConnectionsFrom,
-  // });
+  console.log('feed', {
+    myPubkey,
+    data,
+    loading,
+    // allConnectionsFrom,
+  });
 
   async function loadMore(inView: boolean) {
-    // console.log('load more feed', {
-    //   inView,
-    //   loading,
-    //   feedEventsN: feedEvents.length,
-    //   allConnectionsFrom,
-    // });
+    console.log('load more feed', {
+      inView,
+      loading,
+      feeedEvetnsN: feedEvents.length,
+      // allConnectionsFrom,
+    });
     if (!inView || loading || feedEvents.length <= 0) {
       return;
     }
