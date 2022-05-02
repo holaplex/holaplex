@@ -79,12 +79,14 @@ export default function FeedLayout({ children }: { children: any }) {
             <div className="space-y-4">
               {TEST_FEEDS.map((u) => (
                 // <FollowListItem key={p.handle} profile={p} />
-                <Link passHref key={u.address} href={'/feed?address=' + u.address}>
-                  <a className="flex items-center space-x-4">
-                    <ProfilePFP user={u} />
-                    <span>{u.handle}</span>
-                  </a>
-                </Link>
+                <div key={u.address} className="flex items-center space-x-4">
+                  <ProfilePFP user={u} />
+                  <Link passHref href={'/feed?address=' + u.address}>
+                    <a className="">
+                      <span>{u.handle}</span>
+                    </a>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
