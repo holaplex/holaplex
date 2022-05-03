@@ -75,6 +75,8 @@ const FeedPage = ({ address }: { address: string }) => {
 
   const [hasMore, setHasMore] = useState(true);
   // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
+
+  // make sure all feed events are unique
   const feedEvents =
     data?.feedEvents.filter((fe, i) => {
       return data.feedEvents.findIndex((e) => fe.feedEventId === e.feedEventId) === i;
@@ -178,7 +180,7 @@ const FeedPage = ({ address }: { address: string }) => {
     }, [] as FeedItem[]);
   }
 
-  const feedItems = getFeedItems(feedEvents);
+  const feedItems = feedEvents; // getFeedItems(feedEvents);
 
   return (
     <>
