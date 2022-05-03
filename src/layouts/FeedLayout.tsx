@@ -14,6 +14,10 @@ const Feeds: FeedType[] = ['Following', 'Discovery'];
 
 const TEST_FEEDS = [
   {
+    address: 'GeCRaiFKTbFzBV1UWWFZHBd7kKcCDXZK61QvFpFLen66',
+    handle: 'empty',
+  },
+  {
     address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H', // kris
     handle: '@kristianeboe',
   },
@@ -69,7 +73,7 @@ export default function FeedLayout({ children }: { children: any }) {
         <div className="sticky top-10 hidden h-fit w-full max-w-md space-y-7 xl:block ">
           <WhoToFollowList />
           {/* <MyActivityList /> */}
-          <div>
+          {/* <div>
             <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
               <h3 className="m-0 text-base font-medium text-white">
                 Test feeds (click to view their feeds){' '}
@@ -89,7 +93,7 @@ export default function FeedLayout({ children }: { children: any }) {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
           <div className="relative  py-10 ">
             <div className="absolute  inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-gray-800" />

@@ -321,19 +321,19 @@ function FeedActionBanner(props: {
           </div>
         </div>
         <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
-          <Link href={'/nfts/' + attrs.nft?.address + '/offers/new'}>
-            <a target="_blank">
-              <Button5 v="primary" className="w-full sm:w-auto">
-                Make offer
-              </Button5>
-            </a>
-          </Link>
+          {/* <Link href={'/nfts/' + attrs.nft?.address + '/offers/new'}>
+            <a target="_blank"> */}
+          <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+            Make offer
+          </Button5>
+          {/* </a>
+          </Link> */}
           {/* {props.marketplace && props.refetch && (
             <Modal title={`Make an offer`} open={modelOpen} setOpen={setModalOpen}>
               {props.event.nft! && (
                 <NFTPreview loading={false} nft={props.event.nft as Nft | any} />
               )}
-        
+
               <div className={`mt-8 flex w-full`}>
                 <OfferForm
                   nft={props.event.nft as any}

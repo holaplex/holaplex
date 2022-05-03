@@ -68,7 +68,7 @@ export function generateFeedCardAtributes(
         solAmount,
         nft: event.listing?.nft,
         // listing: event.listing,
-        content: `Listed for ${solAmount} SOL`,
+        content: `Listed for ${solAmount} SOL (${event.lifecycle})`,
       };
 
     case 'FollowEvent':
@@ -114,7 +114,7 @@ export function generateFeedCardAtributes(
       solAmount = event.offer?.price / LAMPORTS_PER_SOL;
       return {
         ...base,
-        content: 'Offered ' + solAmount + ' SOL',
+        content: 'Offered ' + solAmount + ` SOL (${event.lifecycle})`,
         sourceUser: {
           address: event.offer?.buyer!,
           profile: null,
@@ -131,4 +131,26 @@ export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent) {
     e2.__typename === 'MintEvent' &&
     e1.nft?.creators[0].address === e2.nft?.creators[0].address
   );
+}
+
+export function shuffleArray<T>(array: T[]) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  const cloneArray = [...array];
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [cloneArray[currentIndex], cloneArray[randomIndex]] = [
+      cloneArray[randomIndex],
+      cloneArray[currentIndex],
+    ];
+  }
+
+  return cloneArray;
 }

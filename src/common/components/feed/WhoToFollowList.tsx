@@ -3,9 +3,9 @@ import { IProfile } from '@/modules/feed/feed.interfaces';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
-import { User } from './feed.utils';
+import { shuffleArray, User } from './feed.utils';
 import { ProfilePFP } from './FeedCard';
 
 function FollowListItem({
@@ -39,7 +39,7 @@ function FollowListItem({
           )} */}
           <ProfilePFP user={user} />
         </div>
-        <Link href={'/profiles/' + user.address} passHref>
+        <Link href={'/profiles/' + user.address + '/nfts'} passHref>
           <a>{user.profile?.handle}</a>
         </Link>
       </div>
@@ -81,25 +81,51 @@ export default function WhoToFollowList() {
   const myPubkey = anchorWallet?.publicKey.toBase58() || '';
 
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
-  if (!anchorWallet) return null;
 
   // const myFollowingList: string[] = [];
   const myFollowingList =
     allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
 
+  const [topProfilesToFollow, setTopProfilesToFollow] = useState<User[]>(
+    // INFLUENTIAL_WALLETS.slice(0, 10)
+    []
+  );
+
+  useEffect(() => {
+    if (allConnectionsFrom.isLoading) return;
+    setTopProfilesToFollow(
+      shuffleArray(INFLUENTIAL_WALLETS.filter((u) => !myFollowingList.includes(u.address))).slice(
+        0,
+        10
+      )
+    );
+  }, [allConnectionsFrom.isLoading, myFollowingList.length]);
+
+  if (!anchorWallet) return null;
   return (
     <div>
       <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
         <h3 className="m-0 text-base font-medium text-white">Who to follow</h3>
-        <Link href={'/feed/whotofollow'} passHref>
+        {/* <Link href={'/feed/whotofollow'} passHref>
           <a>
             <button className="text-base text-gray-300">See more</button>
           </a>
-        </Link>
+        </Link> */}
       </div>
-
       <div className="space-y-4">
-        {INFLUENTIAL_WALLETS.slice(0, 10).map((u) => (
+        {topProfilesToFollow.length === 0 && (
+          <>
+            <LoadingFollowCard />
+            <LoadingFollowCard />
+            <LoadingFollowCard />
+            <LoadingFollowCard />
+            <LoadingFollowCard />
+            <LoadingFollowCard />
+            <LoadingFollowCard />
+          </>
+        )}
+
+        {topProfilesToFollow.map((u) => (
           <FollowListItem
             key={u.address}
             user={u}
@@ -111,6 +137,19 @@ export default function WhoToFollowList() {
     </div>
   );
 }
+
+const LoadingFollowCard = () => (
+  <div className="flex animate-pulse justify-between">
+    <div className="flex items-center">
+      <div className="mr-4">
+        <div className={`h-10 w-10 rounded-full bg-gray-800`} />
+      </div>
+      <div className={`h-10 w-40 rounded-full bg-gray-800`} />
+    </div>
+
+    <div className={` h-10 w-28 rounded-full bg-gray-800`} />
+  </div>
+);
 
 const INFLUENTIAL_WALLETS = [
   {
