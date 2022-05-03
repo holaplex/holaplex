@@ -14,7 +14,7 @@ import { SuccessToast } from './SuccessToast';
 import classNames from 'classnames';
 
 type FollowUnfollowButtonProps = {
-  source: 'modalFrom' | 'modalTo' | 'profileButton' | 'feed';
+  source: 'modalFrom' | 'modalTo' | 'profileButton' | 'feed' | 'whotofollow';
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;

@@ -42,7 +42,7 @@ export type FeedCardAttributes =
     }
   | undefined;
 
-function getHandle(u: User) {
+export function getHandle(u: User) {
   return (u.profile?.handle && '@' + u.profile?.handle) || shortenAddress(u.address);
 }
 
@@ -72,14 +72,20 @@ export function generateFeedCardAtributes(
       };
 
     case 'FollowEvent':
+      const from = event.connection?.from!;
+      const to = event.connection?.to!;
       return {
         ...base,
         type: 'FollowEvent',
-        content: myFollowingList?.includes(event.connection?.to.address)
-          ? 'Was followed by ' + getHandle(event.connection?.to!)
-          : 'Followed ' + getHandle(event.connection?.to!),
-        sourceUser: event.connection?.from!,
-        toUser: event.connection?.to!,
+        content: myFollowingList?.includes(from.address)
+          ? 'Was followed by ' + getHandle(from)
+          : 'Followed ' + getHandle(from),
+
+        // I thought the source would be from, but aparently it's to
+        // sourceUser: event.connection?.from!,
+        // toUser: event.connection?.to!,
+        sourceUser: to,
+        toUser: from,
       };
 
     case 'MintEvent':

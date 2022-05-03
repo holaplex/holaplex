@@ -67,10 +67,11 @@ const FeedPage = ({ address }: { address: string }) => {
     },
   });
 
-  // const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
+  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
 
-  const myFollowingList: string[] = [];
-  // allConnectionsFrom.data?.map((account) => account.publicKey.toBase58()) || [];
+  // const myFollowingList: string[] = [];
+  const myFollowingList =
+    allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
 
   const [hasMore, setHasMore] = useState(true);
   // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
@@ -89,7 +90,7 @@ const FeedPage = ({ address }: { address: string }) => {
     myPubkey,
     data,
     loading,
-    // allConnectionsFrom,
+    myFollowingList,
   });
 
   async function loadMore(inView: boolean) {

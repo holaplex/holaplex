@@ -35,6 +35,7 @@ import {
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAtributes,
+  getHandle,
   User,
 } from './feed.utils';
 
@@ -175,13 +176,11 @@ export function FeedCard(props: {
   className?: string;
   refetch?: any;
 }) {
-  const myFollowingList = props.myFollowingList || [];
-
   if (props.event.__typename === 'AggregateEvent') {
     return <AggregateCard event={props.event} />;
   }
 
-  const attrs = generateFeedCardAtributes(props.event, myFollowingList);
+  const attrs = generateFeedCardAtributes(props.event, props.myFollowingList);
   // console.log('Feed card', props.event.feedEventId, {
   //   event: props.event,
   //   attrs,
@@ -190,7 +189,7 @@ export function FeedCard(props: {
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
   if (props.event.__typename === 'FollowEvent')
-    return <FollowCard attrs={attrs} event={props.event} />;
+    return <FollowCard attrs={attrs} event={props.event} myFollowingList={props.myFollowingList} />;
 
   if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
 
@@ -220,7 +219,13 @@ export function FeedCard(props: {
   );
 }
 
-function FollowCard(props: { event: FeedItem; attrs: FeedCardAttributes; className?: string }) {
+function FollowCard(props: {
+  event: FeedItem;
+  attrs: FeedCardAttributes;
+  myFollowingList?: string[];
+  className?: string;
+}) {
+  const myFollowingList = props.myFollowingList || [];
   const attrs = props.attrs;
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
@@ -230,6 +235,11 @@ function FollowCard(props: { event: FeedItem; attrs: FeedCardAttributes; classNa
   );
 
   if (!attrs) return <div>Not enough data</div>;
+
+  console.log(attrs.content, {
+    followingList: props.myFollowingList,
+    attrs: attrs,
+  });
 
   return (
     <div
@@ -242,13 +252,20 @@ function FollowCard(props: { event: FeedItem; attrs: FeedCardAttributes; classNa
       <ProfilePFP user={attrs.sourceUser} />
       <div className="ml-4">
         <div className="text-base font-semibold">
-          {attrs.content}
+          {/* {attrs.content} */}
           {/* Started following
               {attrs.toUser?.profile?.handle || shortenAddress(attrs.toUser.address)} */}
+          Followed{' '}
+          <Link href={'/profiles/' + attrs.toUser?.address}>
+            <a target="_blank">{getHandle(attrs.toUser!)}</a>
+          </Link>
         </div>
-        <div className="flex text-sm">
+        <div className="flex space-x-4 text-sm">
           <Link href={'/profiles/' + attrs.sourceUser.address + '/nfts'} passHref>
-            <a>{attrs.sourceUser.profile?.handle || shortenAddress(attrs.sourceUser.address)}</a>
+            <a target="_blank">
+              {getHandle(attrs.sourceUser)}
+              {/* {attrs.sourceUser.profile?.handle || shortenAddress(attrs.sourceUser.address)} */}
+            </a>
           </Link>
           <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
@@ -262,7 +279,7 @@ function FollowCard(props: { event: FeedItem; attrs: FeedCardAttributes; classNa
             toProfile={{
               address: attrs.toUser!.address,
             }}
-            type="Follow" // needs to be dynamic
+            type={myFollowingList.includes(attrs.toUser!.address) ? 'Unfollow' : 'Follow'} // needs to be dynamic
           />
         </div>
       )}

@@ -1,58 +1,314 @@
+import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import { IProfile } from '@/modules/feed/feed.interfaces';
+import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { Connection } from '@solana/web3.js';
+import Link from 'next/link';
+import { useMemo } from 'react';
+import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
+import { User } from './feed.utils';
+import { ProfilePFP } from './FeedCard';
 
-function FollowButton() {
-  return (
-    <button className="rounded-full bg-white px-6 py-2 text-base text-gray-900">Follow</button>
-  );
-}
-
-function FollowListItem({ profile }: { profile: IProfile }) {
+function FollowListItem({
+  user,
+  ...props
+}: {
+  user: User;
+  walletConnectionPair: {
+    wallet: AnchorWallet;
+    connection: Connection;
+  };
+  myFollowingList: string[];
+}) {
+  console.log('whotofollowitem', user.profile?.handle, {
+    address: user.address,
+    l: props.myFollowingList,
+    adInL: props.myFollowingList.includes(user.address),
+  });
   return (
     <div className="flex justify-between">
       <div className="flex items-center">
         <div className="mr-4">
-          {profile.pfp ? (
+          {/* {user.profile?.pfp ? (
             <img
               className="h-8 w-8 rounded-full"
-              src={profile.pfp}
-              alt={'profile picture for ' + profile.handle || profile.address}
+              src={user.profile?.pfp}
+              alt={'profile picture for ' + user.profile.handle || user.address}
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-gray-700"></div>
-          )}
+          )} */}
+          <ProfilePFP user={user} />
         </div>
-        <div> {profile.handle} </div>
+        <Link href={'/profiles/' + user.address} passHref>
+          <a>{user.profile?.handle}</a>
+        </Link>
       </div>
-      <FollowButton />
+
+      <FollowUnfollowButton
+        source="whotofollow"
+        walletConnectionPair={props.walletConnectionPair}
+        toProfile={{
+          address: user.address,
+        }}
+        type={props.myFollowingList.includes(user.address) ? 'Unfollow' : 'Follow'} // needs to be dynamic
+      />
     </div>
   );
 }
 
-const WHO_TO_FOLLOW: IProfile[] = [
+const WHO_TO_FOLLOW: User[] = [
   {
-    pfp: 'https://pbs.twimg.com/profile_images/1502268999316525059/nZNPG8GX_bigger.jpg',
     address: 'asdf',
-    handle: '@kristianeboe',
+    profile: {
+      handle: '@kristianeboe',
+      pfp: 'https://pbs.twimg.com/profile_images/1502268999316525059/nZNPG8GX_bigger.jpg',
+    },
   },
-  { address: 'xv', handle: '@anafescandon' },
-  { address: 'z', handle: 'damiandotsol' },
-  { address: '123', handle: 'kaylakane' },
-  { address: 'gahh', handle: 'belle_belle.sol' },
+  { address: 'xv', profile: { handle: '@anafescandon' } },
+  { address: 'z', profile: { handle: 'damiandotsol' } },
+  { address: '123', profile: { handle: 'kaylakane' } },
+  { address: 'gahh', profile: { handle: 'belle_belle.sol' } },
 ];
 
 export default function WhoToFollowList() {
+  const { connection } = useConnection();
+  const anchorWallet = useAnchorWallet();
+  const walletConnectionPair = useMemo(
+    () => ({ wallet: anchorWallet!, connection }),
+    [anchorWallet, connection]
+  );
+
+  const myPubkey = anchorWallet?.publicKey.toBase58() || '';
+
+  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
+  if (!anchorWallet) return null;
+
+  // const myFollowingList: string[] = [];
+  const myFollowingList =
+    allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
         <h3 className="m-0 text-base font-medium text-white">Who to follow</h3>
-        <button className="text-base text-gray-300">See more</button>
+        <Link href={'/feed/whotofollow'} passHref>
+          <a>
+            <button className="text-base text-gray-300">See more</button>
+          </a>
+        </Link>
       </div>
 
       <div className="space-y-4">
-        {WHO_TO_FOLLOW.map((p) => (
-          <FollowListItem key={p.handle} profile={p} />
+        {INFLUENTIAL_WALLETS.slice(0, 10).map((u) => (
+          <FollowListItem
+            key={u.address}
+            user={u}
+            walletConnectionPair={walletConnectionPair}
+            myFollowingList={myFollowingList}
+          />
         ))}
       </div>
     </div>
   );
 }
+
+const INFLUENTIAL_WALLETS = [
+  {
+    address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H',
+    profile: {
+      handle: 'kristianeboe',
+    },
+  },
+  {
+    address: '3XzWJgu5WEU3GV3mHkWKDYtMXVybUhGeFt7N6uwkcezF',
+    profile: {
+      handle: 'ClassicScuba',
+    },
+  },
+  {
+    address: '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
+    profile: {
+      handle: 'ghost_fried',
+    },
+  },
+  {
+    address: 'DCFWUYqK1iwGzSD3w6SzpwH77GgmbbVX3E2QRtN1qBrj',
+    profile: {
+      handle: 'notjohnlesstudio',
+    },
+  },
+  {
+    address: 'x31BQteSUcoLcatn57pUPh1ATqDkGSBti4KpnXbqjMq',
+    profile: {
+      handle: 'b2kdaman',
+    },
+  },
+  {
+    address: '14kVL6sWSc4oX9rwcJU7aMHMLMjsEfpXcAJf68kmsMeP',
+    profile: {
+      handle: '64jooski',
+    },
+  },
+  {
+    address: '3StkrkMEmdiu9nER5qM3fNR1fCMdawUhGsihF2UkXrPP',
+    profile: {
+      handle: 'earlyishadopter',
+    },
+  },
+  {
+    address: 'DgzWqku67fPeuWgmyZbNa7U7yicKRhbjM7nB86Yx2ojQ',
+    profile: {
+      handle: 'erhancrypto',
+    },
+  },
+  {
+    address: 'Dz3BJenPAMziCBhJFGwUxvu3qhMUuLch8NjoZdfP9xsa',
+    profile: {
+      handle: 'js',
+    },
+  },
+  {
+    address: 'AwiRcagxnT8NLnJeS8ScVcq2Y9f5VeJUfyfR5AXmVFfh',
+    profile: {
+      handle: 'N8Solomon',
+    },
+  },
+  {
+    address: 'AXXRH6NVXjUNxi6GvVWV4Pp6q7k9xkqeqHhRx8sW41TX',
+    profile: {
+      handle: 'Pixeltoy',
+    },
+  },
+  {
+    address: 'CPkXvmoLnru2UX9JcDXLykKkGyTCCYJ67LVZdYahASyh',
+    profile: {
+      handle: 'Ted // SlimeyOctopus',
+    },
+  },
+  {
+    address: '79j2yWfDHnAU3Aq4yfoTcE9KCHCDo2m54aL4te67683Q',
+    profile: {
+      handle: 'TheObserverNft',
+    },
+  },
+  {
+    address: 'Fh2rUc2CrMTp6H7t1CGnG4aXhWn7BzPPQBU2KkgR4jeh',
+    profile: {
+      handle: 'twxcrypto',
+    },
+  },
+  {
+    address: 'gNEt8EeWqdcSpebQXZ8YVnBC9k5yKp2WGvnA9HR8RzQ',
+    profile: {
+      handle: 'wgarrettdavis',
+    },
+  },
+  {
+    address: 'zenom3SnXK6k2UJm73jRQ1n8U7KkLPrTypDatKjGxoL',
+    profile: {
+      handle: 'zen0m',
+    },
+  },
+  {
+    address: 'Er6QJPusC1JsUqevTjFKXtYHbgCtJkyo1DNjEBWevWut',
+    profile: {
+      handle: '0xbustos',
+    },
+  },
+  {
+    address: 'HLSgM1a7wSufVwe1NrPPR22ynY2aPsH8a1XQfqFsQiqY',
+    profile: {
+      handle: '0xCelon',
+    },
+  },
+  {
+    address: 'BjSaYdgdWtBNXGJmy6cuTzxYzLcxvn4Anw6yrWsgKdNm',
+    profile: {
+      handle: 'PrimitiveMoney',
+    },
+  },
+  {
+    address: '8t6BxNBe7pM8YwvG4JUQxi1W9PYfuphrYcUiJF99oWsP',
+    profile: {
+      handle: 'rainnen23',
+    },
+  },
+  {
+    address: '4ZjYSCH3Sib9iMSM3QN2sL2kwxNcXG2P4XCemSC2hsyb',
+    profile: {
+      handle: 'TheOnlyNom',
+    },
+  },
+  {
+    address: 'GcpdC1iUtfiQ48B6dn7bcM2Ax13R6TDom65jQJiTD18G',
+    profile: {
+      handle: 'adam_ape_',
+    },
+  },
+  {
+    address: 'xYwSUQv7DX62XGo4XXFAQRSTwtS1NrWz8rifR7Gppeg',
+    profile: {
+      handle: 'Crypt0xG',
+    },
+  },
+  {
+    address: 'A1Fk3zhtamLixGStRFc4eBd3pVodoFrNRbVFCaPaPJBu',
+    profile: {
+      handle: 'itsMcNatt',
+    },
+  },
+  {
+    address: 'B3jtSCpXQpMZR5r5m87854bgMj5veHwz9idjd22eVrP7',
+    profile: {
+      handle: 'kknorikami',
+    },
+  },
+  {
+    address: 'GpnKen3QMaLc1CzFsoy8UbcbPwEXRXb5k2qTkTcUa3RX',
+    profile: {
+      handle: 'MattSolana',
+    },
+  },
+  {
+    address: 'H4dfSserFhYBswmPMF3FdYEbu4aj1AQt7RSXRyVqVjaS',
+    profile: {
+      handle: 'poohaus',
+    },
+  },
+  {
+    address: '4Jb3dS76hxcBXKZDkwx3KC4NSMXoTKsyXfwW18apS4vZ',
+    profile: {
+      handle: 'S0Ltoshi',
+    },
+  },
+  {
+    address: 'yTM5APEbWb1GBBtgsjzTF6ZYw5pWxqCr7qKykWW7qLS',
+    profile: {
+      handle: 'Solchemist',
+    },
+  },
+  {
+    address: '2TKEfKKLreKYykZMCKiFMYhhkKFxajfSBeKNZ8rFa6qt',
+    profile: {
+      handle: 'Good_Brice_',
+    },
+  },
+  {
+    address: 'CsxZxjL19pJ3DM4yyDZDePgCWj6m7Lm9htwHggBbgP1r',
+    profile: {
+      handle: 'howl33333',
+    },
+  },
+  {
+    address: '57DsAWRijeENrhb4RdKiLjKzLF1V8f1J2D8mCNvGMSPu',
+    profile: {
+      handle: 'quincy_sol',
+    },
+  },
+  {
+    address: 'DWPpeotxT2Q1m1BDzuycQktDe6VnVejLiPWsjfwG6Nb7',
+    profile: {
+      handle: 'Sunless_1',
+    },
+  },
+];
