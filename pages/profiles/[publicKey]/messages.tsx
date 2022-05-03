@@ -8,6 +8,13 @@ import {
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
+import {Mailbox} from '@usedispatch/client';
+
+
+//Question - how do we flow in the wallet and connection objects here?
+// const mailbox  = new Mailbox(conn, senderWallet);
+
+//Question - whats an example of something which fetches async data to populate the view?
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async context =>
   getPropsForWalletOrUsername(context);
