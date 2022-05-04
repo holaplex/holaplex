@@ -10,7 +10,7 @@ import Settings from './SettingsIcon';
 import Close from './CloseIcon';
 
 const HOLAPLEX_MONITORING_PUBLIC_KEY = new PublicKey(
-  'D2pyBevYb6dit1oCx6e8vCxFK9mBeYCRe8TTntk2Tm98'
+  'BpVYWaAPbv5vyeRxiX9PMsmAVJVoL2Lp4YtuRgjuhoZh'
 );
 
 export const themeVariables: IncomingThemeVariables = {
