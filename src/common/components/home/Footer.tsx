@@ -4,7 +4,7 @@ import SocialLinks from '../elements/SocialLinks';
 
 export const SmallFooter = () => {
   return (
-    <div className="mb-7 flex max-w-md flex-col items-center space-y-7 md:items-start">
+    <div className="mb-7 flex max-w-md flex-col items-center space-y-6 md:items-start">
       <div className="flex flex-nowrap items-center text-center text-2xl">
         <div className="flex h-10 w-10 items-center justify-center">👋</div>
         <span className="font-medium text-gray-25">Holaplex</span>

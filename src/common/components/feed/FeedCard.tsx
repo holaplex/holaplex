@@ -201,7 +201,7 @@ export function FeedCard(props: {
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
           <img
-            className="aspect-square w-full rounded-lg "
+            className="aspect-square w-full rounded-lg object-cover "
             src={attrs.nft?.image}
             alt={attrs.nft?.name}
           />
