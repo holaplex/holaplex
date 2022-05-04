@@ -1297,13 +1297,13 @@
   resolved "https://registry.npmjs.org/@ctrl/tinycolor/-/tinycolor-3.4.0.tgz"
   integrity sha512-JZButFdZ1+/xAfpguQHoabIXkcqRRKpMrWKBkpEZZyxfY9C1DpADFB8PEqGSTeFr135SaTRfKqGKx5xSCLI7ZQ==
 
-"@dialectlabs/react-ui@^0.6.10":
-  version "0.6.10"
-  resolved "https://registry.npmjs.org/@dialectlabs/react-ui/-/react-ui-0.6.10.tgz"
-  integrity sha512-XoMrRSlSqAt31XPOSfVc9zaCGp5W7lrKVuFjxZgskPHaGiSU597mz/JhWlmVnBsY1Q6HeRRaHlm5aUL8rLYrFg==
+"@dialectlabs/react-ui@^0.7.3":
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/@dialectlabs/react-ui/-/react-ui-0.7.3.tgz#6d7200bbfbe0787e202426c599d08dc33ee30a04"
+  integrity sha512-mTPrdv5RQe9mew5u5/cD7bFngBixLVUz5wRj+tW+WwYMEQ7ZuPsuviygyiHpu+ke9zscEO+yUjoajmErb/GpBg==
   dependencies:
     "@cardinal/namespaces-components" "2.5.0"
-    "@dialectlabs/web3" "^0.2.0"
+    "@dialectlabs/web3" "^0.3.1"
     "@headlessui/react" "^1.2.0"
     "@project-serum/anchor" "^0.23.0"
     clsx "^1.1.1"
@@ -1312,22 +1312,22 @@
     react-media-hook "^0.4.9"
     swr "^0.5.6"
 
-"@dialectlabs/react@^0.4.8":
-  version "0.4.8"
-  resolved "https://registry.npmjs.org/@dialectlabs/react/-/react-0.4.8.tgz"
-  integrity sha512-2VoxMnu5wQHb+6vJ9gp8XYgr/Gk18YTAS7AYdmGEJ4SpeUp4k1sADZIwuG/8YeBrkdKaXG4z6PGCBiyu0GjKwQ==
+"@dialectlabs/react@^0.4.11":
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/@dialectlabs/react/-/react-0.4.11.tgz#9a60025cf764ae6a613d56f0d45dec64937bdfbb"
+  integrity sha512-8pqDGytQ/9GYbtV2/FekwyX7Z0kEp03+TbDmdGS9LlDWcli3Gtb/0wnlPcGDgslKbV/MWyk0P7UTezZhBV8HGA==
   dependencies:
-    "@dialectlabs/web3" "^0.2.0"
+    "@dialectlabs/web3" "^0.3.1"
     "@project-serum/anchor" "^0.23.0"
     "@solana/web3.js" "1.38.0"
     object-hash "^3.0.0"
     swr "^0.5.6"
     unfetch "^4.2.0"
 
-"@dialectlabs/web3@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@dialectlabs/web3/-/web3-0.2.0.tgz"
-  integrity sha512-NgRV7s7y5brWDZCIcReFpIZRDoygNL13hHwuXq2U30xK1EY1HSr1S+oJMjHYqAAwt0jDraRetoq2ZyJm4xGAOg==
+"@dialectlabs/web3@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@dialectlabs/web3/-/web3-0.3.1.tgz#8332c61a4cefd01ce789239bbcbb63f42941960b"
+  integrity sha512-h/KldrvI5OX0+m2SVrbswVAhFIJX70t1LAcdWkpKn/oX6jCdPzBTzoYJCwCkcMboknMzpbU1tAtKT8dP3Y0OMA==
   dependencies:
     "@project-serum/anchor" "0.23.0"
     "@solana/spl-token" "^0.1.8"
