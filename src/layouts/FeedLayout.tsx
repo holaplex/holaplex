@@ -61,16 +61,16 @@ export default function FeedLayout({ children }: { children: any }) {
   // );
 
   return (
-    <div className="container mx-auto mt-20 px-6 pb-20  ">
+    <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
       <div className="mt-12 flex justify-between">
-        <div className="w-full max-w-2xl">
+        <div className="mx-auto w-full  sm:w-[600px] xl:mx-0 ">
           {/* <div className="flex space-x-1   p-1">
             <Tab title={'Feed'} selected={feedTabSelected} url="/feed" />
             <Tab title={'Discovery'} selected={!feedTabSelected} url="/feed/discovery" />
           </div> */}
           {children}
         </div>
-        <div className="sticky top-10 hidden h-fit w-full max-w-md space-y-7 xl:block ">
+        <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
           <WhoToFollowList />
           {/* <MyActivityList /> */}
           {/* <div>

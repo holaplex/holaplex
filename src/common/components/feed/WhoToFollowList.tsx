@@ -96,7 +96,7 @@ export default function WhoToFollowList() {
     setTopProfilesToFollow(
       shuffleArray(INFLUENTIAL_WALLETS.filter((u) => !myFollowingList.includes(u.address))).slice(
         0,
-        10
+        5
       )
     );
   }, [allConnectionsFrom.isLoading, myFollowingList.length]);
@@ -112,7 +112,7 @@ export default function WhoToFollowList() {
           </a>
         </Link> */}
       </div>
-      <div className="space-y-4">
+      <div className="space-y-6">
         {topProfilesToFollow.length === 0 && (
           <>
             <LoadingFollowCard />

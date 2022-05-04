@@ -141,7 +141,7 @@ function AggregateCard(props: { event: AggregateEvent }) {
   return (
     <div
       className={classNames(
-        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-lg',
+        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-2xl shadow-black',
         false && 'hover:scale-[1.02]'
       )}
     >
@@ -244,7 +244,7 @@ function FollowCard(props: {
   return (
     <div
       className={classNames(
-        'flex flex-wrap items-center rounded-lg bg-gray-800 p-4 shadow-lg',
+        'flex flex-wrap items-center rounded-3xl bg-gray-900 p-4 shadow-2xl shadow-black md:rounded-full',
         false && 'hover:scale-[1.02]',
         props.className
       )}
@@ -262,7 +262,7 @@ function FollowCard(props: {
         </div>
         <div className="flex space-x-4 text-sm">
           <Link href={'/profiles/' + attrs.sourceUser.address + '/nfts'} passHref>
-            <a target="_blank">
+            <a target="_blank" className="font-medium">
               {getHandle(attrs.sourceUser)}
               {/* {attrs.sourceUser.profile?.handle || shortenAddress(attrs.sourceUser.address)} */}
             </a>
@@ -309,7 +309,7 @@ function FeedActionBanner(props: {
 
   return (
     <>
-      <div className="flex w-full flex-wrap items-center rounded-lg bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
+      <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
         <ProfilePFP user={attrs.sourceUser} />
         <div className="ml-2">
           <div className="text-base font-semibold">{attrs.content}</div>

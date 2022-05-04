@@ -193,7 +193,7 @@ const FeedPage = ({ address }: { address: string }) => {
         />
       </Head>
 
-      <div className="space-y-20 xl:max-w-[600px]">
+      <div className="space-y-20 ">
         {loading && (
           <>
             <LoadingFeedCard />
