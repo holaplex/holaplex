@@ -137,7 +137,7 @@ const LoadingFollowCard = () => (
   </div>
 );
 
-const INFLUENTIAL_WALLETS = [
+export const INFLUENTIAL_WALLETS = [
   {
     address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H',
     profile: {
