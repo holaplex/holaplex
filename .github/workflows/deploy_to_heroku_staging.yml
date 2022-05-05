@@ -17,7 +17,7 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: holaplex-builder-staging
           dockerfile_name: Dockerfile
-          docker_options: '--target frontend'
+          docker_options: '--target frontend --build-arg GRAPHQL_URI=https://graph-test.holaplex.com/v1'
           process_type: web
 
       - name: Build Sign-metadata
