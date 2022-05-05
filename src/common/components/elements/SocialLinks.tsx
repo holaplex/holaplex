@@ -9,6 +9,8 @@ import MediumLogo from '@/assets/images/medium-logo.svg';
 
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
+type SocialNetworkProvider = 'Twitter' | 'Medium' | 'Github' | 'Discord' | 'YouTube';
+
 const socialProviders: {
   id: SocialNetworkProvider;
   href: string;
@@ -29,7 +31,7 @@ const socialProviders: {
   },
   {
     id: 'Discord',
-    href: '',
+    href: 'https://discord.com/invite/holaplex',
     svg: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
         <path fill="none" d="M0 0h24v24H0z" />
@@ -56,7 +58,7 @@ const socialProviders: {
 
   {
     id: 'YouTube',
-    href: '',
+    href: 'https://www.youtube.com/channel/UCHcdpZiDj7LiBifxetVH29Q',
     svg: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
         <path fill="none" d="M0 0h24v24H0z" />
@@ -69,20 +71,18 @@ const socialProviders: {
   },
   {
     id: 'Medium',
-    href: '',
+    href: 'https://medium.com/holaplex',
     svg: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
         <path
           id="medium"
           d="M17.52669,16.21674a6.75084,6.75084,0,1,1-6.75057-6.79713,6.7739,6.7739,0,0,1,6.75057,6.79713m7.40561,0c0,3.53343-1.51121,6.399-3.3754,6.399s-3.3754-2.86554-3.3754-6.399,1.511-6.399,3.37517-6.399,3.3754,2.86463,3.3754,6.399m3.02931,0c0,3.16509-.53142,5.73247-1.18714,5.73247s-1.18691-2.5667-1.18691-5.73247.53142-5.73247,1.18691-5.73247,1.18714,2.56647,1.18714,5.73247"
-          fill="white"
+          fill="currentColor"
         />
       </svg>
     ),
   },
 ];
-
-type SocialNetworkProvider = 'Twitter' | 'Medium' | 'Github' | 'Discord' | 'YouTube';
 
 const SocialLinks = () => {
   const { track } = useAnalytics();
@@ -102,7 +102,7 @@ const SocialLinks = () => {
           href={provider.href}
           target="_blank"
           rel="noreferrer"
-          className="opacity-50 hover:opacity-100 "
+          className="hover:text-white"
           onClick={() => trackSocialLink(provider.id)}
         >
           {provider.svg}

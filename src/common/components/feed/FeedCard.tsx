@@ -1,7 +1,7 @@
 import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { getTwitterHandle, useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
 import { Popover } from '@headlessui/react';
@@ -12,7 +12,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   FeedEvent,
   FeedQuery,
@@ -382,7 +382,17 @@ function MakeOfferButton(props: { nft: any }) {
 
 export function ProfilePFP({ user }: { user: User }) {
   // some of these hooks could probably be lifted up, but keeping it here for simplicity
-  const { data: twitterHandle } = useTwitterHandle(null, user.address);
+  const { connection } = useConnection();
+  const [twitterHandle, setTwitterHandle] = useState<string | undefined>(user.profile?.handle);
+  useEffect(() => {
+    if (!twitterHandle) {
+      getTwitterHandle(user.address, connection).then((twitterHandle) => {
+        if (twitterHandle) setTwitterHandle(twitterHandle);
+      });
+    }
+  });
+
+  // const { data: twitterHandle } = useTwitterHandle(null, user.address);
   const walletProfile = useWalletProfileQuery({
     variables: {
       handle: twitterHandle ?? '',

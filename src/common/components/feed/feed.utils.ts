@@ -9,7 +9,7 @@ export type FeedQueryEvent = FeedQuery['feedEvents'][0];
 export interface User {
   address: string;
   profile?: {
-    handle: string;
+    handle?: string;
     pfp?: string;
   } | null;
 }

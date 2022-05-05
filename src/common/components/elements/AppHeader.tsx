@@ -73,11 +73,13 @@ export function AppHeader() {
         </HeaderTitle>
         {!WHICHDAO && (
           <LinkRow size="large">
-            <HeaderLinkWrapper key="feed" active={router.pathname === '/feed'}>
-              <Link href="/feed" passHref>
-                <a className="hover:underline focus:underline">Feed</a>
-              </Link>
-            </HeaderLinkWrapper>
+            {connected && (
+              <HeaderLinkWrapper key="feed" active={router.pathname === '/feed'}>
+                <Link href="/feed" passHref>
+                  <a className="hover:underline focus:underline">Feed</a>
+                </Link>
+              </HeaderLinkWrapper>
+            )}
             <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/nfts/new'}>
               <Link href="/nfts/new" passHref>
                 <a className="hover:underline focus:underline">Mint NFTs</a>

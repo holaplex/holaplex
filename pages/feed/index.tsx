@@ -74,6 +74,9 @@ const FeedPage = ({ address }: { address: string }) => {
     allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
 
   const [hasMore, setHasMore] = useState(true);
+  if (!anchorWallet) {
+    return <NoFeed />;
+  }
   // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
 
   // make sure all feed events are unique

@@ -1,13 +1,16 @@
 import SocialLinks from '@/common/components/elements/SocialLinks';
 import { MyActivityList } from '@/common/components/feed/MyActivityList';
 import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
-import { SmallFooter } from '@/common/components/home/Footer';
+import Footer, { SmallFooter } from '@/common/components/home/Footer';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Tab } from '@headlessui/react';
 import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import NoFeed from '@/common/components/feed/NoFeed';
+import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 
 type FeedType = 'Following' | 'Discovery';
 const Feeds: FeedType[] = ['Following', 'Discovery'];
@@ -44,6 +47,8 @@ const TEST_FEEDS = [
 ];
 
 export default function FeedLayout({ children }: { children: any }) {
+  // Please don't remove the commented out code about the tab structure yet, it might be used soon // Kris
+
   // const router = useRouter();
   // const feedTabSelected = !router.pathname.includes('discovery');
 
@@ -59,6 +64,20 @@ export default function FeedLayout({ children }: { children: any }) {
   //     </a>
   //   </Link>
   // );
+  const anchorWallet = useAnchorWallet();
+  if (!anchorWallet) {
+    return (
+      <div className=" -mt-32 h-full max-h-screen">
+        <div className="container mx-auto -mt-12 -mb-80 flex h-full flex-col items-center justify-center px-6 xl:px-44">
+          <EmptyStateCTA
+            header="Connect your wallet to view your feed"
+            body="Follow your favorite collectors and creators, and get your own personalized feed of activities across the Holaplex ecosystem."
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">

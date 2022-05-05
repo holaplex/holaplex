@@ -5,7 +5,7 @@ import { Connection } from '@solana/web3.js';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
-import { shuffleArray, User } from './feed.utils';
+import { getHandle, shuffleArray, User } from './feed.utils';
 import { ProfilePFP } from './FeedCard';
 
 function FollowListItem({
@@ -40,7 +40,7 @@ function FollowListItem({
           <ProfilePFP user={user} />
         </div>
         <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-          <a>{user.profile?.handle}</a>
+          <a>{getHandle(user)}</a>
         </Link>
       </div>
 
@@ -55,20 +55,6 @@ function FollowListItem({
     </div>
   );
 }
-
-const WHO_TO_FOLLOW: User[] = [
-  {
-    address: 'asdf',
-    profile: {
-      handle: '@kristianeboe',
-      pfp: 'https://pbs.twimg.com/profile_images/1502268999316525059/nZNPG8GX_bigger.jpg',
-    },
-  },
-  { address: 'xv', profile: { handle: '@anafescandon' } },
-  { address: 'z', profile: { handle: 'damiandotsol' } },
-  { address: '123', profile: { handle: 'kaylakane' } },
-  { address: 'gahh', profile: { handle: 'belle_belle.sol' } },
-];
 
 export default function WhoToFollowList() {
   const { connection } = useConnection();
@@ -221,7 +207,7 @@ const INFLUENTIAL_WALLETS = [
   {
     address: 'CPkXvmoLnru2UX9JcDXLykKkGyTCCYJ67LVZdYahASyh',
     profile: {
-      handle: 'Ted // SlimeyOctopus',
+      // handle: 'Ted // SlimeyOctopus',
     },
   },
   {
@@ -299,7 +285,7 @@ const INFLUENTIAL_WALLETS = [
   {
     address: 'B3jtSCpXQpMZR5r5m87854bgMj5veHwz9idjd22eVrP7',
     profile: {
-      handle: 'kknorikami',
+      // handle: 'kknorikami',
     },
   },
   {
@@ -329,7 +315,7 @@ const INFLUENTIAL_WALLETS = [
   {
     address: '2TKEfKKLreKYykZMCKiFMYhhkKFxajfSBeKNZ8rFa6qt',
     profile: {
-      handle: 'Good_Brice_',
+      // handle: 'Good_Brice_',
     },
   },
   {
