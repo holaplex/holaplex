@@ -38,8 +38,13 @@ query nftMarketplace($subdomain: String!, $address: String!) {
     sellerFeeBasisPoints
     mintAddress
     description
+    category
     image
     primarySaleHappened
+    files{
+      uri
+      fileType
+    }
     attributes {
       metadataAddress
       value
