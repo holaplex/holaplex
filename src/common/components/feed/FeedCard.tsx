@@ -325,6 +325,7 @@ function FeedActionBanner(props: {
           {/* <Link href={'/nfts/' + attrs.nft?.address + '/offers/new'}>
             <a target="_blank"> */}
           {attrs.sourceUser.address !== anchorWallet?.publicKey.toBase58() && (
+            /*  attrs.sourceUser.address !== attrs?.nft?.owner?.address &&  */
             <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
               Make offer
             </Button5>
