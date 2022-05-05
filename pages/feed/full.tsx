@@ -167,7 +167,7 @@ export default function FullPage({ address }: { address: string }) {
                 <LoadingFeedCard />
               </>
             )}
-            {feedItems.length === 0 && <NoFeed />}
+            {feedItems.length === 0 && !loading && <NoFeed />}
             {feedItems.map((fEvent) => (
               <FeedCard
                 key={fEvent.feedEventId}

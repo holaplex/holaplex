@@ -204,7 +204,7 @@ const FeedPage = ({ address }: { address: string }) => {
             <LoadingFeedCard />
           </>
         )}
-        {feedItems.length === 0 && <NoFeed />}
+        {feedItems.length === 0 && !loading && <NoFeed />}
         {feedItems.map((fEvent) => (
           <FeedCard
             key={fEvent.feedEventId}
@@ -224,6 +224,16 @@ const FeedPage = ({ address }: { address: string }) => {
           </InView>
         </div>
       )}
+      {/*       {!hasMore && (
+              <EmptyStateCTA header="No more events to load">
+                <Button5
+                  v="primary"
+                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
+                >
+                  Back to top
+                </Button5>
+              </EmptyStateCTA>
+            )} */}
     </>
   );
 };

@@ -65,7 +65,20 @@ export default function FeedLayout({ children }: { children: any }) {
   //   </Link>
   // );
   const anchorWallet = useAnchorWallet();
-  if (!anchorWallet) {
+  const [showConnectCTA, setShowConnectCTA] = useState(false);
+
+  /*   useEffect(() => {
+    if (anchorWallet) {
+      setShowConnectCTA(false);
+    }
+    setTimeout(() => {
+      if (!anchorWallet) {
+        setShowConnectCTA(true);
+      }
+    }, 1500);
+  }, [anchorWallet]); */
+
+  if (showConnectCTA) {
     return (
       <div className=" -mt-32 h-full max-h-screen">
         <div className="container mx-auto -mt-12 -mb-80 flex h-full flex-col items-center justify-center px-6 xl:px-44">
@@ -78,6 +91,7 @@ export default function FeedLayout({ children }: { children: any }) {
       </div>
     );
   }
+  if (!anchorWallet) return null;
 
   return (
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
