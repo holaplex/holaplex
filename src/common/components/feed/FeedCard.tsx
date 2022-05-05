@@ -220,7 +220,7 @@ export function FeedCard(props: {
 }
 
 function FollowCard(props: {
-  event: FeedItem;
+  event: FeedQueryEvent;
   attrs: FeedCardAttributes;
   myFollowingList?: string[];
   className?: string;
@@ -249,7 +249,18 @@ function FollowCard(props: {
         props.className
       )}
     >
-      <ProfilePFP user={attrs.sourceUser} />
+      {/* <ProfilePFP user={attrs.sourceUser} /> */}
+      <Link href={'/profiles/' + props.event.walletAddress + '/nfts'} passHref>
+        <a target="_blank">
+          <img
+            className={classNames('rounded-full', 'h-10 w-10')}
+            src={
+              props.event.profile?.profileImageUrl || getPFPFromPublicKey(props.event.walletAddress)
+            }
+            alt={'profile picture for ' + props.event.profile?.handle || props.event.walletAddress}
+          />
+        </a>
+      </Link>
       <div className="ml-4">
         <div className="text-base font-semibold">
           {/* {attrs.content} */}
@@ -298,7 +309,7 @@ export const ProfileHandle = (props: { address: string }) => {
 };
 
 function FeedActionBanner(props: {
-  event: FeedItem; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
+  event: FeedQueryEvent; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
   marketplace?: Marketplace;
   refetch?: any;
 }) {
@@ -311,7 +322,21 @@ function FeedActionBanner(props: {
   return (
     <>
       <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
-        <ProfilePFP user={attrs.sourceUser} />
+        {/* <ProfilePFP user={attrs.sourceUser} /> */}
+        <Link href={'/profiles/' + props.event.walletAddress + '/nfts'} passHref>
+          <a target="_blank">
+            <img
+              className={classNames('rounded-full', 'h-10 w-10')}
+              src={
+                props.event.profile?.profileImageUrl ||
+                getPFPFromPublicKey(props.event.walletAddress)
+              }
+              alt={
+                'profile picture for ' + props.event.profile?.handle || props.event.walletAddress
+              }
+            />
+          </a>
+        </Link>
         <div className="ml-2">
           <div className="text-base font-semibold">{attrs.content}</div>
           <div className="flex text-sm">

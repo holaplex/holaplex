@@ -2,6 +2,11 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
+      profile {
+        handle
+        profileImageUrl
+      }
+      walletAddress
       feedEventId
       createdAt
       nft {
@@ -28,6 +33,11 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       }
     }
     ... on FollowEvent {
+      profile {
+        handle
+        profileImageUrl
+      }
+      walletAddress
       feedEventId
       graphConnectionAddress
       createdAt
@@ -50,6 +60,11 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       }
     }
     ... on PurchaseEvent {
+      profile {
+        handle
+        profileImageUrl
+      }
+      walletAddress
       feedEventId
       createdAt
       purchase {
@@ -82,6 +97,11 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       }
     }
     ... on ListingEvent {
+      profile {
+        handle
+        profileImageUrl
+      }
+      walletAddress
       feedEventId
       createdAt
       lifecycle
@@ -114,6 +134,11 @@ query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
       }
     }
     ... on OfferEvent {
+      profile {
+        handle
+        profileImageUrl
+      }
+      walletAddress
       feedEventId
       createdAt
       lifecycle
