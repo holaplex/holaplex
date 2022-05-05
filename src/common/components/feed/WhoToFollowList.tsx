@@ -19,11 +19,11 @@ function FollowListItem({
   };
   myFollowingList: string[];
 }) {
-  console.log('whotofollowitem', user.profile?.handle, {
+  /*  console.log('whotofollowitem', user.profile?.handle, {
     address: user.address,
     l: props.myFollowingList,
     adInL: props.myFollowingList.includes(user.address),
-  });
+  }); */
   return (
     <div className="flex justify-between">
       <div className="flex items-center">
@@ -327,7 +327,7 @@ const INFLUENTIAL_WALLETS = [
   {
     address: '57DsAWRijeENrhb4RdKiLjKzLF1V8f1J2D8mCNvGMSPu',
     profile: {
-      handle: 'quincy_sol',
+      // handle: 'quincy_sol',
     },
   },
   {

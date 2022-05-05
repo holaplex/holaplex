@@ -302,8 +302,9 @@ function FeedActionBanner(props: {
   marketplace?: Marketplace;
   refetch?: any;
 }) {
+  const anchorWallet = useAnchorWallet();
   const attrs = generateFeedCardAtributes(props.event);
-  const [modelOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -323,31 +324,66 @@ function FeedActionBanner(props: {
         <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
           {/* <Link href={'/nfts/' + attrs.nft?.address + '/offers/new'}>
             <a target="_blank"> */}
-          <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
-            Make offer
-          </Button5>
+          {attrs.sourceUser.address !== anchorWallet?.publicKey.toBase58() && (
+            <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+              Make offer
+            </Button5>
+          )}
           {/* </a>
           </Link> */}
-          {/* {props.marketplace && props.refetch && (
-            <Modal title={`Make an offer`} open={modelOpen} setOpen={setModalOpen}>
-              {props.event.nft! && (
-                <NFTPreview loading={false} nft={props.event.nft as Nft | any} />
-              )}
+          <OfferModal nft={attrs.nft} modalOpen={modalOpen} setModalOpen={setModalOpen} />
 
-              <div className={`mt-8 flex w-full`}>
-                <OfferForm
-                  nft={props.event.nft as any}
-                  marketplace={props.marketplace as Marketplace}
-                  refetch={props.refetch}
-                />
-              </div>
-            </Modal>
-          )} */}
+          {/*  {props.marketplace &&
+            props.refetch &&
+            ReactDom.createPortal(
+              <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
+                {attrs.nft! && <NFTPreview loading={false} nft={attrs.nft as Nft | any} />}
+
+                <div className={`mt-8 flex w-full`}>
+                  <OfferForm
+                    nft={attrs.nft as any}
+                    marketplace={props.marketplace as Marketplace}
+                    refetch={props.refetch}
+                  />
+                </div>
+              </Modal>,
+              document.getElementsByTagName('body')[0]!
+            )} */}
         </div>
       </div>
     </>
   );
 }
+
+const OfferModal = (props: { nft: any; modalOpen: boolean; setModalOpen: any }) => {
+  const marketplaceQuery = useNftMarketplaceQuery({
+    variables: {
+      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+      address: props.nft.address,
+    },
+  });
+
+  if (!marketplaceQuery.data) return null;
+
+  return ReactDom.createPortal(
+    <Modal title={`Make an offer`} open={props.modalOpen} setOpen={props.setModalOpen}>
+      {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+
+      <div className={`mt-8 flex w-full`}>
+        <OfferForm
+          nft={marketplaceQuery.data.nft as any}
+          marketplace={marketplaceQuery.data.marketplace as Marketplace}
+          refetch={() => {
+            marketplaceQuery.refetch();
+            props.setModalOpen(false);
+          }}
+          reroute={false}
+        />
+      </div>
+    </Modal>,
+    document.getElementsByTagName('body')[0]!
+  );
+};
 
 function MakeOfferButton(props: { nft: any }) {
   const nft = props.nft;
@@ -373,7 +409,12 @@ function MakeOfferButton(props: { nft: any }) {
         {nft && <NFTPreview loading={false} nft={nft as any} />}
         {/* form */}
         <div className={`mt-8 flex w-full`}>
-          <OfferForm nft={nft as any} marketplace={marketplace as any} refetch={refetch} />
+          <OfferForm
+            nft={nft as any}
+            marketplace={marketplace as any}
+            refetch={refetch}
+            reroute={false}
+          />
         </div>
       </Modal>
     </>

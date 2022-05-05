@@ -68,7 +68,7 @@ export function generateFeedCardAtributes(
         solAmount,
         nft: event.listing?.nft,
         // listing: event.listing,
-        content: `Listed for ${solAmount} SOL (${event.lifecycle})`,
+        content: `Listed for ${solAmount} SOL`,
       };
 
     case 'FollowEvent':
@@ -92,7 +92,7 @@ export function generateFeedCardAtributes(
       const creator = event.nft?.creators[0]!;
       return {
         ...base,
-        content: 'Created ' + shortenAddress(event.nft?.address),
+        content: 'Created ', //  + shortenAddress(event.nft?.address),
         sourceUser: {
           address: creator.address,
           profile: creator.profile,
@@ -114,7 +114,7 @@ export function generateFeedCardAtributes(
       solAmount = event.offer?.price / LAMPORTS_PER_SOL;
       return {
         ...base,
-        content: 'Offered ' + solAmount + ` SOL (${event.lifecycle})`,
+        content: 'Offered ' + solAmount + ` SOL`,
         sourceUser: {
           address: event.offer?.buyer!,
           profile: null,
