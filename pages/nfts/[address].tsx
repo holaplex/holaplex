@@ -717,7 +717,7 @@ export default function NftByAddress({
                     >
                       <div className={`flex items-center`}>
                         <Link href={`/profiles/${o.buyer}`}>
-                          <a rel={`nofollower`}>{shortenAddress(o.buyer)}</a>
+                          <a rel={`nofollower`}>{<Avatar address={o.buyer} /> || shortenAddress(o.buyer)}</a>
                         </Link>
                       </div>
                       <div className={`flex items-center`}>
