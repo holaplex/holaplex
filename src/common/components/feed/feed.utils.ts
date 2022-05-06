@@ -1,16 +1,16 @@
 import { shortenAddress } from '@/modules/utils/string';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { FeedQuery, FollowEvent } from 'src/graphql/indexerTypes';
+import { FeedQuery, FollowEvent, MintEvent } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
-
+type Profile = MintEvent['profile'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
 
 export interface User {
   address: string;
   profile?: {
     handle?: string;
-    pfp?: string;
+    profileImageUrl?: string;
   } | null;
 }
 
@@ -77,15 +77,15 @@ export function generateFeedCardAtributes(
       return {
         ...base,
         type: 'FollowEvent',
-        content: myFollowingList?.includes(from.address)
-          ? 'Was followed by ' + getHandle(from)
-          : 'Followed ' + getHandle(from),
+        content: myFollowingList?.includes(to.address)
+          ? 'Was followed by ' + getHandle(to)
+          : 'Followed ' + getHandle(to),
 
         // I thought the source would be from, but aparently it's to
         // sourceUser: event.connection?.from!,
         // toUser: event.connection?.to!,
-        sourceUser: to,
-        toUser: from,
+        sourceUser: from,
+        toUser: to,
       };
 
     case 'MintEvent':

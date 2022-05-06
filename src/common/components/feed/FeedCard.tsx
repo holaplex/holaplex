@@ -16,8 +16,13 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   FeedEvent,
   FeedQuery,
+  ListingEvent,
   Nft,
+  PurchaseEvent,
+  useMarketplacePreviewQuery,
+  useNftMarketplaceLazyQuery,
   useNftMarketplaceQuery,
+  useWalletProfileLazyQuery,
   useWalletProfileQuery,
   Wallet,
 } from 'src/graphql/indexerTypes';
@@ -38,80 +43,8 @@ import {
   getHandle,
   User,
 } from './feed.utils';
-
-export function FeedCardContainer(props: { anchorWallet: AnchorWallet; event: FeedItem }) {
-  const myFollowingList = [
-    'FBNrpSJiM2FCTATss2N6gN9hxaNr6EqsLvrGBAi9cKW7',
-    '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
-    'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS',
-    '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR',
-  ]; // ideally gotten from a context hook or something
-
-  const attrs = generateFeedCardAtributes(props.event, myFollowingList);
-  // console.log('Feed card', {
-  //   event: props.event,
-  //   attrs,
-  // });
-
-  if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
-
-  if (props.event.__typename === 'FollowEvent')
-    return <FollowCard attrs={attrs} event={props.event} />;
-
-  if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
-
-  return (
-    <FeedCard2
-      content={attrs.content}
-      sourceUser={attrs.sourceUser}
-      createdAt={attrs.createdAt}
-      nft={attrs.nft}
-    />
-  );
-}
-
-interface FeedCardProps {
-  content: string;
-  sourceUser: { address: string };
-  nft: { address: string; image: string; name: string };
-  createdAt: string;
-}
-
-function FeedCard2(props: FeedCardProps) {
-  // needs a way to encapsulate various actions. Could be as simple as "children"
-  return (
-    <div className="group relative transition-all  hover:scale-[1.02] ">
-      <Link href={'/nfts/' + props.nft.address} passHref>
-        <a>
-          <img
-            className="aspect-square w-full rounded-lg "
-            src={props.nft?.image}
-            alt={props.nft?.name}
-          />
-        </a>
-      </Link>
-      <ShareMenu className="absolute top-4 right-4 " address={props.nft.address} />
-      <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
-        {/* <FeedActionBanner event={props.event} /> */}
-        <div className="flex w-full items-center rounded-full bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900">
-          <ProfilePFP user={props.sourceUser} />
-          <div className="ml-2">
-            <div className="text-base font-semibold">{props.content}</div>
-            <div className="flex text-sm">
-              {/* {getHandle(attrs.sourceUser)}  */}
-              <ProfileHandle address={props.sourceUser.address} />
-              &nbsp;
-              {DateTime.fromISO(props.createdAt).toRelative()}
-            </div>
-          </div>
-          <div className="ml-auto">
-            <Button5 v="primary">Make offer</Button5>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import BuyForm from '../forms/BuyForm';
+import { TailSpin } from 'react-loader-spinner';
 
 function AggregateCard(props: { event: AggregateEvent }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -236,11 +169,6 @@ function FollowCard(props: {
 
   if (!attrs) return <div>Not enough data</div>;
 
-  console.log(attrs.content, {
-    followingList: props.myFollowingList,
-    attrs: attrs,
-  });
-
   return (
     <div
       className={classNames(
@@ -249,35 +177,33 @@ function FollowCard(props: {
         props.className
       )}
     >
-      {/* <ProfilePFP user={attrs.sourceUser} /> */}
-      <Link href={'/profiles/' + props.event.walletAddress + '/nfts'} passHref>
-        <a target="_blank">
-          <img
-            className={classNames('rounded-full', 'h-10 w-10')}
-            src={
-              props.event.profile?.profileImageUrl || getPFPFromPublicKey(props.event.walletAddress)
-            }
-            alt={'profile picture for ' + props.event.profile?.handle || props.event.walletAddress}
-          />
-        </a>
-      </Link>
+      <ProfilePFP
+        user={{
+          address: props.event.walletAddress, // props.event.walletAddress,
+          profile: props.event.profile,
+        }}
+      />
       <div className="ml-4">
         <div className="text-base font-semibold">
           {/* {attrs.content} */}
           {/* Started following
               {attrs.toUser?.profile?.handle || shortenAddress(attrs.toUser.address)} */}
           Followed{' '}
-          <Link href={'/profiles/' + attrs.toUser?.address}>
+          {/* <Link href={'/profiles/' + attrs.toUser?.address}>
             <a target="_blank">{getHandle(attrs.toUser!)}</a>
-          </Link>
+          </Link> */}
+          <ProfileHandle address={attrs.toUser!.address} />
         </div>
         <div className="flex space-x-4 text-sm">
-          <Link href={'/profiles/' + attrs.sourceUser.address + '/nfts'} passHref>
+          {/*           <Link href={'/profiles/' + attrs.sourceUser.address + '/nfts'} passHref>
             <a target="_blank" className="font-medium">
-              {getHandle(attrs.sourceUser)}
-              {/* {attrs.sourceUser.profile?.handle || shortenAddress(attrs.sourceUser.address)} */}
+              {getHandle({
+                address: props.event.walletAddress,
+                profile: props.event.profile,
+              })}
             </a>
-          </Link>
+          </Link> */}
+          <ProfileHandle address={props.event.walletAddress} />
           <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
       </div>
@@ -313,167 +239,184 @@ function FeedActionBanner(props: {
   marketplace?: Marketplace;
   refetch?: any;
 }) {
-  const anchorWallet = useAnchorWallet();
   const attrs = generateFeedCardAtributes(props.event);
-  const [modalOpen, setModalOpen] = useState(false);
+  const anchorWallet = useAnchorWallet();
 
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
   return (
-    <>
-      <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
-        {/* <ProfilePFP user={attrs.sourceUser} /> */}
-        <Link href={'/profiles/' + props.event.walletAddress + '/nfts'} passHref>
-          <a target="_blank">
-            <img
-              className={classNames('rounded-full', 'h-10 w-10')}
-              src={
-                props.event.profile?.profileImageUrl ||
-                getPFPFromPublicKey(props.event.walletAddress)
-              }
-              alt={
-                'profile picture for ' + props.event.profile?.handle || props.event.walletAddress
-              }
-            />
-          </a>
-        </Link>
-        <div className="ml-2">
-          <div className="text-base font-semibold">{attrs.content}</div>
-          <div className="flex text-sm">
-            {/* {getHandle(attrs.sourceUser)}  */}
-            <ProfileHandle address={attrs.sourceUser.address} />
-            &nbsp;
-            {DateTime.fromISO(attrs.createdAt).toRelative()}
-          </div>
-        </div>
-        <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
-          {/* <Link href={'/nfts/' + attrs.nft?.address + '/offers/new'}>
-            <a target="_blank"> */}
-          {attrs.sourceUser.address !== anchorWallet?.publicKey.toBase58() && (
-            /*  attrs.sourceUser.address !== attrs?.nft?.owner?.address &&  */
-            <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
-              Make offer
-            </Button5>
-          )}
-          {/* </a>
-          </Link> */}
-          <OfferModal nft={attrs.nft} modalOpen={modalOpen} setModalOpen={setModalOpen} />
-
-          {/*  {props.marketplace &&
-            props.refetch &&
-            ReactDom.createPortal(
-              <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
-                {attrs.nft! && <NFTPreview loading={false} nft={attrs.nft as Nft | any} />}
-
-                <div className={`mt-8 flex w-full`}>
-                  <OfferForm
-                    nft={attrs.nft as any}
-                    marketplace={props.marketplace as Marketplace}
-                    refetch={props.refetch}
-                  />
-                </div>
-              </Modal>,
-              document.getElementsByTagName('body')[0]!
-            )} */}
+    <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
+      <ProfilePFP
+        user={{
+          address: props.event.walletAddress,
+          profile: props.event.profile,
+        }}
+      />
+      <div className="ml-2">
+        <div className="text-base font-semibold">{attrs.content}</div>
+        <div className="flex text-sm">
+          {/* {getHandle(attrs.sourceUser)}  */}
+          <ProfileHandle address={attrs.sourceUser.address} />
+          &nbsp;
+          {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
       </div>
-    </>
+
+      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
+        {props.event.__typename === 'ListingEvent' ? (
+          <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />
+        ) : props.event.walletAddress === anchorWallet?.publicKey.toBase58() ? null : ( // update offer
+          <OfferAction nft={attrs.nft} />
+        )}
+      </div>
+    </div>
   );
 }
 
-const OfferModal = (props: { nft: any; modalOpen: boolean; setModalOpen: any }) => {
-  const marketplaceQuery = useNftMarketplaceQuery({
+const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const [callMarketplaceQuery, marketplaceQuery] = useNftMarketplaceLazyQuery({
     variables: {
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      address: props.nft.address,
+      address: props.nft!.address!,
     },
   });
 
-  if (!marketplaceQuery.data) return null;
-
-  return ReactDom.createPortal(
-    <Modal title={`Make an offer`} open={props.modalOpen} setOpen={props.setModalOpen}>
-      {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
-
-      <div className={`mt-8 flex w-full`}>
-        <OfferForm
-          nft={marketplaceQuery.data.nft as any}
-          marketplace={marketplaceQuery.data.marketplace as Marketplace}
-          refetch={() => {
-            marketplaceQuery.refetch();
-            props.setModalOpen(false);
-          }}
-          reroute={false}
-        />
-      </div>
-    </Modal>,
-    document.getElementsByTagName('body')[0]!
-  );
-};
-
-function MakeOfferButton(props: { nft: any }) {
-  const nft = props.nft;
-  const [offerModalOpen, setOfferModalOpen] = useState(false);
-  const {
-    data: marketplace,
-    loading,
-    called,
-    refetch,
-  } = useNftMarketplaceQuery({
-    fetchPolicy: `no-cache`,
-    variables: {
-      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      address: nft.address,
-    },
-  });
+  useEffect(() => {
+    if (modalOpen) {
+      callMarketplaceQuery();
+    }
+  }, [modalOpen]);
 
   return (
     <>
-      <Button5 v="primary">Make offer</Button5>
-      <Modal title={`Make an offer`} open={offerModalOpen} setOpen={setOfferModalOpen}>
-        {/* nft */}
-        {nft && <NFTPreview loading={false} nft={nft as any} />}
-        {/* form */}
-        <div className={`mt-8 flex w-full`}>
-          <OfferForm
-            nft={nft as any}
-            marketplace={marketplace as any}
-            refetch={refetch}
-            reroute={false}
-          />
-        </div>
-      </Modal>
+      <Link href={'/nfts/' + props.nft.address} passHref>
+        <a target="_blank">
+          {/* Buy in feed context onClick={() => setModalOpen(true)} */}
+          <Button5 v="primary" className="w-full sm:w-auto">
+            Buy now
+          </Button5>
+        </a>
+      </Link>
+      {ReactDom.createPortal(
+        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
+          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+
+          {marketplaceQuery.data && (
+            <div className={`mt-8 flex w-full`}>
+              <BuyForm
+                // @ts-ignore
+                listing={props.listingEvent.listing!}
+                nft={marketplaceQuery.data.nft as any}
+                marketplace={marketplaceQuery.data.marketplace as Marketplace}
+                refetch={() => {
+                  marketplaceQuery.refetch();
+                  setModalOpen(false);
+                }}
+              />
+            </div>
+          )}
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
     </>
   );
-}
+};
+
+const OfferAction = (props: { nft: any }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const [callMarketplaceQuery, marketplaceQuery] = useNftMarketplaceLazyQuery({
+    variables: {
+      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+      address: props.nft!.address!,
+    },
+  });
+
+  useEffect(() => {
+    if (modalOpen && !marketplaceQuery.called) {
+      callMarketplaceQuery();
+    }
+  }, [modalOpen]);
+
+  return (
+    <>
+      <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+        Make offer
+      </Button5>
+      {ReactDom.createPortal(
+        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
+          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+          {marketplaceQuery.loading && (
+            <div className="flex justify-center">
+              <TailSpin color={`grey`} />
+            </div>
+          )}
+          {marketplaceQuery.data && (
+            <div className={`mt-8 flex w-full`}>
+              <OfferForm
+                nft={marketplaceQuery.data.nft as any}
+                marketplace={marketplaceQuery.data.marketplace as Marketplace}
+                refetch={() => {
+                  marketplaceQuery.refetch();
+                  setModalOpen(false);
+                }}
+                reroute={false}
+              />
+            </div>
+          )}
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
+    </>
+  );
+};
 
 export function ProfilePFP({ user }: { user: User }) {
   // some of these hooks could probably be lifted up, but keeping it here for simplicity
   const { connection } = useConnection();
-  const [twitterHandle, setTwitterHandle] = useState<string | undefined>(user.profile?.handle);
+  const [twitterHandle, setTwitterHandle] = useState<string | undefined>();
+  /* user.profile?.handle */
+  const [pfpUrl, setPfpUrl] = useState(
+    /* user.profile?.profileImageUrl ||  */
+    getPFPFromPublicKey(user.address)
+  );
   useEffect(() => {
     if (!twitterHandle) {
       getTwitterHandle(user.address, connection).then((twitterHandle) => {
         if (twitterHandle) setTwitterHandle(twitterHandle);
       });
     }
-  });
+  }, []);
 
-  // const { data: twitterHandle } = useTwitterHandle(null, user.address);
-  const walletProfile = useWalletProfileQuery({
+  const [walletProfileQuery, walletProfile] = useWalletProfileLazyQuery({
     variables: {
       handle: twitterHandle ?? '',
     },
   });
+
+  useEffect(() => {
+    if (
+      twitterHandle
+      /*     && !user.profile?.profileImageUrl */
+    ) {
+      walletProfileQuery().then((q) => {
+        if (q.data?.profile?.profileImageUrlLowres) {
+          setPfpUrl(q.data?.profile?.profileImageUrlLowres);
+        }
+      });
+    }
+  }, [twitterHandle]);
+
+  // const { data: twitterHandle } = useTwitterHandle(null, user.address);
 
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={
-            walletProfile.data?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)
-          }
+          src={walletProfile.data?.profile?.profileImageUrlLowres || pfpUrl}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>

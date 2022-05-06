@@ -15,7 +15,7 @@ import {
   useNftMarketplaceQuery,
   useMarketplacePreviewQuery,
 } from 'src/graphql/indexerTypes';
-import { FeedCard, FeedCardContainer } from '@/common/components/feed/FeedCard';
+import { FeedCard } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 import { FeedEvent } from 'src/graphql/indexerTypes.ssr';
@@ -39,7 +39,7 @@ import NoFeed from '../../src/common/components/feed/NoFeed';
 // 2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR // belle
 // NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H // kris
 // 7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F && alex
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 5;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -57,13 +57,7 @@ const FeedPage = ({ address }: { address: string }) => {
     variables: {
       address: myPubkey,
       offset: 0,
-      limit: 25,
-    },
-  });
-
-  const marketplaceQuery = useMarketplacePreviewQuery({
-    variables: {
-      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+      limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
     },
   });
 
@@ -74,9 +68,9 @@ const FeedPage = ({ address }: { address: string }) => {
     allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
 
   const [hasMore, setHasMore] = useState(true);
-  if (!anchorWallet) {
+  /*   if (!anchorWallet) {
     return <NoFeed />;
-  }
+  } */
   // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
 
   // make sure all feed events are unique
@@ -185,6 +179,8 @@ const FeedPage = ({ address }: { address: string }) => {
 
   const feedItems = feedEvents; // getFeedItems(feedEvents);
 
+  const fetchMoreIndex = Math.floor(INFINITE_SCROLL_AMOUNT_INCREMENT / 2);
+
   return (
     <>
       <Head>
@@ -205,11 +201,21 @@ const FeedPage = ({ address }: { address: string }) => {
           </>
         )}
         {feedItems.length === 0 && !loading && <NoFeed />}
-        {feedItems.map((fEvent) => (
+        {feedItems.slice(0, fetchMoreIndex).map((fEvent) => (
           <FeedCard
             key={fEvent.feedEventId}
             event={fEvent}
-            marketplace={marketplaceQuery.data as Marketplace}
+            refetch={refetch}
+            myFollowingList={myFollowingList}
+          />
+        ))}
+        <InView threshold={0.1} onChange={loadMore}>
+          <div></div>
+        </InView>
+        {feedItems.slice(fetchMoreIndex).map((fEvent) => (
+          <FeedCard
+            key={fEvent.feedEventId}
+            event={fEvent}
             refetch={refetch}
             myFollowingList={myFollowingList}
           />
@@ -217,11 +223,9 @@ const FeedPage = ({ address }: { address: string }) => {
       </div>
       {hasMore && !loading && feedEvents.length > 0 && (
         <div>
-          <InView threshold={0.1} onChange={loadMore}>
-            <div className={`my-6 flex w-full items-center justify-center font-bold`}>
-              <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
-            </div>
-          </InView>
+          <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+            <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
+          </div>
         </div>
       )}
       {/*       {!hasMore && (
