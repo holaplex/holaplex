@@ -21,6 +21,47 @@ export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = 
   }
 }; // Do server side redirection for SEO purposes.
 
+export const ProfilePageHead = (props: {
+  publicKey: string;
+  twitterProfile?: {
+    twitterHandle?: string | null;
+    pfp?: string;
+    banner?: string;
+  };
+  description: string;
+}) => {
+  const handle = props.twitterProfile?.twitterHandle
+    ? '@' + props.twitterProfile?.twitterHandle
+    : showFirstAndLastFour(props.publicKey);
+
+  const description = props.description;
+  const title = `${handle}'s profile | Holaplex`;
+  return (
+    <Head>
+      <title>{handle}&apos;s profile | Holaplex</title>
+      <meta property="description" key="description" content={props.description} />
+      <meta property="image" key="image" content={props.twitterProfile?.banner} />
+      {/* Schema */}
+      <meta itemProp="name" content={title} />
+      <meta itemProp="description" content={description} />
+      <meta itemProp="image" content={props.twitterProfile?.banner} />
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image:src" content={props.twitterProfile?.banner} />
+      <meta name="twitter:site" content="@holaplex" />
+      {/* Open Graph */}
+      <meta name="og-title" content={title} />
+      <meta name="og-description" content={description} />
+      <meta name="og-image" content={props.twitterProfile?.banner} />
+      <meta name="og-url" content={`https://holaplex.com/profiles/${props.publicKey}/nfts`} />
+      <meta name="og-site_name" content="Holaplex" />
+      <meta name="og-type" content="product" />
+    </Head>
+  );
+};
+
 const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => {
   const router = useRouter();
   useEffect(() => {
@@ -30,14 +71,15 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
   }, []);
   return (
     <ProfileDataProvider profileData={{ publicKey, ...props }}>
-      <Head>
-        <title>{showFirstAndLastFour(publicKey)}&apos;s profile | Holaplex</title>
-        <meta
-          property="description"
-          key="description"
-          content="View activity for this, or any other pubkey, in the Holaplex ecosystem."
-        />
-      </Head>
+      <ProfilePageHead
+        publicKey={publicKey}
+        twitterProfile={{
+          twitterHandle: props.twitterHandle,
+          banner: props.banner,
+          pfp: props.profilePicture,
+        }}
+        description="View activity for this, or any other pubkey, in the Holaplex ecosystem."
+      />
       <ProfileContainer>
         <div className="flex h-48 w-full items-center justify-center">
           <Spinner />

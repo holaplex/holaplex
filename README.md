@@ -47,3 +47,27 @@ Replace 3001 with an available port on your machine for this and any of the foll
 Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+
+## Graph QL Queries
+We expose a Graph QL layer for data produced by the indexer.
+
+### View Available Data
+View available data at https://docs.holaplex.com/
+
+### View and Use Existing Queries
+Query code is generated from Graph QL queries. 
+The query specs are located in [./src/graphql/**/*.graphql](./src/graphql/). 
+These specs are processed by the `generate:graphql` script in [package.json](./package.json). 
+The script outputs typescript types and react hooks with documentation that can be used to fetch data from
+the Graph QL layer. See [indexerTypes.ts](./src/graphql/indexerTypes.ts) for existing queries.
+
+To use a query, use its hook as documented in the query example for the query in [indexerTypes.ts](./src/graphql/indexerTypes.ts).
+
+### Add a Query
+To add a query, you need to define the Graph QL query spec and use it to generate the necessary
+types and hook. To do this
+
+1. Build the query from available data (see above).
+1. Save the query as a new `.graphql` file in the specs location (see above).
+1. Generate the code with `yarn generate:graphql`. This produces code in [indexerTypes.ts](./src/graphql/indexerTypes.ts).
+1. Finally, use the generated hook in your react component.

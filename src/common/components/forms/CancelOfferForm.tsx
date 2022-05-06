@@ -1,13 +1,15 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react';
-import { Offer, Nft, Marketplace } from '@/types/types';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react';
 import Button from '../elements/Button';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
-import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useForm } from 'react-hook-form';
-import { PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, Transaction } from '@solana/web3.js';
 import { toast } from 'react-toastify';
+import { initMarketplaceSDK, Nft, Marketplace, Offer } from '@holaplex/marketplace-js-sdk';
+import { Wallet } from '@metaplex/js';
+import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface CancelOfferFormProps {
   offer: Offer;
@@ -17,10 +19,8 @@ interface CancelOfferFormProps {
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
+  updateOffer: () => void;
 }
-
-const { createCancelInstruction, createCancelBidReceiptInstruction, createWithdrawInstruction } =
-  AuctionHouseProgram.instructions;
 
 const CancelOfferForm: FC<CancelOfferFormProps> = ({
   offer,
@@ -28,143 +28,86 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
   marketplace,
   refetch,
   setOpen,
+  updateOffer,
 }) => {
-  const [loading, setLoading] = useState(false);
-
   const { publicKey, signTransaction } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
   const {
     formState: { isSubmitting },
     handleSubmit,
   } = useForm();
 
+  const { runActions, hasActionPending } = useContext(MultiTransactionContext);
+
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { trackNFTEvent } = useAnalytics();
+  const onCancelOffer = async () => {
+    if (offer && nft) {
+      toast(`Canceling current offer of ${Number(offer.price) / LAMPORTS_PER_SOL}`);
+      await sdk.offers(marketplace.auctionHouse).cancel({ nft, offer, amount: 1 });
+    }
+  };
+
   const cancelOfferTx = async () => {
     if (!publicKey || !signTransaction || !offer || !nft) {
       return;
     }
 
-    const auctionHouse = new PublicKey(marketplace.auctionHouse.address);
-    const authority = new PublicKey(marketplace.auctionHouse.authority);
-    const auctionHouseFeeAccount = new PublicKey(marketplace.auctionHouse.auctionHouseFeeAccount);
-    const tokenMint = new PublicKey(nft.mintAddress);
-    const receipt = new PublicKey(offer.address);
-    const buyerPrice = Number(offer.price);
-    const tradeState = new PublicKey(offer.tradeState);
-    const owner = new PublicKey(nft.owner.address);
-    const treasuryMint = new PublicKey(marketplace.auctionHouse.treasuryMint);
-    const tokenAccount = new PublicKey(nft.owner.associatedTokenAccountAddress);
+    const offerAmount = Number(offer.price) / LAMPORTS_PER_SOL;
 
-    const [escrowPaymentAccount, escrowPaymentBump] =
-      await AuctionHouseProgram.findEscrowPaymentAccountAddress(auctionHouse, publicKey);
+    const newActions: Action[] = [
+      {
+        name: `Canceling offer for ${Number(offer.price) / LAMPORTS_PER_SOL} SOL...`,
+        id: `cancelOffer`,
+        action: onCancelOffer,
+        param: undefined,
+      },
+    ];
 
-    const txt = new Transaction();
+    trackNFTEvent('NFT Offer Cancelled Init', offerAmount, nft);
 
-    const cancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount,
-      tokenMint,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-      tradeState,
-    };
-
-    const cancelInstructionArgs = {
-      buyerPrice,
-      tokenSize: 1,
-    };
-
-    const cancelBidReceiptInstructionAccounts = {
-      receipt: receipt,
-      instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-    };
-
-    const cancelBidInstruction = createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    );
-
-    const cancelBidReceiptInstruction = createCancelBidReceiptInstruction(
-      cancelBidReceiptInstructionAccounts
-    );
-
-    const withdrawInstructionAccounts = {
-      receiptAccount: publicKey,
-      wallet: publicKey,
-      escrowPaymentAccount,
-      auctionHouse,
-      authority,
-      treasuryMint,
-      auctionHouseFeeAccount,
-    };
-
-    const withdrawInstructionArgs = {
-      escrowPaymentBump,
-      amount: buyerPrice,
-    };
-
-    const withdrawInstruction = createWithdrawInstruction(
-      withdrawInstructionAccounts,
-      withdrawInstructionArgs
-    );
-
-    txt.add(cancelBidInstruction).add(cancelBidReceiptInstruction).add(withdrawInstruction);
-
-    txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
-    txt.feePayer = publicKey;
-
-    let signed: Transaction | undefined = undefined;
-
-    try {
-      signed = await signTransaction(txt);
-    } catch (e: any) {
-      toast.error(e.message);
-      return;
-    }
-
-    let signature: string | undefined = undefined;
-
-    try {
-      setLoading(true);
-      toast('Sending the transaction to Solana.');
-
-      signature = await connection.sendRawTransaction(signed.serialize());
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
-      await refetch();
-      setLoading(false);
-
-      toast.success('The transaction was confirmed.');
-    } catch (e: any) {
-      toast.error(e.message);
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
+    await runActions(newActions, {
+      onActionSuccess: async () => {
+        await refetch();
+        toast.success(`Confirmed cancel offer success`);
+        trackNFTEvent('NFT Offer Cancelled Success', offerAmount, nft);
+      },
+      onActionFailure: async (err) => {
+        toast.error(err.message);
+        await refetch();
+      },
+      onComplete: async () => {
+        refetch();
+        setOpen(false);
+      },
+    });
   };
 
   return (
     <div className={`mt-8`}>
       <p className={`text-center`}>Are you sure you want to cancel this offer?</p>
-      <div className={`mt-6 grid grid-cols-2 items-center justify-between gap-4`}>
+      <form
+        className={`mt-6 grid grid-cols-2 items-center justify-between gap-4`}
+        onSubmit={handleSubmit(cancelOfferTx)}
+      >
         <div>
           <Button
             className={`w-full`}
-            loading={loading}
-            disabled={loading}
+            loading={isSubmitting || hasActionPending}
+            disabled={isSubmitting || hasActionPending}
+            htmlType={`submit`}
             secondary
-            onClick={cancelOfferTx}
           >
             Cancel offer
           </Button>
         </div>
         <div>
-          <Button className={`w-full`} disabled={loading}>
+          <Button className={`w-full`} disabled={isSubmitting} onClick={updateOffer}>
             Update offer
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

@@ -138,23 +138,21 @@ export const validateSubdomainUniqueness = (
 };
 
 export const submitCallback = ({
-  track,
   router,
   solana,
   values,
   setSubmitting,
   onSuccess,
   onError,
-  trackEvent,
+  trackingFunction,
 }: {
-  track: TrackingFunctionSignature;
   router: NextRouter;
   solana: WalletContextState | undefined;
   values: any;
   setSubmitting: (val: boolean) => void;
   onSuccess: (domain: string) => void;
   onError: (e: string | undefined) => void;
-  trackEvent: string;
+  trackingFunction: () => void;
 }): (() => Promise<void>) => {
   return async () => {
     try {
@@ -196,7 +194,7 @@ export const submitCallback = ({
       onSuccess(domain);
 
       router.push('/').then(() => {
-        track(trackEvent, { event_category: 'Storefront' });
+        trackingFunction();
       });
     } catch (e) {
       console.error(e);

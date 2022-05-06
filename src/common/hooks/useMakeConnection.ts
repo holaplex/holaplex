@@ -1,40 +1,20 @@
 import { useMutation, UseMutationOptions } from 'react-query';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { Actions } from '@holaplex/graph-program';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { Program } from '@holaplex/graph-program';
+import * as anchor from '@project-serum/anchor';
 
-//#region Types
-
-// type UpdateTarget = 'allConnectionsTo' | 'allConnectionsFrom';
-
-// type MakeConnectionWithUpdateTargetInput = {
-//   targetPubKey: string;
-//   updateTarget: UpdateTarget;
-// };
 type MakeConnectionOptions = Omit<UseMutationOptions<string, Error, string, unknown>, 'mutationFn'>;
 
-// type MakeConnectionWithUpdateTargetOptions = Omit<
-//   UseMutationOptions<string, Error, MakeConnectionWithUpdateTargetInput, unknown>,
-//   'mutationFn'
-// >;
-
-//#endregion
-
 export const useMakeConnection = (
-  deps: { connection: Connection; wallet: AnchorWallet },
+  { connection, wallet }: { connection: anchor.web3.Connection; wallet: AnchorWallet },
   options?: MakeConnectionOptions
 ) =>
-  useMutation(
-    (targetPubKey: string) => Actions.makeConnection(new PublicKey(targetPubKey), deps),
-    options
-  );
-
-// export const useMakeConnectionWithUpdateTarget = (
-//   deps: { connection: Connection; wallet: AnchorWallet },
-//   options?: MakeConnectionWithUpdateTargetOptions
-// ) =>
-//   useMutation(
-//     async ({ targetPubKey }: MakeConnectionWithUpdateTargetInput) =>
-//       Actions.makeConnection(new PublicKey(targetPubKey), deps),
-//     options
-//   );
+  useMutation((targetPubKey: string) => {
+    const graphProgram = Program.getGraphProgram(
+      new anchor.AnchorProvider(connection, wallet, { commitment: 'processed' })
+    );
+    return graphProgram.methods
+      .makeConnection(new anchor.web3.PublicKey(targetPubKey))
+      .accounts({ from: wallet.publicKey })
+      .rpc();
+  }, options);

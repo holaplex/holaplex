@@ -28,11 +28,17 @@ function MoreDropdown({ address }: { address: string }) {
         <>
           <Popover.Button
             className={cx(
-              'flex h-10 w-10 items-center justify-center rounded-full ',
+              'flex h-10 w-36 items-center justify-center gap-2 rounded-full shadow-sm shadow-black ',
               open ? 'bg-white' : ''
             )}
           >
-            <FeatherIcon icon="more-horizontal" className={open ? 'stroke-black' : ''} />
+            <span className={`${open ? 'text-black' : ''} text-lg font-medium`}>Share</span>
+            <FeatherIcon
+              icon="share"
+              className={open ? 'stroke-black' : ''}
+              width={20}
+              height={20}
+            />
           </Popover.Button>
 
           {open && (
@@ -49,7 +55,7 @@ function MoreDropdown({ address }: { address: string }) {
               <Popover.Panel
                 static
                 as="ul"
-                className="absolute z-10 w-56 p-4 bg-gray-800 rounded shadow-lg right-5 top-12"
+                className="absolute right-0 top-12 z-10 w-56 rounded-lg bg-gray-900 p-4 text-base shadow-lg"
               >
                 <li>
                   {linkCopied ? (
@@ -61,29 +67,23 @@ function MoreDropdown({ address }: { address: string }) {
                       onClick={handleCopyClick}
                       className="flex items-center hover:text-gray-300"
                     >
-                      <FeatherIcon icon="copy" />
+                      <FeatherIcon width={16} height={16} icon="copy" />
                       <span className="pl-5">Copy link to NFT</span>
                     </button>
                   )}
                 </li>
                 <li>
                   <a
-                    href={`https://explorer.solana.com/address/${address}`}
-                    className="flex items-center hover:text-gray-300"
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                      `Checkout this amazing NFT`
+                    )}&hashtags=holaplex&url=${encodeURI(`https://holaplex.com/nfts/${address}`)}`}
+                    className="flex items-center pt-4 hover:text-gray-300"
                     target="_blank"
+                    rel="noreferrer"
                   >
-                    <ExplorerIcon />
-                    <span className="pl-5">View on Explorer</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`https://solscan.io/account/${address}`}
-                    className="flex items-center hover:text-gray-300"
-                    target="_blank"
-                  >
-                    <SolscanIcon />
-                    <span className="pl-5">View on SolScan</span>
+                    <FeatherIcon height={16} width={16} icon={`twitter`} />
+
+                    <span className="pl-5"> Share to Twitter</span>
                   </a>
                 </li>
               </Popover.Panel>

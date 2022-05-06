@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import styled from 'styled-components';
 import {
@@ -7,7 +7,6 @@ import {
   useIsXFollowingYQuery,
 } from 'src/graphql/indexerTypes';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
-import { IProfile } from '@/modules/feed/feed.interfaces';
 import { FollowerBubble } from './FollowerBubble';
 import { useProfileData } from '@/common/context/ProfileData';
 
@@ -17,12 +16,16 @@ type FollowerCountProps = {
 
 export const FollowerCount: FC<FollowerCountProps> = ({ setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
-  if (!wallet) return null;
-  return <FollowerCountContent wallet={wallet} setShowFollowsModal={setShowFollowsModal} />;
+  return (
+    <FollowerCountContent
+      wallet={wallet}
+      setShowFollowsModal={setShowFollowsModal}
+    />
+  );
 };
 
 type FollowerCountContentProps = FollowerCountProps & {
-  wallet: AnchorWallet;
+  wallet?: AnchorWallet;
 };
 
 type FollowsModalState = 'hidden' | 'followers' | 'following';
@@ -40,42 +43,49 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   });
   const isXFollowingY = useIsXFollowingYQuery({
     variables: {
-      xPubKey: wallet.publicKey.toBase58(),
+      xPubKey: wallet?.publicKey.toBase58() ?? '',
       yPubKey: publicKey,
     },
   });
 
   if (profileFollowerOverview.loading || isXFollowingY.loading) return <FollowerCountSkeleton />;
-  const isSameWallet = wallet.publicKey.equals(new PublicKey(publicKey));
+  const isSameWallet = wallet?.publicKey.equals(new PublicKey(publicKey)) ?? false;
 
   const followers = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
   const following = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
-  const amIFollowingThisAccount = isXFollowingY.data?.connections?.length ?? 0 > 0;
+  const amIFollowingThisAccount = !!isXFollowingY.data?.connections?.length ?? 0 > 0;
   return (
-    <div className="flex flex-col">
-      <div className="mt-10 flex justify-between md:justify-start">
-        <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-          <div className="text-left font-semibold">{followers}</div>
-          <div className="text-sm font-medium text-gray-200">Followers</div>
-        </button>
-        <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
-          <div className="text-left font-semibold">{following}</div>
-          <div className="text-sm font-medium text-gray-200">Following</div>
-        </button>
-        <div className="ml-10">
-          {isSameWallet ? null : (
-            <FollowUnfollowButton
-              source="profileButton"
-              walletConnectionPair={walletConnectionPair}
-              type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
-            />
-          )}
+    <>
+      <div className="flex flex-col">
+        <div className="mt-10 flex justify-between lg:justify-start">
+          <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
+            <div className="text-left font-semibold">{followers}</div>
+            <div className="text-sm font-medium text-gray-200">Followers</div>
+          </button>
+          <button onClick={() => setShowFollowsModal('following')} className="ml-4 flex flex-col">
+            <div className="text-left font-semibold">{following}</div>
+            <div className="text-sm font-medium text-gray-200">Following</div>
+          </button>
+          <div className="ml-10">
+            {isSameWallet || !wallet ? null : (
+              <FollowUnfollowButton
+                source="profileButton"
+                walletConnectionPair={
+                  walletConnectionPair as {
+                    wallet: AnchorWallet;
+                    connection: Connection;
+                  }
+                }
+                type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
+              />
+            )}
+          </div>
         </div>
       </div>
       {followers ? (
         <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
       ) : null}
-    </div>
+    </>
   );
 };
 
@@ -92,7 +102,7 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
   const followers = data?.wallet.connectionCounts.fromCount ?? 0;
   if (!followers) return null;
   return (
-    <div className="mt-2 flex  items-center space-x-2 md:space-x-0">
+    <div className="mt-2 flex  items-center justify-center space-x-2 lg:justify-start lg:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className="relative mt-2 flex flex-row -space-x-2">
         {data?.connections.map((follower, i) => (

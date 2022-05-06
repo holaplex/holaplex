@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
@@ -38,7 +38,7 @@ export function AppHeader() {
   const { setVisible } = useWalletModal();
 
   const handleViewProfile = useCallback(() => {
-    router.push(`/profiles/${publicKey!.toBase58()}`);
+    router.push(`/profiles/${publicKey!.toBase58()}/nfts`);
   }, [publicKey, router]);
 
   useEffect(() => {

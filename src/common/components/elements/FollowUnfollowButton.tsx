@@ -24,8 +24,8 @@ type FollowUnfollowButtonProps = {
 
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   source,
-  walletConnectionPair,
   type,
+  walletConnectionPair,
 }) => {
   const toProfile = useProfileData();
   const { track } = useAnalytics();
@@ -62,7 +62,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>,
         { autoClose: 13_000 }
       );
-      await connection.confirmTransaction(txId, 'finalized');
+      await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
       trackSuccess();
       toast(
@@ -87,35 +87,47 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   });
 
   const disconnectTo = useRevokeConnection(walletConnectionPair, {
-    onSuccess: async (txId, toWallet) => {
-      toast(
-        <SuccessToast>
-          Confirming transaction:&nbsp;
-          <a
-            className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {showFirstAndLastFour(txId)}
-          </a>
-        </SuccessToast>,
-        { autoClose: 13_000 }
-      );
-      await connection.confirmTransaction(txId, 'finalized');
+    onSuccess: async (txIds, toWallet) => {
+      for (const txId of txIds) {
+        toast(
+          <SuccessToast>
+            Confirming transaction:&nbsp;
+            <a
+              className="font-bold underline"
+              href={`https://explorer.solana.com/tx/${txId}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {showFirstAndLastFour(txId)}
+            </a>
+          </SuccessToast>,
+          { autoClose: 13_000 }
+        );
+        await connection.confirmTransaction(txId, 'processed');
+      }
+
       await queryClient.invalidateQueries();
 
       trackSuccess();
       toast(
         <SuccessToast>
-          Unfollowed: {showFirstAndLastFour(toWallet)}, TX:&nbsp;
+          Unfollowed: {showFirstAndLastFour(toWallet)}, Revoke TX:&nbsp;
           <a
             className="font-bold underline"
-            href={`https://explorer.solana.com/tx/${txId}`}
+            href={`https://explorer.solana.com/tx/${txIds[0]}`}
             target="_blank"
             rel="noreferrer"
           >
-            {showFirstAndLastFour(txId)}
+            {showFirstAndLastFour(txIds[0])}
+          </a>
+          , Close TX:&nbsp;
+          <a
+            className="font-bold underline"
+            href={`https://explorer.solana.com/tx/${txIds[1]}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {showFirstAndLastFour(txIds[1])}
           </a>
         </SuccessToast>
       );

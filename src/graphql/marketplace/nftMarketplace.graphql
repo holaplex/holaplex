@@ -25,6 +25,11 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       sellerFeeBasisPoints
       requiresSignOff
       canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
+      }
     }
   }
   nft(address: $address) {
@@ -33,8 +38,13 @@ query nftMarketplace($subdomain: String!, $address: String!) {
     sellerFeeBasisPoints
     mintAddress
     description
+    category
     image
     primarySaleHappened
+    files{
+      uri
+      fileType
+    }
     attributes {
       metadataAddress
       value

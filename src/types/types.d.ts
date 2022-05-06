@@ -22,6 +22,23 @@ export interface Marketplace {
   stats: MarketplaceStats;
 }
 
+export interface MarketplacePreviewData {
+  subdomain: string;
+  name: string;
+  bannerUrl: string;
+  creators: {
+    creatorAddress: string;
+  }[]
+  auctionHouse: {
+    stats?: {
+      floor: string;
+    }
+  };
+  stats: {
+    nfts: string;
+  }
+}
+
 interface GraphQLObject {
   __typename: string;
 }

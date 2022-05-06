@@ -4,7 +4,6 @@ import { getPublicKeyFromTwitterHandle, getTwitterHandle } from '@/common/hooks/
 import { getSdk } from 'src/graphql/indexerTypes.ssr';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '../utils/image';
-import { initializeApollo } from 'src/graphql/apollo';
 import { GetProfileFollowerOverviewDocument } from 'src/graphql/indexerTypes';
 
 export const getPublicKey = (input: string) => {

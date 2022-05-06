@@ -2,27 +2,22 @@ import { Dispatch, FC, SetStateAction, useMemo, useRef } from 'react';
 import cx from 'classnames';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { Close } from '../icons/Close';
-import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { DEPRECATED_useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
-import { DEPRECATED_useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
+import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { Unpacked } from '@/types/Unpacked';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
-import { Connection } from '@solana/web3.js';
 import {
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
   useAllConnectionsToQuery,
-  useWalletProfileQuery,
 } from 'src/graphql/indexerTypes';
 import { useProfileData } from '@/common/context/ProfileData';
 
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type FollowModalProps = {
-  wallet: AnchorWallet;
+  wallet?: AnchorWallet;
   visibility: FollowModalVisibility;
   setVisibility:
     | Dispatch<SetStateAction<FollowModalVisibility>>
@@ -93,7 +88,6 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
           {visibility === 'followers'
             ? (allConnectionsTo.data?.connections ?? []).map((item) => (
                 <FollowItem
-                  walletConnectionPair={walletConnectionPair}
                   key={item.from.address as string}
                   side={'allConnectionsFrom'}
                   item={item.from}
@@ -103,7 +97,6 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
           {visibility === 'following'
             ? (allConnectionsFrom.data?.connections ?? []).map((item) => (
                 <FollowItem
-                  walletConnectionPair={walletConnectionPair}
                   key={item.to.address as string}
                   side={'allConnectionsTo'}
                   item={item.to}
@@ -118,17 +111,14 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
 
 type FollowItemProps = {
   item: ConnectionNodeFragment;
-  walletConnectionPair: {
-    wallet: AnchorWallet;
-    connection: Connection;
-  };
   side: 'allConnectionsTo' | 'allConnectionsFrom';
 };
 
-const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) => {
-  const { wallet } = walletConnectionPair;
+const FollowItem: FC<FollowItemProps> = ({ item, side }) => {
+  const wallet = useAnchorWallet();
+  const { connection } = useConnection();
   const connectionsFromWallet = useAllConnectionsFromQuery({
-    variables: { from: wallet.publicKey.toBase58() },
+    variables: { from: wallet?.publicKey.toBase58() ?? '' },
   });
   const { address, profile } = item;
   const itemToReferTo = address as string;
@@ -141,9 +131,7 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
     }
   };
 
-  console.log({ itemToReferTo });
-
-  const itemIsMyWallet = address === wallet.publicKey.toBase58();
+  const itemIsMyWallet = address === wallet?.publicKey.toBase58() ?? false;
 
   const amIFollowingThisAccount = (connectionsFromWallet.data?.connections ?? []).some(({ to }) => {
     return (to.address as string) === itemToReferTo;
@@ -173,11 +161,18 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, walletConnectionPair }) =
           </Link>
         </div>
         <div className="flex items-center">
-          {itemIsMyWallet || connectionsFromWallet.error || connectionsFromWallet.loading ? null : (
+          {itemIsMyWallet ||
+          connectionsFromWallet.error ||
+          connectionsFromWallet.loading ||
+          !wallet ||
+          !connection ? null : (
             <FollowUnfollowButton
+              walletConnectionPair={{
+                connection,
+                wallet,
+              }}
               source={side === 'allConnectionsTo' ? 'modalTo' : 'modalFrom'}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
-              walletConnectionPair={walletConnectionPair}
             />
           )}
         </div>
