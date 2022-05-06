@@ -13,15 +13,9 @@ import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import * as web3 from "@solana/web3.js";
 
-//Question - how do we flow in walletConnectionPair into this area?
-
 export const ProfileMessages = ({ publicKey, ...props}) => {
   const [tx, setTx] = useState<string>("");
   const [receiver, setReceiver] = useState<string>(props.receiver ?? "");
-
-  // const { connection, wallet } = walletConnectionPair;
-  //console.log('pk:', publicKey);
-  //console.log('props:', props);
   const {mailbox, messages, mailboxAddress} = props;
   console.log(mailbox, messages, mailboxAddress);
 
@@ -32,7 +26,6 @@ export const ProfileMessages = ({ publicKey, ...props}) => {
       setReceiver(e.target.value);
     }
   };
-
 
   const sendMessage = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -62,8 +55,10 @@ export const ProfileMessages = ({ publicKey, ...props}) => {
       .catch((error) => {
         alert('send failed');
         console.log('error :', error);
+
         // This is how to retrieve the title and error message
         // for a popup dialog when something fails
+
         /* setModalInfo({
          *   title:
          *         error.error?.code === 4001

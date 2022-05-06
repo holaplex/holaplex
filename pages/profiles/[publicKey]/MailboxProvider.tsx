@@ -16,16 +16,13 @@ export const MailboxProvider = (props: MailboxProviderProps): JSX.Element => {
   const { connection } = useConnection();
   const [mailbox, setMailbox] = useState<Mailbox>();
   const cluster = 'mainnet-beta';
-  //console.log('mbp', wallet, connection, cluster);
 
   useEffect(() => {
     if (!wallet.publicKey) {
       return;
     }
-    //console.log('1');
     const mb = new Mailbox(connection, wallet, { cluster });
     setMailbox(mb);
-    //console.log('mailbox: ', mb);
   }, [connection, wallet.publicKey, cluster]);
 
   return (

@@ -18,11 +18,6 @@ import { Mailbox } from '@usedispatch/client';
 import { MessageAccount } from "@usedispatch/client";
 import * as web3 from "@solana/web3.js";
 
-//Question - how do we flow in the wallet and connection objects here?
-// const mailbox  = new Mailbox(conn, senderWallet);
-
-//Question - whats an example of something which fetches async data to populate the view?
-
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async context =>
   getPropsForWalletOrUsername(context);
 
