@@ -1,0 +1,31 @@
+name: Heroku - Build and deploy (dev)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build frontend
+        uses: gonuit/heroku-docker-deploy@v1.3.3
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: holaplex-builder-staging
+          dockerfile_name: Dockerfile
+          docker_options: '--target frontend --build-arg GRAPHQL_URI=https://graph-test.holaplex.com/v1'
+          process_type: web
+
+      - name: Build Sign-metadata
+        uses: gonuit/heroku-docker-deploy@v1.3.3
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: holaplex-builder-staging
+          dockerfile_name: Dockerfile
+          docker_options: '--target signer'
+          process_type: worker

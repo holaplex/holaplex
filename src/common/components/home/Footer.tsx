@@ -3,7 +3,6 @@ import React, { FC, VFC } from 'react';
 import SocialLinks from '../elements/SocialLinks';
 
 const Footer: VFC = () => {
-  return null;
   return (
     <footer className="mt-20 bg-gray-800 p-10">
       <div className="flex flex-row flex-wrap justify-center md:justify-between">

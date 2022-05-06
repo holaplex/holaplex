@@ -2,7 +2,7 @@ import { ProfileContainer } from '@/common/components/elements/ProfileContainer'
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
@@ -36,6 +36,8 @@ import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferFor
 import { Avatar } from '@/common/components/elements/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty } from 'ramda';
+import { TailSpin } from 'react-loader-spinner';
+import { ProfilePageHead } from '../[publicKey]';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -129,16 +131,16 @@ export const NFTCard = ({
               )}
             </div>
 
-            <div className="flex h-24 items-center bg-gray-900 py-6 px-4">
+            <div className="flex h-24 items-center bg-gray-900 py-6">
               <p className="w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold">
                 {nft.name}
               </p>
             </div>
           </div>
         </Link>
-        <div className={`h-20 md:h-36 xl:h-20`}>
+        <div className={`h-20 md:h-28 xl:h-20`}>
           <div
-            className={`flex h-full w-full items-center justify-between p-4 md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+            className={`flex h-full w-full items-center justify-between md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
           >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
@@ -275,59 +277,71 @@ export const NFTGrid: FC<NFTGridProps> = ({
   loading = false,
 }) => {
   return (
-    <div
-      className={cx(
-        'grid grid-cols-1 gap-6',
-        gridView === '1x1'
-          ? 'grid-cols-1 md:grid-cols-2'
-          : gridView === '2x2'
-          ? 'sm:grid-cols-2'
-          : 'md:grid-cols-3'
-      )}
-    >
-      {loading ? (
-        <>
-          <LoadingNFTCard />
-          <LoadingNFTCard />
-          <LoadingNFTCard />
-        </>
-      ) : (
-        <>
-          {nfts.map((nft) => (
-            <NFTCard
-              key={nft.address}
-              nft={nft}
-              refetch={refetch}
-              loading={loading}
-              marketplace={marketplace}
-            />
-          ))}
-          {hasMore && (
-            <div>
-              <InView threshold={0.1} onChange={onLoadMore}>
-                <LoadingNFTCard />
-              </InView>
+    <>
+      <div
+        className={cx(
+          'grid grid-cols-1 gap-6',
+          gridView === '1x1'
+            ? 'grid-cols-1 md:grid-cols-2'
+            : gridView === '2x2'
+            ? 'sm:grid-cols-2'
+            : 'md:grid-cols-3'
+        )}
+      >
+        {loading ? (
+          <>
+            <LoadingNFTCard />
+            <LoadingNFTCard />
+            <LoadingNFTCard />
+          </>
+        ) : (
+          <>
+            {nfts.map((nft) => (
+              <NFTCard
+                key={nft.address}
+                nft={nft}
+                refetch={refetch}
+                loading={loading}
+                marketplace={marketplace}
+              />
+            ))}
+          </>
+        )}
+      </div>
+      {hasMore && (
+        <div>
+          <InView threshold={0.1} onChange={onLoadMore}>
+            <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+              <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
             </div>
-          )}
-        </>
+          </InView>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
 type ListedFilterState = 'all' | 'listed' | 'unlisted' | 'search';
 
+enum ListingFilters {
+  ALL,
+  LISTED,
+  UNLISTED,
+}
+
+export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+export const INITIAL_FETCH = 25;
+
 const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
-  // const [listedFilter, setListedFilter] = useState<ListedFilterState>('search');
-  // const [showSearchField, toggleSearchField] = useState(false);
+  const [listedFilter, setListedFilter] = useState<ListingFilters>(ListingFilters.ALL);
   const [searchFocused, setSearchFocused] = useState(false);
   const [gridView, setGridView] = useState<'1x1' | '2x2' | '3x3'>('3x3');
   const [hasMore, setHasMore] = useState(true);
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     address: pk,
-    limit: 100,
+    limit: INITIAL_FETCH,
     offset: 0,
   };
   const ownedNFTs = useOwnedNfTsQuery({
@@ -347,6 +361,52 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
     query === ''
       ? nfts
       : nfts.filter((nft) => nft.name.toLowerCase().includes(query.toLowerCase()));
+
+  const listedNfts = useMemo(
+    () => nftsToShow.filter((nft) => nft.listings.length > 0),
+    [nftsToShow]
+  );
+  const unlistedNfts = useMemo(
+    () => nftsToShow.filter((nft) => nft.listings.length <= 0),
+    [nftsToShow]
+  );
+
+  const totalCount = useMemo(() => nftsToShow.length, [nftsToShow]);
+  const listedCount = useMemo(() => listedNfts.length || 0, [listedNfts]);
+
+  const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
+
+  const filteredNfts =
+    listedFilter === ListingFilters.ALL
+      ? nftsToShow
+      : listedFilter === ListingFilters.LISTED
+      ? listedNfts
+      : listedFilter === ListingFilters.UNLISTED
+      ? unlistedNfts
+      : nftsToShow;
+
+  const ListingFilter = ({
+    filterToCheck,
+    count = 0,
+    title,
+  }: {
+    count: number;
+    title: string;
+    filterToCheck: ListingFilters;
+  }) => {
+    return (
+      <div
+        onClick={() => setListedFilter(filterToCheck)}
+        className={`flex w-28 flex-row items-center justify-center gap-2 rounded-full p-2 font-medium ${
+          listedFilter === filterToCheck
+            ? `bg-gray-800`
+            : `cursor-pointer border border-gray-800 bg-gray-900 text-gray-300 hover:bg-gray-800`
+        }`}
+      >
+        <p className={`mb-0 first-letter:text-base`}>{title}</p>
+      </div>
+    );
+  };
 
   const GridSelector = () => {
     return (
@@ -398,42 +458,63 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
 
   return (
     <ProfileDataProvider profileData={props}>
-      <Head>
-        <title>{showFirstAndLastFour(pk)}&apos;s NFTs | Holaplex</title>
-        <meta property="description" key="description" content="View owned and created NFTs" />
-      </Head>
+      <ProfilePageHead
+        publicKey={props.publicKey}
+        twitterProfile={{
+          twitterHandle: props.twitterHandle,
+          banner: props.banner,
+          pfp: props.profilePicture,
+        }}
+        description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
+      />
       <ProfileContainer>
-        <div className="mb-4 flex">
-          <TextInput2
-            id="owned-search"
-            label="owned search"
-            hideLabel
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            leadingIcon={
-              <FeatherIcon
-                icon="search"
-                aria-hidden="true"
-                className={searchFocused ? 'text-white' : 'text-gray-500'}
-              />
-            }
-            placeholder="Search"
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-          />
-          <GridSelector />
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 px-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+          <div className={`flex w-full justify-start gap-4 lg:items-center`}>
+            <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
+            <ListingFilter
+              title={`Listed`}
+              filterToCheck={ListingFilters.LISTED}
+              count={listedCount}
+            />
+            <ListingFilter
+              title={`Unlisted`}
+              filterToCheck={ListingFilters.UNLISTED}
+              count={unlistedCount}
+            />
+          </div>
+          <div className={`flex w-full lg:justify-end`}>
+            <TextInput2
+              id="owned-search"
+              label="owned search"
+              hideLabel
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              leadingIcon={
+                <FeatherIcon
+                  icon="search"
+                  aria-hidden="true"
+                  className={searchFocused ? 'text-white' : 'text-gray-500'}
+                />
+              }
+              placeholder="Search"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+            />
+            <GridSelector />
+          </div>
         </div>
         <NFTGrid
-          hasMore={hasMore}
+          hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
-            if (!inView || loading) {
+            if (!inView || loading || filteredNfts.length <= 0) {
               return;
             }
 
             const { data: newData } = await fetchMore({
               variables: {
                 ...variables,
-                offset: nftsToShow.length + 100,
+                limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+                offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
               },
               updateQuery: (prev, { fetchMoreResult }) => {
                 if (!fetchMoreResult) return prev;
@@ -449,7 +530,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
               },
             });
           }}
-          nfts={nftsToShow}
+          nfts={filteredNfts}
           gridView={gridView}
           refetch={refetch}
           loading={ownedNFTs.loading}
