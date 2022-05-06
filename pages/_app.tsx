@@ -38,6 +38,9 @@ import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
 
+
+import { MailboxProvider } from './profiles/[publicKey]/MailboxProvider';
+
 const { Content } = Layout;
 
 const getSolanaNetwork = () => {
@@ -101,6 +104,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             <MarketplaceProvider wallet={wallet}>
                               {() => (
                                 <AnalyticsProvider>
+                                  <MailboxProvider>
                                   <div className="w-full items-center justify-center bg-[#005BBB] p-2 text-base text-[#FFD500] sm:flex">
                                     Help the people of Ukraine through SOL donations.
                                     <a
@@ -114,6 +118,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                                   </div>
                                   <AppHeader />
                                   <Component {...pageProps} />
+                                  </MailboxProvider>
                                 </AnalyticsProvider>
                               )}
                             </MarketplaceProvider>
