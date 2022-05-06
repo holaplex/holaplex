@@ -42,7 +42,7 @@ export default function DialectNotificationsButton() {
       notifications={[{ name: 'Offer on NFT', detail: 'Event' }]}
       theme="dark"
       variables={themeVariables}
-      network="localnet"
+      network="mainnet"
     />
   );
 }
