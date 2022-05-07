@@ -1,0 +1,9 @@
+query getProfileInfoFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
+      profileImageUrl
+      bannerImageUrl
+    }
+  }
+}

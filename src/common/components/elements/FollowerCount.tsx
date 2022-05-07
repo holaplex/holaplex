@@ -1,8 +1,8 @@
 import { FC, useMemo } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
+import { DEPRECATED_useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
+import { DEPRECATED_useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import styled from 'styled-components';
 import { Unpacked } from '@/types/Unpacked';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
@@ -41,8 +41,8 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, connection);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, connection);
+  const allConnectionsTo = DEPRECATED_useGetAllConnectionsToWithTwitter(pubkey, connection);
+  const allConnectionsFrom = DEPRECATED_useGetAllConnectionsFromWithTwitter(pubkey, connection);
 
   if (allConnectionsTo.error) {
     console.error(allConnectionsTo.error);
@@ -104,7 +104,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   );
 };
 
-export type Followers = ReturnType<typeof useGetAllConnectionsToWithTwitter>['data'];
+export type Followers = ReturnType<typeof DEPRECATED_useGetAllConnectionsToWithTwitter>['data'];
 export type Follower = NonNullable<Unpacked<Followers>>;
 
 type FollowedByProps = {

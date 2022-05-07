@@ -1,7 +1,5 @@
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
-import { showFirstAndLastFour } from '@/modules/utils/string';
 import { GetServerSideProps, NextPage } from 'next';
-import Head from 'next/head';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -13,7 +11,7 @@ import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerT
 import Link from 'next/link';
 import TextInput2 from '@/common/components/elements/TextInput2';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
@@ -42,7 +40,7 @@ import { ProfilePageHead } from '../[publicKey]';
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+  getProfileServerSideProps(context);
 
 export const LoadingNFTCard = () => {
   return (

@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import { Spinner } from '@/common/components/elements/Spinner';
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+  getProfileServerSideProps(context);
 
 export const ProfilePageHead = (props: {
   publicKey: string;

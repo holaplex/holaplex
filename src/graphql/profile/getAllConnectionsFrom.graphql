@@ -1,0 +1,9 @@
+#import "./connectionNode.graphql"
+
+query allConnectionsFrom($from: PublicKey!) {
+  connections(from: [$from], limit: 1000, offset: 0) {
+    to {
+      ...ConnectionNode
+    }
+  }
+}

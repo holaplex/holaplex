@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { Close } from '../icons/Close';
 import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
+import { DEPRECATED_useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
+import { DEPRECATED_useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
@@ -18,8 +18,8 @@ import { IProfile } from '@/modules/feed/feed.interfaces';
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type ConnectionItem =
-  | NonNullable<Unpacked<ReturnType<typeof useGetAllConnectionsToWithTwitter>['data']>>
-  | NonNullable<Unpacked<ReturnType<typeof useGetAllConnectionsFromWithTwitter>['data']>>;
+  | NonNullable<Unpacked<ReturnType<typeof DEPRECATED_useGetAllConnectionsToWithTwitter>['data']>>
+  | NonNullable<Unpacked<ReturnType<typeof DEPRECATED_useGetAllConnectionsFromWithTwitter>['data']>>;
 
 type FollowModalProps = {
   profile: IProfile;
@@ -39,8 +39,8 @@ export const FollowModal: FC<FollowModalProps> = ({
   const { connection } = useConnection();
   const { pubkey } = profile;
 
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, connection);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, connection);
+  const allConnectionsTo = DEPRECATED_useGetAllConnectionsToWithTwitter(pubkey, connection);
+  const allConnectionsFrom = DEPRECATED_useGetAllConnectionsFromWithTwitter(pubkey, connection);
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -148,7 +148,7 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, connection, wallet }) => 
     }
   };
 
-  const allConnectionsFromWallet = useGetAllConnectionsFromWithTwitter(
+  const allConnectionsFromWallet = DEPRECATED_useGetAllConnectionsFromWithTwitter(
     wallet?.publicKey.toBase58() ?? null,
     connection
   );

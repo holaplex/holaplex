@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -8,7 +8,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import { isNil } from 'ramda';
-import { WalletProvider } from '@/modules/wallet';
+import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { Close } from '@/common/components/icons/Close';
@@ -46,7 +46,7 @@ const getSolanaNetwork = () => {
     : WalletAdapterNetwork.Mainnet;
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+const HolaplexApp: FC<AppProps> = ({ Component, pageProps }) => {
   const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
@@ -92,7 +92,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
-                <WalletProvider>
+                <WalletProviderDeprecated>
                   {({ wallet }) => (
                     <MultiTransactionProvider>
                       <StorefrontProvider wallet={wallet}>
@@ -122,7 +122,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                       </StorefrontProvider>
                     </MultiTransactionProvider>
                   )}
-                </WalletProvider>
+                </WalletProviderDeprecated>
               </WalletModalProvider>
             </WalletProviderSolana>
           </ConnectionProvider>
@@ -130,6 +130,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </QueryClientProvider>
     </>
   );
-}
+};
 
-export default MyApp;
+export default HolaplexApp;
