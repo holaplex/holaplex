@@ -97,7 +97,7 @@ const SearchBar: FC = () => {
                 </div>
             )}
             {showResults && (
-                <div className={`absolute bg-gray-900 z-50 p-6 rounded-lg w-full h-content max-h-96 overflow-y-auto top-12 gap-6`}>
+                <div className={`absolute transition ease-in-out bg-gray-900 z-50 p-6 rounded-lg w-full h-content max-h-96 overflow-y-auto top-12 gap-6`}>
                     {isSubmitting || loading && (
                         <>
                             <LoadingSearchItem/>

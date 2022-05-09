@@ -65,7 +65,7 @@ export function AppHeader() {
   return (
     <>
       <nav className={`hidden md:flex flex-row items-center justify-between gap-6 px-6 py-4`}>
-        <div className={`flex items-center flex-row gap-10 text-2xl w-full`}>
+        <div className={`flex items-center flex-row gap-10 text-2xl w-full font-bold`}>
           <Link href="/" passHref>
             <a>
               👋&nbsp;&nbsp;<span>Holaplex</span>
