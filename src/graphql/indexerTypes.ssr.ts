@@ -140,11 +140,14 @@ export type FollowEvent = {
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
   graphConnectionAddress: Scalars['PublicKey'];
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type GraphConnection = {
   __typename?: 'GraphConnection';
   address: Scalars['String'];
+  connectedAt: Scalars['DateTimeUtc'];
   from: Wallet;
   to: Wallet;
 };
@@ -169,6 +172,8 @@ export type ListingEvent = {
   lifecycle: Scalars['String'];
   listing?: Maybe<ListingReceipt>;
   listingReceiptAddress: Scalars['PublicKey'];
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type ListingReceipt = {
@@ -216,6 +221,8 @@ export type MintEvent = {
   feedEventId: Scalars['String'];
   metadataAddress: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type MintStats = {
@@ -326,6 +333,8 @@ export type OfferEvent = {
   feedEventId: Scalars['String'];
   lifecycle: Scalars['String'];
   offer?: Maybe<BidReceipt>;
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type PriceChart = {
@@ -354,8 +363,10 @@ export type PurchaseEvent = {
   __typename?: 'PurchaseEvent';
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
+  profile?: Maybe<TwitterProfile>;
   purchase?: Maybe<PurchaseReceipt>;
   purchaseReceiptAddress: Scalars['PublicKey'];
+  walletAddress: Scalars['String'];
 };
 
 export type PurchaseReceipt = {
@@ -378,8 +389,10 @@ export type QueryRoot = {
   creator: Creator;
   denylist: Denylist;
   enrichedBondingChanges: Array<EnrichedBondingChange>;
-  /** Query feed events for a wallet. Returns events related to the specified user and events for the wallets the user follows. */
+  /** Returns events for the wallets the user is following using the graph_program. */
   feedEvents: Array<FeedEvent>;
+  /** Recommend wallets to follow. */
+  followWallets: Array<Wallet>;
   listings: Array<Listing>;
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
@@ -436,6 +449,13 @@ export type QueryRootFeedEventsArgs = {
 };
 
 
+export type QueryRootFollowWalletsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  wallet?: InputMaybe<Scalars['PublicKey']>;
+};
+
+
 export type QueryRootMarketplaceArgs = {
   subdomain: Scalars['String'];
 };
@@ -453,10 +473,11 @@ export type QueryRootNftCountsArgs = {
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   collection?: InputMaybe<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
-  listed?: InputMaybe<Array<Scalars['PublicKey']>>;
+  listed?: InputMaybe<Scalars['Boolean']>;
   offerers?: InputMaybe<Array<Scalars['PublicKey']>>;
   offset: Scalars['Int'];
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
@@ -617,6 +638,13 @@ export type ShareNftQueryVariables = Exact<{
 
 
 export type ShareNftQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, auctionHouse?: { __typename?: 'AuctionHouse', address: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, price: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, price: any }>, offers: Array<{ __typename?: 'BidReceipt', address: string, buyer: any, price: any }> } | null };
+
+export type BasicSearchQueryVariables = Exact<{
+  walletAddress: Scalars['PublicKey'];
+}>;
+
+
+export type BasicSearchQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', image: string, name: string, address: string, creators: Array<{ __typename?: 'NftCreator', address: string, twitterHandle?: string | null }> }>, wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } };
 
 
 export const ActivityPageDocument = gql`
@@ -1203,6 +1231,26 @@ export const ShareNftDocument = gql`
   }
 }
     `;
+export const BasicSearchDocument = gql`
+    query basicSearch($walletAddress: PublicKey!) {
+  nfts(owners: [$walletAddress], limit: 25, offset: 0) {
+    image
+    name
+    address
+    creators {
+      address
+      twitterHandle
+    }
+  }
+  wallet(address: $walletAddress) {
+    address
+    profile {
+      handle
+      profileImageUrl
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -1237,6 +1285,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     shareNFT(variables: ShareNftQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ShareNftQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ShareNftQuery>(ShareNftDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'shareNFT', 'query');
+    },
+    basicSearch(variables: BasicSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<BasicSearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<BasicSearchQuery>(BasicSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'basicSearch', 'query');
     }
   };
 }
