@@ -119,7 +119,7 @@ export const Avatar = ({
   return (
     <div className="flex items-center">
       <div
-        className={`flex ${sizes[size]}rounded-full ${
+        className={`flex ${sizes[size]} rounded-full ${
           border && `border-2 border-gray-900 border-opacity-60`
         }`}
       >
