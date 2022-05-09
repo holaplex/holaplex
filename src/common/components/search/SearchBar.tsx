@@ -1,6 +1,5 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import { Search } from '../icons/Search';
-import cx from 'classnames';
 import LoadingSearchItem from './LoadingSearchItem';
 import { useBasicSearchLazyQuery } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';

@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
 import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import SearchBar from '../search/SearchBar';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -63,17 +64,18 @@ export function AppHeader() {
 
   return (
     <>
-      <StyledHeader>
-        <HeaderTitle>
+      <nav className={`hidden md:flex flex-row items-center justify-between gap-6 px-6 py-4`}>
+        <div className={`flex items-center flex-row gap-10 text-2xl w-full`}>
           <Link href="/" passHref>
             <a>
               👋&nbsp;&nbsp;<span>Holaplex</span>
             </a>
           </Link>
-        </HeaderTitle>
+          <SearchBar/>
+        </div>
         {!WHICHDAO && (
-          <LinkRow size="large">
-            <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/nfts/new'}>
+          <div className={`flex flex-row gap-6 items-center justify-end min-w-fit`}>
+            <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/nfts/new'} className={`min-w-fit`}>
               <Link href="/nfts/new" passHref>
                 <a className="hover:underline focus:underline">Mint NFTs</a>
               </Link>
@@ -105,7 +107,7 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex items-center">
+              <a className="flex items-center min-w-fit">
                 About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
@@ -154,7 +156,7 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex items-center">
+              <a className="flex items-center min-w-fit">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
@@ -166,9 +168,9 @@ export function AppHeader() {
                 Connect
               </Button>
             )}
-          </LinkRow>
+          </div>
         )}
-      </StyledHeader>
+      </nav>
       <MobileHeader />
     </>
   );
@@ -179,9 +181,12 @@ const MobileHeader = () => {
   return (
     <>
       <MobileHeaderContainer>
-        <Link href="/" passHref>
-          <EmojiLogoAnchor>👋</EmojiLogoAnchor>
-        </Link>
+        <div className={`flex items-center flex-row gap-4 text-2xl w-full mr-4`}>
+          <Link href="/" passHref>
+            <EmojiLogoAnchor>👋</EmojiLogoAnchor>
+          </Link>
+          <SearchBar/>
+        </div>
         <MenuButton onClick={() => setDisplayMenu(true)}>
           <MenuIcon color="#fff" />
         </MenuButton>
