@@ -27,20 +27,13 @@ const previewSubdomains: string[] = [
 const FeaturedMarkeplacesSection: VFC = () => {
   return (
     <HomeSection>
-      {/* <HomeSection.Header>
+      <HomeSection.Header>
         <HomeSection.Title>Marketplaces</HomeSection.Title>
         <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
           Join waitlist
         </HomeSection.HeaderAction>
-      </HomeSection.Header> */}
-      <div className="flex justify-between">
-        <HomeSection.Title>Marketplaces</HomeSection.Title>
-        <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
-          Join waitlist
-        </HomeSection.HeaderAction>
-      </div>
-      <HomeSection.Body></HomeSection.Body>
-      <div className="-ml-[2%] w-[104%] ">
+      </HomeSection.Header>
+      <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
             <HomeSectionCarousel.Item key={s}>
@@ -50,7 +43,7 @@ const FeaturedMarkeplacesSection: VFC = () => {
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
-      </div>
+      </HomeSection.Body>
     </HomeSection>
   );
 };
