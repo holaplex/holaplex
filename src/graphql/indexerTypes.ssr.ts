@@ -899,8 +899,13 @@ export const NftMarketplaceDocument = gql`
     sellerFeeBasisPoints
     mintAddress
     description
+    category
     image
     primarySaleHappened
+    files {
+      uri
+      fileType
+    }
     attributes {
       metadataAddress
       value
