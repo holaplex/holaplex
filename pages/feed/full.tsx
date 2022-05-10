@@ -169,13 +169,7 @@ export default function FullPage({ address }: { address: string }) {
             )}
             {feedItems.length === 0 && !loading && <NoFeed />}
             {feedItems.map((fEvent) => (
-              <FeedCard
-                key={fEvent.feedEventId}
-                event={fEvent}
-                marketplace={marketplaceQuery.data as Marketplace}
-                refetch={refetch}
-                myFollowingList={myFollowingList}
-              />
+              <FeedCard key={fEvent.feedEventId} event={fEvent} myFollowingList={myFollowingList} />
             ))}
             {/*       {!hasMore && (
               <EmptyStateCTA header="No more events to load">

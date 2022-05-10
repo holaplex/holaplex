@@ -45,70 +45,15 @@ import {
 } from './feed.utils';
 import BuyForm from '../forms/BuyForm';
 import { TailSpin } from 'react-loader-spinner';
-
-function AggregateCard(props: { event: AggregateEvent }) {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  // return (
-  //   <div className="relative  flex -space-x-96 -space-y-4  ">
-  //     {props.event.eventsAggregated.slice(1, 5).map((e, i, l) => (
-  //       // <FeedCard
-  //       //   event={e}
-  //       //   key={e.feedEventId}
-  //       //   anchorWallet={props.anchorWallet}
-  //       //   className={` hover:z-50 z-${(l.length - i) * 10}  `}
-  //       // />
-  //       <img
-  //         key={e.feedEventId}
-  //         className={classNames(
-  //           ` hover:z-50 z-${(l.length - i) * 10}  `,
-  //           'aspect-square w-full rounded-lg '
-  //         )}
-  //         src={e.nft?.image}
-  //         alt={e.nft?.name}
-  //       />
-  //     ))}
-  //   </div>
-  // );
-
-  return (
-    <div
-      className={classNames(
-        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-2xl shadow-black',
-        false && 'hover:scale-[1.02]'
-      )}
-    >
-      <div className="mx-auto flex justify-center sm:mx-0">
-        and {props.event.eventsAggregated.length - 1} similar events
-      </div>
-      <Button5 className="ml-auto w-full sm:w-auto" v="ghost" onClick={() => setModalOpen(true)}>
-        View all
-      </Button5>
-      {ReactDom.createPortal(
-        <Modal
-          open={modalOpen}
-          setOpen={setModalOpen}
-          title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
-        >
-          <div className="space-y-10 p-4">
-            {props.event.eventsAggregated.map((e) => (
-              <FeedCard event={e} key={e.feedEventId} />
-            ))}
-          </div>
-        </Modal>,
-        document.getElementsByTagName('body')[0]!
-      )}
-    </div>
-  );
-}
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 export function FeedCard(props: {
   event: FeedItem;
-  marketplace?: Marketplace;
   myFollowingList?: string[];
   className?: string;
-  refetch?: any;
 }) {
+  const { track } = useAnalytics();
+
   if (props.event.__typename === 'AggregateEvent') {
     return <AggregateCard event={props.event} />;
   }
@@ -134,19 +79,22 @@ export function FeedCard(props: {
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
           <img
+            onClick={() =>
+              track('Feed Item Selected', {
+                event_category: 'Feed',
+                event_label: props.event.__typename,
+                sol_value: attrs.solAmount,
+              })
+            }
             className="aspect-square w-full rounded-lg object-cover "
             src={attrs.nft?.image}
             alt={attrs.nft?.name}
           />
         </a>
       </Link>
-      <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address} />
+      <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
-        <FeedActionBanner
-          event={props.event}
-          marketplace={props.marketplace}
-          refetch={props.refetch}
-        />
+        <FeedActionBanner attrs={attrs} event={props.event} />
       </div>
     </div>
   );
@@ -166,6 +114,8 @@ function FollowCard(props: {
     () => ({ wallet: anchorWallet!, connection }),
     [anchorWallet, connection]
   );
+
+  const { track } = useAnalytics();
 
   if (!attrs) return <div>Not enough data</div>;
 
@@ -236,13 +186,33 @@ export const ProfileHandle = (props: { address: string }) => {
 
 function FeedActionBanner(props: {
   event: FeedQueryEvent; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
-  marketplace?: Marketplace;
-  refetch?: any;
+  attrs: FeedCardAttributes;
 }) {
-  const attrs = generateFeedCardAtributes(props.event);
+  const attrs = props.attrs;
   const anchorWallet = useAnchorWallet();
+  const myPubkey = anchorWallet?.publicKey.toBase58();
 
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
+
+  let action: JSX.Element | null = null;
+  const yourEvent = props.event.walletAddress === myPubkey;
+  const youOwnThisNFT = attrs.nft?.owner?.address === myPubkey;
+
+  if (props.event.__typename === 'ListingEvent' && !yourEvent) {
+    action = <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />;
+  } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
+    action = (
+      <Link href={'/nfts/' + attrs.nft?.address}>
+        <a>
+          <Button5 v="primary" className="w-full sm:w-auto">
+            Accept offer
+          </Button5>
+        </a>
+      </Link>
+    );
+  } else if (!yourEvent) {
+    action = <OfferAction nft={attrs.nft} />;
+  }
 
   return (
     <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
@@ -262,13 +232,7 @@ function FeedActionBanner(props: {
         </div>
       </div>
 
-      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">
-        {props.event.__typename === 'ListingEvent' ? (
-          <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />
-        ) : props.event.walletAddress === anchorWallet?.publicKey.toBase58() ? null : ( // update offer
-          <OfferAction nft={attrs.nft} />
-        )}
-      </div>
+      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
     </div>
   );
 }
@@ -288,6 +252,8 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
       callMarketplaceQuery();
     }
   }, [modalOpen]);
+
+  // TODO: Make sure the NFT is still for sale
 
   return (
     <>
@@ -376,11 +342,10 @@ const OfferAction = (props: { nft: any }) => {
 export function ProfilePFP({ user }: { user: User }) {
   // some of these hooks could probably be lifted up, but keeping it here for simplicity
   const { connection } = useConnection();
-  const [twitterHandle, setTwitterHandle] = useState<string | undefined>();
+  const [twitterHandle, setTwitterHandle] = useState<string | undefined>(user.profile?.handle);
   /* user.profile?.handle */
   const [pfpUrl, setPfpUrl] = useState(
-    /* user.profile?.profileImageUrl ||  */
-    getPFPFromPublicKey(user.address)
+    user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
   );
   useEffect(() => {
     if (!twitterHandle) {
@@ -397,10 +362,7 @@ export function ProfilePFP({ user }: { user: User }) {
   });
 
   useEffect(() => {
-    if (
-      twitterHandle
-      /*     && !user.profile?.profileImageUrl */
-    ) {
+    if (twitterHandle && !user.profile?.profileImageUrl) {
       walletProfileQuery().then((q) => {
         if (q.data?.profile?.profileImageUrlLowres) {
           setPfpUrl(q.data?.profile?.profileImageUrlLowres);
@@ -408,6 +370,8 @@ export function ProfilePFP({ user }: { user: User }) {
       });
     }
   }, [twitterHandle]);
+
+  /*  const { track } = useAnalytics(); // track navigation to profile from pfp */
 
   // const { data: twitterHandle } = useTwitterHandle(null, user.address);
 
@@ -431,6 +395,63 @@ function ShareMenu(props: { address: string; className: string }) {
         address={props.address}
         triggerButtonExtraClassNames="bg-gray-900/40 backdrop-blur-3xl group-hover:bg-gray-900"
       />
+    </div>
+  );
+}
+
+// A card to house aggregated Mint events, and maybe follow events
+function AggregateCard(props: { event: AggregateEvent }) {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // return (
+  //   <div className="relative  flex -space-x-96 -space-y-4  ">
+  //     {props.event.eventsAggregated.slice(1, 5).map((e, i, l) => (
+  //       // <FeedCard
+  //       //   event={e}
+  //       //   key={e.feedEventId}
+  //       //   anchorWallet={props.anchorWallet}
+  //       //   className={` hover:z-50 z-${(l.length - i) * 10}  `}
+  //       // />
+  //       <img
+  //         key={e.feedEventId}
+  //         className={classNames(
+  //           ` hover:z-50 z-${(l.length - i) * 10}  `,
+  //           'aspect-square w-full rounded-lg '
+  //         )}
+  //         src={e.nft?.image}
+  //         alt={e.nft?.name}
+  //       />
+  //     ))}
+  //   </div>
+  // );
+
+  return (
+    <div
+      className={classNames(
+        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-2xl shadow-black',
+        false && 'hover:scale-[1.02]'
+      )}
+    >
+      <div className="mx-auto flex justify-center sm:mx-0">
+        and {props.event.eventsAggregated.length - 1} similar events
+      </div>
+      <Button5 className="ml-auto w-full sm:w-auto" v="ghost" onClick={() => setModalOpen(true)}>
+        View all
+      </Button5>
+      {ReactDom.createPortal(
+        <Modal
+          open={modalOpen}
+          setOpen={setModalOpen}
+          title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
+        >
+          <div className="space-y-10 p-4">
+            {props.event.eventsAggregated.map((e) => (
+              <FeedCard event={e} key={e.feedEventId} />
+            ))}
+          </div>
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
     </div>
   );
 }

@@ -74,9 +74,9 @@ export function AppHeader() {
         {!WHICHDAO && (
           <LinkRow size="large">
             {connected && (
-              <HeaderLinkWrapper key="feed" active={router.pathname === '/feed'}>
-                <Link href="/feed" passHref>
-                  <a className="hover:underline focus:underline">Feed</a>
+              <HeaderLinkWrapper key="alpha" active={router.pathname === '/alpha'}>
+                <Link href="/alpha" passHref>
+                  <a className="hover:underline focus:underline">Alpha</a>
                 </Link>
               </HeaderLinkWrapper>
             )}

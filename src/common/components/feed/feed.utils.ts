@@ -1,10 +1,24 @@
 import { shortenAddress } from '@/modules/utils/string';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { FeedQuery, FollowEvent, MintEvent } from 'src/graphql/indexerTypes';
+import {
+  BidReceipt,
+  FeedQuery,
+  FollowEvent,
+  ListingEvent,
+  ListingReceipt,
+  MintEvent,
+  OfferEvent,
+  PurchaseReceipt,
+} from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
 type Profile = MintEvent['profile'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
+type QueryNFT =
+  | MintEvent['nft']
+  | ListingReceipt['nft']
+  | PurchaseReceipt['nft']
+  | BidReceipt['nft'];
 
 export interface User {
   address: string;
@@ -19,6 +33,8 @@ export interface AggregateEvent {
   __typename: 'AggregateEvent';
   createdAt: string;
   eventsAggregated: FeedQueryEvent[];
+  walletAddress: string;
+  profile?: FeedQueryEvent['profile'];
 }
 
 export type FeedItem = FeedQueryEvent | AggregateEvent;
@@ -32,13 +48,7 @@ export type FeedCardAttributes =
       sourceUser: User;
       toUser?: User;
       solAmount?: number;
-      nft?: {
-        address: string;
-        name: string;
-        image: string;
-        description: string;
-        creators: User[];
-      } | null;
+      nft?: QueryNFT;
     }
   | undefined;
 
@@ -54,6 +64,10 @@ export function generateFeedCardAtributes(
     id: event.feedEventId,
     createdAt: event.createdAt,
     type: event.__typename,
+    sourceUser: {
+      address: event.walletAddress,
+      profile: event.profile,
+    },
   };
   let solAmount: number | undefined;
   switch (event.__typename) {
@@ -61,13 +75,8 @@ export function generateFeedCardAtributes(
       solAmount = event.listing?.price / LAMPORTS_PER_SOL;
       return {
         ...base,
-        sourceUser: {
-          address: event.listing?.seller,
-          profile: null,
-        },
-        solAmount,
-        nft: event.listing?.nft,
-        // listing: event.listing,
+        solAmount: solAmount,
+        nft: event.listing?.nft as QueryNFT,
         content: `Listed for ${solAmount} SOL`,
       };
 
@@ -84,7 +93,6 @@ export function generateFeedCardAtributes(
         // I thought the source would be from, but aparently it's to
         // sourceUser: event.connection?.from!,
         // toUser: event.connection?.to!,
-        sourceUser: from,
         toUser: to,
       };
 
@@ -93,11 +101,11 @@ export function generateFeedCardAtributes(
       return {
         ...base,
         content: 'Created ', //  + shortenAddress(event.nft?.address),
-        sourceUser: {
+        /*         sourceUser: {
           address: creator.address,
           profile: creator.profile,
-        },
-        nft: event.nft,
+        }, */
+        nft: event.nft as QueryNFT,
       };
     case 'PurchaseEvent':
       solAmount = event.purchase?.price / LAMPORTS_PER_SOL;
@@ -105,21 +113,23 @@ export function generateFeedCardAtributes(
       return {
         ...base,
         content: 'Bought for ' + solAmount + ' SOL',
-        sourceUser: {
+        solAmount,
+        /*         sourceUser: {
           address: event.purchase?.buyer,
-        },
-        nft: event.purchase?.nft,
+        }, */
+        nft: event.purchase?.nft as QueryNFT,
       };
     case 'OfferEvent':
       solAmount = event.offer?.price / LAMPORTS_PER_SOL;
       return {
         ...base,
         content: 'Offered ' + solAmount + ` SOL`,
-        sourceUser: {
+        solAmount,
+        /*      sourceUser: {
           address: event.offer?.buyer!,
           profile: null,
-        },
-        nft: event.offer?.nft,
+        }, */
+        nft: event.offer?.nft as QueryNFT,
       };
   }
 }

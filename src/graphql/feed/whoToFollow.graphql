@@ -1,0 +1,29 @@
+query whoToFollow($limit: Int = 1000, $offset: Int = 0) {
+  followWallets(limit: 10, offset: 0) {
+    __typename
+    profile {
+      handle
+      profileImageUrl
+    }
+    address
+    bids {
+      lastBidTime
+      listing {
+        nfts {
+          address
+          name
+          image
+        }
+      }
+    }
+    connectionCounts {
+      fromCount
+      toCount
+    }
+    nftCounts {
+      owned
+      offered
+      listed
+    }
+  }
+}

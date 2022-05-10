@@ -4,6 +4,7 @@ import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-ada
 import { Connection } from '@solana/web3.js';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useWhoToFollowQuery, WhoToFollowQuery } from 'src/graphql/indexerTypes';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import { getHandle, shuffleArray, User } from './feed.utils';
 import { ProfilePFP } from './FeedCard';
@@ -19,11 +20,6 @@ function FollowListItem({
   };
   myFollowingList: string[];
 }) {
-  /*  console.log('whotofollowitem', user.profile?.handle, {
-    address: user.address,
-    l: props.myFollowingList,
-    adInL: props.myFollowingList.includes(user.address),
-  }); */
   return (
     <div className="flex justify-between">
       <div className="flex items-center">
@@ -65,6 +61,13 @@ export default function WhoToFollowList() {
   );
 
   const myPubkey = anchorWallet?.publicKey.toBase58() || '';
+
+  const { data } = useWhoToFollowQuery();
+  /*  console.log('whotofollowitem', user.profile?.handle, {
+    address: user.address,
+    l: props.myFollowingList,
+    adInL: props.myFollowingList.includes(user.address),
+  }); */
 
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
 
@@ -137,12 +140,23 @@ const LoadingFollowCard = () => (
   </div>
 );
 
-export const INFLUENTIAL_WALLETS = [
+export const INFLUENTIAL_WALLETS: /* Partial<WhoToFollowQuery['followWallets']>  */ User[] = [
   {
     address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H',
     profile: {
       handle: 'kristianeboe',
+      profileImageUrl: '',
     },
+    /*   bids: [],
+    nftCounts: {
+      listed: 0,
+      offered: 0,
+      owned: 0,
+    },
+    connectionCounts: {
+      fromCount: 0,
+      toCount: 0,
+    }, */
   },
   {
     address: '3XzWJgu5WEU3GV3mHkWKDYtMXVybUhGeFt7N6uwkcezF',
