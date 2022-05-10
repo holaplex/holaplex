@@ -36,7 +36,7 @@ export const NFTSearchItem: FC<NFTSearchItemProps> = ({image, name, creatorAddre
         <Link href={`/nfts/${address}`}>
             <a className={`p-4 flex flex-row items-center justify-between hover:bg-gray-800 rounded-lg`}>
                 <div className={`flex gap-6 flex-row items-center`}>
-                    <img src={image} alt={name} className={`w-10 h-10 rounded-lg aspect-square`}/>
+                    <img src={image} alt={name} className={`w-10 h-10 rounded-lg aspect-square text-sm`}/>
                     <p className={`text-sm m-0`}>{name}</p>
                 </div>
                 <p className={`hidden md:inline-block text-sm text-gray-300 m-0`}>{creatorHandle ? `@${creatorHandle}` : shortenAddress(creatorAddress)}</p>

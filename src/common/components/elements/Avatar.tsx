@@ -126,7 +126,7 @@ export const Avatar = ({
         <img
           src={profilePictureUrl ?? getPFPFromPublicKey(address)}
           alt="Profile Picture"
-          className="rounded-full"
+          className="rounded-full text-sm"
         />
       </div>
 
