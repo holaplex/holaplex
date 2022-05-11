@@ -14,14 +14,17 @@ export const AvatarIcons = ({ creators }: { creators: { address: string }[] }) =
     // wrap the avatars in a container with a small, colored background
     <div className={`inline-flex items-center rounded-full bg-gray-600 bg-opacity-70 p-1`}>
       {creators.slice(0, 4).map(({ address }, i) => (
-        <div key={address} className={classNames("h-6 w-6", {"-ml-3": i > 0})}>
+        <div key={address} className={classNames('h-6 w-6', { '-ml-3': i > 0 })}>
           <AvatarIcon address={address} index={i} />
         </div>
       ))}
       {/* show how many additional creators there are when there are more than 4 */}
       {
         <div
-          className={classNames({"hidden": creators.length < 5}, "-ml-3 flex h-6 items-center rounded-full bg-gray-800 px-1 text-sm text-gray-400 hover:scale-125")}
+          className={classNames(
+            { hidden: creators.length < 5 },
+            '-ml-3 flex h-6 items-center rounded-full bg-gray-800 px-1 text-sm text-gray-400 hover:scale-125'
+          )}
         >
           {`+${creators.length - 4}`}
         </div>
@@ -111,16 +114,9 @@ export const Avatar = ({
 
   return (
     <div className="flex items-center">
-      <div
-        className={`flex h-6 w-6 rounded-full ${
-          border && `border-2 border-gray-900 border-opacity-60`
-        }`}
-      >
-        <img
-          src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-          alt="Profile Picture"
-          className="rounded-full"
-        />
+      {/* Avatar container to set size */}
+      <div className="h-6 w-6">
+        <AvatarImage src={profilePictureUrl ?? getPFPFromPublicKey(address)} border={border} />
       </div>
 
       {showAddress && (
@@ -131,3 +127,24 @@ export const Avatar = ({
     </div>
   );
 };
+
+export const AvatarImage = ({
+  src,
+  border = false,
+  borderClass = 'border-2 border-gray-900 border-opacity-60',
+}: {
+  src: string;
+  border?: boolean;
+  borderClass?: string;
+}) => (
+  <div
+    className={classNames(
+      'flex',
+      'overflow-clip rounded-full',
+      'h-full w-full',
+      border && borderClass ? borderClass : undefined
+    )}
+  >
+    <img src={src} alt="Profile Picture" className="min-h-full min-w-full object-cover" />
+  </div>
+);
