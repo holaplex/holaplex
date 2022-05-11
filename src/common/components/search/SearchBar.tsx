@@ -124,7 +124,7 @@ const SearchBar: FC = () => {
         <div
           className={`flex w-full flex-row items-center gap-2 rounded-full border border-white bg-gray-900 p-2`}
         >
-          <a onClick={toggleBar} className={``}>
+          <a onClick={toggleBar}>
             <Search />
           </a>
           <form
