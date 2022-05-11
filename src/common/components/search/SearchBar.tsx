@@ -44,6 +44,7 @@ const SearchBar: FC = () => {
 
   const toggleBar = () => {
     setShowBar(!showBar);
+    setShowResults(false);
   };
 
   const [searchQuery, { data, loading, called, refetch }] = useMetadataSearchLazyQuery();
