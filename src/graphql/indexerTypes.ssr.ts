@@ -215,6 +215,16 @@ export type Marketplace = {
   subdomain: Scalars['String'];
 };
 
+export type MetadataJson = {
+  __typename?: 'MetadataJson';
+  address?: Maybe<Scalars['String']>;
+  attributes?: Maybe<Array<NftAttribute>>;
+  category?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type MintEvent = {
   __typename?: 'MintEvent';
   createdAt: Scalars['DateTimeUtc'];
@@ -396,11 +406,15 @@ export type QueryRoot = {
   listings: Array<Listing>;
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
+  /** returns metadata_jsons matching the term */
+  metadataJsons: Array<MetadataJson>;
   nft?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
   offer?: Maybe<BidReceipt>;
   profile?: Maybe<Profile>;
+  /** returns profiles matching the search term */
+  profiles: Array<Wallet>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
   storefronts: Array<Storefront>;
@@ -461,6 +475,13 @@ export type QueryRootMarketplaceArgs = {
 };
 
 
+export type QueryRootMetadataJsonsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  term: Scalars['String'];
+};
+
+
 export type QueryRootNftArgs = {
   address: Scalars['String'];
 };
@@ -491,6 +512,13 @@ export type QueryRootOfferArgs = {
 
 export type QueryRootProfileArgs = {
   handle: Scalars['String'];
+};
+
+
+export type QueryRootProfilesArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  term: Scalars['String'];
 };
 
 
@@ -541,6 +569,7 @@ export type Wallet = {
   connectionCounts: ConnectionCounts;
   nftCounts: WalletNftCount;
   profile?: Maybe<TwitterProfile>;
+  twitterHandle?: Maybe<Scalars['String']>;
 };
 
 
@@ -645,6 +674,13 @@ export type BasicSearchQueryVariables = Exact<{
 
 
 export type BasicSearchQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', image: string, name: string, address: string, creators: Array<{ __typename?: 'NftCreator', address: string, twitterHandle?: string | null }> }>, wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } };
+
+export type MetadataSearchQueryVariables = Exact<{
+  term: Scalars['String'];
+}>;
+
+
+export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name?: string | null, address?: string | null, image?: string | null, category?: string | null }> };
 
 
 export const ActivityPageDocument = gql`
@@ -1251,6 +1287,16 @@ export const BasicSearchDocument = gql`
   }
 }
     `;
+export const MetadataSearchDocument = gql`
+    query metadataSearch($term: String!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    category
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -1288,6 +1334,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     basicSearch(variables: BasicSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<BasicSearchQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<BasicSearchQuery>(BasicSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'basicSearch', 'query');
+    },
+    metadataSearch(variables: MetadataSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MetadataSearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MetadataSearchQuery>(MetadataSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'metadataSearch', 'query');
     }
   };
 }

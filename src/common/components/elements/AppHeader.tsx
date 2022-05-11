@@ -64,18 +64,22 @@ export function AppHeader() {
 
   return (
     <>
-      <nav className={`hidden md:flex flex-row items-center justify-between gap-6 px-6 py-4`}>
-        <div className={`flex items-center flex-row gap-10 text-2xl w-full font-bold`}>
+      <nav className={`hidden flex-row items-center justify-between gap-6 px-6 py-4 md:flex`}>
+        <div className={`flex w-full flex-row items-center gap-10 text-2xl font-bold`}>
           <Link href="/" passHref>
-            <a>
+            <a className={`font-bold`}>
               👋&nbsp;&nbsp;<span>Holaplex</span>
             </a>
           </Link>
-          <SearchBar/>
+          <SearchBar />
         </div>
         {!WHICHDAO && (
-          <div className={`flex flex-row gap-6 items-center justify-end min-w-fit`}>
-            <HeaderLinkWrapper key="mint-nfts" active={router.pathname === '/nfts/new'} className={`min-w-fit`}>
+          <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
+            <HeaderLinkWrapper
+              key="mint-nfts"
+              active={router.pathname === '/nfts/new'}
+              className={`min-w-fit`}
+            >
               <Link href="/nfts/new" passHref>
                 <a className="hover:underline focus:underline">Mint NFTs</a>
               </Link>
@@ -107,7 +111,7 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex items-center min-w-fit">
+              <a className="flex min-w-fit items-center">
                 About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
@@ -156,7 +160,7 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex items-center min-w-fit">
+              <a className="flex min-w-fit items-center">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover>
@@ -181,11 +185,11 @@ const MobileHeader = () => {
   return (
     <>
       <MobileHeaderContainer>
-        <div className={`flex items-center flex-row gap-4 text-2xl w-full mr-4`}>
+        <div className={`mr-4 flex w-full flex-row items-center gap-4 text-2xl`}>
           <Link href="/" passHref>
             <EmojiLogoAnchor>👋</EmojiLogoAnchor>
           </Link>
-          <SearchBar/>
+          <SearchBar />
         </div>
         <MenuButton onClick={() => setDisplayMenu(true)}>
           <MenuIcon color="#fff" />
