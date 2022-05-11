@@ -1,5 +1,5 @@
-query whoToFollow($limit: Int = 1000, $offset: Int = 0) {
-  followWallets(limit: 10, offset: 0) {
+query whoToFollow($limit: Int = 25, $offset: Int = 0) {
+  followWallets(limit: $limit, offset: $offset) {
     __typename
     profile {
       handle

@@ -52,7 +52,7 @@ function FollowListItem({
   );
 }
 
-export default function WhoToFollowList() {
+export default function WhoToFollowList(props: { myFollowingList?: string[] }) {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const walletConnectionPair = useMemo(
@@ -62,33 +62,59 @@ export default function WhoToFollowList() {
 
   const myPubkey = anchorWallet?.publicKey.toBase58() || '';
 
-  const { data } = useWhoToFollowQuery();
-  /*  console.log('whotofollowitem', user.profile?.handle, {
-    address: user.address,
-    l: props.myFollowingList,
-    adInL: props.myFollowingList.includes(user.address),
-  }); */
-
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
-
-  // const myFollowingList: string[] = [];
-  const myFollowingList =
-    allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
+  /*   const { data } = useWhoToFollowQuery(); */
 
   const [topProfilesToFollow, setTopProfilesToFollow] = useState<User[]>(
     // INFLUENTIAL_WALLETS.slice(0, 10)
     []
   );
+  const [currentFollowingList, setCurrentFollowingList] = useState<string[]>([]);
 
+  // initialize based on who you already follow
   useEffect(() => {
-    if (allConnectionsFrom.isLoading) return;
-    setTopProfilesToFollow(
-      shuffleArray(INFLUENTIAL_WALLETS.filter((u) => !myFollowingList.includes(u.address))).slice(
-        0,
-        5
-      )
-    );
-  }, [allConnectionsFrom.isLoading, myFollowingList.length]);
+    if (props.myFollowingList && !topProfilesToFollow.length) {
+      setTopProfilesToFollow(
+        INFLUENTIAL_WALLETS.filter((u) => !props.myFollowingList?.includes(u.address)).splice(0, 5)
+      );
+      setCurrentFollowingList(props.myFollowingList);
+    }
+  }, [props.myFollowingList]);
+
+  // update
+  useEffect(() => {
+    if (
+      topProfilesToFollow.length &&
+      props.myFollowingList &&
+      props.myFollowingList.length > 0 &&
+      props.myFollowingList.length !== currentFollowingList.length
+    ) {
+      const newWalletFollowed = props.myFollowingList.find(
+        (address) => !currentFollowingList.includes(address)
+      );
+      if (newWalletFollowed) {
+        const topProfileIndexToChange = topProfilesToFollow.findIndex(
+          (u) => u.address === newWalletFollowed
+        );
+        if (topProfileIndexToChange !== -1) {
+          setTopProfilesToFollow(
+            [
+              ...topProfilesToFollow.slice(0, topProfileIndexToChange),
+              INFLUENTIAL_WALLETS.filter(
+                (u) =>
+                  !topProfilesToFollow.some((tu) => tu.address === u.address) &&
+                  !props.myFollowingList?.includes(u.address)
+              ).splice(0, 1)[0],
+              ...topProfilesToFollow.slice(topProfileIndexToChange + 1),
+            ].filter((u) => u)
+            // filter to handle case when INFLUENTIAL_WALLETS is empty
+          );
+        }
+      }
+      setCurrentFollowingList(props.myFollowingList);
+    }
+  }, [props.myFollowingList?.length]);
+
+  const myFollowingList = props.myFollowingList || [];
 
   if (!anchorWallet) return null;
   return (
@@ -140,14 +166,15 @@ const LoadingFollowCard = () => (
   </div>
 );
 
-export const INFLUENTIAL_WALLETS: /* Partial<WhoToFollowQuery['followWallets']>  */ User[] = [
-  {
-    address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H',
-    profile: {
-      handle: 'kristianeboe',
-      profileImageUrl: '',
-    },
-    /*   bids: [],
+export const INFLUENTIAL_WALLETS: /* Partial<WhoToFollowQuery['followWallets']>  */ User[] =
+  shuffleArray([
+    {
+      address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H',
+      profile: {
+        handle: 'kristianeboe',
+        profileImageUrl: '',
+      },
+      /*   bids: [],
     nftCounts: {
       listed: 0,
       offered: 0,
@@ -157,197 +184,197 @@ export const INFLUENTIAL_WALLETS: /* Partial<WhoToFollowQuery['followWallets']> 
       fromCount: 0,
       toCount: 0,
     }, */
-  },
-  {
-    address: '3XzWJgu5WEU3GV3mHkWKDYtMXVybUhGeFt7N6uwkcezF',
-    profile: {
-      handle: 'ClassicScuba',
     },
-  },
-  {
-    address: '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
-    profile: {
-      handle: 'ghost_fried',
+    {
+      address: '3XzWJgu5WEU3GV3mHkWKDYtMXVybUhGeFt7N6uwkcezF',
+      profile: {
+        handle: 'ClassicScuba',
+      },
     },
-  },
-  {
-    address: 'DCFWUYqK1iwGzSD3w6SzpwH77GgmbbVX3E2QRtN1qBrj',
-    profile: {
-      handle: 'notjohnlesstudio',
+    {
+      address: '2BNABAPHhYAxjpWRoKKnTsWT24jELuvadmZALvP6WvY4',
+      profile: {
+        handle: 'ghost_fried',
+      },
     },
-  },
-  {
-    address: 'x31BQteSUcoLcatn57pUPh1ATqDkGSBti4KpnXbqjMq',
-    profile: {
-      handle: 'b2kdaman',
+    {
+      address: 'DCFWUYqK1iwGzSD3w6SzpwH77GgmbbVX3E2QRtN1qBrj',
+      profile: {
+        handle: 'notjohnlesstudio',
+      },
     },
-  },
-  {
-    address: '14kVL6sWSc4oX9rwcJU7aMHMLMjsEfpXcAJf68kmsMeP',
-    profile: {
-      handle: '64jooski',
+    {
+      address: 'x31BQteSUcoLcatn57pUPh1ATqDkGSBti4KpnXbqjMq',
+      profile: {
+        handle: 'b2kdaman',
+      },
     },
-  },
-  {
-    address: '3StkrkMEmdiu9nER5qM3fNR1fCMdawUhGsihF2UkXrPP',
-    profile: {
-      handle: 'earlyishadopter',
+    {
+      address: '14kVL6sWSc4oX9rwcJU7aMHMLMjsEfpXcAJf68kmsMeP',
+      profile: {
+        handle: '64jooski',
+      },
     },
-  },
-  {
-    address: 'DgzWqku67fPeuWgmyZbNa7U7yicKRhbjM7nB86Yx2ojQ',
-    profile: {
-      handle: 'erhancrypto',
+    {
+      address: '3StkrkMEmdiu9nER5qM3fNR1fCMdawUhGsihF2UkXrPP',
+      profile: {
+        handle: 'earlyishadopter',
+      },
     },
-  },
-  {
-    address: 'Dz3BJenPAMziCBhJFGwUxvu3qhMUuLch8NjoZdfP9xsa',
-    profile: {
-      handle: 'js',
+    {
+      address: 'DgzWqku67fPeuWgmyZbNa7U7yicKRhbjM7nB86Yx2ojQ',
+      profile: {
+        handle: 'erhancrypto',
+      },
     },
-  },
-  {
-    address: 'AwiRcagxnT8NLnJeS8ScVcq2Y9f5VeJUfyfR5AXmVFfh',
-    profile: {
-      handle: 'N8Solomon',
+    {
+      address: 'Dz3BJenPAMziCBhJFGwUxvu3qhMUuLch8NjoZdfP9xsa',
+      profile: {
+        handle: 'js',
+      },
     },
-  },
-  {
-    address: 'AXXRH6NVXjUNxi6GvVWV4Pp6q7k9xkqeqHhRx8sW41TX',
-    profile: {
-      handle: 'Pixeltoy',
+    {
+      address: 'AwiRcagxnT8NLnJeS8ScVcq2Y9f5VeJUfyfR5AXmVFfh',
+      profile: {
+        handle: 'N8Solomon',
+      },
     },
-  },
-  {
-    address: 'CPkXvmoLnru2UX9JcDXLykKkGyTCCYJ67LVZdYahASyh',
-    profile: {
-      // handle: 'Ted // SlimeyOctopus',
+    {
+      address: 'AXXRH6NVXjUNxi6GvVWV4Pp6q7k9xkqeqHhRx8sW41TX',
+      profile: {
+        handle: 'Pixeltoy',
+      },
     },
-  },
-  {
-    address: '79j2yWfDHnAU3Aq4yfoTcE9KCHCDo2m54aL4te67683Q',
-    profile: {
-      handle: 'TheObserverNft',
+    {
+      address: 'CPkXvmoLnru2UX9JcDXLykKkGyTCCYJ67LVZdYahASyh',
+      profile: {
+        // handle: 'Ted // SlimeyOctopus',
+      },
     },
-  },
-  {
-    address: 'Fh2rUc2CrMTp6H7t1CGnG4aXhWn7BzPPQBU2KkgR4jeh',
-    profile: {
-      handle: 'twxcrypto',
+    {
+      address: '79j2yWfDHnAU3Aq4yfoTcE9KCHCDo2m54aL4te67683Q',
+      profile: {
+        handle: 'TheObserverNft',
+      },
     },
-  },
-  {
-    address: 'gNEt8EeWqdcSpebQXZ8YVnBC9k5yKp2WGvnA9HR8RzQ',
-    profile: {
-      handle: 'wgarrettdavis',
+    {
+      address: 'Fh2rUc2CrMTp6H7t1CGnG4aXhWn7BzPPQBU2KkgR4jeh',
+      profile: {
+        handle: 'twxcrypto',
+      },
     },
-  },
-  {
-    address: 'zenom3SnXK6k2UJm73jRQ1n8U7KkLPrTypDatKjGxoL',
-    profile: {
-      handle: 'zen0m',
+    {
+      address: 'gNEt8EeWqdcSpebQXZ8YVnBC9k5yKp2WGvnA9HR8RzQ',
+      profile: {
+        handle: 'wgarrettdavis',
+      },
     },
-  },
-  {
-    address: 'Er6QJPusC1JsUqevTjFKXtYHbgCtJkyo1DNjEBWevWut',
-    profile: {
-      handle: '0xbustos',
+    {
+      address: 'zenom3SnXK6k2UJm73jRQ1n8U7KkLPrTypDatKjGxoL',
+      profile: {
+        handle: 'zen0m',
+      },
     },
-  },
-  {
-    address: 'HLSgM1a7wSufVwe1NrPPR22ynY2aPsH8a1XQfqFsQiqY',
-    profile: {
-      handle: '0xCelon',
+    {
+      address: 'Er6QJPusC1JsUqevTjFKXtYHbgCtJkyo1DNjEBWevWut',
+      profile: {
+        handle: '0xbustos',
+      },
     },
-  },
-  {
-    address: 'BjSaYdgdWtBNXGJmy6cuTzxYzLcxvn4Anw6yrWsgKdNm',
-    profile: {
-      handle: 'PrimitiveMoney',
+    {
+      address: 'HLSgM1a7wSufVwe1NrPPR22ynY2aPsH8a1XQfqFsQiqY',
+      profile: {
+        handle: '0xCelon',
+      },
     },
-  },
-  {
-    address: '8t6BxNBe7pM8YwvG4JUQxi1W9PYfuphrYcUiJF99oWsP',
-    profile: {
-      handle: 'rainnen23',
+    {
+      address: 'BjSaYdgdWtBNXGJmy6cuTzxYzLcxvn4Anw6yrWsgKdNm',
+      profile: {
+        handle: 'PrimitiveMoney',
+      },
     },
-  },
-  {
-    address: '4ZjYSCH3Sib9iMSM3QN2sL2kwxNcXG2P4XCemSC2hsyb',
-    profile: {
-      handle: 'TheOnlyNom',
+    {
+      address: '8t6BxNBe7pM8YwvG4JUQxi1W9PYfuphrYcUiJF99oWsP',
+      profile: {
+        handle: 'RainneN23',
+      },
     },
-  },
-  {
-    address: 'GcpdC1iUtfiQ48B6dn7bcM2Ax13R6TDom65jQJiTD18G',
-    profile: {
-      handle: 'adam_ape_',
+    {
+      address: '4ZjYSCH3Sib9iMSM3QN2sL2kwxNcXG2P4XCemSC2hsyb',
+      profile: {
+        handle: 'TheOnlyNom',
+      },
     },
-  },
-  {
-    address: 'xYwSUQv7DX62XGo4XXFAQRSTwtS1NrWz8rifR7Gppeg',
-    profile: {
-      handle: 'Crypt0xG',
+    {
+      address: 'GcpdC1iUtfiQ48B6dn7bcM2Ax13R6TDom65jQJiTD18G',
+      profile: {
+        handle: 'adam_ape_',
+      },
     },
-  },
-  {
-    address: 'A1Fk3zhtamLixGStRFc4eBd3pVodoFrNRbVFCaPaPJBu',
-    profile: {
-      handle: 'itsMcNatt',
+    {
+      address: 'xYwSUQv7DX62XGo4XXFAQRSTwtS1NrWz8rifR7Gppeg',
+      profile: {
+        handle: 'Crypt0xG',
+      },
     },
-  },
-  {
-    address: 'B3jtSCpXQpMZR5r5m87854bgMj5veHwz9idjd22eVrP7',
-    profile: {
-      // handle: 'kknorikami',
+    {
+      address: 'A1Fk3zhtamLixGStRFc4eBd3pVodoFrNRbVFCaPaPJBu',
+      profile: {
+        handle: 'itsMcNatt',
+      },
     },
-  },
-  {
-    address: 'GpnKen3QMaLc1CzFsoy8UbcbPwEXRXb5k2qTkTcUa3RX',
-    profile: {
-      handle: 'MattSolana',
+    {
+      address: 'B3jtSCpXQpMZR5r5m87854bgMj5veHwz9idjd22eVrP7',
+      profile: {
+        // handle: 'kknorikami',
+      },
     },
-  },
-  {
-    address: 'H4dfSserFhYBswmPMF3FdYEbu4aj1AQt7RSXRyVqVjaS',
-    profile: {
-      handle: 'poohaus',
+    {
+      address: 'GpnKen3QMaLc1CzFsoy8UbcbPwEXRXb5k2qTkTcUa3RX',
+      profile: {
+        handle: 'MattSolana',
+      },
     },
-  },
-  {
-    address: '4Jb3dS76hxcBXKZDkwx3KC4NSMXoTKsyXfwW18apS4vZ',
-    profile: {
-      handle: 'S0Ltoshi',
+    {
+      address: 'H4dfSserFhYBswmPMF3FdYEbu4aj1AQt7RSXRyVqVjaS',
+      profile: {
+        handle: 'poohaus',
+      },
     },
-  },
-  {
-    address: 'yTM5APEbWb1GBBtgsjzTF6ZYw5pWxqCr7qKykWW7qLS',
-    profile: {
-      handle: 'Solchemist',
+    {
+      address: '4Jb3dS76hxcBXKZDkwx3KC4NSMXoTKsyXfwW18apS4vZ',
+      profile: {
+        handle: 'S0Ltoshi',
+      },
     },
-  },
-  {
-    address: '2TKEfKKLreKYykZMCKiFMYhhkKFxajfSBeKNZ8rFa6qt',
-    profile: {
-      // handle: 'Good_Brice_',
+    {
+      address: 'yTM5APEbWb1GBBtgsjzTF6ZYw5pWxqCr7qKykWW7qLS',
+      profile: {
+        handle: 'Solchemist',
+      },
     },
-  },
-  {
-    address: 'CsxZxjL19pJ3DM4yyDZDePgCWj6m7Lm9htwHggBbgP1r',
-    profile: {
-      handle: 'howl33333',
+    {
+      address: '2TKEfKKLreKYykZMCKiFMYhhkKFxajfSBeKNZ8rFa6qt',
+      profile: {
+        // handle: 'Good_Brice_',
+      },
     },
-  },
-  {
-    address: '57DsAWRijeENrhb4RdKiLjKzLF1V8f1J2D8mCNvGMSPu',
-    profile: {
-      // handle: 'quincy_sol',
+    {
+      address: 'CsxZxjL19pJ3DM4yyDZDePgCWj6m7Lm9htwHggBbgP1r',
+      profile: {
+        handle: 'howl33333',
+      },
     },
-  },
-  {
-    address: 'DWPpeotxT2Q1m1BDzuycQktDe6VnVejLiPWsjfwG6Nb7',
-    profile: {
-      handle: 'Sunless_1',
+    {
+      address: '57DsAWRijeENrhb4RdKiLjKzLF1V8f1J2D8mCNvGMSPu',
+      profile: {
+        // handle: 'quincy_sol',
+      },
     },
-  },
-];
+    {
+      address: 'DWPpeotxT2Q1m1BDzuycQktDe6VnVejLiPWsjfwG6Nb7',
+      profile: {
+        handle: 'Sunless_1',
+      },
+    },
+  ]);

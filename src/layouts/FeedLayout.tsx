@@ -11,6 +11,10 @@ import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import NoFeed from '@/common/components/feed/NoFeed';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
+import {
+  useAllConnectionsFromLazyQuery,
+  useAllConnectionsFromQuery,
+} from 'src/graphql/indexerTypes';
 
 type FeedType = 'Following' | 'Discovery';
 const Feeds: FeedType[] = ['Following', 'Discovery'];
@@ -49,34 +53,41 @@ const TEST_FEEDS = [
 export default function FeedLayout({ children }: { children: any }) {
   // Please don't remove the commented out code about the tab structure yet, it might be used soon // Kris
 
-  // const router = useRouter();
-  // const feedTabSelected = !router.pathname.includes('discovery');
+  /*   const router = useRouter();
+  const feedTabSelected = !router.pathname.includes('discovery');
 
-  // const Tab = (props: { url: string; selected: boolean; title: string }) => (
-  //   <Link href={props.url} passHref>
-  //     <a
-  //       className={classNames(
-  //         'w-full  py-2.5 text-center text-sm font-medium text-white ',
-  //         props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
-  //       )}
-  //     >
-  //       {props.title}
-  //     </a>
-  //   </Link>
-  // );
+  const Tab = (props: { url: string; selected: boolean; title: string }) => (
+    <Link href={props.url} passHref>
+      <a
+        className={classNames(
+          'w-full  py-2.5 text-center text-sm font-medium text-white ',
+          props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
+        )}
+      >
+        {props.title}
+      </a>
+    </Link>
+  ); */
   const anchorWallet = useAnchorWallet();
   const [showConnectCTA, setShowConnectCTA] = useState(false);
 
-  /*   useEffect(() => {
-    if (anchorWallet) {
-      setShowConnectCTA(false);
+  const [query, { data }] = useAllConnectionsFromLazyQuery({
+    variables: {
+      from: anchorWallet?.publicKey.toBase58(),
+    },
+  });
+
+  const myFollowingList: string[] | undefined = data?.connections.map((c) => c.to.address);
+
+  useEffect(() => {
+    if (!anchorWallet) {
+      setTimeout(() => {
+        setShowConnectCTA((() => !!anchorWallet)());
+      }, 2000);
+    } else {
+      query();
     }
-    setTimeout(() => {
-      if (!anchorWallet) {
-        setShowConnectCTA(true);
-      }
-    }, 1500);
-  }, [anchorWallet]); */
+  }, [anchorWallet]);
 
   if (showConnectCTA) {
     return (
@@ -97,14 +108,14 @@ export default function FeedLayout({ children }: { children: any }) {
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
       <div className="mt-12 flex justify-between">
         <div className="mx-auto w-full  sm:w-[600px] xl:mx-0 ">
-          {/* <div className="flex space-x-1   p-1">
-            <Tab title={'Feed'} selected={feedTabSelected} url="/feed" />
+          {/*           <div className="flex space-x-1   p-1">
+            <Tab title={'Your Feed'} selected={feedTabSelected} url="/alpha" />
             <Tab title={'Discovery'} selected={!feedTabSelected} url="/feed/discovery" />
           </div> */}
           {children}
         </div>
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
-          <WhoToFollowList />
+          <WhoToFollowList myFollowingList={myFollowingList} />
           {/* <MyActivityList /> */}
           {/* <div>
             <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
