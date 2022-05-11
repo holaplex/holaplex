@@ -29,7 +29,7 @@ export const themeVariables: IncomingThemeVariables = {
     divider: `${defaultVariables.dark.divider} h-px opacity-10 mx-0`,
     notificationMessage: `${defaultVariables.dark.notificationMessage} bg-transparent`,
     notificationTimestamp: `${defaultVariables.dark.notificationTimestamp} text-left`,
-    notificationsDivider: '', // Empty line is intentional to ovveride dt-hidden
+    notificationsDivider: '', // Empty line is intentional to override dt-hidden
   },
 };
 
@@ -43,6 +43,7 @@ export default function DialectNotificationsButton() {
       theme="dark"
       variables={themeVariables}
       network="mainnet"
+      channels={['web3', 'email', 'telegram', 'sms']}
     />
   );
 }
