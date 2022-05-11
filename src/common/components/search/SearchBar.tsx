@@ -1,11 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import { Search } from '../icons/Search';
 import LoadingSearchItem from './LoadingSearchItem';
-import {
-  useBasicSearchLazyQuery,
-  useMetadataSearchLazyQuery,
-  useProfileSearchLazyQuery,
-} from 'src/graphql/indexerTypes';
+import { useMetadataSearchLazyQuery, useProfileSearchLazyQuery } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -61,19 +57,7 @@ const SearchBar: FC = () => {
 
   // TODO: handle enter key
   const handleSearch = ({ query }: SearchQuerySchema) => {
-    // setShowResults(true);
-    // if (isPublicKey(query)) {
-    //   basicSearchQuery({
-    //     variables: {
-    //       walletAddress: query,
-    //     },
-    //   });
-    // }
-    // searchQuery({
-    //   variables: {
-    //     term: query,
-    //   },
-    // });
+    // handle enter
   };
 
   const handleOnChange = (e: any) => {
