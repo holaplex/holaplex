@@ -51,6 +51,7 @@ const SearchBar: FC = () => {
   const [basicSearchQuery, { data: profileData, loading: profileLoading, called: profileCalled }] =
     useBasicSearchLazyQuery();
 
+  // TODO: handle enter key
   const handleSearch = ({ query }: SearchQuerySchema) => {
     // setShowResults(true);
     // if (isPublicKey(query)) {
@@ -126,7 +127,6 @@ const SearchBar: FC = () => {
           >
             <input
               {...register('query', { required: true })}
-              // onBlur={() => setShowResults(false)}
               onFocus={() => setShowResults(true)}
               onChange={handleOnChange}
               placeholder={`Search Holaplex...`}
