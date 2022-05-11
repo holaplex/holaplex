@@ -20,7 +20,7 @@ export const themeVariables: IncomingThemeVariables = {
     },
     bellButton:
       'w-[48px] h-[48px] !bg-transparent shadow-none rounded-full transition-transform hover:scale-[1.02]',
-    modal: `sm:rounded-md shadow-xl shadow-neutral-900 pt-1`,
+    modal: `sm:rounded-md shadow-xl shadow-neutral-900 pt-1 leading-normal`,
     icons: {
       bell: Bell,
       settings: Settings,
@@ -40,6 +40,7 @@ export default function DialectNotificationsButton() {
       wallet={wallet}
       publicKey={HOLAPLEX_MONITORING_PUBLIC_KEY}
       notifications={[{ name: 'Offer on NFT', detail: 'Event' }]}
+      rpcUrl="https://holaplex.rpcpool.com"
       theme="dark"
       variables={themeVariables}
       network="mainnet"
