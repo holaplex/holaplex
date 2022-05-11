@@ -28,7 +28,7 @@ function MoreDropdown({ address }: { address: string }) {
         <>
           <Popover.Button
             className={cx(
-              'flex h-10 w-36 items-center justify-center gap-2 rounded-full ',
+              'flex h-10 w-36 items-center justify-center gap-2 rounded-full shadow-sm shadow-black ',
               open ? 'bg-white' : ''
             )}
           >

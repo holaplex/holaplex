@@ -131,16 +131,16 @@ export const NFTCard = ({
               )}
             </div>
 
-            <div className="flex h-24 items-center bg-gray-900 py-6 px-4">
+            <div className="flex h-24 items-center bg-gray-900 py-6">
               <p className="w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold">
                 {nft.name}
               </p>
             </div>
           </div>
         </Link>
-        <div className={`h-20 md:h-36 xl:h-20`}>
+        <div className={`h-20 md:h-28 xl:h-20`}>
           <div
-            className={`flex h-full w-full items-center justify-between p-4 md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+            className={`flex h-full w-full items-center justify-between md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
           >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
@@ -330,6 +330,7 @@ enum ListingFilters {
 }
 
 export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+export const INITIAL_FETCH = 25;
 
 const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const { publicKey: pk } = props;
@@ -340,7 +341,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     address: pk,
-    limit: 100,
+    limit: INITIAL_FETCH,
     offset: 0,
   };
   const ownedNFTs = useOwnedNfTsQuery({
@@ -467,7 +468,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
       />
       <ProfileContainer>
-        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 px-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -503,7 +504,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore && filteredNfts.length > 99}
+          hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;

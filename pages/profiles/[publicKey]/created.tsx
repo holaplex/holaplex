@@ -15,7 +15,7 @@ import Head from 'next/head';
 import { showFirstAndLastFour } from '../../../src/modules/utils/string';
 import { ProfileContainer } from '@/components/elements/ProfileContainer';
 import TextInput2 from '@/components/elements/TextInput2';
-import { INFINITE_SCROLL_AMOUNT_INCREMENT, NFTGrid } from './nfts';
+import { INFINITE_SCROLL_AMOUNT_INCREMENT, INITIAL_FETCH, NFTGrid } from './nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty } from 'ramda';
@@ -40,7 +40,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     creator: publicKey,
-    limit: 100,
+    limit: INITIAL_FETCH,
     offset: 0,
   };
   const createdNFTs = useCreatedNfTsQuery({
@@ -187,7 +187,7 @@ const CreatedNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
-          hasMore={hasMore && filteredNfts.length > 99}
+          hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {
               return;
