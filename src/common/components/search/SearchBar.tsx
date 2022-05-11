@@ -35,6 +35,7 @@ const SearchBar: FC = () => {
 
   const [showBar, setShowBar] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [hasSearch, setHasSearch] = useState(false);
 
   useEffect(() => {
     setShowResults(false);
@@ -69,6 +70,11 @@ const SearchBar: FC = () => {
   };
 
   const handleOnChange = (e: any) => {
+    if (e.target.value === '') {
+      setHasSearch(false);
+    } else {
+      setHasSearch(true);
+    }
     setShowResults(true);
     if (isPublicKey(e.target.value)) {
       basicSearchQuery({
@@ -132,7 +138,7 @@ const SearchBar: FC = () => {
               placeholder={`Search Holaplex...`}
               className={`h-full w-full bg-gray-900 text-base text-gray-500`}
             />
-            {searchQueryWatchable && (
+            {hasSearch && (
               <button
                 type={`button`}
                 onClick={handleReset}
