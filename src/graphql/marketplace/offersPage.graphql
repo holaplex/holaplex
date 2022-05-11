@@ -40,11 +40,6 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     description
     image
     primarySaleHappened
-    attributes {
-      metadataAddress
-      value
-      traitType
-    }
     creators {
       address
       verified
@@ -92,11 +87,6 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     description
     image
     primarySaleHappened
-    attributes {
-      metadataAddress
-      value
-      traitType
-    }
     creators {
       address
       verified
