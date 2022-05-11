@@ -72,7 +72,8 @@ export function AppHeader() {
               👋&nbsp;&nbsp;<span>Holaplex</span>
             </a>
           </Link>
-          <SearchBar />
+          {/* TODO: temp disabled for deploy */}
+          {/* <SearchBar /> */}
         </div>
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
@@ -190,7 +191,8 @@ const MobileHeader = () => {
           <Link href="/" passHref>
             <EmojiLogoAnchor>👋</EmojiLogoAnchor>
           </Link>
-          <SearchBar />
+          {/* TODO: temp disabled for deploy */}
+          {/* <SearchBar /> */}
         </div>
         <MenuButton onClick={() => setDisplayMenu(true)}>
           <MenuIcon color="#fff" />
