@@ -1,0 +1,5 @@
+query featuredProfiles($limit: Int!) {
+  followWallets(limit: $limit, offset: 0) {
+    address
+  }
+}

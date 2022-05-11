@@ -140,11 +140,14 @@ export type FollowEvent = {
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
   graphConnectionAddress: Scalars['PublicKey'];
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type GraphConnection = {
   __typename?: 'GraphConnection';
   address: Scalars['String'];
+  connectedAt: Scalars['DateTimeUtc'];
   from: Wallet;
   to: Wallet;
 };
@@ -169,6 +172,8 @@ export type ListingEvent = {
   lifecycle: Scalars['String'];
   listing?: Maybe<ListingReceipt>;
   listingReceiptAddress: Scalars['PublicKey'];
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type ListingReceipt = {
@@ -216,6 +221,8 @@ export type MintEvent = {
   feedEventId: Scalars['String'];
   metadataAddress: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type MintStats = {
@@ -326,6 +333,8 @@ export type OfferEvent = {
   feedEventId: Scalars['String'];
   lifecycle: Scalars['String'];
   offer?: Maybe<BidReceipt>;
+  profile?: Maybe<TwitterProfile>;
+  walletAddress: Scalars['String'];
 };
 
 export type PriceChart = {
@@ -354,8 +363,10 @@ export type PurchaseEvent = {
   __typename?: 'PurchaseEvent';
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
+  profile?: Maybe<TwitterProfile>;
   purchase?: Maybe<PurchaseReceipt>;
   purchaseReceiptAddress: Scalars['PublicKey'];
+  walletAddress: Scalars['String'];
 };
 
 export type PurchaseReceipt = {
@@ -378,8 +389,10 @@ export type QueryRoot = {
   creator: Creator;
   denylist: Denylist;
   enrichedBondingChanges: Array<EnrichedBondingChange>;
-  /** Query feed events for a wallet. Returns events related to the specified user and events for the wallets the user follows. */
+  /** Returns events for the wallets the user is following using the graph_program. */
   feedEvents: Array<FeedEvent>;
+  /** Recommend wallets to follow. */
+  followWallets: Array<Wallet>;
   listings: Array<Listing>;
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
@@ -436,6 +449,13 @@ export type QueryRootFeedEventsArgs = {
 };
 
 
+export type QueryRootFollowWalletsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  wallet?: InputMaybe<Scalars['PublicKey']>;
+};
+
+
 export type QueryRootMarketplaceArgs = {
   subdomain: Scalars['String'];
 };
@@ -453,10 +473,11 @@ export type QueryRootNftCountsArgs = {
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   collection?: InputMaybe<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
-  listed?: InputMaybe<Array<Scalars['PublicKey']>>;
+  listed?: InputMaybe<Scalars['Boolean']>;
   offerers?: InputMaybe<Array<Scalars['PublicKey']>>;
   offset: Scalars['Int'];
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
@@ -578,12 +599,26 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type FeaturedProfilesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type FeaturedProfilesQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any }> };
+
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
 }>;
 
 
 export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
+
+export type ProfilePreviewQueryVariables = Exact<{
+  address: Scalars['PublicKey'];
+}>;
+
+
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -838,6 +873,13 @@ export const WalletProfileDocument = gql`
   }
 }
     `;
+export const FeaturedProfilesDocument = gql`
+    query featuredProfiles($limit: Int!) {
+  followWallets(limit: $limit, offset: 0) {
+    address
+  }
+}
+    `;
 export const MarketplacePreviewDocument = gql`
     query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {
@@ -854,6 +896,21 @@ export const MarketplacePreviewDocument = gql`
     }
     creators {
       creatorAddress
+    }
+  }
+}
+    `;
+export const ProfilePreviewDocument = gql`
+    query profilePreview($address: PublicKey!) {
+  wallet(address: $address) {
+    profile {
+      handle
+      profileImageUrl
+      bannerImageUrl
+    }
+    address
+    nftCounts {
+      owned
     }
   }
 }
@@ -1223,8 +1280,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     walletProfile(variables: WalletProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WalletProfileQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WalletProfileQuery>(WalletProfileDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'walletProfile', 'query');
     },
+    featuredProfiles(variables: FeaturedProfilesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FeaturedProfilesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<FeaturedProfilesQuery>(FeaturedProfilesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'featuredProfiles', 'query');
+    },
     marketplacePreview(variables: MarketplacePreviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MarketplacePreviewQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MarketplacePreviewQuery>(MarketplacePreviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'marketplacePreview', 'query');
+    },
+    profilePreview(variables: ProfilePreviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProfilePreviewQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ProfilePreviewQuery>(ProfilePreviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'profilePreview', 'query');
     },
     nftMarketplace(variables: NftMarketplaceQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<NftMarketplaceQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<NftMarketplaceQuery>(NftMarketplaceDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'nftMarketplace', 'query');
