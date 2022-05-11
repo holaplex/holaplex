@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import { Search } from '../icons/Search';
 import LoadingSearchItem from './LoadingSearchItem';
-import { useBasicSearchLazyQuery, useMetadataSearchLazyQuery } from 'src/graphql/indexerTypes';
+import { useMetadataSearchLazyQuery, useProfileSearchLazyQuery } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -48,25 +48,16 @@ const SearchBar: FC = () => {
     setShowResults(false);
   };
 
-  const [searchQuery, { data, loading, called, refetch }] = useMetadataSearchLazyQuery();
-  const [basicSearchQuery, { data: profileData, loading: profileLoading, called: profileCalled }] =
-    useBasicSearchLazyQuery();
+  const [searchQuery, { data, loading, called }] = useMetadataSearchLazyQuery();
+
+  const [
+    profileSearchQuery,
+    { data: profileData, loading: profileLoading, called: profileCalled },
+  ] = useProfileSearchLazyQuery();
 
   // TODO: handle enter key
   const handleSearch = ({ query }: SearchQuerySchema) => {
-    // setShowResults(true);
-    // if (isPublicKey(query)) {
-    //   basicSearchQuery({
-    //     variables: {
-    //       walletAddress: query,
-    //     },
-    //   });
-    // }
-    // searchQuery({
-    //   variables: {
-    //     term: query,
-    //   },
-    // });
+    // handle enter
   };
 
   const handleOnChange = (e: any) => {
@@ -76,13 +67,11 @@ const SearchBar: FC = () => {
       setHasSearch(true);
     }
     // setShowResults(true);
-    if (isPublicKey(e.target.value)) {
-      basicSearchQuery({
-        variables: {
-          walletAddress: e.target.value,
-        },
-      });
-    }
+    profileSearchQuery({
+      variables: {
+        term: e.target.value,
+      },
+    });
     searchQuery({
       variables: {
         term: e.target.value,

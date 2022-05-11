@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 interface ProfileSearchItemProps {
   address: string;
-  handle?: string;
+  handle?: string | null;
   profileImage?: string;
 }
 
