@@ -1,20 +1,17 @@
 import React, { FC } from 'react';
-import { MetadataSearchQuery, BasicSearchQuery } from 'src/graphql/indexerTypes';
+import { MetadataSearchQuery, ProfileSearchQuery } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
+import { profile } from 'console';
 
 interface SearchResultsProps {
   results: MetadataSearchQuery;
-  profileResults?: BasicSearchQuery;
+  profileResults?: ProfileSearchQuery;
 }
 
 const SearchResults: FC<SearchResultsProps> = ({ results, profileResults }) => {
-  if (
-    results.metadataJsons.length === 0 &&
-    profileResults?.nfts.length !== 0 &&
-    !isPublicKey(profileResults?.wallet.address)
-  ) {
+  if (results.metadataJsons.length === 0 && profileResults?.profiles.length === 0) {
     return (
       <div className={`flex h-6 w-full items-center justify-center`}>
         <p className={`m-0 text-center text-base font-medium`}>No Results</p>
@@ -23,41 +20,39 @@ const SearchResults: FC<SearchResultsProps> = ({ results, profileResults }) => {
   }
   return (
     <>
-      {profileResults?.nfts.length !== 0 && isPublicKey(profileResults?.wallet.address) && (
+      {profileResults?.profiles && profileResults?.profiles?.length > 0 && (
         <>
           <h6 className={`text-base font-medium text-gray-300`}>Profiles</h6>
-          <ProfileSearchItem
-            address={profileResults?.wallet?.address}
-            handle={profileResults?.wallet?.profile?.handle}
-          />
+          {profileResults?.profiles?.map((profile) => (
+            <>
+              {profile.address && (
+                <ProfileSearchItem
+                  address={profile?.address}
+                  handle={profile?.twitterHandle}
+                  profileImage={profile?.profile?.profileImageUrl}
+                />
+              )}
+            </>
+          ))}
         </>
       )}
-
-      <h6 className={`text-base font-medium text-gray-300`}>NFTs</h6>
-      {profileResults?.nfts?.map((nft) => (
+      {results.metadataJsons && results.metadataJsons.length > 0 && (
         <>
-          {nft.address && nft.image && nft.name && (
-            <NFTSearchItem
-              key={nft.address}
-              address={nft.address}
-              image={nft.image}
-              name={nft.name}
-            />
-          )}
+          <h6 className={`text-base font-medium text-gray-300`}>NFTs</h6>
+          {results?.metadataJsons?.map((nft) => (
+            <>
+              {nft.address && nft.image && nft.name && (
+                <NFTSearchItem
+                  key={nft.address}
+                  address={nft.address}
+                  image={nft.image}
+                  name={nft.name}
+                />
+              )}
+            </>
+          ))}
         </>
-      ))}
-      {results?.metadataJsons?.map((nft) => (
-        <>
-          {nft.address && nft.image && nft.name && (
-            <NFTSearchItem
-              key={nft.address}
-              address={nft.address}
-              image={nft.image}
-              name={nft.name}
-            />
-          )}
-        </>
-      ))}
+      )}
     </>
   );
 };

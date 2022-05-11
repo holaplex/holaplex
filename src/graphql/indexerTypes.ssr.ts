@@ -682,6 +682,13 @@ export type MetadataSearchQueryVariables = Exact<{
 
 export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name?: string | null, address?: string | null, image?: string | null, category?: string | null }> };
 
+export type ProfileSearchQueryVariables = Exact<{
+  term: Scalars['String'];
+}>;
+
+
+export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string } | null }> };
+
 
 export const ActivityPageDocument = gql`
     query activityPage($address: PublicKey!) {
@@ -1287,6 +1294,17 @@ export const MetadataSearchDocument = gql`
   }
 }
     `;
+export const ProfileSearchDocument = gql`
+    query profileSearch($term: String!) {
+  profiles(term: $term, limit: 5, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -1327,6 +1345,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     metadataSearch(variables: MetadataSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MetadataSearchQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MetadataSearchQuery>(MetadataSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'metadataSearch', 'query');
+    },
+    profileSearch(variables: ProfileSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProfileSearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ProfileSearchQuery>(ProfileSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'profileSearch', 'query');
     }
   };
 }
