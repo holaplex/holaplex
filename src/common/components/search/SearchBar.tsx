@@ -75,7 +75,7 @@ const SearchBar: FC = () => {
     } else {
       setHasSearch(true);
     }
-    setShowResults(true);
+    // setShowResults(true);
     if (isPublicKey(e.target.value)) {
       basicSearchQuery({
         variables: {
@@ -154,16 +154,14 @@ const SearchBar: FC = () => {
         <div
           className={`h-content absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900 p-6 transition ease-in-out`}
         >
-          {isSubmitting ||
-            loading ||
-            (profileLoading && (
-              <>
-                <LoadingSearchItem />
-                <LoadingSearchItem variant={`circle`} />
-                <LoadingSearchItem />
-                <LoadingSearchItem variant={`circle`} />
-              </>
-            ))}
+          {(loading || profileLoading) && (
+            <>
+              <LoadingSearchItem />
+              <LoadingSearchItem variant={`circle`} />
+              <LoadingSearchItem />
+              <LoadingSearchItem variant={`circle`} />
+            </>
+          )}
           {data && (called || profileCalled) && (
             <SearchResults results={data} profileResults={profileData} />
           )}
