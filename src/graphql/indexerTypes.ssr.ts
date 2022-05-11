@@ -668,6 +668,20 @@ export type ShareNftQueryVariables = Exact<{
 
 export type ShareNftQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, auctionHouse?: { __typename?: 'AuctionHouse', address: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, price: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, price: any }>, offers: Array<{ __typename?: 'BidReceipt', address: string, buyer: any, price: any }> } | null };
 
+export type BasicSearchQueryVariables = Exact<{
+  walletAddress: Scalars['PublicKey'];
+}>;
+
+
+export type BasicSearchQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', image: string, name: string, address: string, creators: Array<{ __typename?: 'NftCreator', address: string, twitterHandle?: string | null }> }>, wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } };
+
+export type MetadataSearchQueryVariables = Exact<{
+  term: Scalars['String'];
+}>;
+
+
+export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name?: string | null, address?: string | null, image?: string | null, category?: string | null }> };
+
 
 export const ActivityPageDocument = gql`
     query activityPage($address: PublicKey!) {
@@ -1243,6 +1257,36 @@ export const ShareNftDocument = gql`
   }
 }
     `;
+export const BasicSearchDocument = gql`
+    query basicSearch($walletAddress: PublicKey!) {
+  nfts(owners: [$walletAddress], limit: 25, offset: 0) {
+    image
+    name
+    address
+    creators {
+      address
+      twitterHandle
+    }
+  }
+  wallet(address: $walletAddress) {
+    address
+    profile {
+      handle
+      profileImageUrl
+    }
+  }
+}
+    `;
+export const MetadataSearchDocument = gql`
+    query metadataSearch($term: String!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    category
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -1277,6 +1321,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     shareNFT(variables: ShareNftQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ShareNftQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ShareNftQuery>(ShareNftDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'shareNFT', 'query');
+    },
+    basicSearch(variables: BasicSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<BasicSearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<BasicSearchQuery>(BasicSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'basicSearch', 'query');
+    },
+    metadataSearch(variables: MetadataSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MetadataSearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MetadataSearchQuery>(MetadataSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'metadataSearch', 'query');
     }
   };
 }

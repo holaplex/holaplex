@@ -668,6 +668,20 @@ export type ShareNftQueryVariables = Exact<{
 
 export type ShareNftQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, auctionHouse?: { __typename?: 'AuctionHouse', address: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value: string, traitType: string }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, price: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, price: any }>, offers: Array<{ __typename?: 'BidReceipt', address: string, buyer: any, price: any }> } | null };
 
+export type BasicSearchQueryVariables = Exact<{
+  walletAddress: Scalars['PublicKey'];
+}>;
+
+
+export type BasicSearchQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', image: string, name: string, address: string, creators: Array<{ __typename?: 'NftCreator', address: string, twitterHandle?: string | null }> }>, wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } };
+
+export type MetadataSearchQueryVariables = Exact<{
+  term: Scalars['String'];
+}>;
+
+
+export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name?: string | null, address?: string | null, image?: string | null, category?: string | null }> };
+
 
 export const ActivityPageDocument = gql`
     query activityPage($address: PublicKey!) {
@@ -1506,3 +1520,89 @@ export function useShareNftLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<S
 export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
 export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
 export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;
+export const BasicSearchDocument = gql`
+    query basicSearch($walletAddress: PublicKey!) {
+  nfts(owners: [$walletAddress], limit: 25, offset: 0) {
+    image
+    name
+    address
+    creators {
+      address
+      twitterHandle
+    }
+  }
+  wallet(address: $walletAddress) {
+    address
+    profile {
+      handle
+      profileImageUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useBasicSearchQuery__
+ *
+ * To run a query within a React component, call `useBasicSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBasicSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBasicSearchQuery({
+ *   variables: {
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useBasicSearchQuery(baseOptions: Apollo.QueryHookOptions<BasicSearchQuery, BasicSearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BasicSearchQuery, BasicSearchQueryVariables>(BasicSearchDocument, options);
+      }
+export function useBasicSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BasicSearchQuery, BasicSearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BasicSearchQuery, BasicSearchQueryVariables>(BasicSearchDocument, options);
+        }
+export type BasicSearchQueryHookResult = ReturnType<typeof useBasicSearchQuery>;
+export type BasicSearchLazyQueryHookResult = ReturnType<typeof useBasicSearchLazyQuery>;
+export type BasicSearchQueryResult = Apollo.QueryResult<BasicSearchQuery, BasicSearchQueryVariables>;
+export const MetadataSearchDocument = gql`
+    query metadataSearch($term: String!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    category
+  }
+}
+    `;
+
+/**
+ * __useMetadataSearchQuery__
+ *
+ * To run a query within a React component, call `useMetadataSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMetadataSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMetadataSearchQuery({
+ *   variables: {
+ *      term: // value for 'term'
+ *   },
+ * });
+ */
+export function useMetadataSearchQuery(baseOptions: Apollo.QueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(MetadataSearchDocument, options);
+      }
+export function useMetadataSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(MetadataSearchDocument, options);
+        }
+export type MetadataSearchQueryHookResult = ReturnType<typeof useMetadataSearchQuery>;
+export type MetadataSearchLazyQueryHookResult = ReturnType<typeof useMetadataSearchLazyQuery>;
+export type MetadataSearchQueryResult = Apollo.QueryResult<MetadataSearchQuery, MetadataSearchQueryVariables>;
