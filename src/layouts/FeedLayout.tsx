@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { Tab } from '@headlessui/react';
 import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import NoFeed from '@/common/components/feed/NoFeed';
+import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 import {
   useAllConnectionsFromLazyQuery,

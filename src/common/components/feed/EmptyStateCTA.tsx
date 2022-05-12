@@ -13,7 +13,6 @@ export const EmptyStateCTA = (props: {
     >
       <h6 className={`text-center text-2xl font-semibold`}>{props.header}</h6>
       {props.body && <p className={`text-center text-base text-gray-300`}>{props.body}</p>}
-      {/* <Button>Follow top 10 profiles</Button> */}
       {props.action}
       {props.children}
     </div>

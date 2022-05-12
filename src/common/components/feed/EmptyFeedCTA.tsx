@@ -1,37 +1,28 @@
-import React, { FC, useState, useMemo, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '../elements/Button';
 import { User, shuffleArray } from './feed.utils';
 import { INFLUENTIAL_WALLETS } from './WhoToFollowList';
 import { useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
-import { useMakeConnection } from '@/common/hooks/useMakeConnection';
-import { toast } from 'react-toastify';
+
 import { Program } from '@holaplex/graph-program';
 import * as anchor from '@project-serum/anchor';
 import { Action, MultiTransactionContext } from '@/common/context/MultiTransaction';
 import { shortenAddress } from '@/modules/utils/string';
+import { EmptyStateCTA } from './EmptyStateCTA';
 
-const NoFeed = (props: { myFollowingList?: string[] }) => {
+const EmptyFeedCTA = (props: { myFollowingList?: string[] }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
 
   const myPubkey = anchorWallet?.publicKey.toBase58() || '';
 
-  /*   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
-   */
-  // const myFollowingList: string[] = [];
   const myFollowingList = props.myFollowingList;
-  // @ts-ignore
-  /*     allConnectionsFrom.data?.map((account) => account.account.to.toBase58()) || [];
-   */
+
   const [topProfilesToFollow, setTopProfilesToFollow] = useState<User[]>([]);
 
   useEffect(() => {
     if (!myFollowingList) return;
+    // Should probably move this up into a Feed context
     setTopProfilesToFollow(
       shuffleArray(INFLUENTIAL_WALLETS.filter((u) => !myFollowingList.includes(u.address))).slice(
         0,
@@ -41,15 +32,6 @@ const NoFeed = (props: { myFollowingList?: string[] }) => {
   }, [myFollowingList, myFollowingList?.length]);
 
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
-
-  // const follow = useMakeConnection(walletConnectionPair, {
-  //   onSuccess: async (txId, toWallet) => {
-  //     console.log(`Successfully followed ${toWallet}`)
-  //   },
-  //   onError: (err, toWallet) => {
-  //     console.error(err)
-  //   }
-  // })
 
   const followMultiple = async () => {
     if (!myPubkey || !anchorWallet || !topProfilesToFollow) {
@@ -124,20 +106,25 @@ const NoFeed = (props: { myFollowingList?: string[] }) => {
   };
 
   return (
-    <div
+    <EmptyStateCTA
+      header="Not following anyone yet"
+      body="Follow your favorite collectors and creators, or get started by following some artists and collectors"
+    >
+      <Button loading={hasActionPending} onClick={followMultiple}>
+        Follow top 5 profiles
+      </Button>
+    </EmptyStateCTA>
+    /*     <div
       className={`flex w-full flex-col items-center gap-6 rounded-lg border border-dashed border-gray-300 p-4`}
     >
       <h6 className={`text-center text-2xl font-semibold`}>Not following anyone yet</h6>
       <p className={`text-center text-base text-gray-300`}>
         Follow your favorite collectors and creators, or get started by following some artists and
         collectors
-        {/* the top 10 collectors on Holaplex */}
+
       </p>
-      <Button loading={hasActionPending} onClick={followMultiple}>
-        Follow top 5 profiles
-      </Button>
-    </div>
+    </div> */
   );
 };
 
-export default NoFeed;
+export default EmptyFeedCTA;

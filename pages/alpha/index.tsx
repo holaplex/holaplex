@@ -8,7 +8,12 @@ import {
   useAllConnectionsFromLazyQuery,
   useFeedLazyQuery,
 } from 'src/graphql/indexerTypes';
-import { FeedCard, ProfilePFP } from '@/common/components/feed/FeedCard';
+import {
+  FeedCard,
+  LoadingFeedCard,
+  LoadingFeedItem,
+  ProfilePFP,
+} from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
   FeedCardAttributes,
@@ -18,8 +23,6 @@ import {
   shouldAggregate,
 } from '@/common/components/feed/feed.utils';
 
-import { LoadingFeedCard, LoadingFeedItem } from '../../src/common/components/feed/LoadingFeed';
-import NoFeed from '../../src/common/components/feed/NoFeed';
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
@@ -28,6 +31,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
 import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import Link from 'next/link';
+import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
 
@@ -86,15 +90,22 @@ const FeedPage = ({ address }: { address: string }) => {
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
 
-  // will be used when we start to poll for new events
-  // const [feedEvents, setFeedEvents] = useState(data?.feedEvents || []);
+  // Effect to check connection 2 seconds after loading
+  useEffect(() => {
+    let timerId: any;
+    if (!myPubkey) {
+      timerId = setTimeout(() => {
+        if (!myPubkey) {
+          setShowConnectCTA(true);
+        }
+      }, 2000);
+    } else {
+      setShowConnectCTA(false);
+    }
 
-  /*   useEffect(() => {
-    setTimeout(() => {
-      setShowConnectCTA(!connected);
-    }, 2000);
-  }, []);
- */
+    return () => clearTimeout(timerId);
+  }, [myPubkey]);
+
   useEffect(() => {
     if (anchorWallet) {
       feedQuery();
@@ -243,7 +254,9 @@ const FeedPage = ({ address }: { address: string }) => {
                 <LoadingFeedCard />
               </>
             )}
-            {feedItems.length === 0 && !loading && <NoFeed myFollowingList={myFollowingList} />}
+            {feedItems.length === 0 && !loading && (
+              <EmptyFeedCTA myFollowingList={myFollowingList} />
+            )}
             {feedItems.slice(0, fetchMoreIndex).map((fEvent) => (
               <FeedCard key={fEvent.feedEventId} event={fEvent} myFollowingList={myFollowingList} />
             ))}
