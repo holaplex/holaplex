@@ -579,6 +579,7 @@ export type WalletNftCountsArgs = {
 
 export type WalletNftCount = {
   __typename?: 'WalletNftCount';
+  created: Scalars['Int'];
   listed: Scalars['Int'];
   offered: Scalars['Int'];
   owned: Scalars['Int'];
@@ -629,6 +630,7 @@ export type WalletProfileQueryVariables = Exact<{
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
 export type FeaturedProfilesQueryVariables = Exact<{
+  userWallet?: InputMaybe<Scalars['PublicKey']>;
   limit: Scalars['Int'];
 }>;
 
@@ -647,7 +649,7 @@ export type ProfilePreviewQueryVariables = Exact<{
 }>;
 
 
-export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number } } };
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -917,8 +919,8 @@ export const WalletProfileDocument = gql`
 }
     `;
 export const FeaturedProfilesDocument = gql`
-    query featuredProfiles($limit: Int!) {
-  followWallets(limit: $limit, offset: 0) {
+    query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
     address
   }
 }
@@ -954,6 +956,7 @@ export const ProfilePreviewDocument = gql`
     address
     nftCounts {
       owned
+      created
     }
   }
 }

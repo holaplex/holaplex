@@ -8,6 +8,7 @@ query profilePreview($address: PublicKey!) {
     address
     nftCounts {
       owned
+      created
     }
   }
 }

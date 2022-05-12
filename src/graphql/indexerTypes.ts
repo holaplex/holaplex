@@ -579,6 +579,7 @@ export type WalletNftCountsArgs = {
 
 export type WalletNftCount = {
   __typename?: 'WalletNftCount';
+  created: Scalars['Int'];
   listed: Scalars['Int'];
   offered: Scalars['Int'];
   owned: Scalars['Int'];
@@ -629,6 +630,7 @@ export type WalletProfileQueryVariables = Exact<{
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
 export type FeaturedProfilesQueryVariables = Exact<{
+  userWallet?: InputMaybe<Scalars['PublicKey']>;
   limit: Scalars['Int'];
 }>;
 
@@ -647,7 +649,7 @@ export type ProfilePreviewQueryVariables = Exact<{
 }>;
 
 
-export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number } } };
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -1035,8 +1037,8 @@ export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQue
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
 export const FeaturedProfilesDocument = gql`
-    query featuredProfiles($limit: Int!) {
-  followWallets(limit: $limit, offset: 0) {
+    query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
     address
   }
 }
@@ -1054,6 +1056,7 @@ export const FeaturedProfilesDocument = gql`
  * @example
  * const { data, loading, error } = useFeaturedProfilesQuery({
  *   variables: {
+ *      userWallet: // value for 'userWallet'
  *      limit: // value for 'limit'
  *   },
  * });
@@ -1128,6 +1131,7 @@ export const ProfilePreviewDocument = gql`
     address
     nftCounts {
       owned
+      created
     }
   }
 }
