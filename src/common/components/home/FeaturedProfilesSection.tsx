@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, VFC } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { getFallbackImage } from '@/modules/utils/image';
@@ -7,27 +7,50 @@ import { useFeaturedProfilesQuery, useProfilePreviewQuery } from 'src/graphql/in
 import { AvatarImage } from '../elements/Avatar';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import {
+  AnchorWallet,
+  useAnchorWallet,
+  useConnection,
+  useWallet,
+  WalletContextState,
+} from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
 import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import classNames from 'classnames';
 import Link from 'next/link';
 
+const CAROUSEL_ROWS: number = 2;
+const CAROUSEL_COLS: number = 3;
+const CAROUSEL_PAGES: number = 2;
+
 const FeaturedProfilesSection: VFC = () => {
+  const wallet: WalletContextState = useWallet();
+  const [featuredProfiles, setFeaturedProfiles] = useState<FeaturedProfilesData>([]);
+
   const dataQuery = useFeaturedProfilesQuery({
     variables: {
-      limit: 12,
+      userWallet: wallet?.publicKey,
+      limit: CAROUSEL_PAGES * CAROUSEL_COLS * CAROUSEL_ROWS,
     },
   });
-  let data: FeaturedProfilesData = dataQuery?.data?.followWallets
-    ? (dataQuery.data.followWallets as FeaturedProfilesData)
-    : [];
-  const loading: boolean = dataQuery?.loading;
 
-  if (loading) {
-    data = [];
-  }
+  // get featured profiles once on page load and anytime later when the wallet has been (dis)connected
+  // by making the wallet pubkey one of the dependencies
+  useEffect(() => {
+    if (dataQuery.data?.followWallets && (dataQuery.data.followWallets.length > 0)) {
+      setFeaturedProfiles(dataQuery.data.followWallets as FeaturedProfilesData);
+    }
+  }, [wallet?.publicKey, setFeaturedProfiles, dataQuery.data?.followWallets]); 
+
+  // when the server returns a profile with insufficient data to display the
+  //  preview, remove it from the carousel
+  const onInsufficientDataForAProfile = useCallback<(profileAddress: string) => void>(
+    (profileAddress) => {
+      setFeaturedProfiles(featuredProfiles.filter((p) => p.address !== profileAddress));
+    },
+    [featuredProfiles]
+  );
 
   return (
     <HomeSection>
@@ -38,11 +61,14 @@ const FeaturedProfilesSection: VFC = () => {
         </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
-        <HomeSectionCarousel rows={2} cols={3}>
-          {data.map((s) => (
+        <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
+          {featuredProfiles.map((s) => (
             <HomeSectionCarousel.Item key={s.address}>
               <div className="p-2 md:p-3">
-                <ProfilePreview address={s.address} />
+                <ProfilePreview
+                  address={s.address}
+                  onInsufficientData={onInsufficientDataForAProfile}
+                />
               </div>
             </HomeSectionCarousel.Item>
           ))}
@@ -54,9 +80,10 @@ const FeaturedProfilesSection: VFC = () => {
 
 interface ProfilePreviewProps {
   address: string;
+  onInsufficientData: (address: string) => void;
 }
 
-const ProfilePreview: FC<ProfilePreviewProps> = ({ address }) => {
+const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }) => {
   const { track } = useAnalytics();
   const dataQuery = useProfilePreviewQuery({
     variables: {
@@ -67,6 +94,12 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address }) => {
     ? (dataQuery.data.wallet as ProfilePreviewData)
     : undefined;
   const loading: boolean = dataQuery?.loading;
+
+  useEffect(() => {
+    if (!loading && !previewDataAreSufficient(data)) {
+      onInsufficientData(address);
+    }
+  }, [address, data, onInsufficientData, loading]);
 
   const onClickProfileLink = useCallback(() => {
     track('Profile Selected', {
@@ -79,7 +112,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address }) => {
     return <LoadingPreview />;
   }
 
-  // sufficient data are available after checking dataAreSufficient()
+  // sufficient data are available after checking previewDataAreSufficient()
   data = data!;
 
   const profileUrl: string = `/profiles/${data.address}`;
@@ -195,6 +228,10 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
 
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(targetPubkey, connection);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(targetPubkey, connection);
+
+  if (!userWallet || !userWallet.publicKey) {
+    return null;
+  }
 
   if (allConnectionsTo.error) {
     console.error(allConnectionsTo.error);
