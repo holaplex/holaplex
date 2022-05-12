@@ -134,12 +134,16 @@ export function generateFeedCardAtributes(
   }
 }
 
-export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent) {
-  if (!e1 || !e2) return false;
+export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: FeedQueryEvent) {
+  // for now
+
+  if (!e1 || !e2 || !e3) return false;
+
   return (
-    e1.__typename === 'MintEvent' &&
-    e2.__typename === 'MintEvent' &&
-    e1.nft?.creators[0].address === e2.nft?.creators[0].address
+    e1.__typename === e2.__typename &&
+    e2.__typename == e3.__typename &&
+    e1.walletAddress === e2.walletAddress &&
+    e2.walletAddress === e3.walletAddress
   );
 }
 

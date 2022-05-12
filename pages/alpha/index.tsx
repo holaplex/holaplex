@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
-  useFeedQuery,
   FeedQuery,
   useAllConnectionsFromQuery,
   useAllConnectionsFromLazyQuery,
@@ -65,17 +64,18 @@ const FeedPage = ({ address }: { address: string }) => {
   });
   const feedEvents = data?.feedEvents ?? [];
 
+  // Switching to this as soon as we get it to auoto refetch on new follows
   /*   const [connectionQuery, { data: myConnectionsFromData, refetch }] =
     useAllConnectionsFromLazyQuery({
       variables: {
         from: anchorWallet?.publicKey.toBase58(),
       },
-    }); */
+    });
 
   // API is returning duplicates for some reason
-  /* const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
-      ...new Set(myConnectionsFromData?.connections.map((c) => c.to.address)),
-    ]; */
+  const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
+    ...new Set(myConnectionsFromData?.connections.map((c) => c.to.address)),
+  ]; */
 
   const allConnectionsFromQuery = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
   const myFollowingList =
@@ -83,8 +83,6 @@ const FeedPage = ({ address }: { address: string }) => {
       ? // we need to keep this undefined until the list is actually loaded
         undefined
       : allConnectionsFromQuery.data?.map((u) => u.account.to.toBase58());
-
-  console.log('myFollowingList render', myFollowingList);
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
 
@@ -100,7 +98,7 @@ const FeedPage = ({ address }: { address: string }) => {
   useEffect(() => {
     if (anchorWallet) {
       feedQuery();
-      //       connectionQuery();
+      /* connectionQuery(); */
     }
   }, [anchorWallet]);
 
@@ -171,28 +169,38 @@ const FeedPage = ({ address }: { address: string }) => {
         !event.connection
         // make sure the event is unique // will also be fixed serverside at some point
         // || feedEvents.findIndex((e) => event.feedEventId === e.feedEventId) === i
-      )
+      ) {
         return feedItems;
+      }
+
+      const noAggregation = true;
+      if (noAggregation) {
+        feedItems.push(event);
+        return feedItems;
+      }
+      // for now we do no aggregation, simply make sure events are valid
       const attrs = generateFeedCardAtributes(event);
       feedAttrs.push(attrs);
 
       if (skipIndex > i) return feedItems;
       // const cur = feedEvents[i];
       const nextEvent = feedEvents[i + 1];
+      const nextNextEvent = feedEvents[i + 2];
       feedItems.push(event);
 
-      if (shouldAggregate(event, nextEvent)) {
+      if (shouldAggregate(event, nextEvent, nextNextEvent)) {
         // const eventsAggregated: FeedQueryEvent[] = feedEvents
         //   .slice(i)
         //   .filter((fe, i, arr) => shouldAggregate(fe, arr[i + 1]));
         const eventsAggregated: FeedQueryEvent[] = [feedEvents[i]];
         let j = i + 1;
-        while (shouldAggregate(feedEvents[j], feedEvents[j + 1])) {
+        while (shouldAggregate(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
           eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
           j++;
         }
         eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
-        skipIndex = j + 1;
+        eventsAggregated.push(feedEvents[j + 1] as FeedQueryEvent);
+        skipIndex = j + 2;
 
         feedItems.push({
           feedEventId: 'agg_' + event.feedEventId,
@@ -235,7 +243,7 @@ const FeedPage = ({ address }: { address: string }) => {
                 <LoadingFeedCard />
               </>
             )}
-            {feedItems.length === 0 && !loading && <NoFeed />}
+            {feedItems.length === 0 && !loading && <NoFeed myFollowingList={myFollowingList} />}
             {feedItems.slice(0, fetchMoreIndex).map((fEvent) => (
               <FeedCard key={fEvent.feedEventId} event={fEvent} myFollowingList={myFollowingList} />
             ))}

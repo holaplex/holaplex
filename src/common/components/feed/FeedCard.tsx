@@ -135,25 +135,15 @@ function FollowCard(props: {
       />
       <div className="ml-4">
         <div className="text-base font-semibold">
-          {/* {attrs.content} */}
-          {/* Started following
-              {attrs.toUser?.profile?.handle || shortenAddress(attrs.toUser.address)} */}
-          Followed{' '}
-          {/* <Link href={'/profiles/' + attrs.toUser?.address}>
-            <a target="_blank">{getHandle(attrs.toUser!)}</a>
-          </Link> */}
-          <ProfileHandle address={attrs.toUser!.address} />
+          Followed <ProfileHandle user={attrs.toUser!} />
         </div>
         <div className="flex space-x-4 text-sm">
-          {/*           <Link href={'/profiles/' + attrs.sourceUser.address + '/nfts'} passHref>
-            <a target="_blank" className="font-medium">
-              {getHandle({
-                address: props.event.walletAddress,
-                profile: props.event.profile,
-              })}
-            </a>
-          </Link> */}
-          <ProfileHandle address={props.event.walletAddress} />
+          <ProfileHandle
+            user={{
+              address: props.event.walletAddress,
+              profile: props.event.profile,
+            }}
+          />
           <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
         </div>
       </div>
@@ -174,12 +164,20 @@ function FollowCard(props: {
   );
 }
 
-export const ProfileHandle = (props: { address: string }) => {
-  const { data: twitterHandle } = useTwitterHandle(null, props.address);
+export const ProfileHandle = ({ user }: { user: User }) => {
+  const { connection } = useConnection();
+  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
+  useEffect(() => {
+    if (!twitterHandle) {
+      getTwitterHandle(user.address, connection).then((th) => {
+        if (th) setTwitterHandle(th);
+      });
+    }
+  }, []);
 
   return (
-    <Link href={'/profiles/' + props.address + '/nfts'} passHref>
-      <a>{(twitterHandle && '@' + twitterHandle) || shortenAddress(props.address)}</a>
+    <Link href={'/profiles/' + user.address + '/nfts'} passHref>
+      <a>{(twitterHandle && '@' + twitterHandle) || shortenAddress(user.address)}</a>
     </Link>
   );
 };
@@ -226,7 +224,7 @@ function FeedActionBanner(props: {
         <div className="text-base font-semibold">{attrs.content}</div>
         <div className="flex text-sm">
           {/* {getHandle(attrs.sourceUser)}  */}
-          <ProfileHandle address={attrs.sourceUser.address} />
+          <ProfileHandle user={attrs.sourceUser} />
           &nbsp;
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
@@ -340,13 +338,13 @@ const OfferAction = (props: { nft: any }) => {
 };
 
 export function ProfilePFP({ user }: { user: User }) {
-  // some of these hooks could probably be lifted up, but keeping it here for simplicity
+  // Note, we only invoke extra queries if the prop user does not have necceary info
   const { connection } = useConnection();
-  const [twitterHandle, setTwitterHandle] = useState<string | undefined>(user.profile?.handle);
-  /* user.profile?.handle */
+  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [pfpUrl, setPfpUrl] = useState(
     user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
   );
+
   useEffect(() => {
     if (!twitterHandle) {
       getTwitterHandle(user.address, connection).then((twitterHandle) => {
@@ -372,8 +370,6 @@ export function ProfilePFP({ user }: { user: User }) {
   }, [twitterHandle]);
 
   /*  const { track } = useAnalytics(); // track navigation to profile from pfp */
-
-  // const { data: twitterHandle } = useTwitterHandle(null, user.address);
 
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>

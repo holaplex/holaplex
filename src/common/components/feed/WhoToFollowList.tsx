@@ -116,7 +116,6 @@ export default function WhoToFollowList(props: { myFollowingList?: string[] }) {
 
   const myFollowingList = props.myFollowingList || [];
 
-  if (!anchorWallet) return null;
   return (
     <div>
       <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
@@ -140,14 +139,15 @@ export default function WhoToFollowList(props: { myFollowingList?: string[] }) {
           </>
         )}
 
-        {topProfilesToFollow.map((u) => (
-          <FollowListItem
-            key={u.address}
-            user={u}
-            walletConnectionPair={walletConnectionPair}
-            myFollowingList={myFollowingList}
-          />
-        ))}
+        {anchorWallet &&
+          topProfilesToFollow.map((u) => (
+            <FollowListItem
+              key={u.address}
+              user={u}
+              walletConnectionPair={walletConnectionPair}
+              myFollowingList={myFollowingList}
+            />
+          ))}
       </div>
     </div>
   );
@@ -326,7 +326,7 @@ export const INFLUENTIAL_WALLETS: /* Partial<WhoToFollowQuery['followWallets']> 
     {
       address: 'B3jtSCpXQpMZR5r5m87854bgMj5veHwz9idjd22eVrP7',
       profile: {
-        // handle: 'kknorikami',
+        handle: 'kknorikami',
       },
     },
     {
