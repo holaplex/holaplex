@@ -1,14 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
-import '@dialectlabs/react-ui/index.css';
-import { useRouter } from 'next/router';
+// ts/next fails to find this css module using import
+require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import styled from 'styled-components';
 import { Layout } from 'antd';
-import { isNil } from 'ramda';
 import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
