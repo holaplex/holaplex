@@ -55,6 +55,7 @@ export const ProfileImage = () => {
 
 const ProfileImageWrapper = styled.button`
   ${ButtonReset};
+  min-width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;

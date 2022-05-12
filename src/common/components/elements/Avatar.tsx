@@ -85,11 +85,18 @@ export const Avatar = ({
   address,
   showAddress = true,
   border = false,
+  size = 'sm',
 }: {
   border?: boolean;
   address: string;
   showAddress?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }) => {
+  const sizes = {
+    sm: 'h-6 w-6',
+    md: 'h-10 w-10',
+    lg: 'h-16 w-16',
+  };
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
   const { publicKey } = useWallet();
@@ -114,8 +121,7 @@ export const Avatar = ({
 
   return (
     <div className="flex items-center">
-      {/* Avatar container to set size */}
-      <div className="h-6 w-6">
+      <div className={`flex ${sizes[size]}`}>
         <AvatarImage src={profilePictureUrl ?? getPFPFromPublicKey(address)} border={border} />
       </div>
 
