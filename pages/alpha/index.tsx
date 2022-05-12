@@ -69,7 +69,7 @@ const FeedPage = ({ address }: { address: string }) => {
   const feedEvents = data?.feedEvents ?? [];
 
   // Switching to this as soon as we get it to auoto refetch on new follows
-  /*   const [connectionQuery, { data: myConnectionsFromData, refetch }] =
+  const [connectionQuery, { data: myConnectionsFromData, refetch }] =
     useAllConnectionsFromLazyQuery({
       variables: {
         from: anchorWallet?.publicKey.toBase58(),
@@ -79,14 +79,14 @@ const FeedPage = ({ address }: { address: string }) => {
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
     ...new Set(myConnectionsFromData?.connections.map((c) => c.to.address)),
-  ]; */
+  ];
 
-  const allConnectionsFromQuery = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
+  /*  const allConnectionsFromQuery = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
   const myFollowingList =
     !allConnectionsFromQuery.isFetched || !myPubkey
       ? // we need to keep this undefined until the list is actually loaded
         undefined
-      : allConnectionsFromQuery.data?.map((u) => u.account.to.toBase58());
+      : allConnectionsFromQuery.data?.map((u) => u.account.to.toBase58()); */
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
 
@@ -109,7 +109,7 @@ const FeedPage = ({ address }: { address: string }) => {
   useEffect(() => {
     if (anchorWallet) {
       feedQuery();
-      /* connectionQuery(); */
+      connectionQuery();
     }
   }, [anchorWallet]);
 
@@ -176,10 +176,9 @@ const FeedPage = ({ address }: { address: string }) => {
     return feedEvents.reduce((feedItems, event, i) => {
       if (
         // remove malformed follow events until we fix it serverside
-        event.__typename === 'FollowEvent' &&
-        !event.connection
+        (event.__typename === 'FollowEvent' && !event.connection) ||
         // make sure the event is unique // will also be fixed serverside at some point
-        // || feedEvents.findIndex((e) => event.feedEventId === e.feedEventId) === i
+        feedEvents.findIndex((e) => event.feedEventId === e.feedEventId) === i
       ) {
         return feedItems;
       }
@@ -254,19 +253,38 @@ const FeedPage = ({ address }: { address: string }) => {
                 <LoadingFeedCard />
               </>
             )}
-            {feedItems.length === 0 && !loading && (
+            {feedEvents.length === 0 && !loading && (
               <EmptyFeedCTA myFollowingList={myFollowingList} />
             )}
             {feedItems.slice(0, fetchMoreIndex).map((fEvent) => (
-              <FeedCard key={fEvent.feedEventId} event={fEvent} myFollowingList={myFollowingList} />
+              <div key={fEvent.feedEventId} id={fEvent.feedEventId}>
+                <FeedCard
+                  key={fEvent.feedEventId}
+                  event={fEvent}
+                  myFollowingList={myFollowingList}
+                />
+              </div>
             ))}
+
+            {/*         
+Seems to cause duplicate events, need to figure it out
+<InView threshold={0.1} onChange={loadMore}>
+              <div></div>
+            </InView> */}
+            {feedItems.slice(fetchMoreIndex).map((fEvent) => (
+              <div key={fEvent.feedEventId} id={fEvent.feedEventId}>
+                <FeedCard
+                  key={fEvent.feedEventId}
+                  event={fEvent}
+                  myFollowingList={myFollowingList}
+                />
+              </div>
+            ))}
+            {/* In case you manage to jump over the midway loadpoint */}
             <InView threshold={0.1} onChange={loadMore}>
               <div></div>
             </InView>
-            {feedItems.slice(fetchMoreIndex).map((fEvent) => (
-              <FeedCard key={fEvent.feedEventId} event={fEvent} myFollowingList={myFollowingList} />
-            ))}
-            {hasMoreFeedEvents && loading && feedEvents.length > 0 && (
+            {hasMoreFeedEvents && feedItems.length > 0 && (
               <>
                 <LoadingFeedCard />
                 <LoadingFeedItem />
@@ -288,7 +306,7 @@ const FeedPage = ({ address }: { address: string }) => {
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
           <WhoToFollowList myFollowingList={myFollowingList} />
           {/* <MyActivityList /> */}
-          {/* <TestFeeds /> */}
+          {/*     <TestFeeds /> */}
           <div className="relative  py-10 ">
             <div className="absolute  inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-gray-800" />

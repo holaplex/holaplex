@@ -12,6 +12,8 @@ import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import classNames from 'classnames';
+import { useApolloClient } from '@apollo/client';
+import { AllConnectionsFromDocument, AllConnectionsToDocument } from 'src/graphql/indexerTypes';
 
 type FollowUnfollowButtonProps = {
   source: 'modalFrom' | 'modalTo' | 'profileButton' | 'feed' | 'whotofollow';
@@ -48,6 +50,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const trackInitiateTransaction = () => track(type + ' initiated', sharedTrackingParams);
   const trackSuccess = () => track(type + ' succeeded', sharedTrackingParams);
   const trackError = () => track(type + ' errored', sharedTrackingParams);
+  const apolloClient = useApolloClient();
 
   const connectTo = useMakeConnection(walletConnectionPair, {
     onSuccess: async (txId, toWallet) => {
@@ -67,6 +70,10 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       );
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
+      await apolloClient.refetchQueries({
+        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+      });
+
       trackSuccess();
       toast(
         <SuccessToast>
@@ -110,6 +117,9 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       }
 
       await queryClient.invalidateQueries();
+      await apolloClient.refetchQueries({
+        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+      });
 
       trackSuccess();
       toast(
