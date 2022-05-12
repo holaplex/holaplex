@@ -141,6 +141,33 @@ export default function NftByAddress({
 
   const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
 
+  useEffect(() => {
+    if (!address) return;
+
+    try {
+      queryNft({
+        variables: {
+          subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+          address,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+      // Bugsnag.notify(error);
+    }
+  }, [address, queryNft]);
+
+  useEffect(() => {
+    window.scroll({
+      top: 0,
+      left: 0,
+    });
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [router, router.push, refetch]);
+
   const [imgLoaded, setImgLoaded] = useState(false);
   const [offerModalVisibility, setOfferModalVisibility] = useState(false);
   const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
@@ -170,33 +197,6 @@ export default function NftByAddress({
     setOfferModalVisibility(false);
     setOfferUpdateModalVisibility(true);
   };
-
-  useEffect(() => {
-    if (!address) return;
-
-    try {
-      queryNft({
-        variables: {
-          subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-          address,
-        },
-      });
-    } catch (error: any) {
-      console.error(error);
-      // Bugsnag.notify(error);
-    }
-  }, [address, queryNft]);
-
-  useEffect(() => {
-    window.scroll({
-      top: 0,
-      left: 0,
-    });
-  }, []);
-
-  useEffect(() => {
-    refetch();
-  }, [router, router.push, refetch]);
 
   const updateListingFromCancel = () => {
     setSellCancelModalVisibility(false);

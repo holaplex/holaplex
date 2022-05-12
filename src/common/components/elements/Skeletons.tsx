@@ -27,7 +27,7 @@ export const OverlappingAvatarSkeleton: FC<OverlappingAvatarSkeletonProps> = ({
 
 interface TextSkeletonProps {
   height?: 4 | 5 | 6 | 7 | 8;
-  width?: 12 | 16 | 24 | 36 | 60;
+  width?: 12 | 16 | 24 | 36 | 64;
 }
 
 export const TextSkeleton: FC<TextSkeletonProps> = ({ height = 5, width = 24 }) => {
