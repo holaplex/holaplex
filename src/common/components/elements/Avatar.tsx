@@ -116,7 +116,6 @@ export const Avatar = ({
     });
   }, [queryWalletProfile, twitterHandle]);
 
-  useEffect(() => {}, [twitterHandle]);
   const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
 
   return (

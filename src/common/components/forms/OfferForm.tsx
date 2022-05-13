@@ -34,13 +34,19 @@ export type None = {};
 interface OfferFormProps {
   nft?: Nft | null;
   marketplace: Marketplace;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
+  reroute?: boolean;
 }
 
-const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
+const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = true }) => {
   const [loading, setLoading] = useState(false);
+
+  console.log('offer form', {
+    nft,
+    marketplace,
+  });
 
   const schema = zod.object({
     amount: zod
@@ -68,6 +74,12 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
+    console.log('onOffer', {
+      myPubkey: publicKey?.toBase58(),
+      nft,
+      amount,
+      marketplace,
+    });
     if (nft) {
       await sdk.offers(marketplace.auctionHouse).make({ amount, nft });
     }
@@ -107,7 +119,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch }) => {
       });
     } catch (err: any) {
     } finally {
-      router.push(`/nfts/${nft.address}`);
+      if (reroute === true) router.push(`/nfts/${nft.address}`);
     }
   };
 

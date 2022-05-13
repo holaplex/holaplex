@@ -270,7 +270,7 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
           connection: Connection;
         }
       }
-      toProfile={{ pubkey: targetPubkey }}
+      toProfile={{ address : targetPubkey }}
       type={userIsFollowingProfile ? 'Unfollow' : 'Follow'}
       className={classNames(className, { hidden: hideButton })}
     />

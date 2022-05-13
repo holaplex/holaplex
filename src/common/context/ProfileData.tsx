@@ -19,7 +19,7 @@ export const useProfileData = () => {
 };
 
 export const asProfile = (input: WalletDependantPageProps): IProfile => ({
-  pubkey: input.publicKey,
+  address: input.publicKey,
   handle: input.twitterHandle,
   pfp: input.profilePicture,
 });

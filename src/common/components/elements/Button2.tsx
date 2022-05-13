@@ -38,7 +38,7 @@ export function Button5({
   onClick,
   ...props
 }: {
-  onClick: (...args: any) => void;
+  onClick?: (...args: any) => void;
   className?: string;
   children: any;
   disabled?: boolean;
