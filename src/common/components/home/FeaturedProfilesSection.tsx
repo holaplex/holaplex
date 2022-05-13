@@ -116,7 +116,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
   data = data!;
 
   const profileUrl: string = `/profiles/${data.address}`;
-  const handleString: string = data.profile.handle
+  const handleString: string = data.profile?.handle
     ? `@${data.profile.handle}`
     : showFirstAndLastFour(data.address);
   const ownNftsString: string = (data.nftCounts.owned ?? 0).toLocaleString();
@@ -136,11 +136,11 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </Link>
         {/* preview image */}
-        <div className="relative flex h-[47%]">
+        <div className="relative h-[47%] overflow-clip">
           <img
-            src={data.profile.bannerImageUrl}
+            src={data.profile?.bannerImageUrl ?? getFallbackImage()}
             alt={`${data.address} banner`}
-            className="min-h-full min-w-full object-cover"
+            className="flex min-h-full min-w-full object-cover"
             // provide a fallback image in case the banner isnt found
             onError={({ currentTarget }) => {
               // null onerror to prevent looping in worst case
@@ -148,9 +148,6 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
               currentTarget.src = getFallbackImage();
             }}
           />
-
-          {/* preview gradient overlay */}
-          <div className="absolute h-full w-full bg-gradient-to-b from-black/20 to-black/70" />
         </div>
 
         {/* profile handle, follow, stats box */}
@@ -161,7 +158,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
           <div className="absolute bottom-0 p-2 2xl:p-6">
             <div className="flex flex-col">
-              <span className="flet text-lg 2xl:text-2xl">{handleString}</span>
+              <span className="flex text-lg 2xl:text-2xl">{handleString}</span>
               <div className="mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
                 <span>
                   <span className="font-semibold text-white">{ownNftsString}</span>
@@ -179,7 +176,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
         {/* profile icon  */}
         <div className="absolute left-3 top-1/2 aspect-square h-[22%] -translate-y-1/2">
           <AvatarImage
-            src={data.profile.profileImageUrl ?? getFallbackImage()}
+            src={data.profile?.profileImageUrl ?? getFallbackImage()}
             border
             borderClass="border-4 border-gray-900"
           />
@@ -193,8 +190,7 @@ function previewDataAreSufficient(data?: ProfilePreviewData): boolean {
   return (
     data != undefined &&
     data.address != undefined &&
-    data.nftCounts != undefined &&
-    data.profile != undefined
+    data.nftCounts != undefined
   );
 }
 
