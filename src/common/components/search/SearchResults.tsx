@@ -43,6 +43,8 @@ const SearchResults: FC<SearchResultsProps> = ({ results, profileResults }) => {
             <>
               {nft.address && nft.image && nft.name && (
                 <NFTSearchItem
+                  creatorHandle={nft.creatorTwitterHandle}
+                  creatorAddress={nft.creatorAddress}
                   key={nft.address}
                   address={nft.address}
                   image={nft.image}
