@@ -60,6 +60,7 @@ const FeedPage = ({ address }: { address: string }) => {
   const [showConnectCTA, setShowConnectCTA] = useState(false);
 
   const [feedQuery, { data, loading, called, fetchMore }] = useFeedLazyQuery({
+    notifyOnNetworkStatusChange: true,
     variables: {
       address: myPubkey,
       offset: 0,
@@ -72,7 +73,7 @@ const FeedPage = ({ address }: { address: string }) => {
   const [connectionQuery, { data: myConnectionsFromData, refetch }] =
     useAllConnectionsFromLazyQuery({
       variables: {
-        from: anchorWallet?.publicKey.toBase58(),
+        from: anchorWallet?.publicKey.toBase58() || myPubkey,
       },
     });
 
@@ -107,11 +108,11 @@ const FeedPage = ({ address }: { address: string }) => {
   }, [myPubkey]);
 
   useEffect(() => {
-    if (anchorWallet) {
+    if (myPubkey) {
       feedQuery();
       connectionQuery();
     }
-  }, [anchorWallet]);
+  }, [myPubkey]);
 
   const { setVisible } = useWalletModal();
   if (showConnectCTA) {

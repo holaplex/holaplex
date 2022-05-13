@@ -60,8 +60,6 @@ export default function WhoToFollowList(props: { myFollowingList?: string[] }) {
     [anchorWallet, connection]
   );
 
-  const myPubkey = anchorWallet?.publicKey.toBase58() || '';
-
   /*   const { data } = useWhoToFollowQuery(); */
 
   const [topProfilesToFollow, setTopProfilesToFollow] = useState<User[]>(
@@ -148,6 +146,7 @@ export default function WhoToFollowList(props: { myFollowingList?: string[] }) {
               myFollowingList={myFollowingList}
             />
           ))}
+        {!anchorWallet && myFollowingList && <div>Connect wallet to see suggestions</div>}
       </div>
     </div>
   );

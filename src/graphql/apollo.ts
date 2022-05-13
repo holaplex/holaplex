@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { offsetLimitPagination } from '@apollo/client/utilities';
 import { asBN } from '../modules/utils';
 
 export const apolloClient = new ApolloClient({
