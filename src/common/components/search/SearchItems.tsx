@@ -56,7 +56,7 @@ export const NFTSearchItem: FC<NFTSearchItemProps> = ({
           <p className={`m-0 text-sm`}>{name}</p>
         </div>
         <p className={`m-0 hidden text-sm text-gray-300 md:inline-block`}>
-          {creatorHandle ? `@${creatorHandle}` : address ? shortenAddress(address) : null}
+          {creatorHandle ? `@${creatorHandle}` : creatorAddress ? shortenAddress(creatorAddress) : null}
         </p>
       </a>
     </Link>

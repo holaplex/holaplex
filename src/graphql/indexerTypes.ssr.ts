@@ -217,12 +217,12 @@ export type Marketplace = {
 
 export type MetadataJson = {
   __typename?: 'MetadataJson';
-  address?: Maybe<Scalars['String']>;
-  attributes?: Maybe<Array<NftAttribute>>;
-  category?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  address: Scalars['String'];
+  creatorAddress: Scalars['String'];
+  creatorTwitterHandle?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  mintAddress: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type MintEvent = {
@@ -579,6 +579,7 @@ export type WalletNftCountsArgs = {
 
 export type WalletNftCount = {
   __typename?: 'WalletNftCount';
+  created: Scalars['Int'];
   listed: Scalars['Int'];
   offered: Scalars['Int'];
   owned: Scalars['Int'];
@@ -713,7 +714,7 @@ export type MetadataSearchQueryVariables = Exact<{
 }>;
 
 
-export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name?: string | null, address?: string | null, image?: string | null, category?: string | null }> };
+export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }> };
 
 export type ProfileSearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -1573,7 +1574,8 @@ export const MetadataSearchDocument = gql`
     name
     address
     image
-    category
+    creatorAddress
+    creatorTwitterHandle
   }
 }
     `;
