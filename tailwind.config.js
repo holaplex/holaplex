@@ -3,6 +3,7 @@ const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
+  safelist: ['z-0', 'z-10', 'z-20', 'z-30', 'z-40', 'z-50'],
   theme: {
     extend: {
       // look here to add more colors later https://www.figma.com/file/8WjVJW9fa2rwGctm7ZVaCT/Design-System?node-id=1023%3A36350

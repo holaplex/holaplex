@@ -12,17 +12,17 @@ import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { Button5 } from './Button2';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
-  const from = (activity.sourceUser || activity.nft?.creator) as IProfile;
-
-  const fromDisplay = isYou ? 'You' : from.handle || showFirstAndLastFour(from.pubkey);
+  const from = (activity.sourceUser || activity?.nft?.creators?.[0])!;
+  const creator = activity?.nft?.creators?.[0] || null;
+  const fromDisplay = isYou ? 'You' : from.handle || showFirstAndLastFour(from.address);
   const toDisplay = activity.toUser
-    ? activity.toUser.handle || showFirstAndLastFour(activity.toUser.pubkey)
+    ? activity.toUser.handle || showFirstAndLastFour(activity.toUser.address)
     : '';
-  const creatorDisplay = activity.nft?.creator?.handle || activity.nft?.creator?.pubkey;
+  const creatorDisplay = creator?.handle || creator?.address;
 
   const FromHelper = () => {
-    const { data: twitterHandle } = useTwitterHandle(null, from.pubkey);
-    const profileURL = window.location.origin + '/profiles/' + from.pubkey;
+    const { data: twitterHandle } = useTwitterHandle(null, from.address);
+    const profileURL = window.location.origin + '/profiles/' + from.address;
     return fromDisplay === 'You' ? (
       <span>You</span>
     ) : (
@@ -33,8 +33,8 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   };
 
   const ToHelper = () => {
-    const { data: twitterHandle } = useTwitterHandle(null, activity.toUser?.pubkey);
-    const profileURL = window.location.origin + '/profiles/' + activity.toUser?.pubkey;
+    const { data: twitterHandle } = useTwitterHandle(null, activity.toUser?.address);
+    const profileURL = window.location.origin + '/profiles/' + activity.toUser?.address;
     return activity.toUser ? (
       <a href={profileURL}>
         <span className="text-white">{twitterHandle || toDisplay}</span>
@@ -124,7 +124,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
 export function ActivityCard(props: { activity: IFeedItem }) {
   const { publicKey: connectedPubkey } = useWallet();
-  const isYou = connectedPubkey?.toBase58() === props.activity.sourceUser?.pubkey;
+  const isYou = connectedPubkey?.toBase58() === props.activity.sourceUser?.address;
   // const content = generateContent(props.activity);
   const activityThumbnailImageURL =
     props.activity.nft?.imageURL || props.activity.storefront?.logoUrl;

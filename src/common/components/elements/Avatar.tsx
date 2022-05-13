@@ -14,14 +14,17 @@ export const AvatarIcons = ({ creators }: { creators: { address: string }[] }) =
     // wrap the avatars in a container with a small, colored background
     <div className={`inline-flex items-center rounded-full bg-gray-600 bg-opacity-70 p-1`}>
       {creators.slice(0, 4).map(({ address }, i) => (
-        <div key={address} className={classNames("h-6 w-6", {"-ml-3": i > 0})}>
+        <div key={address} className={classNames('h-6 w-6', { '-ml-3': i > 0 })}>
           <AvatarIcon address={address} index={i} />
         </div>
       ))}
       {/* show how many additional creators there are when there are more than 4 */}
       {
         <div
-          className={classNames({"hidden": creators.length < 5}, "-ml-3 flex h-6 items-center rounded-full bg-gray-800 px-1 text-sm text-gray-400 hover:scale-125")}
+          className={classNames(
+            { hidden: creators.length < 5 },
+            '-ml-3 flex h-6 items-center rounded-full bg-gray-800 px-1 text-sm text-gray-400 hover:scale-125'
+          )}
         >
           {`+${creators.length - 4}`}
         </div>
@@ -113,7 +116,6 @@ export const Avatar = ({
     });
   }, [queryWalletProfile, twitterHandle]);
 
-  useEffect(() => {}, [twitterHandle]);
   const profilePictureUrl = data?.profile?.profileImageUrlHighres || null;
 
   return (

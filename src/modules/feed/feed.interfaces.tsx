@@ -1,3 +1,6 @@
+import { Storefront } from 'src/graphql/indexerTypes';
+import { Listing } from 'src/graphql/indexerTypes.ssr';
+
 export const BID_ACTIVITY = [
   'BID_MADE',
   'OUTBID',
@@ -63,7 +66,7 @@ export enum LISTING_ACTIVITY_E {
 
 export interface IProfile {
   pfp?: string;
-  pubkey: string;
+  address: string;
   handle?: string | null;
   followers?: number;
   following?: number;
@@ -71,7 +74,7 @@ export interface IProfile {
 }
 
 interface NFT {
-  creator?: IProfile;
+  creators?: IProfile[];
   name: string;
   storeSubdomain: string;
   imageURL: string;
@@ -96,20 +99,6 @@ export interface IFeedItem {
     // showClaimUncancelledBid
   };
   // not sure if these should make it
-  listing?: {
-    // TODO Source form grapql
-    address: string;
-    ended: boolean;
-  };
-  storefront?: {
-    // TODO Source form grapql
-    __typename: 'Storefront';
-    ownerAddress: string;
-    subdomain: string;
-    title: string;
-    description: string;
-    faviconUrl: string;
-    logoUrl: string;
-    bannerUrl: string;
-  };
+  listing?: Listing;
+  storefront?: Storefront;
 }

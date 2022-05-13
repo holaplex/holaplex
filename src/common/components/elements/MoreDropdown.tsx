@@ -6,7 +6,13 @@ import { ExplorerIcon } from '../icons/Explorer';
 import { SolscanIcon } from '../icons/Solscan';
 import { Fragment, useEffect, useState } from 'react';
 
-function MoreDropdown({ address }: { address: string }) {
+function MoreDropdown({
+  address,
+  triggerButtonExtraClassNames,
+}: {
+  address: string;
+  triggerButtonExtraClassNames?: string;
+}) {
   const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
@@ -28,14 +34,15 @@ function MoreDropdown({ address }: { address: string }) {
         <>
           <Popover.Button
             className={cx(
-              'flex h-10 w-36 items-center justify-center gap-2 rounded-full shadow-sm shadow-black ',
-              open ? 'bg-white' : ''
+              'flex h-10 w-10 items-center justify-center  rounded-full ',
+              open ? 'bg-white' : '',
+              triggerButtonExtraClassNames
             )}
           >
-            <span className={`${open ? 'text-black' : ''} text-lg font-medium`}>Share</span>
+            {/* <span className={`${open ? 'text-black' : ''} text-lg font-medium`}>Share</span> */}
             <FeatherIcon
               icon="share"
-              className={open ? 'stroke-black' : ''}
+              className={open && !triggerButtonExtraClassNames ? 'stroke-black' : ''}
               width={20}
               height={20}
             />

@@ -77,6 +77,14 @@ export function AppHeader() {
         </div>
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
+            {connected && (
+              <HeaderLinkWrapper key="alpha" active={router.pathname === '/alpha'}>
+                <Link href="/alpha" passHref>
+                  <a className="hover:underline focus:underline">Alpha</a>
+                </Link>
+              </HeaderLinkWrapper>
+            )}
+
             <HeaderLinkWrapper
               key="mint-nfts"
               active={router.pathname === '/nfts/new'}
@@ -86,6 +94,7 @@ export function AppHeader() {
                 <a className="hover:underline focus:underline">Mint NFTs</a>
               </Link>
             </HeaderLinkWrapper>
+
             <Popover
               placement="bottom"
               content={
