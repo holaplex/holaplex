@@ -112,7 +112,11 @@ export function generateFeedCardAtributes(
 
       return {
         ...base,
-        content: 'Bought for ' + solAmount + ' SOL',
+        content:
+          (event.purchase?.buyer === event.walletAddress ? 'Bought' : 'Sold') +
+          ' for ' +
+          solAmount +
+          ' SOL',
         solAmount,
         /*         sourceUser: {
           address: event.purchase?.buyer,
