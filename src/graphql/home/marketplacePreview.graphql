@@ -1,34 +1,18 @@
 query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {
     subdomain
-    bannerUrl
-    stats {
-      nfts
-    }
     name
-    auctionHouse {
-      address
-      treasuryMint
-      auctionHouseTreasury
-      treasuryWithdrawalDestination
-      feeWithdrawalDestination
-      authority
-      creator
-      auctionHouseFeeAccount
-      bump
-      treasuryBump
-      feePayerBump
-      sellerFeeBasisPoints
-      requiresSignOff
-      canChangeSalePrice
-      stats {
-        floor
-        average
-        volume24hr
-      }
-    }
+    bannerUrl
     creators {
       creatorAddress
+    }
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    stats {
+      nfts
     }
   }
 }

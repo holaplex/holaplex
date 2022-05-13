@@ -659,7 +659,7 @@ export type MarketplacePreviewQueryVariables = Exact<{
 }>;
 
 
-export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, bannerUrl: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null } | null };
 
 export type ProfilePreviewQueryVariables = Exact<{
   address: Scalars['PublicKey'];
@@ -1185,34 +1185,18 @@ export const MarketplacePreviewDocument = gql`
     query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {
     subdomain
-    bannerUrl
-    stats {
-      nfts
-    }
     name
-    auctionHouse {
-      address
-      treasuryMint
-      auctionHouseTreasury
-      treasuryWithdrawalDestination
-      feeWithdrawalDestination
-      authority
-      creator
-      auctionHouseFeeAccount
-      bump
-      treasuryBump
-      feePayerBump
-      sellerFeeBasisPoints
-      requiresSignOff
-      canChangeSalePrice
-      stats {
-        floor
-        average
-        volume24hr
-      }
-    }
+    bannerUrl
     creators {
       creatorAddress
+    }
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    stats {
+      nfts
     }
   }
 }
