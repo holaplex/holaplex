@@ -1,0 +1,9 @@
+query metadataSearch($term: String!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    creatorAddress
+    creatorTwitterHandle
+  }
+}

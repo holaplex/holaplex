@@ -25,8 +25,8 @@ export const useProfileData = () => {
   return profileData;
 };
 
-export const asProfile = (input: ProfileData): IProfile => ({
-  pubkey: input.publicKey,
+export const asProfile = (input: WalletDependantPageProps): IProfile => ({
+  address: input.publicKey,
   handle: input.twitterHandle,
   pfp: input.profilePicture,
 });

@@ -31,6 +31,7 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority
         'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
         'transition-opacity duration-500 ease-in-out',
         'flex flex-col items-center justify-center',
+
         {
           'opacity-100': open,
           'opacity-0': !open,
@@ -43,7 +44,7 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority
     >
       <div
         ref={modalRef}
-        className="relative flex h-full max-h-screen w-full flex-col overflow-y-auto rounded-xl bg-gray-900 p-6 text-white shadow-md sm:h-auto sm:max-h-[50rem] sm:max-w-lg"
+        className="scrollbar-thumb-rounded-full relative flex h-full max-h-screen w-full flex-col overflow-y-auto rounded-xl bg-gray-900 p-6 text-white shadow-md scrollbar-thin scrollbar-track-gray-900  sm:h-auto sm:max-h-[50rem] sm:max-w-lg"
       >
         <button
           onClick={() => setOpen(false)}
@@ -54,7 +55,11 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority
         <div className={`flex w-full items-center justify-center`}>
           <h4 className={`text-2xl font-medium`}>{title}</h4>
         </div>
-        <div className={`flex h-full w-full flex-col`}>{children}</div>
+        <div
+          className={`scrollbar-thumb-rounded-full flex h-full w-full flex-col scrollbar-thin scrollbar-track-gray-900`}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -26,11 +26,12 @@ type FollowModalProps = {
 
 export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisibility }) => {
   const { connection } = useConnection();
+
   const { publicKey } = useProfileData();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  const allConnectionsTo = useAllConnectionsToQuery({ variables: { to: publicKey } });
-  const allConnectionsFrom = useAllConnectionsFromQuery({ variables: { from: publicKey } });
+  const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
+  const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -86,21 +87,13 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         </div>
         <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers'
-            ? (allConnectionsTo.data?.connections ?? []).map((item) => (
-                <FollowItem
-                  key={item.from.address as string}
-                  side={'allConnectionsFrom'}
-                  item={item.from}
-                />
+            ? (profileFollowersList.data?.connections ?? []).map((item) => (
+                <FollowItem key={item.from.address as string} side={'followers'} user={item.from} />
               ))
             : null}
           {visibility === 'following'
-            ? (allConnectionsFrom.data?.connections ?? []).map((item) => (
-                <FollowItem
-                  key={item.to.address as string}
-                  side={'allConnectionsTo'}
-                  item={item.to}
-                />
+            ? (profileFollowingList.data?.connections ?? []).map((item) => (
+                <FollowItem key={item.to.address as string} side={'following'} user={item.to} />
               ))
             : null}
         </div>
@@ -110,17 +103,17 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
 };
 
 type FollowItemProps = {
-  item: ConnectionNodeFragment;
-  side: 'allConnectionsTo' | 'allConnectionsFrom';
+  user: ConnectionNodeFragment;
+  side: 'followers' | 'following';
 };
 
-const FollowItem: FC<FollowItemProps> = ({ item, side }) => {
+const FollowItem: FC<FollowItemProps> = ({ user, side }) => {
   const wallet = useAnchorWallet();
   const { connection } = useConnection();
   const connectionsFromWallet = useAllConnectionsFromQuery({
     variables: { from: wallet?.publicKey.toBase58() ?? '' },
   });
-  const { address, profile } = item;
+  const { address, profile } = user;
   const itemToReferTo = address as string;
   const twitterHandle = profile?.handle;
   const hasTwitter = !!twitterHandle;
@@ -171,8 +164,12 @@ const FollowItem: FC<FollowItemProps> = ({ item, side }) => {
                 connection,
                 wallet,
               }}
-              source={side === 'allConnectionsTo' ? 'modalTo' : 'modalFrom'}
+              source={side === 'followers' ? 'modalFollowers' : 'modalFollowing'}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
+              toProfile={{
+                address: itemToReferTo,
+                handle: twitterHandle,
+              }}
             />
           )}
         </div>

@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
+import '@dialectlabs/react-ui/index.css';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
@@ -38,6 +39,7 @@ import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
 import { apolloClient } from 'src/graphql/apollo';
+import { NextPage } from 'next';
 
 const { Content } = Layout;
 
@@ -47,7 +49,15 @@ const getSolanaNetwork = () => {
     : WalletAdapterNetwork.Mainnet;
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
@@ -69,6 +79,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
+
+  const getLayout = Component.getLayout || ((page) => page);
 
   return (
     <>
@@ -115,7 +127,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                                     </a>
                                   </div>
                                   <AppHeader />
-                                  <Component {...pageProps} />
+                                  {getLayout(<Component {...pageProps} />)}
                                 </AnalyticsProvider>
                               )}
                             </MarketplaceProvider>

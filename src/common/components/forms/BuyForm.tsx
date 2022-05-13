@@ -23,10 +23,10 @@ interface BuyFormProps {
   nft: Nft;
   marketplace: Marketplace;
   listing: Listing;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
   className?: string;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
 }
 
 interface BuyFormSchema {

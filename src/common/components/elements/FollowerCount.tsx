@@ -16,12 +16,7 @@ type FollowerCountProps = {
 
 export const FollowerCount: FC<FollowerCountProps> = ({ setShowFollowsModal }) => {
   const wallet = useAnchorWallet();
-  return (
-    <FollowerCountContent
-      wallet={wallet}
-      setShowFollowsModal={setShowFollowsModal}
-    />
-  );
+  return <FollowerCountContent wallet={wallet} setShowFollowsModal={setShowFollowsModal} />;
 };
 
 type FollowerCountContentProps = FollowerCountProps & {
@@ -35,6 +30,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   setShowFollowsModal,
 }) => {
   const { publicKey } = useProfileData();
+
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
@@ -77,6 +73,9 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
                   }
                 }
                 type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
+                toProfile={{
+                  address: publicKey,
+                }}
               />
             )}
           </div>

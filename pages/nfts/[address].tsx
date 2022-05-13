@@ -140,6 +140,33 @@ export default function NftByAddress({
 
   const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
 
+  useEffect(() => {
+    if (!address) return;
+
+    try {
+      queryNft({
+        variables: {
+          subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+          address,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+      // Bugsnag.notify(error);
+    }
+  }, [address, queryNft]);
+
+  useEffect(() => {
+    window.scroll({
+      top: 0,
+      left: 0,
+    });
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [router, router.push, refetch]);
+
   const [imgLoaded, setImgLoaded] = useState(false);
   const [offerModalVisibility, setOfferModalVisibility] = useState(false);
   const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
@@ -169,33 +196,6 @@ export default function NftByAddress({
     setOfferModalVisibility(false);
     setOfferUpdateModalVisibility(true);
   };
-
-  useEffect(() => {
-    if (!address) return;
-
-    try {
-      queryNft({
-        variables: {
-          subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-          address,
-        },
-      });
-    } catch (error: any) {
-      console.error(error);
-      // Bugsnag.notify(error);
-    }
-  }, [address, queryNft]);
-
-  useEffect(() => {
-    window.scroll({
-      top: 0,
-      left: 0,
-    });
-  }, []);
-
-  useEffect(() => {
-    refetch();
-  }, [router, router.push, refetch]);
 
   const updateListingFromCancel = () => {
     setSellCancelModalVisibility(false);
@@ -277,15 +277,29 @@ export default function NftByAddress({
                   <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
                 )}
                 {nft?.category === `video` || nft?.category === `audio` ? (
-                  <video onLoadStart={() => setImgLoaded(true)} onLoad={() => setImgLoaded(true)} className={`block aspect-square w-full rounded-lg border-none object-cover shadow`} playsInline={true} autoPlay={true} muted={true} controls={true} controlsList={`nodownload`} loop={true} poster={imgOpt(nft?.image, 800)!} src={nft.files[0].uri}/>
-                ) : nft?.image && (
-                  <NFTImage
+                  <video
+                    onLoadStart={() => setImgLoaded(true)}
                     onLoad={() => setImgLoaded(true)}
-                    src={imgOpt(nft?.image, 800)!}
-                    className="block aspect-square w-full rounded-lg border-none object-cover shadow"
-                    alt=""
-                  />)}
-                
+                    className={`block aspect-square w-full rounded-lg border-none object-cover shadow`}
+                    playsInline={true}
+                    autoPlay={true}
+                    muted={true}
+                    controls={true}
+                    controlsList={`nodownload`}
+                    loop={true}
+                    poster={imgOpt(nft?.image, 800)!}
+                    src={nft.files[0].uri}
+                  />
+                ) : (
+                  nft?.image && (
+                    <NFTImage
+                      onLoad={() => setImgLoaded(true)}
+                      src={imgOpt(nft?.image, 800)!}
+                      className="block aspect-square w-full rounded-lg border-none object-cover shadow"
+                      alt=""
+                    />
+                  )
+                )}
               </div>
             </div>
             <div>
@@ -719,7 +733,9 @@ export default function NftByAddress({
                     >
                       <div className={`flex items-center`}>
                         <Link href={`/profiles/${o.buyer}`}>
-                          <a rel={`nofollower`}>{<Avatar address={o.buyer} /> || shortenAddress(o.buyer)}</a>
+                          <a rel={`nofollower`}>
+                            {<Avatar address={o.buyer} /> || shortenAddress(o.buyer)}
+                          </a>
                         </Link>
                       </div>
                       <div className={`flex items-center`}>

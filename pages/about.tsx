@@ -245,7 +245,7 @@ export default function About() {
           </SocialWrapper>
         </ContentCol>
       </Row> */}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }
