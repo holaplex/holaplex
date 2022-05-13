@@ -46,6 +46,8 @@ import {
 import BuyForm from '../forms/BuyForm';
 import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { LoadingContainer } from '../elements/LoadingPlaceholders';
+import { imgOpt } from '@/common/utils';
 
 export function FeedCard(props: {
   event: FeedItem;
@@ -53,6 +55,8 @@ export function FeedCard(props: {
   className?: string;
 }) {
   const { track } = useAnalytics();
+
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   if (props.event.__typename === 'AggregateEvent') {
     return <AggregateCard event={props.event} />;
@@ -66,8 +70,9 @@ export function FeedCard(props: {
 
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
-  if (props.event.__typename === 'FollowEvent')
+  if (props.event.__typename === 'FollowEvent') {
     return <FollowCard attrs={attrs} event={props.event} myFollowingList={props.myFollowingList} />;
+  }
 
   const isDev = false;
   if (!attrs.nft)
@@ -85,18 +90,41 @@ export function FeedCard(props: {
     >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
-          <img
-            onClick={() =>
-              track('Feed Item Selected', {
-                event_category: 'Feed',
-                event_label: props.event.__typename,
-                sol_value: attrs.solAmount,
-              })
-            }
-            className="aspect-square w-full rounded-lg object-cover "
-            src={attrs.nft?.image}
-            alt={attrs.nft?.name}
-          />
+          {!imgLoaded && (
+            <LoadingContainer className=" aspect-square w-full rounded-lg bg-gray-800 shadow " />
+          )}
+
+          {attrs.nft?.category === `video` || attrs.nft?.category === `audio` ? (
+            <video
+              onLoadStart={() => setImgLoaded(true)}
+              onLoad={() => setImgLoaded(true)}
+              className={`block aspect-square w-full rounded-lg border-none object-cover shadow`}
+              playsInline={true}
+              autoPlay={true}
+              muted={true}
+              controls={true}
+              controlsList={`nodownload`}
+              loop={true}
+              poster={imgOpt(attrs.nft?.image, 600)!}
+              src={attrs.nft.files[0].uri}
+            />
+          ) : (
+            attrs.nft?.image && (
+              <img
+                onLoad={() => setImgLoaded(true)}
+                onClick={() =>
+                  track('Feed Item Selected', {
+                    event_category: 'Feed',
+                    event_label: props.event.__typename,
+                    sol_value: attrs.solAmount,
+                  })
+                }
+                className="aspect-square w-full rounded-lg object-cover "
+                src={attrs.nft?.image}
+                alt={attrs.nft?.name}
+              />
+            )
+          )}
         </a>
       </Link>
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
