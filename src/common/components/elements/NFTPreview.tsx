@@ -25,11 +25,11 @@ const LoadingPreview = () => {
 };
 
 interface NFTPreviewProps {
-  loading: boolean;
+  loading?: boolean;
   nft?: Nft;
 }
 
-const NFTPreview: FC<NFTPreviewProps> = ({ loading, nft }) => {
+const NFTPreview: FC<NFTPreviewProps> = ({ loading = false, nft }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   if (loading) {

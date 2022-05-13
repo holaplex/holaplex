@@ -3,6 +3,7 @@ query metadataSearch($term: String!) {
     name
     address
     image
-    category
+    creatorAddress
+    creatorTwitterHandle
   }
 }

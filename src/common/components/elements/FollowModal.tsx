@@ -37,7 +37,7 @@ export const FollowModal: FC<FollowModalProps> = ({
   setVisibility,
 }) => {
   const { connection } = useConnection();
-  const { pubkey } = profile;
+  const { address: pubkey } = profile;
 
   const allConnectionsTo = useGetAllConnectionsToWithTwitter(pubkey, connection);
   const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(pubkey, connection);
@@ -194,11 +194,11 @@ const FollowItem: FC<FollowItemProps> = ({ item, side, connection, wallet }) => 
         <div className="flex items-center">
           {itemIsMyWallet || !wallet ? null : (
             <FollowUnfollowButton
-              source={side === 'allConnectionsTo' ? 'modalTo' : 'modalFrom'}
+              source={side === 'allConnectionsTo' ? 'modalFollowers' : 'modalFollowing'}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
               walletConnectionPair={{ wallet, connection }}
               toProfile={{
-                pubkey: itemToReferTo.toBase58(),
+                address: itemToReferTo.toBase58(),
                 handle: twitterHandle,
               }}
             />

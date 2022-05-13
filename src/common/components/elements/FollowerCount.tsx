@@ -36,7 +36,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   wallet,
   setShowFollowsModal,
 }) => {
-  const { pubkey } = profile;
+  const { address: pubkey } = profile;
 
   const { connection } = useConnection();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
