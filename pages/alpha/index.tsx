@@ -133,6 +133,11 @@ const FeedPage = ({ address }: { address: string }) => {
   }
 
   async function loadMore(inView: boolean) {
+    console.log('in view', {
+      inView,
+      loading,
+      feedEventsN: feedEvents.length,
+    });
     if (!inView || loading || feedEvents.length <= 0) {
       return;
     }
@@ -178,7 +183,7 @@ const FeedPage = ({ address }: { address: string }) => {
         // remove malformed follow events until we fix it serverside
         (event.__typename === 'FollowEvent' && !event.connection) ||
         // make sure the event is unique // will also be fixed serverside at some point
-        feedEvents.findIndex((e) => event.feedEventId === e.feedEventId) === i
+        feedEvents.slice(i + 1).findIndex((e) => event.feedEventId === e.feedEventId) === i
       ) {
         return feedItems;
       }
@@ -228,7 +233,13 @@ const FeedPage = ({ address }: { address: string }) => {
 
   const feedItems = getFeedItems(feedEvents);
 
-  const fetchMoreIndex = Math.floor(INFINITE_SCROLL_AMOUNT_INCREMENT / 2);
+  const fetchMoreIndex = feedItems.length - Math.floor(INFINITE_SCROLL_AMOUNT_INCREMENT / 2);
+
+  console.log('Feed', {
+    feedEvents,
+    feedItems,
+    feedAttrs,
+  });
 
   return (
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
@@ -256,7 +267,7 @@ const FeedPage = ({ address }: { address: string }) => {
             {feedEvents.length === 0 && !loading && (
               <EmptyFeedCTA myFollowingList={myFollowingList} />
             )}
-            {feedItems.slice(0, fetchMoreIndex).map((fEvent) => (
+            {feedItems.map((fEvent) => (
               <div key={fEvent.feedEventId} id={fEvent.feedEventId}>
                 <FeedCard
                   key={fEvent.feedEventId}
@@ -266,12 +277,8 @@ const FeedPage = ({ address }: { address: string }) => {
               </div>
             ))}
 
-            {/*         
-Seems to cause duplicate events, need to figure it out
-<InView threshold={0.1} onChange={loadMore}>
-              <div></div>
-            </InView> */}
-            {feedItems.slice(fetchMoreIndex).map((fEvent) => (
+            {/* Seems to cause duplicate events, need to figure it out */}
+            {/*   {feedItems.slice(0, fetchMoreIndex).map((fEvent) => (
               <div key={fEvent.feedEventId} id={fEvent.feedEventId}>
                 <FeedCard
                   key={fEvent.feedEventId}
@@ -279,18 +286,29 @@ Seems to cause duplicate events, need to figure it out
                   myFollowingList={myFollowingList}
                 />
               </div>
-            ))}
-            {/* In case you manage to jump over the midway loadpoint */}
-            <InView threshold={0.1} onChange={loadMore}>
-              <div></div>
-            </InView>
-            {hasMoreFeedEvents && feedItems.length > 0 && (
+            ))} */}
+
+            {/*             <InView threshold={0.1} onChange={loadMore}>
+              <div>IN VIEW 1</div>
+            </InView> */}
+            {/* {feedItems.slice(fetchMoreIndex).map((fEvent, i) => (
+              <div key={fEvent.feedEventId} data-i={i} id={fEvent.feedEventId}>
+                <FeedCard
+                  key={fEvent.feedEventId}
+                  event={fEvent}
+                  myFollowingList={myFollowingList}
+                />
+              </div>
+            ))} */}
+            {hasMoreFeedEvents && loading && feedItems.length > 0 && (
               <>
                 <LoadingFeedCard />
                 <LoadingFeedItem />
                 <LoadingFeedCard />
               </>
             )}
+            {/* In case you manage to jump over the midway loadpoint */}
+            <InView threshold={0.1} onChange={loadMore}></InView>
           </div>
           {/*       {!hasMoreFeedEvents && (
               <EmptyStateCTA header="No more events to load">
