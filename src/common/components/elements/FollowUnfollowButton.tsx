@@ -16,7 +16,7 @@ import { useApolloClient } from '@apollo/client';
 import { AllConnectionsFromDocument, AllConnectionsToDocument } from 'src/graphql/indexerTypes';
 
 type FollowUnfollowButtonProps = {
-  source: 'modalFrom' | 'modalTo' | 'profileButton' | 'feed' | 'whotofollow';
+  source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;
@@ -42,7 +42,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const sharedTrackingParams = {
     source,
     event_category: 'Profile',
-    event_label: 'profile',
+    event_label: type,
     from: myWallet,
     to: toWallet,
   } as const;

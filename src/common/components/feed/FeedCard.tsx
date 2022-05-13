@@ -53,6 +53,7 @@ export function FeedCard(props: {
   event: FeedItem;
   myFollowingList?: string[];
   className?: string;
+  allEventsRef?: FeedItem[];
 }) {
   const { track } = useAnalytics();
 
@@ -114,9 +115,11 @@ export function FeedCard(props: {
                 onLoad={() => setImgLoaded(true)}
                 onClick={() =>
                   track('Feed Item Selected', {
-                    event_category: 'Feed',
+                    event_category: 'Alpha',
                     event_label: props.event.__typename,
                     sol_value: attrs.solAmount,
+                    feedEventType: props.event.__typename,
+                    feedEventsCount: props.allEventsRef?.length,
                   })
                 }
                 className="aspect-square w-full rounded-lg object-cover "
@@ -149,8 +152,6 @@ function FollowCard(props: {
     () => ({ wallet: anchorWallet!, connection }),
     [anchorWallet, connection]
   );
-
-  const { track } = useAnalytics();
 
   if (!attrs) return <div>Not enough data</div>;
 
@@ -224,7 +225,7 @@ function FeedActionBanner(props: {
   const attrs = props.attrs;
   const anchorWallet = useAnchorWallet();
   const myPubkey = anchorWallet?.publicKey.toBase58();
-
+  const { track } = useAnalytics();
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
   let action: JSX.Element | null = null;
@@ -236,8 +237,18 @@ function FeedActionBanner(props: {
   } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
     action = (
       <Link href={'/nfts/' + attrs.nft?.address}>
-        <a>
-          <Button5 v="primary" className="w-full sm:w-auto">
+        <a target="_blank">
+          <Button5
+            v="primary"
+            onClick={() => {
+              track('Feed Accept Offer Initiated', {
+                event_category: 'Alpha',
+                event_label: attrs.nft?.name!,
+                nftAddress: attrs.nft?.address,
+              });
+            }}
+            className="w-full sm:w-auto"
+          >
             Accept offer
           </Button5>
         </a>
@@ -272,7 +283,7 @@ function FeedActionBanner(props: {
 
 const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
   const [modalOpen, setModalOpen] = useState(false);
-
+  const { track } = useAnalytics();
   const [callMarketplaceQuery, marketplaceQuery] = useNftMarketplaceLazyQuery({
     variables: {
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
@@ -286,14 +297,24 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
     }
   }, [modalOpen]);
 
-  // TODO: Make sure the NFT is still for sale
+  // TODO: Make sure the NFT is still for sale. For now, just link to NFT details page
 
   return (
     <>
       <Link href={'/nfts/' + props.nft.address} passHref>
         <a target="_blank">
           {/* Buy in feed context onClick={() => setModalOpen(true)} */}
-          <Button5 v="primary" className="w-full sm:w-auto">
+          <Button5
+            v="primary"
+            onClick={() => {
+              track('Feed Purchase Initiated', {
+                event_category: 'Alpha',
+                event_label: props.nft?.name,
+                nftAddress: props.nft?.address,
+              });
+            }}
+            className="w-full sm:w-auto"
+          >
             Buy now
           </Button5>
         </a>
@@ -333,6 +354,7 @@ const OfferAction = (props: { nft: any }) => {
     },
   });
 
+  const { track } = useAnalytics();
   useEffect(() => {
     if (modalOpen && !marketplaceQuery.called) {
       callMarketplaceQuery();
@@ -341,7 +363,18 @@ const OfferAction = (props: { nft: any }) => {
 
   return (
     <>
-      <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+      <Button5
+        v="primary"
+        onClick={() => {
+          setModalOpen(true);
+          track('Feed Offer Initiated', {
+            event_category: 'Alpha',
+            event_label: props.nft?.name,
+            nftAddress: props.nft?.address,
+          });
+        }}
+        className="w-full sm:w-auto"
+      >
         Make offer
       </Button5>
       {ReactDom.createPortal(

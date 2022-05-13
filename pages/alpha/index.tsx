@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-const FeedPage = ({ address }: { address: string }) => {
+const AlphaPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
   const {
@@ -269,13 +269,12 @@ const FeedPage = ({ address }: { address: string }) => {
               <EmptyFeedCTA myFollowingList={myFollowingList} />
             )}
             {feedItems.map((fEvent) => (
-              <div key={fEvent.feedEventId} id={fEvent.feedEventId}>
-                <FeedCard
-                  key={fEvent.feedEventId}
-                  event={fEvent}
-                  myFollowingList={myFollowingList}
-                />
-              </div>
+              <FeedCard
+                key={fEvent.feedEventId + fEvent.walletAddress}
+                event={fEvent}
+                myFollowingList={myFollowingList}
+                allEventsRef={feedItems}
+              />
             ))}
 
             {/* Seems to cause duplicate events, need to figure it out */}
@@ -339,11 +338,11 @@ const FeedPage = ({ address }: { address: string }) => {
   );
 };
 
-export default FeedPage;
+export default AlphaPage;
 
 /* 
 Might reintorduce this with Tabs later
-FeedPage.getLayout = function getLayout(page: ReactElement) {
+AlphaPage.getLayout = function getLayout(page: ReactElement) {
   return <FeedLayout>{page}</FeedLayout>;
 };
  */
