@@ -69,7 +69,14 @@ export function FeedCard(props: {
   if (props.event.__typename === 'FollowEvent')
     return <FollowCard attrs={attrs} event={props.event} myFollowingList={props.myFollowingList} />;
 
-  if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
+  const isDev = false;
+  if (!attrs.nft)
+    return isDev ? (
+      <div className="flex flex-wrap items-center rounded-lg bg-gray-900 p-4 shadow-2xl shadow-black ">
+        {props.event.__typename} is malformed
+        <pre>{JSON.stringify(props.event, null, 2)}</pre>
+      </div>
+    ) : null;
 
   return (
     <div
