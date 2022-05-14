@@ -723,6 +723,14 @@ export type ProfileSearchQueryVariables = Exact<{
 
 export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string } | null }> };
 
+export type SearchQueryVariables = Exact<{
+  term: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
+}>;
+
+
+export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null } };
+
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {
   address
@@ -1590,6 +1598,33 @@ export const ProfileSearchDocument = gql`
   }
 }
     `;
+export const SearchDocument = gql`
+    query search($term: String!, $walletAddress: PublicKey!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    creatorAddress
+    creatorTwitterHandle
+  }
+  profiles(term: $term, limit: 5, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
+    }
+  }
+  wallet(address: $walletAddress) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -1645,6 +1680,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     profileSearch(variables: ProfileSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProfileSearchQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ProfileSearchQuery>(ProfileSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'profileSearch', 'query');
+    },
+    search(variables: SearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SearchQuery>(SearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'search', 'query');
     }
   };
 }
