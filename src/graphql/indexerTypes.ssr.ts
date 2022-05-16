@@ -690,6 +690,8 @@ export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, prof
 
 export type AllConnectionsFromQueryVariables = Exact<{
   from: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -697,6 +699,8 @@ export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: A
 
 export type AllConnectionsToQueryVariables = Exact<{
   to: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -974,7 +978,7 @@ export const WalletProfileDocument = gql`
 }
     `;
 export const FeedDocument = gql`
-    query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
   feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
@@ -1553,8 +1557,8 @@ export const ShareNftDocument = gql`
 }
     `;
 export const AllConnectionsFromDocument = gql`
-    query allConnectionsFrom($from: PublicKey!) {
-  connections(from: [$from], limit: 1000, offset: 0) {
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(from: [$from], limit: $limit, offset: $offset) {
     to {
       ...ConnectionNode
     }
@@ -1562,8 +1566,8 @@ export const AllConnectionsFromDocument = gql`
 }
     ${ConnectionNodeFragmentDoc}`;
 export const AllConnectionsToDocument = gql`
-    query allConnectionsTo($to: PublicKey!) {
-  connections(to: [$to], limit: 1000, offset: 0) {
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(to: [$to], limit: $limit, offset: $offset) {
     from {
       ...ConnectionNode
     }

@@ -13,6 +13,10 @@ import {
   useAllConnectionsToQuery,
 } from 'src/graphql/indexerTypes';
 import { useProfileData } from '@/common/context/ProfileData';
+import {
+  useGetAllQueryResultsWithoutPagination,
+  useGetAllResultsWithoutPagination,
+} from '@/common/hooks/useGetAllResultsWithoutPagination';
 
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
@@ -30,8 +34,15 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
   const { publicKey } = useProfileData();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
-  const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
+  //  const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
+  // const profileFollowersList = useGetAllResultsWithoutPagination(publicKey);
+  const profileFollowersList = useGetAllQueryResultsWithoutPagination(useAllConnectionsToQuery, {
+    to: publicKey,
+  });
+  // const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
+  const profileFollowingList = useGetAllQueryResultsWithoutPagination(useAllConnectionsFromQuery, {
+    from: publicKey,
+  });
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -87,12 +98,12 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         </div>
         <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers'
-            ? (profileFollowersList.data?.connections ?? []).map((item) => (
+            ? (profileFollowersList.data?.connections ?? []).map((item: any) => (
                 <FollowItem key={item.from.address as string} side={'followers'} user={item.from} />
               ))
             : null}
           {visibility === 'following'
-            ? (profileFollowingList.data?.connections ?? []).map((item) => (
+            ? (profileFollowingList.data?.connections ?? []).map((item: any) => (
                 <FollowItem key={item.to.address as string} side={'following'} user={item.to} />
               ))
             : null}

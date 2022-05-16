@@ -690,6 +690,8 @@ export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, prof
 
 export type AllConnectionsFromQueryVariables = Exact<{
   from: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -697,6 +699,8 @@ export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: A
 
 export type AllConnectionsToQueryVariables = Exact<{
   to: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -1092,7 +1096,7 @@ export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQue
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
 export const FeedDocument = gql`
-    query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
   feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
@@ -1875,8 +1879,8 @@ export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
 export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
 export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;
 export const AllConnectionsFromDocument = gql`
-    query allConnectionsFrom($from: PublicKey!) {
-  connections(from: [$from], limit: 1000, offset: 0) {
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(from: [$from], limit: $limit, offset: $offset) {
     to {
       ...ConnectionNode
     }
@@ -1897,6 +1901,8 @@ export const AllConnectionsFromDocument = gql`
  * const { data, loading, error } = useAllConnectionsFromQuery({
  *   variables: {
  *      from: // value for 'from'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
@@ -1912,8 +1918,8 @@ export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnecti
 export type AllConnectionsFromLazyQueryHookResult = ReturnType<typeof useAllConnectionsFromLazyQuery>;
 export type AllConnectionsFromQueryResult = Apollo.QueryResult<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>;
 export const AllConnectionsToDocument = gql`
-    query allConnectionsTo($to: PublicKey!) {
-  connections(to: [$to], limit: 1000, offset: 0) {
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(to: [$to], limit: $limit, offset: $offset) {
     from {
       ...ConnectionNode
     }
@@ -1934,6 +1940,8 @@ export const AllConnectionsToDocument = gql`
  * const { data, loading, error } = useAllConnectionsToQuery({
  *   variables: {
  *      to: // value for 'to'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
