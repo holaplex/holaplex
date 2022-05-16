@@ -3,60 +3,32 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import cx from 'classnames';
-import { Follower } from './FollowerCount';
-import { useState, useEffect, FC } from 'react';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import { FC } from 'react';
+import { TopFollower } from '@/common/context/ProfileData';
 
 type FollowerBubbleProps = {
   isFirst?: boolean;
-  follower: Follower;
+  follower: TopFollower;
 };
 
 export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
-  const { fromHandle } = follower.twitter;
-
-  const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
-  const [queryWalletProfile, result] = useWalletProfileLazyQuery();
-  useEffect(() => {
-    (async () => {
-      setStatus('loading');
-      try {
-        if (fromHandle) {
-          queryWalletProfile({
-            variables: {
-              handle: fromHandle,
-            },
-          });
-        }
-      } finally {
-        setStatus('done');
-      }
-    })();
-  }, [fromHandle, queryWalletProfile]);
-
-  const isLoading = status === 'loading' || status === 'idle' || result.loading;
-
   return (
-    <Link href={`/profiles/${follower.account.from.toBase58()}`} passHref>
+    <Link href={`/profiles/${follower.from.address as string}`} passHref>
       <a
         className={cx({
-          'ml-[-8px] block': !isFirst,
+          'block': !isFirst,
         })}
       >
-        {!isLoading ? (
-          <FollowedByImage
-            className="h-8 w-8 rounded-full"
-            src={
-              result.data?.profile?.profileImageUrlLowres ??
-              getPFPFromPublicKey(follower.account.from)
-            }
-            width={32}
-            height={32}
-            alt="PFP"
-          />
-        ) : (
-          <div className='[content: ""] skeleton-animation [background-color: #262626] h-8 w-8 rounded-full' />
-        )}
+        <FollowedByImage
+          className="h-8 w-8 rounded-full"
+          src={
+            follower.from?.profile?.profileImageUrl ??
+            getPFPFromPublicKey(follower.from.address!)
+          }
+          width={32}
+          height={32}
+          alt="PFP"
+        />
       </a>
     </Link>
   );

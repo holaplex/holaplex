@@ -47,6 +47,11 @@ export default class MyDocument extends Document {
               src={`https://www.googleoptimize.com/optimize.js?id=${GOOGLE_OPTIMIZE_ID}`}
             ></script>
           )} */}
+          <script
+            async
+            type="module"
+            src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+          />
           {(GA4_ID || OLD_GOOGLE_ANALYTICS_ID) && (
             <>
               <script

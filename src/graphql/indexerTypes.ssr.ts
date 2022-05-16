@@ -690,6 +690,8 @@ export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, prof
 
 export type AllConnectionsFromQueryVariables = Exact<{
   from: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -697,6 +699,8 @@ export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: A
 
 export type AllConnectionsToQueryVariables = Exact<{
   to: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -708,6 +712,28 @@ export type GetProfileFollowerOverviewQueryVariables = Exact<{
 
 
 export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null } }> };
+
+export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
+  pubKey: Scalars['PublicKey'];
+}>;
+
+
+export type GetProfileInfoFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null } };
+
+export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
+  handle: Scalars['String'];
+}>;
+
+
+export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', walletAddress?: string | null, handle: string, profileImageUrl: string, bannerImageUrl: string } | null };
+
+export type IsXFollowingYQueryVariables = Exact<{
+  xPubKey: Scalars['PublicKey'];
+  yPubKey: Scalars['PublicKey'];
+}>;
+
+
+export type IsXFollowingYQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', address: string }> };
 
 export type MetadataSearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -722,6 +748,14 @@ export type ProfileSearchQueryVariables = Exact<{
 
 
 export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string } | null }> };
+
+export type SearchQueryVariables = Exact<{
+  term: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
+}>;
+
+
+export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null } };
 
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {
@@ -952,7 +986,7 @@ export const WalletProfileDocument = gql`
 }
     `;
 export const FeedDocument = gql`
-    query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
   feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
@@ -1531,8 +1565,8 @@ export const ShareNftDocument = gql`
 }
     `;
 export const AllConnectionsFromDocument = gql`
-    query allConnectionsFrom($from: PublicKey!) {
-  connections(from: [$from], limit: 1000, offset: 0) {
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(from: [$from], limit: $limit, offset: $offset) {
     to {
       ...ConnectionNode
     }
@@ -1540,8 +1574,8 @@ export const AllConnectionsFromDocument = gql`
 }
     ${ConnectionNodeFragmentDoc}`;
 export const AllConnectionsToDocument = gql`
-    query allConnectionsTo($to: PublicKey!) {
-  connections(to: [$to], limit: 1000, offset: 0) {
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(to: [$to], limit: $limit, offset: $offset) {
     from {
       ...ConnectionNode
     }
@@ -1568,6 +1602,34 @@ export const GetProfileFollowerOverviewDocument = gql`
   }
 }
     `;
+export const GetProfileInfoFromPubKeyDocument = gql`
+    query getProfileInfoFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
+      profileImageUrl
+      bannerImageUrl
+    }
+  }
+}
+    `;
+export const GetProfileInfoFromTwitterHandleDocument = gql`
+    query getProfileInfoFromTwitterHandle($handle: String!) {
+  profile(handle: $handle) {
+    walletAddress
+    handle
+    profileImageUrl: profileImageUrlHighres
+    bannerImageUrl: bannerImageUrl
+  }
+}
+    `;
+export const IsXFollowingYDocument = gql`
+    query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
+  connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
+    address
+  }
+}
+    `;
 export const MetadataSearchDocument = gql`
     query metadataSearch($term: String!) {
   metadataJsons(term: $term, limit: 25, offset: 0) {
@@ -1586,6 +1648,33 @@ export const ProfileSearchDocument = gql`
     twitterHandle
     profile {
       profileImageUrl
+    }
+  }
+}
+    `;
+export const SearchDocument = gql`
+    query search($term: String!, $walletAddress: PublicKey!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    creatorAddress
+    creatorTwitterHandle
+  }
+  profiles(term: $term, limit: 5, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
+    }
+  }
+  wallet(address: $walletAddress) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
     }
   }
 }
@@ -1640,11 +1729,23 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getProfileFollowerOverview(variables: GetProfileFollowerOverviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileFollowerOverviewQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProfileFollowerOverviewQuery>(GetProfileFollowerOverviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileFollowerOverview', 'query');
     },
+    getProfileInfoFromPubKey(variables: GetProfileInfoFromPubKeyQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileInfoFromPubKeyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProfileInfoFromPubKeyQuery>(GetProfileInfoFromPubKeyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileInfoFromPubKey', 'query');
+    },
+    getProfileInfoFromTwitterHandle(variables: GetProfileInfoFromTwitterHandleQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileInfoFromTwitterHandleQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProfileInfoFromTwitterHandleQuery>(GetProfileInfoFromTwitterHandleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileInfoFromTwitterHandle', 'query');
+    },
+    isXFollowingY(variables: IsXFollowingYQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<IsXFollowingYQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<IsXFollowingYQuery>(IsXFollowingYDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'isXFollowingY', 'query');
+    },
     metadataSearch(variables: MetadataSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MetadataSearchQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MetadataSearchQuery>(MetadataSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'metadataSearch', 'query');
     },
     profileSearch(variables: ProfileSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProfileSearchQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ProfileSearchQuery>(ProfileSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'profileSearch', 'query');
+    },
+    search(variables: SearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SearchQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SearchQuery>(SearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'search', 'query');
     }
   };
 }

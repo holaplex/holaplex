@@ -690,6 +690,8 @@ export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, prof
 
 export type AllConnectionsFromQueryVariables = Exact<{
   from: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -697,6 +699,8 @@ export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: A
 
 export type AllConnectionsToQueryVariables = Exact<{
   to: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -708,6 +712,28 @@ export type GetProfileFollowerOverviewQueryVariables = Exact<{
 
 
 export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null } }> };
+
+export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
+  pubKey: Scalars['PublicKey'];
+}>;
+
+
+export type GetProfileInfoFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null } };
+
+export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
+  handle: Scalars['String'];
+}>;
+
+
+export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', walletAddress?: string | null, handle: string, profileImageUrl: string, bannerImageUrl: string } | null };
+
+export type IsXFollowingYQueryVariables = Exact<{
+  xPubKey: Scalars['PublicKey'];
+  yPubKey: Scalars['PublicKey'];
+}>;
+
+
+export type IsXFollowingYQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', address: string }> };
 
 export type MetadataSearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -722,6 +748,14 @@ export type ProfileSearchQueryVariables = Exact<{
 
 
 export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string } | null }> };
+
+export type SearchQueryVariables = Exact<{
+  term: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
+}>;
+
+
+export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null } };
 
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {
@@ -1070,7 +1104,7 @@ export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQue
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
 export const FeedDocument = gql`
-    query feed($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
   feedEvents(wallet: $address, limit: $limit, offset: $offset) {
     __typename
     ... on MintEvent {
@@ -1853,8 +1887,8 @@ export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
 export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
 export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;
 export const AllConnectionsFromDocument = gql`
-    query allConnectionsFrom($from: PublicKey!) {
-  connections(from: [$from], limit: 1000, offset: 0) {
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(from: [$from], limit: $limit, offset: $offset) {
     to {
       ...ConnectionNode
     }
@@ -1875,6 +1909,8 @@ export const AllConnectionsFromDocument = gql`
  * const { data, loading, error } = useAllConnectionsFromQuery({
  *   variables: {
  *      from: // value for 'from'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
@@ -1890,8 +1926,8 @@ export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnecti
 export type AllConnectionsFromLazyQueryHookResult = ReturnType<typeof useAllConnectionsFromLazyQuery>;
 export type AllConnectionsFromQueryResult = Apollo.QueryResult<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>;
 export const AllConnectionsToDocument = gql`
-    query allConnectionsTo($to: PublicKey!) {
-  connections(to: [$to], limit: 1000, offset: 0) {
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+  connections(to: [$to], limit: $limit, offset: $offset) {
     from {
       ...ConnectionNode
     }
@@ -1912,6 +1948,8 @@ export const AllConnectionsToDocument = gql`
  * const { data, loading, error } = useAllConnectionsToQuery({
  *   variables: {
  *      to: // value for 'to'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
@@ -1974,6 +2012,119 @@ export function useGetProfileFollowerOverviewLazyQuery(baseOptions?: Apollo.Lazy
 export type GetProfileFollowerOverviewQueryHookResult = ReturnType<typeof useGetProfileFollowerOverviewQuery>;
 export type GetProfileFollowerOverviewLazyQueryHookResult = ReturnType<typeof useGetProfileFollowerOverviewLazyQuery>;
 export type GetProfileFollowerOverviewQueryResult = Apollo.QueryResult<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>;
+export const GetProfileInfoFromPubKeyDocument = gql`
+    query getProfileInfoFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
+      profileImageUrl
+      bannerImageUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetProfileInfoFromPubKeyQuery__
+ *
+ * To run a query within a React component, call `useGetProfileInfoFromPubKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProfileInfoFromPubKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProfileInfoFromPubKeyQuery({
+ *   variables: {
+ *      pubKey: // value for 'pubKey'
+ *   },
+ * });
+ */
+export function useGetProfileInfoFromPubKeyQuery(baseOptions: Apollo.QueryHookOptions<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(GetProfileInfoFromPubKeyDocument, options);
+      }
+export function useGetProfileInfoFromPubKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(GetProfileInfoFromPubKeyDocument, options);
+        }
+export type GetProfileInfoFromPubKeyQueryHookResult = ReturnType<typeof useGetProfileInfoFromPubKeyQuery>;
+export type GetProfileInfoFromPubKeyLazyQueryHookResult = ReturnType<typeof useGetProfileInfoFromPubKeyLazyQuery>;
+export type GetProfileInfoFromPubKeyQueryResult = Apollo.QueryResult<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>;
+export const GetProfileInfoFromTwitterHandleDocument = gql`
+    query getProfileInfoFromTwitterHandle($handle: String!) {
+  profile(handle: $handle) {
+    walletAddress
+    handle
+    profileImageUrl: profileImageUrlHighres
+    bannerImageUrl: bannerImageUrl
+  }
+}
+    `;
+
+/**
+ * __useGetProfileInfoFromTwitterHandleQuery__
+ *
+ * To run a query within a React component, call `useGetProfileInfoFromTwitterHandleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProfileInfoFromTwitterHandleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProfileInfoFromTwitterHandleQuery({
+ *   variables: {
+ *      handle: // value for 'handle'
+ *   },
+ * });
+ */
+export function useGetProfileInfoFromTwitterHandleQuery(baseOptions: Apollo.QueryHookOptions<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>(GetProfileInfoFromTwitterHandleDocument, options);
+      }
+export function useGetProfileInfoFromTwitterHandleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>(GetProfileInfoFromTwitterHandleDocument, options);
+        }
+export type GetProfileInfoFromTwitterHandleQueryHookResult = ReturnType<typeof useGetProfileInfoFromTwitterHandleQuery>;
+export type GetProfileInfoFromTwitterHandleLazyQueryHookResult = ReturnType<typeof useGetProfileInfoFromTwitterHandleLazyQuery>;
+export type GetProfileInfoFromTwitterHandleQueryResult = Apollo.QueryResult<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>;
+export const IsXFollowingYDocument = gql`
+    query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
+  connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
+    address
+  }
+}
+    `;
+
+/**
+ * __useIsXFollowingYQuery__
+ *
+ * To run a query within a React component, call `useIsXFollowingYQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsXFollowingYQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsXFollowingYQuery({
+ *   variables: {
+ *      xPubKey: // value for 'xPubKey'
+ *      yPubKey: // value for 'yPubKey'
+ *   },
+ * });
+ */
+export function useIsXFollowingYQuery(baseOptions: Apollo.QueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(IsXFollowingYDocument, options);
+      }
+export function useIsXFollowingYLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(IsXFollowingYDocument, options);
+        }
+export type IsXFollowingYQueryHookResult = ReturnType<typeof useIsXFollowingYQuery>;
+export type IsXFollowingYLazyQueryHookResult = ReturnType<typeof useIsXFollowingYLazyQuery>;
+export type IsXFollowingYQueryResult = Apollo.QueryResult<IsXFollowingYQuery, IsXFollowingYQueryVariables>;
 export const MetadataSearchDocument = gql`
     query metadataSearch($term: String!) {
   metadataJsons(term: $term, limit: 25, offset: 0) {
@@ -2052,3 +2203,59 @@ export function useProfileSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ProfileSearchQueryHookResult = ReturnType<typeof useProfileSearchQuery>;
 export type ProfileSearchLazyQueryHookResult = ReturnType<typeof useProfileSearchLazyQuery>;
 export type ProfileSearchQueryResult = Apollo.QueryResult<ProfileSearchQuery, ProfileSearchQueryVariables>;
+export const SearchDocument = gql`
+    query search($term: String!, $walletAddress: PublicKey!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    creatorAddress
+    creatorTwitterHandle
+  }
+  profiles(term: $term, limit: 5, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
+    }
+  }
+  wallet(address: $walletAddress) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchQuery__
+ *
+ * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchQuery({
+ *   variables: {
+ *      term: // value for 'term'
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+      }
+export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+        }
+export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
+export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
+export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;

@@ -9,8 +9,15 @@ import * as anchor from '@project-serum/anchor';
 import { Action, MultiTransactionContext } from '@/common/context/MultiTransaction';
 import { shortenAddress } from '@/modules/utils/string';
 import { EmptyStateCTA } from './EmptyStateCTA';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
+import { None } from '../forms/OfferForm';
 
-const EmptyFeedCTA = (props: { myFollowingList?: string[] }) => {
+const EmptyFeedCTA = (props: {
+  myFollowingList?: string[];
+  refetch: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<None>>;
+}) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
 
@@ -100,7 +107,7 @@ const EmptyFeedCTA = (props: { myFollowingList?: string[] }) => {
         console.error(err);
       },
       onComplete: async () => {
-        // should refetch feed
+        props.refetch();
       },
     });
   };

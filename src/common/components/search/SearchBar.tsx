@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import { Search } from '../icons/Search';
 import LoadingSearchItem from './LoadingSearchItem';
-import { useMetadataSearchLazyQuery, useProfileSearchLazyQuery } from 'src/graphql/indexerTypes';
+import { useSearchLazyQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -48,14 +48,8 @@ const SearchBar: FC = () => {
     setShowResults(false);
   };
 
-  const [searchQuery, { data, loading, called }] = useMetadataSearchLazyQuery();
+  const [searchQuery, { data, loading, called }] = useSearchLazyQuery();
 
-  const [
-    profileSearchQuery,
-    { data: profileData, loading: profileLoading, called: profileCalled },
-  ] = useProfileSearchLazyQuery();
-
-  // TODO: handle enter key
   const handleSearch = ({ query }: SearchQuerySchema) => {
     // handle enter
   };
@@ -66,15 +60,10 @@ const SearchBar: FC = () => {
     } else {
       setHasSearch(true);
     }
-    // setShowResults(true);
-    profileSearchQuery({
-      variables: {
-        term: e.target.value,
-      },
-    });
     searchQuery({
       variables: {
         term: e.target.value,
+        walletAddress: e.target.value,
       },
     });
   };
@@ -143,7 +132,7 @@ const SearchBar: FC = () => {
         <div
           className={`h-content absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900 p-6 transition ease-in-out`}
         >
-          {(loading || profileLoading) && (
+          {loading && (
             <>
               <LoadingSearchItem />
               <LoadingSearchItem variant={`circle`} />
@@ -151,8 +140,12 @@ const SearchBar: FC = () => {
               <LoadingSearchItem variant={`circle`} />
             </>
           )}
-          {data && (called || profileCalled) && (
-            <SearchResults results={data} profileResults={profileData} />
+          {data && called && (
+            <SearchResults
+              results={data?.metadataJsons as MetadataJson[]}
+              profileResults={data?.profiles as Wallet[]}
+              walletResult={data.wallet as Wallet}
+            />
           )}
         </div>
       )}
