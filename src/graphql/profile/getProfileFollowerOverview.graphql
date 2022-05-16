@@ -1,5 +1,3 @@
-#import "./profileInfo.graphql"
-
 query getProfileFollowerOverview($pubKey: PublicKey!) {
   wallet(address: $pubKey) {
     connectionCounts {

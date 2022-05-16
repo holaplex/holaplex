@@ -48,12 +48,7 @@ const NFTImage: FC<NFTImageProps> = ({ src, onLoad, className, alt }) => {
         >
           <div>
             <div className={`relative`}>
-              <img
-                onLoad={onLoad}
-                src={src}
-                className={`aspect-auto w-full object-scale-down`}
-                alt={alt}
-              />
+              <img onLoad={onLoad} src={src} className={`${className}`} alt={alt} />
             </div>
           </div>
         </div>

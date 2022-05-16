@@ -12,6 +12,7 @@ query nftPage($address: String!) {
       value
       traitType
     }
+
     creators {
       address
       verified

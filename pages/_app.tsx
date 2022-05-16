@@ -9,7 +9,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import { isNil } from 'ramda';
-import { WalletProviderDeprecated } from '@/modules/wallet';
+import { WalletProvider } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { Close } from '@/common/components/icons/Close';
@@ -22,7 +22,6 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
-  GlowWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import {
   ConnectionProvider,
@@ -30,7 +29,8 @@ import {
 } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
+import { apolloClient } from '../src/graphql/apollo';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -38,7 +38,6 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
-import { apolloClient } from 'src/graphql/apollo';
 import { NextPage } from 'next';
 
 const { Content } = Layout;
@@ -70,7 +69,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
-      new GlowWalletAdapter()
     ],
     [network]
   );
@@ -106,7 +104,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
-                <WalletProviderDeprecated>
+                <WalletProvider>
                   {({ wallet }) => (
                     <MultiTransactionProvider>
                       <StorefrontProvider wallet={wallet}>
@@ -125,7 +123,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                       </StorefrontProvider>
                     </MultiTransactionProvider>
                   )}
-                </WalletProviderDeprecated>
+                </WalletProvider>
               </WalletModalProvider>
             </WalletProviderSolana>
           </ConnectionProvider>
@@ -133,6 +131,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       </QueryClientProvider>
     </>
   );
-};
+}
 
 export default MyApp;

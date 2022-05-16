@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import {
-  getProfileServerSideProps,
+  getPropsForWalletOrUsername,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
@@ -35,7 +35,7 @@ enum OfferFilters {
 }
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getProfileServerSideProps(context);
+  getPropsForWalletOrUsername(context);
 
 const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => {
   const [query, setQuery] = useState('');
