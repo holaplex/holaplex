@@ -12,14 +12,14 @@ const memcmpFn = (publicKey: string) => ({
   bytes: new PublicKey(publicKey).toBase58(),
 });
 
-export const useGetAllConnectionsTo = (pubKey: string, connection: Connection) =>
+export const DEPRECATED_useGetAllConnectionsTo = (pubKey: string, connection: Connection) =>
   useQuery([ALL_CONNECTIONS_TO, pubKey], ({ queryKey: [_, publicKey] }) =>
     Program.getGraphProgram(
       new anchor.AnchorProvider(connection, null!, {})
     ).account.connectionV2.all([{ memcmp: memcmpFn(publicKey) }])
   );
 
-export const useGetAllConnectionsToWithTwitter = (pubKey: string, connection: Connection) =>
+export const DEPRECATED_useGetAllConnectionsToWithTwitter = (pubKey: string, connection: Connection) =>
   useQuery(
     [ALL_CONNECTIONS_TO, 'withTwitter', pubKey],
     async ({ queryKey: [_, __, publicKey] }) => {

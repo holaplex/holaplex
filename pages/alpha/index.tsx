@@ -29,7 +29,6 @@ import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 

@@ -1,0 +1,10 @@
+#import "./profileInfo.graphql"
+
+query getProfileInfoFromTwitterHandle($handle: String!) {
+  profile(handle: $handle) {
+    walletAddress
+    handle
+    profileImageUrl: profileImageUrlHighres
+    bannerImageUrl: bannerImageUrl
+  }
+}

@@ -1,3 +1,4 @@
+import { TopFollower } from '@/common/context/ProfileData';
 import { Storefront } from 'src/graphql/indexerTypes';
 import { Listing } from 'src/graphql/indexerTypes.ssr';
 
@@ -70,6 +71,7 @@ export interface IProfile {
   handle?: string | null;
   followers?: number;
   following?: number;
+  topFollowers?: TopFollower[];
   nfts?: NFT[];
 }
 

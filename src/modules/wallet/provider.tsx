@@ -29,7 +29,7 @@ const upsertWallet = async (pubkey: string | undefined) => {
  * 
  * @deprecated Use `WalletProvider` from (@solana/wallet-adapter) instead.
  */
-export const WalletProvider = ({ children }: WalletProviderProps) => {
+export const WalletProviderDeprecated = ({ children }: WalletProviderProps) => {
   const router = useRouter();
   const [wallet, setWallet] = useState<Wallet>();
   const [looking, setLooking] = useState(false);

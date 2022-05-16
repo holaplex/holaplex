@@ -1,4 +1,3 @@
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';

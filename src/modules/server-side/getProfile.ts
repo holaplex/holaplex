@@ -4,6 +4,7 @@ import { getPublicKeyFromTwitterHandle, getTwitterHandle } from '@/common/hooks/
 import { getSdk } from 'src/graphql/indexerTypes.ssr';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '../utils/image';
+import { GetProfileFollowerOverviewDocument } from 'src/graphql/indexerTypes';
 
 export const getPublicKey = (input: string) => {
   try {
@@ -37,9 +38,13 @@ export interface WalletDependantPageProps {
   banner: string;
 }
 
-export const getPropsForWalletOrUsername: GetServerSideProps<WalletDependantPageProps> = async (
-  ctx
-) => {
+/**
+ * @deprecated Do not use, this uses the old GPA queries, use getPropsForWalletOrUsername instead.
+ * Kept for reference.
+ */
+export const getPropsForWalletOrUsernameDeprecated: GetServerSideProps<
+  WalletDependantPageProps
+> = async (ctx) => {
   const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!, 'confirmed');
   const { walletProfile } = getSdk(graphqlRequestClient);
   const input = ctx.params?.publicKey;
@@ -85,6 +90,67 @@ export const getPropsForWalletOrUsername: GetServerSideProps<WalletDependantPage
       twitterHandle,
       profilePicture,
       banner,
+    },
+  };
+};
+
+export const getProfileServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (
+  ctx
+) => {
+  // Keeping this out of apollo since this isn't modified in-app.
+  const { getProfileInfoFromPubKey, getProfileInfoFromTwitterHandle } =
+    getSdk(graphqlRequestClient);
+
+  const input = ctx.params?.publicKey;
+
+  if (typeof input !== 'string') {
+    return { notFound: true };
+  }
+
+  let publicKey = getPublicKey(input);
+
+  let profileInfo: {
+    walletAddress?: string | null;
+    handle: string;
+    profileImageUrl: string;
+    bannerImageUrl: string;
+  } | null = null;
+  if (publicKey) {
+    const result = await getProfileInfoFromPubKey({ pubKey: publicKey.toBase58() });
+    profileInfo = result?.wallet?.profile ?? null;
+  } else if (isTwitterUsername(input)) {
+    const result = await getProfileInfoFromTwitterHandle({ handle: input });
+    profileInfo = result?.profile ?? null;
+    if (profileInfo?.walletAddress) {
+      publicKey = getPublicKey(profileInfo.walletAddress);
+    }
+  } /* It's not a pubkey or a twitter profile. */ else {
+    return { notFound: true };
+  }
+
+  if (!profileInfo && !publicKey) {
+    // Pubkey must be present at this point, can continue if there's no profile info but pubKey.
+    return { notFound: true };
+  }
+
+  // Disabling SSR Pre-Fetch for UX purposes.
+  // const apolloClient = initializeApollo();
+  // await apolloClient.query({
+  //   query: GetProfileFollowerOverviewDocument,
+  //   variables: { pubKey: publicKey!.toBase58() },
+  // });
+
+  const profileServerSideProps = {
+    publicKey: publicKey!.toBase58(),
+    twitterHandle: profileInfo?.handle ?? null,
+    profilePicture:
+      profileInfo?.profileImageUrl?.replace('_normal', '') ?? getPFPFromPublicKey(publicKey!),
+    banner: profileInfo?.bannerImageUrl ?? getBannerFromPublicKey(publicKey!),
+  };
+
+  return {
+    props: {
+      ...profileServerSideProps,
     },
   };
 };
