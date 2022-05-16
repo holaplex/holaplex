@@ -111,6 +111,7 @@ const SearchBar: FC = () => {
           >
             <input
               {...register('query', { required: true })}
+              autoFocus={true}
               onFocus={() => setShowResults(true)}
               onChange={handleOnChange}
               placeholder={`Search Holaplex...`}
