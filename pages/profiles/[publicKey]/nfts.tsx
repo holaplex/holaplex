@@ -85,7 +85,7 @@ export const NFTCard = ({
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
 
   const offers = nft?.offers;
-  const topOffers = offers?.sort((a, b) => Number(a.price) - Number(b.price));
+  const topOffers = offers?.slice()?.sort((a, b) => Number(a.price) - Number(b.price));
   const topOffer = topOffers?.[0];
   const addedOffer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(addedOffer);
