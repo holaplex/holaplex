@@ -2150,7 +2150,7 @@ export type MetadataSearchLazyQueryHookResult = ReturnType<typeof useMetadataSea
 export type MetadataSearchQueryResult = Apollo.QueryResult<MetadataSearchQuery, MetadataSearchQueryVariables>;
 export const ProfileSearchDocument = gql`
     query profileSearch($term: String!) {
-  profiles(term: $term, limit: 5, offset: 0) {
+  profiles(term: $term, limit: 10, offset: 0) {
     address
     twitterHandle
     profile {

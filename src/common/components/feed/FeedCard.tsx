@@ -46,13 +46,18 @@ import {
 import BuyForm from '../forms/BuyForm';
 import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { LoadingContainer } from '../elements/LoadingPlaceholders';
+import { imgOpt } from '@/common/utils';
 
 export function FeedCard(props: {
   event: FeedItem;
   myFollowingList?: string[];
   className?: string;
+  allEventsRef?: FeedItem[];
 }) {
   const { track } = useAnalytics();
+
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   if (props.event.__typename === 'AggregateEvent') {
     return <AggregateCard event={props.event} />;
@@ -66,10 +71,18 @@ export function FeedCard(props: {
 
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
-  if (props.event.__typename === 'FollowEvent')
+  if (props.event.__typename === 'FollowEvent') {
     return <FollowCard attrs={attrs} event={props.event} myFollowingList={props.myFollowingList} />;
+  }
 
-  if (!attrs.nft) return <div>{props.event.__typename} is malformed</div>;
+  const isDev = false;
+  if (!attrs.nft)
+    return isDev ? (
+      <div className="flex flex-wrap items-center rounded-lg bg-gray-900 p-4 shadow-2xl shadow-black ">
+        {props.event.__typename} is malformed
+        <pre>{JSON.stringify(props.event, null, 2)}</pre>
+      </div>
+    ) : null;
 
   return (
     <div
@@ -78,18 +91,43 @@ export function FeedCard(props: {
     >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
-          <img
-            onClick={() =>
-              track('Feed Item Selected', {
-                event_category: 'Feed',
-                event_label: props.event.__typename,
-                sol_value: attrs.solAmount,
-              })
-            }
-            className="aspect-square w-full rounded-lg object-cover "
-            src={attrs.nft?.image}
-            alt={attrs.nft?.name}
-          />
+          {!imgLoaded && (
+            <LoadingContainer className=" aspect-square w-full rounded-lg bg-gray-800 shadow " />
+          )}
+
+          {attrs.nft?.category === `video` || attrs.nft?.category === `audio` ? (
+            <video
+              onLoadStart={() => setImgLoaded(true)}
+              onLoad={() => setImgLoaded(true)}
+              className={`block aspect-square w-full rounded-lg border-none object-cover shadow`}
+              playsInline={true}
+              autoPlay={true}
+              muted={true}
+              controls={true}
+              controlsList={`nodownload`}
+              loop={true}
+              poster={imgOpt(attrs.nft?.image, 600)!}
+              src={attrs.nft.files[0].uri}
+            />
+          ) : (
+            attrs.nft?.image && (
+              <img
+                onLoad={() => setImgLoaded(true)}
+                onClick={() =>
+                  track('Feed Item Selected', {
+                    event_category: 'Alpha',
+                    event_label: props.event.__typename,
+                    sol_value: attrs.solAmount,
+                    feedEventType: props.event.__typename,
+                    feedEventsCount: props.allEventsRef?.length,
+                  })
+                }
+                className="aspect-square w-full rounded-lg object-cover "
+                src={attrs.nft?.image}
+                alt={attrs.nft?.name}
+              />
+            )
+          )}
         </a>
       </Link>
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
@@ -114,8 +152,6 @@ function FollowCard(props: {
     () => ({ wallet: anchorWallet!, connection }),
     [anchorWallet, connection]
   );
-
-  const { track } = useAnalytics();
 
   if (!attrs) return <div>Not enough data</div>;
 
@@ -189,7 +225,7 @@ function FeedActionBanner(props: {
   const attrs = props.attrs;
   const anchorWallet = useAnchorWallet();
   const myPubkey = anchorWallet?.publicKey.toBase58();
-
+  const { track } = useAnalytics();
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
   let action: JSX.Element | null = null;
@@ -201,8 +237,18 @@ function FeedActionBanner(props: {
   } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
     action = (
       <Link href={'/nfts/' + attrs.nft?.address}>
-        <a>
-          <Button5 v="primary" className="w-full sm:w-auto">
+        <a target="_blank">
+          <Button5
+            v="primary"
+            onClick={() => {
+              track('Feed Accept Offer Initiated', {
+                event_category: 'Alpha',
+                event_label: attrs.nft?.name!,
+                nftAddress: attrs.nft?.address,
+              });
+            }}
+            className="w-full sm:w-auto"
+          >
             Accept offer
           </Button5>
         </a>
@@ -237,7 +283,7 @@ function FeedActionBanner(props: {
 
 const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
   const [modalOpen, setModalOpen] = useState(false);
-
+  const { track } = useAnalytics();
   const [callMarketplaceQuery, marketplaceQuery] = useNftMarketplaceLazyQuery({
     variables: {
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
@@ -251,14 +297,24 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
     }
   }, [modalOpen]);
 
-  // TODO: Make sure the NFT is still for sale
+  // TODO: Make sure the NFT is still for sale. For now, just link to NFT details page
 
   return (
     <>
       <Link href={'/nfts/' + props.nft.address} passHref>
         <a target="_blank">
           {/* Buy in feed context onClick={() => setModalOpen(true)} */}
-          <Button5 v="primary" className="w-full sm:w-auto">
+          <Button5
+            v="primary"
+            onClick={() => {
+              track('Feed Purchase Initiated', {
+                event_category: 'Alpha',
+                event_label: props.nft?.name,
+                nftAddress: props.nft?.address,
+              });
+            }}
+            className="w-full sm:w-auto"
+          >
             Buy now
           </Button5>
         </a>
@@ -298,6 +354,7 @@ const OfferAction = (props: { nft: any }) => {
     },
   });
 
+  const { track } = useAnalytics();
   useEffect(() => {
     if (modalOpen && !marketplaceQuery.called) {
       callMarketplaceQuery();
@@ -306,7 +363,18 @@ const OfferAction = (props: { nft: any }) => {
 
   return (
     <>
-      <Button5 v="primary" onClick={() => setModalOpen(true)} className="w-full sm:w-auto">
+      <Button5
+        v="primary"
+        onClick={() => {
+          setModalOpen(true);
+          track('Feed Offer Initiated', {
+            event_category: 'Alpha',
+            event_label: props.nft?.name,
+            nftAddress: props.nft?.address,
+          });
+        }}
+        className="w-full sm:w-auto"
+      >
         Make offer
       </Button5>
       {ReactDom.createPortal(

@@ -47,7 +47,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const sharedTrackingParams = {
     source,
     event_category: 'Profile',
-    event_label: 'profile',
+    event_label: type,
     from: myWallet,
     to: toWallet,
   } as const;
