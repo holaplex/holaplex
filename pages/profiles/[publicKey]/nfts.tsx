@@ -13,11 +13,11 @@ import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerT
 import Link from 'next/link';
 import TextInput2 from '@/common/components/elements/TextInput2';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
-import { imgOpt } from '../../../src/common/utils';
+import { imgOpt } from '@/common/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
@@ -26,13 +26,13 @@ import {
 import Button from '@/components/elements/Button';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
-import SellForm from '../../../src/common/components/forms/SellForm';
+import SellForm from '@/components/forms/SellForm';
 import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
 import BuyForm from '@/components/forms/BuyForm';
-import UpdateOfferForm from '../../../src/common/components/forms/UpdateOfferForm';
+import UpdateOfferForm from '@/common/components/forms/UpdateOfferForm';
 import { Avatar } from '@/common/components/elements/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty } from 'ramda';
@@ -42,7 +42,7 @@ import { ProfilePageHead } from '../[publicKey]';
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+  getProfileServerSideProps(context);
 
 export const LoadingNFTCard = () => {
   return (
