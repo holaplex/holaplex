@@ -276,7 +276,22 @@ export default function NftByAddress({
                 {(loading || !imgLoaded) && (
                   <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
                 )}
-                {nft?.category === `video` || nft?.category === `audio` ? (
+                {nft?.category === `vr` ? (
+                  <div
+                    className={`block aspect-square w-full rounded-lg border-none object-cover shadow`}
+                  >
+                    {/* @ts-ignore */}
+                    <model-viewer
+                      style={{ width: `100%`, height: `100%` }}
+                      onLoad={() => setImgLoaded(true)}
+                      camera-controls
+                      alt={nft.name}
+                      src={
+                        nft.files.find((file) => file.fileType === `application/octet-stream`)?.uri
+                      }
+                    />
+                  </div>
+                ) : nft?.category === `video` || nft?.category === `audio` ? (
                   <video
                     onLoadStart={() => setImgLoaded(true)}
                     onLoad={() => setImgLoaded(true)}
@@ -300,6 +315,7 @@ export default function NftByAddress({
                     />
                   )
                 )}
+                {}
               </div>
             </div>
             <div>
