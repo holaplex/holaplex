@@ -6,7 +6,7 @@ import { isPublicKey } from './SearchBar';
 import { profile } from 'console';
 
 interface SearchResultsProps {
-  results: MetadataJson[];
+  results?: MetadataJson[];
   profileResults?: Wallet[];
   walletResult?: Wallet;
 }
@@ -38,7 +38,7 @@ const SearchResults: FC<SearchResultsProps> = ({ results, profileResults, wallet
         </>
       )}
       {walletResult && isPublicKey(walletResult.address) && (
-        <ProfileSearchItem 
+        <ProfileSearchItem
           address={walletResult?.address}
           handle={walletResult?.twitterHandle}
           profileImage={walletResult?.profile?.profileImageUrl}

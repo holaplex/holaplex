@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import { Search } from '../icons/Search';
 import LoadingSearchItem from './LoadingSearchItem';
-import { useSearchLazyQuery, MetadataJson } from 'src/graphql/indexerTypes';
+import { useSearchLazyQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -39,8 +39,6 @@ const SearchBar: FC = () => {
 
   useEffect(() => {
     setShowResults(false);
-    // handleReset()
-    // TODO: clear results on routed
   }, [router.route]);
 
   useOutsideAlerter(searchResultsRef, () => setShowResults(false));
@@ -50,10 +48,8 @@ const SearchBar: FC = () => {
     setShowResults(false);
   };
 
-  // const [searchQuery, { data, loading, called }] = useMetadataSearchLazyQuery();
-  const [searchQuery, { data, loading, called }] = useSearchLazyQuery()
+  const [searchQuery, { data, loading, called }] = useSearchLazyQuery();
 
-  // TODO: handle enter key
   const handleSearch = ({ query }: SearchQuerySchema) => {
     // handle enter
   };
@@ -64,11 +60,10 @@ const SearchBar: FC = () => {
     } else {
       setHasSearch(true);
     }
-    // setShowResults(true);
     searchQuery({
       variables: {
         term: e.target.value,
-        walletAddress: e.target.value
+        walletAddress: e.target.value,
       },
     });
   };
@@ -146,8 +141,11 @@ const SearchBar: FC = () => {
             </>
           )}
           {data && called && (
-            // @ts-ignore
-            <SearchResults results={data?.metadataJsons} profileResults={data?.profiles} walletResult={data.wallet} />
+            <SearchResults
+              results={data?.metadataJsons as MetadataJson[]}
+              profileResults={data?.profiles as Wallet[]}
+              walletResult={data.wallet as Wallet}
+            />
           )}
         </div>
       )}
