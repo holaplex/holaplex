@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
-// ts/next fails to find this css module using import
+// TODO (fix) ts/next fails to find this css module using import
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';

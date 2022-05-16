@@ -24,7 +24,7 @@ const previewSubdomains: string[] = [
   // 'paragon',
 ];
 
-const FeaturedMarkeplacesSection: VFC = () => {
+const FeaturedMarketplacesSection: VFC = () => {
   return (
     <HomeSection>
       <HomeSection.Header>
@@ -194,4 +194,4 @@ const Container: FC<any> = (props) => {
   );
 };
 
-export default FeaturedMarkeplacesSection;
+export default FeaturedMarketplacesSection;
