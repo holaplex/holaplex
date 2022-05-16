@@ -1,6 +1,0 @@
-query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
-  # If !!length
-  connections(from: [$xPubKey], to: [$yPubKey], limit:1, offset:0) {
-    address
-  }
-}

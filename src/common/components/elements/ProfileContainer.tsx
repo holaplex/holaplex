@@ -11,7 +11,10 @@ import { FollowerCount } from './FollowerCount';
 import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
-import { useProfileData } from '@/common/context/ProfileData';
+import { useProfileData, asProfile } from '@/common/context/ProfileData';
+
+import Footer from '../home/Footer';
+import { imgOpt } from '@/common/utils';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
@@ -55,16 +58,20 @@ export const ProfileContainer: FC = ({ children }) => {
             <div className="mt-10 flex justify-center lg:justify-start">
               <ProfileDisplayName />
             </div>
-            <FollowerCount setShowFollowsModal={setShowFollowsModal} />
+            <FollowerCount
+              profile={asProfile(profileData)}
+              setShowFollowsModal={setShowFollowsModal}
+            />
           </div>
           <div className="mt-10 w-full">
             <ProfileMenu />
             {children}
           </div>
           <FollowModal
-            wallet={anchorWallet}
             visibility={showFollowsModal}
             setVisibility={setShowFollowsModal}
+            profile={asProfile(profileData)}
+            wallet={anchorWallet}
           />
         </div>
         {/* <Footer /> */}

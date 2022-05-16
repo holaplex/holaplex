@@ -29,6 +29,7 @@ import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
+import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
@@ -58,7 +59,7 @@ const AlphaPage = ({ address }: { address: string }) => {
 
   const [showConnectCTA, setShowConnectCTA] = useState(false);
 
-  const [feedQuery, { data, loading, called, fetchMore, refetch: refetchFeed }] = useFeedLazyQuery({
+  const [feedQuery, { data, loading, called, fetchMore }] = useFeedLazyQuery({
     notifyOnNetworkStatusChange: true,
     variables: {
       address: myPubkey,
@@ -265,7 +266,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {feedEvents.length === 0 && !loading && (
-              <EmptyFeedCTA myFollowingList={myFollowingList} refetch={refetchFeed} />
+              <EmptyFeedCTA myFollowingList={myFollowingList} />
             )}
             {feedItems.map((fEvent) => (
               <FeedCard

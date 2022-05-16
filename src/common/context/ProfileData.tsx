@@ -1,20 +1,13 @@
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { WalletDependantPageProps } from '@/modules/server-side/getProfile';
-import { Unpacked } from '@/types/Unpacked';
-import React, { FC, useContext, useMemo } from 'react';
-import { GetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes.ssr';
+import React, { FC, useContext } from 'react';
 
-export type TopFollower = Unpacked<GetProfileFollowerOverviewQuery['connections']>;
-
-interface ProfileData extends WalletDependantPageProps {}
-
-const ProfileDataContext = React.createContext<ProfileData>(null!);
+const ProfileDataContext = React.createContext<WalletDependantPageProps>(null!);
 
 export const ProfileDataProvider: FC<{
   profileData: WalletDependantPageProps;
 }> = ({ children, profileData }) => {
-  const returnValue: ProfileData = useMemo(() => profileData, [profileData]);
-  return <ProfileDataContext.Provider value={returnValue}>{children}</ProfileDataContext.Provider>;
+  return <ProfileDataContext.Provider value={profileData}>{children}</ProfileDataContext.Provider>;
 };
 
 export const useProfileData = () => {
