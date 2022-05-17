@@ -1,7 +1,6 @@
-import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyNowListingsSection';
-import FeaturedMarkeplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
 import Footer from '@/common/components/home/Footer';
-import { recallCache } from '@apollo/client/cache/inmemory/reactiveVars';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -10,9 +9,9 @@ import Carousel from 'react-grid-carousel';
 const Home: FC = () => {
   return (
     <>
-      <div className="container mx-auto w-[80%] pb-48">
-        <FeaturedMarkeplacesSection />
-        <FeaturedBuyNowListingsSection />
+      <div className="container mx-auto w-3/4">
+        <FeaturedMarketplacesSection />
+        <FeaturedProfilesSection />
       </div>
       <Footer />
     </>
@@ -85,7 +84,7 @@ type HomeSectionSubtypes = {
  *  </HomeSection>
  * ```
  */
-export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => <div>{children}</div>;
+export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => <div className="my-24 sm:my-40">{children}</div>;
 
 const HomeSectionHeader: Header = ({ children }) => (
   //TODO revert when ready to swap to new homepage

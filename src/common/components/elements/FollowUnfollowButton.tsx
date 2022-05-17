@@ -170,23 +170,14 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
-  return type === 'Follow' ? (
+  return (
     <Button5
-      v="primary"
-      className={classNames('h-10 w-28', className)}
+      v={type === 'Follow' ? 'primary' : 'secondary'}
+      className={classNames("h-10 w-28", className)}
       onClick={() => handleClick()}
       loading={loading}
     >
-      Follow
-    </Button5>
-  ) : (
-    <Button5
-      v="secondary"
-      className={classNames('h-10 w-28', className)}
-      onClick={() => handleClick()}
-      loading={loading}
-    >
-      Unfollow
+      {type === 'Follow' ? 'Follow' : 'Unfollow'}
     </Button5>
   );
 };

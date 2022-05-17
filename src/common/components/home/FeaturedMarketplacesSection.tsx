@@ -24,7 +24,7 @@ const previewSubdomains: string[] = [
   // 'paragon',
 ];
 
-const FeaturedMarkeplacesSection: VFC = () => {
+const FeaturedMarketplacesSection: VFC = () => {
   return (
     <HomeSection>
       <HomeSection.Header>
@@ -188,10 +188,10 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02]"
+      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02] shadow-md shadow-black"
       {...props}
     />
   );
 };
 
-export default FeaturedMarkeplacesSection;
+export default FeaturedMarketplacesSection;

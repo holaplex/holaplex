@@ -85,18 +85,18 @@ export const Avatar = ({
   address,
   showAddress = true,
   border = false,
-  size = "sm",
+  size = 'sm',
 }: {
   border?: boolean;
   address: string;
   showAddress?: boolean;
-  size?: "sm" | "md" | "lg"
+  size?: 'sm' | 'md' | 'lg';
 }) => {
   const sizes = {
     sm: 'h-6 w-6',
     md: 'h-10 w-10',
-    lg: 'h-16 w-16'
-  }
+    lg: 'h-16 w-16',
+  };
   const { data: twitterHandle } = useTwitterHandle(null, address);
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
   const { publicKey } = useWallet();
@@ -120,16 +120,8 @@ export const Avatar = ({
 
   return (
     <div className="flex items-center">
-      <div
-        className={`flex ${sizes[size]} rounded-full ${
-          border && `border-2 border-gray-900 border-opacity-60`
-        }`}
-      >
-        <img
-          src={profilePictureUrl ?? getPFPFromPublicKey(address)}
-          alt="Profile Picture"
-          className="rounded-full text-sm"
-        />
+      <div className={`flex ${sizes[size]}`}>
+        <AvatarImage src={profilePictureUrl ?? getPFPFromPublicKey(address)} border={border} />
       </div>
 
       {showAddress && (
@@ -140,3 +132,24 @@ export const Avatar = ({
     </div>
   );
 };
+
+export const AvatarImage = ({
+  src,
+  border = false,
+  borderClass = 'border-2 border-gray-900 border-opacity-60',
+}: {
+  src: string;
+  border?: boolean;
+  borderClass?: string;
+}) => (
+  <div
+    className={classNames(
+      'flex',
+      'overflow-clip rounded-full',
+      'h-full w-full',
+      border && borderClass ? borderClass : undefined
+    )}
+  >
+    <img src={src} alt="Profile Picture" className="min-h-full min-w-full object-cover" />
+  </div>
+);
