@@ -1,22 +1,22 @@
-import { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
+import { FC, useCallback, useEffect, useState, VFC } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { getFallbackImage } from '@/modules/utils/image';
 import { FeaturedProfilesData, ProfilePreviewData } from '@/types/types';
-import { useFeaturedProfilesQuery, useProfilePreviewQuery } from 'src/graphql/indexerTypes';
+import {
+  useFeaturedProfilesQuery,
+  useProfilePreviewQuery,
+  useIsXFollowingYLazyQuery,
+} from 'src/graphql/indexerTypes';
 import { AvatarImage } from '../elements/Avatar';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import {
-  AnchorWallet,
   useAnchorWallet,
   useConnection,
   useWallet,
   WalletContextState,
 } from '@solana/wallet-adapter-react';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { useGetAllConnectionsToWithTwitter } from '@/common/hooks/useGetAllConnectionsTo';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import classNames from 'classnames';
 import Link from 'next/link';
 
@@ -38,10 +38,10 @@ const FeaturedProfilesSection: VFC = () => {
   // get featured profiles once on page load and anytime later when the wallet has been (dis)connected
   // by making the wallet pubkey one of the dependencies
   useEffect(() => {
-    if (dataQuery.data?.followWallets && (dataQuery.data.followWallets.length > 0)) {
+    if (dataQuery.data?.followWallets && dataQuery.data.followWallets.length > 0) {
       setFeaturedProfiles(dataQuery.data.followWallets as FeaturedProfilesData);
     }
-  }, [wallet?.publicKey, setFeaturedProfiles, dataQuery.data?.followWallets]); 
+  }, [wallet?.publicKey, setFeaturedProfiles, dataQuery.data?.followWallets]);
 
   // when the server returns a profile with insufficient data to display the
   //  preview, remove it from the carousel
@@ -187,11 +187,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
 };
 
 function previewDataAreSufficient(data?: ProfilePreviewData): boolean {
-  return (
-    data != undefined &&
-    data.address != undefined &&
-    data.nftCounts != undefined
-  );
+  return data != undefined && data.address != undefined && data.nftCounts != undefined;
 }
 
 const LoadingPreview = () => {
@@ -215,59 +211,47 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
   targetPubkey,
   className,
 }) => {
+  const wallet = useAnchorWallet();
   const { connection } = useConnection();
-  const userWallet: AnchorWallet | undefined = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: userWallet, connection }),
-    [userWallet, connection]
-  );
+  const [userIsFollowingThisAccountQuery, userIsFollowingThisAccountContext] =
+    useIsXFollowingYLazyQuery();
 
-  const allConnectionsTo = useGetAllConnectionsToWithTwitter(targetPubkey, connection);
-  const allConnectionsFrom = useGetAllConnectionsFromWithTwitter(targetPubkey, connection);
+  const userWalletAddress: string | undefined = wallet?.publicKey.toBase58();
+  const targetIsUserWallet = targetPubkey === userWalletAddress;
 
-  if (!userWallet || !userWallet.publicKey) {
-    return null;
+  if (userWalletAddress && !targetIsUserWallet && !userIsFollowingThisAccountContext.called) {
+    userIsFollowingThisAccountQuery({
+      variables: { xPubKey: userWalletAddress, yPubKey: targetPubkey },
+    });
   }
 
-  if (allConnectionsTo.error) {
-    console.error(allConnectionsTo.error);
-    return null;
-  }
+  const canAssessFollowState: boolean =
+    userWalletAddress !== undefined &&
+    !targetIsUserWallet &&
+    userIsFollowingThisAccountContext !== undefined &&
+    userIsFollowingThisAccountContext.error === undefined &&
+    !userIsFollowingThisAccountContext.loading &&
+    userIsFollowingThisAccountContext.data !== undefined &&
+    userIsFollowingThisAccountContext.data.connections !== undefined;
 
-  if (allConnectionsFrom.error) {
-    console.error(allConnectionsFrom.error);
-    return null;
-  }
+  const userIsFollowingThisAccount: boolean =
+    canAssessFollowState && userIsFollowingThisAccountContext!.data!.connections.length > 0;
 
-  const allConnectionsToLoading = !allConnectionsTo.data && !allConnectionsTo.error;
-  const allConnectionsFromLoading = !allConnectionsFrom.data && !allConnectionsFrom.error;
+  const hideButton: boolean = targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
 
-  const isLoading = allConnectionsToLoading || allConnectionsFromLoading;
-  if (isLoading) {
-    return null;
-  }
-
-  const walletIsUsers: boolean = !!userWallet?.publicKey.equals(new PublicKey(targetPubkey));
-  let userIsFollowingProfile: boolean = false;
-  if (!walletIsUsers && userWallet && allConnectionsTo.data && allConnectionsTo.data.length > 0) {
-    userIsFollowingProfile = allConnectionsTo.data.some((i) =>
-      i.account.from.equals(userWallet.publicKey)
-    );
-  }
-
-  const hideButton: boolean = walletIsUsers || !userWallet;
+  if (!wallet) return null;
 
   return (
     <FollowUnfollowButton
-      source="profileButton"
-      walletConnectionPair={
-        walletConnectionPair as {
-          wallet: AnchorWallet;
-          connection: Connection;
-        }
-      }
-      toProfile={{ address : targetPubkey }}
-      type={userIsFollowingProfile ? 'Unfollow' : 'Follow'}
+      walletConnectionPair={{
+        connection,
+        wallet,
+      }}
+      source="modalFollowing"
+      type={userIsFollowingThisAccount ? 'Unfollow' : 'Follow'}
+      toProfile={{
+        address: targetPubkey,
+      }}
       className={classNames(className, { hidden: hideButton })}
     />
   );
