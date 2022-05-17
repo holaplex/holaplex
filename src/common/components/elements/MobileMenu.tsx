@@ -43,15 +43,38 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
   return (
     <ItemsContainer>
       <Link passHref href="/">
-        <MenuItemRow onClick={onCloseClick}>Home</MenuItemRow>
+        <a
+          className={`flex h-16 items-center pl-4 text-xl font-medium text-gray-300 hover:text-white`}
+          onClick={onCloseClick}
+        >
+          Home
+        </a>
       </Link>
       <Link passHref href="/storefront/edit">
-        <MenuItemRow onClick={onCloseClick}>Edit store</MenuItemRow>
+        <a
+          className={`flex h-16 items-center pl-4 text-xl font-medium text-gray-300 hover:text-white`}
+          onClick={onCloseClick}
+        >
+          Edit store
+        </a>
+      </Link>
+      <Link passHref href="/alpha">
+        <a
+          onClick={onCloseClick}
+          className={`flex h-16 items-center pl-4 text-xl font-medium text-gray-300 hover:text-white`}
+        >
+          Alpha
+        </a>
       </Link>
       <Link passHref href="/nfts/new">
-        <MenuItemRow>Mint NFTs</MenuItemRow>
+        <a
+          onClick={onCloseClick}
+          className={`flex h-16 items-center pl-4 text-xl font-medium text-gray-300 hover:text-white`}
+        >
+          Create
+        </a>
       </Link>
-      <Link passHref href="/about">
+      {/* <Link passHref href="/about">
         <MenuItemRow onClick={onCloseClick}>About</MenuItemRow>
       </Link>
       <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
@@ -68,7 +91,7 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
         <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
           Privacy policy
         </MenuItemRow>
-      </Link>
+      </Link> */}
     </ItemsContainer>
   );
 };

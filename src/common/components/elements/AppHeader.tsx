@@ -65,7 +65,9 @@ export function AppHeader() {
 
   return (
     <>
-      <nav className={`hidden flex-row items-center justify-between gap-6 px-6 py-4 md:flex`}>
+      <nav
+        className={`hidden flex-row items-center justify-between gap-6 bg-transparent px-6 py-4 md:flex`}
+      >
         <div className={`flex w-full flex-row items-center gap-10 text-2xl font-bold`}>
           <Link href="/" passHref>
             <a className={`font-bold`}>
@@ -80,7 +82,9 @@ export function AppHeader() {
             {connected && (
               <HeaderLinkWrapper key="alpha" active={router.pathname === '/alpha'}>
                 <Link href="/alpha" passHref>
-                  <a className="hover:underline focus:underline">Alpha</a>
+                  <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
+                    Alpha
+                  </a>
                 </Link>
               </HeaderLinkWrapper>
             )}
@@ -91,11 +95,13 @@ export function AppHeader() {
               className={`min-w-fit`}
             >
               <Link href="/nfts/new" passHref>
-                <a className="hover:underline focus:underline">Mint NFTs</a>
+                <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
+                  Create
+                </a>
               </Link>
             </HeaderLinkWrapper>
 
-            <Popover
+            {/* <Popover
               placement="bottom"
               content={
                 <div className="flex flex-col space-y-6">
@@ -125,8 +131,8 @@ export function AppHeader() {
               <a className="flex min-w-fit items-center">
                 About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
-            </Popover>
-            <Popover
+            </Popover> */}
+            {/* <Popover
               placement="bottom"
               content={
                 <div className="flex flex-col space-y-6">
@@ -174,12 +180,22 @@ export function AppHeader() {
               <a className="flex min-w-fit items-center">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
-            </Popover>
-            <DialectNotificationsButton />
+            </Popover> */}
+            {connectedAndInstalledWallet && (
+              <div className={`rounded-full p-4 shadow-lg shadow-black hover:bg-gray-800`}>
+                <DialectNotificationsButton />
+              </div>
+            )}
+
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button loading={connecting} onClick={() => setVisible(true)} size="small">
+              <Button
+                loading={connecting}
+                onClick={() => setVisible(true)}
+                size="small"
+                className={`text-lg font-medium`}
+              >
                 Connect
               </Button>
             )}
