@@ -9,6 +9,7 @@ import { useScrollBlock } from '@/common/hooks/useScrollBlock';
 import { BulkMinter as TBulkMinter } from '@holaplex/ui';
 import { Connection } from '@solana/web3.js';
 import { StorefrontContext } from '@/modules/storefront';
+import { useRouter } from 'next/router';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -47,6 +48,7 @@ const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_ENDPOINT as str
 
 const MintModal = ({ show, onClose }: MintModalProps) => {
   const { track } = useAnalytics();
+  const router = useRouter();
   const [blockScroll, allowScroll] = useScrollBlock();
   const { storefront } = useContext(StorefrontContext);
   const { solana } = useContext(WalletContext);
@@ -72,6 +74,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
+        goToOwnedRoute={() => router.push(`/profiles/${solana?.publicKey?.toBase58()}/created`)}
         wallet={solana}
         track={track}
         storefront={storefront}
