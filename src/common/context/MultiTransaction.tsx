@@ -76,6 +76,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasActionPending(true);
         let filtered = actions;
         for (const action of actions) {
+          setHasError(false);
           setMessage(action.name);
           await action.action(action.param);
           settings?.onActionSuccess?.(action.id);
@@ -193,7 +194,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
           <p className={`mt-4 text-center text-gray-300`}>
             {completedActions} of {numActions}
           </p>
-          {hasError && (
+          {hasError && hasRemainingActions && (
             <div className={`flex w-full px-4`}>
               <Button
                 className={`w-full`}
@@ -202,7 +203,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
                 size={`small`}
                 onClick={retryActions}
               >
-                Retry?
+                Retry? (Check Transaction First)
               </Button>
             </div>
           )}
