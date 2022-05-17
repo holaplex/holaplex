@@ -52,7 +52,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import FeaturedMarkeplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -490,7 +490,7 @@ export default function Home({
       </section>
 
       <section>
-        <FeaturedMarkeplacesSection/>
+        <FeaturedMarketplacesSection/>
       </section>
       <section className="mt-10">
         <div ref={listingsTopRef} />

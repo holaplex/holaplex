@@ -646,12 +646,27 @@ export type WhoToFollowQueryVariables = Exact<{
 
 export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, bids: Array<{ __typename?: 'Bid', lastBidTime: string, listing?: { __typename?: 'Listing', nfts: Array<{ __typename?: 'Nft', address: string, name: string, image: string }> } | null }>, connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number }, nftCounts: { __typename?: 'WalletNftCount', owned: number, offered: number, listed: number } }> };
 
+export type FeaturedProfilesQueryVariables = Exact<{
+  userWallet?: InputMaybe<Scalars['PublicKey']>;
+  limit: Scalars['Int'];
+}>;
+
+
+export type FeaturedProfilesQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any }> };
+
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
 }>;
 
 
-export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, bannerUrl: string, name: string, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }> } | null };
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, bannerUrl: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null } | null, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null } | null };
+
+export type ProfilePreviewQueryVariables = Exact<{
+  address: Scalars['PublicKey'];
+}>;
+
+
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -1370,38 +1385,58 @@ export function useWhoToFollowLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type WhoToFollowQueryHookResult = ReturnType<typeof useWhoToFollowQuery>;
 export type WhoToFollowLazyQueryHookResult = ReturnType<typeof useWhoToFollowLazyQuery>;
 export type WhoToFollowQueryResult = Apollo.QueryResult<WhoToFollowQuery, WhoToFollowQueryVariables>;
+export const FeaturedProfilesDocument = gql`
+    query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
+    address
+  }
+}
+    `;
+
+/**
+ * __useFeaturedProfilesQuery__
+ *
+ * To run a query within a React component, call `useFeaturedProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFeaturedProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFeaturedProfilesQuery({
+ *   variables: {
+ *      userWallet: // value for 'userWallet'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useFeaturedProfilesQuery(baseOptions: Apollo.QueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(FeaturedProfilesDocument, options);
+      }
+export function useFeaturedProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(FeaturedProfilesDocument, options);
+        }
+export type FeaturedProfilesQueryHookResult = ReturnType<typeof useFeaturedProfilesQuery>;
+export type FeaturedProfilesLazyQueryHookResult = ReturnType<typeof useFeaturedProfilesLazyQuery>;
+export type FeaturedProfilesQueryResult = Apollo.QueryResult<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>;
 export const MarketplacePreviewDocument = gql`
     query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {
     subdomain
-    bannerUrl
-    stats {
-      nfts
-    }
     name
-    auctionHouse {
-      address
-      treasuryMint
-      auctionHouseTreasury
-      treasuryWithdrawalDestination
-      feeWithdrawalDestination
-      authority
-      creator
-      auctionHouseFeeAccount
-      bump
-      treasuryBump
-      feePayerBump
-      sellerFeeBasisPoints
-      requiresSignOff
-      canChangeSalePrice
-      stats {
-        floor
-        average
-        volume24hr
-      }
-    }
+    bannerUrl
     creators {
       creatorAddress
+    }
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    stats {
+      nfts
     }
   }
 }
@@ -1434,6 +1469,50 @@ export function useMarketplacePreviewLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type MarketplacePreviewQueryHookResult = ReturnType<typeof useMarketplacePreviewQuery>;
 export type MarketplacePreviewLazyQueryHookResult = ReturnType<typeof useMarketplacePreviewLazyQuery>;
 export type MarketplacePreviewQueryResult = Apollo.QueryResult<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>;
+export const ProfilePreviewDocument = gql`
+    query profilePreview($address: PublicKey!) {
+  wallet(address: $address) {
+    profile {
+      handle
+      profileImageUrl
+      bannerImageUrl
+    }
+    address
+    nftCounts {
+      owned
+      created
+    }
+  }
+}
+    `;
+
+/**
+ * __useProfilePreviewQuery__
+ *
+ * To run a query within a React component, call `useProfilePreviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfilePreviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfilePreviewQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useProfilePreviewQuery(baseOptions: Apollo.QueryHookOptions<ProfilePreviewQuery, ProfilePreviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfilePreviewQuery, ProfilePreviewQueryVariables>(ProfilePreviewDocument, options);
+      }
+export function useProfilePreviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilePreviewQuery, ProfilePreviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfilePreviewQuery, ProfilePreviewQueryVariables>(ProfilePreviewDocument, options);
+        }
+export type ProfilePreviewQueryHookResult = ReturnType<typeof useProfilePreviewQuery>;
+export type ProfilePreviewLazyQueryHookResult = ReturnType<typeof useProfilePreviewLazyQuery>;
+export type ProfilePreviewQueryResult = Apollo.QueryResult<ProfilePreviewQuery, ProfilePreviewQueryVariables>;
 export const NftMarketplaceDocument = gql`
     query nftMarketplace($subdomain: String!, $address: String!) {
   marketplace(subdomain: $subdomain) {

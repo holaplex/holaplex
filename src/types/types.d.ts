@@ -39,6 +39,23 @@ export interface MarketplacePreviewData {
   }
 }
 
+
+export type FeaturedProfilesData = {address: string}[];
+
+
+export interface ProfilePreviewData {
+  address: string;
+  profile: {
+    handle?: string;
+    profileImageUrl?: string;
+    bannerImageUrl?: string;
+  }
+  nftCounts: {
+    owned?: number;
+    created?: number;
+  }
+}
+
 interface GraphQLObject {
   __typename: string;
 }

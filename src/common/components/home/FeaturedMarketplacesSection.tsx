@@ -24,23 +24,16 @@ const previewSubdomains: string[] = [
   // 'paragon',
 ];
 
-const FeaturedMarkeplacesSection: VFC = () => {
+const FeaturedMarketplacesSection: VFC = () => {
   return (
     <HomeSection>
-      {/* <HomeSection.Header>
+      <HomeSection.Header>
         <HomeSection.Title>Marketplaces</HomeSection.Title>
         <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
           Join waitlist
         </HomeSection.HeaderAction>
-      </HomeSection.Header> */}
-      <div className="flex justify-between">
-        <HomeSection.Title>Marketplaces</HomeSection.Title>
-        <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
-          Join waitlist
-        </HomeSection.HeaderAction>
-      </div>
-      <HomeSection.Body></HomeSection.Body>
-      <div className="-ml-[2%] w-[104%] ">
+      </HomeSection.Header>
+      <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
             <HomeSectionCarousel.Item key={s}>
@@ -50,7 +43,7 @@ const FeaturedMarkeplacesSection: VFC = () => {
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
-      </div>
+      </HomeSection.Body>
     </HomeSection>
   );
 };
@@ -195,10 +188,10 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02]"
+      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02] shadow-md shadow-black"
       {...props}
     />
   );
 };
 
-export default FeaturedMarkeplacesSection;
+export default FeaturedMarketplacesSection;

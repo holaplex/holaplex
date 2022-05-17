@@ -2,11 +2,10 @@ import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
-import '@dialectlabs/react-ui/index.css';
-import { useRouter } from 'next/router';
+// TODO (fix) ts/next fails to find this css module using import
+require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import styled from 'styled-components';
 import { Layout } from 'antd';
 import { isNil } from 'ramda';
 import { WalletProviderDeprecated } from '@/modules/wallet';

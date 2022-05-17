@@ -1,7 +1,5 @@
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
-import { showFirstAndLastFour } from '@/modules/utils/string';
 import { GetServerSideProps, NextPage } from 'next';
-import Head from 'next/head';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -80,6 +78,12 @@ export const NFTCard = ({
   loading: boolean;
 }) => {
   const { publicKey } = useWallet();
+  const [listNFTVisibility, setListNFTVisibility] = useState(false);
+  const [updateListingVisibility, setUpdateListingVisibility] = useState(false);
+  const [updateOfferVisibility, setUpdateOfferVisibility] = useState(false);
+
+  if (loading) return <LoadingNFTCard/>;
+
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
@@ -95,10 +99,6 @@ export const NFTCard = ({
   );
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;
-
-  const [listNFTVisibility, setListNFTVisibility] = useState(false);
-  const [updateListingVisibility, setUpdateListingVisibility] = useState(false);
-  const [updateOfferVisibility, setUpdateOfferVisibility] = useState(false);
 
   return (
     <>
