@@ -45,6 +45,7 @@ export const ProfileImage = () => {
             width={40}
             height={40}
             src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
+            className={`shadow-lg shadow-black`}
             alt="Profile Image"
           />
         </ProfileImageWrapper>
