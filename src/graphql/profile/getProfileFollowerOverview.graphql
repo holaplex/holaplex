@@ -1,0 +1,20 @@
+#import "./profileInfo.graphql"
+
+query getProfileFollowerOverview($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    connectionCounts {
+      fromCount
+      toCount
+    }
+  }
+  connections(to: [$pubKey], limit: 4, offset: 0) {
+    from {
+      address
+      profile {
+        handle
+        profileImageUrl
+        bannerImageUrl
+      }
+    }
+  }
+}

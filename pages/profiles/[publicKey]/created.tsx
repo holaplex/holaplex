@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import React, { useMemo, useState } from 'react';
 import { CreatedNfTsQuery, useCreatedNfTsQuery } from '../../../src/graphql/indexerTypes';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '../../../src/modules/server-side/getProfile';
 //@ts-ignore
@@ -24,7 +24,7 @@ import { ProfilePageHead } from '../[publicKey]';
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+  getProfileServerSideProps(context);
 
 enum ListingFilters {
   ALL,

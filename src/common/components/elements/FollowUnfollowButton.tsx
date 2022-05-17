@@ -11,33 +11,43 @@ import { toast } from 'react-toastify';
 import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
+import { useProfileData } from '@/common/context/ProfileData';
+
+import classNames from 'classnames';
+import { useApolloClient } from '@apollo/client';
+import { AllConnectionsFromDocument, AllConnectionsToDocument } from 'src/graphql/indexerTypes';
 
 type FollowUnfollowButtonProps = {
-  source: 'modalFrom' | 'modalTo' | 'profileButton';
+  source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;
   };
-  toProfile: IProfile;
+  toProfile: {
+    address: string;
+    handle?: string;
+  };
   type: 'Follow' | 'Unfollow';
+  className?: string;
 };
 
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   source,
-  walletConnectionPair,
-  toProfile,
   type,
+  walletConnectionPair,
+  className,
+  toProfile,
 }) => {
   const { track } = useAnalytics();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); // TODO: Remove
   const { connection, wallet } = walletConnectionPair;
   const myWallet = wallet.publicKey.toBase58();
-  const toWallet = toProfile.pubkey;
+  const toWallet = toProfile.address;
 
   const sharedTrackingParams = {
     source,
     event_category: 'Profile',
-    event_label: 'profile',
+    event_label: type,
     from: myWallet,
     to: toWallet,
   } as const;
@@ -45,6 +55,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const trackInitiateTransaction = () => track(type + ' initiated', sharedTrackingParams);
   const trackSuccess = () => track(type + ' succeeded', sharedTrackingParams);
   const trackError = () => track(type + ' errored', sharedTrackingParams);
+  const apolloClient = useApolloClient();
 
   const connectTo = useMakeConnection(walletConnectionPair, {
     onSuccess: async (txId, toWallet) => {
@@ -64,6 +75,10 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       );
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
+      await apolloClient.refetchQueries({
+        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+      });
+
       trackSuccess();
       toast(
         <SuccessToast>
@@ -79,7 +94,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>
       );
     },
-    onError: (error, toWallet) => {
+    onError: (error) => {
       console.error(error);
       trackError();
       toast(<FailureToast>Unable to follow, try again later.</FailureToast>);
@@ -107,6 +122,9 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       }
 
       await queryClient.invalidateQueries();
+      await apolloClient.refetchQueries({
+        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+      });
 
       trackSuccess();
       toast(
@@ -132,7 +150,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
         </SuccessToast>
       );
     },
-    onError: (error, toWallet) => {
+    onError: (error) => {
       console.error(error);
       trackError();
       toast(<FailureToast>Unable to unfollow, try again later.</FailureToast>);
@@ -153,11 +171,21 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
   return type === 'Follow' ? (
-    <Button5 v="primary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
+    <Button5
+      v="primary"
+      className={classNames('h-10 w-28', className)}
+      onClick={() => handleClick()}
+      loading={loading}
+    >
       Follow
     </Button5>
   ) : (
-    <Button5 v="secondary" className="h-10 w-28" onClick={() => handleClick()} loading={loading}>
+    <Button5
+      v="secondary"
+      className={classNames('h-10 w-28', className)}
+      onClick={() => handleClick()}
+      loading={loading}
+    >
       Unfollow
     </Button5>
   );

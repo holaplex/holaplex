@@ -1,14 +1,15 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
+import '@dialectlabs/react-ui/index.css';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import { isNil } from 'ramda';
-import { WalletProvider } from '@/modules/wallet';
+import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
 import { Close } from '@/common/components/icons/Close';
@@ -21,6 +22,7 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
+  GlowWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import {
   ConnectionProvider,
@@ -28,8 +30,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from '../src/graphql/apollo';
+import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -37,6 +38,8 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
+import { apolloClient } from 'src/graphql/apollo';
+import { NextPage } from 'next';
 
 const { Content } = Layout;
 
@@ -46,7 +49,15 @@ const getSolanaNetwork = () => {
     : WalletAdapterNetwork.Mainnet;
 };
 
-function MyApp({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const network = getSolanaNetwork();
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT!;
 
@@ -59,6 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
+      new GlowWalletAdapter()
     ],
     [network]
   );
@@ -67,6 +79,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
     []
   );
+
+  const getLayout = Component.getLayout || ((page) => page);
 
   return (
     <>
@@ -92,7 +106,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
             <WalletProviderSolana wallets={wallets} autoConnect>
               <WalletModalProvider>
-                <WalletProvider>
+                <WalletProviderDeprecated>
                   {({ wallet }) => (
                     <MultiTransactionProvider>
                       <StorefrontProvider wallet={wallet}>
@@ -101,19 +115,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                             <MarketplaceProvider wallet={wallet}>
                               {() => (
                                 <AnalyticsProvider>
-                                  <div className="w-full items-center justify-center bg-[#005BBB] p-2 text-base text-[#FFD500] sm:flex">
-                                    Help the people of Ukraine through SOL donations.
-                                    <a
-                                      href="https://donate.metaplex.com/"
-                                      className="ml-4 inline items-center justify-center underline transition-transform sm:flex sm:h-8 sm:rounded-full sm:bg-[#FFD500] sm:px-4 sm:text-[#005BBB] sm:no-underline sm:hover:scale-[1.02] sm:hover:text-[#005BBB]"
-                                      target="_blank"
-                                      rel="noreferrer"
-                                    >
-                                      Learn more
-                                    </a>
-                                  </div>
                                   <AppHeader />
-                                  <Component {...pageProps} />
+                                  {getLayout(<Component {...pageProps} />)}
                                 </AnalyticsProvider>
                               )}
                             </MarketplaceProvider>
@@ -122,7 +125,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                       </StorefrontProvider>
                     </MultiTransactionProvider>
                   )}
-                </WalletProvider>
+                </WalletProviderDeprecated>
               </WalletModalProvider>
             </WalletProviderSolana>
           </ConnectionProvider>
@@ -130,6 +133,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </QueryClientProvider>
     </>
   );
-}
+};
 
 export default MyApp;

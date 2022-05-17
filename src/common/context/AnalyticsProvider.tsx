@@ -37,7 +37,15 @@ interface GenericTrackingAttributes {
 }
 
 export interface TrackingAttributes extends GenericTrackingAttributes {
-  event_category: 'Global' | 'Storefront' | 'Discovery' | 'Minter' | 'Misc' | 'Profile' | 'NFTs';
+  event_category:
+    | 'Global'
+    | 'Storefront'
+    | 'Discovery'
+    | 'Minter'
+    | 'Misc'
+    | 'Profile'
+    | 'NFTs'
+    | 'Alpha';
   event_label: string;
   value?: number;
   sol_value?: number;

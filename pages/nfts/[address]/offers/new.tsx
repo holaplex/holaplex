@@ -5,7 +5,7 @@ import Modal from '@/components/elements/Modal';
 import OfferForm from '@/components/forms/OfferForm';
 import BlurPage from '@/components/layouts/BlurPage';
 import { useNftMarketplaceQuery } from '../../../../src/graphql/indexerTypes';
-import { Nft, Marketplace } from '@/types/types';
+import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 
 import Custom404 from '../../../404';
 import NftByAddress from '../../[address]';
@@ -36,7 +36,7 @@ const NewNFTOffer = ({ address }: { address: string }) => {
 
   const nft = data?.nft;
   const marketplace = data?.marketplace;
-  const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
+  const isOwner = publicKey ? Boolean(nft?.owner?.address === publicKey?.toBase58()) : false;
 
   const router = useRouter();
 
@@ -45,10 +45,10 @@ const NewNFTOffer = ({ address }: { address: string }) => {
   };
 
   useEffect(() => {
-    if (!publicKey || (isOwner && router)) {
+    if (isOwner) {
       goBack();
     }
-  }, [publicKey, isOwner, router, goBack]);
+  }, [isOwner, router, goBack, publicKey]);
 
   if (!publicKey || (isOwner && router)) {
     return null;

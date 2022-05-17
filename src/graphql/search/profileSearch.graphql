@@ -1,0 +1,9 @@
+query profileSearch($term: String!) {
+  profiles(term: $term, limit: 10, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+    }
+  }
+}
