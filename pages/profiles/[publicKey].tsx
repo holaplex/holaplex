@@ -1,10 +1,9 @@
-import { ActivityContent } from '@/common/components/elements/ActivityContent';
 import Head from 'next/head';
 import { GetServerSideProps, NextPage } from 'next';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
@@ -12,8 +11,15 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Spinner } from '@/common/components/elements/Spinner';
 
-export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
-  getPropsForWalletOrUsername(context);
+export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) => {
+  const result = await getProfileServerSideProps(context);
+  if ((result as { redirect?: boolean }).redirect) {
+    return result;
+  } else {
+    const { props } = result as { props: WalletDependantPageProps };
+    return { redirect: { destination: `/profiles/${props.publicKey}/nfts`, statusCode: 302 } };
+  }
+}; // Do server side redirection for SEO purposes.
 
 export const ProfilePageHead = (props: {
   publicKey: string;
@@ -58,11 +64,11 @@ export const ProfilePageHead = (props: {
 
 const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => {
   const router = useRouter();
-
   useEffect(() => {
     router.replace(`/profiles/${publicKey}/nfts`);
+    // Run once if client-side
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <ProfileDataProvider profileData={{ publicKey, ...props }}>
       <ProfilePageHead
@@ -75,7 +81,6 @@ const ActivityLanding: NextPage<WalletDependantPageProps> = ({ publicKey, ...pro
         description="View activity for this, or any other pubkey, in the Holaplex ecosystem."
       />
       <ProfileContainer>
-        {/* <ActivityContent /> */}
         <div className="flex h-48 w-full items-center justify-center">
           <Spinner />
         </div>

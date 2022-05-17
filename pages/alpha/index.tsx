@@ -29,7 +29,6 @@ import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
-import { useGetAllConnectionsFromWithTwitter } from '@/common/hooks/useGetAllConnectionsFrom';
 import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
@@ -43,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-const FeedPage = ({ address }: { address: string }) => {
+const AlphaPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
   const {
@@ -59,7 +58,7 @@ const FeedPage = ({ address }: { address: string }) => {
 
   const [showConnectCTA, setShowConnectCTA] = useState(false);
 
-  const [feedQuery, { data, loading, called, fetchMore }] = useFeedLazyQuery({
+  const [feedQuery, { data, loading, called, fetchMore, refetch: refetchFeed }] = useFeedLazyQuery({
     notifyOnNetworkStatusChange: true,
     variables: {
       address: myPubkey,
@@ -266,16 +265,15 @@ const FeedPage = ({ address }: { address: string }) => {
               </>
             )}
             {feedEvents.length === 0 && !loading && (
-              <EmptyFeedCTA myFollowingList={myFollowingList} />
+              <EmptyFeedCTA myFollowingList={myFollowingList} refetch={refetchFeed} />
             )}
             {feedItems.map((fEvent) => (
-              <div key={fEvent.feedEventId} id={fEvent.feedEventId}>
-                <FeedCard
-                  key={fEvent.feedEventId}
-                  event={fEvent}
-                  myFollowingList={myFollowingList}
-                />
-              </div>
+              <FeedCard
+                key={fEvent.feedEventId + fEvent.walletAddress}
+                event={fEvent}
+                myFollowingList={myFollowingList}
+                allEventsRef={feedItems}
+              />
             ))}
 
             {/* Seems to cause duplicate events, need to figure it out */}
@@ -339,11 +337,11 @@ const FeedPage = ({ address }: { address: string }) => {
   );
 };
 
-export default FeedPage;
+export default AlphaPage;
 
 /* 
 Might reintorduce this with Tabs later
-FeedPage.getLayout = function getLayout(page: ReactElement) {
+AlphaPage.getLayout = function getLayout(page: ReactElement) {
   return <FeedLayout>{page}</FeedLayout>;
 };
  */

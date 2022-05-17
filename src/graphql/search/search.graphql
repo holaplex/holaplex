@@ -1,0 +1,25 @@
+query search($term: String!, $walletAddress: PublicKey!){
+    metadataJsons(term: $term, limit: 25, offset: 0){
+        name
+        address
+        image
+        creatorAddress
+        creatorTwitterHandle
+    }
+    profiles(term: $term, limit: 5, offset: 0){
+        address
+        twitterHandle
+        profile{
+            profileImageUrl
+            handle
+        }
+    }
+    wallet(address: $walletAddress){
+        address
+        twitterHandle
+        profile{
+            profileImageUrl
+            handle
+        }
+    }
+}

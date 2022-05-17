@@ -33,7 +33,7 @@ const BuySellForm: FC<BuySellFormProps> = ({ nft, marketplace }) => {
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
   const offers = nft?.offers;
-  const topOffer = offers?.sort((a, b) => Number(a.price) - Number(b.price))[0];
+  const topOffer = offers?.slice()?.sort((a, b) => Number(a.price) - Number(b.price))[0];
   const hasTopOffer = Boolean(topOffer);
 
   // nft state
