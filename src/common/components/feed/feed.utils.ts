@@ -56,7 +56,7 @@ export function getHandle(u: User) {
   return (u.profile?.handle && '@' + u.profile?.handle) || shortenAddress(u.address);
 }
 
-export function generateFeedCardAtributes(
+export function generateFeedCardAttributes(
   event: FeedItem,
   myFollowingList?: string[]
 ): FeedCardAttributes {

@@ -2,6 +2,7 @@ import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyN
 import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
 import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
 import Footer from '@/common/components/home/Footer';
+import HeroSection from '@/common/components/home/HeroSection';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -9,14 +10,15 @@ import Carousel from 'react-grid-carousel';
 
 const Home: FC = () => {
   return (
-    <>
+    <div>
+      <HeroSection />
       <div className="container mx-auto w-3/4">
         <FeaturedMarketplacesSection />
         <FeaturedBuyNowListingsSection/>
         <FeaturedProfilesSection />
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
@@ -86,7 +88,9 @@ type HomeSectionSubtypes = {
  *  </HomeSection>
  * ```
  */
-export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => <div className="my-24 sm:my-40">{children}</div>;
+export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => (
+  <div className="my-24 sm:my-40">{children}</div>
+);
 
 const HomeSectionHeader: Header = ({ children }) => (
   //TODO revert when ready to swap to new homepage

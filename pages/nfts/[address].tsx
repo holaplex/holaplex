@@ -88,37 +88,52 @@ const Activities = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
-  const { data } = await apolloClient.query<ShareNftQuery>({
-    query: ShareNftDocument,
-    variables: {
-      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      address: context?.params?.address,
-    },
-  });
-  const offers = data.nft?.offers || [];
-  const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
-  const topOffer = topOffers?.[0];
 
-  const listings = data.nft?.listings || [];
-  const topListings = listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
-  const topListing = topListings?.[0];
+  try {
+    const { data } = await apolloClient.query<ShareNftQuery>({
+      query: ShareNftDocument,
+      variables: {
+        subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+        address: context?.params?.address,
+      },
+    });
+    const offers = data.nft?.offers || [];
+    const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+    const topOffer = topOffers?.[0];
 
-  return {
-    props: {
-      address: nftAddress,
-      name: data.nft?.name || nftAddress,
-      description: data.nft?.description || '',
-      image:
-        data.nft?.image ||
-        `/images/gradients/gradient-${seededRandomBetween(
-          new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
-          1,
-          8
-        )}.png`,
-      listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
-      offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
-    },
-  };
+    const listings = data.nft?.listings || [];
+    const topListings =
+      listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+    const topListing = topListings?.[0];
+
+    return {
+      props: {
+        address: nftAddress,
+        name: data.nft?.name || nftAddress,
+        description: data.nft?.description || '',
+        image:
+          data.nft?.image ||
+          `/images/gradients/gradient-${seededRandomBetween(
+            new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
+            1,
+            8
+          )}.png`,
+        listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
+        offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
+      },
+    };
+  } catch (err) {
+    return {
+      props: {
+        address: nftAddress,
+        name: '',
+        description: '',
+        image: '',
+        listedPrice: 0,
+        offerPrice: 0,
+      },
+    };
+  }
 };
 
 export default function NftByAddress({
@@ -139,7 +154,7 @@ export default function NftByAddress({
   const { publicKey } = useWallet();
   const router = useRouter();
 
-  const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
+  const [queryNft, { data, loading, called, refetch, error }] = useNftMarketplaceLazyQuery();
 
   useEffect(() => {
     if (!address) return;
