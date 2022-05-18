@@ -26,7 +26,6 @@ jobs:
 
       - name: Build, tag, and push Frontend to Amazon ECR
         id: build-frontend-image
-
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ github.event.repository.name }}
@@ -37,10 +36,12 @@ jobs:
           git_branch=${GITHUB_REF##*/}
           if [ $git_branch == 'main' ];then
             graphql_endpoint="https://graph.holaplex.com"
-          else
-            graphql_endpoint="https://graph-test.holaplex.com"
           fi
 
+          if [ $git_branch == 'dev' ];then
+            graphql_endpoint="https://graph-test.holaplex.com"
+          fi
+          echo "Using graphql endpoint: $graphql_endpoint"
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
           docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
           echo "Pushing image to ECR..."
@@ -48,7 +49,7 @@ jobs:
           echo "::set-output name=image::$image_tag"
 
           if [ $git_branch == 'dev' ];then
-            graphql_endpoint="https://graph-test.holaplex.tools"
+            graphql_endpoint=https://graph-test.holaplex.tools
             git_branch=canary
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
             docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
@@ -57,7 +58,7 @@ jobs:
             echo "::set-output name=image::$image_tag"
           fi
 
-      - name: Build, tag, and push signer to Amazon ECR (dev)
+      - name: Build, tag, and push signer to Amazon ECR
         id: build-signer-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -72,8 +73,17 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
+          if [ $git_branch == 'dev' ];then
+            git_branch=canary
+            image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
+            docker build -t $image_tag --target $app .
+            echo "Pushing image to ECR..."
+            docker push $image_tag
+            echo "::set-output name=image::$image_tag"
+          fi
 
-      - name: Triggering deployment manifest update in kubes repository
+
+      - name: Triggering deployment manifest update in kubes repository (Dev)
         if: github.ref == 'refs/heads/dev'
         uses: actions/github-script@v6
         env:
@@ -94,7 +104,7 @@ jobs:
               ref: 'canary'
             })
 
-      - name: Triggering deployment manifest update in kubes repository
+      - name: Triggering deployment manifest update in kubes repository (prod)
         if: github.ref == 'refs/heads/main'
         uses: actions/github-script@v6
         env:
