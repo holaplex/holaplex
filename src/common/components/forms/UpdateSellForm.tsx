@@ -12,7 +12,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { FeeItem } from './SellForm';
 import AcceptOfferForm from './AcceptOfferForm';
-import { initMarketplaceSDK, Nft, Marketplace, Listing, Offer } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, Listing, Offer, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import Modal from '../elements/Modal';
@@ -23,7 +23,7 @@ import DownloadNFTCard from './DownloadableNFTCard';
 
 interface UpdateSellFormProps {
   nft: Nft;
-  marketplace: Marketplace;
+  marketplace: {auctionHouse: AuctionHouse};
   listing: Listing;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -241,9 +241,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
         <DownloadNFTCard
           listing={listing}
           nft={nft}
-          marketplace={marketplace}
           updatedPrice={updatedPrice * LAMPORTS_PER_SOL}
-          offer={offer}
         />
       </Modal>
     </div>

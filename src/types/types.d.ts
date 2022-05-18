@@ -40,6 +40,44 @@ export interface MarketplacePreviewData {
 }
 
 
+export interface BuyNowListingPreviewData {
+  nft: {
+    name: string;
+    description: string;
+    image: string;
+    creators: {
+      share: number;
+    }[]
+    offers: {
+      price: number;
+    }[]
+    owner: {
+      address: string;
+    }
+    listings: {
+      auctionHouse: string;
+      address: string;
+    }[]
+    purchases: {
+      price: number;
+    }[]
+    address: string;
+  }
+  marketplace: {
+    auctionHouse: {
+      sellerFeeBasisPoints: number;
+      address: string;
+      stats: {
+        floor: number;
+        average: number;
+      }
+      auctionHouseTreasury: string;
+      authority: string;
+    }
+  }
+}
+
+
 export type FeaturedProfilesData = {address: string}[];
 
 

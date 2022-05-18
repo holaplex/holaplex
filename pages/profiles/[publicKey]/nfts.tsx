@@ -25,7 +25,7 @@ import Button from '@/components/elements/Button';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
 import SellForm from '@/components/forms/SellForm';
-import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
@@ -71,7 +71,7 @@ export const NFTCard = ({
   loading = false,
 }: {
   nft: OwnedNFT;
-  marketplace: Marketplace;
+  marketplace: {auctionHouse: AuctionHouse};
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;

@@ -8,20 +8,16 @@ import Button from '../elements/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   LAMPORTS_PER_SOL,
-  PublicKey,
-  SYSVAR_INSTRUCTIONS_PUBKEY,
-  Transaction,
-  TransactionInstruction,
 } from '@solana/web3.js';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
 interface BuyFormProps {
   nft: Nft;
-  marketplace: Marketplace;
+  marketplace: {auctionHouse: AuctionHouse};
   listing: Listing;
   className?: string;
   refetch:
