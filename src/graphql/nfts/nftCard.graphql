@@ -1,26 +1,51 @@
 query nftCard($subdomain: String!, $address: String!) {
   nft(address: $address) {
+    address
     name
+    sellerFeeBasisPoints
+    mintAddress
     description
     image
+    primarySaleHappened
     creators {
+      address
       share
-    }
-    offers {
-      price
+      verified
     }
     owner {
       address
-    }
-    listings {
-      auctionHouse
-      address
-      price
+      associatedTokenAccountAddress
     }
     purchases {
+      address
+      buyer
+      auctionHouse
       price
+      createdAt
     }
-    address
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
   }
   marketplace(subdomain: $subdomain) {
     auctionHouse {

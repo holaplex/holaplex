@@ -251,6 +251,7 @@ export type Nft = {
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   category: Scalars['String'];
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
   creators: Array<NftCreator>;
   description: Scalars['String'];
   files: Array<NftFile>;
@@ -702,7 +703,7 @@ export type NftCardQueryVariables = Exact<{
 }>;
 
 
-export type NftCardQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', name: string, description: string, image: string, address: string, creators: Array<{ __typename?: 'NftCreator', share: number }>, offers: Array<{ __typename?: 'BidReceipt', price: any }>, owner?: { __typename?: 'NftOwner', address: string } | null, listings: Array<{ __typename?: 'ListingReceipt', auctionHouse: any, address: string, price: any }>, purchases: Array<{ __typename?: 'PurchaseReceipt', price: any }> } | null, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', sellerFeeBasisPoints: number, address: string, auctionHouseTreasury: string, authority: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null } | null } | null } | null };
+export type NftCardQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', sellerFeeBasisPoints: number, address: string, auctionHouseTreasury: string, authority: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null } | null } | null } | null };
 
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
@@ -1509,27 +1510,52 @@ export const OffersPageDocument = gql`
 export const NftCardDocument = gql`
     query nftCard($subdomain: String!, $address: String!) {
   nft(address: $address) {
+    address
     name
+    sellerFeeBasisPoints
+    mintAddress
     description
     image
+    primarySaleHappened
     creators {
+      address
       share
-    }
-    offers {
-      price
+      verified
     }
     owner {
       address
-    }
-    listings {
-      auctionHouse
-      address
-      price
+      associatedTokenAccountAddress
     }
     purchases {
+      address
+      buyer
+      auctionHouse
       price
+      createdAt
     }
-    address
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
   }
   marketplace(subdomain: $subdomain) {
     auctionHouse {

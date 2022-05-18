@@ -1,4 +1,5 @@
 import BN from 'bn.js';
+import { OwnedNfTsQuery } from 'src/graphql/indexerTypes';
 
 export type Volume = number;
 
@@ -40,29 +41,8 @@ export interface MarketplacePreviewData {
 }
 
 
-export interface BuyNowListingPreviewData {
-  nft: {
-    name: string;
-    description: string;
-    image: string;
-    creators: {
-      share: number;
-    }[]
-    offers: {
-      price: number;
-    }[]
-    owner: {
-      address: string;
-    }
-    listings: {
-      auctionHouse: string;
-      address: string;
-    }[]
-    purchases: {
-      price: number;
-    }[]
-    address: string;
-  }
+export type BuyNowListingPreviewData = {
+  nft: OwnedNfTsQuery['nfts'][0],
   marketplace: {
     auctionHouse: {
       sellerFeeBasisPoints: number;
@@ -75,7 +55,7 @@ export interface BuyNowListingPreviewData {
       authority: string;
     }
   }
-}
+};
 
 
 export type FeaturedProfilesData = {address: string}[];
