@@ -14,6 +14,7 @@ import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/market
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 
 interface BuyFormProps {
   nft: Nft;
@@ -34,7 +35,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
     amount: zod.number(),
   });
 
-  const { publicKey, signTransaction } = useWallet();
+  const { publicKey, signTransaction, select: selectWallet } = useWallet();
   const wallet = useWallet();
   const { connection } = useConnection();
 
@@ -65,6 +66,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
 
   const buyTx = async ({ amount }: BuyFormSchema) => {
     if (!publicKey || !signTransaction) {
+      selectWallet(PhantomWalletName);
       return;
     }
     if (!listing || isOwner || !nft || !marketplace) {

@@ -43,18 +43,7 @@ export interface MarketplacePreviewData {
 
 export type BuyNowListingPreviewData = {
   nft: OwnedNfTsQuery['nfts'][0],
-  marketplace: {
-    auctionHouse: {
-      sellerFeeBasisPoints: number;
-      address: string;
-      stats: {
-        floor: number;
-        average: number;
-      }
-      auctionHouseTreasury: string;
-      authority: string;
-    }
-  }
+  marketplace: OwnedNfTsQuery['marketplace'][0]
 };
 
 

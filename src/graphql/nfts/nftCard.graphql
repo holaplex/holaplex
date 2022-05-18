@@ -49,14 +49,20 @@ query nftCard($subdomain: String!, $address: String!) {
   }
   marketplace(subdomain: $subdomain) {
     auctionHouse {
-      sellerFeeBasisPoints
       address
-      stats {
-        floor
-        average
-      }
+      treasuryMint
       auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
       authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
     }
   }
 }
