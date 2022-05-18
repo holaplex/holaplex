@@ -1,7 +1,8 @@
 interface FileUploadResponse {
   name: string;
   type: string;
-  uri: string;
+  uri?: string;
+  url?: string;
   error?: string;
 }
 

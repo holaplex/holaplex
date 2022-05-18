@@ -97,7 +97,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           autoClose={5000}
           hideProgressBar={true}
           position={'bottom-center'}
-          className="bottom-4 w-full max-w-full  font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
+          className="w-full max-w-full font-sans text-sm text-white bottom-4 sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
           toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
           closeButton={() => <Close color="#fff" />}
         />
