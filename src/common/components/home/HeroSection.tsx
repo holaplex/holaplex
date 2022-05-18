@@ -33,16 +33,24 @@ export default function HeroSection() {
     <div className="">
       <Marquee speed={40} gradient={false} pauseOnHover={true}>
         <div className="grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar  ">
-          {feedItems.slice(0, 12).map((fi) => (
-            <div className="w-96 flex-shrink-0" key={fi.feedEventId}>
-              <FeedCard
-                options={{ hideAction: true }}
-                event={fi}
-                myFollowingList={[]}
-                key={fi.feedEventId}
-              />
-            </div>
-          ))}
+          {!feedItems.length
+            ? Array(12)
+                .fill(null)
+                .map((_, i) => (
+                  <div key={i} className="w-96">
+                    <LoadingFeedCard />
+                  </div>
+                ))
+            : feedItems.slice(0, 12).map((fi) => (
+                <div className="w-96 flex-shrink-0" key={fi.feedEventId}>
+                  <FeedCard
+                    options={{ hideAction: true }}
+                    event={fi}
+                    myFollowingList={[]}
+                    key={fi.feedEventId}
+                  />
+                </div>
+              ))}
         </div>
       </Marquee>
 
@@ -60,14 +68,4 @@ export default function HeroSection() {
       </div>
     </div>
   );
-}
-
-function LoadingRow() {
-  return Array(12)
-    .fill(null)
-    .map((_, i) => (
-      <div key={i} className="w-96">
-        <LoadingFeedCard />
-      </div>
-    ));
 }
