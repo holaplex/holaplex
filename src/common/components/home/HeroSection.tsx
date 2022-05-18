@@ -1,6 +1,5 @@
 import { ArrowRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
-import { HomeSectionCarousel } from 'pages/home-v2-wip';
 import React from 'react';
 import { useFeedQuery } from 'src/graphql/indexerTypes';
 import { Button5 } from '../elements/Button2';
