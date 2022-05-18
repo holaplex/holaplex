@@ -251,6 +251,7 @@ export type Nft = {
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   category: Scalars['String'];
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
   creators: Array<NftCreator>;
   description: Scalars['String'];
   files: Array<NftFile>;
@@ -289,7 +290,7 @@ export type NftActivity = {
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
-  wallets: Array<Scalars['String']>;
+  wallets: Array<Wallet>;
 };
 
 export type NftAttribute = {
@@ -424,11 +425,13 @@ export type QueryRoot = {
 
 export type QueryRootActivitiesArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 
 export type QueryRootChartsArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   endDate: Scalars['DateTimeUtc'];
   startDate: Scalars['DateTimeUtc'];
 };
@@ -560,6 +563,7 @@ export type TwitterProfile = {
   description: Scalars['String'];
   handle: Scalars['String'];
   profileImageUrl: Scalars['String'];
+  profileImageUrlHighres: Scalars['String'];
 };
 
 export type Wallet = {
@@ -770,7 +774,7 @@ export type SearchQueryVariables = Exact<{
 }>;
 
 
-export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null } };
+export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }, nfts: Array<{ __typename?: 'Nft', name: string, address: string, image: string, creators: Array<{ __typename?: 'NftCreator', address: string }> }> };
 
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {
@@ -2300,6 +2304,14 @@ export const SearchDocument = gql`
     profile {
       profileImageUrl
       handle
+    }
+  }
+  nfts(creators: [$walletAddress], limit: 25, offset: 0) {
+    name
+    address
+    image
+    creators {
+      address
     }
   }
 }
