@@ -130,7 +130,10 @@ export default function New() {
       const settings = new File([JSON.stringify(input)], 'storefront_settings');
 
       const { uri } = await ipfsSDK.uploadFile(settings);
-      alert(uri);
+      if (isNil(uri)){
+        toast("There was a problem uploding store settings, please refresh the page and try again.", { autoClose: 60000, type: 'error' });
+        return
+      }
       const auctionHouseCreateInstruction = await createAuctionHouse({
         wallet: solana as Wallet,
         sellerFeeBasisPoints,

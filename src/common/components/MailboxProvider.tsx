@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+//@ts-ignore
 import { Mailbox } from '@usedispatch/client';
 import { useConnection } from '@solana/wallet-adapter-react';
 
