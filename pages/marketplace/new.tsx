@@ -277,7 +277,7 @@ export default function New() {
               {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
                 <div className="mb-8">
                   <div className="mb-2 text-sm">Logo preview:</div>
-                  <Image
+                  <img
                     src={ifElse(
                       has('response'),
                       view(lensPath(['response', 'url'])),
