@@ -61,7 +61,7 @@ export default function HeroSection() {
         <Link href="/alpha">
           <a className="mt-10">
             <Button5 className="!py-3 !px-6 !text-2xl !font-medium" v="primary">
-              Get started with Alpha <ArrowRightIcon className="ml-3 h-8 w-8" />
+              Get started <ArrowRightIcon className="ml-3 h-8 w-8" />
             </Button5>
           </a>
         </Link>
