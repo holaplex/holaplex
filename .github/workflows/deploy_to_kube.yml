@@ -42,7 +42,7 @@ jobs:
           fi
 
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint}
+          docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
@@ -51,7 +51,7 @@ jobs:
             graphql_endpoint="https://graph-test.holaplex.tools"
             git_branch=canary
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-            docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint}
+            docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
             echo "Pushing image to ECR..."
             docker push $image_tag
             echo "::set-output name=image::$image_tag"
