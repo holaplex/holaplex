@@ -93,7 +93,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         } else {
           setHasError(true);
         }
-        settings?.onActionFailure?.(err);
+        settings?.onActionFailure?.(errorCodeHelper(err.message));
         setHasActionPending(false);
       } finally {
         setHasActionPending(false);

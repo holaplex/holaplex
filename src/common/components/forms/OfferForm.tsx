@@ -113,7 +113,8 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
         onComplete: async () => {
           await refetch();
         },
-        onActionFailure: async () => {
+        onActionFailure: async (err) => {
+          toast.error(err.message);
           await refetch();
         },
       });

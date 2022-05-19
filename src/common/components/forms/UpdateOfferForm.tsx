@@ -21,7 +21,7 @@ interface UpdateOfferFormSchema {
 
 interface UpdateOfferFormProps {
   nft: Nft;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouse: AuctionHouse };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -60,14 +60,12 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
     if (currOffer) {
-      toast(`Canceling current offer of ${Number(currOffer.price)}`);
       await sdk.offers(marketplace.auctionHouse).cancel({ nft, offer: currOffer, amount: 1 });
     }
   };
 
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
     if (amount) {
-      toast(`Updating current offer to: ${amount} SOL`);
       await sdk.offers(marketplace.auctionHouse).make({ amount, nft });
     }
   };
@@ -110,7 +108,8 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
         toast.success(`Confirmed offer update success`);
         trackNFTEvent('NFT Offer Updated Success', offerAmount, nft);
       },
-      onActionFailure: async () => {
+      onActionFailure: async (err) => {
+        toast.error(err.message);
         await refetch();
       },
       onComplete: async () => {

@@ -12,7 +12,13 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { FeeItem } from './SellForm';
 import AcceptOfferForm from './AcceptOfferForm';
-import { initMarketplaceSDK, Nft, Listing, Offer, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import {
+  initMarketplaceSDK,
+  Nft,
+  Listing,
+  Offer,
+  AuctionHouse,
+} from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import Modal from '../elements/Modal';
@@ -23,7 +29,7 @@ import DownloadNFTCard from './DownloadableNFTCard';
 
 interface UpdateSellFormProps {
   nft: Nft;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouse: AuctionHouse };
   listing: Listing;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -103,14 +109,12 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
   const onCancelListing = async () => {
     if (listing && isOwner && nft) {
-      toast(`Canceling listing for ${nft.name}`);
       await sdk.listings(marketplace.auctionHouse).cancel({ nft, listing });
     }
   };
 
   const onUpdateListing = async ({ amount }: { amount: number }) => {
     if (amount && nft) {
-      toast(`Updating current listing to ${amount} SOL`);
       await sdk.listings(marketplace.auctionHouse).post({ amount, nft });
     }
   };

@@ -3,9 +3,7 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '../elements/NFTPreview';
 import { DisplaySOL } from '../CurrencyHelpers';
-import {
-  LAMPORTS_PER_SOL,
-} from '@solana/web3.js';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -17,14 +15,13 @@ import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
-
 interface SellFormSchema {
   amount: string;
 }
 
 interface SellFormProps {
   nft?: Nft;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouse: AuctionHouse };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -118,7 +115,6 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
 
     await runActions(newActions, {
       onActionSuccess: async () => {
-        toast.success(`Confirmed listing success`);
         trackNFTEvent('NFT Listed Success', sellAmount, nft);
         await refetch();
       },
