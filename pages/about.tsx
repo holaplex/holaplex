@@ -38,8 +38,33 @@ const Section = styled.div`
   justify-content: center;
   padding: 2rem 0;
   position: relative;
+  
+  &.slanted-bg {
+    position: relative;
 
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -25%;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(to right, #000000, #202021);
+      transform: rotate(7deg);
+      pointer-events: none;
+    }
+  }
 `;
+
+const SlantedBgContainer = styled.div`
+  width: 100%;
+  overflow: hidden;
+  padding: 10vw 0;
+  margin: -10vw 0;
+  position: relative;
+  z-index: 2;
+`;
+
 const Content = styled.div`
   max-width: 1200px;
   width: 100%;
@@ -204,29 +229,31 @@ export default function About() {
         </div>
       </Section>
 
-      <Section className='bg-gray-700'>
-        <div className="flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
-          <div className='w-11/12 lg:w-1/2 max-w-lg'>
+      <SlantedBgContainer>
+        <Section className='slanted-bg bg-black'>
+          <div className="flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
+            <div className='w-11/12 lg:w-1/2 max-w-lg'>
               <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" />
+            </div>
+            <div className='w-full lg:w-1/2'>
+              <Content>
+                <BoldParagraph className='mb-6 lg:mb-14 text-gray-400'>
+                  YOUR TALENT
+                </BoldParagraph>
+                <GradientText>
+                  We Unlock Your <br className='lg:block hidden' /> extraordinary Work
+                </GradientText>
+                <BoldParagraph className='mt-6 lg:mt-14 color-white'>
+                  Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.
+                </BoldParagraph>
+              </Content>
+            </div>
           </div>
-          <div className='w-full lg:w-1/2'>
-            <Content>
-              <BoldParagraph className='mb-6 lg:mb-14 text-gray-400'>
-                YOUR TALENT
-              </BoldParagraph>
-              <GradientText>
-                We Unlock Your <br className='lg:block hidden' /> extraordinary Work
-              </GradientText>
-              <BoldParagraph className='mt-6 lg:mt-14 color-white'>
-                Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.
-              </BoldParagraph>
-            </Content>
-          </div>
-        </div>
-      </Section>
+        </Section>
+      </SlantedBgContainer>
 
 
-      <Section>
+      <Section className='bg-black'>
         <Content className='text-center'>
           <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
             YOUR COMMUNITY
@@ -252,7 +279,7 @@ export default function About() {
           </Content>
         </Section>
         */}
-
+      <div className='bg-black h-20 -mb-20' />
       <Footer />
     </>
   );
