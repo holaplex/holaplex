@@ -35,9 +35,9 @@ jobs:
           app=frontend
           git_branch=${GITHUB_REF##*/}
           if [ $git_branch == 'main' ];then
-            graphql_endpoint="https://graph.holaplex.com"
+            graphql_endpoint="https://graph.holaplex.com/v1"
           else
-            graphql_endpoint="https://graph-test.holaplex.com"
+            graphql_endpoint="https://graph-test.holaplex.com/v1"
           fi
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
           docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
@@ -46,7 +46,7 @@ jobs:
           echo "::set-output name=image::$image_tag"
 
           if [ $git_branch == 'dev' ];then
-            graphql_endpoint=https://graph-test.holaplex.tools
+            graphql_endpoint=https://graph-test.holaplex.tools/v1
             git_branch=canary
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
             docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
