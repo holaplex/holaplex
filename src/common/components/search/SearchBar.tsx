@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import { Search } from '../icons/Search';
 import LoadingSearchItem from './LoadingSearchItem';
 import { useSearchLazyQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
@@ -10,6 +10,7 @@ import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { useRouter } from 'next/router';
 import { Close } from '../icons/Close';
 import { PublicKey } from '@solana/web3.js';
+import { SearchIcon, XIcon } from '@heroicons/react/outline';
 
 const schema = zod.object({
   query: zod.string().nonempty({ message: `Must enter something` }),
@@ -33,7 +34,6 @@ const SearchBar: FC = () => {
 
   const router = useRouter();
 
-  const [showBar, setShowBar] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [hasSearch, setHasSearch] = useState(false);
 
@@ -43,16 +43,13 @@ const SearchBar: FC = () => {
 
   useOutsideAlerter(searchResultsRef, () => setShowResults(false));
 
-  const toggleBar = () => {
-    setShowBar(!showBar);
-    setShowResults(false);
-  };
-
   const [searchQuery, { data, loading, called }] = useSearchLazyQuery();
 
   const handleSearch = ({ query }: SearchQuerySchema) => {
     // handle enter
   };
+
+  // handle ctrl/cmd + k
 
   const handleOnChange = (e: any) => {
     if (e.target.value === '') {
@@ -70,6 +67,7 @@ const SearchBar: FC = () => {
 
   const handleReset = () => {
     setValue('query', '');
+    setHasSearch(false);
     setShowResults(false);
   };
 
@@ -89,46 +87,46 @@ const SearchBar: FC = () => {
     <div
       id={`searchbar-container`}
       ref={searchResultsRef}
-      className={`relative z-30 flex w-full flex-row items-center`}
+      className={`relative z-30 -ml-4 flex w-full flex-row items-center`}
     >
-      {!showBar ? (
-        <a
-          onClick={toggleBar}
-          className={`rounded-full p-2 transition ease-in-out hover:cursor-pointer hover:bg-gray-800`}
-        >
-          <Search />
-        </a>
-      ) : (
-        <div
-          className={`flex w-full flex-row items-center gap-2 rounded-full border border-white bg-gray-900 p-2`}
-        >
-          <a onClick={toggleBar}>
-            <Search />
-          </a>
-          <form
-            className={`relative flex w-full items-center`}
-            onSubmit={handleSubmit(handleSearch)}
-          >
-            <input
-              {...register('query', { required: true })}
-              autoFocus={true}
-              onFocus={() => setShowResults(true)}
-              onChange={handleOnChange}
-              placeholder={`Search Holaplex...`}
-              className={`h-full w-full bg-gray-900 text-base text-gray-500`}
-            />
-            {hasSearch && (
-              <button
-                type={`button`}
-                onClick={handleReset}
-                className={`absolute top-0 right-2 hover:text-gray-400`}
-              >
-                <Close color={`#ffffff`} />
+      <form
+        className={`group relative block w-full items-center`}
+        onSubmit={handleSubmit(handleSearch)}
+      >
+        <div className="relative z-0 flex flex-1 items-center  px-2 sm:absolute sm:inset-0">
+          <div className="w-full ">
+            <label htmlFor="search" className="sr-only">
+              Search
+            </label>
+            <div className="relative block">
+              <button className=" absolute  inset-y-0 left-0  flex items-center rounded-full p-2 hover:bg-gray-800 group-focus:!bg-transparent">
+                <Search className="h-6 w-6 text-white " aria-hidden="true" />
               </button>
-            )}
-          </form>
+
+              <input
+                id="search"
+                className="block w-full rounded-full border border-transparent bg-transparent py-2 pl-12 pr-3 text-base placeholder-transparent focus:border-white   focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
+                type="search"
+                {...register('query', { required: true })}
+                autoFocus={true}
+                onFocus={() => setShowResults(true)}
+                onChange={handleOnChange}
+                placeholder={`Search Holaplex...`}
+              />
+
+              {hasSearch && (
+                <button
+                  type={`button`}
+                  onClick={handleReset}
+                  className={`absolute inset-y-0 right-0 flex items-center pr-3 `}
+                >
+                  <XIcon className="h-6 w-6 text-white hover:text-gray-400" />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      )}
+      </form>
       {showResults && (
         <div
           className={`h-content absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900 p-6 transition ease-in-out`}
