@@ -36,12 +36,9 @@ jobs:
           git_branch=${GITHUB_REF##*/}
           if [ $git_branch == 'main' ];then
             graphql_endpoint="https://graph.holaplex.com"
-          fi
-
-          if [ $git_branch == 'dev' ];then
+          else
             graphql_endpoint="https://graph-test.holaplex.com"
           fi
-          echo "Using graphql endpoint: $graphql_endpoint"
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
           docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
           echo "Pushing image to ECR..."
