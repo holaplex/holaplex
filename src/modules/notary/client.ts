@@ -23,10 +23,10 @@ export const signPhantom =
   (solana: WalletContextState): Signer =>
   async (utf8) => {
     if (!solana.signMessage) {
-      throw new WalletSignMessageError("sign message not supported");
+      throw new WalletSignMessageError('sign message not supported');
     }
-    
-    return await solana.signMessage(utf8) as Signature
+
+    return (await solana.signMessage(utf8)) as Signature;
   };
 
 /**
@@ -70,4 +70,4 @@ export const stringifyNotarized = <T>({
   payload,
   signature,
 }: Notarized<T>): JsonString<NotarizedStr<T>> =>
-  jsonStringify({ payload, signature: signature.toString('base64') as SignatureStr });
+  jsonStringify({ payload, signature: Buffer.from(signature).toString('base64') as SignatureStr });
