@@ -251,6 +251,7 @@ export type Nft = {
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   category: Scalars['String'];
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
   creators: Array<NftCreator>;
   description: Scalars['String'];
   files: Array<NftFile>;
@@ -289,7 +290,7 @@ export type NftActivity = {
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
-  wallets: Array<Scalars['String']>;
+  wallets: Array<Wallet>;
 };
 
 export type NftAttribute = {
@@ -424,11 +425,13 @@ export type QueryRoot = {
 
 export type QueryRootActivitiesArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 
 export type QueryRootChartsArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
+  creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   endDate: Scalars['DateTimeUtc'];
   startDate: Scalars['DateTimeUtc'];
 };
@@ -560,6 +563,7 @@ export type TwitterProfile = {
   description: Scalars['String'];
   handle: Scalars['String'];
   profileImageUrl: Scalars['String'];
+  profileImageUrlHighres: Scalars['String'];
 };
 
 export type Wallet = {
@@ -646,6 +650,13 @@ export type WhoToFollowQueryVariables = Exact<{
 
 export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, bids: Array<{ __typename?: 'Bid', lastBidTime: string, listing?: { __typename?: 'Listing', nfts: Array<{ __typename?: 'Nft', address: string, name: string, image: string }> } | null }>, connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number }, nftCounts: { __typename?: 'WalletNftCount', owned: number, offered: number, listed: number } }> };
 
+export type FeaturedBuyNowListingsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type FeaturedBuyNowListingsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string }> };
+
 export type FeaturedProfilesQueryVariables = Exact<{
   userWallet?: InputMaybe<Scalars['PublicKey']>;
   limit: Scalars['Int'];
@@ -685,6 +696,14 @@ export type OffersPageQueryVariables = Exact<{
 
 
 export type OffersPageQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, sentOffers: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, receivedOffers: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }> };
+
+export type NftCardQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+  address: Scalars['String'];
+}>;
+
+
+export type NftCardQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
 
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
@@ -1385,6 +1404,46 @@ export function useWhoToFollowLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type WhoToFollowQueryHookResult = ReturnType<typeof useWhoToFollowQuery>;
 export type WhoToFollowLazyQueryHookResult = ReturnType<typeof useWhoToFollowLazyQuery>;
 export type WhoToFollowQueryResult = Apollo.QueryResult<WhoToFollowQuery, WhoToFollowQueryVariables>;
+export const FeaturedBuyNowListingsDocument = gql`
+    query featuredBuyNowListings($limit: Int!) {
+  nfts(
+    limit: $limit
+    offset: 0
+    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
+    listed: true
+  ) {
+    address
+  }
+}
+    `;
+
+/**
+ * __useFeaturedBuyNowListingsQuery__
+ *
+ * To run a query within a React component, call `useFeaturedBuyNowListingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFeaturedBuyNowListingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFeaturedBuyNowListingsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useFeaturedBuyNowListingsQuery(baseOptions: Apollo.QueryHookOptions<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>(FeaturedBuyNowListingsDocument, options);
+      }
+export function useFeaturedBuyNowListingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>(FeaturedBuyNowListingsDocument, options);
+        }
+export type FeaturedBuyNowListingsQueryHookResult = ReturnType<typeof useFeaturedBuyNowListingsQuery>;
+export type FeaturedBuyNowListingsLazyQueryHookResult = ReturnType<typeof useFeaturedBuyNowListingsLazyQuery>;
+export type FeaturedBuyNowListingsQueryResult = Apollo.QueryResult<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>;
 export const FeaturedProfilesDocument = gql`
     query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
   followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
@@ -1798,6 +1857,105 @@ export function useOffersPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type OffersPageQueryHookResult = ReturnType<typeof useOffersPageQuery>;
 export type OffersPageLazyQueryHookResult = ReturnType<typeof useOffersPageLazyQuery>;
 export type OffersPageQueryResult = Apollo.QueryResult<OffersPageQuery, OffersPageQueryVariables>;
+export const NftCardDocument = gql`
+    query nftCard($subdomain: String!, $address: String!) {
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+  marketplace(subdomain: $subdomain) {
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+}
+    `;
+
+/**
+ * __useNftCardQuery__
+ *
+ * To run a query within a React component, call `useNftCardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNftCardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNftCardQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useNftCardQuery(baseOptions: Apollo.QueryHookOptions<NftCardQuery, NftCardQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
+      }
+export function useNftCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftCardQuery, NftCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
+        }
+export type NftCardQueryHookResult = ReturnType<typeof useNftCardQuery>;
+export type NftCardLazyQueryHookResult = ReturnType<typeof useNftCardLazyQuery>;
+export type NftCardQueryResult = Apollo.QueryResult<NftCardQuery, NftCardQueryVariables>;
 export const NftPageDocument = gql`
     query nftPage($address: String!) {
   nft(address: $address) {

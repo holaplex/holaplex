@@ -1,3 +1,4 @@
+import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyNowListingsSection';
 import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
 import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
 import Footer from '@/common/components/home/Footer';
@@ -13,6 +14,7 @@ const Home: FC = () => {
       <HeroSection />
       <div className="container mx-auto w-3/4">
         <FeaturedMarketplacesSection />
+        <FeaturedBuyNowListingsSection/>
         <FeaturedProfilesSection />
       </div>
       <Footer />

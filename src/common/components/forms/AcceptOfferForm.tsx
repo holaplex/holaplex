@@ -6,10 +6,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { toast } from 'react-toastify';
-import { Nft, Marketplace, Offer, Listing, initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
+import { Nft, Offer, Listing, initMarketplaceSDK, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
@@ -18,7 +16,7 @@ interface AcceptOfferFormProps {
   nft: Nft;
   offer: Offer;
   listing?: Listing;
-  marketplace: Marketplace;
+  marketplace: {auctionHouse: AuctionHouse};
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;

@@ -56,9 +56,10 @@ const FeaturedProfilesSection: VFC = () => {
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>Profiles to Follow</HomeSection.Title>
-        <HomeSection.HeaderAction external href="https://google.com">
+        {/* //TODO revert once discovery is ready  */}
+        {/* <HomeSection.HeaderAction external href="https://google.com">
           Discover All
-        </HomeSection.HeaderAction>
+        </HomeSection.HeaderAction> */}
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>

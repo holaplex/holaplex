@@ -1,0 +1,5 @@
+query featuredBuyNowListings($limit: Int!) {
+  nfts(limit: $limit, offset:0, auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"], listed: true) {
+    address
+  }
+}
