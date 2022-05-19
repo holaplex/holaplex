@@ -662,10 +662,10 @@ export default function NftByAddress({
                       <div className={`grid grid-cols-1 gap-4`}>
                         <DetailAddressRow title={`Mint address`} address={nft.mintAddress} />
                         <DetailAddressRow title={`Token address`} address={nft.address} />
-                        <DetailAddressRow
+                        {/*                         <DetailAddressRow
                           title={`Auction house`}
                           address={defaultListing?.address}
-                        />
+                        /> */}
                         <div className={`flex items-center justify-between`}>
                           <p className={`m-0 text-base font-normal text-gray-300`}>
                             Creator royalties
