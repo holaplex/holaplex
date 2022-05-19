@@ -55,7 +55,7 @@ const FeaturedProfilesSection: VFC = () => {
   return (
     <HomeSection>
       <HomeSection.Header>
-        <HomeSection.Title>Profiles to Follow</HomeSection.Title>
+        <HomeSection.Title>Profiles to follow</HomeSection.Title>
         {/* //TODO revert once discovery is ready  */}
         {/* <HomeSection.HeaderAction external href="https://google.com">
           Discover All

@@ -1,3 +1,4 @@
+import FeaturedAuctionsSection from '@/common/components/home/FeaturedAuctionsSection';
 import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyNowListingsSection';
 import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
 import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
@@ -13,9 +14,10 @@ const Home: FC = () => {
     <div>
       <HeroSection />
       <div className="container mx-auto w-3/4">
-        <FeaturedMarketplacesSection />
-        <FeaturedBuyNowListingsSection/>
+        <FeaturedBuyNowListingsSection />
         <FeaturedProfilesSection />
+        <FeaturedAuctionsSection />
+        <FeaturedMarketplacesSection />
       </div>
       <Footer />
     </div>
@@ -93,9 +95,7 @@ export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => (
 );
 
 const HomeSectionHeader: Header = ({ children }) => (
-  //TODO revert when ready to swap to new homepage
-  <div className="flex justify-between">
-    {/* <div className="mb-4 flex flex-row items-center justify-between border-b border-gray-800 p-2"> */}
+  <div className="mb-4 flex flex-row items-center justify-between border-b border-gray-800 p-2">
     {children}
   </div>
 );

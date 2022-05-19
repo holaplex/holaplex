@@ -47,7 +47,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
   return (
     <HomeSection>
       <HomeSection.Header>
-        <HomeSection.Title>What&apos;s Hot</HomeSection.Title>
+        <HomeSection.Title>What&apos;s hot</HomeSection.Title>
         {/* //TODO revert once discovery is ready */}
         {/* <HomeSection.HeaderAction external href="https://holaplex.com">
           Discover All

@@ -84,7 +84,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <Head>
-        <title>Tools built by creators, for creators, owned by creators | Holaplex</title>
+        <title>Holaplex | Tools built by creators, for creators, owned by creators</title>
         <meta
           property="description"
           key="description"
