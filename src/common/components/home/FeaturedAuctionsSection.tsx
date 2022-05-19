@@ -53,6 +53,9 @@ const FeaturedAuctionsSection: VFC = () => {
   );
 };
 
+
+// TODO: this was adapted from the v1 homepage and should probably be replaced with
+//  a graph-ql version at some point
 async function getAndPrepListings(): Promise<Listing[]> {
   async function DAOStoreFrontList() {
     if (WHICHDAO) {
