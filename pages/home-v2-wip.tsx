@@ -14,10 +14,10 @@ const Home: FC = () => {
     <div>
       <HeroSection />
       <div className="container mx-auto w-3/4">
-        <FeaturedMarketplacesSection />
         <FeaturedBuyNowListingsSection />
         <FeaturedProfilesSection />
         <FeaturedAuctionsSection />
+        <FeaturedMarketplacesSection />
       </div>
       <Footer />
     </div>
