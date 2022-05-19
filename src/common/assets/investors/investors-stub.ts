@@ -24,10 +24,10 @@ const stores = [
     logoLight: '/images/investor-logos/collab-currency-light.png',
   },
   {
-    name: 'Social Capital',
-    url: 'https://www.socialcapital.com',
-    logo: '/images/investor-logos/social-capital.png',
-    logoLight: '/images/investor-logos/social-capital-light.png',
+    name: 'Blockchain Coinvest',
+    url: 'https://www.blockchaincoinvestors.com',
+    logo: '/images/investor-logos/blockchain-coinvestors.png',
+    logoLight: '/images/investor-logos/blockchain-coinvestors-light.png',
   },
   {
     name: 'Lemnis Capital',
@@ -36,9 +36,10 @@ const stores = [
     logoLight: '/images/investor-logos/lemnis-light.png',
   },
   {
-    name: 'Blockchain Coinvest',
-    url: 'https://www.blockchaincoinvestors.com',
-    logo: '/images/investor-logos/blockchain-coinvestors.png',
+    name: 'Kano One',
+    url: 'https://kano.one',
+    logo: '/images/investor-logos/kano.png',
+    logoLight: '/images/investor-logos/kano-light.png',
   },
   {
     name: 'Hard Yaka',
@@ -47,22 +48,10 @@ const stores = [
     logoLight: '/images/investor-logos/hard-yaka-light.png',
   },
   {
-    name: 'Kano One',
-    url: 'https://kano.one',
-    logo: '/images/investor-logos/kano.png',
-    logoLight: '/images/investor-logos/kano-light.png',
-  },
-  {
     name: 'Filecoin',
     url: 'https://filecoin.io',
     logo: '/images/investor-logos/filecoin.png',
-  },
-
-  {
-    name: 'Arweave',
-    url: 'https://arweave.org',
-    logo: '/images/investor-logos/arweave.png',
-    logoLight: '/images/investor-logos/arweave-light.png',
+    logoLight: '/images/investor-logos/filecoin-light.png',
   },
 ];
 
