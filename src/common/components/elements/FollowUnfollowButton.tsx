@@ -15,7 +15,11 @@ import { useProfileData } from '@/common/context/ProfileData';
 
 import classNames from 'classnames';
 import { useApolloClient } from '@apollo/client';
-import { AllConnectionsFromDocument, AllConnectionsToDocument } from 'src/graphql/indexerTypes';
+import {
+  AllConnectionsFromDocument,
+  AllConnectionsToDocument,
+  IsXFollowingYDocument,
+} from 'src/graphql/indexerTypes';
 
 type FollowUnfollowButtonProps = {
   source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
@@ -76,7 +80,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
       });
 
       trackSuccess();
@@ -123,7 +127,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
       });
 
       trackSuccess();
@@ -173,7 +177,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   return (
     <Button5
       v={type === 'Follow' ? 'primary' : 'secondary'}
-      className={classNames("h-10 w-28", className)}
+      className={classNames('h-10 w-28', className)}
       onClick={() => handleClick()}
       loading={loading}
     >
