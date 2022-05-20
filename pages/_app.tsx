@@ -44,8 +44,6 @@ import { NextPage } from 'next';
 import { MailboxProvider } from './profiles/[publicKey]/MailboxProvider';
 
 
-import { MailboxProvider } from './profiles/[publicKey]/MailboxProvider';
-
 const { Content } = Layout;
 
 const getSolanaNetwork = () => {

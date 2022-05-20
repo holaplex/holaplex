@@ -188,13 +188,13 @@ export function AppHeader() {
             </Popover> */}
 
             {connectedAndInstalledWallet && (
-                            <HeaderLinkWrapper key="messages" active={router.pathname === '/profiles/' + publicKey + '/messages'}>
+                            
                             <Link href={"/profiles/" +publicKey+ "/messages"}  passHref>
                               <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
                                 Messages
                               </a>
                             </Link>
-                          </HeaderLinkWrapper>
+
               
             )}
 
