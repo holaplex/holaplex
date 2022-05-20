@@ -76,8 +76,12 @@ const Content = styled.div`
 `;
 
 const HeroSection = styled(Section)`
-  min-height: 80vh;
+  padding: 14rem 0;
+  @media (max-width: 1000px) {
+    padding: 4rem 0;
+  }
   align-items: center;
+  position: relative;
 `;
 
 const LogoContainer = styled.a`
@@ -98,6 +102,24 @@ const MainTool = styled.div`
   }
 `;
 
+const CommunityNFTContainer = styled.div`
+  width: 33%;
+  margin-left: -5%;
+  margin-right: -5%;
+  border-radius: 4%;
+  overflow: hidden;
+
+  box-shadow: 0px 0px 4rem 0px rgba(255,255,255,0.25);
+  aspect-ratio: 1/1;
+
+  &:nth-child(even) {
+    margin-top: -25%;
+  }
+  &:last-child {
+    margin-top: -15%;
+  }
+`;
+
 export default function About() {
   return (
     <>
@@ -111,8 +133,11 @@ export default function About() {
       </Head>
       <HeroSection>
         <Image src={'/images/page-about/hero.jpg'} objectFit='cover' layout='fill' quality={100} />
+        <div className='w-10/12 ml-auto h-64 relative lg:absolute lg:w-5/12 lg:h-auto inset-y-10 right-0 '>
+          <Image src={'/images/page-about/laptop.png'} layout={'fill'} objectFit={'contain'} objectPosition={'center right'} />
+        </div>
         <Content>
-          <div className='lg:w-9/12'>
+          <div className='lg:w-9/12 mt-12 lg:mt-0'>
             <BoldParagraph className='mb-4 lg:mb-14 text-gray-400'>
               POWERED BY Solana
             </BoldParagraph>
@@ -151,10 +176,10 @@ export default function About() {
           <GradientText>
             Supported &amp; Trusted By <br className='lg:block hidden' /> The Best
           </GradientText>
-          <BoldParagraph className='mt-8 lg:mt-14 color-white'>
+          <BoldParagraph className='my-8 lg:my-14 text-gray-500'>
             We work with leading funds and platforms
           </BoldParagraph>
-          <div className='flex flex-wrap justify-center gap-4 lg:gap-8'>
+          <div className='flex flex-wrap justify-center gap-4 lg:gap-8 my-14 lg:my-28'>
             {investorData.map((investor, index) => (
               <LogoContainer key={investor.url} href={investor.url} target="_blank" rel="noreferrer">
                 <Image
@@ -229,28 +254,30 @@ export default function About() {
         </div>
       </Section>
 
-      <SlantedBgContainer>
-        <Section className='slanted-bg bg-black'>
-          <div className="flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
-            <div className='w-11/12 lg:w-1/2 max-w-lg'>
-              <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" />
+      <div className='py-14 lg:py-28 bg-black'>
+        <SlantedBgContainer>
+          <Section className='slanted-bg'>
+            <div className="flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
+              <div className='w-11/12 lg:w-1/2 max-w-lg'>
+                <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" />
+              </div>
+              <div className='w-full lg:w-1/2'>
+                <Content>
+                  <BoldParagraph className='mb-6 lg:mb-14 text-gray-400'>
+                    YOUR TALENT
+                  </BoldParagraph>
+                  <GradientText>
+                    We Unlock Your <br className='lg:block hidden' /> extraordinary Work
+                  </GradientText>
+                  <BoldParagraph className='mt-6 lg:mt-14 color-white'>
+                    Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.
+                  </BoldParagraph>
+                </Content>
+              </div>
             </div>
-            <div className='w-full lg:w-1/2'>
-              <Content>
-                <BoldParagraph className='mb-6 lg:mb-14 text-gray-400'>
-                  YOUR TALENT
-                </BoldParagraph>
-                <GradientText>
-                  We Unlock Your <br className='lg:block hidden' /> extraordinary Work
-                </GradientText>
-                <BoldParagraph className='mt-6 lg:mt-14 color-white'>
-                  Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.
-                </BoldParagraph>
-              </Content>
-            </div>
-          </div>
-        </Section>
-      </SlantedBgContainer>
+          </Section>
+        </SlantedBgContainer>
+      </div>
 
 
       <Section className='bg-black'>
@@ -261,10 +288,18 @@ export default function About() {
           <GradientText>
             A community driven by you
           </GradientText>
-          <BoldParagraph className='mt-8 lg:mt-14 color-white'>
+          <BoldParagraph className='mt-8 lg:mt-14 color-white max-w-2xl mx-auto'>
             You created it and you own it. Our community believes in being radically open, decentralized and permissionless.
           </BoldParagraph>
         </Content>
+        <div className='max-w-6xl w-10/12 mx-auto'>
+          <div className='flex flex-wrap justify-around items-center mt-24 lg:mt-48'>
+            <CommunityNFTContainer className=''><Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer className='z-20'><Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer className='z-10'><Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer className=''><Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" /></CommunityNFTContainer>
+          </div>
+        </div>
       </Section>
 
       {/*
@@ -279,6 +314,7 @@ export default function About() {
           </Content>
         </Section>
         */}
+
       <div className='bg-black h-20 -mb-20' />
       <Footer />
     </>
