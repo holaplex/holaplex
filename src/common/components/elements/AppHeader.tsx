@@ -18,6 +18,7 @@ import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
+import classNames from 'classnames';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -80,26 +81,30 @@ export function AppHeader() {
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
             {connected && (
-              <HeaderLinkWrapper key="alpha" active={router.pathname === '/alpha'}>
-                <Link href="/alpha" passHref>
-                  <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
-                    Alpha
-                  </a>
-                </Link>
-              </HeaderLinkWrapper>
-            )}
-
-            <HeaderLinkWrapper
-              key="mint-nfts"
-              active={router.pathname === '/nfts/new'}
-              className={`min-w-fit`}
-            >
-              <Link href="/nfts/new" passHref>
-                <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
-                  Create
+              <Link href="/alpha" passHref>
+                <a
+                  key="alpha"
+                  className={classNames(
+                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
+                  )}
+                >
+                  Alpha
                 </a>
               </Link>
-            </HeaderLinkWrapper>
+            )}
+
+            <Link href="/nfts/new" passHref>
+              <a
+                key="create"
+                className={classNames(
+                  'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                  router.pathname === '/nfts/new' ? 'text-white' : 'text-gray-300'
+                )}
+              >
+                Create
+              </a>
+            </Link>
 
             {/* <Popover
               placement="bottom"
@@ -252,60 +257,4 @@ const MobileHeaderContainer = styled.div`
   ${mq('md')} {
     display: none;
   }
-`;
-
-const HeaderTitle = styled.div`
-  font-size: 24px;
-  line-height: 2px;
-  font-weight: 700;
-  margin-right: 2rem;
-  flex-grow: 1;
-  a {
-    display: flex;
-    color: ${sv.colors.buttonText};
-    &:hover {
-      color: ${sv.colors.buttonText};
-    }
-  }
-
-  span {
-    display: none;
-  }
-
-  @media screen and (min-width: 550px) {
-    span {
-      display: block;
-    }
-  }
-`;
-
-const { Header } = Layout;
-
-const StyledHeader = styled(Header)`
-  display: none;
-  ${mq('md')} {
-    ${sv.flexRow};
-    margin: 5px;
-    padding: 1.25rem;
-  }
-`;
-
-const HeaderLinkWrapper = styled.div<{ active: boolean }>`
-  color: ${sv.colors.buttonText};
-  ${({ active }) => active && `text-decoration: underline;`}
-`;
-
-const LinkRow = styled(Space)`
-  @media screen and (max-width: 550px) {
-    .ant-space-item:nth-child(1) {
-      display: none;
-    }
-  }
-`;
-
-const CloseButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 `;
