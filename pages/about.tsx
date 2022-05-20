@@ -1,137 +1,127 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import Head from 'next/head';
-import sv from '@/constants/styles';
-import RoadmapImage from '@/assets/images/roadmap-v1.svg';
-import investorData from '@/assets/investors/investors-stub';
-import { List, Space, Row, Col, Typography, Card } from 'antd';
-import SocialLinks from '@/common/components/elements/SocialLinks';
+import { Typography, Button } from 'antd';
 import Footer from '@/common/components/home/Footer';
+import investorData from '@/assets/investors/investors-stub';
+import Link from 'next/link';
 
 const { Title, Paragraph } = Typography;
 
-const ContentCol = styled(Col)`
-  max-width: 1400px;
+const GradientText = styled(Title)`
+  font-size: 60px !important;
+  font-size: clamp(24px, 4vw, 60px) !important;
+
+  background: linear-gradient(
+    to right,
+    #FFFFFF 0%,
+    #808080 100%
+	);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -o-background-clip: text;
+    -webkit-text-fill-color: transparent;
 `;
 
-const Roadmap = styled.div`
-  margin: 70px 0 0 0;
-  width: 100%;
-  overflow-x: auto;
-  padding: 0 ${sv.appPadding}px;
-`;
-
-const HeroTitle = styled.h1`
-  text-align: center;
-  font-weight: 800;
-  font-size: 68px;
-  line-height: auto;
-  margin-top: ${sv.sectionPadding}px;
-  @media screen and (max-width: 550px) {
-    margin-top: ${sv.appPadding}px;
-    font-size: 48px;
-    line-height: auto;
-    text-align: left;
-    padding: 0 ${sv.appPadding}px;
-  }
-`;
-
-const Pitch = styled.h2`
+const BoldParagraph = styled.p`
   font-size: 24px;
-  line-height: 32px;
-  letter-spacing: 0.2px;
-  text-align: center;
-  font-weight: 300;
-  color: rgba(253, 253, 253, 0.6);
-  @media screen and (max-width: 550px) {
-    font-size: 20px;
-    text-align: left;
-    padding: 0 ${sv.appPadding}px;
-  }
+  font-size: clamp(16px, 2vw, 24px);
+  font-weight: bold;
 `;
 
-const LightText = styled(Paragraph)`
-  color: rgba(255, 255, 255, 0.6);
-  a {
-    color: rgba(255, 255, 255, 1);
-    text-decoration: underline;
-    &:hover {
-      color: rgba(255, 255, 255, 0.6);
-      text-decoration: underline;
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2rem 0;
+  position: relative;
+  
+  &.slanted-bg {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -25%;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(to right, #000000, #202021);
+      transform: rotate(7deg);
+      pointer-events: none;
     }
   }
 `;
 
-const LightTitle = styled(Title)`
-  &.ant-typography,
-  &.ant-typography {
-    color: #ffffff;
-  }
-`;
-
-const Community = styled(Row)`
-  margin-top: ${sv.sectionPadding * 2}px;
-  @media screen and (max-width: 550px) {
-    margin-top: ${sv.sectionPadding}px;
-    padding: 0 ${sv.appPadding}px;
-  }
-`;
-
-const Stats = styled.div``;
-
-const Stat = styled(Col)`
-  text-align: center;
-  padding: ${sv.grid}px;
-`;
-
-type StatTitleProps = {
-  textColor: string;
-};
-const StatTitle = styled.h1`
-  background: ${({ textColor }: StatTitleProps) => textColor};
-  font-size: 5vw;
-  margin-bottom: 0;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  @media screen and (min-width: 1600px) {
-    font-size: 90px;
-  }
-  @media screen and (max-width: 768px) {
-    font-size: 48px;
-  }
-`;
-
-const BackedBy = styled(Row)`
-  margin: ${sv.sectionPadding * 2}px 0 ${sv.sectionPadding * 1.5}px;
-`;
-
-const Investors = styled.div`
+const SlantedBgContainer = styled.div`
   width: 100%;
-  background: #fff;
-  border-radius: 8px;
-  margin-top: ${sv.appPadding}px;
+  overflow: hidden;
+  padding: 10vw 0;
+  margin: -10vw 0;
+  position: relative;
+  z-index: 2;
 `;
 
-const Investor = styled.div`
-  margin: ${sv.grid * 4}px;
+const Content = styled.div`
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  box-sizing: border-box;
+  padding: 1rem;
   position: relative;
-  height: 60px;
-  display: flex;
+  z-index: 10;
+`;
+
+const HeroSection = styled(Section)`
+  padding: 14rem 0;
+  @media (max-width: 1000px) {
+    padding: 4rem 0;
+  }
   align-items: center;
-  justify-content: center;
+  position: relative;
+  min-height: calc(100vh - 80px);
+  @media (max-width: 768px) {
+    min-height: calc(100vh - 72px);
+  }
 `;
 
 const LogoContainer = styled.a`
   width: 100%;
   height: 100%;
-  max-width: 120px;
+  max-width: 150px;
+  aspect-ratio: 16 / 7;
   display: block;
   position: relative;
 `;
 
-const SocialWrapper = styled.div`
-  margin: 2rem 0 4rem;
+const MainTool = styled.div`
+  text-align: center;
+  width: 100%;
+  max-width: 12rem;
+  & > div {
+    margin: 0.75rem auto;
+  }
+`;
+
+const CommunityNFTContainer = styled.div`
+  width: 30%;
+  margin-left: -3.5%;
+  margin-right: -3.5%;
+  border-radius: 4%;
+  overflow: hidden;
+
+  box-shadow: 0px 0px 4rem 0px rgba(255,255,255,0.25);
+  aspect-ratio: 1/1;
+
+  &:nth-child(even) {
+    margin-top: -25%;
+  }
+  &:last-child {
+    margin-top: -15%;
+  }
 `;
 
 export default function About() {
@@ -145,107 +135,199 @@ export default function About() {
           content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
         />
       </Head>
-      <Row justify="center">
-        <ContentCol xs={22} md={20}>
-          <Space direction="vertical" align="center" size="large">
-            <HeroTitle>
-              Our mission is to empower creators and collectors with a suite of tools to create,
-              market, and sell NFTs.
-            </HeroTitle>
-            <Pitch>
-              Tools that are open source, owned by creators, are permissionless, and governed by the
-              community.
-            </Pitch>
-          </Space>
-        </ContentCol>
-      </Row>
+      <HeroSection>
+        <Image src={'/images/page-about/hero.jpg'} objectFit='cover' layout='fill' quality={100} />
+        <div className='w-10/12 ml-auto h-64 relative lg:absolute lg:w-5/12 lg:h-auto inset-y-10 right-0 '>
+          <Image src={'/images/page-about/laptop.png'} layout={'fill'} objectFit={'contain'} objectPosition={'center right'} />
+        </div>
+        <Content>
+          <div className='lg:w-9/12 mt-12 lg:mt-0'>
+            <BoldParagraph className='mb-4 lg:mb-14 text-gray-400'>
+              POWERED BY Solana
+            </BoldParagraph>
+            <GradientText>
+              Incredibly Fast, <br className='lg:block hidden' />
+              Low Cost &amp; Eco-Friendly.
+            </GradientText>
+            <BoldParagraph className='mt-4 lg:mt-14 color-white'>
+              Tools that are open source, owned by creators, are <br className='lg:block hidden' /> permissionless, and governed by the community.
+            </BoldParagraph>
+          </div>
+        </Content>
+      </HeroSection>
 
-      <Row justify="center">
-        <Col>
-          <Roadmap>
-            <Image layout="fixed" width={1147} height={185} src={RoadmapImage} alt="hola" />
-          </Roadmap>
-        </Col>
-      </Row>
+      <Section className='bg-gray-800'>
+        <Image src={'/images/page-about/connect.jpg'} objectFit='cover' layout='fill' />
+        <Content className='text-center'>
+          <div className='py-8'>
+            <Title className='mt-0'>
+              Connect Your Wallet
+            </Title>
+            <Link href="/alpha">
+              <a>
+                <Button>
+                  Claim Your Profile
+                </Button>
+              </a>
+            </Link>
+          </div>
+        </Content>
+      </Section>
 
-      <Community justify="center">
-        <ContentCol xs={22} md={20}>
-          <Row>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <LightTitle level={2}>We exist for our community of creators.</LightTitle>
-              <LightText>
-                The rapid rise of NFTs has allowed creators to build communities and monetize their
-                work in innovative ways. So much talent has come into this space but there are
-                barriers preventing some from joining. Using the tools needed to mint and sell NFTs
-                is non-trivial even for experienced developers.
-              </LightText>
-              <LightText>
-                Holaplex is committed to building tools that will allow creators and collectors to
-                join the NFT community easily and safely.
-              </LightText>
-            </Col>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <Stats>
-                <Row>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
-                    <LightText>Stores created</LightText>
-                  </Stat>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.orangeGradient}>5k+</StatTitle>
-                    <LightText>NFTs minted</LightText>
-                  </Stat>
-                </Row>
-                <Row>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.purpleGradient}>8k+</StatTitle>
-                    <LightText>Twitter followers</LightText>
-                  </Stat>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
-                    <LightText>SOL transaction volume</LightText>
-                  </Stat>
-                </Row>
-              </Stats>
-            </Col>
-          </Row>
-        </ContentCol>
-      </Community>
+      <Section className='bg-black'>
+        <Content className='text-center'>
+          <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
+            Our partners
+          </BoldParagraph>
+          <GradientText>
+            Supported &amp; Trusted By <br className='lg:block hidden' /> The Best
+          </GradientText>
+          <BoldParagraph className='my-8 lg:my-14 text-gray-500'>
+            We work with leading funds and platforms
+          </BoldParagraph>
+          <div className='flex flex-wrap justify-center gap-4 lg:gap-8 my-14 lg:my-28'>
+            {investorData.map((investor, index) => (
+              <LogoContainer key={investor.url} href={investor.url} target="_blank" rel="noreferrer">
+                <Image
+                  layout="fill"
+                  objectFit="contain"
+                  src={investor.logoLight || investor.logo}
+                  alt={investor.name}
+                />
+              </LogoContainer>
+            ))}
+          </div>
+        </Content>
+      </Section>
 
-      <BackedBy justify="center">
-        <ContentCol xs={22} md={20}>
-          <Title level={2}>Backed by</Title>
-          <Investors>
-            <List
-              grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-              dataSource={investorData}
-              renderItem={(investor: { url: string; logo: string; name: string }) => (
-                <List.Item key={investor.url}>
-                  <Investor>
-                    <LogoContainer href={investor.url} target="_blank" rel="noreferrer">
-                      <Image
-                        layout="fill"
-                        objectFit="contain"
-                        src={investor.logo}
-                        alt={investor.name}
-                      />
-                    </LogoContainer>
-                  </Investor>
-                </List.Item>
-              )}
-            />
-          </Investors>
-        </ContentCol>
-      </BackedBy>
-      {/* <Row justify="center">
-        <ContentCol xs={22} md={20}>
-          <Title level={2}>Get in touch</Title>
-          <SocialWrapper>
-            <SocialLinks />
-          </SocialWrapper>
-        </ContentCol>
-      </Row> */}
-      {/* <Footer /> */}
+      <Section className='bg-black'>
+        <Content>
+          <div className='lg:w-3/4 mb-12 lg:mb-0'>
+            <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
+              WHAT WE CREATE
+            </BoldParagraph>
+            <GradientText>
+              Three Main Tools of <br className='lg:block hidden' /> the Platform
+            </GradientText>
+            <BoldParagraph className='mt-8 lg:mt-14 color-white'>
+              With Holaplex, it's easier than ever to get started in the NFT community. We're committed to making it easy for everyone to join.
+            </BoldParagraph>
+          </div>
+          <div className='flex flex-wrap gap-8 justify-around items-center lg:hidden'>
+            <MainTool>
+              <b>No-Code Tools</b>
+              <div>
+                <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
+              </div>
+              <p>Profiles and Marketplaces</p>
+            </MainTool>
+            <MainTool className='lg:mt-16'>
+              <b>Social Graph</b>
+              <div>
+                <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
+              </div>
+              <p>Solana’s NFT Social Network supports following and feed</p>
+            </MainTool>
+            <MainTool className='lg:-mt-24 xl:-mt-32'>
+              <b>Indexer</b>
+              <div>
+                <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
+              </div>
+              <p>Read Sonlana’s on-chain NFT related data fast and efficiently</p>
+            </MainTool>
+            </div>
+        </Content>
+        <div className='hidden lg:block w-full overflow-hidden pointer-events-none' style={{marginTop: 'clamp(-500px, -12%, 0px)'}}>
+          <div className='max-w-8xl flex justify-center' style={{ width: '120%', marginLeft: '-12%' }}>
+            <Image src={'/images/page-about/three-main-tools.svg'} width="2994" height="1417" className='w-full' />
+          </div>
+        </div>
+      </Section>
+
+      <Section className='bg-black'>
+        <div className="flex justify-center items-center flex-col lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
+          <div className='w-full lg:w-1/2'>
+            <Content>
+              <BoldParagraph className='mb-8 lg:mb-14 text-gray-500'>
+                YOUR COMMUNITY
+              </BoldParagraph>
+              <GradientText>
+                Build your following, <br className='lg:block hidden' /> own your audience
+              </GradientText>
+              <BoldParagraph className='mt-8 lg:mt-14 text-gray-400'>
+                Every follower is stored on-chain. This means they are portable to any platorm that utlizes the free and open-sourced Holaplex Social Graph. Build your following today!
+              </BoldParagraph>
+            </Content>
+          </div>
+          <div className='w-full lg:w-1/2 max-w-md lg:max-w-full'>
+            <Image src={'/images/page-about/audience.svg'} width="931" height="818" />
+          </div>
+        </div>
+      </Section>
+
+      <div className='py-14 lg:py-28 bg-black'>
+        <SlantedBgContainer>
+          <Section className='slanted-bg'>
+            <div className="flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
+              <div className='w-11/12 lg:w-1/2 max-w-lg'>
+                <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" />
+              </div>
+              <div className='w-full lg:w-1/2'>
+                <Content>
+                  <BoldParagraph className='mb-6 lg:mb-14 text-gray-400'>
+                    YOUR TALENT
+                  </BoldParagraph>
+                  <GradientText>
+                    We Unlock Your <br className='lg:block hidden' /> extraordinary Work
+                  </GradientText>
+                  <BoldParagraph className='mt-6 lg:mt-14 color-white'>
+                    Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.
+                  </BoldParagraph>
+                </Content>
+              </div>
+            </div>
+          </Section>
+        </SlantedBgContainer>
+      </div>
+
+
+      <Section className='bg-black'>
+        <Content className='text-center'>
+          <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
+            YOUR COMMUNITY
+          </BoldParagraph>
+          <GradientText>
+            A community driven by you
+          </GradientText>
+          <BoldParagraph className='mt-8 lg:mt-14 color-white max-w-2xl mx-auto'>
+            You created it and you own it. Our community believes in being radically open, decentralized and permissionless.
+          </BoldParagraph>
+        </Content>
+        <div className='max-w-6xl w-10/12 mx-auto'>
+          <div className='flex flex-wrap justify-around items-center mt-24 lg:mt-48'>
+            <CommunityNFTContainer className=''><Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer className='z-20'><Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer className='z-10'><Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer className=''><Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" /></CommunityNFTContainer>
+          </div>
+        </div>
+      </Section>
+
+      {/*
+        <Section>
+          <Content className='text-center'>
+            <GradientText>
+              GitHub Projects
+            </GradientText>
+            <BoldParagraph className='mt-14 color-gray-400'>
+              Open-source tools increase velocity of innovation so we can win together. Come build with us!
+            </BoldParagraph>
+          </Content>
+        </Section>
+        */}
+
+      <div className='bg-black h-20 -mb-20' />
+      <Footer />
     </>
   );
 }
