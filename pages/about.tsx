@@ -40,8 +40,12 @@ const Section = styled.div`
     & > .slanted-container {
       position: absolute;
       top: 0;
-      left: -4%;
-      width: 108%;
+      left: -15%;
+      width: 130%;
+      @media (min-aspect-ratio: 1/1) {
+        left: -4%;
+        width: 108%;
+      }
       height: 100%;
       background: linear-gradient(to right, #000000, #202021);
       transform: rotate(7deg);
@@ -331,18 +335,10 @@ export default function About() {
         </Content>
         <div className='max-w-6xl w-10/12 mx-auto'>
           <div className='flex flex-wrap justify-around items-center mt-24 lg:mt-48'>
-            <CommunityNFTContainer style={{animationDelay: '250ms ', animationDuration: '5s'}} className=''>
-              <Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" alt="" />
-            </CommunityNFTContainer>
-            <CommunityNFTContainer style={{animationDelay: '500ms ', animationDuration: '3s'}} className='z-20'>
-              <Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" alt="" />
-            </CommunityNFTContainer>
-            <CommunityNFTContainer style={{animationDelay: '1500ms', animationDuration: '5s'}} className='z-10'>
-              <Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" alt="" />
-            </CommunityNFTContainer>
-            <CommunityNFTContainer style={{animationDelay: '2000ms', animationDuration: '6s'}} className=''>
-              <Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" alt="" />
-            </CommunityNFTContainer>
+            <CommunityNFTContainer style={{ animationDelay: '250ms ', animationDuration: '5s' }} className=''><Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer style={{ animationDelay: '500ms ', animationDuration: '3s' }} className='z-20'><Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer style={{ animationDelay: '1500ms', animationDuration: '5s' }} className='z-10'><Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer style={{ animationDelay: '2000ms', animationDuration: '6s' }} className=''><Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" /></CommunityNFTContainer>
           </div>
         </div>
       </Section>
