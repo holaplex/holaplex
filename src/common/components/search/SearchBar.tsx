@@ -96,6 +96,7 @@ const SearchBar: FC = () => {
             <label htmlFor="search" className="sr-only">
               Search
             </label>
+
             <div className="relative block transition-all ">
               <span
                 onClick={() => setFocus('query', { shouldSelect: true })}
@@ -129,6 +130,7 @@ const SearchBar: FC = () => {
           </div>
         </div>
       </form>
+
       {showResults && (
         <div
           className={`h-content scrollbar-thumb-rounded-full absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900 ${
