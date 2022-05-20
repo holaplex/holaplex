@@ -69,7 +69,7 @@ const FeaturedProfilesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredProfiles.map((s) => (
-            <HomeSectionCarousel.Item key={s.address} className="px-4 md:px-8 pb-16">
+            <HomeSectionCarousel.Item key={s.address} className="px-4 lg:px-8 pb-16">
               <ProfilePreview
                 address={s.address}
                 onInsufficientData={onInsufficientDataForAProfile}
@@ -154,10 +154,10 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </div>
 
-        <div className="flex h-[53%] w-full flex-col justify-between p-4">
+        <div className="flex h-[53%] w-full flex-col justify-between p-4 md:p-2 lg:p-4">
           {/* pfp, follow */}
           <div className="relative flex items-end justify-end">
-            <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-20 md:w-20">
+            <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-12 md:w-12 lg:h-20 lg:w-20">
               <AvatarImage
                 src={data.profile?.profileImageUrlHighres ?? getFallbackImage()}
                 border
@@ -171,8 +171,8 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           </div>
           {/* handle, stats */}
           <div className="flex flex-col">
-            <span className="flex text-lg 2xl:text-2xl">{handleString}</span>
-            <div className="mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
+            <span className="flex text-base lg:text-lg 2xl:text-2xl">{handleString}</span>
+            <div className="mt-4 md:mt-2 lg:mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
               <span>
                 <span className="font-semibold text-white">{ownNftsString}</span>
                 <span className="ml-2 font-medium text-gray-300">Collected</span>
@@ -248,7 +248,7 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
     return (
       <Button5
         v="primary"
-        className={classNames(className, 'h-8 w-24 md:h-10 md:w-28')}
+        className={classNames(className, 'h-8 w-24 lg:h-10 lg:w-28')}
         onClick={() => walletConnector.select(PhantomWalletName)}
         loading={false}
       >
