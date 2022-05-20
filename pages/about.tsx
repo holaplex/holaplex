@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { Typography, Button } from 'antd';
 import Footer from '@/common/components/home/Footer';
 import investorData from '@/assets/investors/investors-stub';
+import Link from 'next/link';
 
 const { Title, Paragraph } = Typography;
 
@@ -162,11 +163,13 @@ export default function About() {
             <Title className='mt-0'>
               Connect Your Wallet
             </Title>
-            <a href="/">
-              <Button>
-                Claim Your Profile
-              </Button>
-            </a>
+            <Link href="/alpha">
+              <a>
+                <Button>
+                  Claim Your Profile
+                </Button>
+              </a>
+            </Link>
           </div>
         </Content>
       </Section>
