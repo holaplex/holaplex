@@ -65,7 +65,10 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
     <StyledModal
       destroyOnClose
       footer={[]}
-      onCancel={onClose}
+      onCancel={() => {
+        allowScroll();
+        onClose();
+      }}
       visible={show}
       width="100%"
       bodyStyle={{ height: '100%' }}
@@ -79,7 +82,10 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
         track={track}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}
-        onClose={onClose}
+        onClose={() => {
+          allowScroll();
+          onClose();
+        }}
         connection={connection}
       />
     </StyledModal>
