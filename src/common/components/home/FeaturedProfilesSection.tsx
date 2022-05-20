@@ -130,7 +130,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
     <PreviewContainer>
       {/* put the profile link under everything so that it doesnt interfere with other interactions,
         and force every element to have no pointer events unless it needs them */}
-      <div className="pointer-events-none">
+      <div className="pointer-events-none flex flex-col justify-between">
         <Link href={profileUrl} passHref>
           <a
             href={profileUrl}
@@ -140,7 +140,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </Link>
         {/* preview image */}
-        <div className="relative h-[47%] overflow-clip">
+        <div className="relative h-[47%] overflow-clip flex-shrink-0">
           <img
             src={data.profile?.bannerImageUrl ?? getFallbackImage()}
             alt={`${data.address} banner`}
@@ -154,7 +154,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </div>
 
-        <div className="flex h-[53%] w-full flex-col justify-between p-4 md:p-2 lg:p-4">
+        <div className="flex w-full h-full flex-col justify-between p-4 md:p-2 lg:p-4">
           {/* pfp, follow */}
           <div className="relative flex items-end justify-end">
             <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-12 md:w-12 lg:h-20 lg:w-20">
@@ -172,7 +172,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           {/* handle, stats */}
           <div className="flex flex-col">
             <span className="flex text-base lg:text-lg 2xl:text-2xl">{handleString}</span>
-            <div className="mt-4 md:mt-2 lg:mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
+            <div className="mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
               <span>
                 <span className="font-semibold text-white">{ownNftsString}</span>
                 <span className="ml-2 font-medium text-gray-300">Collected</span>
