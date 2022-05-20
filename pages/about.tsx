@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Head from 'next/head';
 import { Typography, Button } from 'antd';
 import Footer from '@/common/components/home/Footer';
@@ -37,13 +37,11 @@ const Section = styled.div`
 
   &.slanted-bg {
     position: relative;
-
-    &::before {
-      content: '';
+    & > .slanted-container {
       position: absolute;
       top: 0;
-      left: -25%;
-      width: 150%;
+      left: -4%;
+      width: 108%;
       height: 100%;
       background: linear-gradient(to right, #000000, #202021);
       transform: rotate(7deg);
@@ -102,6 +100,12 @@ const MainTool = styled.div`
   }
 `;
 
+const floating = keyframes`
+  0% { transform: translate(0,  0%); }
+  50% { transform: translate(0, 1%); }
+  100% { transform: translate(0, -0%); }
+`
+
 const CommunityNFTContainer = styled.div`
   width: 30%;
   margin-left: -3.5%;
@@ -111,6 +115,11 @@ const CommunityNFTContainer = styled.div`
 
   box-shadow: 0px 0px 4rem 0px rgba(255, 255, 255, 0.25);
   aspect-ratio: 1/1;
+
+  animation-name: ${floating};
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 
   &:nth-child(even) {
     margin-top: -25%;
@@ -242,21 +251,21 @@ export default function About() {
             </MainTool>
           </div>
         </Content>
-        <div
-          className="pointer-events-none hidden w-full overflow-hidden lg:block"
+        <div 
+          className='hidden lg:block w-full overflow-hidden pointer-events-none' 
           style={{ marginTop: 'clamp(-500px, -12%, 0px)' }}
-        >
-          <div
-            className="max-w-8xl flex justify-center"
+         >
+          <div 
+            className='max-w-8xl flex justify-center' 
             style={{ width: '120%', marginLeft: '-12%' }}
-          >
-            <Image
-              src={'/images/page-about/three-main-tools.svg'}
-              width="2994"
-              height="1417"
-              className="w-full"
-              alt="Three main tools"
-            />
+           >
+            <Image 
+              src={'/images/page-about/three-main-tools.svg'} 
+              width="2994" 
+              height="1417" 
+              className='w-full'
+              alt=""
+             />
           </div>
         </div>
       </Section>
@@ -286,18 +295,13 @@ export default function About() {
 
       <div className="bg-black py-14 lg:py-28">
         <SlantedBgContainer>
-          <Section className="slanted-bg">
-            <div
-              className="mx-auto flex w-full flex-col items-center justify-center lg:flex-row lg:gap-12"
-              style={{ maxWidth: '1400px' }}
-            >
-              <div className="w-11/12 max-w-lg lg:w-1/2">
-                <Image
-                  src={'/images/page-about/we-unlock-your-talent.png'}
-                  width="1332"
-                  height="1538"
-                  alt="We unlock your talent"
-                />
+          <Section className='slanted-bg'>
+            <div className="slanted-container">
+              <Image src={'/images/page-about/texture-bg.jpg'} layout='fill' objectFit='cover' quality={80} />
+            </div>
+            <div className="lg:my-32 xl:my-48 flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
+              <div className='w-11/12 lg:w-1/2 max-w-lg'>
+                <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" alt="We unlock your talent" />
               </div>
               <div className="w-full lg:w-1/2">
                 <Content>
@@ -325,18 +329,18 @@ export default function About() {
             decentralized and permissionless.
           </BoldParagraph>
         </Content>
-        <div className="mx-auto w-10/12 max-w-6xl">
-          <div className="mt-24 flex flex-wrap items-center justify-around lg:mt-48">
-            <CommunityNFTContainer className="">
+        <div className='max-w-6xl w-10/12 mx-auto'>
+          <div className='flex flex-wrap justify-around items-center mt-24 lg:mt-48'>
+            <CommunityNFTContainer style={{animationDelay: '250ms ', animationDuration: '5s'}} className=''>
               <Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" alt="" />
             </CommunityNFTContainer>
-            <CommunityNFTContainer className="z-20">
+            <CommunityNFTContainer style={{animationDelay: '500ms ', animationDuration: '3s'}} className='z-20'>
               <Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" alt="" />
             </CommunityNFTContainer>
-            <CommunityNFTContainer className="z-10">
+            <CommunityNFTContainer style={{animationDelay: '1500ms', animationDuration: '5s'}} className='z-10'>
               <Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" alt="" />
             </CommunityNFTContainer>
-            <CommunityNFTContainer className="">
+            <CommunityNFTContainer style={{animationDelay: '2000ms', animationDuration: '6s'}} className=''>
               <Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" alt="" />
             </CommunityNFTContainer>
           </div>
