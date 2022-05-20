@@ -96,17 +96,20 @@ const SearchBar: FC = () => {
             <label htmlFor="search" className="sr-only">
               Search
             </label>
+
             <div className="relative block transition-all ">
               <span
                 onClick={() => setFocus('query', { shouldSelect: true })}
-                className="absolute inset-y-0  left-[45%] flex  cursor-pointer items-center rounded-full  p-2 shadow-lg shadow-black transition-all hover:bg-gray-800 group-focus-within:left-0 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
+                className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-2 shadow-lg shadow-black transition-all hover:bg-gray-800 group-focus-within:left-0 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
               >
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
               </span>
 
               <input
                 id="search"
-                className="block w-full rounded-full border border-transparent bg-transparent py-2 pr-3 pl-12 text-base placeholder-transparent transition-all focus:border-white   focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
+                autoComplete={`off`}
+                autoCorrect={`off`}
+                className="block w-full rounded-full border border-transparent bg-transparent py-2 pr-3 pl-12 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
                 type="search"
                 {...register('query', { required: true })}
                 onFocus={() => setShowResults(true)}
@@ -127,9 +130,12 @@ const SearchBar: FC = () => {
           </div>
         </div>
       </form>
+
       {showResults && (
         <div
-          className={`h-content absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900 p-6 transition ease-in-out`}
+          className={`h-content scrollbar-thumb-rounded-full absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900 ${
+            data && called ? `p-6` : ``
+          } transition ease-in-out scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
         >
           {loading && (
             <>
