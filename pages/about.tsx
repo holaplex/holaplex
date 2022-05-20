@@ -200,9 +200,9 @@ export default function About() {
         </Content>
       </Section>
 
-      <Section className='bg-gradient-to-b from-black to-gray-700'>
+      <Section className='bg-black'>
         <Content>
-          <div className='lg:w-3/4 mb-12 lg:mb-24'>
+          <div className='lg:w-3/4 mb-12 lg:mb-0'>
             <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
               WHAT WE CREATE
             </BoldParagraph>
@@ -213,7 +213,7 @@ export default function About() {
               With Holaplex, it's easier than ever to get started in the NFT community. We're committed to making it easy for everyone to join.
             </BoldParagraph>
           </div>
-          <div className='flex justify-around'>
+          <div className='flex flex-wrap gap-8 justify-around items-center lg:hidden'>
             <MainTool>
               <b>No-Code Tools</b>
               <div>
@@ -235,8 +235,13 @@ export default function About() {
               </div>
               <p>Read Sonlana’s on-chain NFT related data fast and efficiently</p>
             </MainTool>
-          </div>
+            </div>
         </Content>
+        <div className='hidden lg:block w-full overflow-hidden pointer-events-none' style={{marginTop: 'clamp(-500px, -12%, 0px)'}}>
+          <div className='max-w-8xl flex justify-center' style={{ width: '120%', marginLeft: '-12%' }}>
+            <Image src={'/images/page-about/three-main-tools.svg'} width="2994" height="1417" className='w-full' />
+          </div>
+        </div>
       </Section>
 
       <Section className='bg-black'>
