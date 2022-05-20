@@ -2,8 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import Head from 'next/head';
-import sv from '@/constants/styles';
-import { List, Space, Row, Col, Typography, Card, Button } from 'antd';
+import { Typography, Button } from 'antd';
 import Footer from '@/common/components/home/Footer';
 import investorData from '@/assets/investors/investors-stub';
 
@@ -82,6 +81,10 @@ const HeroSection = styled(Section)`
   }
   align-items: center;
   position: relative;
+  min-height: calc(100vh - 80px);
+  @media (max-width: 768px) {
+    min-height: calc(100vh - 72px);
+  }
 `;
 
 const LogoContainer = styled.a`
@@ -103,9 +106,9 @@ const MainTool = styled.div`
 `;
 
 const CommunityNFTContainer = styled.div`
-  width: 33%;
-  margin-left: -5%;
-  margin-right: -5%;
+  width: 30%;
+  margin-left: -3.5%;
+  margin-right: -3.5%;
   border-radius: 4%;
   overflow: hidden;
 
