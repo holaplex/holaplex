@@ -1,12 +1,13 @@
-import { useEffect, useState, VFC } from 'react';
+import { useEffect, useMemo, useState, VFC } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
 import { IndexerSDK, Listing } from '@/modules/indexer';
-import { ListingPreview } from '../elements/ListingPreview';
+import { ListingPreview, SkeletonListing } from '../elements/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';
 
 const CAROUSEL_ROWS: number = 1;
 const CAROUSEL_COLS: number = 3;
 const CAROUSEL_PAGES: number = 5;
+const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
 const DAO_LIST_IPFS =
@@ -15,6 +16,15 @@ const DAO_LIST_IPFS =
 
 const FeaturedAuctionsSection: VFC = () => {
   const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
+  const placeholderCards = useMemo(
+    () =>
+      [...Array(N_LISTINGS)].map((_, i) => (
+        <HomeSectionCarousel.Item key={i} className="p-3 duration-300 hover:scale-[1.02] md:p-4">
+          <SkeletonListing />
+        </HomeSectionCarousel.Item>
+      )),
+    []
+  );
 
   useEffect(() => {
     getAndPrepListings()
@@ -35,23 +45,28 @@ const FeaturedAuctionsSection: VFC = () => {
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
-          {featuredListings.map((listing, i) => (
-            <HomeSectionCarousel.Item
-              key={listing.listingAddress}
-              className="p-3 duration-300 hover:scale-[1.02] md:p-4"
-            >
-              <ListingPreview
-                key={listing.listingAddress}
-                listing={listing}
-                meta={{
-                  index: i,
-                  list: 'featured-listings',
-                  sortBy: SortOptions.Trending,
-                  filterBy: FilterOptions.Auctions,
-                }}
-              />
-            </HomeSectionCarousel.Item>
-          ))}
+          {featuredListings.length === 0
+            ? placeholderCards
+            : featuredListings.map(
+                (listing, i) =>
+                  (
+                    <HomeSectionCarousel.Item
+                      key={listing.listingAddress}
+                      className="p-3 duration-300 hover:scale-[1.02] md:p-4"
+                    >
+                      <ListingPreview
+                        key={listing.listingAddress}
+                        listing={listing}
+                        meta={{
+                          index: i,
+                          list: 'featured-listings',
+                          sortBy: SortOptions.Trending,
+                          filterBy: FilterOptions.Auctions,
+                        }}
+                      />
+                    </HomeSectionCarousel.Item>
+                  ) || placeholderCards
+              )}
         </HomeSectionCarousel>
       </HomeSection.Body>
     </HomeSection>
@@ -104,8 +119,7 @@ async function getAndPrepListings(): Promise<Listing[]> {
     );
   }
 
-  const totalListings: number = CAROUSEL_COLS * CAROUSEL_ROWS * CAROUSEL_PAGES;
-  return applyListingFilterAndSort(daoFilteredListings).slice(0, totalListings);
+  return applyListingFilterAndSort(daoFilteredListings).slice(0, N_LISTINGS);
 }
 
 export default FeaturedAuctionsSection;

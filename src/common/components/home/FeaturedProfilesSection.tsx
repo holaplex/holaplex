@@ -25,10 +25,13 @@ import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
 const CAROUSEL_PAGES: number = 2;
+const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
 
 const FeaturedProfilesSection: VFC = () => {
   const wallet: WalletContextState = useWallet();
-  const [featuredProfiles, setFeaturedProfiles] = useState<FeaturedProfilesData>([]);
+  // initial value hack to get loading card
+  // TODO pass in a loading boolean to bypass loading until the address is known
+  const [featuredProfiles, setFeaturedProfiles] = useState<FeaturedProfilesData>([...Array(N_LISTINGS)].map(_ => ({address: ''})));
 
   const dataQuery = useFeaturedProfilesQuery({
     variables: {

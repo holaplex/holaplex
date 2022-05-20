@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, VFC } from 'react';
+import { useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
@@ -9,6 +9,7 @@ import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
 const CAROUSEL_PAGES: number = 3;
+const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
 
 interface FeaturedListing {
   address: string;
@@ -17,9 +18,16 @@ interface FeaturedListing {
 
 const FeaturedBuyNowListingsSection: VFC = () => {
   const [featuredListings, setFeaturedListings] = useState<FeaturedListing[]>([]);
-
-  const maxListings: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
   const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: 1000 } });
+  const placeholderCards = useMemo(
+    () =>
+      [...Array(N_LISTINGS)].map((_, i) => (
+        <HomeSectionCarousel.Item key={i} className="p-3 md:p-4">
+          <LoadingNFTCard />
+        </HomeSectionCarousel.Item>
+      )),
+    []
+  );
 
   useEffect(() => {
     if (
@@ -33,7 +41,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       setFeaturedListings(
         dataQuery.data.nfts
           .filter((v) => v.address !== undefined)
-          .slice(0, maxListings)
+          .slice(0, N_LISTINGS)
           .map((v) => ({ address: v.address, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN }))
       );
     }
@@ -57,15 +65,17 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
-          {featuredListings.map((s) => (
-            <HomeSectionCarousel.Item key={s.address} className="p-3 md:p-4">
-              <NFTCardDataWrapper
-                address={s.address}
-                marketplace={s.marketplace}
-                onInsufficientData={onInsufficientDataForAListing}
-              />
-            </HomeSectionCarousel.Item>
-          ))}
+          {featuredListings.length === 0
+            ? placeholderCards
+            : featuredListings.map((s) => (
+                <HomeSectionCarousel.Item key={s.address} className="p-3 md:p-4">
+                  <NFTCardDataWrapper
+                    address={s.address}
+                    marketplace={s.marketplace}
+                    onInsufficientData={onInsufficientDataForAListing}
+                  />
+                </HomeSectionCarousel.Item>
+              ))}
         </HomeSectionCarousel>
       </HomeSection.Body>
     </HomeSection>
