@@ -19,7 +19,7 @@ import {
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
-  generateFeedCardAtributes,
+  generateFeedCardAttributes,
   shouldAggregate,
 } from '@/common/components/feed/feed.utils';
 
@@ -194,7 +194,7 @@ const AlphaPage = ({ address }: { address: string }) => {
         return feedItems;
       }
       // for now we do no aggregation, simply make sure events are valid
-      const attrs = generateFeedCardAtributes(event);
+      const attrs = generateFeedCardAttributes(event);
       feedAttrs.push(attrs);
 
       if (skipIndex > i) return feedItems;

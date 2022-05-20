@@ -1,30 +1,22 @@
 import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
-import { LoadingBox, LoadingContainer } from '../elements/LoadingPlaceholders';
 import NFTPreview from '../elements/NFTPreview';
 import { DisplaySOL } from '../CurrencyHelpers';
 import {
   LAMPORTS_PER_SOL,
-  PublicKey,
-  SYSVAR_INSTRUCTIONS_PUBKEY,
-  Transaction,
 } from '@solana/web3.js';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
-import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
+import { AuctionHouse, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 
-const { createSellInstruction, createPrintListingReceiptInstruction } =
-  AuctionHouseProgram.instructions;
 
 interface SellFormSchema {
   amount: string;
@@ -32,7 +24,7 @@ interface SellFormSchema {
 
 interface SellFormProps {
   nft?: Nft;
-  marketplace: Marketplace;
+  marketplace: {auctionHouse: AuctionHouse};
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;

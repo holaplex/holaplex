@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useActivityPageQuery, useFeedQuery } from 'src/graphql/indexerTypes';
 import { ActivityCard } from '../elements/ActivityCard';
 import { getActivityItemsFromBids } from '../elements/ActivityContent';
-import { generateFeedCardAtributes } from './feed.utils';
+import { generateFeedCardAttributes } from './feed.utils';
 
 export function MyActivityList() {
   const anchorWallet = useAnchorWallet();
@@ -32,7 +32,7 @@ export function MyActivityList() {
   //     activityPage.data?.wallet?.bids
   //       ? // @ts-ignore
   //         data?.feedEvents
-  //           .map((e) => generateFeedCardAtributes(e))
+  //           .map((e) => generateFeedCardAttributes(e))
   //           .filter((a) => a?.sourceUser.address === myPubkey)
   //       : [],
 

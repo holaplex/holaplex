@@ -1,4 +1,5 @@
 import BN from 'bn.js';
+import { OwnedNfTsQuery } from 'src/graphql/indexerTypes';
 
 export type Volume = number;
 
@@ -36,6 +37,29 @@ export interface MarketplacePreviewData {
   };
   stats: {
     nfts: string;
+  }
+}
+
+
+export type BuyNowListingPreviewData = {
+  nft: OwnedNfTsQuery['nfts'][0],
+  marketplace: OwnedNfTsQuery['marketplace'][0]
+};
+
+
+export type FeaturedProfilesData = {address: string}[];
+
+
+export interface ProfilePreviewData {
+  address: string;
+  profile: {
+    handle?: string;
+    profileImageUrl?: string;
+    bannerImageUrl?: string;
+  }
+  nftCounts: {
+    owned?: number;
+    created?: number;
   }
 }
 

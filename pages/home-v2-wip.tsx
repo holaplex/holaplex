@@ -1,5 +1,9 @@
-import FeaturedMarkeplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedAuctionsSection from '@/common/components/home/FeaturedAuctionsSection';
+import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyNowListingsSection';
+import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
 import Footer from '@/common/components/home/Footer';
+import HeroSection from '@/common/components/home/HeroSection';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -7,12 +11,16 @@ import Carousel from 'react-grid-carousel';
 
 const Home: FC = () => {
   return (
-    <>
-      <div className="container mx-auto w-[80%] pb-48">
-       <FeaturedMarkeplacesSection/>
+    <div>
+      <HeroSection />
+      <div className="container mx-auto w-3/4">
+        <FeaturedBuyNowListingsSection />
+        <FeaturedProfilesSection />
+        <FeaturedAuctionsSection />
+        <FeaturedMarketplacesSection />
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
@@ -42,19 +50,14 @@ const ExternalLink: FC<HomeLinkProps> = ({ href, children }) => (
   </a>
 );
 
-
 const PageLeftButton = (
-  <button
-    className="flex items-center justify-center absolute left-0 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black hover:scale-125 transition"
-  >
+  <button className="absolute left-0 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronLeftIcon className="h-4 w-4" />
   </button>
 );
 
 const PageRightButton = (
-  <button
-    className="flex items-center justify-center absolute right-0 top-1/2 h-10 w-10 translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black hover:scale-125 transition"
-  >
+  <button className="absolute right-0 top-1/2 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronRightIcon className="h-4 w-4" />
   </button>
 );
@@ -88,7 +91,7 @@ type HomeSectionSubtypes = {
  * ```
  */
 export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => (
-  <div>{children}</div>
+  <div className="my-24 sm:my-40">{children}</div>
 );
 
 const HomeSectionHeader: Header = ({ children }) => (
@@ -113,19 +116,17 @@ const HomeSectionHeaderAction: HeaderAction<HeaderActionProps> = ({ href, extern
   return (
     <LinkComponent href={href}>
       {children}
-      <ChevronRightIcon className="h-4 ml-2" />
+      <ChevronRightIcon className="ml-2 h-4" />
     </LinkComponent>
   );
 };
 HomeSection.HeaderAction = HomeSectionHeaderAction;
-
 
 /**
  * Container for main body of each home section. Add whatever content you want as children.
  */
 const HomeSectionBody: Body = ({ children }) => <div>{children}</div>;
 HomeSection.Body = HomeSectionBody;
-
 
 type Item = FC;
 
@@ -139,19 +140,27 @@ interface HomeSectionCarouselProps {
   gap?: number;
 }
 
-export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCarouselSubtypes = ({ rows, cols, gap = 0, children }) => (
-  <Carousel
-    rows={rows}
-    cols={cols}
-    gap={gap}
-    arrowLeft={PageLeftButton}
-    arrowRight={PageRightButton}
-  >
-    {children}
-  </Carousel>
+export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCarouselSubtypes = ({
+  rows,
+  cols,
+  gap = 0,
+  children,
+}) => (
+  // enlarge the carousel section to account for internal padding of elements such that elements still fill
+  // the space
+  <div className="-ml-[2%] w-[104%]">
+    <Carousel
+      rows={rows}
+      cols={cols}
+      gap={gap}
+      arrowLeft={PageLeftButton}
+      arrowRight={PageRightButton}
+    >
+      {children}
+    </Carousel>
+  </div>
 );
 
 HomeSectionCarousel.Item = Carousel.Item;
-
 
 export default Home;

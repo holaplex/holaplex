@@ -52,7 +52,9 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import FeaturedMarkeplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
+import HeroSection from '@/common/components/home/HeroSection';
+import { FilterOptions, SortOptions } from '@/common/components/home/home.interfaces';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
@@ -158,22 +160,6 @@ const HeroCol = styled.div`
     margin: 0 0 0.5rem 0;
   }
 `;
-
-export enum FilterOptions {
-  All = 'all',
-  Auctions = 'auctions',
-  InstantSale = 'instant_sale',
-  Secondary = 'secondary',
-}
-
-export enum SortOptions {
-  RecentlyAdded = 'recently_added',
-  EndingSoonest = 'ending_soonest',
-  Expensive = 'expensive',
-  Cheapest = 'cheapest',
-  BidCount = 'bid_count',
-  Trending = 'trending',
-}
 
 const sortOptions: {
   [key in FilterOptions]: {
@@ -488,9 +474,8 @@ export default function Home({
           </HeroCarousel>
         </HeroCol>
       </section>
-
       <section>
-        <FeaturedMarkeplacesSection/>
+        <FeaturedMarketplacesSection />
       </section>
       <section className="mt-10">
         <div ref={listingsTopRef} />

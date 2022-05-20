@@ -8,11 +8,12 @@ import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
 import { useInView } from 'react-intersection-observer';
 import { addListingToTrackCall, useAnalytics } from '@/common/context/AnalyticsProvider';
-import { FilterOptions, SortOptions } from 'pages';
+
 import Price from '@/common/components/elements/Price';
 import { maybeCDN, imgOpt } from '@/common/utils';
 import AuctionCountdown from './Countdown';
 import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
+import { FilterOptions, SortOptions } from '../home/home.interfaces';
 
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};

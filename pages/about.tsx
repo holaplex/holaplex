@@ -13,16 +13,12 @@ const GradientText = styled(Title)`
   font-size: 60px !important;
   font-size: clamp(24px, 4vw, 60px) !important;
 
-  background: linear-gradient(
-    to right,
-    #FFFFFF 0%,
-    #808080 100%
-	);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    -o-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  background: linear-gradient(to right, #ffffff 0%, #808080 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -o-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const BoldParagraph = styled.p`
@@ -38,7 +34,7 @@ const Section = styled.div`
   justify-content: center;
   padding: 2rem 0;
   position: relative;
-  
+
   &.slanted-bg {
     position: relative;
     & > .slanted-container {
@@ -117,7 +113,7 @@ const CommunityNFTContainer = styled.div`
   border-radius: 4%;
   overflow: hidden;
 
-  box-shadow: 0px 0px 4rem 0px rgba(255,255,255,0.25);
+  box-shadow: 0px 0px 4rem 0px rgba(255, 255, 255, 0.25);
   aspect-ratio: 1/1;
 
   animation-name: ${floating};
@@ -145,58 +141,68 @@ export default function About() {
         />
       </Head>
       <HeroSection>
-        <Image src={'/images/page-about/hero.jpg'} objectFit='cover' layout='fill' quality={100} />
-        <div className='w-10/12 ml-auto h-64 relative lg:absolute lg:w-5/12 lg:h-auto inset-y-10 right-0 '>
-          <Image src={'/images/page-about/laptop.png'} layout={'fill'} objectFit={'contain'} objectPosition={'center right'} />
+        <Image
+          src={'/images/page-about/hero.jpg'}
+          objectFit="cover"
+          layout="fill"
+          quality={100}
+          alt=""
+        />
+        <div className="relative inset-y-10 right-0 ml-auto h-64 w-10/12 lg:absolute lg:h-auto lg:w-5/12 ">
+          <Image
+            src={'/images/page-about/laptop.png'}
+            alt="Marketplace preview"
+            layout={'fill'}
+            objectFit={'contain'}
+            objectPosition={'center right'}
+          />
         </div>
         <Content>
-          <div className='lg:w-9/12 mt-12 lg:mt-0'>
-            <BoldParagraph className='mb-4 lg:mb-14 text-gray-400'>
-              POWERED BY Solana
-            </BoldParagraph>
+          <div className="mt-12 lg:mt-0 lg:w-9/12">
+            <BoldParagraph className="mb-4 text-gray-400 lg:mb-14">POWERED BY Solana</BoldParagraph>
             <GradientText>
-              Incredibly Fast, <br className='lg:block hidden' />
+              Incredibly Fast, <br className="hidden lg:block" />
               Low Cost &amp; Eco-Friendly.
             </GradientText>
-            <BoldParagraph className='mt-4 lg:mt-14 color-white'>
-              Tools that are open source, owned by creators, are <br className='lg:block hidden' /> permissionless, and governed by the community.
+            <BoldParagraph className="color-white mt-4 lg:mt-14">
+              Tools that are open source, owned by creators, are <br className="hidden lg:block" />{' '}
+              permissionless, and governed by the community.
             </BoldParagraph>
           </div>
         </Content>
       </HeroSection>
 
-      <Section className='bg-gray-800'>
-        <Image src={'/images/page-about/connect.jpg'} objectFit='cover' layout='fill' />
-        <Content className='text-center'>
-          <div className='py-8'>
-            <Title className='mt-0'>
-              Connect Your Wallet
-            </Title>
+      <Section className="bg-gray-800">
+        <Image src={'/images/page-about/connect.jpg'} alt="" objectFit="cover" layout="fill" />
+        <Content className="text-center">
+          <div className="py-8">
+            <Title className="mt-0">Connect Your Wallet</Title>
             <Link href="/alpha">
               <a>
-                <Button>
-                  Claim Your Profile
-                </Button>
+                <Button>Claim Your Profile</Button>
               </a>
             </Link>
           </div>
         </Content>
       </Section>
 
-      <Section className='bg-black'>
-        <Content className='text-center'>
-          <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
-            Our partners
-          </BoldParagraph>
+      <Section className="bg-black">
+        <Content className="text-center">
+          <BoldParagraph className="mb-8 text-gray-400 lg:mb-14">Our partners</BoldParagraph>
           <GradientText>
-            Supported &amp; Trusted By <br className='lg:block hidden' /> The Best
+            Supported &amp; Trusted By <br className="hidden lg:block" /> The Best
           </GradientText>
-          <BoldParagraph className='my-8 lg:my-14 text-gray-500'>
+          <BoldParagraph className="my-8 text-gray-500 lg:my-14">
             We work with leading funds and platforms
           </BoldParagraph>
-          <div className='flex flex-wrap justify-center gap-4 lg:gap-8 my-14 lg:my-28'>
+          <div className="my-14 flex flex-wrap justify-center gap-4 lg:my-28 lg:gap-8">
             {investorData.map((investor, index) => (
-              <LogoContainer key={investor.url} href={investor.url} target="_blank" rel="noreferrer">
+              <LogoContainer
+                key={investor.url}
+                href={investor.url}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Image
                   layout="fill"
                   objectFit="contain"
@@ -209,20 +215,19 @@ export default function About() {
         </Content>
       </Section>
 
-      <Section className='bg-black'>
+      <Section className="bg-black">
         <Content>
-          <div className='lg:w-3/4 mb-12 lg:mb-0'>
-            <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
-              WHAT WE CREATE
-            </BoldParagraph>
+          <div className="mb-12 lg:mb-0 lg:w-3/4">
+            <BoldParagraph className="mb-8 text-gray-400 lg:mb-14">WHAT WE CREATE</BoldParagraph>
             <GradientText>
-              Three Main Tools of <br className='lg:block hidden' /> the Platform
+              Three Main Tools of <br className="hidden lg:block" /> the Platform
             </GradientText>
-            <BoldParagraph className='mt-8 lg:mt-14 color-white'>
-              With Holaplex, it's easier than ever to get started in the NFT community. We're committed to making it easy for everyone to join.
+            <BoldParagraph className="color-white mt-8 lg:mt-14">
+              With Holaplex, it&apos;s easier than ever to get started in the NFT community.
+              We&apos;re committed to making it easy for everyone to join.
             </BoldParagraph>
           </div>
-          <div className='flex flex-wrap gap-8 justify-around items-center lg:hidden'>
+          <div className="flex flex-wrap items-center justify-around gap-8 lg:hidden">
             <MainTool>
               <b>No-Code Tools</b>
               <div>
@@ -230,51 +235,65 @@ export default function About() {
               </div>
               <p>Profiles and Marketplaces</p>
             </MainTool>
-            <MainTool className='lg:mt-16'>
+            <MainTool className="lg:mt-16">
               <b>Social Graph</b>
               <div>
                 <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
               </div>
-              <p>Solana’s NFT Social Network supports following and feed</p>
+              <p>Solana&apos;s NFT Social Network supports following and feed</p>
             </MainTool>
-            <MainTool className='lg:-mt-24 xl:-mt-32'>
+            <MainTool className="lg:-mt-24 xl:-mt-32">
               <b>Indexer</b>
               <div>
                 <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
               </div>
-              <p>Read Sonlana’s on-chain NFT related data fast and efficiently</p>
+              <p>Read Sonlana&apos;s on-chain NFT related data fast and efficiently</p>
             </MainTool>
           </div>
         </Content>
-        <div className='hidden lg:block w-full overflow-hidden pointer-events-none' style={{ marginTop: 'clamp(-500px, -12%, 0px)' }}>
-          <div className='max-w-8xl flex justify-center' style={{ width: '120%', marginLeft: '-12%' }}>
-            <Image src={'/images/page-about/three-main-tools.svg'} width="2994" height="1417" className='w-full' />
+        <div 
+          className='hidden lg:block w-full overflow-hidden pointer-events-none' 
+          style={{ marginTop: 'clamp(-500px, -12%, 0px)' }}
+         >
+          <div 
+            className='max-w-8xl flex justify-center' 
+            style={{ width: '120%', marginLeft: '-12%' }}
+           >
+            <Image 
+              src={'/images/page-about/three-main-tools.svg'} 
+              width="2994" 
+              height="1417" 
+              className='w-full'
+              alt=""
+             />
           </div>
         </div>
       </Section>
 
-      <Section className='bg-black'>
-        <div className="flex justify-center items-center flex-col lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
-          <div className='w-full lg:w-1/2'>
+      <Section className="bg-black">
+        <div
+          className="mx-auto flex w-full flex-col items-center justify-center lg:flex-row"
+          style={{ maxWidth: '1400px' }}
+        >
+          <div className="w-full lg:w-1/2">
             <Content>
-              <BoldParagraph className='mb-8 lg:mb-14 text-gray-500'>
-                YOUR COMMUNITY
-              </BoldParagraph>
+              <BoldParagraph className="mb-8 text-gray-500 lg:mb-14">YOUR COMMUNITY</BoldParagraph>
               <GradientText>
-                Build your following, <br className='lg:block hidden' /> own your audience
+                Build your following, <br className="hidden lg:block" /> own your audience
               </GradientText>
-              <BoldParagraph className='mt-8 lg:mt-14 text-gray-400'>
-                Every follower is stored on-chain. This means they are portable to any platorm that utlizes the free and open-sourced Holaplex Social Graph. Build your following today!
+              <BoldParagraph className="mt-8 text-gray-400 lg:mt-14">
+                Every follower is stored on-chain. This means they are portable to any platorm that
+                utlizes the free and open-sourced Holaplex Social Graph. Build your following today!
               </BoldParagraph>
             </Content>
           </div>
-          <div className='w-full lg:w-1/2 max-w-md lg:max-w-full'>
+          <div className="w-full max-w-md lg:w-1/2 lg:max-w-full">
             <Image src={'/images/page-about/audience.svg'} width="931" height="818" />
           </div>
         </div>
       </Section>
 
-      <div className='py-14 lg:py-28 bg-black'>
+      <div className="bg-black py-14 lg:py-28">
         <SlantedBgContainer>
           <Section className='slanted-bg'>
             <div className="slanted-container">
@@ -282,18 +301,17 @@ export default function About() {
             </div>
             <div className="lg:my-32 xl:my-48 flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
               <div className='w-11/12 lg:w-1/2 max-w-lg'>
-                <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" />
+                <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" alt="We unlock your talent" />
               </div>
-              <div className='w-full lg:w-1/2'>
+              <div className="w-full lg:w-1/2">
                 <Content>
-                  <BoldParagraph className='mb-6 lg:mb-14 text-gray-400'>
-                    YOUR TALENT
-                  </BoldParagraph>
+                  <BoldParagraph className="mb-6 text-gray-400 lg:mb-14">YOUR TALENT</BoldParagraph>
                   <GradientText>
-                    We Unlock Your <br className='lg:block hidden' /> extraordinary Work
+                    We Unlock Your <br className="hidden lg:block" /> extraordinary Work
                   </GradientText>
-                  <BoldParagraph className='mt-6 lg:mt-14 color-white'>
-                    Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs.
+                  <BoldParagraph className="color-white mt-6 lg:mt-14">
+                    Our mission is to empower creators and collectors with a suite of tools to
+                    create, market, and sell NFTs.
                   </BoldParagraph>
                 </Content>
               </div>
@@ -302,25 +320,29 @@ export default function About() {
         </SlantedBgContainer>
       </div>
 
-
-      <Section className='bg-black'>
-        <Content className='text-center'>
-          <BoldParagraph className='mb-8 lg:mb-14 text-gray-400'>
-            YOUR COMMUNITY
-          </BoldParagraph>
-          <GradientText>
-            A community driven by you
-          </GradientText>
-          <BoldParagraph className='mt-8 lg:mt-14 color-white max-w-2xl mx-auto'>
-            You created it and you own it. Our community believes in being radically open, decentralized and permissionless.
+      <Section className="bg-black">
+        <Content className="text-center">
+          <BoldParagraph className="mb-8 text-gray-400 lg:mb-14">YOUR COMMUNITY</BoldParagraph>
+          <GradientText>A community driven by you</GradientText>
+          <BoldParagraph className="color-white mx-auto mt-8 max-w-2xl lg:mt-14">
+            You created it and you own it. Our community believes in being radically open,
+            decentralized and permissionless.
           </BoldParagraph>
         </Content>
         <div className='max-w-6xl w-10/12 mx-auto'>
           <div className='flex flex-wrap justify-around items-center mt-24 lg:mt-48'>
-            <CommunityNFTContainer style={{animationDelay: '250ms ', animationDuration: '5s'}} className=''><Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" /></CommunityNFTContainer>
-            <CommunityNFTContainer style={{animationDelay: '500ms ', animationDuration: '3s'}} className='z-20'><Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" /></CommunityNFTContainer>
-            <CommunityNFTContainer style={{animationDelay: '1500ms', animationDuration: '5s'}} className='z-10'><Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" /></CommunityNFTContainer>
-            <CommunityNFTContainer style={{animationDelay: '2000ms', animationDuration: '6s'}} className=''><Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" /></CommunityNFTContainer>
+            <CommunityNFTContainer style={{animationDelay: '250ms ', animationDuration: '5s'}} className=''>
+              <Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" alt="" />
+            </CommunityNFTContainer>
+            <CommunityNFTContainer style={{animationDelay: '500ms ', animationDuration: '3s'}} className='z-20'>
+              <Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" alt="" />
+            </CommunityNFTContainer>
+            <CommunityNFTContainer style={{animationDelay: '1500ms', animationDuration: '5s'}} className='z-10'>
+              <Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" alt="" />
+            </CommunityNFTContainer>
+            <CommunityNFTContainer style={{animationDelay: '2000ms', animationDuration: '6s'}} className=''>
+              <Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" alt="" />
+            </CommunityNFTContainer>
           </div>
         </div>
       </Section>
@@ -338,7 +360,7 @@ export default function About() {
         </Section>
         */}
 
-      <div className='bg-black h-20 -mb-20' />
+      <div className="-mb-20 h-20 bg-black" />
       <Footer />
     </>
   );
