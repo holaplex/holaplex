@@ -36,6 +36,7 @@ import { InView } from 'react-intersection-observer';
 import { isEmpty } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import { ProfilePageHead } from '../[publicKey]';
+import classNames from 'classnames';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -69,6 +70,7 @@ export const NFTCard = ({
   marketplace,
   refetch,
   loading = false,
+  showName = true
 }: {
   nft: OwnedNFT;
   marketplace: {auctionHouse: AuctionHouse};
@@ -76,6 +78,7 @@ export const NFTCard = ({
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
   loading: boolean;
+  showName?: boolean;
 }) => {
   const { publicKey } = useWallet();
   const [listNFTVisibility, setListNFTVisibility] = useState(false);
@@ -131,37 +134,37 @@ export const NFTCard = ({
               )}
             </div>
 
-            <div className="flex h-24 items-center bg-gray-900 py-6">
-              <p className="w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold">
+            <div className="flex items-center bg-gray-900 py-4">
+              <p className={classNames("w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold", {hidden: !showName})}>
                 {nft.name}
               </p>
             </div>
           </div>
         </Link>
-        <div className={`h-20 md:h-28 xl:h-20`}>
+        <div>
           <div
-            className={`flex h-full w-full items-center justify-between md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+            className={`flex h-full w-full items-end justify-between md:flex-col md:items-center md:justify-between xl:flex-row xl:items-end xl:justify-between`}
           >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Price</li>
-                <DisplaySOL amount={Number(defaultListing?.price)} />
+                <li className={`text-sm md:text-base font-bold text-gray-300 mb-2`}>Price</li>
+                <DisplaySOL amount={Number(defaultListing?.price)} className="text-sm md:text-base" />
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && Boolean(lastSale) && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Last sale</li>
+                <li className={`text-sm md:text-base font-bold text-gray-300`}>Last sale</li>
                 <DisplaySOL amount={Number(lastSale)} />
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Not listed</li>
+                <li className={`text-sm md:text-base font-bold text-gray-300`}>Not listed</li>
               </ul>
             )}
             {!hasDefaultListing && hasAddedOffer && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Your offer</li>
+                <li className={`text-sm md:text-base font-bold text-gray-300`}>Your offer</li>
                 <DisplaySOL amount={Number(addedOffer?.price) || 0} />
               </ul>
             )}
