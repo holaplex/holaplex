@@ -1,4 +1,4 @@
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import React, { FC, useCallback, useEffect, useState, VFC } from 'react';
 import { imgOpt, isTouchScreenOnly } from '../../utils';
 import { MarketplacePreviewData } from '@/types/types';

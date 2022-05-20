@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import { ListingPreview, SkeletonListing } from '../elements/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';

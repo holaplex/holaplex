@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState, VFC } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { getFallbackImage } from '@/modules/utils/image';
 import { FeaturedProfilesData, ProfilePreviewData } from '@/types/types';

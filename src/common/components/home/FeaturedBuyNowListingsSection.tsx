@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { Nft, useFeaturedBuyNowListingsQuery, useNftCardQuery } from 'src/graphql/indexerTypes';
 import { BuyNowListingPreviewData } from '@/types/types';
