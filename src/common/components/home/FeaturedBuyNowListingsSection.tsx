@@ -102,7 +102,6 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
       marketplace={{ auctionHouse: data!.marketplace!.auctionHouse! as AuctionHouse }}
       refetch={refetch}
       loading={loading}
-      showName={false}
     />
   );
 };
