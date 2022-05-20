@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import { Search } from '../icons/Search';
 import LoadingSearchItem from './LoadingSearchItem';
-import { useSearchLazyQuery, MetadataJson, Wallet, Nft } from 'src/graphql/indexerTypes';
+import { useSearchLazyQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -141,7 +141,6 @@ const SearchBar: FC = () => {
           )}
           {data && called && (
             <SearchResults
-              createdResults={data?.nfts as Nft[]}
               results={data?.metadataJsons as MetadataJson[]}
               profileResults={data?.profiles as Wallet[]}
               walletResult={data.wallet as Wallet}
