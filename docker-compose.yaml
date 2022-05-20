@@ -14,5 +14,5 @@ services:
     volumes:
        - postgres:/data/postgres
     ports:
-      - "15432:5432"
+      - "5432:5432"
     restart: unless-stopped

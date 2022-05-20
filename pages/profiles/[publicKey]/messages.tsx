@@ -1,33 +1,24 @@
-import Head from 'next/head';
 import { GetServerSideProps, NextPage } from 'next';
-import { showFirstAndLastFour } from '@/modules/utils/string';
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import { ProfileMessages } from '@/common/components/elements/ProfileMessages';
 import {
-  getPropsForWalletOrUsername,
+  getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
-
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useConnection } from '@solana/wallet-adapter-react';
-import { useEffect, useMemo, useState } from 'react';
-
+import { ProfilePageHead } from '../[publicKey]';
 import { useMailbox } from './MailboxProvider';
-import { Mailbox } from '@usedispatch/client';
 import { MessageAccount } from "@usedispatch/client";
+import { useEffect, useState } from 'react';
 import * as web3 from "@solana/web3.js";
 
-export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async context =>
-  getPropsForWalletOrUsername(context);
+export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
+  getProfileServerSideProps(context);
 
 const MessagesPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) => {
-  const [data, setData] = useState<String>("")
+
   const [messages, setMessages] = useState<MessageAccount[]>([]);
   const [mailboxAddress, setMailboxAddress] = useState<web3.PublicKey | null>( null );
-
-  const { connection } = useConnection();
-  const wallet = useWallet();
 
   const mailbox = useMailbox();
 
@@ -55,30 +46,21 @@ const MessagesPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props 
 
   }, [mailbox]);
 
-
-  const fetchData = useMemo(async ()=>{
-    // you can fetch data here how you like
-    // whatever data you want to set use the setData(data) hook
-    // setData(...) Note the Type in useState above
-  }, [data])
-
-
-
-  return (
-    <ProfileDataProvider profileData={{ publicKey, ...props }}>
-      <Head>
-        <title>{showFirstAndLastFour(publicKey)}&apos;s profile | Holaplex</title>
-        <meta
-          property='description'
-          key='description'
-          content='View your messages in the Holaplex ecosystem.'
-        />
-      </Head>
-      <ProfileContainer>
-        <ProfileMessages publicKey={publicKey} messages={messages} mailboxAddress={mailboxAddress} mailbox={mailbox} />
-        </ProfileContainer>
-    </ProfileDataProvider>
-  );
-};
-
+      return (
+  <ProfileDataProvider profileData={{ publicKey, ...props }}>
+    <ProfilePageHead
+      publicKey={publicKey}
+      twitterProfile={{
+        twitterHandle: props.twitterHandle,
+        banner: props.banner,
+        pfp: props.profilePicture,
+      }}
+      description="View activity for this, or any other pubkey, in the Holaplex ecosystem."
+    />
+    <ProfileContainer>
+    <ProfileMessages publicKey={publicKey} messages={messages} mailboxAddress={mailboxAddress} mailbox={mailbox} />
+    </ProfileContainer>
+  </ProfileDataProvider>
+);
+    }
 export default MessagesPage;

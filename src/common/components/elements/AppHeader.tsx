@@ -133,7 +133,7 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex min-w-fit items-center">
+              <a className="flex items-center min-w-fit">
                 About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover> */}
@@ -182,10 +182,22 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex min-w-fit items-center">
+              <a className="flex items-center min-w-fit">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover> */}
+
+            {connectedAndInstalledWallet && (
+                            <HeaderLinkWrapper key="messages" active={router.pathname === '/profiles/' + publicKey + '/messages'}>
+                            <Link href={"/profiles/" +publicKey+ "/messages"}  passHref>
+                              <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
+                                Messages
+                              </a>
+                            </Link>
+                          </HeaderLinkWrapper>
+              
+            )}
+
             {connectedAndInstalledWallet && (
               <div className={`rounded-full p-4 shadow-lg shadow-black hover:bg-gray-800`}>
                 <DialectNotificationsButton />
