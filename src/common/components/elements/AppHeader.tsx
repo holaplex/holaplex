@@ -224,26 +224,25 @@ const MobileHeader = () => {
           {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
-        <MenuButton onClick={() => setDisplayMenu(true)}>
+        <button
+          className="flex items-center justify-center rounded-full shadow-lg shadow-black hover:bg-gray-800"
+          onClick={() => setDisplayMenu(true)}
+        >
           <MenuIcon color="#fff" />
-        </MenuButton>
+        </button>
       </MobileHeaderContainer>
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
     </>
   );
 };
 
-const MenuButton = styled.button`
-  ${ButtonReset}
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const EmojiLogoAnchor = styled.a`
   width: 40px;
   height: 40px;
-  font-size: 24px;
+  font-size: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const MobileHeaderContainer = styled.div`

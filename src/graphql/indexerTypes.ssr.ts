@@ -1683,7 +1683,7 @@ export const ShareNftDocument = gql`
 }
     `;
 export const AllConnectionsFromDocument = gql`
-    query allConnectionsFrom($from: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   connections(from: [$from], limit: $limit, offset: $offset) {
     to {
       ...ConnectionNode
@@ -1692,7 +1692,7 @@ export const AllConnectionsFromDocument = gql`
 }
     ${ConnectionNodeFragmentDoc}`;
 export const AllConnectionsToDocument = gql`
-    query allConnectionsTo($to: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   connections(to: [$to], limit: $limit, offset: $offset) {
     from {
       ...ConnectionNode

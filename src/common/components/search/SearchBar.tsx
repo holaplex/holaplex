@@ -75,13 +75,11 @@ const SearchBar: FC = () => {
     handleSubmit,
     setValue,
     register,
-    watch,
+    setFocus,
     formState: { isSubmitting },
   } = useForm<SearchQuerySchema>({
     resolver: zodResolver(schema),
   });
-
-  const searchQueryWatchable = watch('query');
 
   return (
     <div
@@ -90,7 +88,7 @@ const SearchBar: FC = () => {
       className={`relative z-30 -ml-4 flex w-full flex-row items-center`}
     >
       <form
-        className={`group relative block w-full items-center`}
+        className={`group relative block w-full items-center justify-center `}
         onSubmit={handleSubmit(handleSearch)}
       >
         <div className="relative z-0 flex flex-1 items-center  px-2 sm:absolute sm:inset-0">
@@ -98,17 +96,19 @@ const SearchBar: FC = () => {
             <label htmlFor="search" className="sr-only">
               Search
             </label>
-            <div className="relative block">
-              <button className=" absolute  inset-y-0 left-0  flex items-center rounded-full p-2 hover:bg-gray-800 group-focus:!bg-transparent">
+            <div className="relative block transition-all ">
+              <span
+                onClick={() => setFocus('query', { shouldSelect: true })}
+                className="absolute inset-y-0  left-[45%] flex  cursor-pointer items-center rounded-full  p-2 shadow-lg shadow-black transition-all hover:bg-gray-800 group-focus-within:left-0 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
+              >
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
-              </button>
+              </span>
 
               <input
                 id="search"
-                className="block w-full rounded-full border border-transparent bg-transparent py-2 pl-12 pr-3 text-base placeholder-transparent focus:border-white   focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
+                className="block w-full rounded-full border border-transparent bg-transparent py-2 pr-3 pl-12 text-base placeholder-transparent transition-all focus:border-white   focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
                 type="search"
                 {...register('query', { required: true })}
-                autoFocus={true}
                 onFocus={() => setShowResults(true)}
                 onChange={handleOnChange}
                 placeholder={`Search Holaplex...`}
