@@ -19,6 +19,8 @@ import {
 } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { Button5 } from '../elements/Button2';
+import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
@@ -64,13 +66,11 @@ const FeaturedProfilesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredProfiles.map((s) => (
-            <HomeSectionCarousel.Item key={s.address}>
-              <div className="p-2 md:p-3">
-                <ProfilePreview
-                  address={s.address}
-                  onInsufficientData={onInsufficientDataForAProfile}
-                />
-              </div>
+            <HomeSectionCarousel.Item key={s.address} className="p-3 md:p-6">
+              <ProfilePreview
+                address={s.address}
+                onInsufficientData={onInsufficientDataForAProfile}
+              />
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
@@ -151,36 +151,35 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </div>
 
-        {/* profile handle, follow, stats box */}
-        <div className="h-full w-full">
-          <FollowUnfollowButtonDataWrapper
-            targetPubkey={data.address}
-            className="pointer-events-auto z-50 float-right mt-2 mr-3"
-          />
-          <div className="absolute bottom-0 p-2 2xl:p-6">
-            <div className="flex flex-col">
-              <span className="flex text-lg 2xl:text-2xl">{handleString}</span>
-              <div className="mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
-                <span>
-                  <span className="font-semibold text-white">{ownNftsString}</span>
-                  <span className="ml-2 font-medium text-gray-300">Collected</span>
-                </span>
-                <span className="ml-4">
-                  <span className="font-semibold text-white">{createdNftsString}</span>
-                  <span className="ml-2 font-medium text-gray-300">Created</span>
-                </span>
-              </div>
+        <div className="flex flex-col h-[53%] w-full p-4 justify-between">
+          {/* pfp, follow */}
+          <div className="relative flex items-end justify-end">
+            <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-20 md:w-20">
+              <AvatarImage
+                src={data.profile?.profileImageUrlHighres ?? getFallbackImage()}
+                border
+                borderClass="border-4 border-gray-900"
+              />
+            </div>
+            <FollowUnfollowButtonDataWrapper
+              targetPubkey={data.address}
+              className="pointer-events-auto z-50 flex"
+            />
+          </div>
+          {/* handle, stats */}
+          <div className="flex flex-col">
+            <span className="flex text-lg 2xl:text-2xl">{handleString}</span>
+            <div className="mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
+              <span>
+                <span className="font-semibold text-white">{ownNftsString}</span>
+                <span className="ml-2 font-medium text-gray-300">Collected</span>
+              </span>
+              <span className="ml-4">
+                <span className="font-semibold text-white">{createdNftsString}</span>
+                <span className="ml-2 font-medium text-gray-300">Created</span>
+              </span>
             </div>
           </div>
-        </div>
-
-        {/* profile icon  */}
-        <div className="absolute left-3 top-1/2 aspect-square h-[22%] -translate-y-1/2">
-          <AvatarImage
-            src={data.profile?.profileImageUrl ?? getFallbackImage()}
-            border
-            borderClass="border-4 border-gray-900"
-          />
         </div>
       </div>
     </PreviewContainer>
@@ -202,7 +201,7 @@ const LoadingPreview = () => {
 const PreviewContainer: FC<any> = (props) => {
   return (
     <div
-      className="relative flex aspect-square w-full overflow-clip rounded-lg shadow-md shadow-black duration-150 hover:scale-[1.02]"
+      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg shadow-2xl shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );
@@ -213,6 +212,7 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
   className,
 }) => {
   const wallet = useAnchorWallet();
+  const walletConnector = useWallet();
   const { connection } = useConnection();
   const [userIsFollowingThisAccountQuery, userIsFollowingThisAccountContext] =
     useIsXFollowingYLazyQuery();
@@ -238,22 +238,31 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
   const userIsFollowingThisAccount: boolean =
     canAssessFollowState && userIsFollowingThisAccountContext!.data!.connections.length > 0;
 
-  const hideButton: boolean = targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
+  const promptConnect: boolean =
+    targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
 
-  if (!wallet) return null;
+  if (promptConnect) {
+    return (
+      <Button5
+        v="primary"
+        className={classNames(className, 'h-8 w-24 md:h-10 md:w-28')}
+        onClick={() => walletConnector.select(PhantomWalletName)}
+        loading={false}
+      >
+        <span className="text-base md:text-lg">Connect</span>
+      </Button5>
+    );
+  }
 
   return (
     <FollowUnfollowButton
-      walletConnectionPair={{
-        connection,
-        wallet,
-      }}
+      walletConnectionPair={{ connection, wallet: wallet! }}
       source="modalFollowing"
       type={userIsFollowingThisAccount ? 'Unfollow' : 'Follow'}
       toProfile={{
         address: targetPubkey,
       }}
-      className={classNames(className, { hidden: hideButton })}
+      className={classNames(className, { hidden: promptConnect })}
     />
   );
 };

@@ -677,7 +677,7 @@ export type ProfilePreviewQueryVariables = Exact<{
 }>;
 
 
-export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -1533,7 +1533,7 @@ export const ProfilePreviewDocument = gql`
   wallet(address: $address) {
     profile {
       handle
-      profileImageUrl
+      profileImageUrlHighres
       bannerImageUrl
     }
     address

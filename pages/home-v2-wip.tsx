@@ -5,15 +5,16 @@ import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSe
 import Footer from '@/common/components/home/Footer';
 import HeroSection from '@/common/components/home/HeroSection';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import classNames from 'classnames';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import Carousel from 'react-grid-carousel';
 
 const Home: FC = () => {
   return (
     <div>
       <HeroSection />
-      <div className="container mx-auto w-3/4">
+      <div className="container mx-auto w-[88%] md:w-3/4">
         <FeaturedBuyNowListingsSection />
         <FeaturedProfilesSection />
         <FeaturedAuctionsSection />
@@ -51,13 +52,13 @@ const ExternalLink: FC<HomeLinkProps> = ({ href, children }) => (
 );
 
 const PageLeftButton = (
-  <button className="absolute left-0 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
+  <button className="absolute left-0 top-1/2 flex h-10 w-10 z-50 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronLeftIcon className="h-4 w-4" />
   </button>
 );
 
 const PageRightButton = (
-  <button className="absolute right-0 top-1/2 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
+  <button className="absolute right-0 top-1/2 flex h-10 w-10 z-50 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronRightIcon className="h-4 w-4" />
   </button>
 );
@@ -128,7 +129,7 @@ HomeSection.HeaderAction = HomeSectionHeaderAction;
 const HomeSectionBody: Body = ({ children }) => <div>{children}</div>;
 HomeSection.Body = HomeSectionBody;
 
-type Item = FC;
+type Item = FC<{children: ReactNode | ReactNode[], className?: string}>;
 
 type HomeSectionCarouselSubtypes = {
   Item: Item;
@@ -148,19 +149,24 @@ export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCaro
 }) => (
   // enlarge the carousel section to account for internal padding of elements such that elements still fill
   // the space
-  <div className="-ml-[2%] w-[104%]">
+  <div className="-ml-[2%] w-screen md:w-[104%] overflow-visible">
     <Carousel
       rows={rows}
       cols={cols}
       gap={gap}
       arrowLeft={PageLeftButton}
       arrowRight={PageRightButton}
+      containerStyle={{overflow: "visible"}}
     >
       {children}
     </Carousel>
   </div>
 );
 
-HomeSectionCarousel.Item = Carousel.Item;
+const HomeSectionCarouselItem: Item = ({ children, className }) => <div className={classNames("snap-center overflow-visible", className)}>{children}</div>;
+// this is a hack to get the carousel to display custom-styled items
+// https://github.com/x3388638/react-grid-carousel/blob/master/src/components/Carousel.js#L206-L212
+HomeSectionCarouselItem.displayName = "CAROUSEL_ITEM";
+HomeSectionCarousel.Item = HomeSectionCarouselItem;
 
 export default Home;

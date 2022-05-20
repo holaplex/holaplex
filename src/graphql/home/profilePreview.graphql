@@ -2,7 +2,7 @@ query profilePreview($address: PublicKey!) {
   wallet(address: $address) {
     profile {
       handle
-      profileImageUrl
+      profileImageUrlHighres
       bannerImageUrl
     }
     address

@@ -5,7 +5,7 @@ import { ListingPreview } from '../elements/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';
 
 const CAROUSEL_ROWS: number = 1;
-const CAROUSEL_COLS: number = 2;
+const CAROUSEL_COLS: number = 3;
 const CAROUSEL_PAGES: number = 5;
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
@@ -36,15 +36,20 @@ const FeaturedAuctionsSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredListings.map((listing, i) => (
-            <HomeSectionCarousel.Item key={listing.listingAddress}>
-              <div className="p-2">
-                <ListingPreview key={listing.listingAddress} listing={listing} meta={{
+            <HomeSectionCarousel.Item
+              key={listing.listingAddress}
+              className="p-3 md:p-4 duration-300 hover:scale-[1.02]"
+            >
+              <ListingPreview
+                key={listing.listingAddress}
+                listing={listing}
+                meta={{
                   index: i,
                   list: 'featured-listings',
                   sortBy: SortOptions.Trending,
-                  filterBy: FilterOptions.Auctions
-                }} />
-              </div>
+                  filterBy: FilterOptions.Auctions,
+                }}
+              />
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
@@ -52,7 +57,6 @@ const FeaturedAuctionsSection: VFC = () => {
     </HomeSection>
   );
 };
-
 
 // TODO: this was adapted from the v1 homepage and should probably be replaced with
 //  a graph-ql version at some point

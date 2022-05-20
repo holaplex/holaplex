@@ -54,7 +54,7 @@ export interface ProfilePreviewData {
   address: string;
   profile: {
     handle?: string;
-    profileImageUrl?: string;
+    profileImageUrlHighres?: string;
     bannerImageUrl?: string;
   }
   nftCounts: {

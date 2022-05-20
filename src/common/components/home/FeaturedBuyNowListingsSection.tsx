@@ -17,9 +17,9 @@ interface FeaturedListing {
 
 const FeaturedBuyNowListingsSection: VFC = () => {
   const [featuredListings, setFeaturedListings] = useState<FeaturedListing[]>([]);
-  
+
   const maxListings: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
-  const dataQuery = useFeaturedBuyNowListingsQuery({variables: {limit: 1000}});
+  const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: 1000 } });
 
   useEffect(() => {
     if (
@@ -30,17 +30,19 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       dataQuery.data?.nfts &&
       dataQuery.data.nfts.length > 0
     ) {
-      setFeaturedListings(dataQuery.data.nfts
-        .filter(v => v.address !== undefined)
-        .slice(0, maxListings)
-        .map(v => ({ address: v.address, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN })));
+      setFeaturedListings(
+        dataQuery.data.nfts
+          .filter((v) => v.address !== undefined)
+          .slice(0, maxListings)
+          .map((v) => ({ address: v.address, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN }))
+      );
     }
   }, [dataQuery.data]);
 
   // when the server returns a profile with insufficient data to display the
   //  preview, remove it from the carousel
   const onInsufficientDataForAListing = useCallback<(nftAddress: string) => void>(
-    nftAddress => setFeaturedListings(featuredListings.filter(n => n.address !== nftAddress)),
+    (nftAddress) => setFeaturedListings(featuredListings.filter((n) => n.address !== nftAddress)),
     [featuredListings]
   );
 
@@ -56,10 +58,12 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredListings.map((s) => (
-            <HomeSectionCarousel.Item key={s.address}>
-              <div className="p-2">
-                <NFTCardDataWrapper address={s.address} marketplace={s.marketplace} onInsufficientData={onInsufficientDataForAListing}/>
-              </div>
+            <HomeSectionCarousel.Item key={s.address} className="p-3 md:p-4">
+              <NFTCardDataWrapper
+                address={s.address}
+                marketplace={s.marketplace}
+                onInsufficientData={onInsufficientDataForAListing}
+              />
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
@@ -67,7 +71,6 @@ const FeaturedBuyNowListingsSection: VFC = () => {
     </HomeSection>
   );
 };
-
 
 interface ListingPreviewProps {
   address: string;
@@ -78,27 +81,39 @@ interface ListingPreviewProps {
 const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
   address,
   marketplace,
-  onInsufficientData
+  onInsufficientData,
 }) => {
-  const {data, loading, refetch, called } = useNftCardQuery({variables: {address: address, subdomain: marketplace}});
+  const { data, loading, refetch, called } = useNftCardQuery({
+    variables: { address: address, subdomain: marketplace },
+  });
 
   if (loading) {
-    return <LoadingNFTCard/>;
+    return <LoadingNFTCard />;
   }
 
   if (!loading && called && !previewDataAreSufficient(data as BuyNowListingPreviewData)) {
     onInsufficientData(address);
-    return <LoadingNFTCard/>;
+    return <LoadingNFTCard />;
   }
 
   return (
-    <NFTCard nft={data?.nft as Nft} marketplace={{auctionHouse: data!.marketplace!.auctionHouse! as AuctionHouse}} refetch={refetch} loading={loading} />
+    <NFTCard
+      nft={data?.nft as Nft}
+      marketplace={{ auctionHouse: data!.marketplace!.auctionHouse! as AuctionHouse }}
+      refetch={refetch}
+      loading={loading}
+      showName={false}
+    />
   );
 };
 
-
 function previewDataAreSufficient(data: BuyNowListingPreviewData): boolean {
-  return data !== undefined && data.marketplace !== undefined && data.marketplace.auctionHouse !== undefined && data.nft !== undefined
+  return (
+    data !== undefined &&
+    data.marketplace !== undefined &&
+    data.marketplace.auctionHouse !== undefined &&
+    data.nft !== undefined
+  );
 }
 
 export default FeaturedBuyNowListingsSection;
