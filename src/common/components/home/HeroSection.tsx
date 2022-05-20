@@ -57,7 +57,7 @@ export default function HeroSection() {
 
       <div className="mt-20 flex flex-col items-center text-center">
         <h1 className="text-3xl font-medium">
-          Every NFT on Solana. Every wallet is a store. Everyone welcome.
+          Every NFT on Solana. Every wallet is a store. Everyone is welcome.
         </h1>
         <Link href="/alpha">
           <a className="mt-10">
