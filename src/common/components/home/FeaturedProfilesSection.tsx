@@ -69,7 +69,7 @@ const FeaturedProfilesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredProfiles.map((s) => (
-            <HomeSectionCarousel.Item key={s.address} className="p-3 md:p-6">
+            <HomeSectionCarousel.Item key={s.address} className="px-4 md:px-8 pb-16">
               <ProfilePreview
                 address={s.address}
                 onInsufficientData={onInsufficientDataForAProfile}

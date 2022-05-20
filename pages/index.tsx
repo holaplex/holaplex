@@ -149,14 +149,14 @@ export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCaro
 }) => (
   // enlarge the carousel section to account for internal padding of elements such that elements still fill
   // the space
-  <div className="-ml-[2%] w-screen overflow-visible md:w-[104%]">
+  <div className="-ml-[5%] w-screen overflow-visible md:w-[110%]">
     <Carousel
       rows={rows}
       cols={cols}
       gap={gap}
       arrowLeft={PageLeftButton}
       arrowRight={PageRightButton}
-      containerStyle={{ overflow: 'visible' }}
+      containerStyle={{ overflow: 'visible'}}
     >
       {children}
     </Carousel>

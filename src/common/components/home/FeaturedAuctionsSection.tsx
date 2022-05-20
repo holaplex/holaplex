@@ -19,7 +19,7 @@ const FeaturedAuctionsSection: VFC = () => {
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
-        <HomeSectionCarousel.Item key={i} className="p-3 duration-300 hover:scale-[1.02] md:p-4">
+        <HomeSectionCarousel.Item key={i} className="duration-300 hover:scale-[1.02] px-4 md:px-8 pb-16">
           <SkeletonListing />
         </HomeSectionCarousel.Item>
       )),
@@ -52,7 +52,7 @@ const FeaturedAuctionsSection: VFC = () => {
                   (
                     <HomeSectionCarousel.Item
                       key={listing.listingAddress}
-                      className="p-3 duration-300 hover:scale-[1.02] md:p-4"
+                      className="duration-300 hover:scale-[1.02] px-4 md:px-8 pb-16"
                     >
                       <ListingPreview
                         key={listing.listingAddress}

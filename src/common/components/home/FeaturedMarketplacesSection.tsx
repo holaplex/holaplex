@@ -36,7 +36,7 @@ const FeaturedMarketplacesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s} className="aspect-[16/10] w-full p-3 md:p-4">
+            <HomeSectionCarousel.Item key={s} className="aspect-[16/10] w-full px-4 md:px-8 pb-16">
               <MarketplacePreview subdomain={s} />
             </HomeSectionCarousel.Item>
           ))}
