@@ -14,7 +14,7 @@ export default function HeroSection() {
     variables: {
       address: ALPHA_WALLET,
       offset: 0,
-      limit: 25,
+      limit: 50,
     },
   });
   const feedEvents = data?.feedEvents || [];

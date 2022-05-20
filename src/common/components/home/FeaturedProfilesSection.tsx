@@ -151,7 +151,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </div>
 
-        <div className="flex flex-col h-[53%] w-full p-4 justify-between">
+        <div className="flex h-[53%] w-full flex-col justify-between p-4">
           {/* pfp, follow */}
           <div className="relative flex items-end justify-end">
             <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-20 md:w-20">

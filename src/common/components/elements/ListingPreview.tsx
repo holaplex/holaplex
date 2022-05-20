@@ -159,7 +159,7 @@ export function ListingPreview({
     <div
       ref={cardRef}
       className={classNames(
-        'rounded-t-lg pt-1 shadow-black shadow-2xl duration-300',
+        'rounded-t-lg pt-1 shadow-2xl shadow-black duration-300',
         meta.list === 'current-listings' ? 'sm:hover:scale-[1.02] sm:hover:shadow-xl' : ''
       )}
       onClick={() => {

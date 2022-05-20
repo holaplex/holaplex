@@ -38,7 +38,7 @@ const FeaturedAuctionsSection: VFC = () => {
           {featuredListings.map((listing, i) => (
             <HomeSectionCarousel.Item
               key={listing.listingAddress}
-              className="p-3 md:p-4 duration-300 hover:scale-[1.02]"
+              className="p-3 duration-300 hover:scale-[1.02] md:p-4"
             >
               <ListingPreview
                 key={listing.listingAddress}

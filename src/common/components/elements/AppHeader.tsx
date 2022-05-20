@@ -80,6 +80,17 @@ export function AppHeader() {
         </div>
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
+            <Link href="/home-v2-wip" passHref>
+              <a
+                key="/home-v2-wip"
+                className={classNames(
+                  'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                  router.pathname === '/home-v2-wip' ? 'text-white' : 'text-gray-300'
+                )}
+              >
+                Home
+              </a>
+            </Link>
             {connected && (
               <Link href="/alpha" passHref>
                 <a
