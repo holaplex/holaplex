@@ -16,7 +16,8 @@ export default function HeroSection() {
     variables: {
       address: ALPHA_WALLET,
       offset: 0,
-      limit: 50,
+      limit: N_ITEMS,
+      excludeTypes: ["follow"]
     },
   });
   const feedEvents = data?.feedEvents || [];
@@ -28,14 +29,7 @@ export default function HeroSection() {
     setTimeout(() => setShowLoadingCards(feedItems.length == 0), 100);
   }, [loading, feedItems]);
 
-  feedEvents.forEach((event) => {
-    if (
-      event.__typename !== 'FollowEvent' &&
-      !feedItems.find((i) => i && i.feedEventId === event.feedEventId)
-    ) {
-      feedItems.push(event);
-    }
-  });
+  feedItems.push(...feedEvents);
 
   return (
     <div>

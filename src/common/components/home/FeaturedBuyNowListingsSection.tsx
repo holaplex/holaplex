@@ -18,7 +18,7 @@ interface FeaturedListing {
 
 const FeaturedBuyNowListingsSection: VFC = () => {
   const [featuredListings, setFeaturedListings] = useState<FeaturedListing[]>([]);
-  const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: 1000 } });
+  const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: N_LISTINGS } });
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
@@ -35,14 +35,14 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       !dataQuery.error &&
       !dataQuery.loading &&
       dataQuery.called &&
-      dataQuery.data?.nfts &&
-      dataQuery.data.nfts.length > 0
+      dataQuery.data?.featuredListings &&
+      dataQuery.data.featuredListings.length > 0
     ) {
       setFeaturedListings(
-        dataQuery.data.nfts
-          .filter((v) => v.address !== undefined)
+        dataQuery.data.featuredListings
+          .filter((v) => v.metadata !== undefined)
           .slice(0, N_LISTINGS)
-          .map((v) => ({ address: v.address, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN }))
+          .map((v) => ({ address: v.metadata, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN }))
       );
     }
   }, [dataQuery.data]);
