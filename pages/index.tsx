@@ -52,13 +52,13 @@ const ExternalLink: FC<HomeLinkProps> = ({ href, children }) => (
 );
 
 const PageLeftButton = (
-  <button className="absolute left-0 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
+  <button className="absolute left-8 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronLeftIcon className="h-4 w-4" />
   </button>
 );
 
 const PageRightButton = (
-  <button className="absolute right-0 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
+  <button className="absolute right-8 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronRightIcon className="h-4 w-4" />
   </button>
 );
