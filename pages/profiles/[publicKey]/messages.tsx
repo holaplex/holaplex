@@ -24,9 +24,9 @@ const MessagesPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props 
 
   useEffect(() => {
 
-    console.log('use effect');
+    // console.log('use effect');
     if (mailbox) {
-      console.log('mailbox!: ', mailbox);
+      // console.log('mailbox!: ', mailbox);
       mailbox
         .getMailboxAddress()
         .then((address) => setMailboxAddress(address));

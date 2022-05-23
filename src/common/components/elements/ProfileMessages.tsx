@@ -12,13 +12,23 @@ import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import * as web3 from '@solana/web3.js';
+import { Mailbox, MessageAccount } from '@usedispatch/client';
 
-export const ProfileMessages = ({ publicKey, ...props }: any) => {
+interface ProfileMessagesInterface {
+  publicKey: string;
+  mailbox: Mailbox | undefined;
+  messages: any;
+  mailboxAddress: web3.PublicKey | null;
+  receiver?: any;
+}
+
+export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterface) => {
   const [tx, setTx] = useState<string>('');
   const [receiver, setReceiver] = useState<string>(props.receiver ?? '');
   const { mailbox, messages, mailboxAddress } = props;
   const [selectedMessage, setSelectedMessage] = useState<string>('');
-  console.log(mailbox, messages, mailboxAddress);
+  // console.log(mailbox, messages, mailboxAddress);
+  const [allMessages, setAllMessages] = useState<Map<string, []>>(new Map());
 
   const handleReceiverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (props.receiver) {
@@ -28,6 +38,35 @@ export const ProfileMessages = ({ publicKey, ...props }: any) => {
     }
   };
 
+  useEffect(() => {
+    console.log('use effect profilemessages');
+    if (mailbox && messages) {
+      const uniqueSenders = [...new Set(messages.map((message: any) => message.sender.toBase58()))];
+      const pArray = uniqueSenders.map(u =>
+        mailbox.fetchSentMessagesTo(new web3.PublicKey(String(u)))
+      );
+      Promise.all(pArray).then(msgs => {
+        console.log(msgs);
+        // setSentMessages(msgs);
+
+        let allMessages = new Map();
+        for (var i = 0; i < uniqueSenders.length; i++) {
+          console.log('Sent to: ', uniqueSenders[i]);
+          console.log(msgs[i]);
+          //@ts-ignore // we know they will be strings
+          allMessages[uniqueSenders[i]] = [
+            ...msgs[i],
+            ...messages.filter((m: any) => m.receiver == publicKey && m.sender == uniqueSenders[i]),
+          //@ts-ignore
+          ].sort((a, b) => a.data.ts > b.data.ts);
+        }
+        console.log('all messages');
+        console.log(allMessages);
+        setAllMessages(allMessages);
+      });
+    }
+  }, [mailbox]);
+
   const sendMessage = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     const target = event.target as typeof event.target & {
@@ -36,6 +75,7 @@ export const ProfileMessages = ({ publicKey, ...props }: any) => {
     };
     if (!mailbox) {
       alert('wallet is not connected, not sending message');
+      return;
     }
     const receiverPublicKey: web3.PublicKey = new web3.PublicKey(selectedMessage);
     const senderPublicKey = mailbox.mailboxOwner;
@@ -102,26 +142,47 @@ export const ProfileMessages = ({ publicKey, ...props }: any) => {
           </span>
         </div>
         <div className='grow'>
-          {messages.map((message: any) => {
-            return (
-              // <div>
-              //   From:{message.sender.toBase58()}
-              //   <br />
-              //   Subj: {message.data.subj}
-              //   <br />
-              //   Body: {message.data.body}
-              //   <br />
-              //   TS: {message.data.ts?.toDateString()}
-              //   <br />
-              //   <div>
-              //     <br />
-              //   </div>
-              // </div>
-              <div>
-                <span>{message.data.body}</span>
-              </div>
-            );
-          })}
+          <div className='grid grid-flow-row'>
+            {//@ts-ignore
+            selectedMessage != '' && allMessages[selectedMessage] ? (
+              //@ts-ignore
+              allMessages[selectedMessage].map((message: any) => {
+                let cx = '';
+                if (message.sender.toBase58() == publicKey) {
+                  cx = 'background-blue text-white';
+                } else {
+                  cx = 'background-black text-white border border-white';
+                }
+
+                return (
+                  // <div>
+                  //
+                  //   <br />
+                  //   Subj: {message.data.subj}
+                  //   <br />
+                  //   Body: {message.data.body}
+                  //   <br />
+                  //   TS: {message.data.ts?.toDateString()}
+                  //   <br />
+                  //   <div>
+                  //     <br />
+                  //   </div>
+                  // </div>
+                  <div className={'py-2 ' + cx}>
+                    <span>From:{showFirstAndLastFour(message.sender.toBase58())}</span>
+                    <br />
+                    <span>To:{showFirstAndLastFour(message.receiver.toBase58())}</span>
+                    <br />
+                    <span>{String(message.data.ts)}</span>
+                    <br />
+                    <span>{message.data.body}</span>
+                  </div>
+                );
+              })
+            ) : (
+              <></>
+            )}
+          </div>
           <form onSubmit={sendMessage} className='bottom-0'>
             <div className='relative'>
               <input
@@ -158,12 +219,13 @@ export const ProfileMessages = ({ publicKey, ...props }: any) => {
         </div>
       </div>
 
-      <div className='border border-white'>
+      {/*       <div className='border border-white'>
         <h1>Compose</h1>
 
         <h1>Messages go here</h1>
         <h2>ADDRESS: {mailboxAddress?.toBase58() ?? ''}</h2>
       </div>
+     */}
     </>
   );
 };
