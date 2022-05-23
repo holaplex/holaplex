@@ -8,7 +8,7 @@ import { FeedCard, LoadingFeedCard } from '../feed/FeedCard';
 import Marquee from 'react-fast-marquee';
 import classNames from 'classnames';
 
-const ALPHA_WALLET = 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H';
+const ALPHA_WALLET = 'ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz'; // backup 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H';
 const N_ITEMS = 12;
 
 export default function HeroSection() {
@@ -17,7 +17,7 @@ export default function HeroSection() {
       address: ALPHA_WALLET,
       offset: 0,
       limit: N_ITEMS,
-      excludeTypes: ["follow"]
+      excludeTypes: ['follow'],
     },
   });
   const feedEvents = data?.feedEvents || [];
@@ -34,25 +34,36 @@ export default function HeroSection() {
   return (
     <div>
       <Marquee speed={40} gradient={false} pauseOnHover={true}>
-        <div className={classNames("grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar", {hidden: showLoadingCards})}>
+        <div
+          className={classNames(
+            'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar',
+            { hidden: showLoadingCards }
+          )}
+        >
           {feedItems.slice(0, N_ITEMS).map((fi, i) => (
             <div className="w-96 flex-shrink-0" key={fi.feedEventId}>
               <FeedCard
-                  options={{ hideAction: true }}
-                  event={fi}
-                  myFollowingList={[]}
-                  key={fi.feedEventId}
-                />
+                options={{ hideAction: true }}
+                event={fi}
+                myFollowingList={[]}
+                key={fi.feedEventId}
+              />
             </div>
           ))}
         </div>
       </Marquee>
-      <div className={classNames("grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar", {hidden: !showLoadingCards})}>
-        {Array(N_ITEMS).fill(null).map((_, i) => (
-          <div className='w-96 flex-shrink-0' key={i}>
-            <LoadingFeedCard />
-          </div>
-        ))}
+      <div
+        className={classNames('grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar', {
+          hidden: !showLoadingCards,
+        })}
+      >
+        {Array(N_ITEMS)
+          .fill(null)
+          .map((_, i) => (
+            <div className="w-96 flex-shrink-0" key={i}>
+              <LoadingFeedCard />
+            </div>
+          ))}
       </div>
 
       <div className="mt-20 flex flex-col items-center text-center">

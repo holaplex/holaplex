@@ -34,15 +34,15 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
   const { publicKey } = useProfileData();
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
-  //  const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
+  const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
   // const profileFollowersList = useGetAllResultsWithoutPagination(publicKey);
-  const profileFollowersList = useGetAllQueryResultsWithoutPagination(useAllConnectionsToQuery, {
+  /* const profileFollowersList = useGetAllQueryResultsWithoutPagination(useAllConnectionsToQuery, {
     to: publicKey,
-  });
-  // const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
-  const profileFollowingList = useGetAllQueryResultsWithoutPagination(useAllConnectionsFromQuery, {
+  }); */
+  const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
+  /*   const profileFollowingList = useGetAllQueryResultsWithoutPagination(useAllConnectionsFromQuery, {
     from: publicKey,
-  });
+  }); */
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
