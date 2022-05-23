@@ -53,9 +53,11 @@ const FeaturedBuyNowListingsSection: VFC = () => {
   }, [dataQuery.data]);
 
   useEffect(() => {
-    if (windowWidth < LARGE_SCREEN_THRESHOLD && carouselCols > CAROUSEL_COLS_SMALL_SCREEN) {
-      setCarouselCols(CAROUSEL_COLS_SMALL_SCREEN);
-    } else if (carouselCols < CAROUSEL_COLS_LARGE_SCREEN) {
+    if (windowWidth < LARGE_SCREEN_THRESHOLD) {
+      if (carouselCols !== CAROUSEL_COLS_SMALL_SCREEN) {
+        setCarouselCols(CAROUSEL_COLS_SMALL_SCREEN);
+      }
+    } else if (carouselCols !== CAROUSEL_COLS_LARGE_SCREEN) {
       setCarouselCols(CAROUSEL_COLS_LARGE_SCREEN);
     }
   }, [windowWidth]);
