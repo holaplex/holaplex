@@ -52,13 +52,13 @@ const ExternalLink: FC<HomeLinkProps> = ({ href, children }) => (
 );
 
 const PageLeftButton = (
-  <button className="absolute left-8 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
+  <button className="absolute left-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronLeftIcon className="h-4 w-4" />
   </button>
 );
 
 const PageRightButton = (
-  <button className="absolute right-8 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
+  <button className="absolute right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-gray-900 stroke-white p-1 shadow shadow-black transition hover:scale-125">
     <ChevronRightIcon className="h-4 w-4" />
   </button>
 );
@@ -149,7 +149,7 @@ export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCaro
 }) => (
   // enlarge the carousel section to account for internal padding of elements such that elements still fill
   // the space
-  <div className="-ml-[5%] w-screen overflow-visible md:w-[110%]">
+  <div className="-ml-[3%] w-screen overflow-visible md:w-[106%]">
     <Carousel
       rows={rows}
       cols={cols}

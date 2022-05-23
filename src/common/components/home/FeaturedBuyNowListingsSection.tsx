@@ -22,7 +22,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
-        <HomeSectionCarousel.Item key={i} className="px-4 pb-16 md:px-8">
+        <HomeSectionCarousel.Item key={i} className="p-4">
           <LoadingNFTCard />
         </HomeSectionCarousel.Item>
       )),
@@ -68,7 +68,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
           {featuredListings.length === 0
             ? placeholderCards
             : featuredListings.map((s) => (
-                <HomeSectionCarousel.Item key={s.address} className="px-4 pb-16 md:px-8">
+                <HomeSectionCarousel.Item key={s.address} className="p-4">
                   <NFTCardDataWrapper
                     address={s.address}
                     marketplace={s.marketplace}

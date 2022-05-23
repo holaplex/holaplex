@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = 
 export const LoadingNFTCard = () => {
   return (
     <div
-      className={`overflow-hidden, animate-pulse rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+      className={`overflow-hidden, animate-pulse rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black`}
     >
       <div className={`aspect-square w-full rounded-lg bg-gray-800`} />
       <div className={`flex h-24 items-center py-6 px-4`}>
@@ -107,7 +107,7 @@ export const NFTCard = ({
 
   return (
     <>
-      <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black transition duration-[300ms] hover:scale-[1.02]">
+      <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black transition duration-[300ms] hover:scale-[1.02]">
         <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
           <a target={newTab ? `_blank` : `_self`} className={`cursor-pointer`}>
             <div className={`relative `}>
