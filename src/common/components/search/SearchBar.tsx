@@ -100,7 +100,7 @@ const SearchBar: FC = () => {
             <div className="relative block transition-all ">
               <span
                 onClick={() => setFocus('query', { shouldSelect: true })}
-                className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125 hover:bg-gray-800 group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
+                className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
               >
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
               </span>
