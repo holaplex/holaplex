@@ -70,22 +70,24 @@ export const NFTCard = ({
   marketplace,
   refetch,
   loading = false,
-  showName = true
+  showName = true,
+  newTab = false,
 }: {
   nft: OwnedNFT;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouse: AuctionHouse };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
   loading: boolean;
   showName?: boolean;
+  newTab?: boolean;
 }) => {
   const { publicKey } = useWallet();
   const [listNFTVisibility, setListNFTVisibility] = useState(false);
   const [updateListingVisibility, setUpdateListingVisibility] = useState(false);
   const [updateOfferVisibility, setUpdateOfferVisibility] = useState(false);
 
-  if (loading) return <LoadingNFTCard/>;
+  if (loading) return <LoadingNFTCard />;
 
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
@@ -107,7 +109,7 @@ export const NFTCard = ({
     <>
       <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black transition duration-[300ms] hover:scale-[1.02]">
         <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
-          <div className={`cursor-pointer`}>
+          <a target={newTab ? `_blank` : `_self`} className={`cursor-pointer`}>
             <div className={`relative `}>
               <img
                 src={imgOpt(nft.image, 600)}
@@ -135,11 +137,16 @@ export const NFTCard = ({
             </div>
 
             <div className="flex items-center bg-gray-900 py-4">
-              <p className={classNames("w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold", {hidden: !showName})}>
+              <p
+                className={classNames(
+                  'w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold',
+                  { hidden: !showName }
+                )}
+              >
                 {nft.name}
               </p>
             </div>
-          </div>
+          </a>
         </Link>
         <div>
           <div
@@ -147,24 +154,27 @@ export const NFTCard = ({
           >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm md:text-base font-bold text-gray-300 mb-2`}>Price</li>
-                <DisplaySOL amount={Number(defaultListing?.price)} className="text-sm md:text-base" />
+                <li className={`mb-2 text-sm font-bold text-gray-300 md:text-base`}>Price</li>
+                <DisplaySOL
+                  amount={Number(defaultListing?.price)}
+                  className="text-sm md:text-base"
+                />
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && Boolean(lastSale) && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm md:text-base font-bold text-gray-300`}>Last sale</li>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Last sale</li>
                 <DisplaySOL amount={Number(lastSale)} />
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm md:text-base font-bold text-gray-300`}>Not listed</li>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Not listed</li>
               </ul>
             )}
             {!hasDefaultListing && hasAddedOffer && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm md:text-base font-bold text-gray-300`}>Your offer</li>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Your offer</li>
                 <DisplaySOL amount={Number(addedOffer?.price) || 0} />
               </ul>
             )}
