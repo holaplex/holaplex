@@ -158,7 +158,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
 
         <div className="flex h-full w-full flex-col justify-between p-4 md:p-2 lg:p-4">
           {/* pfp, follow */}
-          <div className="relative flex items-end justify-end">
+          <div className="relative flex items-end justify-end h-8 lg:h-10">
             <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-12 md:w-12 lg:h-20 lg:w-20">
               <AvatarImage
                 src={data.profile?.profileImageUrlHighres ?? getFallbackImage()}
@@ -217,7 +217,6 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
   className,
 }) => {
   const wallet = useAnchorWallet();
-  const walletConnector = useWallet();
   const { connection } = useConnection();
   const [userIsFollowingThisAccountQuery, userIsFollowingThisAccountContext] =
     useIsXFollowingYLazyQuery();
@@ -243,20 +242,11 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
   const userIsFollowingThisAccount: boolean =
     canAssessFollowState && userIsFollowingThisAccountContext!.data!.connections.length > 0;
 
-  const promptConnect: boolean =
+  const hideButton: boolean =
     targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
 
-  if (promptConnect) {
-    return (
-      <Button5
-        v="primary"
-        className={classNames(className, 'h-8 w-24 lg:h-10 lg:w-28')}
-        onClick={() => walletConnector.select(PhantomWalletName)}
-        loading={false}
-      >
-        <span className="text-base md:text-lg">Connect</span>
-      </Button5>
-    );
+  if (hideButton) {
+    return null;
   }
 
   return (
@@ -267,7 +257,7 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
       toProfile={{
         address: targetPubkey,
       }}
-      className={classNames(className, { hidden: promptConnect })}
+      className={classNames(className, { hidden: hideButton })}
     />
   );
 };

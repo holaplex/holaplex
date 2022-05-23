@@ -22,7 +22,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
-        <HomeSectionCarousel.Item key={i} className="px-4 md:px-8 pb-16">
+        <HomeSectionCarousel.Item key={i} className="px-4 pb-16 md:px-8">
           <LoadingNFTCard />
         </HomeSectionCarousel.Item>
       )),
@@ -68,7 +68,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
           {featuredListings.length === 0
             ? placeholderCards
             : featuredListings.map((s) => (
-                <HomeSectionCarousel.Item key={s.address} className="px-4 md:px-8 pb-16">
+                <HomeSectionCarousel.Item key={s.address} className="px-4 pb-16 md:px-8">
                   <NFTCardDataWrapper
                     address={s.address}
                     marketplace={s.marketplace}
@@ -108,6 +108,7 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
 
   return (
     <NFTCard
+      newTab={false}
       nft={data?.nft as Nft}
       marketplace={{ auctionHouse: data!.marketplace!.auctionHouse! as AuctionHouse }}
       refetch={refetch}
