@@ -39,7 +39,7 @@ import {
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
-  generateFeedCardAtributes,
+  generateFeedCardAttributes,
   getHandle,
   User,
 } from './feed.utils';
@@ -49,11 +49,16 @@ import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
 
+interface FeedCardOptions {
+  hideAction?: boolean;
+}
+
 export function FeedCard(props: {
   event: FeedItem;
   myFollowingList?: string[];
   className?: string;
   allEventsRef?: FeedItem[];
+  options?: FeedCardOptions;
 }) {
   const { track } = useAnalytics();
 
@@ -63,7 +68,7 @@ export function FeedCard(props: {
     return <AggregateCard event={props.event} />;
   }
 
-  const attrs = generateFeedCardAtributes(props.event, props.myFollowingList);
+  const attrs = generateFeedCardAttributes(props.event, props.myFollowingList);
   // console.log('Feed card', props.event.feedEventId, {
   //   event: props.event,
   //   attrs,
@@ -91,7 +96,9 @@ export function FeedCard(props: {
     >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
-          {!imgLoaded && (
+          {false && (
+            // removed for now to work with new hero section. Add it and the hero feed has massive flickering on load
+            // !imgLoaded
             <LoadingContainer className=" aspect-square w-full rounded-lg bg-gray-800 shadow " />
           )}
 
@@ -132,7 +139,7 @@ export function FeedCard(props: {
       </Link>
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
-        <FeedActionBanner attrs={attrs} event={props.event} />
+        <FeedActionBanner attrs={attrs} event={props.event} options={props.options} />
       </div>
     </div>
   );
@@ -221,6 +228,7 @@ export const ProfileHandle = ({ user }: { user: User }) => {
 function FeedActionBanner(props: {
   event: FeedQueryEvent; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
   attrs: FeedCardAttributes;
+  options?: FeedCardOptions;
 }) {
   const attrs = props.attrs;
   const anchorWallet = useAnchorWallet();
@@ -231,8 +239,9 @@ function FeedActionBanner(props: {
   let action: JSX.Element | null = null;
   const yourEvent = props.event.walletAddress === myPubkey;
   const youOwnThisNFT = attrs.nft?.owner?.address === myPubkey;
-
-  if (props.event.__typename === 'ListingEvent' && !yourEvent) {
+  if (props.options?.hideAction) {
+    action = null;
+  } else if (props.event.__typename === 'ListingEvent' && !yourEvent) {
     action = <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />;
   } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
     action = (

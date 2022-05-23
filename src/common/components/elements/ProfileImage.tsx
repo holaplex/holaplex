@@ -40,14 +40,18 @@ export const ProfileImage = () => {
         visible={isShowingProfilePopover}
         content={<ProfilePopover ref={popoverRef} />}
       >
-        <ProfileImageWrapper onClick={() => setIsShowingProfilePopover((v) => !v)}>
+        <button
+          onClick={() => setIsShowingProfilePopover((v) => !v)}
+          className="flex items-center justify-center overflow-hidden rounded-full shadow-lg shadow-black ring-4 ring-gray-900 transition-transform  hover:scale-125"
+        >
           <img
-            width={40}
-            height={40}
+            width={44}
+            height={44}
             src={profilePictureUrl ?? getPFPFromPublicKey(publicKey)}
+            className={` `}
             alt="Profile Image"
           />
-        </ProfileImageWrapper>
+        </button>
       </Popover>
     </>
   );

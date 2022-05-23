@@ -1,4 +1,4 @@
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import React, { FC, useCallback, useEffect, useState, VFC } from 'react';
 import { imgOpt, isTouchScreenOnly } from '../../utils';
 import { MarketplacePreviewData } from '@/types/types';
@@ -15,7 +15,8 @@ const previewSubdomains: string[] = [
   'skeletoncrew',
   'thechimpions',
   'monkedao',
-  'cityshop',
+  'event',
+  // 'cityshop',
   // 'ursmarket',
   // 'thislooksrare',
   // 'shiguardians',
@@ -24,33 +25,24 @@ const previewSubdomains: string[] = [
   // 'paragon',
 ];
 
-const FeaturedMarkeplacesSection: VFC = () => {
+const FeaturedMarketplacesSection: VFC = () => {
   return (
     <HomeSection>
-      {/* <HomeSection.Header>
+      <HomeSection.Header>
         <HomeSection.Title>Marketplaces</HomeSection.Title>
         <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
           Join waitlist
         </HomeSection.HeaderAction>
-      </HomeSection.Header> */}
-      <div className="flex justify-between">
-        <HomeSection.Title>Marketplaces</HomeSection.Title>
-        <HomeSection.HeaderAction external href="https://marketplace.holaplex.com/waitlist">
-          Join waitlist
-        </HomeSection.HeaderAction>
-      </div>
-      <HomeSection.Body></HomeSection.Body>
-      <div className="-ml-[2%] w-[104%] ">
+      </HomeSection.Header>
+      <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s}>
-              <div key={s} className="aspect-[16/10] w-full p-2">
-                <MarketplacePreview subdomain={s} />
-              </div>
+            <HomeSectionCarousel.Item key={s} className="aspect-[560/360] w-full p-4">
+              <MarketplacePreview subdomain={s} />
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
-      </div>
+      </HomeSection.Body>
     </HomeSection>
   );
 };
@@ -143,7 +135,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
 
       {/* marketplace name, NFT volume, and floor price section */}
       <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-sm font-semibold text-white lg:text-xl">{data.name}</span>
+        <span className="text-sm font-semibold text-white lg:text-lg">{data.name}</span>
 
         {/* NFT volume and floor price row container
                 Using height and opacity (rather than 'display') to animate bottom-text appearing */}
@@ -152,11 +144,11 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
           } flex flex-row items-center justify-between overflow-hidden duration-150`}
         >
-          <span className="text-left text-xs font-medium lg:text-base">{`${nftVolumeStr} NFTs`}</span>
+          <span className="text-left text-xs font-medium lg:text-sm">{`${nftVolumeStr} NFTs`}</span>
           <div
             className={`${
               floorPriceSol == 0 ? 'hidden' : ''
-            } flex flex-row text-right text-xs  font-medium lg:text-base`}
+            } flex flex-row text-right text-xs font-medium lg:text-sm`}
           >
             <span className="mr-1 lg:mr-3">Floor price</span>
             <Price priceSol={floorPriceSol} />
@@ -195,10 +187,10 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02]"
+      className="relative flex h-full w-full overflow-clip rounded-lg shadow-md shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );
 };
 
-export default FeaturedMarkeplacesSection;
+export default FeaturedMarketplacesSection;

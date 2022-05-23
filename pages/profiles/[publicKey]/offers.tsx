@@ -135,14 +135,18 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                 .map((offer) => (
                   <div
                     key={offer.address}
-                    className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
+                    className={`flex  flex-row justify-between rounded-lg border border-gray-800 p-4`}
                   >
                     <div className={`flex items-center justify-start`}>
-                      <img
-                        src={imgOpt(receivedOffer?.image, 800)!}
-                        className={`aspect-square h-20 rounded-lg object-cover`}
-                        alt={receivedOffer?.name}
-                      />
+                      <Link href={'/nfts/' + receivedOffer.address}>
+                        <a className="flex-shrink-0">
+                          <img
+                            src={imgOpt(receivedOffer?.image, 600)!}
+                            className={`aspect-square h-20 rounded-lg object-cover`}
+                            alt={receivedOffer?.name}
+                          />
+                        </a>
+                      </Link>
                       <div>
                         <div className={`ml-4 flex flex-col justify-center`}>
                           <p className={`mb-0 text-base text-gray-300`}>
@@ -226,14 +230,18 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                 .map((offer) => (
                   <div
                     key={offer.address}
-                    className={`flex h-28 flex-row justify-between rounded-lg border border-gray-800 p-4`}
+                    className={`flex  flex-row flex-wrap justify-between rounded-lg border border-gray-800 p-4`}
                   >
                     <div className={`flex items-center justify-start`}>
-                      <img
-                        src={imgOpt(sentOffer?.image, 400)!}
-                        className={`h-20 rounded-lg`}
-                        alt={sentOffer?.name}
-                      />
+                      <Link href={'/nfts/' + sentOffer.address}>
+                        <a className="flex-shrink-0">
+                          <img
+                            src={imgOpt(sentOffer?.image, 400)!}
+                            className={`aspect-square h-20 rounded-lg`}
+                            alt={sentOffer?.name}
+                          />
+                        </a>
+                      </Link>
                       <div>
                         <div className={`ml-4 flex flex-col justify-center`}>
                           <p className={`mb-0 text-base text-gray-300`}>
@@ -268,7 +276,7 @@ const OfferPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props }) 
                               setShowUpdateOfferModal(true);
                             }}
                             secondary
-                            className={`bg-gray-800 ease-in hover:bg-gray-700`}
+                            className={`w-full  bg-gray-800 ease-in hover:bg-gray-700 md:w-auto `}
                           >
                             Update offer
                           </Button>

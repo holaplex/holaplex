@@ -18,8 +18,7 @@ export const themeVariables: IncomingThemeVariables = {
     colors: {
       bg: 'bg-[#1A1A1A]',
     },
-    bellButton:
-      'w-[48px] h-[48px] !bg-transparent shadow-none rounded-full transition-transform hover:scale-[1.02]',
+
     modal: `sm:rounded-md shadow-xl shadow-neutral-900 pt-1 leading-normal`,
     icons: {
       bell: Bell,

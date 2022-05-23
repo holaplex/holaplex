@@ -1,0 +1,14 @@
+query profilePreview($address: PublicKey!) {
+  wallet(address: $address) {
+    profile {
+      handle
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    address
+    nftCounts {
+      owned
+      created
+    }
+  }
+}
