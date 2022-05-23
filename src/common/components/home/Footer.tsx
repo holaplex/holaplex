@@ -61,7 +61,10 @@ const Footer: VFC = () => {
                 </InternalLink>
               </li>
               <li>
-                <InternalLink href="/storefront/new">Set up a storefront</InternalLink>
+                <InternalLink href="/storefront/new">New storefront</InternalLink>
+              </li>
+              <li>
+                <InternalLink href="/storefront/edit">Edit storefront</InternalLink>
               </li>
             </ul>
           </div>

@@ -31,7 +31,9 @@ const FeaturedProfilesSection: VFC = () => {
   const wallet: WalletContextState = useWallet();
   // initial value hack to get loading card
   // TODO pass in a loading boolean to bypass loading until the address is known
-  const [featuredProfiles, setFeaturedProfiles] = useState<FeaturedProfilesData>([...Array(N_LISTINGS)].map(_ => ({address: ''})));
+  const [featuredProfiles, setFeaturedProfiles] = useState<FeaturedProfilesData>(
+    [...Array(N_LISTINGS)].map((_) => ({ address: '' }))
+  );
 
   const dataQuery = useFeaturedProfilesQuery({
     variables: {
@@ -69,7 +71,7 @@ const FeaturedProfilesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredProfiles.map((s) => (
-            <HomeSectionCarousel.Item key={s.address} className="px-4 lg:px-8 pb-16">
+            <HomeSectionCarousel.Item key={s.address} className="px-4 pb-16 lg:px-8">
               <ProfilePreview
                 address={s.address}
                 onInsufficientData={onInsufficientDataForAProfile}
@@ -140,7 +142,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </Link>
         {/* preview image */}
-        <div className="relative h-[47%] overflow-clip flex-shrink-0">
+        <div className="relative h-[47%] flex-shrink-0 overflow-clip">
           <img
             src={data.profile?.bannerImageUrl ?? getFallbackImage()}
             alt={`${data.address} banner`}
@@ -154,7 +156,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
           />
         </div>
 
-        <div className="flex w-full h-full flex-col justify-between p-4 md:p-2 lg:p-4">
+        <div className="flex h-full w-full flex-col justify-between p-4 md:p-2 lg:p-4">
           {/* pfp, follow */}
           <div className="relative flex items-end justify-end">
             <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-12 md:w-12 lg:h-20 lg:w-20">
@@ -196,7 +198,7 @@ function previewDataAreSufficient(data?: ProfilePreviewData): boolean {
 const LoadingPreview = () => {
   return (
     <PreviewContainer>
-      <div className="h-full w-full animate-pulse bg-gray-700" />
+      <div className="h-full w-full animate-pulse bg-gray-800" />
     </PreviewContainer>
   );
 };

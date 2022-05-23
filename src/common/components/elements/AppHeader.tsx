@@ -19,6 +19,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
 import classNames from 'classnames';
+import { Button5 } from './Button2';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -186,23 +187,19 @@ export function AppHeader() {
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover> */}
-            {connectedAndInstalledWallet && (
-              <div className={`rounded-full p-4 shadow-lg shadow-black hover:bg-gray-800`}>
-                <DialectNotificationsButton />
-              </div>
-            )}
+            {connectedAndInstalledWallet && <DialectNotificationsButton />}
 
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button
+              <Button5
+                v="primary"
                 loading={connecting}
                 onClick={() => setVisible(true)}
-                size="small"
-                className={`text-lg font-medium`}
+                className={`min-h-full text-lg font-medium`}
               >
                 Connect
-              </Button>
+              </Button5>
             )}
           </div>
         )}

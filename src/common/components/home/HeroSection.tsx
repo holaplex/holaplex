@@ -21,49 +21,44 @@ export default function HeroSection() {
     },
   });
   const feedEvents = data?.feedEvents || [];
-  const feedItems: FeedQueryEvent[] = useMemo(() => [], []);
-
-  // hack to prevent the marquee from appearing to resize over multiple rows once the feed cards are loaded
-  const [showLoadingCards, setShowLoadingCards] = useState<boolean>(true);
-  useEffect(() => {
-    setTimeout(() => setShowLoadingCards(feedItems.length == 0), 100);
-  }, [loading, feedItems]);
-
-  feedItems.push(...feedEvents);
+  const feedItems: FeedQueryEvent[] = useMemo(() => feedEvents.slice(0, N_ITEMS), [feedEvents]);
 
   return (
-    <div>
-      <Marquee speed={40} gradient={false} pauseOnHover={true}>
-        <div
-          className={classNames(
-            'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar',
-            { hidden: showLoadingCards }
-          )}
-        >
-          {feedItems.slice(0, N_ITEMS).map((fi, i) => (
-            <div className="w-96 flex-shrink-0" key={fi.feedEventId}>
-              <FeedCard
-                options={{ hideAction: true }}
-                event={fi}
-                myFollowingList={[]}
-                key={fi.feedEventId}
-              />
-            </div>
-          ))}
-        </div>
-      </Marquee>
-      <div
-        className={classNames('grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar', {
-          hidden: !showLoadingCards,
-        })}
-      >
-        {Array(N_ITEMS)
-          .fill(null)
-          .map((_, i) => (
-            <div className="w-96 flex-shrink-0" key={i}>
-              <LoadingFeedCard />
-            </div>
-          ))}
+    <div className="">
+      <div className="relative h-[400px]">
+        <Marquee speed={feedItems.length ? 40 : 0} gradient={false} pauseOnHover={true}>
+          <div
+            className={classNames(
+              'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'
+            )}
+          >
+            {feedItems.map((fi, i) => (
+              <div className="w-96 flex-shrink-0" key={i}>
+                <FeedCard
+                  options={{ hideAction: true }}
+                  event={fi}
+                  myFollowingList={[]}
+                  key={fi.feedEventId}
+                />
+              </div>
+            ))}
+          </div>
+        </Marquee>
+        {!feedEvents.length && (
+          <div
+            className={classNames(
+              ' absolute inset-0  grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'
+            )}
+          >
+            {Array(N_ITEMS)
+              .fill(null)
+              .map((_, i) => (
+                <div className="w-96 flex-shrink-0" key={i}>
+                  <LoadingFeedCard />
+                </div>
+              ))}
+          </div>
+        )}
       </div>
 
       <div className="mt-20 flex flex-col items-center text-center">

@@ -96,7 +96,9 @@ export function FeedCard(props: {
     >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
-          {!imgLoaded && (
+          {false && (
+            // removed for now to work with new hero section. Add it and the hero feed has massive flickering on load
+            // !imgLoaded
             <LoadingContainer className=" aspect-square w-full rounded-lg bg-gray-800 shadow " />
           )}
 
