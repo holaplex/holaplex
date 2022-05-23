@@ -15,7 +15,8 @@ const previewSubdomains: string[] = [
   'skeletoncrew',
   'thechimpions',
   'monkedao',
-  'cityshop',
+  'event',
+  // 'cityshop',
   // 'ursmarket',
   // 'thislooksrare',
   // 'shiguardians',
@@ -36,7 +37,7 @@ const FeaturedMarketplacesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s} className="aspect-[16/10] w-full px-4 md:px-8 pb-16">
+            <HomeSectionCarousel.Item key={s} className="aspect-[16/10] w-full px-4 pb-16 md:px-8">
               <MarketplacePreview subdomain={s} />
             </HomeSectionCarousel.Item>
           ))}
