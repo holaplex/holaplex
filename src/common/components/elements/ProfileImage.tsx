@@ -42,7 +42,7 @@ export const ProfileImage = () => {
       >
         <button
           onClick={() => setIsShowingProfilePopover((v) => !v)}
-          className="flex items-center justify-center overflow-hidden rounded-full shadow-lg shadow-black ring-4 ring-gray-900  transition-transform"
+          className="flex items-center justify-center overflow-hidden rounded-full shadow-lg shadow-black ring-4 ring-gray-900 transition-transform  hover:scale-125"
         >
           <img
             width={44}

@@ -98,7 +98,7 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
     variables: { pubKey: publicKey },
   });
   if (loading) return null;
-  const followers = data?.wallet.connectionCounts.fromCount ?? 0;
+  const followers = data?.wallet.connectionCounts.toCount ?? 0;
   if (!followers) return null;
   return (
     <div className="mt-2 flex  items-center justify-center space-x-2 lg:justify-start lg:space-x-0">

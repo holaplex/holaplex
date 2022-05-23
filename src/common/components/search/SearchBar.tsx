@@ -100,7 +100,7 @@ const SearchBar: FC = () => {
             <div className="relative block transition-all ">
               <span
                 onClick={() => setFocus('query', { shouldSelect: true })}
-                className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-2 shadow-lg shadow-black transition-all hover:bg-gray-800 group-focus-within:left-0 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
+                className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
               >
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
               </span>
@@ -109,7 +109,7 @@ const SearchBar: FC = () => {
                 id="search"
                 autoComplete={`off`}
                 autoCorrect={`off`}
-                className="block w-full rounded-full border border-transparent bg-transparent py-2 pr-3 pl-12 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
+                className="block w-full rounded-full border border-transparent bg-transparent py-3 pl-12 pr-2 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
                 type="search"
                 {...register('query', { required: true })}
                 onFocus={() => setShowResults(true)}
