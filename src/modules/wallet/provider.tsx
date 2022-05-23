@@ -9,11 +9,11 @@ interface WalletProviderProps {
   wallet?: Wallet;
   solana?: WalletContextState;
   children: (props: WalletContextProps) => React.ReactElement;
-};
+}
 
 const upsertWallet = async (pubkey: string | undefined) => {
   if (!pubkey) {
-    return Promise.reject("no public key");
+    return Promise.reject('no public key');
   }
 
   return walletSDK.find(pubkey).then((wallet: any) => {
@@ -26,7 +26,7 @@ const upsertWallet = async (pubkey: string | undefined) => {
 };
 
 /**
- * 
+ *
  * @deprecated Use `WalletProvider` from (@solana/wallet-adapter) instead.
  */
 export const WalletProviderDeprecated = ({ children }: WalletProviderProps) => {
@@ -53,7 +53,7 @@ export const WalletProviderDeprecated = ({ children }: WalletProviderProps) => {
       .finally(() => {
         setLooking(false);
       });
-  }, [router, publicKey])
+  }, [router, publicKey]);
 
   return (
     <WalletContext.Provider
@@ -66,7 +66,7 @@ export const WalletProviderDeprecated = ({ children }: WalletProviderProps) => {
       {children({
         wallet,
         solana,
-        looking
+        looking,
       })}
     </WalletContext.Provider>
   );
