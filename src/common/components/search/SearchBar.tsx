@@ -11,6 +11,8 @@ import { useRouter } from 'next/router';
 import { Close } from '../icons/Close';
 import { PublicKey } from '@solana/web3.js';
 import { SearchIcon, XIcon } from '@heroicons/react/outline';
+import { IShortcutProviderRenderProps, withShortcut } from 'react-keybind';
+import KeyboardShortcut from '../elements/KeyboardShortcut';
 
 const schema = zod.object({
   query: zod.string().nonempty({ message: `Must enter something` }),
@@ -18,6 +20,10 @@ const schema = zod.object({
 
 interface SearchQuerySchema {
   query: string;
+}
+
+interface SearchBarProps {
+  shortcut: IShortcutProviderRenderProps;
 }
 
 export const isPublicKey = (address: string) => {
@@ -29,12 +35,13 @@ export const isPublicKey = (address: string) => {
   }
 };
 
-const SearchBar: FC = () => {
+const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   const searchResultsRef = useRef<HTMLDivElement>(null!);
 
   const router = useRouter();
 
   const [showResults, setShowResults] = useState(false);
+  const [showKeybind, setShowKeybind] = useState(false);
   const [hasSearch, setHasSearch] = useState(false);
 
   useEffect(() => {
@@ -81,6 +88,20 @@ const SearchBar: FC = () => {
     resolver: zodResolver(schema),
   });
 
+  // Keybinds
+  const openSearch = () => {
+    setFocus('query', { shouldSelect: true });
+  };
+
+  useEffect(() => {
+    if (shortcut.registerShortcut) {
+      shortcut.registerShortcut(openSearch, ['ctrl+k', 'ctrl+k'], 'Search', 'Start searching');
+      return () => {
+        if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(['ctrl+k', 'ctrl+k']);
+      };
+    }
+  }, []);
+
   return (
     <div
       id={`searchbar-container`}
@@ -112,7 +133,11 @@ const SearchBar: FC = () => {
                 className="block w-full rounded-full border border-transparent bg-transparent py-3 pl-12 pr-2 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
                 type="search"
                 {...register('query', { required: true })}
-                onFocus={() => setShowResults(true)}
+                onFocus={() => {
+                  setShowResults(true);
+                  setShowKeybind(true);
+                }}
+                onBlur={() => setShowKeybind(false)}
                 onChange={handleOnChange}
                 placeholder={`Search Holaplex...`}
               />
@@ -125,6 +150,16 @@ const SearchBar: FC = () => {
                 >
                   <XIcon className="h-6 w-6 text-white hover:text-gray-400" />
                 </button>
+              )}
+
+              {showKeybind && (
+                <div
+                  className={`absolute inset-y-0 ${
+                    hasSearch ? `right-8` : `right-0`
+                  } flex items-center pr-3`}
+                >
+                  <KeyboardShortcut keys={[`ctrl`, `k`]} />
+                </div>
               )}
             </div>
           </div>
@@ -158,4 +193,4 @@ const SearchBar: FC = () => {
   );
 };
 
-export default SearchBar;
+export default withShortcut(SearchBar);
