@@ -23,7 +23,7 @@ interface SearchQuerySchema {
 }
 
 interface SearchBarProps {
-  shortcut: IShortcutProviderRenderProps;
+  shortcut?: IShortcutProviderRenderProps;
 }
 
 export const isPublicKey = (address: string) => {
@@ -94,7 +94,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   };
 
   useEffect(() => {
-    if (shortcut.registerShortcut) {
+    if (shortcut && shortcut.registerShortcut) {
       shortcut.registerShortcut(openSearch, ['ctrl+k', 'ctrl+k'], 'Search', 'Start searching');
       return () => {
         if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(['ctrl+k', 'ctrl+k']);
