@@ -36,7 +36,7 @@ const FeaturedMarketplacesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s} className="aspect-[16/10] w-full px-4 md:px-8 pb-16">
+            <HomeSectionCarousel.Item key={s} className="aspect-[560/360] w-full p-4">
               <MarketplacePreview subdomain={s} />
             </HomeSectionCarousel.Item>
           ))}
@@ -134,7 +134,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
 
       {/* marketplace name, NFT volume, and floor price section */}
       <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-sm font-semibold text-white lg:text-xl">{data.name}</span>
+        <span className="text-sm font-semibold text-white lg:text-lg">{data.name}</span>
 
         {/* NFT volume and floor price row container
                 Using height and opacity (rather than 'display') to animate bottom-text appearing */}
@@ -143,11 +143,11 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
           } flex flex-row items-center justify-between overflow-hidden duration-150`}
         >
-          <span className="text-left text-xs font-medium lg:text-base">{`${nftVolumeStr} NFTs`}</span>
+          <span className="text-left text-xs font-medium lg:text-sm">{`${nftVolumeStr} NFTs`}</span>
           <div
             className={`${
               floorPriceSol == 0 ? 'hidden' : ''
-            } flex flex-row text-right text-xs  font-medium lg:text-base`}
+            } flex flex-row text-right text-xs font-medium lg:text-sm`}
           >
             <span className="mr-1 lg:mr-3">Floor price</span>
             <Price priceSol={floorPriceSol} />
@@ -186,7 +186,7 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative flex h-full w-full overflow-clip rounded-lg shadow-2xl shadow-black duration-300 hover:scale-[1.02]"
+      className="relative flex h-full w-full overflow-clip rounded-lg shadow-md shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );

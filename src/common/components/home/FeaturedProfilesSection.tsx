@@ -19,8 +19,6 @@ import {
 } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { Button5 } from '../elements/Button2';
-import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
@@ -69,7 +67,7 @@ const FeaturedProfilesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
           {featuredProfiles.map((s) => (
-            <HomeSectionCarousel.Item key={s.address} className="px-4 lg:px-8 pb-16">
+            <HomeSectionCarousel.Item key={s.address} className="p-4">
               <ProfilePreview
                 address={s.address}
                 onInsufficientData={onInsufficientDataForAProfile}
@@ -204,7 +202,7 @@ const LoadingPreview = () => {
 const PreviewContainer: FC<any> = (props) => {
   return (
     <div
-      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg shadow-2xl shadow-black duration-300 hover:scale-[1.02]"
+      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg shadow-md shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );
