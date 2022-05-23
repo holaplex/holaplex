@@ -5,11 +5,14 @@ import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { Nft, useFeaturedBuyNowListingsQuery, useNftCardQuery } from 'src/graphql/indexerTypes';
 import { BuyNowListingPreviewData } from '@/types/types';
 import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import useWindowDimensions from '@/common/hooks/useWindowDimensions';
 
 const CAROUSEL_ROWS: number = 2;
-const CAROUSEL_COLS: number = 3;
-const CAROUSEL_PAGES: number = 3;
-const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
+const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
+const CAROUSEL_COLS_SMALL_SCREEN: number = 2;
+const CAROUSEL_PAGES: number = 5;
+const LARGE_SCREEN_THRESHOLD: number = 1350;
+const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS_LARGE_SCREEN * CAROUSEL_PAGES;
 
 interface FeaturedListing {
   address: string;
@@ -28,6 +31,8 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       )),
     []
   );
+  const { width: windowWidth } = useWindowDimensions();
+  const [carouselCols, setCarouselCols] = useState<number>(CAROUSEL_COLS_LARGE_SCREEN);
 
   useEffect(() => {
     if (
@@ -47,6 +52,16 @@ const FeaturedBuyNowListingsSection: VFC = () => {
     }
   }, [dataQuery.data]);
 
+  useEffect(() => {
+    if (windowWidth < LARGE_SCREEN_THRESHOLD) {
+      if (carouselCols !== CAROUSEL_COLS_SMALL_SCREEN) {
+        setCarouselCols(CAROUSEL_COLS_SMALL_SCREEN);
+      }
+    } else if (carouselCols !== CAROUSEL_COLS_LARGE_SCREEN) {
+      setCarouselCols(CAROUSEL_COLS_LARGE_SCREEN);
+    }
+  }, [windowWidth]);
+
   // when the server returns a profile with insufficient data to display the
   //  preview, remove it from the carousel
   const onInsufficientDataForAListing = useCallback<(nftAddress: string) => void>(
@@ -64,7 +79,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
         </HomeSection.HeaderAction> */}
       </HomeSection.Header>
       <HomeSection.Body>
-        <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
+        <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={carouselCols}>
           {featuredListings.length === 0
             ? placeholderCards
             : featuredListings.map((s) => (

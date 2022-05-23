@@ -3,11 +3,14 @@ import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import { ListingPreview, SkeletonListing } from '../elements/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';
+import useWindowDimensions from '@/common/hooks/useWindowDimensions';
 
 const CAROUSEL_ROWS: number = 1;
-const CAROUSEL_COLS: number = 3;
+const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
+const CAROUSEL_COLS_SMALL_SCREEN: number = 2;
 const CAROUSEL_PAGES: number = 5;
-const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
+const LARGE_SCREEN_THRESHOLD: number = 1350;
+const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS_LARGE_SCREEN * CAROUSEL_PAGES;
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO as string;
 const DAO_LIST_IPFS =
@@ -19,12 +22,14 @@ const FeaturedAuctionsSection: VFC = () => {
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
-        <HomeSectionCarousel.Item key={i} className="duration-300 hover:scale-[1.02] p-4">
+        <HomeSectionCarousel.Item key={i} className="p-4 duration-300 hover:scale-[1.02]">
           <SkeletonListing />
         </HomeSectionCarousel.Item>
       )),
     []
   );
+  const { width: windowWidth } = useWindowDimensions();
+  const [carouselCols, setCarouselCols] = useState<number>(CAROUSEL_COLS_LARGE_SCREEN);
 
   useEffect(() => {
     getAndPrepListings()
@@ -33,6 +38,16 @@ const FeaturedAuctionsSection: VFC = () => {
       })
       .catch((e) => console.log('Unable to load featured auctions', e));
   }, []);
+
+  useEffect(() => {
+    if (windowWidth < LARGE_SCREEN_THRESHOLD) {
+      if (carouselCols !== CAROUSEL_COLS_SMALL_SCREEN) {
+        setCarouselCols(CAROUSEL_COLS_SMALL_SCREEN);
+      }
+    } else if (carouselCols !== CAROUSEL_COLS_LARGE_SCREEN) {
+      setCarouselCols(CAROUSEL_COLS_LARGE_SCREEN);
+    }
+  }, [windowWidth]);
 
   return (
     <HomeSection>
@@ -44,7 +59,7 @@ const FeaturedAuctionsSection: VFC = () => {
         </HomeSection.HeaderAction> */}
       </HomeSection.Header>
       <HomeSection.Body>
-        <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
+        <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={carouselCols}>
           {featuredListings.length === 0
             ? placeholderCards
             : featuredListings.map(
@@ -52,7 +67,7 @@ const FeaturedAuctionsSection: VFC = () => {
                   (
                     <HomeSectionCarousel.Item
                       key={listing.listingAddress}
-                      className="duration-300 hover:scale-[1.02] p-4"
+                      className="p-4 duration-300 hover:scale-[1.02]"
                     >
                       <ListingPreview
                         key={listing.listingAddress}
