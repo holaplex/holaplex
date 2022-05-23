@@ -88,12 +88,12 @@ const Footer: VFC = () => {
             <span className="text-base font-medium text-white">Help</span>
             <ul className="mt-4 space-y-2">
               <li>
-                <ExternalLink href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407417107475-FAQ">
+                <ExternalLink href="https://wiki.holaplex.com/Help-Desk/FAQ">
                   FAQs
                 </ExternalLink>
               </li>
               <li>
-                <ExternalLink href="https://holaplex-support.zendesk.com/hc/en-us/requests/new">
+                <ExternalLink href="https://wiki.holaplex.com/">
                   Support
                 </ExternalLink>
               </li>
