@@ -2,7 +2,7 @@ name: Heroku - Build and deploy (dev)
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, austin/homepage-v2-cleanup]
 
 jobs:
   build:

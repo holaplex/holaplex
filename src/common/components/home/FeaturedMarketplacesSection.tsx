@@ -1,4 +1,4 @@
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import React, { FC, useCallback, useEffect, useState, VFC } from 'react';
 import { imgOpt, isTouchScreenOnly } from '../../utils';
 import { MarketplacePreviewData } from '@/types/types';
@@ -36,10 +36,8 @@ const FeaturedMarketplacesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s}>
-              <div key={s} className="aspect-[16/10] w-full p-2">
-                <MarketplacePreview subdomain={s} />
-              </div>
+            <HomeSectionCarousel.Item key={s} className="aspect-[16/10] w-full px-4 md:px-8 pb-16">
+              <MarketplacePreview subdomain={s} />
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
@@ -188,7 +186,7 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02] shadow-md shadow-black"
+      className="relative flex h-full w-full overflow-clip rounded-lg shadow-2xl shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );

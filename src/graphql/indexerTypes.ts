@@ -361,15 +361,6 @@ export type PricePoint = {
   price: Scalars['U64'];
 };
 
-export type Profile = {
-  __typename?: 'Profile';
-  bannerImageUrl: Scalars['String'];
-  handle: Scalars['String'];
-  profileImageUrlHighres: Scalars['String'];
-  profileImageUrlLowres: Scalars['String'];
-  walletAddress?: Maybe<Scalars['String']>;
-};
-
 export type PurchaseEvent = {
   __typename?: 'PurchaseEvent';
   createdAt: Scalars['DateTimeUtc'];
@@ -400,6 +391,7 @@ export type QueryRoot = {
   creator: Creator;
   denylist: Denylist;
   enrichedBondingChanges: Array<EnrichedBondingChange>;
+  featuredListings: Array<ListingReceipt>;
   /** Returns events for the wallets the user is following using the graph_program. */
   feedEvents: Array<FeedEvent>;
   /** Recommend wallets to follow. */
@@ -413,7 +405,7 @@ export type QueryRoot = {
   nftCounts: NftCount;
   nfts: Array<Nft>;
   offer?: Maybe<BidReceipt>;
-  profile?: Maybe<Profile>;
+  profile?: Maybe<TwitterProfile>;
   /** returns profiles matching the search term */
   profiles: Array<Wallet>;
   /** A storefront */
@@ -459,7 +451,14 @@ export type QueryRootEnrichedBondingChangesArgs = {
 };
 
 
+export type QueryRootFeaturedListingsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+};
+
+
 export type QueryRootFeedEventsArgs = {
+  excludeTypes?: InputMaybe<Array<Scalars['String']>>;
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   wallet: Scalars['PublicKey'];
@@ -562,8 +561,11 @@ export type TwitterProfile = {
   bannerImageUrl: Scalars['String'];
   description: Scalars['String'];
   handle: Scalars['String'];
+  /** @deprecated Use profileImageUrlLowres instead. */
   profileImageUrl: Scalars['String'];
   profileImageUrlHighres: Scalars['String'];
+  profileImageUrlLowres: Scalars['String'];
+  walletAddress?: Maybe<Scalars['String']>;
 };
 
 export type Wallet = {
@@ -631,12 +633,13 @@ export type WalletProfileQueryVariables = Exact<{
 }>;
 
 
-export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
+export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
 export type FeedQueryVariables = Exact<{
   address: Scalars['PublicKey'];
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+  excludeTypes?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
@@ -655,7 +658,7 @@ export type FeaturedBuyNowListingsQueryVariables = Exact<{
 }>;
 
 
-export type FeaturedBuyNowListingsQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string }> };
+export type FeaturedBuyNowListingsQuery = { __typename?: 'QueryRoot', featuredListings: Array<{ __typename?: 'ListingReceipt', address: string, metadata: any }> };
 
 export type FeaturedProfilesQueryVariables = Exact<{
   userWallet?: InputMaybe<Scalars['PublicKey']>;
@@ -677,7 +680,7 @@ export type ProfilePreviewQueryVariables = Exact<{
 }>;
 
 
-export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -759,7 +762,7 @@ export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
 }>;
 
 
-export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'Profile', walletAddress?: string | null, handle: string, profileImageUrl: string, bannerImageUrl: string } | null };
+export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, handle: string, profileImageUrl: string, bannerImageUrl: string } | null };
 
 export type IsXFollowingYQueryVariables = Exact<{
   xPubKey: Scalars['PublicKey'];
@@ -1138,8 +1141,13 @@ export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQue
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
 export const FeedDocument = gql`
-    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
-  feedEvents(wallet: $address, limit: $limit, offset: $offset) {
+    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
+  feedEvents(
+    wallet: $address
+    limit: $limit
+    offset: $offset
+    excludeTypes: $excludeTypes
+  ) {
     __typename
     ... on MintEvent {
       feedEventId
@@ -1330,6 +1338,7 @@ export const FeedDocument = gql`
  *      address: // value for 'address'
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
+ *      excludeTypes: // value for 'excludeTypes'
  *   },
  * });
  */
@@ -1406,13 +1415,9 @@ export type WhoToFollowLazyQueryHookResult = ReturnType<typeof useWhoToFollowLaz
 export type WhoToFollowQueryResult = Apollo.QueryResult<WhoToFollowQuery, WhoToFollowQueryVariables>;
 export const FeaturedBuyNowListingsDocument = gql`
     query featuredBuyNowListings($limit: Int!) {
-  nfts(
-    limit: $limit
-    offset: 0
-    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
-    listed: true
-  ) {
+  featuredListings(limit: $limit, offset: 0) {
     address
+    metadata
   }
 }
     `;
@@ -1533,7 +1538,7 @@ export const ProfilePreviewDocument = gql`
   wallet(address: $address) {
     profile {
       handle
-      profileImageUrl
+      profileImageUrlHighres
       bannerImageUrl
     }
     address
@@ -2119,7 +2124,7 @@ export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
 export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
 export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;
 export const AllConnectionsFromDocument = gql`
-    query allConnectionsFrom($from: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   connections(from: [$from], limit: $limit, offset: $offset) {
     to {
       ...ConnectionNode
@@ -2158,7 +2163,7 @@ export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnecti
 export type AllConnectionsFromLazyQueryHookResult = ReturnType<typeof useAllConnectionsFromLazyQuery>;
 export type AllConnectionsFromQueryResult = Apollo.QueryResult<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>;
 export const AllConnectionsToDocument = gql`
-    query allConnectionsTo($to: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   connections(to: [$to], limit: $limit, offset: $offset) {
     from {
       ...ConnectionNode

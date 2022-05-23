@@ -177,7 +177,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   return (
     <Button5
       v={type === 'Follow' ? 'primary' : 'secondary'}
-      className={classNames('h-10 w-28', className)}
+      className={classNames('h-8 w-24 lg:h-10 lg:w-28', className)}
       onClick={() => handleClick()}
       loading={loading}
     >
