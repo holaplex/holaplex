@@ -2,29 +2,24 @@ import React from 'react';
 import Image from 'next/image';
 import styled, { keyframes } from 'styled-components';
 import Head from 'next/head';
-import { Typography, Button } from 'antd';
+import { Typography } from 'antd';
 import Footer from '@/common/components/home/Footer';
 import investorData from '@/assets/investors/investors-stub';
 import Link from 'next/link';
 
-const { Title, Paragraph } = Typography;
-
-const GradientText = styled(Title)`
-  font-size: 60px !important;
-  font-size: clamp(24px, 4vw, 60px) !important;
-
-  background: linear-gradient(to right, #ffffff 0%, #808080 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -o-background-clip: text;
-  -webkit-text-fill-color: transparent;
+const Heading = styled.h2`
+  font-size: 32px;
+  font-size: clamp(24px, 4vw, 32px);
+  font-family: 'Inter', sans-serif;
 `;
-
-const BoldParagraph = styled.p`
+const SubHeading = styled.h3`
   font-size: 24px;
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: bold;
+  font-size: clamp(20px, 3vw, 24px);
+  font-family: 'Inter', sans-serif;
+`;
+const Paragraph = styled.p`
+  font-size: 16px;
+  color: #A8A8A8;
 `;
 
 const Section = styled.div`
@@ -32,36 +27,13 @@ const Section = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 2rem 0;
-  position: relative;
-
-  &.slanted-bg {
-    position: relative;
-    & > .slanted-container {
-      position: absolute;
-      top: 0;
-      left: -15%;
-      width: 130%;
-      @media (min-aspect-ratio: 1/1) {
-        left: -4%;
-        width: 108%;
-      }
-      height: 100%;
-      background: linear-gradient(to right, #000000, #202021);
-      transform: rotate(7deg);
-      pointer-events: none;
-    }
+  padding: 3rem 0;
+  @media (min-width: 1200px) {
+    padding: 4.5rem 0;
   }
+  position: relative;
 `;
 
-const SlantedBgContainer = styled.div`
-  width: 100%;
-  overflow: hidden;
-  padding: 10vw 0;
-  margin: -10vw 0;
-  position: relative;
-  z-index: 2;
-`;
 
 const Content = styled.div`
   max-width: 1200px;
@@ -95,10 +67,13 @@ const LogoContainer = styled.a`
   position: relative;
 `;
 
-const MainTool = styled.div`
+const CoreProduct = styled.div`
   text-align: center;
   width: 100%;
-  max-width: 12rem;
+  max-width: 24rem;
+  box-shadow: 0px 20px 32px rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+  border-radius: 1rem;
   & > div {
     margin: 0.75rem auto;
   }
@@ -117,11 +92,11 @@ const CommunityNFTContainer = styled.div`
   border-radius: 4%;
   overflow: hidden;
 
-  box-shadow: 0px 0px 4rem 0px rgba(255, 255, 255, 0.25);
+  box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.25);
   aspect-ratio: 1/1;
 
   animation-name: ${floating};
-  animation-duration: 3s;
+  animation-duration: 5s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
 
@@ -135,7 +110,7 @@ const CommunityNFTContainer = styled.div`
 
 export default function About() {
   return (
-    <>
+    <div style={{ background: '#1E1E1E' }}>
       <Head>
         <title>We exist for our community of creators | Holaplex</title>
         <meta
@@ -143,88 +118,127 @@ export default function About() {
           key="description"
           content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
         />
+        <body />
       </Head>
 
-      <Section className="bg-black">
+      <Section>
         <Content className="text-center">
-          <BoldParagraph className="mb-8 text-gray-400 lg:mb-14">YOUR COMMUNITY</BoldParagraph>
-          <GradientText>A community driven by you</GradientText>
-          <BoldParagraph className="color-white mx-auto mt-8 max-w-2xl lg:mt-14">
+          <Heading>A community driven by you</Heading>
+          <Paragraph>
             You created it and you own it. Our community believes in being radically open,
             decentralized and permissionless.
-          </BoldParagraph>
+          </Paragraph>
         </Content>
         <div className='max-w-6xl w-10/12 mx-auto'>
           <div className='flex flex-wrap justify-around items-center mt-24 lg:mt-48'>
             <CommunityNFTContainer style={{ animationDelay: '250ms ', animationDuration: '5s' }} className=''><Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" alt="" /></CommunityNFTContainer>
-            <CommunityNFTContainer style={{ animationDelay: '500ms ', animationDuration: '3s' }} className='z-20'><Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" alt="" /></CommunityNFTContainer>
+            <CommunityNFTContainer style={{ animationDelay: '500ms ', animationDuration: '6s' }} className='z-20'><Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" alt="" /></CommunityNFTContainer>
             <CommunityNFTContainer style={{ animationDelay: '1500ms', animationDuration: '5s' }} className='z-10'><Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" alt="" /></CommunityNFTContainer>
             <CommunityNFTContainer style={{ animationDelay: '2000ms', animationDuration: '6s' }} className=''><Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" alt="" /></CommunityNFTContainer>
           </div>
         </div>
       </Section>
 
-      <Section className="bg-black">
+      <Section>
         <div
           className="mx-auto flex w-full flex-col items-center justify-center lg:flex-row"
           style={{ maxWidth: '1400px' }}
         >
           <div className="w-full lg:w-1/2">
             <Content>
-              <BoldParagraph className="mb-8 text-gray-500 lg:mb-14">YOUR COMMUNITY</BoldParagraph>
-              <GradientText>
+              <Heading>
                 Build your following, <br className="hidden lg:block" /> own your audience
-              </GradientText>
-              <BoldParagraph className="mt-8 text-gray-400 lg:mt-14">
+              </Heading>
+              <Paragraph>
                 Every follower is stored on-chain. This means they are portable to any platorm that
                 utlizes the free and open-sourced Holaplex Social Graph. Build your following today!
-              </BoldParagraph>
+              </Paragraph>
             </Content>
           </div>
           <div className="w-full max-w-md lg:w-1/2 lg:max-w-full">
-            <Image src={'/images/page-about/audience.svg'} width="931" height="818" />
+            <Image src={'/images/page-about/audience.svg'} width="579" height="336" />
           </div>
         </div>
       </Section>
 
-      <div className="bg-black py-14 lg:py-28">
-        <SlantedBgContainer>
-          <Section className='slanted-bg'>
-            <div className="slanted-container">
-              <Image src={'/images/page-about/texture-bg.jpg'} layout='fill' objectFit='cover' quality={80} />
-            </div>
-            <div className="lg:my-32 xl:my-48 flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
-              <div className='w-11/12 lg:w-1/2 max-w-lg'>
-                <Image src={'/images/page-about/we-unlock-your-talent.png'} width="1332" height="1538" alt="We unlock your talent" />
-              </div>
-              <div className="w-full lg:w-1/2">
-                <Content>
-                  <BoldParagraph className="mb-6 text-gray-400 lg:mb-14">YOUR TALENT</BoldParagraph>
-                  <GradientText>
-                    We Unlock Your <br className="hidden lg:block" /> extraordinary Work
-                  </GradientText>
-                  <BoldParagraph className="color-white mt-6 lg:mt-14">
-                    Our mission is to empower creators and collectors with a suite of tools to
-                    create, market, and sell NFTs.
-                  </BoldParagraph>
-                </Content>
-              </div>
-            </div>
-          </Section>
-        </SlantedBgContainer>
-      </div>
+      <Section>
+        <div className="flex justify-center items-center flex-col lg:gap-12 lg:flex-row w-full mx-auto" style={{ maxWidth: '1400px' }}>
+          <div className='w-11/12 lg:w-1/2 max-w-lg'>
+            <Image src={'/images/page-about/we-unlock-your-talent.png'} width="594" height="826" alt="We unlock your talent" />
+          </div>
+          <div className="w-full lg:w-1/2">
+            <Content>
+              <Heading>
+                We Unlock Your <br className="hidden lg:block" /> extraordinary Work
+              </Heading>
+              <Paragraph>
+                Our mission is to empower creators and collectors with a suite of tools to
+                create, market, and sell NFTs.
+              </Paragraph>
+            </Content>
+          </div>
+        </div>
+      </Section>
 
+      <Section>
+        <Content className='text-center'>
+          <div>
+            <Heading>
+              Our core products
+            </Heading>
+            <Paragraph>
+              It’s easier than ever to get started with NFTs. With Holaplex, everyone’s welcome.
+            </Paragraph>
+          </div>
+          <div className="flex flex-wrap justify-around lg:justify-between gap-8 lg:gap-12 lg:mt-12 w-full">
+            <CoreProduct>
+              <div>
+                <Image src={'/images/page-about/core-profiles.svg'} width="48" height="48" />
+              </div>
+              <SubHeading>Profiles</SubHeading>
+              <Paragraph>Every Solana wallet is a profile that operates as an NFT store</Paragraph>
+            </CoreProduct>
+            <CoreProduct>
+              <div>
+                <Image src={'/images/page-about/core-alpha.svg'} width="48" height="48" />
+              </div>
+              <SubHeading>Alpha</SubHeading>
+              <Paragraph>An on-chain social feed of activity from profiles you’re following</Paragraph>
+            </CoreProduct>
+            <div className='w-full flex justify-center'>
+              <CoreProduct>
+                <div>
+                  <Image src={'/images/page-about/core-indexer.svg'} width="48" height="48" />
+                </div>
+                <SubHeading>Indexer</SubHeading>
+                <Paragraph>Better access to useful on-chain data at lightning speed</Paragraph>
+              </CoreProduct>
+            </div>
+            <CoreProduct>
+              <div>
+                <Image src={'/images/page-about/core-social.svg'} width="48" height="48" />
+              </div>
+              <SubHeading>Social Graph</SubHeading>
+              <Paragraph>An graph program that powers on-chain followers and social feeds</Paragraph>
+            </CoreProduct>
+            <CoreProduct>
+              <div>
+                <Image src={'/images/page-about/core-marketplace.svg'} width="48" height="48" />
+              </div>
+              <SubHeading>Marketplaces</SubHeading>
+              <Paragraph>No-code NFT marketplaces for DAOs and NFT collectives</Paragraph>
+            </CoreProduct>
+          </div>
+        </Content>
+      </Section>
 
-      <Section className="bg-black">
+      <Section>
         <Content className="text-center">
-          <BoldParagraph className="mb-8 text-gray-400 lg:mb-14">Our partners</BoldParagraph>
-          <GradientText>
-            Supported &amp; Trusted By <br className="hidden lg:block" /> The Best
-          </GradientText>
-          <BoldParagraph className="my-8 text-gray-500 lg:my-14">
-            We work with leading funds and platforms
-          </BoldParagraph>
-          <div className="my-14 flex flex-wrap justify-center gap-4 lg:my-28 lg:gap-8">
+          <Heading>
+            Backed by
+          </Heading>
+          <br />
+          <div className="flex flex-wrap justify-center gap-4 lg:gap-8">
             {investorData.map((investor, index) => (
               <LogoContainer
                 key={investor.url}
@@ -242,64 +256,81 @@ export default function About() {
             ))}
           </div>
         </Content>
-      </Section>
-
-      <Section className="bg-black" style={{ paddingBottom: '0px' }}>
-        <Content>
-          <div className="mb-12 lg:mb-0 lg:w-3/4">
-            <BoldParagraph className="mb-8 text-gray-400 lg:mb-14">WHAT WE CREATE</BoldParagraph>
-            <GradientText>
-              Three Main Tools of <br className="hidden lg:block" /> the Platform
-            </GradientText>
-            <BoldParagraph className="color-white mt-8 lg:mt-14">
-              With Holaplex, it&apos;s easier than ever to get started in the NFT community.
-              We&apos;re committed to making it easy for everyone to join.
-            </BoldParagraph>
-          </div>
-          <div className="flex flex-wrap items-center justify-around gap-8 lg:hidden">
-            <MainTool>
-              <b>No-Code Tools</b>
-              <div>
-                <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
-              </div>
-              <p>Profiles and Marketplaces</p>
-            </MainTool>
-            <MainTool className="lg:mt-16">
-              <b>Social Graph</b>
-              <div>
-                <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
-              </div>
-              <p>Solana&apos;s NFT Social Network supports following and feed</p>
-            </MainTool>
-            <MainTool className="lg:-mt-24 xl:-mt-32">
-              <b>Indexer</b>
-              <div>
-                <Image src={'/images/page-about/main-tool.svg'} width="94" height="94" />
-              </div>
-              <p>Read Sonlana&apos;s on-chain NFT related data fast and efficiently</p>
-            </MainTool>
+        <br />
+        <br />
+        <br />
+        <br />
+        <Content className="text-center">
+          <Heading>
+            Our partners
+          </Heading>
+          <br />
+          <div className="flex flex-wrap justify-center gap-4 lg:gap-8">
+            <LogoContainer
+              href='https://www.metaplex.com/'
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                layout="fill"
+                objectFit="contain"
+                src='/images/page-about/partners/metaplex.png'
+                alt='metaplex'
+              />
+            </LogoContainer>
+            <LogoContainer
+              href='https://www.cardinal.so/'
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                layout="fill"
+                objectFit="contain"
+                src='/images/page-about/partners/cardinal.png'
+                alt='cardinal'
+              />
+            </LogoContainer>
+            <LogoContainer
+              href='https://www.dialect.to/'
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                layout="fill"
+                objectFit="contain"
+                src='/images/page-about/partners/dialect.png'
+                alt='dialect'
+              />
+            </LogoContainer>
+            <LogoContainer
+              href='https://www.crossmint.io/'
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                layout="fill"
+                objectFit="contain"
+                src='/images/page-about/partners/crossmint.png'
+                alt='crossmint'
+              />
+            </LogoContainer>
+            <LogoContainer
+              href='https://www.notifi.network/'
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                layout="fill"
+                objectFit="contain"
+                src='/images/page-about/partners/notifi.png'
+                alt='notifi'
+              />
+            </LogoContainer>
           </div>
         </Content>
-        <div
-          className='hidden lg:block w-full overflow-hidden pointer-events-none'
-          style={{ marginTop: 'clamp(-500px, -12%, 0px)' }}
-        >
-          <div
-            className='max-w-8xl flex justify-center'
-            style={{ width: '120%', marginLeft: '-12%' }}
-          >
-            <Image
-              src={'/images/page-about/three-main-tools.svg'}
-              width="2994"
-              height="1417"
-              className='w-full'
-              alt=""
-            />
-          </div>
-        </div>
       </Section>
       <div className='-mt-20' />
       <Footer />
-    </>
+    </div>
   );
 }
