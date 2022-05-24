@@ -130,7 +130,7 @@ export function FeedCard(props: {
                   })
                 }
                 className="aspect-square w-full rounded-lg object-cover "
-                src={attrs.nft?.image}
+                src={imgOpt(attrs.nft?.image || '', 600)}
                 alt={attrs.nft?.name}
               />
             )

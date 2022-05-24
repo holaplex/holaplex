@@ -8,7 +8,7 @@ import useWindowDimensions from '@/common/hooks/useWindowDimensions';
 const CAROUSEL_ROWS: number = 1;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
 const CAROUSEL_COLS_SMALL_SCREEN: number = 2;
-const CAROUSEL_PAGES: number = 5;
+const CAROUSEL_PAGES: number = 3;
 const LARGE_SCREEN_THRESHOLD: number = 1350;
 const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS_LARGE_SCREEN * CAROUSEL_PAGES;
 

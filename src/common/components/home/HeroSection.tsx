@@ -20,7 +20,7 @@ export default function HeroSection() {
       excludeTypes: ['follow'],
     },
   });
-  const feedEvents = data?.feedEvents || [];
+  const feedEvents = useMemo(() => data?.feedEvents || [], [data?.feedEvents]);
   const feedItems: FeedQueryEvent[] = useMemo(() => feedEvents.slice(0, N_ITEMS), [feedEvents]);
 
   return (
