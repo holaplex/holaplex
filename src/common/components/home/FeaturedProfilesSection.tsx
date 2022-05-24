@@ -25,6 +25,9 @@ const CAROUSEL_COLS: number = 3;
 const CAROUSEL_PAGES: number = 2;
 const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
 
+//TODO remove once other profiles have enough followers to preclude this one in the backend
+const DISALLOWED_PROFILES: string[] = ["ho1aVYd4TDWCi1pMqFvboPPc3J13e4LgWkWzGJpPJty"];
+
 const FeaturedProfilesSection: VFC = () => {
   const wallet: WalletContextState = useWallet();
   // initial value hack to get loading card
@@ -44,7 +47,8 @@ const FeaturedProfilesSection: VFC = () => {
   // by making the wallet pubkey one of the dependencies
   useEffect(() => {
     if (dataQuery.data?.followWallets && dataQuery.data.followWallets.length > 0) {
-      setFeaturedProfiles(dataQuery.data.followWallets as FeaturedProfilesData);
+      const profilesToShow = (dataQuery.data.followWallets as FeaturedProfilesData).filter(p => !DISALLOWED_PROFILES.includes(p.address));
+      setFeaturedProfiles(profilesToShow);
     }
   }, [wallet?.publicKey, setFeaturedProfiles, dataQuery.data?.followWallets]);
 
