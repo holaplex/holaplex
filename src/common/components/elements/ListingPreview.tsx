@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
-import { Skeleton, Card, Row, Image, Typography, Tooltip } from 'antd';
+import React from 'react';
+import { Row, Image, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { DateTime, Duration } from 'luxon';
+import { DateTime } from 'luxon';
 // import Image as NextImage from 'next/image';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 import { NFTFallbackImage } from '@/common/constants/NFTFallbackImage';
@@ -14,6 +14,7 @@ import { maybeCDN, imgOpt } from '@/common/utils';
 import AuctionCountdown from './Countdown';
 import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
 import { FilterOptions, SortOptions } from '../home/home.interfaces';
+import classNames from 'classnames';
 
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
@@ -114,6 +115,7 @@ export function ListingPreview({
   const [showArtPreview, setShowArtPreview] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nft, setNFT] = useState<NFTMetadata | null>(null);
+  const [imgLoaded, setImgLoaded] = useState<boolean>(false);
 
   const nftMetadata = listing?.items?.[0]; // other items are usually tiered auctions or participation nfts
   const isDev = false && process.env.NODE_ENV === 'development';
@@ -129,13 +131,6 @@ export function ListingPreview({
         const nftJson: NFTMetadata = await res.json();
         setNFT(nftJson);
         setTimeout(() => setLoading(false), 500);
-
-        // if (window.location.host.includes('localhost')) {
-        //   console.log(nftMetadata.name, {
-        //     ...listing,
-        //     nftJson,
-        //   });
-        // }
       }
     }
     if (!nftMetadata?.uri) {
@@ -172,36 +167,44 @@ export function ListingPreview({
       }}
     >
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
-        <NFTPreview
-          className="aspect-square"
-          $show={inView}
-          src={imgOpt(nft?.image || '', 600)}
-          preview={{
-            visible: showArtPreview,
-            mask: (
-              <CustomImageMask
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  setShowArtPreview(true);
-                  track('Listing Preview Expanded', {
-                    event_category: 'Discovery',
-                    event_label: nftMetadata.name,
-                    ...meta,
-                    ...addListingToTrackCall(listing),
-                  });
-                }}
-              >
-                <CustomExpandIcon />
-              </CustomImageMask>
-            ),
-            onVisibleChange: (visible, prevVisible) => {
-              prevVisible && setShowArtPreview(visible);
-            },
-            destroyOnClose: true,
-          }}
-          alt={nftMetadata?.name + ' preview'}
-          fallback={NFTFallbackImage}
+        <div className={classNames({ hidden: !imgLoaded })}>
+          <NFTPreview
+            className="aspect-square"
+            $show={inView}
+            src={imgOpt(nft?.image || '', 600)}
+            onLoad={() => setImgLoaded(true)}
+            preview={{
+              visible: showArtPreview,
+              mask: (
+                <CustomImageMask
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowArtPreview(true);
+                    track('Listing Preview Expanded', {
+                      event_category: 'Discovery',
+                      event_label: nftMetadata.name,
+                      ...meta,
+                      ...addListingToTrackCall(listing),
+                    });
+                  }}
+                >
+                  <CustomExpandIcon />
+                </CustomImageMask>
+              ),
+              onVisibleChange: (visible, prevVisible) => {
+                prevVisible && setShowArtPreview(visible);
+              },
+              destroyOnClose: true,
+            }}
+            alt={nftMetadata?.name + ' preview'}
+            fallback={NFTFallbackImage}
+          />
+        </div>
+        <LoadingContainer
+          className={classNames('animate-pulse bg-gray-900', 'aspect-square w-full', {
+            hidden: imgLoaded,
+          })}
         />
       </a>
       <div className="border-x border-gray-800 px-4 pt-4 pb-5">
@@ -412,10 +415,6 @@ const SecondarySaleIcon = (props: any) => (
     </defs>
   </svg>
 );
-
-export function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export function generateListingShell(id: number): Listing {
   const now = new Date().toISOString();
