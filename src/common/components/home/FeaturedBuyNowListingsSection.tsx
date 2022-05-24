@@ -2,10 +2,16 @@ import { useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import { Nft, useFeaturedBuyNowListingsQuery, useNftCardQuery } from 'src/graphql/indexerTypes';
+import {
+  Nft,
+  useFeaturedBuyNowListingsQuery,
+  useNftCardLazyQuery,
+  useNftCardQuery,
+} from 'src/graphql/indexerTypes';
 import { BuyNowListingPreviewData } from '@/types/types';
 import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/common/hooks/useWindowDimensions';
+import { auction } from '@metaplex/js/lib/programs';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
@@ -101,43 +107,67 @@ interface ListingPreviewProps {
   address: string;
   marketplace: string;
   onInsufficientData: (address: string) => void;
+  data?: { auctionHouse: AuctionHouse; nft: Nft };
 }
 
 const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
   address,
   marketplace,
   onInsufficientData,
+  data,
 }) => {
-  const { data, loading, refetch, called } = useNftCardQuery({
-    variables: { address: address, subdomain: marketplace },
+  const [nftCardQuery, { data: queriedData, loading, refetch, called }] = useNftCardLazyQuery();
+
+  useEffect(() => {
+    if (!data && !loading && !called) {
+      nftCardQuery({variables: {subdomain: marketplace, address: address}});
+    }
   });
 
-  if (loading) {
-    return <LoadingNFTCard />;
-  }
+  const {auctionHouse, nft} = useMemo(() => {
+    let auctionHouse: AuctionHouse | undefined;
+    let nft: Nft | undefined;
+    if (data) {
+      auctionHouse = data.auctionHouse;
+      nft = data.nft;
+      if (!previewDataAreSufficient(data.nft, data.auctionHouse)) {
+        onInsufficientData(address);
+      }
+    } else if (!loading && called) {
+      const auctionHouseMaybe: AuctionHouse | undefined | null = queriedData?.marketplace?.auctionHouse;
+      const nftMaybe: Nft | undefined | null = queriedData?.nft as Nft;
+      if (!previewDataAreSufficient(nftMaybe, auctionHouseMaybe)) {
+        onInsufficientData(address);
 
-  if (!loading && called && !previewDataAreSufficient(data as BuyNowListingPreviewData)) {
-    onInsufficientData(address);
-    return <LoadingNFTCard />;
+      } else {
+        auctionHouse = auctionHouseMaybe!;
+        nft = nftMaybe;
+      }
+    }
+    return {auctionHouse, nft};
+  }, [data, queriedData, address, called, loading, onInsufficientData]);
+  
+  if (!auctionHouse || !nft) {
+    return <LoadingNFTCard/>;
   }
 
   return (
     <NFTCard
       newTab={false}
-      nft={data?.nft as Nft}
-      marketplace={{ auctionHouse: data!.marketplace!.auctionHouse! as AuctionHouse }}
+      nft={nft!}
+      marketplace={{ auctionHouse: auctionHouse! }}
       refetch={refetch}
       loading={loading}
     />
   );
 };
 
-function previewDataAreSufficient(data: BuyNowListingPreviewData): boolean {
+function previewDataAreSufficient(nft: Nft | undefined | null, auctionHouse?: AuctionHouse | undefined | null): boolean {
   return (
-    data !== undefined &&
-    data.marketplace !== undefined &&
-    data.marketplace.auctionHouse !== undefined &&
-    data.nft !== undefined
+    nft !== undefined &&
+    nft !== null &&
+    auctionHouse !== undefined &&
+    auctionHouse !== null
   );
 }
 
