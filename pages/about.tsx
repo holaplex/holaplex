@@ -156,7 +156,7 @@ export default function About() {
             </Content>
           </div>
           <div className="w-full max-w-md lg:w-1/2 lg:max-w-full">
-            <Image src={'/images/page-about/audience.svg'} width="579" height="336" />
+            <Image src={'/images/page-about/audience.svg'} width="579" height="336" alt=""/>
           </div>
         </div>
       </Section>
@@ -193,14 +193,14 @@ export default function About() {
           <div className="flex flex-wrap justify-around lg:justify-between gap-8 lg:gap-12 lg:mt-12 w-full">
             <CoreProduct>
               <div>
-                <Image src={'/images/page-about/core-profiles.svg'} width="48" height="48" />
+                <Image src={'/images/page-about/core-profiles.svg'} width="48" height="48" alt="" />
               </div>
               <SubHeading>Profiles</SubHeading>
               <Paragraph>Every Solana wallet is a profile that operates as an NFT store</Paragraph>
             </CoreProduct>
             <CoreProduct>
               <div>
-                <Image src={'/images/page-about/core-alpha.svg'} width="48" height="48" />
+                <Image src={'/images/page-about/core-alpha.svg'} width="48" height="48" alt="" />
               </div>
               <SubHeading>Alpha</SubHeading>
               <Paragraph>An on-chain social feed of activity from profiles you’re following</Paragraph>
@@ -208,7 +208,7 @@ export default function About() {
             <div className='w-full flex justify-center'>
               <CoreProduct>
                 <div>
-                  <Image src={'/images/page-about/core-indexer.svg'} width="48" height="48" />
+                  <Image src={'/images/page-about/core-indexer.svg'} width="48" height="48" alt="" />
                 </div>
                 <SubHeading>Indexer</SubHeading>
                 <Paragraph>Better access to useful on-chain data at lightning speed</Paragraph>
@@ -216,14 +216,14 @@ export default function About() {
             </div>
             <CoreProduct>
               <div>
-                <Image src={'/images/page-about/core-social.svg'} width="48" height="48" />
+                <Image src={'/images/page-about/core-social.svg'} width="48" height="48" alt="" />
               </div>
               <SubHeading>Social Graph</SubHeading>
               <Paragraph>An graph program that powers on-chain followers and social feeds</Paragraph>
             </CoreProduct>
             <CoreProduct>
               <div>
-                <Image src={'/images/page-about/core-marketplace.svg'} width="48" height="48" />
+                <Image src={'/images/page-about/core-marketplace.svg'} width="48" height="48" alt="" />
               </div>
               <SubHeading>Marketplaces</SubHeading>
               <Paragraph>No-code NFT marketplaces for DAOs and NFT collectives</Paragraph>
