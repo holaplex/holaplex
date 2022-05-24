@@ -167,7 +167,7 @@ export function ListingPreview({
       }}
     >
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
-        <div className={classNames({ hidden: !imgLoaded })}>
+        <div className={classNames("aspect-square w-full", { hidden: !imgLoaded })}>
           <NFTPreview
             className="aspect-square"
             $show={inView}
