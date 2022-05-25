@@ -13,11 +13,6 @@ import {
   useAllConnectionsToQuery,
 } from 'src/graphql/indexerTypes';
 import { useProfileData } from '@/common/context/ProfileData';
-import {
-  useGetAllQueryResultsWithoutPagination,
-  useGetAllResultsWithoutPagination,
-} from '@/common/hooks/useGetAllResultsWithoutPagination';
-
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type FollowModalProps = {

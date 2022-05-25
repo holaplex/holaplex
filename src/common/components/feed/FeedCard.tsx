@@ -1,7 +1,6 @@
 import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import { getTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
@@ -14,6 +13,7 @@ import {
   ListingEvent,
   Nft,
   useNftMarketplaceLazyQuery,
+  useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
 } from 'src/graphql/indexerTypes';
 import { Button5 } from '../elements/Button2';
@@ -195,13 +195,18 @@ function FollowCard(props: {
 }
 
 export const ProfileHandle = ({ user }: { user: User }) => {
-  const { connection } = useConnection();
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
+  
   useEffect(() => {
+    async function getTwitterHandleAndSetState(): Promise<void> {
+      await twitterHandleQuery({variables: {pubKey: user.address}});
+      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
+        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
+      }
+    }
     if (!twitterHandle) {
-      getTwitterHandle(user.address, connection).then((th) => {
-        if (th) setTwitterHandle(th);
-      });
+      getTwitterHandleAndSetState();
     }
   }, []);
 
@@ -403,17 +408,21 @@ const OfferAction = (props: { nft: any }) => {
 
 export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
-  const { connection } = useConnection();
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [pfpUrl, setPfpUrl] = useState(
     user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
   );
-
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
+  
   useEffect(() => {
+    async function getTwitterHandleAndSetState(): Promise<void> {
+      await twitterHandleQuery({variables: {pubKey: user.address}});
+      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
+        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
+      }
+    }
     if (!twitterHandle) {
-      getTwitterHandle(user.address, connection).then((twitterHandle) => {
-        if (twitterHandle) setTwitterHandle(twitterHandle);
-      });
+      getTwitterHandleAndSetState();
     }
   }, []);
 

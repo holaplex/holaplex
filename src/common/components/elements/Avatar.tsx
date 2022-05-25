@@ -1,12 +1,11 @@
-import { getTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
-import { useTwitterHandleFromPubKeyQuery, useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import { useEffect, useState } from 'react';
+import { useTwitterHandleFromPubKeyLazyQuery, useTwitterHandleFromPubKeyQuery, useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import cx from 'classnames';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 
 export interface AvatarIconsProps {
@@ -50,8 +49,8 @@ export interface AvatarIconProps {
 }
 
 export const AvatarIcon = ({ address, index, data }: AvatarIconProps) => {
-  const { connection } = useConnection();
-  const [queryWalletProfile, queryWalletProfileContext] = useWalletProfileLazyQuery();
+  const [walletProfileQuery, walletProfileQueryContext] = useWalletProfileLazyQuery();
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
   const [twitterHandle, setTwitterHandle] = useState<string | undefined>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>();
   const leftPosPixls = 12;
@@ -60,13 +59,11 @@ export const AvatarIcon = ({ address, index, data }: AvatarIconProps) => {
   // query needed data if it wasnt provided
   useEffect(() => {
     async function queryData(walletAddress: string) {
-      const queriedTwitterHandle: string | undefined = await getTwitterHandle(
-        walletAddress,
-        connection
-      );
+      await twitterHandleQuery({variables: {pubKey: walletAddress}});
+      const queriedTwitterHandle = twitterHandleQueryContext.data?.wallet?.profile?.handle;
       if (queriedTwitterHandle) {
         setTwitterHandle(queriedTwitterHandle);
-        queryWalletProfile({
+        walletProfileQuery({
           variables: {
             handle: queriedTwitterHandle,
           },
@@ -75,23 +72,25 @@ export const AvatarIcon = ({ address, index, data }: AvatarIconProps) => {
     }
 
     if (!data) queryData(address);
-  }, [queryWalletProfile, address, connection, data]);
+  }, 
+  // dont include the results of the queries because this will re-trigger querying
+  [walletProfileQuery, twitterHandleQuery, address, data]);
 
   useEffect(() => {
     let result: string = getPFPFromPublicKey(address);
     if (data?.pfpUrl) result = data.pfpUrl;
-    else if (queryWalletProfileContext.called && !queryWalletProfileContext.loading) {
-      if (queryWalletProfileContext.data?.profile?.profileImageUrlHighres) {
-        result = queryWalletProfileContext.data.profile.profileImageUrlHighres;
+    else if (walletProfileQueryContext.called && !walletProfileQueryContext.loading) {
+      if (walletProfileQueryContext.data?.profile?.profileImageUrlHighres) {
+        result = walletProfileQueryContext.data.profile.profileImageUrlHighres;
       }
     }
     if (result) setProfilePictureUrl(result);
   }, [
     data?.pfpUrl,
     address,
-    queryWalletProfileContext.called,
-    queryWalletProfileContext.loading,
-    queryWalletProfileContext.data?.profile?.profileImageUrlHighres,
+    walletProfileQueryContext.called,
+    walletProfileQueryContext.loading,
+    walletProfileQueryContext.data?.profile?.profileImageUrlHighres,
   ]);
 
   return (
