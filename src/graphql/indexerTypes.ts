@@ -773,6 +773,13 @@ export type IsXFollowingYQueryVariables = Exact<{
 
 export type IsXFollowingYQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', address: string }> };
 
+export type TwitterHandleFromPubKeyQueryVariables = Exact<{
+  pubKey: Scalars['PublicKey'];
+}>;
+
+
+export type TwitterHandleFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string } | null } };
+
 export type MetadataSearchQueryVariables = Exact<{
   term: Scalars['String'];
 }>;
@@ -2443,6 +2450,43 @@ export function useIsXFollowingYLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type IsXFollowingYQueryHookResult = ReturnType<typeof useIsXFollowingYQuery>;
 export type IsXFollowingYLazyQueryHookResult = ReturnType<typeof useIsXFollowingYLazyQuery>;
 export type IsXFollowingYQueryResult = Apollo.QueryResult<IsXFollowingYQuery, IsXFollowingYQueryVariables>;
+export const TwitterHandleFromPubKeyDocument = gql`
+    query twitterHandleFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
+    }
+  }
+}
+    `;
+
+/**
+ * __useTwitterHandleFromPubKeyQuery__
+ *
+ * To run a query within a React component, call `useTwitterHandleFromPubKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTwitterHandleFromPubKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTwitterHandleFromPubKeyQuery({
+ *   variables: {
+ *      pubKey: // value for 'pubKey'
+ *   },
+ * });
+ */
+export function useTwitterHandleFromPubKeyQuery(baseOptions: Apollo.QueryHookOptions<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(TwitterHandleFromPubKeyDocument, options);
+      }
+export function useTwitterHandleFromPubKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(TwitterHandleFromPubKeyDocument, options);
+        }
+export type TwitterHandleFromPubKeyQueryHookResult = ReturnType<typeof useTwitterHandleFromPubKeyQuery>;
+export type TwitterHandleFromPubKeyLazyQueryHookResult = ReturnType<typeof useTwitterHandleFromPubKeyLazyQuery>;
+export type TwitterHandleFromPubKeyQueryResult = Apollo.QueryResult<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>;
 export const MetadataSearchDocument = gql`
     query metadataSearch($term: String!) {
   metadataJsons(term: $term, limit: 25, offset: 0) {

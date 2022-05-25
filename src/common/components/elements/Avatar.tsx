@@ -1,10 +1,10 @@
-import { getTwitterHandle, useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { getTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import { useTwitterHandleFromPubKeyQuery, useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import cx from 'classnames';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
@@ -137,7 +137,8 @@ export const Avatar = ({
     md: 'h-10 w-10',
     lg: 'h-16 w-16',
   };
-  const { data: twitterHandle } = useTwitterHandle(null, address);
+  const {data: twitterHandleQueryData} = useTwitterHandleFromPubKeyQuery({variables: {pubKey: address}});
+  const twitterHandle: string | undefined = twitterHandleQueryData?.wallet?.profile?.handle;
   const [queryWalletProfile, { data }] = useWalletProfileLazyQuery();
   const { publicKey } = useWallet();
   const isYou = publicKey?.toBase58() === address;

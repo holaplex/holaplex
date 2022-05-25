@@ -1,33 +1,21 @@
 import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import { getTwitterHandle, useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { getTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
-import { Popover } from '@headlessui/react';
-import { ShareIcon } from '@heroicons/react/outline';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  FeedEvent,
-  FeedQuery,
   ListingEvent,
   Nft,
-  PurchaseEvent,
-  useMarketplacePreviewQuery,
   useNftMarketplaceLazyQuery,
-  useNftMarketplaceQuery,
   useWalletProfileLazyQuery,
-  useWalletProfileQuery,
-  Wallet,
 } from 'src/graphql/indexerTypes';
-import { FollowEvent } from 'src/graphql/indexerTypes.ssr';
-import { JsxElement } from 'typescript';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import Modal from '../elements/Modal';
@@ -40,7 +28,6 @@ import {
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAttributes,
-  getHandle,
   User,
 } from './feed.utils';
 import BuyForm from '../forms/BuyForm';

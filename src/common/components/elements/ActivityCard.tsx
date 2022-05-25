@@ -1,15 +1,14 @@
-import { IFeedItem, IProfile } from '@/modules/feed/feed.interfaces';
+import { IFeedItem } from '@/modules/feed/feed.interfaces';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from './Price';
-import Image from 'next/image';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { Button5 } from './Button2';
+import { useTwitterHandleFromPubKeyQuery } from 'src/graphql/indexerTypes';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
   const from = (activity.sourceUser || activity?.nft?.creators?.[0])!;
@@ -21,7 +20,9 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   const creatorDisplay = creator?.handle || creator?.address;
 
   const FromHelper = () => {
-    const { data: twitterHandle } = useTwitterHandle(null, from.address);
+    const { data } = useTwitterHandleFromPubKeyQuery({ variables: { pubKey: from.address } });
+    const twitterHandle: string | undefined = data?.wallet?.profile?.handle;
+
     const profileURL = window.location.origin + '/profiles/' + from.address;
     return fromDisplay === 'You' ? (
       <span>You</span>
@@ -33,7 +34,10 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   };
 
   const ToHelper = () => {
-    const { data: twitterHandle } = useTwitterHandle(null, activity.toUser?.address);
+    const { data } = useTwitterHandleFromPubKeyQuery({
+      variables: { pubKey:  activity.toUser?.address},
+    });
+    const twitterHandle: string | undefined = data?.wallet?.profile?.handle;
     const profileURL = window.location.origin + '/profiles/' + activity.toUser?.address;
     return activity.toUser ? (
       <a href={profileURL}>

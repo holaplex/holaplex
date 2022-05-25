@@ -2,8 +2,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { forwardRef, useEffect, FC } from 'react';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { useTwitterHandleFromPubKeyQuery, useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 import { WalletLabel } from '@/common/components/elements/WalletIndicator';
@@ -29,7 +28,8 @@ type PopoverBoxContentsProps = {
 export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile }) => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
   const { connected, publicKey } = useWallet();
-  const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const {data} = useTwitterHandleFromPubKeyQuery({variables: {pubKey: publicKey?.toBase58()}})
+  const twitterHandle: string | undefined = data?.wallet?.profile?.handle;
 
   useEffect(() => {
     if (!twitterHandle) return;

@@ -35,18 +35,3 @@ export const getPublicKeyFromTwitterHandle = async (handle: string, connection: 
   const result = await NameRegistryState.retrieve(connection, domainKey);
   return result?.owner as PublicKey | undefined;
 };
-
-export const useTwitterHandle = (forWallet?: PublicKey | null, base58Key?: string) => {
-  const { connection } = useConnection();
-  return useQuery(
-    ['twitter-handle', forWallet?.toBase58() || base58Key],
-
-    async ({ queryKey: [_, pk] }) => {
-      if (pk && connection) {
-        return await getTwitterHandle(pk, connection);
-      } else {
-        return undefined;
-      }
-    }
-  );
-};

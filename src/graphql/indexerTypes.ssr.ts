@@ -773,6 +773,13 @@ export type IsXFollowingYQueryVariables = Exact<{
 
 export type IsXFollowingYQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', address: string }> };
 
+export type TwitterHandleFromPubKeyQueryVariables = Exact<{
+  pubKey: Scalars['PublicKey'];
+}>;
+
+
+export type TwitterHandleFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string } | null } };
+
 export type MetadataSearchQueryVariables = Exact<{
   term: Scalars['String'];
 }>;
@@ -1832,6 +1839,15 @@ export const IsXFollowingYDocument = gql`
   }
 }
     `;
+export const TwitterHandleFromPubKeyDocument = gql`
+    query twitterHandleFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
+    }
+  }
+}
+    `;
 export const MetadataSearchDocument = gql`
     query metadataSearch($term: String!) {
   metadataJsons(term: $term, limit: 25, offset: 0) {
@@ -1951,6 +1967,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     isXFollowingY(variables: IsXFollowingYQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<IsXFollowingYQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<IsXFollowingYQuery>(IsXFollowingYDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'isXFollowingY', 'query');
+    },
+    twitterHandleFromPubKey(variables: TwitterHandleFromPubKeyQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<TwitterHandleFromPubKeyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<TwitterHandleFromPubKeyQuery>(TwitterHandleFromPubKeyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'twitterHandleFromPubKey', 'query');
     },
     metadataSearch(variables: MetadataSearchQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MetadataSearchQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MetadataSearchQuery>(MetadataSearchDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'metadataSearch', 'query');
