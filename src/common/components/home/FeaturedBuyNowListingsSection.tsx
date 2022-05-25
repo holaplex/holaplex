@@ -6,12 +6,9 @@ import {
   Nft,
   useFeaturedBuyNowListingsQuery,
   useNftCardLazyQuery,
-  useNftCardQuery,
 } from 'src/graphql/indexerTypes';
-import { BuyNowListingPreviewData } from '@/types/types';
 import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/common/hooks/useWindowDimensions';
-import { auction } from '@metaplex/js/lib/programs';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
@@ -23,11 +20,15 @@ const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS_LARGE_SCREEN * CAROUSEL
 interface FeaturedListing {
   address: string;
   marketplace: string;
+  data: {
+    auctionHouse: AuctionHouse;
+    nft: Nft
+  }
 }
 
 const FeaturedBuyNowListingsSection: VFC = () => {
   const [featuredListings, setFeaturedListings] = useState<FeaturedListing[]>([]);
-  const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: N_LISTINGS } });
+  const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: N_LISTINGS, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN} });
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
@@ -47,13 +48,23 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       !dataQuery.loading &&
       dataQuery.called &&
       dataQuery.data?.featuredListings &&
-      dataQuery.data.featuredListings.length > 0
+      dataQuery.data.featuredListings.length > 0 &&
+      dataQuery.data.marketplace &&
+      dataQuery.data.marketplace.auctionHouse
     ) {
+      const auctionHouse: AuctionHouse = dataQuery.data.marketplace.auctionHouse as AuctionHouse;
       setFeaturedListings(
         dataQuery.data.featuredListings
-          .filter((v) => v.metadata !== undefined)
+          .filter((v) => v.metadata !== undefined && v.nft !== undefined)
           .slice(0, N_LISTINGS)
-          .map((v) => ({ address: v.metadata, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN }))
+          .map((v) => ({ 
+            address: v.metadata, 
+            marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+            data:  {
+              auctionHouse: auctionHouse,
+              nft: v.nft as Nft
+            }
+          }))
       );
     }
   }, [dataQuery.data]);
@@ -93,6 +104,7 @@ const FeaturedBuyNowListingsSection: VFC = () => {
                   <NFTCardDataWrapper
                     address={s.address}
                     marketplace={s.marketplace}
+                    data={s.data}
                     onInsufficientData={onInsufficientDataForAListing}
                   />
                 </HomeSectionCarousel.Item>
@@ -124,6 +136,7 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
     }
   });
 
+  // query preview data if it wasnt already given
   const {auctionHouse, nft} = useMemo(() => {
     let auctionHouse: AuctionHouse | undefined;
     let nft: Nft | undefined;
