@@ -96,24 +96,39 @@ const ProfileDisplayName: FC = () => {
   return (
     <div className="flex items-center text-2xl font-medium">
       {twitterHandle ? (
-        <a
-          className="hover:text-gray-300"
-          target="_blank"
-          href={'https://www.twitter.com/' + twitterHandle}
-          rel="noreferrer"
-        >
-          @{twitterHandle}
-        </a>
+        <div className={`flex flex-col justify-start gap-4`}>
+          <a
+            className="hover:text-gray-300"
+            target="_blank"
+            href={'https://www.twitter.com/' + twitterHandle}
+            rel="noreferrer"
+          >
+            @{twitterHandle}
+          </a>
+          <span className={`flex gap-4 font-mono text-xs`}>
+            {shortenAddress(publicKey)}{' '}
+            {copied ? (
+              <CheckIcon className="h-4 w-4 hover:text-gray-300" />
+            ) : (
+              <DuplicateIcon
+                className="h-4 w-4 cursor-pointer hover:text-gray-300"
+                onClick={copyPubKey}
+              />
+            )}
+          </span>
+        </div>
       ) : (
-        <span className="font-mono ">{shortenAddress(publicKey)}</span>
-      )}
-      {copied ? (
-        <CheckIcon className="ml-4 h-7 w-7 hover:text-gray-300" />
-      ) : (
-        <DuplicateIcon
-          className="ml-4 h-7 w-7 cursor-pointer hover:text-gray-300"
-          onClick={copyPubKey}
-        />
+        <span className="flex items-center font-mono">
+          {shortenAddress(publicKey)}{' '}
+          {copied ? (
+            <CheckIcon className="ml-4 h-7 w-7 hover:text-gray-300" />
+          ) : (
+            <DuplicateIcon
+              className="ml-4 h-7 w-7 cursor-pointer hover:text-gray-300"
+              onClick={copyPubKey}
+            />
+          )}
+        </span>
       )}
     </div>
   );
