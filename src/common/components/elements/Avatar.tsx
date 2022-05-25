@@ -51,8 +51,8 @@ export interface AvatarIconProps {
 export const AvatarIcon = ({ address, index, data }: AvatarIconProps) => {
   const [walletProfileQuery, walletProfileQueryContext] = useWalletProfileLazyQuery();
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-  const [twitterHandle, setTwitterHandle] = useState<string | undefined>();
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>();
+  const [twitterHandle, setTwitterHandle] = useState<string | undefined>(data?.twitterHandle);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>(data?.pfpUrl);
   const leftPosPixls = 12;
   const leftPos = index * leftPosPixls;
 
