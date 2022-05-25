@@ -12,6 +12,7 @@ import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from '@/common/context/ProfileData';
+import { FollowUnfollowButtonDataWrapper } from '../home/FeaturedProfilesSection';
 
 export const ProfileContainer: FC = ({ children }) => {
   const profileData = useProfileData();
@@ -28,8 +29,8 @@ export const ProfileContainer: FC = ({ children }) => {
           <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
         </header>
         <div className="container  mx-auto px-6 pb-20 md:px-12 lg:flex">
-          <div className="relative lg:sticky lg:top-24 lg:h-96 lg:w-full lg:max-w-xs ">
-            <div className="-mt-12 flex justify-center text-center lg:justify-start">
+          <div className="relative lg:sticky lg:top-24 lg:mr-16 lg:h-96 lg:w-full lg:max-w-xs ">
+            <div className="-mt-12 flex justify-between text-center lg:justify-start lg:gap-12">
               <div className=" max-w-fit rounded-full border-4 border-gray-900 ">
                 <img
                   src={profilePicture}
@@ -38,24 +39,31 @@ export const ProfileContainer: FC = ({ children }) => {
                   alt="profile picture"
                 />
               </div>
-            </div>
-            <div className="mt-2 flex justify-center lg:justify-start">
-              {anchorWallet?.publicKey.toString() == profileData.publicKey.toString() &&
-                !twitterHandle && (
-                  <ConnectTwitterButton
-                    address={new PublicKey(profileData.publicKey)}
-                    connection={connection}
-                    wallet={anchorWallet}
-                    cluster={'mainnet-beta'}
-                    variant={'secondary'}
-                    style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
+              <div className="mt-16 flex justify-center lg:justify-start">
+                {anchorWallet?.publicKey.toString() == profileData.publicKey.toString() &&
+                  !twitterHandle && (
+                    <ConnectTwitterButton
+                      address={new PublicKey(profileData.publicKey)}
+                      connection={connection}
+                      wallet={anchorWallet}
+                      cluster={'mainnet-beta'}
+                      variant={'secondary'}
+                      style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
+                    />
+                  )}
+                {anchorWallet?.publicKey.toString() !== profileData.publicKey.toString() && (
+                  <FollowUnfollowButtonDataWrapper
+                    targetPubkey={profileData.publicKey.toString()}
+                    className={`pointer-events-auto flex`}
                   />
                 )}
+              </div>
             </div>
+
             <div className="mt-10 flex justify-center lg:justify-start">
               <ProfileDisplayName />
             </div>
-            <FollowerCount setShowFollowsModal={setShowFollowsModal} />
+            <FollowerCount setShowFollowsModal={setShowFollowsModal} showButton={false} />
           </div>
           <div className="mt-10 w-full">
             <ProfileMenu />

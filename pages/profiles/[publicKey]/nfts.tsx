@@ -37,6 +37,9 @@ import { isEmpty } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import { ProfilePageHead } from '../[publicKey]';
 import classNames from 'classnames';
+import NoProfileItems, {
+  NoProfileVariant,
+} from '../../../src/common/components/elements/NoProfileItems';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -272,6 +275,7 @@ interface NFTGridProps {
   nfts: OwnedNFT[];
   marketplace: Marketplace;
   gridView: '1x1' | '2x2' | '3x3';
+  ctaVariant?: NoProfileVariant;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -287,6 +291,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
   refetch,
   onLoadMore,
   hasMore,
+  ctaVariant,
   loading = false,
 }) => {
   return (
@@ -309,15 +314,21 @@ export const NFTGrid: FC<NFTGridProps> = ({
           </>
         ) : (
           <>
-            {nfts.map((nft) => (
-              <NFTCard
-                key={nft.address}
-                nft={nft}
-                refetch={refetch}
-                loading={loading}
-                marketplace={marketplace}
-              />
-            ))}
+            {nfts.length === 0 ? (
+              <div className={`col-span-full`}>
+                <NoProfileItems variant={ctaVariant} />
+              </div>
+            ) : (
+              nfts.map((nft) => (
+                <NFTCard
+                  key={nft.address}
+                  nft={nft}
+                  refetch={refetch}
+                  loading={loading}
+                  marketplace={marketplace}
+                />
+              ))
+            )}
           </>
         )}
       </div>
@@ -481,7 +492,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
       />
       <ProfileContainer>
-        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 px-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -517,6 +528,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
+          ctaVariant={`collected`}
           hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {

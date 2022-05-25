@@ -26,7 +26,7 @@ const CAROUSEL_PAGES: number = 2;
 const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS * CAROUSEL_PAGES;
 
 //TODO remove once other profiles have enough followers to preclude this one in the backend
-const DISALLOWED_PROFILES: string[] = ["ho1aVYd4TDWCi1pMqFvboPPc3J13e4LgWkWzGJpPJty"];
+const DISALLOWED_PROFILES: string[] = ['ho1aVYd4TDWCi1pMqFvboPPc3J13e4LgWkWzGJpPJty'];
 
 const FeaturedProfilesSection: VFC = () => {
   const wallet: WalletContextState = useWallet();
@@ -47,7 +47,9 @@ const FeaturedProfilesSection: VFC = () => {
   // by making the wallet pubkey one of the dependencies
   useEffect(() => {
     if (dataQuery.data?.followWallets && dataQuery.data.followWallets.length > 0) {
-      const profilesToShow = (dataQuery.data.followWallets as FeaturedProfilesData).filter(p => !DISALLOWED_PROFILES.includes(p.address));
+      const profilesToShow = (dataQuery.data.followWallets as FeaturedProfilesData).filter(
+        (p) => !DISALLOWED_PROFILES.includes(p.address)
+      );
       setFeaturedProfiles(profilesToShow);
     }
   }, [wallet?.publicKey, setFeaturedProfiles, dataQuery.data?.followWallets]);
@@ -160,7 +162,7 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData }
 
         <div className="flex h-full w-full flex-col justify-between p-4 md:p-2 lg:p-4">
           {/* pfp, follow */}
-          <div className="relative flex items-end justify-end h-8 lg:h-10">
+          <div className="relative flex h-8 items-end justify-end lg:h-10">
             <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-12 md:w-12 lg:h-20 lg:w-20">
               <AvatarImage
                 src={data.profile?.profileImageUrlHighres ?? getFallbackImage()}
@@ -214,7 +216,7 @@ const PreviewContainer: FC<any> = (props) => {
   );
 };
 
-const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: string }> = ({
+export const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: string }> = ({
   targetPubkey,
   className,
 }) => {
@@ -244,8 +246,7 @@ const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: s
   const userIsFollowingThisAccount: boolean =
     canAssessFollowState && userIsFollowingThisAccountContext!.data!.connections.length > 0;
 
-  const hideButton: boolean =
-    targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
+  const hideButton: boolean = targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
 
   if (hideButton) {
     return null;

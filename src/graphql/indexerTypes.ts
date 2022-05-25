@@ -743,6 +743,13 @@ export type AllConnectionsToQueryVariables = Exact<{
 
 export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } }> };
 
+export type GetCollectedByQueryVariables = Exact<{
+  creator: Scalars['PublicKey'];
+}>;
+
+
+export type GetCollectedByQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, owner?: { __typename?: 'NftOwner', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, profileImageUrlLowres: string, handle: string } | null } | null }> };
+
 export type GetProfileFollowerOverviewQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
 }>;
@@ -2201,6 +2208,48 @@ export function useAllConnectionsToLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type AllConnectionsToQueryHookResult = ReturnType<typeof useAllConnectionsToQuery>;
 export type AllConnectionsToLazyQueryHookResult = ReturnType<typeof useAllConnectionsToLazyQuery>;
 export type AllConnectionsToQueryResult = Apollo.QueryResult<AllConnectionsToQuery, AllConnectionsToQueryVariables>;
+export const GetCollectedByDocument = gql`
+    query getCollectedBy($creator: PublicKey!) {
+  nfts(creators: [$creator], limit: 1000, offset: 0) {
+    address
+    owner {
+      profile {
+        walletAddress
+        profileImageUrlLowres
+        handle
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCollectedByQuery__
+ *
+ * To run a query within a React component, call `useGetCollectedByQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCollectedByQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCollectedByQuery({
+ *   variables: {
+ *      creator: // value for 'creator'
+ *   },
+ * });
+ */
+export function useGetCollectedByQuery(baseOptions: Apollo.QueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(GetCollectedByDocument, options);
+      }
+export function useGetCollectedByLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(GetCollectedByDocument, options);
+        }
+export type GetCollectedByQueryHookResult = ReturnType<typeof useGetCollectedByQuery>;
+export type GetCollectedByLazyQueryHookResult = ReturnType<typeof useGetCollectedByLazyQuery>;
+export type GetCollectedByQueryResult = Apollo.QueryResult<GetCollectedByQuery, GetCollectedByQueryVariables>;
 export const GetProfileFollowerOverviewDocument = gql`
     query getProfileFollowerOverview($pubKey: PublicKey!) {
   wallet(address: $pubKey) {

@@ -11,6 +11,32 @@ type FollowerBubbleProps = {
   follower: TopFollower;
 };
 
+type FollowBubbleImageProps = {
+  image: string;
+  address: string;
+  isFirst?: boolean;
+};
+
+export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image, address }) => {
+  return (
+    <Link href={`/profiles/${address as string}/nfts`} passHref>
+      <a
+        className={cx({
+          block: !isFirst,
+        })}
+      >
+        <FollowedByImage
+          className="h-8 w-8 rounded-full"
+          src={image ?? getPFPFromPublicKey(address!)}
+          width={32}
+          height={32}
+          alt="PFP"
+        />
+      </a>
+    </Link>
+  );
+};
+
 export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
   return (
     <Link href={`/profiles/${follower.from.address as string}/nfts`} passHref>
