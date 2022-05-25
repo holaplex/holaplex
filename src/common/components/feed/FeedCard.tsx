@@ -268,7 +268,12 @@ function FeedActionBanner(props: {
   }
 
   return (
-    <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
+    <div
+      className={classNames(
+        'flex w-full flex-wrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
+      )}
+    >
       <ProfilePFP
         user={{
           address: props.event.walletAddress,
@@ -284,8 +289,9 @@ function FeedActionBanner(props: {
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
       </div>
-
-      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      {!props.options?.hideAction && (
+        <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      )}
     </div>
   );
 }
