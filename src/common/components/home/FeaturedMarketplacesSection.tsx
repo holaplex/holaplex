@@ -25,19 +25,6 @@ const previewSubdomains: string[] = [
   // 'paragon',
 ];
 
-// TODO make featured_marketplaces query in indexer, and have
-// it return a list of Marketplace objects (for now hard-coded)
-// TODO update your marketplace preview data object with something like
-//  query {
-//   marketplace(subdomain:"junglecats") {
-//     creators {
-//       profile {
-//         handle
-//         profileImageUrlHighres
-//       }
-//     }
-//   }
-// }
 
 const FeaturedMarketplacesSection: VFC = () => {
   return (
