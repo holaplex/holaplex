@@ -61,7 +61,7 @@ const NFTPreview: FC<NFTPreviewProps> = ({ loading = false, nft }) => {
             </Link>
           ) : (
             <div>
-              <AvatarIcons creators={nft?.creators || []} />
+              <AvatarIcons profiles={nft?.creators || []} />
             </div>
           )}
         </ul>

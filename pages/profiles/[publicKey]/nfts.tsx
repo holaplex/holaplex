@@ -95,6 +95,10 @@ export const NFTCard = ({
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
+  const shownCreatorHandle =
+    sortedCreators.length > 0 ? sortedCreators[0].profile?.handle : undefined;
+  const shownCreatorPfpUrl =
+    sortedCreators.length > 0 ? sortedCreators[0].profile?.profileImageUrlLowres : undefined;
 
   const offers = nft?.offers;
   const topOffers = offers?.slice()?.sort((a, b) => Number(a.price) - Number(b.price));
@@ -123,7 +127,12 @@ export const NFTCard = ({
                 <div className={`absolute left-0 top-0 flex flex-row items-center p-4`}>
                   <Link href={`/profiles/${shownCreatorAddress}`}>
                     <a className="text-gray-300">
-                      <Avatar address={shownCreatorAddress} showAddress={false} border={true} />
+                      <Avatar
+                        address={shownCreatorAddress}
+                        showAddress={false}
+                        border={true}
+                        data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
+                      />
                     </a>
                   </Link>
 

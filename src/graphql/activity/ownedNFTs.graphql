@@ -44,6 +44,10 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       address
       share
       verified
+      profile {
+        handle
+        profileImageUrlLowres
+      }
     }
     owner {
       address

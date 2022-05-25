@@ -5,16 +5,21 @@ import { useEffect, useRef, useState } from 'react';
 import { ButtonReset } from '@/common/styles/ButtonReset';
 import { ProfilePopover } from './ProfilePopover';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
-import { useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import {
+  useTwitterHandleFromPubKeyQuery,
+  useWalletProfileLazyQuery,
+} from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 
 export const ProfileImage = () => {
   const [queryWalletProfile, walletProfile] = useWalletProfileLazyQuery();
 
   const { connected, publicKey } = useWallet();
-  const { data: twitterHandle } = useTwitterHandle(publicKey);
+  const { data } = useTwitterHandleFromPubKeyQuery({
+    variables: { pubKey: publicKey?.toBase58() },
+  });
+  const twitterHandle: string | undefined = data?.wallet?.profile?.handle;
 
   useEffect(() => {
     if (!twitterHandle) return;
