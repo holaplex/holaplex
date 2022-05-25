@@ -2,11 +2,7 @@ import { useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import {
-  Nft,
-  useFeaturedBuyNowListingsQuery,
-  useNftCardLazyQuery,
-} from 'src/graphql/indexerTypes';
+import { Nft, useFeaturedBuyNowListingsQuery, useNftCardLazyQuery } from 'src/graphql/indexerTypes';
 import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/common/hooks/useWindowDimensions';
 
@@ -22,13 +18,15 @@ interface FeaturedListing {
   marketplace: string;
   data: {
     auctionHouse: AuctionHouse;
-    nft: Nft
-  }
+    nft: Nft;
+  };
 }
 
 const FeaturedBuyNowListingsSection: VFC = () => {
   const [featuredListings, setFeaturedListings] = useState<FeaturedListing[]>([]);
-  const dataQuery = useFeaturedBuyNowListingsQuery({ variables: { limit: N_LISTINGS, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN} });
+  const dataQuery = useFeaturedBuyNowListingsQuery({
+    variables: { limit: N_LISTINGS, marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN },
+  });
   const placeholderCards = useMemo(
     () =>
       [...Array(N_LISTINGS)].map((_, i) => (
@@ -57,13 +55,13 @@ const FeaturedBuyNowListingsSection: VFC = () => {
         dataQuery.data.featuredListings
           .filter((v) => v.metadata !== undefined && v.nft !== undefined)
           .slice(0, N_LISTINGS)
-          .map((v) => ({ 
-            address: v.metadata, 
+          .map((v) => ({
+            address: v.metadata,
             marketplace: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-            data:  {
+            data: {
               auctionHouse: auctionHouse,
-              nft: v.nft as Nft
-            }
+              nft: v.nft as Nft,
+            },
           }))
       );
     }
@@ -132,12 +130,12 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
 
   useEffect(() => {
     if (!data && !loading && !called) {
-      nftCardQuery({variables: {subdomain: marketplace, address: address}});
+      nftCardQuery({ variables: { subdomain: marketplace, address: address } });
     }
   });
 
   // query preview data if it wasnt already given
-  const {auctionHouse, nft} = useMemo(() => {
+  const { auctionHouse, nft } = useMemo(() => {
     let auctionHouse: AuctionHouse | undefined;
     let nft: Nft | undefined;
     if (data) {
@@ -147,21 +145,21 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
         onInsufficientData(address);
       }
     } else if (!loading && called) {
-      const auctionHouseMaybe: AuctionHouse | undefined | null = queriedData?.marketplace?.auctionHouse;
+      const auctionHouseMaybe: AuctionHouse | undefined | null =
+        queriedData?.marketplace?.auctionHouse;
       const nftMaybe: Nft | undefined | null = queriedData?.nft as Nft;
       if (!previewDataAreSufficient(nftMaybe, auctionHouseMaybe)) {
         onInsufficientData(address);
-
       } else {
         auctionHouse = auctionHouseMaybe!;
         nft = nftMaybe;
       }
     }
-    return {auctionHouse, nft};
+    return { auctionHouse, nft };
   }, [data, queriedData, address, called, loading, onInsufficientData]);
-  
+
   if (!auctionHouse || !nft) {
-    return <LoadingNFTCard/>;
+    return <LoadingNFTCard />;
   }
 
   return (
@@ -175,13 +173,11 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
   );
 };
 
-function previewDataAreSufficient(nft: Nft | undefined | null, auctionHouse?: AuctionHouse | undefined | null): boolean {
-  return (
-    nft !== undefined &&
-    nft !== null &&
-    auctionHouse !== undefined &&
-    auctionHouse !== null
-  );
+function previewDataAreSufficient(
+  nft: Nft | undefined | null,
+  auctionHouse?: AuctionHouse | undefined | null
+): boolean {
+  return nft !== undefined && nft !== null && auctionHouse !== undefined && auctionHouse !== null;
 }
 
 export default FeaturedBuyNowListingsSection;

@@ -104,19 +104,21 @@ const ProfilePreview: FC<ProfilePreviewProps> = ({ address, onInsufficientData, 
     profile: {},
   });
 
-  useEffect(() => {
-    async function queryAndSetData() {
-      await dataQuery({ variables: { address: address } });
-      if (dataQueryContext.data) {
-        setFinalData(dataQueryContext.data.wallet as ProfilePreviewData);
+  useEffect(
+    () => {
+      async function queryAndSetData() {
+        await dataQuery({ variables: { address: address } });
+        if (dataQueryContext.data) {
+          setFinalData(dataQueryContext.data.wallet as ProfilePreviewData);
+        }
       }
-    }
 
-    if (data) setFinalData(data);
-    else queryAndSetData();
-  }, 
-  // dont want to include the dataQuery.data as this will re-trigger the request
-  [dataQuery, data, address]);
+      if (data) setFinalData(data);
+      else queryAndSetData();
+    },
+    // dont want to include the dataQuery.data as this will re-trigger the request
+    [dataQuery, data, address]
+  );
 
   useEffect(() => {
     if ((data || !dataQueryContext.loading) && !previewDataAreSufficient(finalData)) {

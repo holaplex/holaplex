@@ -3,7 +3,12 @@ import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useGetProfileInfoFromPubKeyLazyQuery, useTwitterHandleFromPubKeyLazyQuery, useTwitterHandleFromPubKeyQuery, useWalletProfileLazyQuery } from 'src/graphql/indexerTypes';
+import {
+  useGetProfileInfoFromPubKeyLazyQuery,
+  useTwitterHandleFromPubKeyLazyQuery,
+  useTwitterHandleFromPubKeyQuery,
+  useWalletProfileLazyQuery,
+} from 'src/graphql/indexerTypes';
 import cx from 'classnames';
 import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
@@ -57,24 +62,26 @@ export const AvatarIcon = ({ address, index, data }: AvatarIconProps) => {
   const leftPos = index * leftPosPixls;
 
   // query needed data if it wasnt provided
-  useEffect(() => {
-    async function queryData(walletAddress: string) {
-      await twitterHandleQuery({variables: {pubKey: walletAddress}});
-      const queriedTwitterHandle = twitterHandleQueryContext.data?.wallet?.profile?.handle;
-      if (queriedTwitterHandle) {
-        setTwitterHandle(queriedTwitterHandle);
-        walletProfileQuery({
-          variables: {
-            handle: queriedTwitterHandle,
-          },
-        });
+  useEffect(
+    () => {
+      async function queryData(walletAddress: string) {
+        await twitterHandleQuery({ variables: { pubKey: walletAddress } });
+        const queriedTwitterHandle = twitterHandleQueryContext.data?.wallet?.profile?.handle;
+        if (queriedTwitterHandle) {
+          setTwitterHandle(queriedTwitterHandle);
+          walletProfileQuery({
+            variables: {
+              handle: queriedTwitterHandle,
+            },
+          });
+        }
       }
-    }
 
-    if (!data) queryData(address);
-  }, 
-  // dont include the results of the queries because this will re-trigger querying
-  [walletProfileQuery, twitterHandleQuery, address, data]);
+      if (!data) queryData(address);
+    },
+    // dont include the results of the queries because this will re-trigger querying
+    [walletProfileQuery, twitterHandleQuery, address, data]
+  );
 
   useEffect(() => {
     let result: string = getPFPFromPublicKey(address);
@@ -146,23 +153,25 @@ export const Avatar = ({
   const [pfpUrl, setPfpUrl] = useState<string | undefined>(data?.pfpUrl);
   const { publicKey } = useWallet();
 
-  useEffect(() => {
-    async function getProfileInfoAndSetState(): Promise<void> {
-      await getProfileInfoQuery({variables: {pubKey: address}});
-      if (getProfileInfoQueryContext.data) {
-        if (getProfileInfoQueryContext.data.wallet.profile?.handle) {
-          setTwitterHandle(getProfileInfoQueryContext.data.wallet.profile?.handle);
-        }
-        if (getProfileInfoQueryContext.data.wallet.profile?.profileImageUrl) {
-          setPfpUrl(getProfileInfoQueryContext.data.wallet.profile?.profileImageUrl);
+  useEffect(
+    () => {
+      async function getProfileInfoAndSetState(): Promise<void> {
+        await getProfileInfoQuery({ variables: { pubKey: address } });
+        if (getProfileInfoQueryContext.data) {
+          if (getProfileInfoQueryContext.data.wallet.profile?.handle) {
+            setTwitterHandle(getProfileInfoQueryContext.data.wallet.profile?.handle);
+          }
+          if (getProfileInfoQueryContext.data.wallet.profile?.profileImageUrl) {
+            setPfpUrl(getProfileInfoQueryContext.data.wallet.profile?.profileImageUrl);
+          }
         }
       }
-    }
 
-    if (!data) getProfileInfoAndSetState();
-  }, 
-  // dont include results of the query to avoid re-triggering
-  [data, useGetProfileInfoFromPubKeyLazyQuery, address]);
+      if (!data) getProfileInfoAndSetState();
+    },
+    // dont include results of the query to avoid re-triggering
+    [data, useGetProfileInfoFromPubKeyLazyQuery, address]
+  );
 
   const isYou = publicKey?.toBase58() === address;
   const displayName = isYou

@@ -36,7 +36,6 @@ export interface WalletDependantPageProps {
   banner: string;
 }
 
-
 export const getProfileServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (
   ctx
 ) => {

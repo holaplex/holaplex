@@ -148,9 +148,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
       <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
         <div className="pointer-events-auto">
           <AvatarIcons
-            profiles={
-              finalData.creators.map(convertCreatorDataToAvatarIconProps) || []
-            }
+            profiles={finalData.creators.map(convertCreatorDataToAvatarIconProps) || []}
           />
         </div>
       </div>
@@ -197,9 +195,9 @@ function dataAreSufficient(data?: MarketplacePreviewData): boolean {
 function convertCreatorDataToAvatarIconProps(
   data: MarketplacePreviewData['creators'][0]
 ): AvatarIconsProps['profiles'][0] {
-  // always supply 'data' so that the avatar component doesnt attempt to 
+  // always supply 'data' so that the avatar component doesnt attempt to
   //  retrieve the data itself (it will find nothing since we already know it's not there)
-  const result: AvatarIconsProps['profiles'][0] = { address: data.creatorAddress, data: {}};
+  const result: AvatarIconsProps['profiles'][0] = { address: data.creatorAddress, data: {} };
   if (data.profile) {
     result.data!.pfpUrl = data.profile.profileImageUrlHighres;
     result.data!.twitterHandle = data.profile.profileImageUrlHighres;

@@ -197,10 +197,10 @@ function FollowCard(props: {
 export const ProfileHandle = ({ user }: { user: User }) => {
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-  
+
   useEffect(() => {
     async function getTwitterHandleAndSetState(): Promise<void> {
-      await twitterHandleQuery({variables: {pubKey: user.address}});
+      await twitterHandleQuery({ variables: { pubKey: user.address } });
       if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
@@ -413,10 +413,10 @@ export function ProfilePFP({ user }: { user: User }) {
     user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
   );
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-  
+
   useEffect(() => {
     async function getTwitterHandleAndSetState(): Promise<void> {
-      await twitterHandleQuery({variables: {pubKey: user.address}});
+      await twitterHandleQuery({ variables: { pubKey: user.address } });
       if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }

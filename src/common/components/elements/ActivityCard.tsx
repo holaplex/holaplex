@@ -35,7 +35,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
   const ToHelper = () => {
     const { data } = useTwitterHandleFromPubKeyQuery({
-      variables: { pubKey:  activity.toUser?.address},
+      variables: { pubKey: activity.toUser?.address },
     });
     const twitterHandle: string | undefined = data?.wallet?.profile?.handle;
     const profileURL = window.location.origin + '/profiles/' + activity.toUser?.address;
