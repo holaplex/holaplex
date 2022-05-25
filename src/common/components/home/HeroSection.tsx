@@ -25,7 +25,7 @@ export default function HeroSection() {
 
   return (
     <div className="">
-      <div className="relative h-[400px]">
+      <div className="relative h-[400px] overflow-visible">
         <Marquee speed={feedItems.length ? 40 : 0} gradient={false} pauseOnHover={true}>
           <div
             className={classNames(
@@ -53,7 +53,7 @@ export default function HeroSection() {
             {Array(N_ITEMS)
               .fill(null)
               .map((_, i) => (
-                <div className="w-96 flex-shrink-0" key={i}>
+                <div className="w-96 flex-shrink-0 overflow-visible" key={i}>
                   <LoadingFeedCard />
                 </div>
               ))}
