@@ -161,7 +161,11 @@ export function ActivityCard(props: { activity: IFeedItem }) {
         >
           {activityThumbnailImageURL && (
             <img
-              className={thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'}
+              className={
+                thumbnailType === 'DEFAULT'
+                  ? 'aspect-square rounded-md object-cover'
+                  : 'aspect-square rounded-full object-cover'
+              }
               src={imgOpt(activityThumbnailImageURL, 200)!}
               alt="activity thumbnail"
             />
