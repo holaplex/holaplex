@@ -128,13 +128,13 @@ const FollowerCountSkeleton = () => (
   <div className="flex flex-col">
     <div className="mt-10 flex flex-row">
       <button disabled className="flex flex-col">
-        <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
+        <div className="animate-pulse rounded-sm bg-gradient-to-r from-gray-900 to-gray-800 font-bold">
           &nbsp;&nbsp;&nbsp;&nbsp;
         </div>
         <div className="text-sm text-gray-200">Followers</div>
       </button>
       <button disabled className="ml-4 flex flex-col">
-        <div className="animate-pulse rounded-sm bg-gradient-to-r from-slate-800 to-slate-600 font-bold">
+        <div className="animate-pulse rounded-sm bg-gradient-to-r from-gray-900 to-gray-800 font-bold">
           &nbsp;&nbsp;&nbsp;&nbsp;
         </div>
         <div className="text-sm text-gray-200">Following</div>

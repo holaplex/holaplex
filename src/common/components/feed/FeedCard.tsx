@@ -260,7 +260,12 @@ function FeedActionBanner(props: {
   }
 
   return (
-    <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
+    <div
+      className={classNames(
+        'flex w-full flex-wrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
+      )}
+    >
       <ProfilePFP
         user={{
           address: props.event.walletAddress,
@@ -276,8 +281,9 @@ function FeedActionBanner(props: {
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
       </div>
-
-      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      {!props.options?.hideAction && (
+        <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      )}
     </div>
   );
 }
@@ -528,7 +534,7 @@ function AggregateCard(props: { event: AggregateEvent }) {
 export const LoadingFeedCard = () => {
   return (
     <div
-      className={`relative flex aspect-square animate-pulse flex-col justify-end overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+      className={`relative flex aspect-square animate-pulse flex-col justify-end  rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
     >
       <div className={`h-12 w-full rounded-full bg-gray-800`} />
       <div className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-gray-800`} />
