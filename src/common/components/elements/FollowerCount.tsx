@@ -126,22 +126,25 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
-      <div className="relative mt-2 flex flex-row justify-start -space-x-2">
-        {data?.connections.map((follower, i) => (
-          <FollowerBubble
-            isFirst={i === 0}
-            key={follower.from.address as string}
-            follower={follower}
-          />
-        ))}
-        {followers > 4 ? (
-          <OtherFollowersNumberBubble
-            onClick={onOtherFollowersClick}
-            className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
-          >
-            +{followers - 4}
-          </OtherFollowersNumberBubble>
-        ) : null}
+      <div className={`flex items-center gap-2`}>
+        <p className={`m-0 text-left text-lg font-semibold`}>{followers}</p>
+        <div className="relative mt-2 flex flex-row justify-start -space-x-4">
+          {data?.connections.map((follower, i) => (
+            <FollowerBubble
+              isFirst={i === 0}
+              key={follower.from.address as string}
+              follower={follower}
+            />
+          ))}
+          {followers > 4 ? (
+            <OtherFollowersNumberBubble
+              onClick={onOtherFollowersClick}
+              className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
+            >
+              +{followers - 4}
+            </OtherFollowersNumberBubble>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -173,23 +176,26 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Collected by</div>
-      <div className="relative mt-2 flex flex-row justify-start -space-x-2">
-        {collectedProfiles?.slice(0, 4)?.map((collector, i) => (
-          <FollowerBubbleImage
-            isFirst={i === 0}
-            key={collector?.walletAddress as string}
-            image={collector?.profileImageUrlLowres}
-            address={collector?.walletAddress as string}
-          />
-        ))}
-        {collectedProfiles.length > 4 ? (
-          <OtherFollowersNumberBubble
-            onClick={onOtherCollectedClick}
-            className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
-          >
-            +{collectedProfiles.length - 4}
-          </OtherFollowersNumberBubble>
-        ) : null}
+      <div className={`flex items-center gap-2`}>
+        <p className={`m-0 text-left text-lg font-semibold`}>{collectedProfiles.length}</p>
+        <div className="relative mt-2 flex flex-row justify-start -space-x-4">
+          {collectedProfiles?.slice(0, 4)?.map((collector, i) => (
+            <FollowerBubbleImage
+              isFirst={i === 0}
+              key={collector?.walletAddress as string}
+              image={collector?.profileImageUrlLowres}
+              address={collector?.walletAddress as string}
+            />
+          ))}
+          {collectedProfiles.length > 4 ? (
+            <OtherFollowersNumberBubble
+              onClick={onOtherCollectedClick}
+              className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
+            >
+              +{collectedProfiles.length - 4}
+            </OtherFollowersNumberBubble>
+          ) : null}
+        </div>
       </div>
     </div>
   );
