@@ -157,7 +157,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
     variables: { creator: publicKey },
   });
   if (loading) return null;
-  let collectedProfiles: TwitterProfile[] = [];
+  const collectedProfiles: TwitterProfile[] = [];
   data?.nfts.map((nft) => {
     if (
       !collectedProfiles.find(

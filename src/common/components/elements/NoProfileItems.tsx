@@ -51,8 +51,8 @@ const NoProfileItems: FC<NoProfileItemsProps> = ({ variant = 'collected' }) => {
         <div
           className={`mt-12 flex w-full flex-col rounded-lg border border-gray-800 p-4 text-center`}
         >
-          <span className="text-center text-2xl font-semibold">{`No items`}</span>
-          <span className="mt-2 text-gray-300 ">{`Nothing to see here...`}</span>
+          <span className="text-center text-2xl font-semibold">No items</span>
+          <span className="mt-2 text-gray-300 ">Nothing to see here...</span>
         </div>
       );
   }

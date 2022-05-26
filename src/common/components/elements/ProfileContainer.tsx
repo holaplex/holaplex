@@ -15,8 +15,7 @@ import { useProfileData } from '@/common/context/ProfileData';
 import { FollowUnfollowButtonDataWrapper } from '../home/FeaturedProfilesSection';
 
 export const ProfileContainer: FC = ({ children }) => {
-  const profileData = useProfileData();
-  const { banner, profilePicture, twitterHandle } = profileData;
+  const { banner, profilePicture, twitterHandle, publicKey } = useProfileData();
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
@@ -40,20 +39,19 @@ export const ProfileContainer: FC = ({ children }) => {
                 />
               </div>
               <div className="mt-16 flex justify-center lg:justify-start">
-                {anchorWallet?.publicKey.toString() == profileData.publicKey.toString() &&
-                  !twitterHandle && (
-                    <ConnectTwitterButton
-                      address={new PublicKey(profileData.publicKey)}
-                      connection={connection}
-                      wallet={anchorWallet}
-                      cluster={'mainnet-beta'}
-                      variant={'secondary'}
-                      style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
-                    />
-                  )}
-                {anchorWallet?.publicKey.toString() !== profileData.publicKey.toString() && (
+                {anchorWallet?.publicKey.toString() == publicKey.toString() && !twitterHandle && (
+                  <ConnectTwitterButton
+                    address={new PublicKey(publicKey)}
+                    connection={connection}
+                    wallet={anchorWallet}
+                    cluster={'mainnet-beta'}
+                    variant={'secondary'}
+                    style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
+                  />
+                )}
+                {anchorWallet?.publicKey.toString() !== publicKey.toString() && (
                   <FollowUnfollowButtonDataWrapper
-                    targetPubkey={profileData.publicKey.toString()}
+                    targetPubkey={publicKey.toString()}
                     className={`pointer-events-auto flex`}
                   />
                 )}
