@@ -20,7 +20,7 @@ import {
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAttributes,
-  shouldAggregate,
+  shouldAggregateFollows,
 } from '@/common/components/feed/feed.utils';
 
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
@@ -133,11 +133,11 @@ const AlphaPage = ({ address }: { address: string }) => {
   }
 
   async function loadMore(inView: boolean) {
-    console.log('in view', {
-      inView,
-      loading,
-      feedEventsN: feedEvents.length,
-    });
+    // console.log('in view', {
+    //   inView,
+    //   loading,
+    //   feedEventsN: feedEvents.length,
+    // });
     if (!inView || loading || feedEvents.length <= 0) {
       return;
     }
@@ -155,11 +155,6 @@ const AlphaPage = ({ address }: { address: string }) => {
         if (moreFeedEvents.length === 0) {
           setHasMoreFeedEvents(false);
         }
-
-        console.log('update query', {
-          prevFeedEventsN: prevFeedEvents?.length,
-          moreFeedEventsN: moreFeedEvents?.length,
-        });
 
         fetchMoreResult.feedEvents = prevFeedEvents.concat(moreFeedEvents);
 
@@ -188,7 +183,7 @@ const AlphaPage = ({ address }: { address: string }) => {
         return feedItems;
       }
 
-      const noAggregation = true;
+      const noAggregation = false;
       if (noAggregation) {
         feedItems.push(event);
         return feedItems;
@@ -203,13 +198,14 @@ const AlphaPage = ({ address }: { address: string }) => {
       const nextNextEvent = feedEvents[i + 2];
       feedItems.push(event);
 
-      if (shouldAggregate(event, nextEvent, nextNextEvent)) {
+      // Single person aggregate
+      if (shouldAggregateFollows(event, nextEvent, nextNextEvent)) {
         // const eventsAggregated: FeedQueryEvent[] = feedEvents
         //   .slice(i)
         //   .filter((fe, i, arr) => shouldAggregate(fe, arr[i + 1]));
         const eventsAggregated: FeedQueryEvent[] = [feedEvents[i]];
         let j = i + 1;
-        while (shouldAggregate(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
+        while (shouldAggregateFollows(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
           eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
           j++;
         }
@@ -218,7 +214,7 @@ const AlphaPage = ({ address }: { address: string }) => {
         skipIndex = j + 2;
 
         feedItems.push({
-          feedEventId: 'agg_' + event.feedEventId,
+          feedEventId: `agg_${event.feedEventId}`,
           __typename: 'AggregateEvent',
           createdAt: event.createdAt,
           walletAddress: event.walletAddress,
@@ -234,12 +230,6 @@ const AlphaPage = ({ address }: { address: string }) => {
   const feedItems = getFeedItems(feedEvents);
 
   const fetchMoreIndex = feedItems.length - Math.floor(INFINITE_SCROLL_AMOUNT_INCREMENT / 2);
-
-  console.log('Feed', {
-    feedEvents,
-    feedItems,
-    feedAttrs,
-  });
 
   return (
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
@@ -267,9 +257,9 @@ const AlphaPage = ({ address }: { address: string }) => {
             {feedEvents.length === 0 && !loading && (
               <EmptyFeedCTA myFollowingList={myFollowingList} refetch={refetchFeed} />
             )}
-            {feedItems.map((fEvent) => (
+            {feedItems.map((fEvent, i) => (
               <FeedCard
-                key={fEvent.feedEventId + fEvent.walletAddress}
+                key={fEvent.feedEventId + fEvent.walletAddress + i}
                 event={fEvent}
                 myFollowingList={myFollowingList}
                 allEventsRef={feedItems}

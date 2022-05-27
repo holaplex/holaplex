@@ -1,5 +1,6 @@
 import { shortenAddress } from '@/modules/utils/string';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { DateTime } from 'luxon';
 import {
   BidReceipt,
   FeedQuery,
@@ -138,7 +139,18 @@ export function generateFeedCardAttributes(
   }
 }
 
-export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: FeedQueryEvent) {
+export const aggregateEventsTime = (events: FeedQueryEvent[]) => {
+  let avgTime = 0;
+  events.forEach((event) => {
+    const date = DateTime.fromISO(event.createdAt).toMillis();
+    avgTime += date;
+  });
+  avgTime = avgTime / events.length;
+  const avgDate = DateTime.fromMillis(avgTime);
+  return avgDate;
+};
+
+export function shouldAggregateFollows(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: FeedQueryEvent) {
   // for now
 
   if (!e1 || !e2 || !e3) return false;
@@ -147,7 +159,10 @@ export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: Feed
     e1.__typename === e2.__typename &&
     e2.__typename == e3.__typename &&
     e1.walletAddress === e2.walletAddress &&
-    e2.walletAddress === e3.walletAddress
+    e2.walletAddress === e3.walletAddress &&
+    e1.__typename === 'FollowEvent' &&
+    e2.__typename === 'FollowEvent' &&
+    e3.__typename === 'FollowEvent'
   );
 }
 

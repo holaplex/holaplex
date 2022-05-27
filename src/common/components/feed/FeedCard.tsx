@@ -24,6 +24,7 @@ import NFTPreview from '../elements/NFTPreview';
 import OfferForm from '../forms/OfferForm';
 import {
   AggregateEvent,
+  aggregateEventsTime,
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
@@ -35,6 +36,8 @@ import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
+import Carousel from 'react-grid-carousel';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -51,8 +54,9 @@ export function FeedCard(props: {
 
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  console.log(props.event.feedEventId);
   if (props.event.__typename === 'AggregateEvent') {
-    return <AggregateCard event={props.event} />;
+    return <FollowAggregateCard event={props.event} myFollowingList={props.myFollowingList} />;
   }
 
   const attrs = generateFeedCardAttributes(props.event, props.myFollowingList);
@@ -474,31 +478,68 @@ function ShareMenu(props: { address: string; className: string }) {
   );
 }
 
+const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingList?: string[] }) => {
+  const { connection } = useConnection();
+  const anchorWallet = useAnchorWallet();
+  const walletConnectionPair = useMemo(
+    () => ({ wallet: anchorWallet!, connection }),
+    [anchorWallet, connection]
+  );
+
+  return (
+    <div className={`flex flex-col items-center gap-2 p-4`}>
+      <ProfilePFP user={user} />
+      <p className={`m-0 text-base font-semibold`}>
+        <ProfileHandle user={user} />
+      </p>
+      <FollowUnfollowButton
+        source={'feed'}
+        className={`!w-full sm:ml-auto sm:w-auto`}
+        walletConnectionPair={walletConnectionPair}
+        toProfile={{ address: user.address }}
+        type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
+      />
+    </div>
+  );
+};
+
 // A card to house aggregated Mint events, and maybe follow events
-function AggregateCard(props: { event: AggregateEvent }) {
+function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: string[] }) {
+  const CAROUSEL_COLS: number = 3;
   const [modalOpen, setModalOpen] = useState(false);
 
-  // return (
-  //   <div className="relative  flex -space-x-96 -space-y-4  ">
-  //     {props.event.eventsAggregated.slice(1, 5).map((e, i, l) => (
-  //       // <FeedCard
-  //       //   event={e}
-  //       //   key={e.feedEventId}
-  //       //   anchorWallet={props.anchorWallet}
-  //       //   className={` hover:z-50 z-${(l.length - i) * 10}  `}
-  //       // />
-  //       <img
-  //         key={e.feedEventId}
-  //         className={classNames(
-  //           ` hover:z-50 z-${(l.length - i) * 10}  `,
-  //           'aspect-square w-full rounded-lg '
-  //         )}
-  //         src={e.nft?.image}
-  //         alt={e.nft?.name}
-  //       />
-  //     ))}
-  //   </div>
-  // );
+  return (
+    <div className={`flex flex-col rounded-lg bg-gray-900 p-4 shadow-2xl shadow-black`}>
+      <div className={`flex w-full items-center gap-4 border-b border-b-gray-800 pb-4`}>
+        <ProfilePFP user={{ address: props.event.walletAddress, profile: props.event.profile }} />
+        <div className={`flex flex-col gap-2`}>
+          <p className={`m-0 text-base`}>
+            <span className={`font-semibold`}>
+              <ProfileHandle
+                user={{ address: props.event.walletAddress, profile: props.event.profile }}
+              />
+            </span>
+            &nbsp;followed {props.event.eventsAggregated.length} people
+          </p>
+          <p className={`m-0 text-xs text-gray-300`}>
+            {aggregateEventsTime(props.event.eventsAggregated).toRelative()}
+          </p>
+        </div>
+      </div>
+      <div className={`grid w-full grid-cols-3 grid-rows-1 overflow-x-visible`}>
+        {props.event.eventsAggregated.map((e: any) => (
+          <ProfileMiniCard
+            key={e.feedEventId + e?.connection?.to?.address}
+            user={{
+              address: e?.connection?.to?.address,
+              profile: e.connection.to?.profile,
+            }}
+            myFollowingList={props.myFollowingList}
+          />
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div
