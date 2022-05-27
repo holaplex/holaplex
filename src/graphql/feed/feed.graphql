@@ -1,5 +1,5 @@
-query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0) {
-  feedEvents(wallet: $address, limit: $limit, offset: $offset) {
+query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
+  feedEvents(wallet: $address, limit: $limit, offset: $offset, excludeTypes: $excludeTypes) {
     __typename
     ... on MintEvent {
       feedEventId

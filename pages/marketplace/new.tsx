@@ -130,7 +130,10 @@ export default function New() {
       const settings = new File([JSON.stringify(input)], 'storefront_settings');
 
       const { uri } = await ipfsSDK.uploadFile(settings);
-
+      if (isNil(uri)){
+        toast("There was a problem uploding store settings, please refresh the page and try again.", { autoClose: 60000, type: 'error' });
+        return
+      }
       const auctionHouseCreateInstruction = await createAuctionHouse({
         wallet: solana as Wallet,
         sellerFeeBasisPoints,
@@ -193,7 +196,6 @@ export default function New() {
               return;
             }
             const current = findIndex(propEq('name', changed.name), fields);
-
             setFields(update(current, changed, fields));
           }}
           onFinish={onSubmit}
@@ -228,7 +230,7 @@ export default function New() {
           </Row>
           <Row>
             <Col span={24}>
-              <h2 className="mb-7 text-3xl font-black">Customize your marketplace</h2>
+              <h2 className="text-3xl font-black mb-7">Customize your marketplace</h2>
 
               <Form.Item
                 label="Hero Banner"
@@ -238,7 +240,7 @@ export default function New() {
               >
                 <Upload dragger className="h-[1000px]">
                   <div className="flex h-[8rem] flex-col justify-center">
-                    <span className="material-icons mb-2">add_circle_outline</span>
+                    <span className="mb-2 material-icons">add_circle_outline</span>
                     <p className="">Upload banner image (required)</p>
                     <p className="">1500px x 375px JPEG, PNG or GIF - max file size 2mb</p>
                   </div>
@@ -264,7 +266,7 @@ export default function New() {
               >
                 <Upload dragger>
                   <div className="flex h-[8rem] flex-col justify-center">
-                    <span className="material-icons mb-2">add_circle_outline</span>
+                    <span className="mb-2 material-icons">add_circle_outline</span>
                     <p className="ant-upload-text">Upload logo image</p>
                     <p className="ant-upload-hint">
                       225px x 225px JPEG, PNG or GIF - max file size 1mb
@@ -275,7 +277,7 @@ export default function New() {
               {values.theme.logo[0] && values.theme.logo[0].status === 'done' && (
                 <div className="mb-8">
                   <div className="mb-2 text-sm">Logo preview:</div>
-                  <Image
+                  <img
                     src={ifElse(
                       has('response'),
                       view(lensPath(['response', 'url'])),
@@ -328,7 +330,7 @@ export default function New() {
                   <>
                     <Space direction="vertical" size="middle" className="w-full">
                       {fields.map(({ key, name, ...restField }, idx) => (
-                        <Space key={key} direction="horizontal" size="middle" className="flex w-full justify-between mb-4">
+                        <Space key={key} direction="horizontal" size="middle" className="flex justify-between w-full mb-4">
                           <Typography.Text>{values.creators[idx].address}</Typography.Text>
                           <Button size="small" onClick={() => remove(idx)}>Remove</Button>
                         </Space>

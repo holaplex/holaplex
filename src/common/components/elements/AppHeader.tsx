@@ -18,6 +18,8 @@ import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
+import classNames from 'classnames';
+import { Button5 } from './Button2';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -65,8 +67,10 @@ export function AppHeader() {
 
   return (
     <>
-      <nav className={`hidden flex-row items-center justify-between gap-6 px-6 py-4 md:flex`}>
-        <div className={`flex w-full flex-row items-center gap-10 text-2xl font-bold`}>
+      <nav
+        className={`hidden flex-row items-center justify-between gap-6 bg-transparent px-6 py-4 md:flex`}
+      >
+        <div className={`flex w-full flex-row items-center gap-10 py-1 text-2xl font-bold`}>
           <Link href="/" passHref>
             <a className={`font-bold`}>
               👋&nbsp;&nbsp;<span>Holaplex</span>
@@ -78,24 +82,32 @@ export function AppHeader() {
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
             {connected && (
-              <HeaderLinkWrapper key="alpha" active={router.pathname === '/alpha'}>
-                <Link href="/alpha" passHref>
-                  <a className="hover:underline focus:underline">Alpha</a>
-                </Link>
-              </HeaderLinkWrapper>
+              <Link href="/alpha" passHref>
+                <a
+                  key="alpha"
+                  className={classNames(
+                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
+                  )}
+                >
+                  Alpha
+                </a>
+              </Link>
             )}
 
-            <HeaderLinkWrapper
-              key="mint-nfts"
-              active={router.pathname === '/nfts/new'}
-              className={`min-w-fit`}
-            >
-              <Link href="/nfts/new" passHref>
-                <a className="hover:underline focus:underline">Mint NFTs</a>
-              </Link>
-            </HeaderLinkWrapper>
+            <Link href="/nfts/new" passHref>
+              <a
+                key="create"
+                className={classNames(
+                  'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                  router.pathname === '/nfts/new' ? 'text-white' : 'text-gray-300'
+                )}
+              >
+                Create
+              </a>
+            </Link>
 
-            <Popover
+            {/* <Popover
               placement="bottom"
               content={
                 <div className="flex flex-col space-y-6">
@@ -125,8 +137,8 @@ export function AppHeader() {
               <a className="flex min-w-fit items-center">
                 About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
-            </Popover>
-            <Popover
+            </Popover> */}
+            {/* <Popover
               placement="bottom"
               content={
                 <div className="flex flex-col space-y-6">
@@ -174,14 +186,20 @@ export function AppHeader() {
               <a className="flex min-w-fit items-center">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
-            </Popover>
-            <DialectNotificationsButton />
+            </Popover> */}
+            {connectedAndInstalledWallet && <DialectNotificationsButton />}
+
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button loading={connecting} onClick={() => setVisible(true)} size="small">
+              <Button5
+                v="primary"
+                loading={connecting}
+                onClick={() => setVisible(true)}
+                className={`min-h-full text-lg font-medium`}
+              >
                 Connect
-              </Button>
+              </Button5>
             )}
           </div>
         )}
@@ -203,26 +221,25 @@ const MobileHeader = () => {
           {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
-        <MenuButton onClick={() => setDisplayMenu(true)}>
+        <button
+          className="flex items-center justify-center rounded-full shadow-lg shadow-black hover:bg-gray-800"
+          onClick={() => setDisplayMenu(true)}
+        >
           <MenuIcon color="#fff" />
-        </MenuButton>
+        </button>
       </MobileHeaderContainer>
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
     </>
   );
 };
 
-const MenuButton = styled.button`
-  ${ButtonReset}
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const EmojiLogoAnchor = styled.a`
   width: 40px;
   height: 40px;
-  font-size: 24px;
+  font-size: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const MobileHeaderContainer = styled.div`
@@ -236,60 +253,4 @@ const MobileHeaderContainer = styled.div`
   ${mq('md')} {
     display: none;
   }
-`;
-
-const HeaderTitle = styled.div`
-  font-size: 24px;
-  line-height: 2px;
-  font-weight: 700;
-  margin-right: 2rem;
-  flex-grow: 1;
-  a {
-    display: flex;
-    color: ${sv.colors.buttonText};
-    &:hover {
-      color: ${sv.colors.buttonText};
-    }
-  }
-
-  span {
-    display: none;
-  }
-
-  @media screen and (min-width: 550px) {
-    span {
-      display: block;
-    }
-  }
-`;
-
-const { Header } = Layout;
-
-const StyledHeader = styled(Header)`
-  display: none;
-  ${mq('md')} {
-    ${sv.flexRow};
-    margin: 5px;
-    padding: 1.25rem;
-  }
-`;
-
-const HeaderLinkWrapper = styled.div<{ active: boolean }>`
-  color: ${sv.colors.buttonText};
-  ${({ active }) => active && `text-decoration: underline;`}
-`;
-
-const LinkRow = styled(Space)`
-  @media screen and (max-width: 550px) {
-    .ant-space-item:nth-child(1) {
-      display: none;
-    }
-  }
-`;
-
-const CloseButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 `;

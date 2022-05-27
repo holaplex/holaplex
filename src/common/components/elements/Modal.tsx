@@ -2,6 +2,7 @@ import { Dispatch, FC, ReactNode, SetStateAction, useRef } from 'react';
 import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
 import cx from 'classnames';
 import { Close } from '@/components/icons/Close';
+import classNames from 'classnames';
 
 type ModalProps = {
   open: Boolean;
@@ -11,11 +12,19 @@ type ModalProps = {
     | Dispatch<SetStateAction<Boolean>>
     | ((open: Boolean) => void);
   children: ReactNode;
-  title: String;
+  title?: String;
   priority?: boolean;
+  short?: Boolean;
 };
 
-export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority = false }) => {
+export const Modal: FC<ModalProps> = ({
+  open,
+  setOpen,
+  children,
+  title,
+  priority = false,
+  short,
+}) => {
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setOpen(priority)); // disable outside alerter if priority (require clicking close)
 
@@ -31,7 +40,6 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority
         'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
         'transition-opacity duration-500 ease-in-out',
         'flex flex-col items-center justify-center',
-
         {
           'opacity-100': open,
           'opacity-0': !open,
@@ -44,7 +52,10 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority
     >
       <div
         ref={modalRef}
-        className="scrollbar-thumb-rounded-full relative flex h-full max-h-screen w-full flex-col overflow-y-auto rounded-xl bg-gray-900 p-6 text-white shadow-md scrollbar-thin scrollbar-track-gray-900  sm:h-auto sm:max-h-[50rem] sm:max-w-lg"
+        className={classNames(
+          'scrollbar-thumb-rounded-full relative flex h-full max-h-screen w-full flex-col overflow-y-auto rounded-xl bg-gray-900 p-6 text-white shadow-md scrollbar-thin scrollbar-track-gray-900  sm:h-auto  sm:max-w-lg',
+          short ? 'sm:max-h-[30rem]' : 'sm:max-h-[50rem]'
+        )}
       >
         <button
           onClick={() => setOpen(false)}
@@ -52,9 +63,11 @@ export const Modal: FC<ModalProps> = ({ open, setOpen, children, title, priority
         >
           <Close color={`#ffffff`} />
         </button>
-        <div className={`flex w-full items-center justify-center`}>
-          <h4 className={`text-2xl font-medium`}>{title}</h4>
-        </div>
+        {title && (
+          <div className={`flex w-full items-center justify-center`}>
+            <h4 className={`text-2xl font-medium`}>{title}</h4>
+          </div>
+        )}
         <div
           className={`scrollbar-thumb-rounded-full flex h-full w-full flex-col scrollbar-thin scrollbar-track-gray-900`}
         >

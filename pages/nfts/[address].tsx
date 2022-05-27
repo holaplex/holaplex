@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Custom404 from '../404';
 import Accordion from '../../src/common/components/elements/Accordion';
 import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
-import { imgOpt } from '../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { DateTime } from 'luxon';
@@ -15,7 +14,6 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-import { LoadingContainer } from '@/components/elements/LoadingPlaceholders';
 import { Tag } from '@/components/icons/Tag';
 import Button from '@/components/elements/Button';
 import {
@@ -38,11 +36,9 @@ import { apolloClient } from '../../src/graphql/apollo';
 import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
 import Head from 'next/head';
 import { Avatar, AvatarIcons } from '@/common/components/elements/Avatar';
-import Footer from '@/common/components/home/Footer';
 import { seededRandomBetween } from '../../src/modules/utils/random';
 import { SolscanIcon } from '../../src/common/components/icons/Solscan';
 import { ExplorerIcon } from '../../src/common/components/icons/Explorer';
-import NFTImage from '../../src/common/components/elements/NFTImage';
 import NFTFile from '../../src/common/components/elements/NFTFile';
 
 const Activities = ({
@@ -88,37 +84,52 @@ const Activities = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
-  const { data } = await apolloClient.query<ShareNftQuery>({
-    query: ShareNftDocument,
-    variables: {
-      subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      address: context?.params?.address,
-    },
-  });
-  const offers = data.nft?.offers || [];
-  const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
-  const topOffer = topOffers?.[0];
 
-  const listings = data.nft?.listings || [];
-  const topListings = listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
-  const topListing = topListings?.[0];
+  try {
+    const { data } = await apolloClient.query<ShareNftQuery>({
+      query: ShareNftDocument,
+      variables: {
+        subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+        address: context?.params?.address,
+      },
+    });
+    const offers = data.nft?.offers || [];
+    const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+    const topOffer = topOffers?.[0];
 
-  return {
-    props: {
-      address: nftAddress,
-      name: data.nft?.name || nftAddress,
-      description: data.nft?.description || '',
-      image:
-        data.nft?.image ||
-        `/images/gradients/gradient-${seededRandomBetween(
-          new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
-          1,
-          8
-        )}.png`,
-      listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
-      offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
-    },
-  };
+    const listings = data.nft?.listings || [];
+    const topListings =
+      listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+    const topListing = topListings?.[0];
+
+    return {
+      props: {
+        address: nftAddress,
+        name: data.nft?.name || nftAddress,
+        description: data.nft?.description || '',
+        image:
+          data.nft?.image ||
+          `/images/gradients/gradient-${seededRandomBetween(
+            new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
+            1,
+            8
+          )}.png`,
+        listedPrice: Number(topListing?.price) / LAMPORTS_PER_SOL || 0,
+        offerPrice: Number(topOffer?.price) / LAMPORTS_PER_SOL || 0,
+      },
+    };
+  } catch (err) {
+    return {
+      props: {
+        address: nftAddress,
+        name: '',
+        description: '',
+        image: '',
+        listedPrice: 0,
+        offerPrice: 0,
+      },
+    };
+  }
 };
 
 export default function NftByAddress({
@@ -139,7 +150,7 @@ export default function NftByAddress({
   const { publicKey } = useWallet();
   const router = useRouter();
 
-  const [queryNft, { data, loading, called, refetch }] = useNftMarketplaceLazyQuery();
+  const [queryNft, { data, loading, called, refetch, error }] = useNftMarketplaceLazyQuery();
 
   useEffect(() => {
     if (!address) return;
@@ -308,7 +319,7 @@ export default function NftByAddress({
                       </Link>
                     ) : (
                       <div>
-                        <AvatarIcons creators={nft?.creators || []} />
+                        <AvatarIcons profiles={nft?.creators || []} />
                       </div>
                     )}
                   </ul>
@@ -647,10 +658,10 @@ export default function NftByAddress({
                       <div className={`grid grid-cols-1 gap-4`}>
                         <DetailAddressRow title={`Mint address`} address={nft.mintAddress} />
                         <DetailAddressRow title={`Token address`} address={nft.address} />
-                        <DetailAddressRow
+                        {/*                         <DetailAddressRow
                           title={`Auction house`}
                           address={defaultListing?.address}
-                        />
+                        /> */}
                         <div className={`flex items-center justify-between`}>
                           <p className={`m-0 text-base font-normal text-gray-300`}>
                             Creator royalties

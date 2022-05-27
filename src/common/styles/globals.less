@@ -149,6 +149,10 @@ input[type='checkbox'] {
   background-color: #171717;
 }
 
+.ant-image {
+  width: 100%;
+}
+
 .ant-image-mask  {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
@@ -195,4 +199,12 @@ input[type='checkbox'] {
 
 .dt-bg-\[\#25BC3B\] {
   background-color: white !important;
+}
+
+.dt-relative.dt-flex.dt-items-center.dt-justify-center.dt-rounded-full {
+ @apply !rounded-full !p-6 !shadow-lg !shadow-black !transition;
+}
+
+.dt-relative.dt-flex.dt-items-center.dt-justify-center.dt-rounded-full:hover {
+  @apply !scale-125 !bg-gray-800;
 }

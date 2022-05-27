@@ -11,19 +11,44 @@ type FollowerBubbleProps = {
   follower: TopFollower;
 };
 
-export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
+type FollowBubbleImageProps = {
+  image: string;
+  address: string;
+  isFirst?: boolean;
+};
+
+export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image, address }) => {
   return (
-    <Link href={`/profiles/${follower.from.address as string}`} passHref>
+    <Link href={`/profiles/${address as string}/nfts`} passHref>
       <a
         className={cx({
-          'block': !isFirst,
+          block: !isFirst,
         })}
       >
         <FollowedByImage
-          className="h-8 w-8 rounded-full"
+          className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
+          src={image ?? getPFPFromPublicKey(address!)}
+          width={32}
+          height={32}
+          alt="PFP"
+        />
+      </a>
+    </Link>
+  );
+};
+
+export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
+  return (
+    <Link href={`/profiles/${follower.from.address as string}/nfts`} passHref>
+      <a
+        className={cx({
+          block: !isFirst,
+        })}
+      >
+        <FollowedByImage
+          className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
           src={
-            follower.from?.profile?.profileImageUrl ??
-            getPFPFromPublicKey(follower.from.address!)
+            follower.from?.profile?.profileImageUrl ?? getPFPFromPublicKey(follower.from.address!)
           }
           width={32}
           height={32}

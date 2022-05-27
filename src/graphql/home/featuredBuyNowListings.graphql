@@ -1,0 +1,72 @@
+query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
+  featuredListings(limit: $limit, offset: 0) {
+    address
+    metadata
+    nft {
+      address
+      name
+      sellerFeeBasisPoints
+      mintAddress
+      description
+      image
+      primarySaleHappened
+      creators {
+        address
+        share
+        verified
+      }
+      owner {
+        address
+        associatedTokenAccountAddress
+      }
+      purchases {
+        address
+        buyer
+        auctionHouse
+        price
+        createdAt
+      }
+      listings {
+        address
+        tradeState
+        seller
+        metadata
+        auctionHouse
+        price
+        tradeStateBump
+        createdAt
+        canceledAt
+      }
+      offers {
+        address
+        tradeState
+        buyer
+        metadata
+        auctionHouse
+        price
+        tradeStateBump
+        tokenAccount
+        createdAt
+        canceledAt
+      }
+    }
+  }
+  marketplace(subdomain: $marketplace) {
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+}

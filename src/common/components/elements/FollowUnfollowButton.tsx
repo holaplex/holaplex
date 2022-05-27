@@ -15,10 +15,24 @@ import { useProfileData } from '@/common/context/ProfileData';
 
 import classNames from 'classnames';
 import { useApolloClient } from '@apollo/client';
-import { AllConnectionsFromDocument, AllConnectionsToDocument } from 'src/graphql/indexerTypes';
+import {
+  AllConnectionsFromDocument,
+  AllConnectionsToDocument,
+  IsXFollowingYDocument,
+  GetProfileFollowerOverviewDocument,
+  GetCollectedByDocument,
+} from 'src/graphql/indexerTypes';
+
+export type FollowUnfollowSource =
+  | 'modalFollowing'
+  | 'modalFollowers'
+  | 'profileButton'
+  | 'feed'
+  | 'whotofollow'
+  | 'collectedBy';
 
 type FollowUnfollowButtonProps = {
-  source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
+  source: FollowUnfollowSource;
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;
@@ -76,7 +90,13 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
+        ],
       });
 
       trackSuccess();
@@ -123,7 +143,13 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
+        ],
       });
 
       trackSuccess();
@@ -170,23 +196,14 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
-  return type === 'Follow' ? (
+  return (
     <Button5
-      v="primary"
-      className={classNames('h-10 w-28', className)}
+      v={type === 'Follow' ? 'primary' : 'secondary'}
+      className={classNames('h-8 w-24 lg:h-10 lg:w-28', className)}
       onClick={() => handleClick()}
       loading={loading}
     >
-      Follow
-    </Button5>
-  ) : (
-    <Button5
-      v="secondary"
-      className={classNames('h-10 w-28', className)}
-      onClick={() => handleClick()}
-      loading={loading}
-    >
-      Unfollow
+      {type === 'Follow' ? 'Follow' : 'Unfollow'}
     </Button5>
   );
 };

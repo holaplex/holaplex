@@ -23,11 +23,6 @@ query shareNFT($subdomain: String!, $address: String!) {
     description
     image
     primarySaleHappened
-    attributes {
-      metadataAddress
-      value
-      traitType
-    }
     creators {
       address
       verified

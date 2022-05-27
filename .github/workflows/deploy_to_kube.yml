@@ -24,7 +24,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push Frontend to Amazon ECR (dev)
+      - name: Build, tag, and push Frontend to Amazon ECR
         id: build-frontend-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -33,13 +33,29 @@ jobs:
         run: |
           git_hash=$(git rev-parse --short "$GITHUB_SHA")
           app=frontend
-          image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-${GITHUB_REF##*/}-$git_hash"
-          docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=https://graph-test.holaplex.com/v1 .
+          git_branch=${GITHUB_REF##*/}
+          if [ $git_branch == 'main' ];then
+            graphql_endpoint="https://graph.holaplex.com/v1"
+          else
+            graphql_endpoint="https://graph-test.holaplex.com/v1"
+          fi
+          image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
+          docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
 
-      - name: Build, tag, and push signer to Amazon ECR (dev)
+          if [ $git_branch == 'dev' ];then
+            graphql_endpoint=https://graph-test.holaplex.tools/v1
+            git_branch=canary
+            image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
+            docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
+            echo "Pushing image to ECR..."
+            docker push $image_tag
+            echo "::set-output name=image::$image_tag"
+          fi
+
+      - name: Build, tag, and push signer to Amazon ECR
         id: build-signer-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -48,13 +64,45 @@ jobs:
         run: |
           git_hash=$(git rev-parse --short "$GITHUB_SHA")
           app=signer
-          image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-${GITHUB_REF##*/}-$git_hash"
+          git_branch=${GITHUB_REF##*/}
+          image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
           docker build -t $image_tag --target $app .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
+          if [ $git_branch == 'dev' ];then
+            git_branch=canary
+            image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
+            docker build -t $image_tag --target $app .
+            echo "Pushing image to ECR..."
+            docker push $image_tag
+            echo "::set-output name=image::$image_tag"
+          fi
 
-      - name: Triggering deployment manifest update in kubes repository
+
+      - name: Triggering deployment manifest update in kubes repository (Dev)
+        if: github.ref == 'refs/heads/dev'
+        uses: actions/github-script@v6
+        env:
+          BRANCH: ${{ github.ref_name }}
+        with:
+          github-token: ${{ secrets.ACTIONS_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'holaplex',
+              repo: 'kubes',
+              workflow_id: 'holaplex.yaml',
+              ref: process.env.BRANCH
+            });
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'holaplex',
+              repo: 'kubes',
+              workflow_id: 'holaplex.yaml',
+              ref: 'canary'
+            })
+
+      - name: Triggering deployment manifest update in kubes repository (prod)
+        if: github.ref == 'refs/heads/main'
         uses: actions/github-script@v6
         env:
           BRANCH: ${{ github.ref_name }}

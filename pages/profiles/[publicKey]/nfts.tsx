@@ -1,7 +1,5 @@
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
-import { showFirstAndLastFour } from '@/modules/utils/string';
 import { GetServerSideProps, NextPage } from 'next';
-import Head from 'next/head';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -27,7 +25,7 @@ import Button from '@/components/elements/Button';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
 import SellForm from '@/components/forms/SellForm';
-import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
@@ -38,6 +36,10 @@ import { InView } from 'react-intersection-observer';
 import { isEmpty } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import { ProfilePageHead } from '../[publicKey]';
+import classNames from 'classnames';
+import NoProfileItems, {
+  NoProfileVariant,
+} from '../../../src/common/components/elements/NoProfileItems';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -47,7 +49,7 @@ export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = 
 export const LoadingNFTCard = () => {
   return (
     <div
-      className={`overflow-hidden, animate-pulse rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+      className={`overflow-hidden, animate-pulse rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black`}
     >
       <div className={`aspect-square w-full rounded-lg bg-gray-800`} />
       <div className={`flex h-24 items-center py-6 px-4`}>
@@ -71,21 +73,35 @@ export const NFTCard = ({
   marketplace,
   refetch,
   loading = false,
+  showName = true,
+  newTab = false,
 }: {
   nft: OwnedNFT;
-  marketplace: Marketplace;
+  marketplace: { auctionHouse: AuctionHouse };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
   loading: boolean;
+  showName?: boolean;
+  newTab?: boolean;
 }) => {
   const { publicKey } = useWallet();
+  const [listNFTVisibility, setListNFTVisibility] = useState(false);
+  const [updateListingVisibility, setUpdateListingVisibility] = useState(false);
+  const [updateOfferVisibility, setUpdateOfferVisibility] = useState(false);
+
+  if (loading) return <LoadingNFTCard />;
+
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
+  const shownCreatorHandle =
+    sortedCreators.length > 0 ? sortedCreators[0].profile?.handle : undefined;
+  const shownCreatorPfpUrl =
+    sortedCreators.length > 0 ? sortedCreators[0].profile?.profileImageUrlLowres : undefined;
 
   const offers = nft?.offers;
-  const topOffers = offers?.sort((a, b) => Number(a.price) - Number(b.price));
+  const topOffers = offers?.slice()?.sort((a, b) => Number(a.price) - Number(b.price));
   const topOffer = topOffers?.[0];
   const addedOffer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(addedOffer);
@@ -96,15 +112,11 @@ export const NFTCard = ({
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;
 
-  const [listNFTVisibility, setListNFTVisibility] = useState(false);
-  const [updateListingVisibility, setUpdateListingVisibility] = useState(false);
-  const [updateOfferVisibility, setUpdateOfferVisibility] = useState(false);
-
   return (
     <>
-      <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black transition duration-[300ms] hover:scale-[1.02]">
+      <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black transition duration-[300ms] hover:scale-[1.02]">
         <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
-          <div className={`cursor-pointer`}>
+          <a target={newTab ? `_blank` : `_self`} className={`cursor-pointer`}>
             <div className={`relative `}>
               <img
                 src={imgOpt(nft.image, 600)}
@@ -115,7 +127,12 @@ export const NFTCard = ({
                 <div className={`absolute left-0 top-0 flex flex-row items-center p-4`}>
                   <Link href={`/profiles/${shownCreatorAddress}`}>
                     <a className="text-gray-300">
-                      <Avatar address={shownCreatorAddress} showAddress={false} border={true} />
+                      <Avatar
+                        address={shownCreatorAddress}
+                        showAddress={false}
+                        border={true}
+                        data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
+                      />
                     </a>
                   </Link>
 
@@ -131,37 +148,45 @@ export const NFTCard = ({
               )}
             </div>
 
-            <div className="flex h-24 items-center bg-gray-900 py-6">
-              <p className="w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold">
+            <div className="flex items-center bg-gray-900 py-4">
+              <p
+                className={classNames(
+                  'w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold',
+                  { hidden: !showName }
+                )}
+              >
                 {nft.name}
               </p>
             </div>
-          </div>
+          </a>
         </Link>
-        <div className={`h-20 md:h-28 xl:h-20`}>
+        <div>
           <div
-            className={`flex h-full w-full items-center justify-between md:flex-col md:items-start md:justify-between xl:flex-row xl:items-center xl:justify-between`}
+            className={`flex h-full w-full items-end justify-between md:flex-col md:items-center md:justify-between xl:flex-row xl:items-end xl:justify-between`}
           >
             {hasDefaultListing && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Price</li>
-                <DisplaySOL amount={Number(defaultListing?.price)} />
+                <li className={`mb-2 text-sm font-bold text-gray-300 md:text-base`}>Price</li>
+                <DisplaySOL
+                  amount={Number(defaultListing?.price)}
+                  className="text-sm md:text-base"
+                />
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && Boolean(lastSale) && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Last sale</li>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Last sale</li>
                 <DisplaySOL amount={Number(lastSale)} />
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Not listed</li>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Not listed</li>
               </ul>
             )}
             {!hasDefaultListing && hasAddedOffer && (
               <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300`}>Your offer</li>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Your offer</li>
                 <DisplaySOL amount={Number(addedOffer?.price) || 0} />
               </ul>
             )}
@@ -259,6 +284,7 @@ interface NFTGridProps {
   nfts: OwnedNFT[];
   marketplace: Marketplace;
   gridView: '1x1' | '2x2' | '3x3';
+  ctaVariant?: NoProfileVariant;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -274,6 +300,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
   refetch,
   onLoadMore,
   hasMore,
+  ctaVariant,
   loading = false,
 }) => {
   return (
@@ -296,15 +323,21 @@ export const NFTGrid: FC<NFTGridProps> = ({
           </>
         ) : (
           <>
-            {nfts.map((nft) => (
-              <NFTCard
-                key={nft.address}
-                nft={nft}
-                refetch={refetch}
-                loading={loading}
-                marketplace={marketplace}
-              />
-            ))}
+            {nfts.length === 0 ? (
+              <div className={`col-span-full`}>
+                <NoProfileItems variant={ctaVariant} />
+              </div>
+            ) : (
+              nfts.map((nft) => (
+                <NFTCard
+                  key={nft.address}
+                  nft={nft}
+                  refetch={refetch}
+                  loading={loading}
+                  marketplace={marketplace}
+                />
+              ))
+            )}
           </>
         )}
       </div>
@@ -468,7 +501,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
       />
       <ProfileContainer>
-        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 px-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -504,6 +537,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
+          ctaVariant={`collected`}
           hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {

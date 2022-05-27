@@ -1,33 +1,21 @@
 import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import { getTwitterHandle, useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
-import { Popover } from '@headlessui/react';
-import { ShareIcon } from '@heroicons/react/outline';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  FeedEvent,
-  FeedQuery,
   ListingEvent,
   Nft,
-  PurchaseEvent,
-  useMarketplacePreviewQuery,
   useNftMarketplaceLazyQuery,
-  useNftMarketplaceQuery,
+  useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
-  useWalletProfileQuery,
-  Wallet,
 } from 'src/graphql/indexerTypes';
-import { FollowEvent } from 'src/graphql/indexerTypes.ssr';
-import { JsxElement } from 'typescript';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import Modal from '../elements/Modal';
@@ -39,8 +27,7 @@ import {
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
-  generateFeedCardAtributes,
-  getHandle,
+  generateFeedCardAttributes,
   User,
 } from './feed.utils';
 import BuyForm from '../forms/BuyForm';
@@ -49,11 +36,16 @@ import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
 
+interface FeedCardOptions {
+  hideAction?: boolean;
+}
+
 export function FeedCard(props: {
   event: FeedItem;
   myFollowingList?: string[];
   className?: string;
   allEventsRef?: FeedItem[];
+  options?: FeedCardOptions;
 }) {
   const { track } = useAnalytics();
 
@@ -63,7 +55,7 @@ export function FeedCard(props: {
     return <AggregateCard event={props.event} />;
   }
 
-  const attrs = generateFeedCardAtributes(props.event, props.myFollowingList);
+  const attrs = generateFeedCardAttributes(props.event, props.myFollowingList);
   // console.log('Feed card', props.event.feedEventId, {
   //   event: props.event,
   //   attrs,
@@ -91,7 +83,9 @@ export function FeedCard(props: {
     >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
-          {!imgLoaded && (
+          {false && (
+            // removed for now to work with new hero section. Add it and the hero feed has massive flickering on load
+            // !imgLoaded
             <LoadingContainer className=" aspect-square w-full rounded-lg bg-gray-800 shadow " />
           )}
 
@@ -123,7 +117,7 @@ export function FeedCard(props: {
                   })
                 }
                 className="aspect-square w-full rounded-lg object-cover "
-                src={attrs.nft?.image}
+                src={imgOpt(attrs.nft?.image || '', 600)}
                 alt={attrs.nft?.name}
               />
             )
@@ -132,7 +126,7 @@ export function FeedCard(props: {
       </Link>
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
-        <FeedActionBanner attrs={attrs} event={props.event} />
+        <FeedActionBanner attrs={attrs} event={props.event} options={props.options} />
       </div>
     </div>
   );
@@ -201,13 +195,18 @@ function FollowCard(props: {
 }
 
 export const ProfileHandle = ({ user }: { user: User }) => {
-  const { connection } = useConnection();
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
+
   useEffect(() => {
+    async function getTwitterHandleAndSetState(): Promise<void> {
+      await twitterHandleQuery({ variables: { pubKey: user.address } });
+      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
+        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
+      }
+    }
     if (!twitterHandle) {
-      getTwitterHandle(user.address, connection).then((th) => {
-        if (th) setTwitterHandle(th);
-      });
+      getTwitterHandleAndSetState();
     }
   }, []);
 
@@ -221,6 +220,7 @@ export const ProfileHandle = ({ user }: { user: User }) => {
 function FeedActionBanner(props: {
   event: FeedQueryEvent; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
   attrs: FeedCardAttributes;
+  options?: FeedCardOptions;
 }) {
   const attrs = props.attrs;
   const anchorWallet = useAnchorWallet();
@@ -231,8 +231,9 @@ function FeedActionBanner(props: {
   let action: JSX.Element | null = null;
   const yourEvent = props.event.walletAddress === myPubkey;
   const youOwnThisNFT = attrs.nft?.owner?.address === myPubkey;
-
-  if (props.event.__typename === 'ListingEvent' && !yourEvent) {
+  if (props.options?.hideAction) {
+    action = null;
+  } else if (props.event.__typename === 'ListingEvent' && !yourEvent) {
     action = <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />;
   } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
     action = (
@@ -259,7 +260,12 @@ function FeedActionBanner(props: {
   }
 
   return (
-    <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
+    <div
+      className={classNames(
+        'flex w-full flex-wrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
+      )}
+    >
       <ProfilePFP
         user={{
           address: props.event.walletAddress,
@@ -275,8 +281,9 @@ function FeedActionBanner(props: {
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
       </div>
-
-      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      {!props.options?.hideAction && (
+        <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      )}
     </div>
   );
 }
@@ -407,17 +414,21 @@ const OfferAction = (props: { nft: any }) => {
 
 export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
-  const { connection } = useConnection();
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [pfpUrl, setPfpUrl] = useState(
     user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
   );
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
   useEffect(() => {
+    async function getTwitterHandleAndSetState(): Promise<void> {
+      await twitterHandleQuery({ variables: { pubKey: user.address } });
+      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
+        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
+      }
+    }
     if (!twitterHandle) {
-      getTwitterHandle(user.address, connection).then((twitterHandle) => {
-        if (twitterHandle) setTwitterHandle(twitterHandle);
-      });
+      getTwitterHandleAndSetState();
     }
   }, []);
 
@@ -523,7 +534,7 @@ function AggregateCard(props: { event: AggregateEvent }) {
 export const LoadingFeedCard = () => {
   return (
     <div
-      className={`relative flex aspect-square animate-pulse flex-col justify-end overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+      className={`relative flex aspect-square animate-pulse flex-col justify-end  rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
     >
       <div className={`h-12 w-full rounded-full bg-gray-800`} />
       <div className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-gray-800`} />

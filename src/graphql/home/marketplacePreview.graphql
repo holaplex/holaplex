@@ -1,0 +1,22 @@
+query marketplacePreview($subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    bannerUrl
+    creators {
+      creatorAddress
+      profile {
+        handle
+        profileImageUrlHighres
+      }
+    }
+    auctionHouse {
+      stats {
+        floor
+      }
+    }
+    stats {
+      nfts
+    }
+  }
+}
