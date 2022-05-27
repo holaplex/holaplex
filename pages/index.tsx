@@ -9,16 +9,56 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { FC, ReactNode } from 'react';
 import Carousel from 'react-grid-carousel';
+import MyCarousel from '@/common/components/elements/Carousel';
 
 const Home: FC = () => {
   return (
     <div>
-      <HeroSection />
+      {/* <HeroSection /> */}
       <div className="container mx-auto w-[88%] md:w-3/4">
-        <FeaturedBuyNowListingsSection />
+        {/* <FeaturedBuyNowListingsSection />
         <FeaturedProfilesSection />
         <FeaturedAuctionsSection />
-        <FeaturedMarketplacesSection />
+        <FeaturedMarketplacesSection /> */}
+        <MyCarousel>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-pink-500"/>
+            <div className="w-10 aspect-square bg-slate-400 border border-green-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+          <MyCarousel.Item>
+            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+          </MyCarousel.Item>
+        </MyCarousel>
       </div>
       <Footer />
     </div>
