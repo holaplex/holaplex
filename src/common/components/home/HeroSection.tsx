@@ -20,12 +20,12 @@ export default function HeroSection() {
       excludeTypes: ['follow'],
     },
   });
-  const feedEvents = data?.feedEvents || [];
+  const feedEvents = useMemo(() => data?.feedEvents || [], [data?.feedEvents]);
   const feedItems: FeedQueryEvent[] = useMemo(() => feedEvents.slice(0, N_ITEMS), [feedEvents]);
 
   return (
     <div className="">
-      <div className="relative h-[400px]">
+      <div className="relative h-[450px] ">
         <Marquee speed={feedItems.length ? 40 : 0} gradient={false} pauseOnHover={true}>
           <div
             className={classNames(
@@ -53,7 +53,7 @@ export default function HeroSection() {
             {Array(N_ITEMS)
               .fill(null)
               .map((_, i) => (
-                <div className="w-96 flex-shrink-0" key={i}>
+                <div className="w-96 flex-shrink-0 " key={i}>
                   <LoadingFeedCard />
                 </div>
               ))}

@@ -21,7 +21,7 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
-  GlowWalletAdapter
+  GlowWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import {
   ConnectionProvider,
@@ -39,6 +39,9 @@ import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
 import { apolloClient } from 'src/graphql/apollo';
 import { NextPage } from 'next';
+
+// keybinds
+import { ShortcutProvider } from 'react-keybind';
 
 const { Content } = Layout;
 
@@ -69,7 +72,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
-      new GlowWalletAdapter()
+      new GlowWalletAdapter(),
     ],
     [network]
   );
@@ -97,41 +100,43 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           autoClose={5000}
           hideProgressBar={true}
           position={'bottom-center'}
-          className="w-full max-w-full font-sans text-sm text-white bottom-4 sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
+          className="bottom-4 w-full max-w-full font-sans text-sm text-white sm:right-4 sm:left-auto sm:w-96 sm:translate-x-0 "
           toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
           closeButton={() => <Close color="#fff" />}
         />
         <ApolloProvider client={apolloClient}>
-          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
-            <WalletProviderSolana wallets={wallets} autoConnect>
-              <WalletModalProvider>
-                <WalletProviderDeprecated>
-                  {({ wallet }) => (
-                    <MultiTransactionProvider>
-                      <StorefrontProvider wallet={wallet}>
-                        {({}) => {
-                          return (
-                            <MarketplaceProvider wallet={wallet}>
-                              {() => (
-                                <AnalyticsProvider>
-                                  <AppHeader />
-                                  {getLayout(<Component {...pageProps} />)}
-                                </AnalyticsProvider>
-                              )}
-                            </MarketplaceProvider>
-                          );
-                        }}
-                      </StorefrontProvider>
-                    </MultiTransactionProvider>
-                  )}
-                </WalletProviderDeprecated>
-              </WalletModalProvider>
-            </WalletProviderSolana>
-          </ConnectionProvider>
+          <ShortcutProvider preventDefault={true}>
+            <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
+              <WalletProviderSolana wallets={wallets} autoConnect>
+                <WalletModalProvider>
+                  <WalletProviderDeprecated>
+                    {({ wallet }) => (
+                      <MultiTransactionProvider>
+                        <StorefrontProvider wallet={wallet}>
+                          {({}) => {
+                            return (
+                              <MarketplaceProvider wallet={wallet}>
+                                {() => (
+                                  <AnalyticsProvider>
+                                    <AppHeader />
+                                    {getLayout(<Component {...pageProps} />)}
+                                  </AnalyticsProvider>
+                                )}
+                              </MarketplaceProvider>
+                            );
+                          }}
+                        </StorefrontProvider>
+                      </MultiTransactionProvider>
+                    )}
+                  </WalletProviderDeprecated>
+                </WalletModalProvider>
+              </WalletProviderSolana>
+            </ConnectionProvider>
+          </ShortcutProvider>
         </ApolloProvider>
       </QueryClientProvider>
     </>
   );
-};
+}
 
 export default MyApp;

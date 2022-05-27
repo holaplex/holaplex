@@ -1,33 +1,21 @@
 import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
-import { getTwitterHandle, useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress } from '@/modules/utils/string';
-import { Popover } from '@headlessui/react';
-import { ShareIcon } from '@heroicons/react/outline';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  FeedEvent,
-  FeedQuery,
   ListingEvent,
   Nft,
-  PurchaseEvent,
-  useMarketplacePreviewQuery,
   useNftMarketplaceLazyQuery,
-  useNftMarketplaceQuery,
+  useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
-  useWalletProfileQuery,
-  Wallet,
 } from 'src/graphql/indexerTypes';
-import { FollowEvent } from 'src/graphql/indexerTypes.ssr';
-import { JsxElement } from 'typescript';
 import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import Modal from '../elements/Modal';
@@ -40,7 +28,6 @@ import {
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAttributes,
-  getHandle,
   User,
 } from './feed.utils';
 import BuyForm from '../forms/BuyForm';
@@ -130,7 +117,7 @@ export function FeedCard(props: {
                   })
                 }
                 className="aspect-square w-full rounded-lg object-cover "
-                src={attrs.nft?.image}
+                src={imgOpt(attrs.nft?.image || '', 600)}
                 alt={attrs.nft?.name}
               />
             )
@@ -208,13 +195,18 @@ function FollowCard(props: {
 }
 
 export const ProfileHandle = ({ user }: { user: User }) => {
-  const { connection } = useConnection();
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
+
   useEffect(() => {
+    async function getTwitterHandleAndSetState(): Promise<void> {
+      await twitterHandleQuery({ variables: { pubKey: user.address } });
+      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
+        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
+      }
+    }
     if (!twitterHandle) {
-      getTwitterHandle(user.address, connection).then((th) => {
-        if (th) setTwitterHandle(th);
-      });
+      getTwitterHandleAndSetState();
     }
   }, []);
 
@@ -268,7 +260,12 @@ function FeedActionBanner(props: {
   }
 
   return (
-    <div className="flex w-full flex-wrap items-center rounded-3xl bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:rounded-full">
+    <div
+      className={classNames(
+        'flex w-full flex-wrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
+      )}
+    >
       <ProfilePFP
         user={{
           address: props.event.walletAddress,
@@ -284,8 +281,9 @@ function FeedActionBanner(props: {
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
       </div>
-
-      <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      {!props.options?.hideAction && (
+        <div className="ml-auto mt-4 w-full sm:mt-0 sm:w-auto ">{action}</div>
+      )}
     </div>
   );
 }
@@ -416,17 +414,21 @@ const OfferAction = (props: { nft: any }) => {
 
 export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
-  const { connection } = useConnection();
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [pfpUrl, setPfpUrl] = useState(
     user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
   );
+  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
   useEffect(() => {
+    async function getTwitterHandleAndSetState(): Promise<void> {
+      await twitterHandleQuery({ variables: { pubKey: user.address } });
+      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
+        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
+      }
+    }
     if (!twitterHandle) {
-      getTwitterHandle(user.address, connection).then((twitterHandle) => {
-        if (twitterHandle) setTwitterHandle(twitterHandle);
-      });
+      getTwitterHandleAndSetState();
     }
   }, []);
 
@@ -532,7 +534,7 @@ function AggregateCard(props: { event: AggregateEvent }) {
 export const LoadingFeedCard = () => {
   return (
     <div
-      className={`relative flex aspect-square animate-pulse flex-col justify-end overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
+      className={`relative flex aspect-square animate-pulse flex-col justify-end  rounded-lg border-gray-900 bg-gray-900 p-4 shadow-2xl shadow-black`}
     >
       <div className={`h-12 w-full rounded-full bg-gray-800`} />
       <div className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-gray-800`} />

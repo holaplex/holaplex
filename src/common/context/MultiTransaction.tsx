@@ -1,13 +1,7 @@
-import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { isEmpty } from 'ramda';
 import React, { FC, createContext, useState } from 'react';
-import { toast } from 'react-toastify';
-import { v4 } from 'uuid';
 import { errorCodeHelper } from '../../modules/utils/marketplace';
 import Button from '../components/elements/Button';
 import Modal from '../components/elements/Modal';
-import { None } from '../components/forms/OfferForm';
 
 type AsyncFunction = (arg?: any) => Promise<void>;
 export type Action = {

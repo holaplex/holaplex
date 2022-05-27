@@ -156,7 +156,7 @@ export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCaro
       gap={gap}
       arrowLeft={PageLeftButton}
       arrowRight={PageRightButton}
-      containerStyle={{ overflow: 'visible'}}
+      containerStyle={{ overflow: 'visible' }}
     >
       {children}
     </Carousel>

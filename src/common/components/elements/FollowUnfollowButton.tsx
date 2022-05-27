@@ -19,10 +19,20 @@ import {
   AllConnectionsFromDocument,
   AllConnectionsToDocument,
   IsXFollowingYDocument,
+  GetProfileFollowerOverviewDocument,
+  GetCollectedByDocument,
 } from 'src/graphql/indexerTypes';
 
+export type FollowUnfollowSource =
+  | 'modalFollowing'
+  | 'modalFollowers'
+  | 'profileButton'
+  | 'feed'
+  | 'whotofollow'
+  | 'collectedBy';
+
 type FollowUnfollowButtonProps = {
-  source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
+  source: FollowUnfollowSource;
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;
@@ -80,7 +90,13 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
+        ],
       });
 
       trackSuccess();
@@ -127,7 +143,13 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
+        ],
       });
 
       trackSuccess();

@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Custom404 from '../404';
 import Accordion from '../../src/common/components/elements/Accordion';
 import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
-import { imgOpt } from '../../src/common/utils';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { DateTime } from 'luxon';
@@ -15,7 +14,6 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { SolIcon } from '../../src/common/components/elements/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-import { LoadingContainer } from '@/components/elements/LoadingPlaceholders';
 import { Tag } from '@/components/icons/Tag';
 import Button from '@/components/elements/Button';
 import {
@@ -38,11 +36,9 @@ import { apolloClient } from '../../src/graphql/apollo';
 import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
 import Head from 'next/head';
 import { Avatar, AvatarIcons } from '@/common/components/elements/Avatar';
-import Footer from '@/common/components/home/Footer';
 import { seededRandomBetween } from '../../src/modules/utils/random';
 import { SolscanIcon } from '../../src/common/components/icons/Solscan';
 import { ExplorerIcon } from '../../src/common/components/icons/Explorer';
-import NFTImage from '../../src/common/components/elements/NFTImage';
 import NFTFile from '../../src/common/components/elements/NFTFile';
 
 const Activities = ({
@@ -323,7 +319,7 @@ export default function NftByAddress({
                       </Link>
                     ) : (
                       <div>
-                        <AvatarIcons creators={nft?.creators || []} />
+                        <AvatarIcons profiles={nft?.creators || []} />
                       </div>
                     )}
                   </ul>

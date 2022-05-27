@@ -29,6 +29,10 @@ export interface MarketplacePreviewData {
   bannerUrl: string;
   creators: {
     creatorAddress: string;
+    profile?: {
+      profileImageUrlHighres?: string;
+      handle?: string;
+    }
   }[]
   auctionHouse: {
     stats?: {
@@ -45,9 +49,6 @@ export type BuyNowListingPreviewData = {
   nft: OwnedNfTsQuery['nfts'][0],
   marketplace: OwnedNfTsQuery['marketplace'][0]
 };
-
-
-export type FeaturedProfilesData = {address: string}[];
 
 
 export interface ProfilePreviewData {
