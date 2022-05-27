@@ -1,21 +1,33 @@
 import classNames from 'classnames';
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { RefObject, useMemo, useRef, useState } from 'react';
+
+//TODO 
+//  - reduce number of initial renders to 1
+//  - check shadow stuff
+//  - change default button classes
+//  - expose pagination button classes
+//  - make progress dots
+//  - expose slider visibility 
+//  - expose slider styling (also allows for setting visibility?)
 
 interface ItemProps {
   children: JSX.Element | JSX.Element[];
   className?: string;
-  style?: string;
+  style?: object;
 }
 
-interface Item {
+type AnimationStyle = 'none' | 'slide' | 'fade';
+
+interface ICarouselItem {
   (props: ItemProps): JSX.Element;
 }
 
-type CarouselSubtypes = {
-  Item: Item;
-};
-
-type AnimationStyle = 'none' | 'slide' | 'fade';
+const CarouselItem: ICarouselItem = ({ children, className, style = {} }) => (
+  //TODO does the item need any classes?
+  <div className={classNames('', className)} style={style}>
+    {children}
+  </div>
+);
 
 export interface CarouselProps {
   rows?: number;
@@ -24,7 +36,9 @@ export interface CarouselProps {
   animation?: AnimationStyle;
   style?: object;
   className?: string;
-  children?: JSX.Element[];
+  pageStyle?: object;
+  pageClassName?: string;
+  children?: JSX.Element | JSX.Element[];
 }
 
 const Carousel = ({
@@ -34,101 +48,115 @@ const Carousel = ({
   animation = 'slide',
   style,
   className,
-  children,
+  pageStyle,
+  pageClassName,
+  children = [],
 }: CarouselProps): JSX.Element => {
-  const rowsClass: string = rows ? `grid-rows-${rows}` : '';
-  const colsClass: string = cols ? `grid-cols-${cols}` : '';
-  const gapClass: string= gap !== undefined ? `gap-[${gap}px]` : '';
-  const pageGridClass: string = `grid ${rowsClass} ${colsClass} ${gapClass} w-full overflow-visible border-2 border-red-500`;
+  const childArray = useMemo<JSX.Element[]>(() => {
+    if (children === undefined) return [];
+    else if (!Array.isArray(children)) return [children];
+    else return children;
+  }, [children]);
 
   const nElementsPerPage: number = rows * cols;
   // have at least one page even when there's no children
-  const nPages: number = Math.max(1, Math.ceil((children?.length || 0) / nElementsPerPage));
+  const nPages: number = Math.max(1, Math.ceil(childArray.length / nElementsPerPage));
 
   const [page, setPage] = useState<number>(0);
   const [carouselAnimationClass, setCarouselAnimationClass] = useState<string>('');
-  const [pageAnimationClasses, setPageAnimationClasses] = useState<string[]>(Array(nPages).fill(''));
+  const [pageAnimationClasses, setPageAnimationClasses] = useState<string[]>(
+    Array(nPages).fill('')
+  );
   const carouselRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  // animation/transition settings
-  useEffect(() => {
-    if (carouselRef.current) {
-      //TODO move to function
-      const newPageClasses: string[] = [];
-      let newCarouselClass: string;
+  useMemo(
+    () => {
       switch (animation) {
         case 'slide': {
-          newCarouselClass = 'overflow-x-scroll scroll-smooth';
-          for (let i = 0; i < nPages; i++) {
-            // need one page to not be absolutely positioned to allow for flex sizing to work
-            // TODO is this a safe way to style? Because that means every page will be sized according
-            //  to the first page. Alternatively we could translate the pages instead of scrolling, but
-            //  that would break built-in scrolling if that's something we want to keep.
-            if (i === 0) newPageClasses.push('');
-            else newPageClasses.push(`absolute top-0 left-[${i * 100}%]`);
-          }
-          carouselRef.current.scrollTo({ left: carouselRef.current.scrollWidth * (page / 3) });
+          updateSlideAnimation();
           break;
         }
         case 'fade': {
-          newCarouselClass = '';
-          for (let i = 0; i < nPages; i++) {
-            // need one page to not be absolutely positioned to allow for flex sizing to work
-            const pageOffset: number = i - page;
-            newPageClasses.push(
-              //TODO replace with classNames()?
-              `${pageOffset === 0 ? '' : 'absolute top-0 left-0'} transition-opacity duration-700 ease-in opacity-${pageOffset === 0 ? 100 : 0}`
-            );
-          }
-          carouselRef.current.scroll(0, 0);
+          updateFadeAnimation();
           break;
         }
         default: {
-          newCarouselClass = '';
-          newPageClasses.push(...Array(nPages).fill(''));
+          updateDefaultAnimation();
         }
       }
-      console.log(newPageClasses);
-      setCarouselAnimationClass(newCarouselClass);
-      setPageAnimationClasses(newPageClasses);
+
+      function updateSlideAnimation(): void {
+        const pageClasses: string[] = [];
+        for (let i = 0; i < nPages; i++) {
+          pageClasses.push(`flex min-w-full`);
+        }
+        setCarouselAnimationClass('flex flex-row flex-nowrap overflow-x-scroll scroll-smooth');
+        setPageAnimationClasses(pageClasses);
+        if (carouselRef.current) {
+          carouselRef.current.scrollTo({ left: carouselRef.current.scrollWidth * (page / 3) });
+        }
+      }
+
+      function updateFadeAnimation(): void {
+        const pageClasses: string[] = [];
+        for (let i = 0; i < nPages; i++) {
+          // need one page to not be absolutely positioned to allow for flex sizing to work
+          const pageOffset: number = i - page;
+          pageClasses.push(
+            classNames(
+              pageOffset === 0 ? '' : 'absolute top-0 left-0',
+              `transition-opacity duration-700 ease-in opacity-${pageOffset === 0 ? 100 : 0}`
+            )
+          );
+        }
+        setCarouselAnimationClass('relative');
+        setPageAnimationClasses(pageClasses);
+        if (carouselRef.current) carouselRef.current.scroll(0, 0);
+      }
+
+      function updateDefaultAnimation(): void {
+        setCarouselAnimationClass('');
+        setPageAnimationClasses(Array(nPages).fill(''));
+        if (carouselRef.current) carouselRef.current.scroll(0, 0);
+      }
+    },
+    // style should be in here in case they override the style in a way that changes the
+    //  layout of the carousel, but putting it in causes infinite re-render
+    [animation, page, rows, cols, children, className, style]
+  );
+
+  const rowsClass: string = rows ? `grid-rows-${rows}` : '';
+  const colsClass: string = cols ? `grid-cols-${cols}` : '';
+  const gapClass: string = gap !== undefined ? `gap-[${gap}px]` : '';
+  const pageGridClass: string = `grid ${rowsClass} ${colsClass} ${gapClass} w-full overflow-visible border-2 border-red-500`;
+
+  const pages: JSX.Element[] = [];
+  const childQueue: JSX.Element[] = [...childArray];
+  for (let i = 0; i < nPages; i++) {
+    const pageItems: JSX.Element[] = [];
+    const nItemsInPage = Math.min(nElementsPerPage, childQueue.length);
+    for (let j = 0; j < nItemsInPage; j++) {
+      const pageItem: JSX.Element = childQueue.shift()!;
+      pageItems.push(pageItem);
     }
-  }, 
-  
-  // style and className need to be dependencies in case the user specifies custom styling that changes the
-  //  number of pages or size of each page
-  [page, animation, nPages, style, className]);
+    // main problem with this approach (one grid per page) means you might have different styling/sizing per page
+    pages.push(
+      <div
+        className={classNames(`${pageGridClass} ${pageAnimationClasses[i]}`, pageClassName)}
+        key={`carousel-page-${i}`}
+        style={pageStyle || {}}
+      >
+        {pageItems}
+      </div>
+    );
+  }
+
+  console.log('render');
 
   return (
     <>
-      <div
-        ref={carouselRef}
-        className={`${carouselAnimationClass} relative max-w-full overflow-visible`}
-      >
-        {/* main problem with this approach (one grid per page) means you might have different styling/sizing per page */}
-        <div
-          className={`${pageGridClass} ${pageAnimationClasses[0]}`}
-        >
-          <div className="flex items-center justify-center rounded-md bg-cyan-400">1</div>
-          <div className="flex items-center justify-center rounded-md bg-cyan-400">2</div>
-          <div className="flex items-center justify-center rounded-md bg-cyan-400">3</div>
-          <div className="flex items-center justify-center rounded-md bg-cyan-400">4</div>
-        </div>
-        <div
-          className={`${pageGridClass} ${pageAnimationClasses[1]}`}
-        >
-          <div className="flex items-center justify-center rounded-md bg-pink-400">5</div>
-          <div className="flex items-center justify-center rounded-md bg-pink-400">6</div>
-          <div className="flex items-center justify-center rounded-md bg-pink-400">7</div>
-          <div className="flex items-center justify-center rounded-md bg-pink-400">8</div>
-        </div>
-        <div
-          className={`${pageGridClass} ${pageAnimationClasses[2]}`}
-        >
-          <div className="flex items-center justify-center rounded-md bg-green-400">9</div>
-          <div className="flex items-center justify-center rounded-md bg-green-400">10</div>
-          <div className="flex items-center justify-center rounded-md bg-green-400">11</div>
-          <div className="flex items-center justify-center rounded-md bg-green-400">12</div>
-        </div>
+      <div ref={carouselRef} className={`${carouselAnimationClass} max-w-full overflow-visible`} style={style || {}}>
+        {pages}
       </div>
       <div className="flex justify-between">
         <button className="flex bg-red-500" onClick={() => setPage(Math.max(0, page - 1))}>
@@ -142,13 +170,6 @@ const Carousel = ({
   );
 };
 
-
-// TODO expose styling in the Carousel component
-// const CarouselPage = ({children, className, style}: )
-
-const CarouselItem = ({ children, className, style }: ItemProps): JSX.Element => (
-  <div>{children}</div>
-);
 Carousel.Item = CarouselItem;
 
 export default Carousel;

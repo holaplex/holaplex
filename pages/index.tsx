@@ -20,43 +20,42 @@ const Home: FC = () => {
         <FeaturedProfilesSection />
         <FeaturedAuctionsSection />
         <FeaturedMarketplacesSection /> */}
-        <MyCarousel>
+        <MyCarousel rows={2} cols={2} className="p-4">
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-pink-500"/>
-            <div className="w-10 aspect-square bg-slate-400 border border-green-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-pink-500 opacity-30">1</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-blue-500 opacity-30">2</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-green-500 opacity-30">3</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-red-500 opacity-30">4</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-yellow-500 opacity-30">5</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-slate-500 opacity-30">6</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-orange-500 opacity-30">7</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-cyan-500 opacity-30">8</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-yellow-500 opacity-30">9</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-slate-500 opacity-30">10</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-orange-500 opacity-30">11</div>
           </MyCarousel.Item>
           <MyCarousel.Item>
-            <div className="w-10 aspect-square bg-slate-400 border border-blue-500"/>
+            <div className="flex justify-center items-center bg-slate-400 border-4 border-cyan-500 opacity-30">12</div>
           </MyCarousel.Item>
         </MyCarousel>
       </div>
