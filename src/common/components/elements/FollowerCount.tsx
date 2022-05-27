@@ -75,7 +75,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
               <div className=" text-sm font-medium text-gray-200">Followers</div>
               <div className=" font-semibold">{followers}</div>
             </button>
-            {followers ? (
+            {wallet && followers ? (
               <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
             ) : null}
           </div>
@@ -122,31 +122,49 @@ type FollowedByProps = {
 };
 
 const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
-  const { publicKey } = useProfileData();
+  const { publicKey, profilesIFollow } = useProfileData();
   const { data, loading } = useGetProfileFollowerOverviewQuery({
     variables: { pubKey: publicKey },
   });
   if (loading) return null;
   const followers = data?.wallet.connectionCounts.toCount ?? 0;
   if (!followers) return null;
+
+  // which of this profiles followers am I following
+  const profileFollowersIAlsoFollow = data?.connections.filter((profileConnection) =>
+    profilesIFollow?.some(
+      (myConnection) => profileConnection.from.address === myConnection.to.address
+    )
+  );
+  console.log('followed by', {
+    profileFollowersIAlsoFollow,
+    profileConnections: data?.connections,
+    profilesIFollow,
+  });
+
+  if (!profileFollowersIAlsoFollow?.length) return null;
+
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className={`flex items-center gap-2`}>
+        <p className={`m-0 text-left text-lg font-semibold`}>
+          {profileFollowersIAlsoFollow.length}
+        </p>
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
-          {data?.connections.map((follower, i) => (
+          {profileFollowersIAlsoFollow.map((follower, i) => (
             <FollowerBubble
               isFirst={i === 0}
               key={follower.from.address as string}
               follower={follower}
             />
           ))}
-          {followers > 4 ? (
+          {profileFollowersIAlsoFollow.length > 4 ? (
             <OtherFollowersNumberBubble
               onClick={onOtherFollowersClick}
               className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
             >
-              +{followers - 4}
+              +{profileFollowersIAlsoFollow.length - 4}
             </OtherFollowersNumberBubble>
           ) : null}
         </div>

@@ -103,15 +103,15 @@ const ProfileDisplayName: FC = () => {
           >
             @{twitterHandle}
           </a>
-          <span className={`flex gap-4 font-mono text-xs`}>
+          <span
+            className={`flex max-w-fit cursor-pointer gap-2 rounded-full px-2 py-1 font-mono text-xs shadow-lg shadow-black hover:text-gray-300`}
+            onClick={copyPubKey}
+          >
             {shortenAddress(publicKey)}{' '}
             {copied ? (
-              <CheckIcon className="h-4 w-4 hover:text-gray-300" />
+              <CheckIcon className="h-4 w-4 " />
             ) : (
-              <DuplicateIcon
-                className="h-4 w-4 cursor-pointer hover:text-gray-300"
-                onClick={copyPubKey}
-              />
+              <DuplicateIcon className="h-4 w-4 cursor-pointer " />
             )}
           </span>
         </div>
@@ -131,8 +131,6 @@ const ProfileDisplayName: FC = () => {
     </div>
   );
 };
-
-export const PFP_SIZE = 100;
 
 const Banner = styled.div`
   width: 100%;

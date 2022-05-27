@@ -7,7 +7,7 @@ query getProfileFollowerOverview($pubKey: PublicKey!) {
       toCount
     }
   }
-  connections(to: [$pubKey], limit: 4, offset: 0) {
+  connections(to: [$pubKey], limit: 1000, offset: 0) {
     from {
       address
       profile {
