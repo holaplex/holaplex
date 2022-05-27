@@ -68,9 +68,12 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
       <div className="flex flex-col">
         <div className="mt-10 flex justify-between">
           <div className={`flex flex-col gap-4`}>
-            <button onClick={() => setShowFollowsModal('followers')} className="flex flex-col">
-              <div className="text-sm font-medium text-gray-200">Followers</div>
-              <div className="text-left font-semibold">{followers}</div>
+            <button
+              onClick={() => setShowFollowsModal('followers')}
+              className="flex flex-col text-left"
+            >
+              <div className=" text-sm font-medium text-gray-200">Followers</div>
+              <div className=" font-semibold">{followers}</div>
             </button>
             {followers ? (
               <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
@@ -78,9 +81,12 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
           </div>
 
           <div className={`flex flex-col gap-4`}>
-            <button onClick={() => setShowFollowsModal('following')} className="flex flex-col">
+            <button
+              onClick={() => setShowFollowsModal('following')}
+              className="flex flex-col text-left"
+            >
               <div className="text-sm font-medium text-gray-200">Following</div>
-              <div className="text-left font-semibold">{following}</div>
+              <div className=" font-semibold">{following}</div>
             </button>
             <CollectedBy />
           </div>
