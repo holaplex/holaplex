@@ -8,8 +8,6 @@ import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { FollowUnfollowButton, FollowUnfollowSource } from './FollowUnfollowButton';
 import {
-  AllConnectionsFromQuery,
-  AllConnectionsToQuery,
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
   useAllConnectionsToQuery,
@@ -148,7 +146,7 @@ export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
   });
 
   return (
-    <div className={cx('flex h-10')}>
+    <div className="flex h-10">
       <div className="flex flex-1 justify-between">
         <div className="flex items-center">
           <img

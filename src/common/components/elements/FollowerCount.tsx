@@ -196,6 +196,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
     }
   });
   if (!collectedProfiles || collectedProfiles.length <= 0) return null;
+  collectedProfiles.sort(compareTwitterProfilesForSorting);
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div
@@ -228,7 +229,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
       {ReactDom.createPortal(
         <Modal open={showCollectedByModal} short setOpen={setShowCollectedByModal}>
           <h4 className="mt-12 h-14 text-center text-base font-medium leading-3">Collected by</h4>
-          <div className="  space-y-6 py-6  ">
+          <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
             {collectedProfiles.map((p) => (
               <FollowItem
                 key={p.walletAddress}
@@ -285,6 +286,15 @@ interface FollowerConnection {
   }
 }
 
+interface FollowingConnection {
+  to: {
+    address: string;
+    profile?: {
+      handle?: string | null | undefined;
+    } | null | undefined
+  }
+}
+
 /**
    * Processes raw follower connections returned from backend for further use 
    * 
@@ -296,16 +306,6 @@ interface FollowerConnection {
   const uniqueFollowers = [...new Map(connections?.map(f => [f.from.address, f])).values()];
   if (sort) uniqueFollowers.sort(compareFollowersForSorting);
   return uniqueFollowers;
-}
-
-
-interface FollowingConnection {
-  to: {
-    address: string;
-    profile?: {
-      handle?: string | null | undefined;
-    } | null | undefined
-  }
 }
 
 /**
@@ -345,4 +345,21 @@ function compareFollowingForSorting(a: FollowingConnection, b: FollowingConnecti
   else if (a.to.profile?.handle && !b.to.profile?.handle) return -1;
   else if (!a.to.profile?.handle && b.to.profile?.handle) return 1;
   else return a.to.address.localeCompare(b.to.address);
+}
+
+
+/**
+ * Compares two following (users) alphabetically by wallet or handle, giving priority to twitter handles over wallets
+ * @param a first follower
+ * @param b second followers
+ * @returns string comparison (where applicable)
+ */
+ function compareTwitterProfilesForSorting(a: TwitterProfile, b: TwitterProfile): number {
+  if (a.handle && b.handle) return a.handle.localeCompare(b.handle);
+  else if (a.handle && !b.handle) return -1;
+  else if (!a.handle && b.handle) return 1;
+  else if (a.walletAddress && b.walletAddress) return a.walletAddress.localeCompare(b.walletAddress);
+  else if (a.walletAddress && !b.walletAddress) return -1;
+  else if (!a.walletAddress && b.walletAddress) return 1;
+  else return 0;
 }
