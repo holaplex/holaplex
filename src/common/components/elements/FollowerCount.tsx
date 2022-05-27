@@ -127,7 +127,6 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
       <div className={`flex items-center gap-2`}>
-        <p className={`m-0 text-left text-lg font-semibold`}>{followers}</p>
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
           {data?.connections.map((follower, i) => (
             <FollowerBubble
