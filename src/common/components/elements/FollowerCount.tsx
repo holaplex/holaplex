@@ -3,6 +3,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import styled from 'styled-components';
 import {
+  GetProfileFollowerOverviewQuery,
   TwitterProfile,
   useGetCollectedByQuery,
   useGetProfileFollowerOverviewQuery,
@@ -63,6 +64,7 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   if (profileFollowerOverview.loading || isXFollowingY.loading) return <FollowerCountSkeleton />;
   const isSameWallet = wallet?.publicKey.equals(new PublicKey(publicKey)) ?? false;
 
+  //TODO these numbers will be wrong until the indexer is able to remove duplicates
   const followers = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
   const following = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
   const amIFollowingThisAccount = !!isXFollowingY.data?.connections?.length ?? 0 > 0;
@@ -130,8 +132,13 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
     variables: { pubKey: publicKey },
   });
   if (loading) return null;
-  const followers = data?.wallet.connectionCounts.toCount ?? 0;
-  if (!followers) return null;
+
+  const uniqueFollowers = cleanUpFollowers(data?.connections);
+  if (uniqueFollowers.length === 0) return null;
+
+  // this number will be wrong until the backend removes duplicates
+  const followerCount = data?.wallet.connectionCounts.toCount ?? 0;
+
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div
@@ -142,19 +149,19 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
       </div>
       <div className={`flex items-center gap-2`}>
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
-          {data?.connections.map((follower, i) => (
+          {uniqueFollowers.slice(0, 4).map((follower, i) => (
             <FollowerBubble
               isFirst={i === 0}
               key={follower.from.address as string}
-              follower={follower}
+              follower={follower as GetProfileFollowerOverviewQuery['connections'][0]}
             />
           ))}
-          {followers > 4 ? (
+          {followerCount > 4 ? (
             <OtherFollowersNumberBubble
               onClick={onOtherFollowersClick}
               className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
             >
-              +{followers - 4}
+              +{followerCount - 4}
             </OtherFollowersNumberBubble>
           ) : null}
         </div>
@@ -267,3 +274,75 @@ const OtherFollowersNumberBubble = styled.button`
   color: #a8a8a8;
   background-color: #262626;
 `;
+
+
+interface FollowerConnection {
+  from: {
+    address: string;
+    profile?: {
+      handle?: string | null | undefined;
+    } | null | undefined
+  }
+}
+
+/**
+   * Processes raw follower connections returned from backend for further use 
+   * 
+   * @param connections follower data returned from backend
+   * @param sort sort followers? Defaults to <code>true</code>
+   * @returns prepped array of follower connections
+   */
+ export function cleanUpFollowers(connections: FollowerConnection[] | undefined, sort=true): FollowerConnection[] {
+  const uniqueFollowers = [...new Map(connections?.map(f => [f.from.address, f])).values()];
+  if (sort) uniqueFollowers.sort(compareFollowersForSorting);
+  return uniqueFollowers;
+}
+
+
+interface FollowingConnection {
+  to: {
+    address: string;
+    profile?: {
+      handle?: string | null | undefined;
+    } | null | undefined
+  }
+}
+
+/**
+ * Processes raw following connections returned from backend for further use 
+ * 
+ * @param connections following data returned from backend
+ * @param sort sort following connections? Defaults to <code>true</code>
+ * @returns prepped array of following connections
+ */
+export function cleanUpFollowing(connections: FollowingConnection[] | undefined, sort=true): FollowingConnection[] {
+  const uniqueFollowing = [...new Map(connections?.map(f => [f.to.address, f])).values()];
+  if (sort) uniqueFollowing.sort(compareFollowingForSorting);
+  return uniqueFollowing;
+}
+
+/**
+ * Compares two followers alphabetically by wallet or handle, giving priority to twitter handles over wallets
+ * @param a first follower
+ * @param b second follower
+ * @returns string comparison (where applicable)
+ */
+function compareFollowersForSorting(a: FollowerConnection, b: FollowerConnection): number {
+  if (a.from.profile?.handle && b.from.profile?.handle) return a.from.profile.handle.localeCompare(b.from.profile.handle);
+  else if (a.from.profile?.handle && !b.from.profile?.handle) return -1;
+  else if (!a.from.profile?.handle && b.from.profile?.handle) return 1;
+  else return a.from.address.localeCompare(b.from.address);
+}
+
+/**
+ * Compares two following (users) alphabetically by wallet or handle, giving priority to twitter handles over wallets
+ * @param a first follower
+ * @param b second followers
+ * @returns string comparison (where applicable)
+ */
+function compareFollowingForSorting(a: FollowingConnection, b: FollowingConnection): number {
+  if (a.to.profile?.handle && b.to.profile?.handle) return a.to.profile.handle.localeCompare(b.to.profile.handle);
+  else if (a.to.profile?.handle && !b.to.profile?.handle) return -1;
+  else if (!a.to.profile?.handle && b.to.profile?.handle) return 1;
+  else return a.to.address.localeCompare(b.to.address);
+}

@@ -8,11 +8,14 @@ import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { FollowUnfollowButton, FollowUnfollowSource } from './FollowUnfollowButton';
 import {
+  AllConnectionsFromQuery,
+  AllConnectionsToQuery,
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
   useAllConnectionsToQuery,
 } from 'src/graphql/indexerTypes';
 import { useProfileData } from '@/common/context/ProfileData';
+import { cleanUpFollowers, cleanUpFollowing } from './FollowerCount';
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type FollowModalProps = {
@@ -93,7 +96,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         </div>
         <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers'
-            ? (profileFollowersList.data?.connections ?? []).map((item: any) => (
+            ? cleanUpFollowers(profileFollowersList.data?.connections).filter((v, i, a) => i === a.indexOf(v)).map((item: any) => (
                 <FollowItem
                   key={item.from.address as string}
                   source={'modalFollowers'}
@@ -102,7 +105,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
               ))
             : null}
           {visibility === 'following'
-            ? (profileFollowingList.data?.connections ?? []).map((item: any) => (
+            ? cleanUpFollowing(profileFollowingList.data?.connections).map((item: any) => (
                 <FollowItem
                   key={item.to.address as string}
                   source={'modalFollowing'}
