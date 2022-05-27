@@ -29,7 +29,7 @@ export const ProfileContainer: FC = ({ children }) => {
         </header>
         <div className="container  mx-auto px-6 pb-20 md:px-12 lg:flex">
           <div className="relative lg:sticky lg:top-24 lg:mr-28 lg:h-96 lg:w-full lg:max-w-xs ">
-            <div className="-mt-12 flex justify-between text-center lg:justify-start lg:gap-12">
+            <div className="-mt-12 flex  justify-center text-center lg:justify-start lg:gap-12">
               <div className=" max-w-fit rounded-full border-4 border-gray-900 ">
                 <img
                   src={profilePicture}
@@ -52,7 +52,7 @@ export const ProfileContainer: FC = ({ children }) => {
                 {anchorWallet?.publicKey.toString() !== publicKey.toString() && (
                   <FollowUnfollowButtonDataWrapper
                     targetPubkey={publicKey.toString()}
-                    className={`pointer-events-auto flex`}
+                    className={`pointer-events-auto absolute right-0 flex`}
                   />
                 )}
               </div>
@@ -94,7 +94,7 @@ const ProfileDisplayName: FC = () => {
   return (
     <div className="flex items-center text-2xl font-medium">
       {twitterHandle ? (
-        <div className={`flex flex-col justify-start gap-4`}>
+        <div className={`flex flex-col items-center justify-start gap-4 lg:items-start`}>
           <a
             className="hover:text-gray-300"
             target="_blank"
@@ -103,15 +103,15 @@ const ProfileDisplayName: FC = () => {
           >
             @{twitterHandle}
           </a>
-          <span className={`flex gap-4 font-mono text-xs`}>
+          <span
+            className={`flex max-w-fit cursor-pointer gap-2 rounded-full px-2 py-1 font-mono text-xs shadow-lg shadow-black hover:text-gray-300`}
+            onClick={copyPubKey}
+          >
             {shortenAddress(publicKey)}{' '}
             {copied ? (
-              <CheckIcon className="h-4 w-4 hover:text-gray-300" />
+              <CheckIcon className="h-4 w-4 " />
             ) : (
-              <DuplicateIcon
-                className="h-4 w-4 cursor-pointer hover:text-gray-300"
-                onClick={copyPubKey}
-              />
+              <DuplicateIcon className="h-4 w-4 cursor-pointer " />
             )}
           </span>
         </div>

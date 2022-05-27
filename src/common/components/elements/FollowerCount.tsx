@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import styled from 'styled-components';
@@ -11,6 +11,9 @@ import {
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { FollowerBubble, FollowerBubbleImage } from './FollowerBubble';
 import { useProfileData } from '@/common/context/ProfileData';
+import Modal from './Modal';
+import ReactDom from 'react-dom';
+import { FollowItem } from './FollowModal';
 
 type FollowerCountProps = {
   setShowFollowsModal: (s: FollowsModalState) => void;
@@ -131,7 +134,12 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
   if (!followers) return null;
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
-      <div className="mr-2 text-sm font-medium text-gray-200">Followed by</div>
+      <div
+        onClick={onOtherFollowersClick}
+        className="mr-2 cursor-pointer text-sm font-medium text-gray-200"
+      >
+        Followed by
+      </div>
       <div className={`flex items-center gap-2`}>
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
           {data?.connections.map((follower, i) => (
@@ -161,12 +169,15 @@ type CollectedByProps = {
 
 const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
   const { publicKey } = useProfileData();
+
+  const [showCollectedByModal, setShowCollectedByModal] = useState(false);
+
   const { data, loading } = useGetCollectedByQuery({
     variables: { creator: publicKey },
   });
   if (loading) return null;
   const collectedProfiles: TwitterProfile[] = [];
-  data?.nfts.map((nft) => {
+  data?.nfts.forEach((nft) => {
     if (
       !collectedProfiles.find(
         (profile) => nft.owner?.profile?.walletAddress === profile?.walletAddress
@@ -180,9 +191,14 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
   if (!collectedProfiles || collectedProfiles.length <= 0) return null;
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
-      <div className="mr-2 text-sm font-medium text-gray-200">Collected by</div>
+      <div
+        className="mr-2 cursor-pointer text-sm font-medium text-gray-200 "
+        onClick={() => setShowCollectedByModal(true)}
+      >
+        Collected by
+      </div>
       <div className={`flex items-center gap-2`}>
-        <p className={`m-0 text-left text-lg font-semibold`}>{collectedProfiles.length}</p>
+        {/* <p className={`m-0 text-left text-lg font-semibold`}>{collectedProfiles.length}</p> */}
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
           {collectedProfiles?.slice(0, 4)?.map((collector, i) => (
             <FollowerBubbleImage
@@ -194,7 +210,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
           ))}
           {collectedProfiles.length > 4 ? (
             <OtherFollowersNumberBubble
-              onClick={onOtherCollectedClick}
+              onClick={() => setShowCollectedByModal(true)}
               className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
             >
               +{collectedProfiles.length - 4}
@@ -202,6 +218,27 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
           ) : null}
         </div>
       </div>
+      {ReactDom.createPortal(
+        <Modal open={showCollectedByModal} short setOpen={setShowCollectedByModal}>
+          <h4 className="mt-12 h-14 text-center text-base font-medium leading-3">Collected by</h4>
+          <div className="  space-y-6 py-6  ">
+            {collectedProfiles.map((p) => (
+              <FollowItem
+                key={p.walletAddress}
+                source={'collectedBy'}
+                user={{
+                  address: p.walletAddress,
+                  profile: {
+                    handle: p.handle,
+                    profileImageUrl: p.profileImageUrlLowres,
+                  },
+                }}
+              />
+            ))}
+          </div>
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
     </div>
   );
 };

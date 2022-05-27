@@ -20,10 +20,19 @@ import {
   AllConnectionsToDocument,
   IsXFollowingYDocument,
   GetProfileFollowerOverviewDocument,
+  GetCollectedByDocument,
 } from 'src/graphql/indexerTypes';
 
+export type FollowUnfollowSource =
+  | 'modalFollowing'
+  | 'modalFollowers'
+  | 'profileButton'
+  | 'feed'
+  | 'whotofollow'
+  | 'collectedBy';
+
 type FollowUnfollowButtonProps = {
-  source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
+  source: FollowUnfollowSource;
   walletConnectionPair: {
     wallet: AnchorWallet;
     connection: Connection;
@@ -86,6 +95,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
           AllConnectionsToDocument,
           IsXFollowingYDocument,
           GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
         ],
       });
 
@@ -138,6 +148,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
           AllConnectionsToDocument,
           IsXFollowingYDocument,
           GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
         ],
       });
 

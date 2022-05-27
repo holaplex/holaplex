@@ -6,7 +6,7 @@ import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-ada
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { FollowUnfollowButton } from './FollowUnfollowButton';
+import { FollowUnfollowButton, FollowUnfollowSource } from './FollowUnfollowButton';
 import {
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
@@ -94,12 +94,20 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers'
             ? (profileFollowersList.data?.connections ?? []).map((item: any) => (
-                <FollowItem key={item.from.address as string} side={'followers'} user={item.from} />
+                <FollowItem
+                  key={item.from.address as string}
+                  source={'modalFollowers'}
+                  user={item.from}
+                />
               ))
             : null}
           {visibility === 'following'
             ? (profileFollowingList.data?.connections ?? []).map((item: any) => (
-                <FollowItem key={item.to.address as string} side={'following'} user={item.to} />
+                <FollowItem
+                  key={item.to.address as string}
+                  source={'modalFollowing'}
+                  user={item.to}
+                />
               ))
             : null}
         </div>
@@ -110,10 +118,10 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
 
 type FollowItemProps = {
   user: ConnectionNodeFragment;
-  side: 'followers' | 'following';
+  source: FollowUnfollowSource;
 };
 
-const FollowItem: FC<FollowItemProps> = ({ user, side }) => {
+export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
   const wallet = useAnchorWallet();
   const { connection } = useConnection();
   const connectionsFromWallet = useAllConnectionsFromQuery({
@@ -170,7 +178,7 @@ const FollowItem: FC<FollowItemProps> = ({ user, side }) => {
                 connection,
                 wallet,
               }}
-              source={side === 'followers' ? 'modalFollowers' : 'modalFollowing'}
+              source={source}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
               toProfile={{
                 address: itemToReferTo,
