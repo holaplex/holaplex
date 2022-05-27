@@ -19,6 +19,7 @@ import {
   AllConnectionsFromDocument,
   AllConnectionsToDocument,
   IsXFollowingYDocument,
+  GetProfileFollowerOverviewDocument,
 } from 'src/graphql/indexerTypes';
 
 type FollowUnfollowButtonProps = {
@@ -80,7 +81,12 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+        ],
       });
 
       trackSuccess();
@@ -127,7 +133,12 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+        ],
       });
 
       trackSuccess();
