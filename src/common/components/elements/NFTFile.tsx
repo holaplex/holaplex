@@ -19,12 +19,12 @@ const NFTFile: FC<NFTFileProps> = ({ nft, loading }) => {
         type="module"
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
       />
-      <div className="relative aspect-square w-full  ">
+      <div className="relative w-full  ">
         {(loading || !imgLoaded) && (
           <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
         )}
         {nft?.category === `vr` ? (
-          <div className={`block aspect-square w-full rounded-lg border-none object-cover shadow`}>
+          <div className={`block w-full rounded-lg border-none object-cover shadow`}>
             {/* @ts-ignore */}
             <model-viewer
               style={{ width: `100%`, height: `100%` }}
@@ -38,7 +38,7 @@ const NFTFile: FC<NFTFileProps> = ({ nft, loading }) => {
           <video
             onLoadStart={() => setImgLoaded(true)}
             onLoad={() => setImgLoaded(true)}
-            className={`block aspect-square w-full rounded-lg border-none object-cover shadow`}
+            className={`block w-full rounded-lg border-none object-cover shadow`}
             playsInline={true}
             autoPlay={true}
             muted={true}
@@ -53,7 +53,7 @@ const NFTFile: FC<NFTFileProps> = ({ nft, loading }) => {
             <NFTImage
               onLoad={() => setImgLoaded(true)}
               src={imgOpt(nft?.image, 800)!}
-              className="block aspect-square w-full rounded-lg border-none object-cover shadow"
+              className="block w-full rounded-lg border-none object-cover shadow"
               alt=""
             />
           )
