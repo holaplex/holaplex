@@ -744,6 +744,13 @@ export type AllConnectionsToQueryVariables = Exact<{
 
 export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } }> };
 
+export type GetCollectedByQueryVariables = Exact<{
+  creator: Scalars['PublicKey'];
+}>;
+
+
+export type GetCollectedByQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, owner?: { __typename?: 'NftOwner', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, profileImageUrlLowres: string, handle: string } | null } | null }> };
+
 export type GetProfileFollowerOverviewQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
 }>;
@@ -1795,6 +1802,20 @@ export const AllConnectionsToDocument = gql`
   }
 }
     ${ConnectionNodeFragmentDoc}`;
+export const GetCollectedByDocument = gql`
+    query getCollectedBy($creator: PublicKey!) {
+  nfts(creators: [$creator], limit: 1000, offset: 0) {
+    address
+    owner {
+      profile {
+        walletAddress
+        profileImageUrlLowres
+        handle
+      }
+    }
+  }
+}
+    `;
 export const GetProfileFollowerOverviewDocument = gql`
     query getProfileFollowerOverview($pubKey: PublicKey!) {
   wallet(address: $pubKey) {
@@ -1959,6 +1980,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     allConnectionsTo(variables: AllConnectionsToQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AllConnectionsToQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<AllConnectionsToQuery>(AllConnectionsToDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'allConnectionsTo', 'query');
+    },
+    getCollectedBy(variables: GetCollectedByQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCollectedByQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCollectedByQuery>(GetCollectedByDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCollectedBy', 'query');
     },
     getProfileFollowerOverview(variables: GetProfileFollowerOverviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileFollowerOverviewQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProfileFollowerOverviewQuery>(GetProfileFollowerOverviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileFollowerOverview', 'query');

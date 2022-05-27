@@ -228,7 +228,7 @@ const PreviewContainer: FC<any> = (props) => {
   );
 };
 
-const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: string }> = ({
+export const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; className?: string }> = ({
   targetPubkey,
   className,
 }) => {
