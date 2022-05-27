@@ -51,7 +51,7 @@ export const Modal: FC<ModalProps> = ({
       )}
     >
       <div
-        ref={modalRef}
+        ref={priority ? null : modalRef}
         className={classNames(
           'scrollbar-thumb-rounded-full relative flex h-full max-h-screen w-full flex-col overflow-y-auto rounded-xl bg-gray-900 p-6 text-white shadow-md scrollbar-thin scrollbar-track-gray-900  sm:h-auto  sm:max-w-lg',
           short ? 'sm:max-h-[30rem]' : 'sm:max-h-[50rem]'
