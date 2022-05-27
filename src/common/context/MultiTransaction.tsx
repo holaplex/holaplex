@@ -81,7 +81,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
-        if (errorMsg.includes(`User rejected the request`)) {
+        if (
+          errorMsg.includes(`User rejected the request`) ||
+          errorMsg.includes(`was not confirmed`) ||
+          errorMsg.includes(`It is unknown if it succeeded or failed`)
+        ) {
           setActions([]);
           setHasRemainingActions(false);
         } else {
@@ -132,7 +136,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
-        if (errorMsg.includes(`User rejected the request`)) {
+        if (
+          errorMsg.includes(`User rejected the request`) ||
+          errorMsg.includes(`was not confirmed`) ||
+          errorMsg.includes(`It is unknown if it succeeded or failed`)
+        ) {
           setActions([]);
           setHasRemainingActions(false);
         } else {
