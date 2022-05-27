@@ -16,7 +16,7 @@ const NoProfileItems: FC<NoProfileItemsProps> = ({ variant = 'collected' }) => {
           className={`mt-12 flex w-full flex-col rounded-lg border border-gray-800 p-4 text-center`}
         >
           <span className="text-center text-2xl font-semibold">
-            {`You haven't collected anything yet`}
+            You haven&apos;t collected anything yet
           </span>
           <span className="mt-2 text-gray-300 ">{`NFTs you have collected will show up here`}</span>
         </div>
@@ -36,7 +36,7 @@ const NoProfileItems: FC<NoProfileItemsProps> = ({ variant = 'collected' }) => {
           className={`mt-12 flex flex-col justify-center gap-4 rounded-lg border border-gray-800 p-4 text-center`}
         >
           <span className="text-center text-2xl font-semibold">
-            {`You haven't created anything yet`}
+            You haven&apos;t created anything yet
           </span>
           <span className="text-gray-300 ">{`NFTs you have created or co-created will show up here`}</span>
           <div>
