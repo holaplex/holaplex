@@ -1,14 +1,15 @@
 import classNames from 'classnames';
-import { RefObject, useMemo, useRef, useState } from 'react';
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
-//TODO 
-//  - reduce number of initial renders to 1
-//  - check shadow stuff
-//  - change default button classes
-//  - expose pagination button classes
+//TODO
 //  - make progress dots
-//  - expose slider visibility 
+//  - expose slider visibility
 //  - expose slider styling (also allows for setting visibility?)
+//  - responsive
+//  - get page number based on slider position and update slider position from there
+//    so that if the slider is being used, you can click the buttons to re-align to the nearest page
+//    in that direction
+//  - write tests
 
 interface ItemProps {
   children: JSX.Element | JSX.Element[];
@@ -18,41 +19,98 @@ interface ItemProps {
 
 type AnimationStyle = 'none' | 'slide' | 'fade';
 
-interface ICarouselItem {
+interface CarouselItem {
   (props: ItemProps): JSX.Element;
 }
 
-const CarouselItem: ICarouselItem = ({ children, className, style = {} }) => (
-  //TODO does the item need any classes?
-  <div className={classNames('', className)} style={style}>
+const CarouselItem: CarouselItem = ({ children, className, style = {} }) => (
+  <div className={classNames('overflow-visible', className)} style={style}>
     {children}
   </div>
 );
 
+interface PageButton {
+  (props: { children: JSX.Element; className: string }): JSX.Element;
+}
+
+const PageButton: PageButton = ({ children, className }) => (
+  <button
+    className={classNames(
+      'h-10 w-10',
+      'rounded-full shadow shadow-current',
+      'active:scale-95',
+      'flex items-center justify-center',
+      className
+    )}
+  >
+    {children}
+  </button>
+);
+
+const DefaultPageNextElement: JSX.Element = (
+  <PageButton className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </PageButton>
+);
+
+const DefaultPagePreviousElement: JSX.Element = (
+  <PageButton className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </PageButton>
+);
+
 export interface CarouselProps {
-  rows?: number;
-  cols?: number;
+  rows: number;
+  cols: number;
   gap?: number;
+
+  /**
+   * 'slide' animation cuts off content outside the carousel necessarily (=== no giant box shadows!)
+   * because otherwise the content outside the current page
+   * would have to be visible, thus defeating the purpose of the carousels
+   */
   animation?: AnimationStyle;
   style?: object;
   className?: string;
   pageStyle?: object;
   pageClassName?: string;
+  pageNextElement?: JSX.Element;
+  pagePreviousElement?: JSX.Element;
   children?: JSX.Element | JSX.Element[];
 }
 
 const Carousel = ({
-  rows = 1,
-  cols = 1,
-  gap = 10,
+  rows,
+  cols,
+  gap = 0,
   animation = 'slide',
   style,
   className,
   pageStyle,
   pageClassName,
+  pageNextElement: pageRightElement = DefaultPageNextElement,
+  pagePreviousElement: pageLeftElement = DefaultPagePreviousElement,
   children = [],
 }: CarouselProps): JSX.Element => {
-  const childArray = useMemo<JSX.Element[]>(() => {
+  // ensure 'children' is an array of elements for simpler use, since
+  //  we need to spread them across pages
+  const childArray: JSX.Element[] = useMemo<JSX.Element[]>(() => {
     if (children === undefined) return [];
     else if (!Array.isArray(children)) return [children];
     else return children;
@@ -63,72 +121,69 @@ const Carousel = ({
   const nPages: number = Math.max(1, Math.ceil(childArray.length / nElementsPerPage));
 
   const [page, setPage] = useState<number>(0);
-  const [carouselAnimationClass, setCarouselAnimationClass] = useState<string>('');
-  const [pageAnimationClasses, setPageAnimationClasses] = useState<string[]>(
-    Array(nPages).fill('')
-  );
   const carouselRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
-  useMemo(
-    () => {
-      switch (animation) {
-        case 'slide': {
-          updateSlideAnimation();
-          break;
-        }
-        case 'fade': {
-          updateFadeAnimation();
-          break;
-        }
-        default: {
-          updateDefaultAnimation();
-        }
-      }
+  function updateAnimation(): [string, string[]] {
+    switch (animation) {
+      case 'slide':
+        return updateSlideAnimation();
+      case 'fade':
+        return updateFadeAnimation();
+      default:
+        return updateDefaultAnimation();
+    }
 
-      function updateSlideAnimation(): void {
-        const pageClasses: string[] = [];
-        for (let i = 0; i < nPages; i++) {
-          pageClasses.push(`flex min-w-full`);
-        }
-        setCarouselAnimationClass('flex flex-row flex-nowrap overflow-x-scroll scroll-smooth');
-        setPageAnimationClasses(pageClasses);
-        if (carouselRef.current) {
-          carouselRef.current.scrollTo({ left: carouselRef.current.scrollWidth * (page / 3) });
-        }
+    function updateSlideAnimation(): [string, string[]] {
+      const pageClasses: string[] = [];
+      for (let i = 0; i < nPages; i++) {
+        pageClasses.push(`flex min-w-full`);
       }
-
-      function updateFadeAnimation(): void {
-        const pageClasses: string[] = [];
-        for (let i = 0; i < nPages; i++) {
-          // need one page to not be absolutely positioned to allow for flex sizing to work
-          const pageOffset: number = i - page;
-          pageClasses.push(
-            classNames(
-              pageOffset === 0 ? '' : 'absolute top-0 left-0',
-              `transition-opacity duration-700 ease-in opacity-${pageOffset === 0 ? 100 : 0}`
-            )
-          );
-        }
-        setCarouselAnimationClass('relative');
-        setPageAnimationClasses(pageClasses);
-        if (carouselRef.current) carouselRef.current.scroll(0, 0);
+      if (carouselRef.current) {
+        carouselRef.current.scrollTo({ left: carouselRef.current.scrollWidth * (page / nPages) });
       }
+      return ['flex flex-row flex-nowrap scroll-smooth overflow-hidden', pageClasses];
+    }
 
-      function updateDefaultAnimation(): void {
-        setCarouselAnimationClass('');
-        setPageAnimationClasses(Array(nPages).fill(''));
-        if (carouselRef.current) carouselRef.current.scroll(0, 0);
+    function updateFadeAnimation(): [string, string[]] {
+      const pageClasses: string[] = [];
+      for (let i = 0; i < nPages; i++) {
+        // need one page to not be absolutely positioned to allow for flex sizing to work
+        pageClasses.push(
+          classNames(
+            i === page ? '' : 'absolute top-0 left-0 overflow-visible',
+            `transition-opacity duration-300 ease-in opacity-${page === i ? 100 : 0}`
+          )
+        );
       }
-    },
-    // style should be in here in case they override the style in a way that changes the
-    //  layout of the carousel, but putting it in causes infinite re-render
-    [animation, page, rows, cols, children, className, style]
-  );
+      if (carouselRef.current) carouselRef.current.scroll(0, 0);
+      return ['relative', pageClasses];
+    }
 
+    function updateDefaultAnimation(): [string, string[]] {
+      const pageClasses: string[] = [];
+      for (let i = 0; i < nPages; i++) {
+        // need one page to not be absolutely positioned to allow for flex sizing to work
+        pageClasses.push(
+          classNames(
+            i === page ? '' : 'absolute top-0 left-0 overflow-visible',
+            `opacity-${page === i ? 100 : 0}`
+          )
+        );
+      }
+      if (carouselRef.current) carouselRef.current.scroll(0, 0);
+      return ['relative', pageClasses];
+    }
+  }
+
+  const [carouselAnimationClass, pageAnimationClasses] = updateAnimation();
   const rowsClass: string = rows ? `grid-rows-${rows}` : '';
   const colsClass: string = cols ? `grid-cols-${cols}` : '';
-  const gapClass: string = gap !== undefined ? `gap-[${gap}px]` : '';
-  const pageGridClass: string = `grid ${rowsClass} ${colsClass} ${gapClass} w-full overflow-visible border-2 border-red-500`;
+  const pageGridClass: string = classNames('grid', rowsClass, colsClass);
+
+  // tailwind doesnt support dynamic arbitrary values
+  // https://v2.tailwindcss.com/docs/just-in-time-mode#arbitrary-value-support
+  const completePageStyle: object = { gap: `${gap}px`, marginRight: `${gap}px` };
+  Object.assign(completePageStyle, pageStyle);
 
   const pages: JSX.Element[] = [];
   const childQueue: JSX.Element[] = [...childArray];
@@ -142,31 +197,42 @@ const Carousel = ({
     // main problem with this approach (one grid per page) means you might have different styling/sizing per page
     pages.push(
       <div
-        className={classNames(`${pageGridClass} ${pageAnimationClasses[i]}`, pageClassName)}
+        className={classNames(
+          'w-full overflow-visible',
+          pageGridClass,
+          pageAnimationClasses[i],
+          pageClassName
+        )}
         key={`carousel-page-${i}`}
-        style={pageStyle || {}}
+        style={completePageStyle}
       >
         {pageItems}
       </div>
     );
   }
 
-  console.log('render');
-
   return (
-    <>
-      <div ref={carouselRef} className={`${carouselAnimationClass} max-w-full overflow-visible`} style={style || {}}>
+    <div className="relative overflow-visible">
+      <div
+        ref={carouselRef}
+        className={classNames('max-w-full', carouselAnimationClass, className)}
+        style={style}
+      >
         {pages}
       </div>
-      <div className="flex justify-between">
-        <button className="flex bg-red-500" onClick={() => setPage(Math.max(0, page - 1))}>
-          Previous
-        </button>
-        <button className="flex bg-red-500" onClick={() => setPage(Math.min(2, page + 1))}>
-          Next
-        </button>
+      <div
+        onClick={() => setPage(Math.max(0, page - 1))}
+        className={classNames({ hidden: page === 0 })}
+      >
+        {pageLeftElement}
       </div>
-    </>
+      <div
+        onClick={() => setPage(Math.min(nPages - 1, page + 1))}
+        className={classNames({ hidden: page === nPages - 1 })}
+      >
+        {pageRightElement}
+      </div>
+    </div>
   );
 };
 
