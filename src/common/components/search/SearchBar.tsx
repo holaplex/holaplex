@@ -13,6 +13,9 @@ import { PublicKey } from '@solana/web3.js';
 import { SearchIcon, XIcon } from '@heroicons/react/outline';
 import { IShortcutProviderRenderProps, withShortcut } from 'react-keybind';
 import KeyboardShortcut from '../elements/KeyboardShortcut';
+import { DebounceInput } from 'react-debounce-input';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const schema = zod.object({
   query: zod.string().nonempty({ message: `Must enter something` }),
@@ -50,7 +53,25 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
   useOutsideAlerter(searchResultsRef, () => setShowResults(false));
 
-  const [searchQuery, { data, loading, called }] = useSearchLazyQuery();
+  const { track } = useAnalytics();
+  const [searchQuery, { data, loading, called, variables: searchVariables }] = useSearchLazyQuery();
+
+  const wallet = useWallet();
+
+  useEffect(() => {
+    // keeping this as own side effect instead of moving it in with handleChange
+    // debounced either way
+
+    if (searchVariables?.term) {
+      track('Search Queried', {
+        term: searchVariables?.term,
+        event_category: 'Search',
+        event_label: searchVariables?.term,
+        connected: wallet.connected,
+        wallet: wallet.publicKey?.toBase58(),
+      });
+    }
+  }, [searchVariables?.term]);
 
   const handleSearch = ({ query }: SearchQuerySchema) => {
     // handle enter
@@ -59,6 +80,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   // handle ctrl/cmd + k
 
   const handleOnChange = (e: any) => {
+    console.log('search change', e.target.value);
     if (e.target.value === '') {
       setHasSearch(false);
     } else {
@@ -126,7 +148,9 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
               </span>
 
-              <input
+              <DebounceInput
+                minLength={2}
+                debounceTimeout={300}
                 id="search"
                 autoComplete={`off`}
                 autoCorrect={`off`}
@@ -138,8 +162,8 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   setShowKeybind(true);
                 }}
                 onBlur={() => setShowKeybind(false)}
-                onChange={handleOnChange}
                 placeholder={`Search Holaplex...`}
+                onChange={handleOnChange}
               />
 
               {hasSearch && (
@@ -182,6 +206,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
           )}
           {data && called && (
             <SearchResults
+              term={searchVariables?.term}
               results={data?.metadataJsons as MetadataJson[]}
               profileResults={data?.profiles as Wallet[]}
               walletResult={data.wallet as Wallet}
