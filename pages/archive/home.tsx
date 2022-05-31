@@ -301,7 +301,6 @@ export default function Home({
   const router = useRouter();
   const { storefront, searching } = useContext(StorefrontContext);
   const { connected, connecting } = useWallet();
-  const { looking } = useContext(WalletContext);
   const { track } = useAnalytics();
   const [show, setShow] = useState(16);
   const [loading, setLoading] = useState(true);
@@ -430,7 +429,7 @@ export default function Home({
             <div className="flex flex-wrap gap-4">
               <Link href={storefront ? '/storefront/edit' : '/storefront/new'} passHref>
                 <a>
-                  <Button skeleton={looking || searching} className="min-w-[13rem]">
+                  <Button skeleton={searching} className="min-w-[13rem]">
                     {storefront ? 'Edit your store' : 'Create your store'}
                   </Button>
                 </a>

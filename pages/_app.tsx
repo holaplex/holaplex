@@ -109,39 +109,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
               <WalletProviderSolana wallets={wallets} autoConnect>
                 <WalletModalProvider>
-                  {true ? (
-                    <WalletProviderDeprecated>
-                      {({ wallet }) => (
-                        <MultiTransactionProvider>
-                          <StorefrontProvider wallet={wallet}>
-                            {({}) => {
-                              return (
-                                <MarketplaceProvider wallet={wallet}>
-                                  {() => (
-                                    <AnalyticsProvider>
-                                      <AppHeader />
-                                      {getLayout(<Component {...pageProps} />)}
-                                    </AnalyticsProvider>
-                                  )}
-                                </MarketplaceProvider>
-                              );
-                            }}
-                          </StorefrontProvider>
-                        </MultiTransactionProvider>
-                      )}
-                    </WalletProviderDeprecated>
-                  ) : (
-                    <MultiTransactionProvider>
-                      <StorefrontProvider>
-                        <MarketplaceProvider>
-                          <AnalyticsProvider>
-                            <AppHeader />
-                            {getLayout(<Component {...pageProps} />)}
-                          </AnalyticsProvider>
-                        </MarketplaceProvider>
-                      </StorefrontProvider>
-                    </MultiTransactionProvider>
-                  )}
+                  <MultiTransactionProvider>
+                    <StorefrontProvider>
+                      <MarketplaceProvider>
+                        <AnalyticsProvider>
+                          <AppHeader />
+                          {getLayout(<Component {...pageProps} />)}
+                        </AnalyticsProvider>
+                      </MarketplaceProvider>
+                    </StorefrontProvider>
+                  </MultiTransactionProvider>
                 </WalletModalProvider>
               </WalletProviderSolana>
             </ConnectionProvider>
