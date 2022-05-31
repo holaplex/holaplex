@@ -200,6 +200,8 @@ const AlphaPage = ({ address }: { address: string }) => {
 
       // Single person aggregate
       if (shouldAggregateFollows(event, nextEvent, nextNextEvent)) {
+        // remove the item that would start the aggregation
+        feedItems.pop();
         // const eventsAggregated: FeedQueryEvent[] = feedEvents
         //   .slice(i)
         //   .filter((fe, i, arr) => shouldAggregate(fe, arr[i + 1]));

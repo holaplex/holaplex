@@ -2,7 +2,7 @@ import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
-import { shortenAddress } from '@/modules/utils/string';
+import { shortenAddress, shortenHandle } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
@@ -29,6 +29,7 @@ import {
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAttributes,
+  getAggregateProfiles,
   User,
 } from './feed.utils';
 import BuyForm from '../forms/BuyForm';
@@ -36,8 +37,7 @@ import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
-import Carousel from 'react-grid-carousel';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import Button from '../elements/Button';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -54,7 +54,6 @@ export function FeedCard(props: {
 
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  console.log(props.event.feedEventId);
   if (props.event.__typename === 'AggregateEvent') {
     return <FollowAggregateCard event={props.event} myFollowingList={props.myFollowingList} />;
   }
@@ -167,19 +166,26 @@ function FollowCard(props: {
           profile: props.event.profile,
         }}
       />
-      <div className="ml-4">
+      <div className="ml-4 flex flex-col justify-start gap-2">
         <div className="text-base font-semibold">
-          Followed <ProfileHandle user={attrs.toUser!} />
+          <ProfileHandle user={attrs.sourceUser} />
+          &nbsp;
+          {myFollowingList.includes(attrs.sourceUser!.address) &&
+          attrs.toUser!.address === anchorWallet?.publicKey.toBase58() ? (
+            <>
+              <span className={`text-base font-normal`}>followed you back</span>
+            </>
+          ) : (
+            <>
+              <span className={`text-base font-normal`}>followed</span>
+              &nbsp;
+              <ProfileHandle user={attrs.toUser!} />
+            </>
+          )}
         </div>
-        <div className="flex space-x-4 text-sm">
-          <ProfileHandle
-            user={{
-              address: props.event.walletAddress,
-              profile: props.event.profile,
-            }}
-          />
-          <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
-        </div>
+        <p className={`m-0 text-xs text-gray-300`}>
+          {DateTime.fromISO(attrs.createdAt).toRelative()}
+        </p>
       </div>
       {walletConnectionPair.wallet && (
         <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
@@ -198,7 +204,34 @@ function FollowCard(props: {
   );
 }
 
-export const ProfileHandle = ({ user }: { user: User }) => {
+export const ProfileHandleStack = ({ users }: { users: User[] }) => {
+  return (
+    <div>
+      {users.length > 2 ? (
+        <p className={`m-0 text-base font-bold`}>
+          <ProfileHandle user={users[0]} />
+
+          <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
+          <span className={`m-0`}>{users.length - 1} others</span>
+        </p>
+      ) : (
+        <p className={`m-0`}>
+          {users.slice(0, 2).map((user, i) => (
+            <span key={user.address} className={`m-0 text-base font-bold`}>
+              <ProfileHandle user={user} />
+
+              {i === 0 && users.length > 1 && (
+                <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
+              )}
+            </span>
+          ))}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?: boolean }) => {
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
@@ -216,7 +249,10 @@ export const ProfileHandle = ({ user }: { user: User }) => {
 
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-      <a>{(twitterHandle && '@' + twitterHandle) || shortenAddress(user.address)}</a>
+      <a>
+        {(twitterHandle && '@' + (shorten ? shortenHandle(twitterHandle) : twitterHandle)) ||
+          shortenAddress(user.address)}
+      </a>
     </Link>
   );
 };
@@ -276,11 +312,18 @@ function FeedActionBanner(props: {
           profile: props.event.profile,
         }}
       />
-      <div className="ml-2">
-        <div className="text-base font-semibold">{attrs.content}</div>
-        <div className="flex text-sm">
-          {/* {getHandle(attrs.sourceUser)}  */}
+      <div className="ml-2 flex max-w-xs flex-col gap-2">
+        <div className={`flex text-base font-semibold`}>
           <ProfileHandle user={attrs.sourceUser} />
+          &nbsp;
+          <div className="text-base font-normal">{attrs.content}</div>
+          &nbsp;
+          {attrs.type === `MintEvent` && (
+            <div className={`truncate text-base italic`}>{attrs.nft?.name}</div>
+          )}
+        </div>
+        <div className="flex text-xs">
+          {/* {getHandle(attrs.sourceUser)}  */}
           &nbsp;
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
@@ -416,6 +459,30 @@ const OfferAction = (props: { nft: any }) => {
   );
 };
 
+export const ProfilePFPStack = ({ users }: { users: User[] }) => {
+  return (
+    <div className={`inline-flex items-center`}>
+      {users.slice(0, 3).map((user, i) => (
+        <div
+          key={user.address}
+          className={`${
+            i > 0 && `-ml-6`
+          } transition duration-100 ease-in hover:z-10 hover:scale-105`}
+        >
+          <ProfilePFP user={user} />
+        </div>
+      ))}
+      {users.length - 3 > 1 && (
+        <button
+          className={`-ml-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition duration-100 ease-in hover:z-10 hover:scale-105`}
+        >
+          +{users.length - 3}
+        </button>
+      )}
+    </div>
+  );
+};
+
 export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
@@ -486,19 +553,52 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
     [anchorWallet, connection]
   );
 
+  if (!user.address) {
+    return null;
+  }
+
   return (
-    <div className={`flex flex-col items-center gap-2 p-4`}>
+    <div className={`flex w-64 max-w-xs flex-col items-center gap-2 p-4`}>
       <ProfilePFP user={user} />
       <p className={`m-0 text-base font-semibold`}>
-        <ProfileHandle user={user} />
+        <ProfileHandle user={user} shorten={true} />
       </p>
-      <FollowUnfollowButton
-        source={'feed'}
-        className={`!w-full sm:ml-auto sm:w-auto`}
-        walletConnectionPair={walletConnectionPair}
-        toProfile={{ address: user.address }}
-        type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
-      />
+      {user.address === anchorWallet?.publicKey.toBase58() ? (
+        <Button5
+          v={`secondary`}
+          type={`button`}
+          className={`h-8 w-24 !w-full sm:ml-auto sm:w-auto lg:h-10 lg:w-28`}
+        >
+          View
+        </Button5>
+      ) : (
+        <FollowUnfollowButton
+          source={'feed'}
+          className={`!w-full sm:ml-auto sm:w-auto`}
+          walletConnectionPair={walletConnectionPair}
+          toProfile={{ address: user.address }}
+          type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
+        />
+      )}
+    </div>
+  );
+};
+
+const AggregateProfiles = (props: { event: AggregateEvent }) => {
+  const users = getAggregateProfiles(props.event);
+
+  return (
+    <div className={`flex min-w-max`}>
+      <ProfilePFPStack users={users} />
+    </div>
+  );
+};
+
+const AggregateHandles = (props: { event: AggregateEvent }) => {
+  const users = getAggregateProfiles(props.event);
+  return (
+    <div className={`inline-flex`}>
+      <ProfileHandleStack users={users} />
     </div>
   );
 };
@@ -511,63 +611,31 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
   return (
     <div className={`flex flex-col rounded-lg bg-gray-900 p-4 shadow-2xl shadow-black`}>
       <div className={`flex w-full items-center gap-4 border-b border-b-gray-800 pb-4`}>
-        <ProfilePFP user={{ address: props.event.walletAddress, profile: props.event.profile }} />
-        <div className={`flex flex-col gap-2`}>
-          <p className={`m-0 text-base`}>
-            <span className={`font-semibold`}>
-              <ProfileHandle
-                user={{ address: props.event.walletAddress, profile: props.event.profile }}
-              />
-            </span>
+        <AggregateProfiles event={props.event} />
+        <div className={`flex w-full flex-col gap-2`}>
+          <div className={`text-base`}>
+            <AggregateHandles event={props.event} />
             &nbsp;followed {props.event.eventsAggregated.length} people
-          </p>
+          </div>
           <p className={`m-0 text-xs text-gray-300`}>
             {aggregateEventsTime(props.event.eventsAggregated).toRelative()}
           </p>
         </div>
       </div>
-      <div className={`grid w-full grid-cols-3 grid-rows-1 overflow-x-visible`}>
+      <div
+        className={`flex w-full gap-4 overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
+      >
         {props.event.eventsAggregated.map((e: any) => (
           <ProfileMiniCard
             key={e.feedEventId + e?.connection?.to?.address}
             user={{
               address: e?.connection?.to?.address,
-              profile: e.connection.to?.profile,
+              profile: e.connection?.to?.profile,
             }}
             myFollowingList={props.myFollowingList}
           />
         ))}
       </div>
-    </div>
-  );
-
-  return (
-    <div
-      className={classNames(
-        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-2xl shadow-black',
-        false && 'hover:scale-[1.02]'
-      )}
-    >
-      <div className="mx-auto flex justify-center sm:mx-0">
-        and {props.event.eventsAggregated.length - 1} similar events
-      </div>
-      <Button5 className="ml-auto w-full sm:w-auto" v="ghost" onClick={() => setModalOpen(true)}>
-        View all
-      </Button5>
-      {ReactDom.createPortal(
-        <Modal
-          open={modalOpen}
-          setOpen={setModalOpen}
-          title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
-        >
-          <div className="space-y-10 p-4">
-            {props.event.eventsAggregated.map((e) => (
-              <FeedCard event={e} key={e.feedEventId} />
-            ))}
-          </div>
-        </Modal>,
-        document.getElementsByTagName('body')[0]!
-      )}
     </div>
   );
 }

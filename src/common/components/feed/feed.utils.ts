@@ -88,8 +88,8 @@ export function generateFeedCardAttributes(
         ...base,
         type: 'FollowEvent',
         content: myFollowingList?.includes(to.address)
-          ? 'Was followed by ' + getHandle(to)
-          : 'Followed ' + getHandle(to),
+          ? 'was followed by ' + getHandle(to)
+          : 'followed ' + getHandle(to),
 
         // I thought the source would be from, but aparently it's to
         // sourceUser: event.connection?.from!,
@@ -101,7 +101,7 @@ export function generateFeedCardAttributes(
       const creator = event.nft?.creators[0]!;
       return {
         ...base,
-        content: 'Created ', //  + shortenAddress(event.nft?.address),
+        content: 'created ', //  + shortenAddress(event.nft?.address),
         /*         sourceUser: {
           address: creator.address,
           profile: creator.profile,
@@ -114,7 +114,7 @@ export function generateFeedCardAttributes(
       return {
         ...base,
         content:
-          (event.purchase?.buyer === event.walletAddress ? 'Bought' : 'Sold') +
+          (event.purchase?.buyer === event.walletAddress ? 'bought' : 'sold') +
           ' for ' +
           solAmount +
           ' SOL',
@@ -128,7 +128,7 @@ export function generateFeedCardAttributes(
       solAmount = event.offer?.price / LAMPORTS_PER_SOL;
       return {
         ...base,
-        content: 'Offered ' + solAmount + ` SOL`,
+        content: 'offered ' + solAmount + ` SOL`,
         solAmount,
         /*      sourceUser: {
           address: event.offer?.buyer!,
@@ -138,6 +138,29 @@ export function generateFeedCardAttributes(
       };
   }
 }
+
+export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => {
+  if (aggregateEvent.eventsAggregated.length < 2) {
+    return [
+      {
+        address: aggregateEvent.walletAddress,
+        profile: aggregateEvent.profile,
+      },
+    ];
+  }
+  const users: User[] = [];
+  aggregateEvent.eventsAggregated.map((user) => {
+    if (!users?.find((u) => u?.address === user.walletAddress)) {
+      users.push({
+        address: user.walletAddress,
+        profile: user.profile,
+      });
+    } else {
+      // do nothing
+    }
+  });
+  return users as User[];
+};
 
 export const aggregateEventsTime = (events: FeedQueryEvent[]) => {
   let avgTime = 0;
@@ -158,8 +181,8 @@ export function shouldAggregateFollows(e1: FeedQueryEvent, e2: FeedQueryEvent, e
   return (
     e1.__typename === e2.__typename &&
     e2.__typename == e3.__typename &&
-    e1.walletAddress === e2.walletAddress &&
-    e2.walletAddress === e3.walletAddress &&
+    // e1.walletAddress === e2.walletAddress &&
+    // e2.walletAddress === e3.walletAddress &&
     e1.__typename === 'FollowEvent' &&
     e2.__typename === 'FollowEvent' &&
     e3.__typename === 'FollowEvent'
