@@ -19,6 +19,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
+import Carousel from '@/common/components/elements/Carousel';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
@@ -73,17 +74,17 @@ const FeaturedProfilesSection: VFC = () => {
         </HomeSection.HeaderAction> */}
       </HomeSection.Header>
       <HomeSection.Body>
-        <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>
-          {featuredProfiles.map((s) => (
-            <HomeSectionCarousel.Item key={s.address} className="p-4">
+        <Carousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS} animation="fade">
+          {featuredProfiles.map((s, i) => (
+            <Carousel.Item key={s.address || i} className="p-4">
               <ProfilePreview
                 address={s.address}
                 data={s}
                 onInsufficientData={onInsufficientDataForAProfile}
               />
-            </HomeSectionCarousel.Item>
+            </Carousel.Item>
           ))}
-        </HomeSectionCarousel>
+        </Carousel>
       </HomeSection.Body>
     </HomeSection>
   );
@@ -222,7 +223,7 @@ const LoadingPreview = () => {
 const PreviewContainer: FC<any> = (props) => {
   return (
     <div
-      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg shadow-md shadow-black duration-300 hover:scale-[1.02]"
+      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg shadow-2xl shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );
