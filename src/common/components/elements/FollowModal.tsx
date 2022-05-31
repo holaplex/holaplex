@@ -13,6 +13,7 @@ import {
   useAllConnectionsToQuery,
 } from 'src/graphql/indexerTypes';
 import { useProfileData } from '@/common/context/ProfileData';
+import { cleanUpFollowers, cleanUpFollowing } from './FollowerCount';
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type FollowModalProps = {
@@ -93,7 +94,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         </div>
         <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers'
-            ? (profileFollowersList.data?.connections ?? []).map((item: any) => (
+            ? cleanUpFollowers(profileFollowersList.data?.connections).filter((v, i, a) => i === a.indexOf(v)).map((item: any) => (
                 <FollowItem
                   key={item.from.address as string}
                   source={'modalFollowers'}
@@ -102,7 +103,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
               ))
             : null}
           {visibility === 'following'
-            ? (profileFollowingList.data?.connections ?? []).map((item: any) => (
+            ? cleanUpFollowing(profileFollowingList.data?.connections).map((item: any) => (
                 <FollowItem
                   key={item.to.address as string}
                   source={'modalFollowing'}
@@ -145,7 +146,7 @@ export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
   });
 
   return (
-    <div className={cx('flex h-10')}>
+    <div className="flex h-10">
       <div className="flex flex-1 justify-between">
         <div className="flex items-center">
           <img

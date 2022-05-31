@@ -45,7 +45,8 @@ export interface TrackingAttributes extends GenericTrackingAttributes {
     | 'Misc'
     | 'Profile'
     | 'NFTs'
-    | 'Alpha';
+    | 'Alpha'
+    | 'Search';
   event_label: string;
   value?: number;
   sol_value?: number;
