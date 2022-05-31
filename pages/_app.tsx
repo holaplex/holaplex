@@ -40,6 +40,9 @@ import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
 import { apolloClient } from 'src/graphql/apollo';
 import { NextPage } from 'next';
 
+// keybinds
+import { ShortcutProvider } from 'react-keybind';
+
 const { Content } = Layout;
 
 const getSolanaNetwork = () => {
@@ -102,22 +105,47 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           closeButton={() => <Close color="#fff" />}
         />
         <ApolloProvider client={apolloClient}>
-          <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
-            <WalletProviderSolana wallets={wallets} autoConnect>
-              <WalletModalProvider>
-                <MultiTransactionProvider>
-                  <StorefrontProvider>
-                    <MarketplaceProvider>
-                      <AnalyticsProvider>
-                        <AppHeader />
-                        {getLayout(<Component {...pageProps} />)}
-                      </AnalyticsProvider>
-                    </MarketplaceProvider>
-                  </StorefrontProvider>
-                </MultiTransactionProvider>
-              </WalletModalProvider>
-            </WalletProviderSolana>
-          </ConnectionProvider>
+          <ShortcutProvider preventDefault={true}>
+            <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
+              <WalletProviderSolana wallets={wallets} autoConnect>
+                <WalletModalProvider>
+                  {true ? (
+                    <WalletProviderDeprecated>
+                      {({ wallet }) => (
+                        <MultiTransactionProvider>
+                          <StorefrontProvider wallet={wallet}>
+                            {({}) => {
+                              return (
+                                <MarketplaceProvider wallet={wallet}>
+                                  {() => (
+                                    <AnalyticsProvider>
+                                      <AppHeader />
+                                      {getLayout(<Component {...pageProps} />)}
+                                    </AnalyticsProvider>
+                                  )}
+                                </MarketplaceProvider>
+                              );
+                            }}
+                          </StorefrontProvider>
+                        </MultiTransactionProvider>
+                      )}
+                    </WalletProviderDeprecated>
+                  ) : (
+                    <MultiTransactionProvider>
+                      <StorefrontProvider>
+                        <MarketplaceProvider>
+                          <AnalyticsProvider>
+                            <AppHeader />
+                            {getLayout(<Component {...pageProps} />)}
+                          </AnalyticsProvider>
+                        </MarketplaceProvider>
+                      </StorefrontProvider>
+                    </MultiTransactionProvider>
+                  )}
+                </WalletModalProvider>
+              </WalletProviderSolana>
+            </ConnectionProvider>
+          </ShortcutProvider>
         </ApolloProvider>
       </QueryClientProvider>
     </>

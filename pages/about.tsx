@@ -1,251 +1,363 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Image from 'next/image';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Head from 'next/head';
-import sv from '@/constants/styles';
-import RoadmapImage from '@/assets/images/roadmap-v1.svg';
-import investorData from '@/assets/investors/investors-stub';
-import { List, Space, Row, Col, Typography, Card } from 'antd';
-import SocialLinks from '@/common/components/elements/SocialLinks';
+import { Typography } from 'antd';
 import Footer from '@/common/components/home/Footer';
+import investorData from '@/assets/investors/investors-stub';
+import Link from 'next/link';
 
-const { Title, Paragraph } = Typography;
-
-const ContentCol = styled(Col)`
-  max-width: 1400px;
+const Heading = styled.h2`
+  font-size: 32px;
+  font-size: clamp(24px, 4vw, 32px);
+  font-family: 'Inter', sans-serif;
 `;
-
-const Roadmap = styled.div`
-  margin: 70px 0 0 0;
-  width: 100%;
-  overflow-x: auto;
-  padding: 0 ${sv.appPadding}px;
-`;
-
-const HeroTitle = styled.h1`
-  text-align: center;
-  font-weight: 800;
-  font-size: 68px;
-  line-height: auto;
-  margin-top: ${sv.sectionPadding}px;
-  @media screen and (max-width: 550px) {
-    margin-top: ${sv.appPadding}px;
-    font-size: 48px;
-    line-height: auto;
-    text-align: left;
-    padding: 0 ${sv.appPadding}px;
-  }
-`;
-
-const Pitch = styled.h2`
+const SubHeading = styled.h3`
   font-size: 24px;
-  line-height: 32px;
-  letter-spacing: 0.2px;
-  text-align: center;
-  font-weight: 300;
-  color: rgba(253, 253, 253, 0.6);
-  @media screen and (max-width: 550px) {
-    font-size: 20px;
-    text-align: left;
-    padding: 0 ${sv.appPadding}px;
-  }
+  font-size: clamp(20px, 3vw, 24px);
+  font-family: 'Inter', sans-serif;
+`;
+const Paragraph = styled.p`
+  font-size: 16px;
+  color: #a8a8a8;
 `;
 
-const LightText = styled(Paragraph)`
-  color: rgba(255, 255, 255, 0.6);
-  a {
-    color: rgba(255, 255, 255, 1);
-    text-decoration: underline;
-    &:hover {
-      color: rgba(255, 255, 255, 0.6);
-      text-decoration: underline;
-    }
-  }
-`;
-
-const LightTitle = styled(Title)`
-  &.ant-typography,
-  &.ant-typography {
-    color: #ffffff;
-  }
-`;
-
-const Community = styled(Row)`
-  margin-top: ${sv.sectionPadding * 2}px;
-  @media screen and (max-width: 550px) {
-    margin-top: ${sv.sectionPadding}px;
-    padding: 0 ${sv.appPadding}px;
-  }
-`;
-
-const Stats = styled.div``;
-
-const Stat = styled(Col)`
-  text-align: center;
-  padding: ${sv.grid}px;
-`;
-
-type StatTitleProps = {
-  textColor: string;
-};
-const StatTitle = styled.h1`
-  background: ${({ textColor }: StatTitleProps) => textColor};
-  font-size: 5vw;
-  margin-bottom: 0;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  @media screen and (min-width: 1600px) {
-    font-size: 90px;
-  }
-  @media screen and (max-width: 768px) {
-    font-size: 48px;
-  }
-`;
-
-const BackedBy = styled(Row)`
-  margin: ${sv.sectionPadding * 2}px 0 ${sv.sectionPadding * 1.5}px;
-`;
-
-const Investors = styled.div`
-  width: 100%;
-  background: #fff;
-  border-radius: 8px;
-  margin-top: ${sv.appPadding}px;
-`;
-
-const Investor = styled.div`
-  margin: ${sv.grid * 4}px;
-  position: relative;
-  height: 60px;
+const Section = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
   justify-content: center;
+  padding: 3rem 0;
+  @media (min-width: 1200px) {
+    padding: 4.5rem 0;
+  }
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const Content = styled.div`
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  box-sizing: border-box;
+  padding: 1rem;
+  position: relative;
+  z-index: 10;
+`;
+
+const HeroSection = styled(Section)`
+  padding: 14rem 0;
+  @media (max-width: 1000px) {
+    padding: 4rem 0;
+  }
+  align-items: center;
+  position: relative;
+  min-height: calc(100vh - 80px);
+  @media (max-width: 768px) {
+    min-height: calc(100vh - 72px);
+  }
 `;
 
 const LogoContainer = styled.a`
   width: 100%;
   height: 100%;
-  max-width: 120px;
+  max-width: 150px;
+  aspect-ratio: 16 / 7;
   display: block;
   position: relative;
 `;
 
-const SocialWrapper = styled.div`
-  margin: 2rem 0 4rem;
+const CoreProduct = styled.div`
+  text-align: center;
+  width: 100%;
+  max-width: 24rem;
+  box-shadow: 0px 20px 32px rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+  border-radius: 1rem;
+  & > div {
+    margin: 0.75rem auto;
+  }
+`;
+
+const floating = keyframes`
+  0% { transform: translate(0,  0%); }
+  50% { transform: translate(0, 1%); }
+  100% { transform: translate(0, -0%); }
+`;
+
+const CommunityNFTContainer = styled.div`
+  width: 30%;
+  margin-left: -3.5%;
+  margin-right: -3.5%;
+  border-radius: 4%;
+  overflow: hidden;
+
+  box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.25);
+  aspect-ratio: 1/1;
+
+  animation-name: ${floating};
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+
+  &:nth-child(even) {
+    margin-top: -25%;
+  }
+  &:last-child {
+    margin-top: -15%;
+  }
 `;
 
 export default function About() {
   return (
     <>
-      <Head>
-        <title>We exist for our community of creators | Holaplex</title>
-        <meta
-          property="description"
-          key="description"
-          content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
-        />
-      </Head>
-      <Row justify="center">
-        <ContentCol xs={22} md={20}>
-          <Space direction="vertical" align="center" size="large">
-            <HeroTitle>
-              Our mission is to empower creators and collectors with a suite of tools to create,
-              market, and sell NFTs.
-            </HeroTitle>
-            <Pitch>
-              Tools that are open source, owned by creators, are permissionless, and governed by the
-              community.
-            </Pitch>
-          </Space>
-        </ContentCol>
-      </Row>
+      <div className="container  mx-auto px-6 md:px-12">
+        <Head>
+          <title>About Holaplex | Holaplex</title>
+          <meta
+            property="description"
+            key="description"
+            content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
+          />
+          <body />
+        </Head>
 
-      <Row justify="center">
-        <Col>
-          <Roadmap>
-            <Image layout="fixed" width={1147} height={185} src={RoadmapImage} alt="hola" />
-          </Roadmap>
-        </Col>
-      </Row>
+        <Section>
+          <Content className="text-center">
+            <Heading>A community driven by you</Heading>
+            <Paragraph>
+              You created it and you own it. Our community believes in being radically open,
+              decentralized and permissionless.
+            </Paragraph>
+          </Content>
+          <div className="mx-auto w-10/12 max-w-6xl">
+            <div className="mt-24 flex flex-wrap items-center justify-around lg:mt-48">
+              <CommunityNFTContainer
+                style={{ animationDelay: '250ms ', animationDuration: '5s' }}
+                className=""
+              >
+                <Image src={'/images/page-about/nft-1.jpg'} width="500" height="500" alt="" />
+              </CommunityNFTContainer>
+              <CommunityNFTContainer
+                style={{ animationDelay: '500ms ', animationDuration: '6s' }}
+                className="z-20"
+              >
+                <Image src={'/images/page-about/nft-2.jpg'} width="500" height="500" alt="" />
+              </CommunityNFTContainer>
+              <CommunityNFTContainer
+                style={{ animationDelay: '1500ms', animationDuration: '5s' }}
+                className="z-10"
+              >
+                <Image src={'/images/page-about/nft-3.jpg'} width="500" height="500" alt="" />
+              </CommunityNFTContainer>
+              <CommunityNFTContainer
+                style={{ animationDelay: '2000ms', animationDuration: '6s' }}
+                className=""
+              >
+                <Image src={'/images/page-about/nft-4.jpg'} width="500" height="500" alt="" />
+              </CommunityNFTContainer>
+            </div>
+          </div>
+        </Section>
 
-      <Community justify="center">
-        <ContentCol xs={22} md={20}>
-          <Row>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <LightTitle level={2}>We exist for our community of creators.</LightTitle>
-              <LightText>
-                The rapid rise of NFTs has allowed creators to build communities and monetize their
-                work in innovative ways. So much talent has come into this space but there are
-                barriers preventing some from joining. Using the tools needed to mint and sell NFTs
-                is non-trivial even for experienced developers.
-              </LightText>
-              <LightText>
-                Holaplex is committed to building tools that will allow creators and collectors to
-                join the NFT community easily and safely.
-              </LightText>
-            </Col>
-            <Col xs={24} md={12} lg={12} xl={12} xxl={12}>
-              <Stats>
-                <Row>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.mainGradient}>1.5k+</StatTitle>
-                    <LightText>Stores created</LightText>
-                  </Stat>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.orangeGradient}>5k+</StatTitle>
-                    <LightText>NFTs minted</LightText>
-                  </Stat>
-                </Row>
-                <Row>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.purpleGradient}>8k+</StatTitle>
-                    <LightText>Twitter followers</LightText>
-                  </Stat>
-                  <Stat span={12}>
-                    <StatTitle textColor={sv.colors.greenGradient}>40k+</StatTitle>
-                    <LightText>SOL transaction volume</LightText>
-                  </Stat>
-                </Row>
-              </Stats>
-            </Col>
-          </Row>
-        </ContentCol>
-      </Community>
+        <Section>
+          <div
+            className="mx-auto flex w-full flex-col items-center justify-center lg:flex-row"
+            style={{ maxWidth: '1400px' }}
+          >
+            <div className="w-full lg:w-1/2">
+              <Content>
+                <Heading>
+                  Build your following, <br className="hidden lg:block" /> own your audience
+                </Heading>
+                <Paragraph>
+                  Every follower is stored on-chain. This means they are portable to any platorm
+                  that utlizes the free and open-sourced Holaplex Social Graph. Build your following
+                  today!
+                </Paragraph>
+              </Content>
+            </div>
+            <div className="w-full max-w-md lg:w-1/2 lg:max-w-full">
+              <Image src={'/images/page-about/audience.svg'} width="579" height="336" alt="" />
+            </div>
+          </div>
+        </Section>
 
-      <BackedBy justify="center">
-        <ContentCol xs={22} md={20}>
-          <Title level={2}>Backed by</Title>
-          <Investors>
-            <List
-              grid={{ xs: 2, sm: 3, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
-              dataSource={investorData}
-              renderItem={(investor: { url: string; logo: string; name: string }) => (
-                <List.Item key={investor.url}>
-                  <Investor>
-                    <LogoContainer href={investor.url} target="_blank" rel="noreferrer">
-                      <Image
-                        layout="fill"
-                        objectFit="contain"
-                        src={investor.logo}
-                        alt={investor.name}
-                      />
-                    </LogoContainer>
-                  </Investor>
-                </List.Item>
-              )}
-            />
-          </Investors>
-        </ContentCol>
-      </BackedBy>
-      {/* <Row justify="center">
-        <ContentCol xs={22} md={20}>
-          <Title level={2}>Get in touch</Title>
-          <SocialWrapper>
-            <SocialLinks />
-          </SocialWrapper>
-        </ContentCol>
-      </Row> */}
-      {/* <Footer /> */}
+        <Section>
+          <div
+            className="mx-auto flex w-full flex-col items-center justify-center lg:flex-row lg:gap-12"
+            style={{ maxWidth: '1400px' }}
+          >
+            <div className="w-11/12 max-w-lg lg:w-1/2">
+              <Image
+                src={'/images/page-about/we-unlock-your-talent.png'}
+                width="594"
+                height="826"
+                alt="We unlock your talent"
+              />
+            </div>
+            <div className="w-full lg:w-1/2">
+              <Content>
+                <Heading>
+                  We Unlock Your <br className="hidden lg:block" /> extraordinary Work
+                </Heading>
+                <Paragraph>
+                  Our mission is to empower creators and collectors with a suite of tools to create,
+                  market, and sell NFTs.
+                </Paragraph>
+              </Content>
+            </div>
+          </div>
+        </Section>
+
+        <Section>
+          <Content className="text-center">
+            <div>
+              <Heading>Our core products</Heading>
+              <Paragraph>
+                It’s easier than ever to get started with NFTs. With Holaplex, everyone’s welcome.
+              </Paragraph>
+            </div>
+            <div className="flex w-full flex-wrap justify-around gap-8 lg:mt-12 lg:justify-between lg:gap-12">
+              <CoreProduct>
+                <div>
+                  <Image
+                    src={'/images/page-about/core-profiles.svg'}
+                    width="48"
+                    height="48"
+                    alt=""
+                  />
+                </div>
+                <SubHeading>Profiles</SubHeading>
+                <Paragraph>
+                  Every Solana wallet is a profile that operates as an NFT store
+                </Paragraph>
+              </CoreProduct>
+              <CoreProduct>
+                <div>
+                  <Image src={'/images/page-about/core-alpha.svg'} width="48" height="48" alt="" />
+                </div>
+                <SubHeading>Alpha</SubHeading>
+                <Paragraph>
+                  An on-chain social feed of activity from profiles you’re following
+                </Paragraph>
+              </CoreProduct>
+              <div className="flex w-full justify-center">
+                <CoreProduct>
+                  <div>
+                    <Image
+                      src={'/images/page-about/core-indexer.svg'}
+                      width="48"
+                      height="48"
+                      alt=""
+                    />
+                  </div>
+                  <SubHeading>Indexer</SubHeading>
+                  <Paragraph>Better access to useful on-chain data at lightning speed</Paragraph>
+                </CoreProduct>
+              </div>
+              <CoreProduct>
+                <div>
+                  <Image src={'/images/page-about/core-social.svg'} width="48" height="48" alt="" />
+                </div>
+                <SubHeading>Social Graph</SubHeading>
+                <Paragraph>
+                  An graph program that powers on-chain followers and social feeds
+                </Paragraph>
+              </CoreProduct>
+              <CoreProduct>
+                <div>
+                  <Image
+                    src={'/images/page-about/core-marketplace.svg'}
+                    width="48"
+                    height="48"
+                    alt=""
+                  />
+                </div>
+                <SubHeading>Marketplaces</SubHeading>
+                <Paragraph>No-code NFT marketplaces for DAOs and NFT collectives</Paragraph>
+              </CoreProduct>
+            </div>
+          </Content>
+        </Section>
+
+        <Section>
+          <Content className="text-center">
+            <Heading>Backed by</Heading>
+            <br />
+            <div className="flex flex-wrap justify-center gap-4 lg:gap-8">
+              {investorData.map((investor, index) => (
+                <LogoContainer
+                  key={investor.url}
+                  href={investor.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Image
+                    layout="fill"
+                    objectFit="contain"
+                    src={investor.logoLight || investor.logo}
+                    alt={investor.name}
+                  />
+                </LogoContainer>
+              ))}
+            </div>
+          </Content>
+          <br />
+          <br />
+          <br />
+          <br />
+          <Content className="text-center">
+            <Heading>Our partners</Heading>
+            <br />
+            <div className="flex flex-wrap justify-center gap-4 lg:gap-8">
+              <LogoContainer href="https://www.metaplex.com/" target="_blank" rel="noreferrer">
+                <Image
+                  layout="fill"
+                  objectFit="contain"
+                  src="/images/page-about/partners/metaplex.png"
+                  alt="metaplex"
+                />
+              </LogoContainer>
+              <LogoContainer href="https://www.cardinal.so/" target="_blank" rel="noreferrer">
+                <Image
+                  layout="fill"
+                  objectFit="contain"
+                  src="/images/page-about/partners/cardinal.png"
+                  alt="cardinal"
+                />
+              </LogoContainer>
+              <LogoContainer href="https://www.dialect.to/" target="_blank" rel="noreferrer">
+                <Image
+                  layout="fill"
+                  objectFit="contain"
+                  src="/images/page-about/partners/dialect.png"
+                  alt="dialect"
+                />
+              </LogoContainer>
+              <LogoContainer href="https://www.crossmint.io/" target="_blank" rel="noreferrer">
+                <Image
+                  layout="fill"
+                  objectFit="contain"
+                  src="/images/page-about/partners/crossmint.png"
+                  alt="crossmint"
+                />
+              </LogoContainer>
+              <LogoContainer href="https://www.notifi.network/" target="_blank" rel="noreferrer">
+                <Image
+                  layout="fill"
+                  objectFit="contain"
+                  src="/images/page-about/partners/notifi.png"
+                  alt="notifi"
+                />
+              </LogoContainer>
+            </div>
+          </Content>
+        </Section>
+        <div className="-mt-20" />
+      </div>
+      <Footer />
     </>
   );
 }
