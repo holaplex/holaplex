@@ -1,5 +1,9 @@
-import { GetServerSideProps, NextPage } from 'next';
+
+import { getTwitterHandle } from '@/common/hooks/useTwitterHandle';
+import { useConnection } from '@solana/wallet-adapter-react';
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
+import { MessageAccount } from '@usedispatch/client';
+import { GetServerSideProps, NextPage } from 'next';
 import { ProfileMessages } from '@/common/components/elements/ProfileMessages';
 import {
   getProfileServerSideProps,
@@ -8,9 +12,9 @@ import {
 import { ProfileDataProvider } from '@/common/context/ProfileData';
 import { ProfilePageHead } from '../[publicKey]';
 import { useMailbox } from './MailboxProvider';
-import { MessageAccount } from '@usedispatch/client';
 import { useEffect, useState } from 'react';
 import * as web3 from '@solana/web3.js';
+
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async context =>
   getProfileServerSideProps(context);
@@ -21,6 +25,7 @@ const MessagesPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props 
   const [mailboxAddress, setMailboxAddress] = useState<web3.PublicKey | null>(null);
 
   const mailbox = useMailbox();
+
 
   useEffect(() => {
     // console.log('use effect');
@@ -49,6 +54,9 @@ const MessagesPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props 
                   (m: any) => m.receiver == publicKey && m.sender == uniqueSenders[i]
                 )]
                 .sort((a, b) => {
+                  console.log("Comparing")
+                  console.log(new Date(String(a.data.ts)).getTime())
+                  console.log(new Date(String(b.data.ts)).getTime())
                 if (new Date(String(a.data.ts)).getTime() > new Date(String(b.data.ts)).getTime()){
                   console.log("sort true")
                   return -1
@@ -62,6 +70,7 @@ const MessagesPage: NextPage<WalletDependantPageProps> = ({ publicKey, ...props 
                 return 0 
               });
             }
+            console.log(allMessages)
             setMessages(allMessages);
             setUniqueSenders(uniqueSenders)
           });
