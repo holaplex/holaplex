@@ -100,6 +100,16 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
             }
           >
             <div className='grid-flow-col gap-4'>
+              <div className={'px-2 py-2 mx-2 my-4 rounded-md '}>
+                <form>
+                  <input
+                    type='text'
+                    name='newMessageReceipient'
+                    className='z-0 w-full pl-10 pr-20 text-white bg-[#161616] border border-gray-600 rounded-lg h-14'
+                    placeholder='To...'
+                  />
+                </form>
+              </div>
               {uniqueSenders.map((us: any) => {
                 let cx = '';
                 if (us == selectedMessage) {
@@ -128,67 +138,74 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
         </div>
         <div className='grow'>
           <div className='relative h-full grid-flow-col gap-4'>
-          {//@ts-ignore
-          selectedMessage != '' && messages[selectedMessage] ? (
-            //@ts-ignore
-            messages[selectedMessage].map((message: any, index) => {
-              let cx, dx = '';
-              if (message.sender.toBase58() == publicKey) {
-                cx = 'text-right';
-                dx = 'float-right';
-              } else {
-                cx = 'text-left';
-                dx = 'float-left';
-              }
-
-              var nextSame  = '  '
+            {//@ts-ignore
+            selectedMessage != '' && messages[selectedMessage] ? (
               //@ts-ignore
-              if ( messages[selectedMessage].length < index+1 && message.sender.toBase58() == messages[selectedMessage][index+1].sender.toBase58() ) {
-                nextSame = ' hidden '
-              }
+              messages[selectedMessage].map((message: any, index) => {
+                let cx,
+                  dx = '';
+                if (message.sender.toBase58() == publicKey) {
+                  cx = 'text-right';
+                  dx = 'float-right';
+                } else {
+                  cx = 'text-left';
+                  dx = 'float-left';
+                }
 
-              return (
-                <div className={'py-2 ml-4 ' + cx}>
-                  <div
-                    className={
-                      'h12 max-h-12 px-10 py-10  text-white inline-flex focus:border-[#72a4e1aa] active:scale-[0.99] hover:opacity-100 items-center justify-center border-[3px] border-transparent opacity-90 transition-all bg-gray-800 false whitespace-nowrap border-opacity-10 rounded-xl w-[33%] '
-                    }
-                  >
-                    <span>
-                      {message.data.body}
-                      <br />
-                      {String(message.data.ts.toDateString())}
-                    </span>
+                var nextSame = '  ';
+
+                if (
+                  //@ts-ignore
+                  messages[selectedMessage].length < index + 1 &&
+                  message.sender.toBase58() ==
+                    //@ts-ignore
+                    messages[selectedMessage][index + 1].sender.toBase58()
+                ) {
+                  nextSame = ' hidden ';
+                }
+
+                return (
+                  <div className={'py-2 ml-4 ' + cx}>
+                    <div
+                      className={
+                        'h12 max-h-12 px-10 py-10  text-white inline-flex focus:border-[#72a4e1aa] active:scale-[0.99] hover:opacity-100 items-center justify-center border-[3px] border-transparent opacity-90 transition-all bg-gray-800 false whitespace-nowrap border-opacity-10 rounded-xl w-[33%] '
+                      }
+                    >
+                      <span>
+                        {message.data.body}
+                        <br />
+                        {String(message.data.ts.toDateString())}
+                      </span>
+                    </div>
+                    <div className={'inline-block ' + dx + nextSame}>
+                      <ProfilePFP user={{ address: message.sender.toBase58() }} />
+                    </div>
                   </div>
-                  <div className={'inline-block ' + dx + nextSame}>
-                    <ProfilePFP user={{ address: message.sender.toBase58() }} />
+                );
+              })
+            ) : (
+              <></>
+            )}
+            <span className='absolute w-full ml-8 bottom-10'>
+              <form onSubmit={sendMessage}>
+                <div className='relative'>
+                  <input
+                    type='text'
+                    name='message'
+                    className='z-0 w-full pl-10 pr-20 text-white bg-[#161616] border border-gray-600 rounded-lg h-14'
+                    placeholder='Message...'
+                  />
+                  <div className='absolute top-2 right-2'>
+                    <button
+                      className='w-20 h-10 text-black bg-white rounded-lg hover:bg-gray-600'
+                      type='submit'
+                    >
+                      Send
+                    </button>
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <></>
-          )}
-          <span className='absolute w-full ml-8 bottom-10'>
-          <form onSubmit={sendMessage}>
-            <div className='relative'>
-              <input
-                type='text'
-                name='message'
-                className='z-0 w-full pl-10 pr-20 text-white bg-[#161616] border border-gray-600 rounded-lg h-14'
-                placeholder='Message...'
-              />
-              <div className='absolute top-2 right-2'>
-                <button
-                  className='w-20 h-10 text-black bg-white rounded-lg hover:bg-gray-600'
-                  type='submit'
-                >
-                  Send
-                </button>
-              </div>
-            </div>
-          </form>
-          </span>
+              </form>
+            </span>
           </div>
         </div>
       </div>
