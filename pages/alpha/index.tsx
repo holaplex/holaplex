@@ -21,6 +21,7 @@ import {
   FeedQueryEvent,
   generateFeedCardAttributes,
   shouldAggregateFollows,
+  shouldAggregateSaleEvents,
 } from '@/common/components/feed/feed.utils';
 
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
@@ -222,6 +223,29 @@ const AlphaPage = ({ address }: { address: string }) => {
           walletAddress: event.walletAddress,
           profile: event.profile,
           eventsAggregated,
+        });
+      }
+
+      if (shouldAggregateSaleEvents(event, nextEvent, nextNextEvent)) {
+        feedItems.pop();
+
+        const salesAggregated: FeedQueryEvent[] = [feedEvents[i]];
+        let k = i + 1;
+        while (shouldAggregateSaleEvents(feedEvents[k], feedEvents[k + 1], feedEvents[k + 2])) {
+          salesAggregated.push(feedEvents[k] as FeedQueryEvent);
+          k++;
+        }
+        salesAggregated.push(feedEvents[k] as FeedQueryEvent);
+        salesAggregated.push(feedEvents[k + 1] as FeedQueryEvent);
+        skipIndex = k + 2;
+
+        feedItems.push({
+          feedEventId: `agg_${event.feedEventId}`,
+          __typename: 'AggregateSaleEvent',
+          createdAt: event.createdAt,
+          walletAddress: event.walletAddress,
+          profile: event.profile,
+          eventsAggregated: salesAggregated,
         });
       }
 

@@ -25,6 +25,7 @@ import OfferForm from '../forms/OfferForm';
 import {
   AggregateEvent,
   aggregateEventsTime,
+  AggregateSaleEvent,
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
@@ -37,7 +38,7 @@ import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
-import Button from '../elements/Button';
+import { Carousel } from 'flowbite-react';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -59,10 +60,10 @@ export function FeedCard(props: {
   }
 
   const attrs = generateFeedCardAttributes(props.event, props.myFollowingList);
-  // console.log('Feed card', props.event.feedEventId, {
-  //   event: props.event,
-  //   attrs,
-  // });
+
+  if (props.event.__typename === 'AggregateSaleEvent') {
+    return <SaleAggregateCard event={props.event} myFollowingList={props.myFollowingList} />;
+  }
 
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -258,7 +259,7 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
 };
 
 function FeedActionBanner(props: {
-  event: FeedQueryEvent; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
+  event: FeedItem; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
   attrs: FeedCardAttributes;
   options?: FeedCardOptions;
 }) {
@@ -567,7 +568,7 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
         <Button5
           v={`secondary`}
           type={`button`}
-          className={`h-8 w-24 !w-full sm:ml-auto sm:w-auto lg:h-10 lg:w-28`}
+          className={`h-8 !w-full sm:ml-auto sm:w-auto lg:h-10 lg:w-28`}
         >
           View
         </Button5>
@@ -639,6 +640,98 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
     </div>
   );
 }
+
+export const NFTCarousel = ({
+  attrs,
+  feedEvent,
+  interval = 10000,
+}: {
+  attrs: FeedCardAttributes[];
+  feedEvent: FeedItem;
+  interval?: number;
+}) => {
+  const STARTING_INDEX = 0;
+  const [currAttr, setCurrAttr] = useState<FeedCardAttributes>(attrs[STARTING_INDEX]);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const getNextEvent = (list: any[], currIndex: number) => {
+    if (list.length === currIndex + 1) {
+      return list[0];
+    } else {
+      return list[currIndex + 1];
+    }
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const nextEvent = getNextEvent(
+        attrs,
+        attrs.findIndex((attr) => attr?.id === currAttr?.id)
+      );
+      if (!isHovered) setCurrAttr(nextEvent);
+    }, interval ?? 3000);
+
+    return () => clearInterval(intervalId);
+  }, [currAttr, interval, attrs, isHovered]);
+
+  const setNextEvent = (attr: FeedCardAttributes) => {
+    setCurrAttr(attr);
+  };
+
+  if (!attrs) {
+    return null;
+  }
+
+  return (
+    <div
+      onMouseOver={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`group relative transition-all duration-300 hover:scale-[1.02]`}
+    >
+      <Link href={`/nfts/${currAttr?.nft?.address}`} passHref>
+        <a>
+          <img
+            src={currAttr?.nft?.image}
+            className={`aspect-square w-full rounded-lg object-cover`}
+            alt={currAttr?.nft?.name}
+          />
+        </a>
+      </Link>
+      <ShareMenu className="absolute top-4 right-4 " address={currAttr?.nft?.address!} />
+      <div
+        className={`absolute bottom-24 left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2`}
+      >
+        {attrs.map((attr, i) => (
+          <button
+            onClick={() => setNextEvent(attr)}
+            className={`h-2 w-2 rounded-full ${
+              currAttr?.id === attr?.id ? `bg-white` : `bg-gray-300`
+            }`}
+            key={`indicator-${i}`}
+          />
+        ))}
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
+        <FeedActionBanner attrs={currAttr} event={feedEvent} />
+      </div>
+    </div>
+  );
+};
+
+const SaleAggregateCard = (props: { event: AggregateSaleEvent; myFollowingList?: string[] }) => {
+  const attrs = props.event.eventsAggregated.map((e, i) => {
+    return generateFeedCardAttributes(e, props.myFollowingList);
+  });
+
+  return (
+    <div
+      id={props.event.feedEventId}
+      className={`group relative transition-all hover:scale-[1.02]`}
+    >
+      <NFTCarousel attrs={attrs} feedEvent={props.event} />
+    </div>
+  );
+};
 
 export const LoadingFeedCard = () => {
   return (

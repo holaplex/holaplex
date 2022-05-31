@@ -71,6 +71,7 @@
     "feather-icons-react": "^0.4.3",
     "fetch": "^1.1.0",
     "final-form": "^4.20.2",
+    "flowbite-react": "^0.0.25",
     "formidable": "^1.2.2",
     "fs-extra": "^10.0.0",
     "graphql": "^16.3.0",

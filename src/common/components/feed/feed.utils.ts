@@ -38,7 +38,15 @@ export interface AggregateEvent {
   profile?: FeedQueryEvent['profile'];
 }
 
-export type FeedItem = FeedQueryEvent | AggregateEvent;
+export interface AggregateSaleEvent extends Omit<AggregateEvent, '__typename'> {
+  __typename: 'AggregateSaleEvent';
+}
+
+export interface AggregateFollowEvent extends Omit<AggregateEvent, '__typename'> {
+  __typename: 'AggregateFollowEvent';
+}
+
+export type FeedItem = FeedQueryEvent | AggregateEvent | AggregateSaleEvent | AggregateFollowEvent;
 
 export type FeedCardAttributes =
   | {
@@ -188,6 +196,32 @@ export function shouldAggregateFollows(e1: FeedQueryEvent, e2: FeedQueryEvent, e
     e3.__typename === 'FollowEvent'
   );
 }
+
+export const shouldAggregateSaleEvents = (
+  e1: FeedQueryEvent,
+  e2: FeedQueryEvent,
+  e3: FeedQueryEvent
+) => {
+  if (!e1 || !e2 || !e3) return false;
+
+  const isNFTEvent = (e: FeedQueryEvent): boolean => {
+    return (
+      e.__typename === 'ListingEvent' ||
+      e.__typename === 'OfferEvent' ||
+      e.__typename === 'PurchaseEvent'
+    );
+  };
+
+  return (
+    e1.__typename === e2.__typename &&
+    e2.__typename == e3.__typename &&
+    // e1.walletAddress === e2.walletAddress &&
+    // e2.walletAddress === e3.walletAddress &&
+    isNFTEvent(e1) &&
+    isNFTEvent(e2) &&
+    isNFTEvent(e3)
+  );
+};
 
 export function shuffleArray<T>(array: T[]) {
   let currentIndex = array.length,
