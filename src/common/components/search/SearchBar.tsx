@@ -40,6 +40,7 @@ export const isPublicKey = (address: string) => {
 
 const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   const searchResultsRef = useRef<HTMLDivElement>(null!);
+  const searchInputRef = useRef<HTMLInputElement>(null!);
 
   const router = useRouter();
 
@@ -80,7 +81,6 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   // handle ctrl/cmd + k
 
   const handleOnChange = (e: any) => {
-    console.log('search change', e.target.value);
     if (e.target.value === '') {
       setHasSearch(false);
     } else {
@@ -112,14 +112,18 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
   // Keybinds
   const openSearch = () => {
-    setFocus('query', { shouldSelect: true });
+    // setFocus('query', { shouldSelect: true }); // had to switch because of debounce
+    searchInputRef?.current?.focus();
   };
 
   useEffect(() => {
     if (shortcut && shortcut.registerShortcut) {
       shortcut.registerShortcut(openSearch, ['ctrl+k', 'ctrl+k'], 'Search', 'Start searching');
+
       return () => {
-        if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(['ctrl+k', 'ctrl+k']);
+        if (shortcut.unregisterShortcut) {
+          shortcut.unregisterShortcut(['ctrl+k', 'ctrl+k']);
+        }
       };
     }
   }, []);
@@ -142,7 +146,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
             <div className="relative block transition-all ">
               <span
-                onClick={() => setFocus('query', { shouldSelect: true })}
+                onClick={() => searchInputRef?.current?.focus()}
                 className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
               >
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
@@ -154,7 +158,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                 id="search"
                 autoComplete={`off`}
                 autoCorrect={`off`}
-                className="block w-full rounded-full border border-transparent bg-transparent py-3 pl-12 pr-2 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
+                className="block w-full rounded-full border border-transparent bg-transparent py-3 pl-14 pr-2 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
                 type="search"
                 {...register('query', { required: true })}
                 onFocus={() => {
@@ -164,6 +168,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                 onBlur={() => setShowKeybind(false)}
                 placeholder={`Search Holaplex...`}
                 onChange={handleOnChange}
+                inputRef={searchInputRef}
               />
 
               {hasSearch && (
