@@ -1,7 +1,5 @@
-import sv from '@/constants/styles';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Layout, Popover, Space } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -9,31 +7,30 @@ import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
 import { mq } from '@/common/styles/MediaQuery';
 import { MobileMenu } from './MobileMenu';
-import { ButtonReset } from '@/common/styles/ButtonReset';
 import { Menu as MenuIcon } from '@/components/icons/Menu';
-import { ChevronRight } from '../icons/ChevronRight';
 import { toast } from 'react-toastify';
 import { Check } from '../icons/Check';
-import Button from '@/components/elements/Button';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
 import classNames from 'classnames';
 import { Button5 } from './Button2';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CollectionIcon,
+  LightBulbIcon,
+  PhotographIcon,
+  UsersIcon,
+} from '@heroicons/react/outline';
+import { isTouchScreenOnly } from '@/common/utils';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
 export function AppHeader() {
   const router = useRouter();
 
-  const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
-    connecting,
-    disconnecting,
-  } = useWallet();
+  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
   const hasWalletTypeSelected =
     userWallet?.readyState === WalletReadyState.Installed ||
     userWallet?.readyState === WalletReadyState.Loadable;
@@ -76,127 +73,32 @@ export function AppHeader() {
               👋&nbsp;&nbsp;<span>Holaplex</span>
             </a>
           </Link>
-          {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
-            {connected && (
-              <Link href="/alpha" passHref>
-                <a
-                  key="alpha"
-                  className={classNames(
-                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
-                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
-                  )}
-                >
-                  Alpha
-                </a>
-              </Link>
+            <DiscoverMenu />
+
+            {connectedAndInstalledWallet && (
+              <>
+                <DialectNotificationsButton />
+                <ProfileImage />
+                {/* eslint-disable-next-line @next/next/link-passhref */}
+                <Link href="/nfts/new">
+                  <Button5 v="primary" key="create" disabled={router.pathname === '/nfts/new'}>
+                    Create
+                  </Button5>
+                </Link>
+              </>
             )}
-
-            <Link href="/nfts/new" passHref>
-              <a
-                key="create"
-                className={classNames(
-                  'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
-                  router.pathname === '/nfts/new' ? 'text-white' : 'text-gray-300'
-                )}
-              >
-                Create
-              </a>
-            </Link>
-
-            {/* <Popover
-              placement="bottom"
-              content={
-                <div className="flex flex-col space-y-6">
-                  <Link href="/about" passHref>
-                    <a className="hover:underline">About Holaplex</a>
-                  </Link>
-                  <Link
-                    href="https://docs.google.com/document/d/1jskpoCdDm7DU2IbeXwRhhl5LGiNhonAx2HsmfJlDsEs"
-                    passHref
-                  >
-                    <a className="hover:underline" target="_blank">
-                      Terms of Service
-                    </a>
-                  </Link>
-
-                  <Link
-                    href="https://docs.google.com/document/d/12uQU7LbLUd0bY7Nz13-F9cua5Wk8mnRNBlyDzF6gRmo"
-                    passHref
-                  >
-                    <a className="hover:underline" target="_blank">
-                      Privacy policy
-                    </a>
-                  </Link>
-                </div>
-              }
-            >
-              <a className="flex min-w-fit items-center">
-                About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
-              </a>
-            </Popover> */}
-            {/* <Popover
-              placement="bottom"
-              content={
-                <div className="flex flex-col space-y-6">
-                  <Link
-                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407417107475-FAQ"
-                    passHref
-                  >
-                    <a target="_blank" className="hover:underline">
-                      FAQ
-                    </a>
-                  </Link>
-                  <Link
-                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407782141971-Set-Up-A-Store"
-                    passHref
-                  >
-                    <a target="_blank" className="hover:underline">
-                      Setting up a store
-                    </a>
-                  </Link>
-
-                  <Link
-                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407791450515-Minting-NFTs"
-                    passHref
-                  >
-                    <a target="_blank" className="hover:underline">
-                      Minting NFTS
-                    </a>
-                  </Link>
-                  <Link
-                    href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407792008979-Selling-NFTs"
-                    passHref
-                  >
-                    <a target="_blank" className="hover:underline">
-                      Selling NFTS
-                    </a>
-                  </Link>
-                  <Link href="https://holaplex-support.zendesk.com/hc/en-us/requests/new" passHref>
-                    <a target="_blank" className="hover:underline">
-                      Submit a support ticket
-                    </a>
-                  </Link>
-                </div>
-              }
-            >
-              <a className="flex min-w-fit items-center">
-                Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
-              </a>
-            </Popover> */}
-            {connectedAndInstalledWallet && <DialectNotificationsButton />}
-
-            {connectedAndInstalledWallet ? (
-              <ProfileImage />
-            ) : (
+            {!connectedAndInstalledWallet && (
               <Button5
                 v="primary"
                 loading={connecting}
                 onClick={() => setVisible(true)}
-                className={`min-h-full text-lg font-medium`}
+                className={classNames(`min-h-full text-lg font-medium`, {
+                  hidden: connectedAndInstalledWallet,
+                })}
               >
                 Connect
               </Button5>
@@ -209,6 +111,123 @@ export function AppHeader() {
   );
 }
 
+function DiscoverMenu(): JSX.Element {
+  const [isTouchAndShowItems, setIsTouchAndShowItems] = useState<boolean>(false);
+  const [isTouch, setIsTouch] = useState<boolean>(false);
+  const [forceHide, setForceHide] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsTouch(isTouchScreenOnly());
+  }, [setIsTouch]);
+
+  const onClickHeader = useCallback(() => {
+    if (isTouch) setIsTouchAndShowItems(!isTouchAndShowItems);
+  }, [isTouchAndShowItems, isTouch]);
+
+  const onClickHideTemporarily = useCallback(() => {
+    setIsTouchAndShowItems(false);
+    setForceHide(true);
+    setTimeout(() => setForceHide(false), 100);
+  }, []);
+
+  let containerDisplayClasses: string | undefined;
+  let buttonDisplayBasedTextClasses: string;
+  let arrowDownDisplayClasses: string;
+  let arrowUpDisplayClasses: string;
+  let itemContainerDisplayClasses: string;
+  if (!isTouch) {
+    containerDisplayClasses = 'group';
+    buttonDisplayBasedTextClasses = 'text-gray-300 hover:text-white focus:text-white group-hover:text-white group-focus:text-white';
+    arrowDownDisplayClasses = forceHide ? 'block' : 'block group-hover:hidden group-focus:hidden';
+    arrowUpDisplayClasses = forceHide ? 'hidden' : 'hidden group-hover:block group-focus:block';
+    itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-hover:block group-focus:block';
+  } else if (isTouchAndShowItems) {
+    buttonDisplayBasedTextClasses = 'text-white group-focus:text-white';
+    arrowDownDisplayClasses = forceHide ? 'block' : 'hidden group-focus:block';
+    arrowUpDisplayClasses = forceHide ? 'hidden' : 'block group-focus:hidden';
+    itemContainerDisplayClasses = forceHide ? 'hidden' : 'block group-focus:block';
+  } else {
+    buttonDisplayBasedTextClasses = 'text-gray-300 group-focus:text-white';
+    arrowDownDisplayClasses = 'block';
+    arrowUpDisplayClasses = 'hidden';
+    itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-focus:block';
+  }
+
+  return (
+    <div
+      className={classNames('relative inline-block', containerDisplayClasses)}
+      // setTimeout is a hack to allow the click to propagate to the menu item before closing
+      onBlur={() => setTimeout(() => setIsTouchAndShowItems(false), 50)}
+    >
+      {/* Header */}
+      <button
+        className={classNames('flex flex-row flex-nowrap items-center justify-center', [
+          'text-lg font-medium',
+          buttonDisplayBasedTextClasses,
+        ])}
+        onClick={onClickHeader}
+      >
+        Discover
+        <ChevronDownIcon className={classNames('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
+        <ChevronUpIcon className={classNames('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
+      </button>
+
+      {/* Options */}
+      <ul
+        className={classNames(
+          itemContainerDisplayClasses,
+          'absolute left-1/2 z-20 -translate-x-1/2',
+          'list-none overflow-clip',
+          'rounded-b-lg shadow-lg shadow-black'
+        )}
+      >
+        <li onClick={onClickHideTemporarily}>
+          <MenuLink href="/alpha">
+            <LightBulbIcon className="h-5 w-5" />
+            <span>Alpha</span>
+          </MenuLink>
+        </li>
+        <li onClick={onClickHideTemporarily}>
+          <MenuLink href="/discover?tab=nfts">
+            <PhotographIcon className="h-5 w-5" />
+            <span>NFTs</span>
+          </MenuLink>
+        </li>
+        <li onClick={onClickHideTemporarily}>
+          <MenuLink href="/discover?tab=collections">
+            <CollectionIcon className="h-5 w-5" />
+            <span>Collections</span>
+          </MenuLink>
+        </li>
+        <li onClick={onClickHideTemporarily}>
+          <MenuLink href="/discover?tab=profiles">
+            <UsersIcon className="h-5 w-5" />
+            <span>Profiles</span>
+          </MenuLink>
+        </li>
+      </ul>
+    </div>
+  );
+
+  function MenuLink(props: { children: JSX.Element[]; href: string }): JSX.Element {
+    return (
+      <Link href={props.href}>
+        <a
+          className={classNames(
+            'w-full',
+            'flex flex-row flex-nowrap justify-start',
+            'space-x-4 p-4',
+            'text-lg',
+            'bg-gray-900 hover:bg-gray-700 focus:bg-gray-700'
+          )}
+        >
+          {props.children}
+        </a>
+      </Link>
+    );
+  }
+}
+
 const MobileHeader = () => {
   const [displayMenu, setDisplayMenu] = useState(false);
   return (
@@ -218,7 +237,6 @@ const MobileHeader = () => {
           <Link href="/" passHref>
             <EmojiLogoAnchor>👋</EmojiLogoAnchor>
           </Link>
-          {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
         <button
