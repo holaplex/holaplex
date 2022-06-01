@@ -642,16 +642,18 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
 }
 
 export const NFTCarousel = ({
-  attrs,
+  nfts,
   feedEvent,
   interval = 10000,
+  attrs,
 }: {
-  attrs: FeedCardAttributes[];
+  nfts: Nft[];
   feedEvent: FeedItem;
   interval?: number;
+  attrs?: FeedCardAttributes[];
 }) => {
   const STARTING_INDEX = 0;
-  const [currAttr, setCurrAttr] = useState<FeedCardAttributes>(attrs[STARTING_INDEX]);
+  const [currAttr, setCurrAttr] = useState<Nft>(nfts[STARTING_INDEX]);
   const [isHovered, setIsHovered] = useState(false);
 
   const getNextEvent = (list: any[], currIndex: number) => {
@@ -672,20 +674,24 @@ export const NFTCarousel = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       const nextEvent = getNextEvent(
-        attrs,
-        attrs.findIndex((attr) => attr?.id === currAttr?.id)
+        nfts,
+        nfts.findIndex((nfts) => nfts?.address === currAttr?.address)
       );
       if (!isHovered) setCurrAttr(nextEvent);
     }, interval ?? 3000);
 
     return () => clearInterval(intervalId);
-  }, [currAttr, interval, attrs, isHovered]);
+  }, [currAttr, interval, nfts, isHovered]);
 
-  const setNextEvent = (attr: FeedCardAttributes) => {
-    setCurrAttr(attr);
+  const setNextEvent = (nft: Nft) => {
+    setCurrAttr(nft);
   };
 
-  if (!attrs) {
+  const getCurrentIndex = () => {
+    return nfts.findIndex((nft) => nft?.address === currAttr?.address);
+  };
+
+  if (!nfts) {
     return null;
   }
 
@@ -695,16 +701,16 @@ export const NFTCarousel = ({
       onMouseLeave={() => setIsHovered(false)}
       className={`group relative transition-all duration-300 hover:scale-[1.02]`}
     >
-      <Link href={`/nfts/${currAttr?.nft?.address}`} passHref>
+      <Link href={`/nfts/${currAttr?.address}`} passHref>
         <a>
           <img
-            src={currAttr?.nft?.image}
+            src={currAttr?.image}
             className={`aspect-square w-full rounded-lg object-cover`}
-            alt={currAttr?.nft?.name}
+            alt={currAttr?.name}
           />
         </a>
       </Link>
-      <ShareMenu className="absolute top-4 right-4 " address={currAttr?.nft?.address!} />
+      <ShareMenu className="absolute top-4 right-4 " address={currAttr?.address!} />
       <div
         className={`absolute left-4 top-1/2 flex items-center rounded-full p-2 hover:bg-gray-900/40 hover:backdrop-blur-3xl`}
       >
@@ -712,8 +718,8 @@ export const NFTCarousel = ({
           onClick={() =>
             setNextEvent(
               getPreviousEvent(
-                attrs,
-                attrs.findIndex((attr) => attr?.id === currAttr?.id)
+                nfts,
+                nfts.findIndex((nft) => nft?.address === currAttr?.address)
               )
             )
           }
@@ -728,8 +734,8 @@ export const NFTCarousel = ({
           onClick={() =>
             setNextEvent(
               getNextEvent(
-                attrs,
-                attrs.findIndex((attr) => attr?.id === currAttr?.id)
+                nfts,
+                nfts.findIndex((nft) => nft?.address === currAttr?.address)
               )
             )
           }
@@ -738,21 +744,25 @@ export const NFTCarousel = ({
         </button>
       </div>
       <div
-        className={`absolute bottom-24 left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2 transition-all duration-300 ease-in-out`}
+        className={`absolute ${
+          attrs ? `bottom-24` : `bottom-4`
+        } left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2 transition-all duration-300 ease-in-out`}
       >
-        {attrs.map((attr, i) => (
+        {nfts.map((nft, i) => (
           <button
-            onClick={() => setNextEvent(attr)}
+            onClick={() => setNextEvent(nft)}
             className={`h-2 w-2 rounded-full ${
-              currAttr?.id === attr?.id ? `bg-white` : `bg-gray-300`
+              currAttr?.address === nft?.address ? `bg-white` : `bg-gray-300`
             }`}
             key={`indicator-${i}`}
           />
         ))}
       </div>
-      <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
-        <FeedActionBanner attrs={currAttr} event={feedEvent} />
-      </div>
+      {attrs && (
+        <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
+          <FeedActionBanner attrs={attrs[getCurrentIndex()]} event={feedEvent} />
+        </div>
+      )}
     </div>
   );
 };
@@ -761,13 +771,16 @@ const SaleAggregateCard = (props: { event: AggregateSaleEvent; myFollowingList?:
   const attrs = props.event.eventsAggregated.map((e, i) => {
     return generateFeedCardAttributes(e, props.myFollowingList);
   });
+  const nfts = attrs.map((attr) => {
+    return attr?.nft;
+  });
 
   return (
     <div
       id={props.event.feedEventId}
       className={`group relative transition-all hover:scale-[1.02]`}
     >
-      <NFTCarousel attrs={attrs} feedEvent={props.event} />
+      <NFTCarousel nfts={nfts as Partial<Nft> as any} feedEvent={props.event} attrs={attrs} />
     </div>
   );
 };
