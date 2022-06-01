@@ -1,19 +1,11 @@
-import SocialLinks from '@/common/components/elements/SocialLinks';
-import { MyActivityList } from '@/common/components/feed/MyActivityList';
 import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Tab } from '@headlessui/react';
-import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 import {
   useAllConnectionsFromLazyQuery,
-  useAllConnectionsFromQuery,
 } from 'src/graphql/indexerTypes';
 
 type FeedType = 'Following' | 'Discovery';
@@ -108,36 +100,10 @@ export default function FeedLayout({ children }: { children: any }) {
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
       <div className="mt-12 flex justify-between">
         <div className="mx-auto w-full  sm:w-[600px] xl:mx-0 ">
-          {/*           <div className="flex space-x-1   p-1">
-            <Tab title={'Your Feed'} selected={feedTabSelected} url="/alpha" />
-            <Tab title={'Discovery'} selected={!feedTabSelected} url="/feed/discovery" />
-          </div> */}
           {children}
         </div>
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
           <WhoToFollowList myFollowingList={myFollowingList} />
-          {/* <MyActivityList /> */}
-          {/* <div>
-            <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
-              <h3 className="m-0 text-base font-medium text-white">
-                Test feeds (click to view their feeds){' '}
-              </h3>
-            </div>
-
-            <div className="space-y-4">
-              {TEST_FEEDS.map((u) => (
-                // <FollowListItem key={p.handle} profile={p} />
-                <div key={u.address} className="flex items-center space-x-4">
-                  <ProfilePFP user={u} />
-                  <Link passHref href={'/feed?address=' + u.address}>
-                    <a className="">
-                      <span>{u.handle}</span>
-                    </a>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div> */}
           <div className="relative  py-10 ">
             <div className="absolute  inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-gray-800" />
