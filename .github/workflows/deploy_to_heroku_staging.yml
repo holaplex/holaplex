@@ -2,7 +2,7 @@ name: Heroku - Build and deploy (dev)
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, milo/feat/consolidated-feed-events]
 
 jobs:
   build:
