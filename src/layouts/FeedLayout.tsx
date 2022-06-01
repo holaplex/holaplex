@@ -5,42 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 import {
-  useAllConnectionsFromLazyQuery,
+  useAllConnectionsFromLazyQuery, useWhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
-
-type FeedType = 'Following' | 'Discovery';
-const Feeds: FeedType[] = ['Following', 'Discovery'];
-
-const TEST_FEEDS = [
-  {
-    address: 'GeCRaiFKTbFzBV1UWWFZHBd7kKcCDXZK61QvFpFLen66',
-    handle: 'empty',
-  },
-  {
-    address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H', // kris
-    handle: '@kristianeboe',
-  },
-  {
-    address: 'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS', // kayla
-    handle: '@itskay_k',
-  },
-  {
-    address: '7oUUEdptZnZVhSet4qobU9PtpPfiNUEJ8ftPnrC6YEaa', // dan
-    handle: '@dandelzzz',
-  },
-  {
-    address: 'FeikG7Kui7zw8srzShhrPv2TJgwAn61GU7m8xmaK9GnW', // kevin
-    handle: '@misterkevin_rs',
-  },
-  {
-    address: '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR', // Belle
-    handle: '@belle__sol',
-  },
-  {
-    address: '7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F', // Alex
-    handle: '@afkehaya',
-  },
-];
+import { User } from '@/common/components/feed/feed.utils';
 
 export default function FeedLayout({ children }: { children: any }) {
   // Please don't remove the commented out code about the tab structure yet, it might be used soon // Kris
@@ -70,6 +37,9 @@ export default function FeedLayout({ children }: { children: any }) {
   });
 
   const myFollowingList: string[] | undefined = data?.connections.map((c) => c.to.address);
+
+  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
+  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
 
   useEffect(() => {
     if (!anchorWallet) {
@@ -103,7 +73,7 @@ export default function FeedLayout({ children }: { children: any }) {
           {children}
         </div>
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
-          <WhoToFollowList myFollowingList={myFollowingList} />
+          <WhoToFollowList myFollowingList={myFollowingList} profilesToFollow={profilesToFollow}/>
           <div className="relative  py-10 ">
             <div className="absolute  inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-gray-800" />

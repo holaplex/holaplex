@@ -43,7 +43,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const AlphaPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
-  const { connection } = useConnection();
   const {
     connecting,
   } = useWallet();
@@ -70,7 +69,7 @@ const AlphaPage = ({ address }: { address: string }) => {
       },
     });
 
-  const {data: whoToFollowData, loading: loadingWhoToFollow} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
+  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
   const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
 
   // API is returning duplicates for some reason
