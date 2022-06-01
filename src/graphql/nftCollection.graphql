@@ -1,0 +1,18 @@
+{
+    query nftCollectionPage( $address: String! $limit: Int = 25, $offset: Int = 0, ) {
+        nft(address: "DTjENPCxVnukLh5wbdBsb3CDttSfQzdNeRyk7dzr6vjr") {
+            address
+            name
+            mintAddress
+            creators {
+                position
+                address
+                twitterHandle
+            }
+        }
+        nfts(collection: "FbMgyHab7LxdhnSAFueCR9JGdCZKQNornmHEf4vocGGQ", limit: $limit, offset: $offset) {
+            name
+            image
+        }
+    }
+}

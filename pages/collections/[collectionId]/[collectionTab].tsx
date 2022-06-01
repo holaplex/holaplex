@@ -14,6 +14,10 @@ enum TabRoute {
   ACTIVITY,
   ABOUT,
 }
+// DTjENPCxVnukLh5wbdBsb3CDttSfQzdNeRyk7dzr6vjr // rejects address
+// FbMgyHab7LxdhnSAFueCR9JGdCZKQNornmHEf4vocGGQ // rejects mint address
+// 8G1ZSVLf8SW27SiNCLjDph9JSb3uivoypumLxS4adW7D // dgods
+// 6XxjKYFbcndh2gDcsUrmZgVEsoDxXMnfsaGY6fpTJzNr // dgods min address
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const collectionId = context.query.collectionId || '';
