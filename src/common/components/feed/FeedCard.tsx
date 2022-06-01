@@ -38,7 +38,7 @@ import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
-import { Carousel } from 'flowbite-react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -662,6 +662,13 @@ export const NFTCarousel = ({
     }
   };
 
+  const getPreviousEvent = (list: any[], currIndex: number) => {
+    if (currIndex === 0) {
+      return list[list.length - 1];
+    } else {
+      return list[currIndex - 1];
+    }
+  };
   useEffect(() => {
     const intervalId = setInterval(() => {
       const nextEvent = getNextEvent(
@@ -699,7 +706,39 @@ export const NFTCarousel = ({
       </Link>
       <ShareMenu className="absolute top-4 right-4 " address={currAttr?.nft?.address!} />
       <div
-        className={`absolute bottom-24 left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2`}
+        className={`absolute left-4 top-1/2 flex items-center rounded-full p-2 hover:bg-gray-900/40 hover:backdrop-blur-3xl`}
+      >
+        <button
+          onClick={() =>
+            setNextEvent(
+              getPreviousEvent(
+                attrs,
+                attrs.findIndex((attr) => attr?.id === currAttr?.id)
+              )
+            )
+          }
+        >
+          <ChevronLeftIcon className="h-4 w-4" />
+        </button>
+      </div>
+      <div
+        className={`absolute right-4 top-1/2 flex items-center rounded-full p-2 hover:bg-gray-900/40 hover:backdrop-blur-3xl`}
+      >
+        <button
+          onClick={() =>
+            setNextEvent(
+              getNextEvent(
+                attrs,
+                attrs.findIndex((attr) => attr?.id === currAttr?.id)
+              )
+            )
+          }
+        >
+          <ChevronRightIcon className="h-4 w-4" />
+        </button>
+      </div>
+      <div
+        className={`absolute bottom-24 left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2 transition-all duration-300 ease-in-out`}
       >
         {attrs.map((attr, i) => (
           <button

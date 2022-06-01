@@ -208,7 +208,8 @@ export const shouldAggregateSaleEvents = (
     return (
       e.__typename === 'ListingEvent' ||
       e.__typename === 'OfferEvent' ||
-      e.__typename === 'PurchaseEvent'
+      e.__typename === 'PurchaseEvent' ||
+      e.__typename === 'MintEvent'
     );
   };
 
