@@ -492,7 +492,7 @@ export const ProfilePFPStack = ({ users }: { users: User[] }) => {
           <ProfilePFP user={user} />
         </div>
       ))}
-      {users.length - 3 > 1 && (
+      {users.length > 4 && (
         <button
           className={`-ml-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition duration-100 ease-in hover:z-10 hover:scale-105`}
         >
