@@ -11,6 +11,11 @@ export function shortenAddress(address?: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
+export const shortenHandle = (handle?: string, chars = 6): string => {
+  if (!handle) return '';
+  return `${handle.slice(0, chars)}${handle.length > chars && `...`}`;
+};
+
 /**
  * Pretty similar to Rust's b"Something" literal.
  * Useful for using with Solana's PDAs.
