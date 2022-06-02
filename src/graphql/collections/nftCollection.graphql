@@ -1,4 +1,9 @@
-query nftCollection($address: String!, $limit: Int = 25, $offset: Int = 0) {
+query nftCollection(
+  $address: String!
+  $marketplaceSubdomain: String!
+  $limit: Int = 25
+  $offset: Int = 0
+) {
   nft(address: "DTjENPCxVnukLh5wbdBsb3CDttSfQzdNeRyk7dzr6vjr") {
     address
     name
@@ -6,7 +11,10 @@ query nftCollection($address: String!, $limit: Int = 25, $offset: Int = 0) {
     creators {
       position
       address
-      twitterHandle
+      profile {
+        handle
+        profileImageUrlLowres
+      }
     }
   }
   nfts(collection: "FbMgyHab7LxdhnSAFueCR9JGdCZKQNornmHEf4vocGGQ", limit: $limit, offset: $offset) {
@@ -58,6 +66,40 @@ query nftCollection($address: String!, $limit: Int = 25, $offset: Int = 0) {
       tokenAccount
       createdAt
       canceledAt
+    }
+  }
+
+  marketplace(subdomain: $marketplaceSubdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
+      }
     }
   }
 }

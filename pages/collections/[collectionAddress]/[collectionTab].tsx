@@ -10,11 +10,20 @@ import { CollectionRaisedCard } from '@/common/components/collections/Collection
 import { FollowItem } from '@/common/components/elements/FollowModal';
 import { getSdk } from 'src/graphql/indexerTypes.ssr';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
-import { GetCollectionQuery, useNftsInCollectionQuery } from 'src/graphql/indexerTypes';
+import {
+  GetCollectionQuery,
+  useAllConnectionsToQuery,
+  useIsXFollowingYQuery,
+  useNftsInCollectionQuery,
+} from 'src/graphql/indexerTypes';
 import { FollowUnfollowButton } from '@/common/components/elements/FollowUnfollowButton';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { NFTGrid } from 'pages/profiles/[publicKey]/nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
+import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
+import { User } from '@/common/components/feed/feed.utils';
+import { AvatarIcons } from '@/common/components/elements/Avatar';
+import { CollectedBy } from '@/common/components/elements/FollowerCount';
 
 enum TabRoute {
   NFTS = 'nfts',
@@ -39,8 +48,13 @@ interface CollectionPage {
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
 const INITIAL_FETCH = 25;
 
-function CreatorBadge() {
-  return;
+function CreatorChip(props: { user: User }) {
+  return (
+    <span className="flex max-w-fit items-center space-x-4 py-3 px-2 text-base font-medium shadow-2xl">
+      <ProfilePFP user={props.user} />
+      <ProfileHandle user={props.user} />
+    </span>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<CollectionPage> = async (context) => {
@@ -85,6 +99,11 @@ export const getServerSideProps: GetServerSideProps<CollectionPage> = async (con
 };
 
 export default function CollectionTab(props: CollectionPage) {
+  const wallet = useAnchorWallet();
+  const [hasMore, setHasMore] = useState(true);
+  const { connection } = useConnection();
+  const myPubkey = wallet?.publicKey.toBase58();
+
   const variables = {
     marketplaceSubdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     collectionMintAddress: props.collection?.mintAddress,
@@ -96,12 +115,18 @@ export default function CollectionTab(props: CollectionPage) {
     variables,
   });
 
+  const { data: followersData } = useAllConnectionsToQuery({
+    variables: {
+      to: props.collectionAddress,
+    },
+  });
+  const followers = followersData?.connections || [];
+
+  const amIFollowingThisCollection = !!followers.find((f) => f.from.address === myPubkey);
+
   const creators = props.collection?.creators || [];
 
   const nfts = data?.nfts || [];
-  const wallet = useAnchorWallet();
-  const [hasMore, setHasMore] = useState(true);
-  const { connection } = useConnection();
 
   const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
@@ -115,27 +140,75 @@ export default function CollectionTab(props: CollectionPage) {
               className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 shadow-2xl ring-8 ring-gray-900"
               alt="Collection logo"
             />
-
             <div>
               <span className="text-base text-gray-300">Collection of {nfts.length}</span>
               <h1 className="mt-4 text-5xl"> {props.collection?.name} </h1>
-              {!connection ? null : (
+              {!connection || !wallet ? null : (
                 <FollowUnfollowButton
                   toProfile={{
                     address: props.collection?.address!,
                   }}
-                  type="Follow"
+                  type={amIFollowingThisCollection ? 'Unfollow' : 'Follow'}
                   walletConnectionPair={walletConnectionPair}
                   source="collectionPage"
                 />
               )}
             </div>
           </div>
-          {creators.map((c) => (
-            <span key={c.address}>{c.twitterHandle || c.address}</span>
-          ))}
+          {creators.length === 1 ? (
+            <CreatorChip
+              user={{
+                address: creators[0].address,
+                profile: {
+                  handle: creators[0].profile?.handle,
+                  profileImageUrl: creators[0].profile?.profileImageUrlLowres,
+                },
+              }}
+            />
+          ) : (
+            <AvatarIcons
+              profiles={
+                creators.map((cc) => ({
+                  address: cc.address,
+                  data: {
+                    twitterHandle: cc.profile?.handle,
+                    pfpUrl: cc.profile?.profileImageUrlLowres,
+                  },
+                })) || []
+              }
+            />
+          )}
         </div>
-        <div className="h-40 w-80 shadow-2xl">Analytics</div>
+        <CollectionRaisedCard>
+          <div className="grid grid-cols-2 grid-rows-2 gap-x-5 gap-y-4">
+            <div>
+              <div className="cursor-pointer text-sm font-medium text-gray-200">Followed by</div>
+              <div className="flex items-center">
+                <span className={`mr-2 text-left text-2xl font-semibold`}>{followers.length}</span>
+
+                <AvatarIcons
+                  profiles={followers.map((f) => ({
+                    address: f.from.address,
+                    data: {
+                      twitterHandle: f.from.profile?.handle,
+                      pfpUrl: f.from.profile?.profileImageUrl,
+                    },
+                  }))}
+                />
+              </div>
+            </div>
+
+            {/* 
+            <div>
+              // ! Need to think about this some more, might need a new query
+              <div>Collected by</div>
+              <CollectedBy creatorPubkey={creators[0].address} />
+            </div>
+              */}
+            {/* <div>Floor price</div>
+            <div>Total volume</div> */}
+          </div>
+        </CollectionRaisedCard>
       </div>
 
       <div className="w-full   ">
@@ -153,42 +226,46 @@ export default function CollectionTab(props: CollectionPage) {
         </div>
         <div className="">
           {props.collectionTab === 'nfts' && (
-            <div className="flex">
-              <div className="mr-10 w-80">Placeholder</div>
-              <NFTGrid
-                ctaVariant={`collection`}
-                hasMore={hasMore && nfts.length > INITIAL_FETCH - 1}
-                onLoadMore={async (inView) => {
-                  if (!inView || loading || nfts.length <= 0) {
-                    return;
-                  }
+            <div className="mt-10">
+              <div>Search and filter</div>
 
-                  const { data: newData } = await fetchMore({
-                    variables: {
-                      ...variables,
-                      limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-                      offset: nfts.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
-                    },
-                    updateQuery: (prev, { fetchMoreResult }) => {
-                      if (!fetchMoreResult) return prev;
-                      const prevNfts = prev.nfts;
-                      const moreNfts = fetchMoreResult.nfts;
-                      if (!moreNfts.length) {
-                        setHasMore(false);
-                      }
+              <div className="mt-20 flex ">
+                <div className="mr-10 w-80">Placeholder</div>
+                <NFTGrid
+                  ctaVariant={`collection`}
+                  hasMore={hasMore && nfts.length > INITIAL_FETCH - 1}
+                  onLoadMore={async (inView) => {
+                    if (!inView || loading || nfts.length <= 0) {
+                      return;
+                    }
 
-                      fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+                    const { data: newData } = await fetchMore({
+                      variables: {
+                        ...variables,
+                        limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+                        offset: nfts.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+                      },
+                      updateQuery: (prev, { fetchMoreResult }) => {
+                        if (!fetchMoreResult) return prev;
+                        const prevNfts = prev.nfts;
+                        const moreNfts = fetchMoreResult.nfts;
+                        if (!moreNfts.length) {
+                          setHasMore(false);
+                        }
 
-                      return { ...fetchMoreResult };
-                    },
-                  });
-                }}
-                nfts={nfts}
-                gridView={'3x3'}
-                refetch={refetch}
-                loading={loading}
-                marketplace={data?.marketplace}
-              />
+                        fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+
+                        return { ...fetchMoreResult };
+                      },
+                    });
+                  }}
+                  nfts={nfts}
+                  gridView={'3x3'}
+                  refetch={refetch}
+                  loading={loading}
+                  marketplace={data?.marketplace}
+                />
+              </div>
             </div>
           )}
           {props.collectionTab === 'about' && <CollectionAbout collection={props.collection} />}
@@ -201,35 +278,6 @@ export default function CollectionTab(props: CollectionPage) {
 function CollectionNFTs() {
   return <div>NFTs</div>;
 }
-
-const collectionCreators = [
-  {
-    address: 'GeCRaiFKTbFzBV1UWWFZHBd7kKcCDXZK61QvFpFLen66',
-  },
-  {
-    address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H', // kris
-    handle: 'kristianeboe',
-  },
-  {
-    address: 'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS', // kayla
-    handle: 'itskay_k',
-  },
-  {
-    address: '7oUUEdptZnZVhSet4qobU9PtpPfiNUEJ8ftPnrC6YEaa', // dan
-  },
-  {
-    address: 'FeikG7Kui7zw8srzShhrPv2TJgwAn61GU7m8xmaK9GnW', // kevin
-    handle: 'misterkevin_rs',
-  },
-  {
-    address: '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR', // Belle
-    handle: 'belle__sol',
-  },
-  {
-    address: '7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F', // Alex
-    handle: 'afkehaya',
-  },
-];
 
 function CollectionAbout(props: { collection: NFTCollection }) {
   return (
@@ -261,6 +309,7 @@ function CollectionAbout(props: { collection: NFTCollection }) {
 
 const Tab1 = (props: { url: string; selected: boolean; title: string }) => (
   <Link href={props.url} passHref>
+    {/* maybe use shallow in Link */}
     <a
       className={classNames(
         'w-full  py-2.5 text-center text-sm font-medium text-white ',

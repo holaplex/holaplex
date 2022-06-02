@@ -65,8 +65,9 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const isSameWallet = wallet?.publicKey.equals(new PublicKey(publicKey)) ?? false;
 
   //TODO these numbers will be wrong until the indexer is able to remove duplicates
-  const followers = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
-  const following = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
+  const followers = profileFollowerOverview.data?.connections || [];
+  const followerCount = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
+  const followingCount = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
   const amIFollowingThisAccount = !!isXFollowingY.data?.connections?.length ?? 0 > 0;
   return (
     <>
@@ -78,10 +79,13 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
               className="flex flex-col text-left"
             >
               <div className=" text-sm font-medium text-gray-200">Followers</div>
-              <div className=" font-semibold">{followers}</div>
+              <div className=" font-semibold">{followerCount}</div>
             </button>
-            {followers ? (
-              <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
+            {followers?.length ? (
+              <FollowedBy
+                followers={followers}
+                onOtherFollowersClick={() => setShowFollowsModal('followers')}
+              />
             ) : null}
           </div>
 
@@ -91,9 +95,9 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
               className="flex flex-col text-left"
             >
               <div className="text-sm font-medium text-gray-200">Following</div>
-              <div className=" font-semibold">{following}</div>
+              <div className=" font-semibold">{followingCount}</div>
             </button>
-            <CollectedBy />
+            <CollectedBy creatorPubkey={publicKey} />
           </div>
 
           {showButton && (
@@ -124,20 +128,18 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
 
 type FollowedByProps = {
   onOtherFollowersClick?: VoidFunction;
+  followers: GetProfileFollowerOverviewQuery['connections'];
 };
 
-const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
+export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick, followers }) => {
   const { publicKey } = useProfileData();
-  const { data, loading } = useGetProfileFollowerOverviewQuery({
-    variables: { pubKey: publicKey },
-  });
-  if (loading) return null;
+  if (!followers.length) return null;
 
-  const uniqueFollowers = cleanUpFollowers(data?.connections);
+  const uniqueFollowers = cleanUpFollowers(followers);
   if (uniqueFollowers.length === 0) return null;
 
   // this number will be wrong until the backend removes duplicates
-  const followerCount = data?.wallet.connectionCounts.toCount ?? 0;
+  const followerCount = uniqueFollowers.length ?? 0;
 
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
@@ -171,16 +173,15 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
 };
 
 type CollectedByProps = {
+  creatorPubkey: string;
   onOtherCollectedClick?: VoidFunction;
 };
 
-const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
-  const { publicKey } = useProfileData();
-
+export const CollectedBy: FC<CollectedByProps> = ({ creatorPubkey, onOtherCollectedClick }) => {
   const [showCollectedByModal, setShowCollectedByModal] = useState(false);
 
   const { data, loading } = useGetCollectedByQuery({
-    variables: { creator: publicKey },
+    variables: { creator: creatorPubkey },
   });
   if (loading) return null;
   const collectedProfiles: TwitterProfile[] = [];
@@ -189,7 +190,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
       !collectedProfiles.find(
         (profile) => nft.owner?.profile?.walletAddress === profile?.walletAddress
       ) &&
-      publicKey !== nft.owner?.profile?.walletAddress &&
+      creatorPubkey !== nft.owner?.profile?.walletAddress &&
       nft?.owner?.profile !== null
     ) {
       collectedProfiles.push(nft.owner?.profile as TwitterProfile);
@@ -276,47 +277,58 @@ const OtherFollowersNumberBubble = styled.button`
   background-color: #262626;
 `;
 
-
 interface FollowerConnection {
   from: {
     address: string;
-    profile?: {
-      handle?: string | null | undefined;
-    } | null | undefined
-  }
+    profile?:
+      | {
+          handle?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  };
 }
 
 interface FollowingConnection {
   to: {
     address: string;
-    profile?: {
-      handle?: string | null | undefined;
-    } | null | undefined
-  }
+    profile?:
+      | {
+          handle?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  };
 }
 
 /**
-   * Processes raw follower connections returned from backend for further use 
-   * 
-   * @param connections follower data returned from backend
-   * @param sort sort followers? Defaults to <code>true</code>
-   * @returns prepped array of follower connections
-   */
- export function cleanUpFollowers(connections: FollowerConnection[] | undefined, sort=true): FollowerConnection[] {
-  const uniqueFollowers = [...new Map(connections?.map(f => [f.from.address, f])).values()];
+ * Processes raw follower connections returned from backend for further use
+ *
+ * @param connections follower data returned from backend
+ * @param sort sort followers? Defaults to <code>true</code>
+ * @returns prepped array of follower connections
+ */
+export function cleanUpFollowers(
+  connections: FollowerConnection[] | undefined,
+  sort = true
+): FollowerConnection[] {
+  const uniqueFollowers = [...new Map(connections?.map((f) => [f.from.address, f])).values()];
   if (sort) uniqueFollowers.sort(compareFollowersForSorting);
   return uniqueFollowers;
 }
 
 /**
- * Processes raw following connections returned from backend for further use 
- * 
+ * Processes raw following connections returned from backend for further use
+ *
  * @param connections following data returned from backend
  * @param sort sort following connections? Defaults to <code>true</code>
  * @returns prepped array of following connections
  */
-export function cleanUpFollowing(connections: FollowingConnection[] | undefined, sort=true): FollowingConnection[] {
-  const uniqueFollowing = [...new Map(connections?.map(f => [f.to.address, f])).values()];
+export function cleanUpFollowing(
+  connections: FollowingConnection[] | undefined,
+  sort = true
+): FollowingConnection[] {
+  const uniqueFollowing = [...new Map(connections?.map((f) => [f.to.address, f])).values()];
   if (sort) uniqueFollowing.sort(compareFollowingForSorting);
   return uniqueFollowing;
 }
@@ -328,7 +340,8 @@ export function cleanUpFollowing(connections: FollowingConnection[] | undefined,
  * @returns string comparison (where applicable)
  */
 function compareFollowersForSorting(a: FollowerConnection, b: FollowerConnection): number {
-  if (a.from.profile?.handle && b.from.profile?.handle) return a.from.profile.handle.localeCompare(b.from.profile.handle);
+  if (a.from.profile?.handle && b.from.profile?.handle)
+    return a.from.profile.handle.localeCompare(b.from.profile.handle);
   else if (a.from.profile?.handle && !b.from.profile?.handle) return -1;
   else if (!a.from.profile?.handle && b.from.profile?.handle) return 1;
   else return a.from.address.localeCompare(b.from.address);
@@ -341,12 +354,12 @@ function compareFollowersForSorting(a: FollowerConnection, b: FollowerConnection
  * @returns string comparison (where applicable)
  */
 function compareFollowingForSorting(a: FollowingConnection, b: FollowingConnection): number {
-  if (a.to.profile?.handle && b.to.profile?.handle) return a.to.profile.handle.localeCompare(b.to.profile.handle);
+  if (a.to.profile?.handle && b.to.profile?.handle)
+    return a.to.profile.handle.localeCompare(b.to.profile.handle);
   else if (a.to.profile?.handle && !b.to.profile?.handle) return -1;
   else if (!a.to.profile?.handle && b.to.profile?.handle) return 1;
   else return a.to.address.localeCompare(b.to.address);
 }
-
 
 /**
  * Compares two following (users) alphabetically by wallet or handle, giving priority to twitter handles over wallets
@@ -354,11 +367,12 @@ function compareFollowingForSorting(a: FollowingConnection, b: FollowingConnecti
  * @param b second followers
  * @returns string comparison (where applicable)
  */
- function compareTwitterProfilesForSorting(a: TwitterProfile, b: TwitterProfile): number {
+function compareTwitterProfilesForSorting(a: TwitterProfile, b: TwitterProfile): number {
   if (a.handle && b.handle) return a.handle.localeCompare(b.handle);
   else if (a.handle && !b.handle) return -1;
   else if (!a.handle && b.handle) return 1;
-  else if (a.walletAddress && b.walletAddress) return a.walletAddress.localeCompare(b.walletAddress);
+  else if (a.walletAddress && b.walletAddress)
+    return a.walletAddress.localeCompare(b.walletAddress);
   else if (a.walletAddress && !b.walletAddress) return -1;
   else if (!a.walletAddress && b.walletAddress) return 1;
   else return 0;
