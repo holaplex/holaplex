@@ -320,7 +320,10 @@ function FeedActionBanner(props: {
           <div className="text-base font-normal">{attrs.content}</div>
           &nbsp;
           {attrs.type === `MintEvent` && (
-            <div className={`truncate text-base italic`}>{attrs.nft?.name}</div>
+            <div className={`truncate text-clip text-base`}>
+              {attrs?.nft?.name.slice(0, 8)}
+              {(attrs.nft?.name?.length || 0) > 8 && `...`}
+            </div>
           )}
         </div>
         <div className="flex text-xs">
@@ -644,7 +647,7 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
 export const NFTCarousel = ({
   nfts,
   feedEvent,
-  interval = 10000,
+  interval = 5000,
   attrs,
 }: {
   nfts: Nft[];

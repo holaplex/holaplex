@@ -34,6 +34,7 @@ import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+const AGGREGATE_EVENT_LIMIT = 6;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -231,9 +232,13 @@ const AlphaPage = ({ address }: { address: string }) => {
 
         const salesAggregated: FeedQueryEvent[] = [feedEvents[i]];
         let k = i + 1;
+        let y = k;
         while (shouldAggregateSaleEvents(feedEvents[k], feedEvents[k + 1], feedEvents[k + 2])) {
           salesAggregated.push(feedEvents[k] as FeedQueryEvent);
           k++;
+          if (k - y > AGGREGATE_EVENT_LIMIT) {
+            break;
+          }
         }
         salesAggregated.push(feedEvents[k] as FeedQueryEvent);
         salesAggregated.push(feedEvents[k + 1] as FeedQueryEvent);
