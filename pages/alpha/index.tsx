@@ -4,15 +4,14 @@ import { GetServerSideProps } from 'next';
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   FeedQuery,
-  useAllConnectionsFromQuery,
   useAllConnectionsFromLazyQuery,
   useFeedLazyQuery,
+  useWhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
 import {
   FeedCard,
   LoadingFeedCard,
   LoadingFeedItem,
-  ProfilePFP,
 } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
@@ -22,6 +21,7 @@ import {
   generateFeedCardAttributes,
   shouldAggregateFollows,
   shouldAggregateSaleEvents,
+  User
 } from '@/common/components/feed/feed.utils';
 
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
@@ -30,7 +30,6 @@ import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
-import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
@@ -46,14 +45,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const AlphaPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
-  const { connection } = useConnection();
   const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
     connecting,
-    disconnecting,
   } = useWallet();
 
   const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
@@ -71,24 +64,20 @@ const AlphaPage = ({ address }: { address: string }) => {
   const feedEvents = data?.feedEvents ?? [];
 
   // Switching to this as soon as we get it to auoto refetch on new follows
-  const [connectionQuery, { data: myConnectionsFromData, refetch }] =
+  const [connectionQuery, { data: myConnectionsFromData }] =
     useAllConnectionsFromLazyQuery({
       variables: {
         from: anchorWallet?.publicKey.toBase58() || myPubkey,
       },
     });
 
+  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
+  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
+
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
     ...new Set(myConnectionsFromData?.connections.map((c) => c.to.address)),
   ];
-
-  /*  const allConnectionsFromQuery = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
-  const myFollowingList =
-    !allConnectionsFromQuery.isFetched || !myPubkey
-      ? // we need to keep this undefined until the list is actually loaded
-        undefined
-      : allConnectionsFromQuery.data?.map((u) => u.account.to.toBase58()); */
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
 
@@ -286,7 +275,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {feedEvents.length === 0 && !loading && (
-              <EmptyFeedCTA myFollowingList={myFollowingList} refetch={refetchFeed} />
+              <EmptyFeedCTA myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} refetch={refetchFeed} />
             )}
             {feedItems.map((fEvent, i) => (
               <FeedCard
@@ -342,7 +331,7 @@ const AlphaPage = ({ address }: { address: string }) => {
             )} */}
         </div>
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
-          <WhoToFollowList myFollowingList={myFollowingList} />
+          <WhoToFollowList myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} />
           {/* <MyActivityList /> */}
           {/*     <TestFeeds /> */}
           <div className="relative  py-10 ">
@@ -412,60 +401,3 @@ function BackToTopBtn() {
     </button>
   );
 }
-
-const TestFeeds = () => {
-  const TEST_FEEDS = [
-    {
-      address: 'GeCRaiFKTbFzBV1UWWFZHBd7kKcCDXZK61QvFpFLen66',
-      handle: 'empty',
-    },
-    {
-      address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H', // kris
-      handle: '@kristianeboe',
-    },
-    {
-      address: 'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS', // kayla
-      handle: '@itskay_k',
-    },
-    {
-      address: '7oUUEdptZnZVhSet4qobU9PtpPfiNUEJ8ftPnrC6YEaa', // dan
-      handle: '@dandelzzz',
-    },
-    {
-      address: 'FeikG7Kui7zw8srzShhrPv2TJgwAn61GU7m8xmaK9GnW', // kevin
-      handle: '@misterkevin_rs',
-    },
-    {
-      address: '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR', // Belle
-      handle: '@belle__sol',
-    },
-    {
-      address: '7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F', // Alex
-      handle: '@afkehaya',
-    },
-  ];
-
-  return (
-    <div>
-      <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
-        <h3 className="m-0 text-base font-medium text-white">
-          Test feeds (click to view their feeds){' '}
-        </h3>
-      </div>
-
-      <div className="space-y-4">
-        {TEST_FEEDS.map((u) => (
-          // <FollowListItem key={p.handle} profile={p} />
-          <div key={u.address} className="flex items-center space-x-4">
-            <ProfilePFP user={u} />
-            <Link passHref href={'/feed?address=' + u.address}>
-              <a className="">
-                <span>{u.handle}</span>
-              </a>
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
