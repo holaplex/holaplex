@@ -37,6 +37,9 @@ import { isEmpty } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import { ProfilePageHead } from '../[publicKey]';
 import classNames from 'classnames';
+import NoProfileItems, {
+  NoProfileVariant,
+} from '../../../src/common/components/elements/NoProfileItems';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -111,7 +114,7 @@ export const NFTCard = ({
 
   return (
     <>
-      <div className="transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black transition duration-[300ms] hover:scale-[1.02]">
+      <div className="relative transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black transition duration-[300ms] hover:scale-[1.02]">
         <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
           <a target={newTab ? `_blank` : `_self`} className={`cursor-pointer`}>
             <div className={`relative `}>
@@ -120,29 +123,6 @@ export const NFTCard = ({
                 alt={nft.name}
                 className="aspect-square w-full rounded-lg object-cover"
               />
-              {shownCreatorAddress && (
-                <div className={`absolute left-0 top-0 flex flex-row items-center p-4`}>
-                  <Link href={`/profiles/${shownCreatorAddress}`} passHref>
-                    <div className="text-gray-300">
-                      <Avatar
-                        address={shownCreatorAddress}
-                        showAddress={false}
-                        border={true}
-                        data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
-                      />
-                    </div>
-                  </Link>
-
-                  {offers.length > 0 && (
-                    <div
-                      className={`ml-2 flex h-6 items-center rounded-full bg-gray-900 bg-opacity-60 px-2 font-mono text-sm`}
-                      style={{ backdropFilter: `blur(10px)` }}
-                    >
-                      {offers.length} OFFER{offers.length > 1 && `S`}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="flex items-center bg-gray-900 py-4">
@@ -157,6 +137,29 @@ export const NFTCard = ({
             </div>
           </a>
         </Link>
+        {shownCreatorAddress && (
+          <div className={`absolute left-4 top-4 flex flex-row items-center p-4`}>
+            <Link href={`/profiles/${shownCreatorAddress}`}>
+              <a className="text-gray-300">
+                <Avatar
+                  address={shownCreatorAddress}
+                  showAddress={false}
+                  border={true}
+                  data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
+                />
+              </a>
+            </Link>
+
+            {offers.length > 0 && (
+              <div
+                className={`ml-2 flex h-6 items-center rounded-full bg-gray-900 bg-opacity-60 px-2 font-mono text-sm`}
+                style={{ backdropFilter: `blur(10px)` }}
+              >
+                {offers.length} OFFER{offers.length > 1 && `S`}
+              </div>
+            )}
+          </div>
+        )}
         <div>
           <div
             className={`flex h-full w-full items-end justify-between md:flex-col md:items-center md:justify-between xl:flex-row xl:items-end xl:justify-between`}
@@ -281,6 +284,7 @@ interface NFTGridProps {
   nfts: OwnedNFT[];
   marketplace: Marketplace;
   gridView: '1x1' | '2x2' | '3x3';
+  ctaVariant?: NoProfileVariant;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -296,6 +300,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
   refetch,
   onLoadMore,
   hasMore,
+  ctaVariant,
   loading = false,
 }) => {
   return (
@@ -318,15 +323,21 @@ export const NFTGrid: FC<NFTGridProps> = ({
           </>
         ) : (
           <>
-            {nfts.map((nft) => (
-              <NFTCard
-                key={nft.address}
-                nft={nft}
-                refetch={refetch}
-                loading={loading}
-                marketplace={marketplace}
-              />
-            ))}
+            {nfts.length === 0 ? (
+              <div className={`col-span-full`}>
+                <NoProfileItems variant={ctaVariant} />
+              </div>
+            ) : (
+              nfts.map((nft) => (
+                <NFTCard
+                  key={nft.address}
+                  nft={nft}
+                  refetch={refetch}
+                  loading={loading}
+                  marketplace={marketplace}
+                />
+              ))
+            )}
           </>
         )}
       </div>
@@ -490,7 +501,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
         description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
       />
       <ProfileContainer>
-        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 px-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
           <div className={`flex w-full justify-start gap-4 lg:items-center`}>
             <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
             <ListingFilter
@@ -526,6 +537,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
           </div>
         </div>
         <NFTGrid
+          ctaVariant={`collected`}
           hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
             if (!inView || loading || filteredNfts.length <= 0) {

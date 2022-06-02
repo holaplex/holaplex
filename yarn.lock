@@ -2926,7 +2926,7 @@
 
 "@solana/wallet-adapter-wallets@^0.15.5":
   version "0.15.5"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.15.5.tgz#a4f0cb38430705d89b45872a0b4883c7ea32aa9a"
+  resolved "https://registry.npmjs.org/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.15.5.tgz"
   integrity sha512-wDy3AhfoXemIPubKasQm/yhWyA0/2mjLJbQpn9jQ/JcxSEwSeUjSrebNE3tYMZ9Pi94ShLmtN/bEHSwo7nCoug==
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.4"
@@ -3341,7 +3341,7 @@
 
 "@types/react-dom@^18.0.4":
   version "18.0.4"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.4.tgz#dcbcadb277bcf6c411ceff70069424c57797d375"
+  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.0.4.tgz"
   integrity sha512-FgTtbqPOCI3dzZPZoC2T/sx3L34qxy99ITWn4eoSA95qPyXDMH0ALoAqUp49ITniiJFsXUVBtalh/KffMpg21Q==
   dependencies:
     "@types/react" "*"
@@ -5657,7 +5657,7 @@ dot-prop@^5.2.0:
 
 dotenv-flow@^3.2.0:
   version "3.2.0"
-  resolved "https://registry.yarnpkg.com/dotenv-flow/-/dotenv-flow-3.2.0.tgz#a5d79dd60ddb6843d457a4874aaf122cf659a8b7"
+  resolved "https://registry.npmjs.org/dotenv-flow/-/dotenv-flow-3.2.0.tgz"
   integrity sha512-GEB6RrR4AbqDJvNSFrYHqZ33IKKbzkvLYiD5eo4+9aFXr4Y4G+QaFrB/fNp0y6McWBmvaPn3ZNjIufnj8irCtg==
   dependencies:
     dotenv "^8.0.0"
@@ -5674,7 +5674,7 @@ dotenv@^16.0.0:
 
 dotenv@^8.0.0:
   version "8.6.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
+  resolved "https://registry.npmjs.org/dotenv/-/dotenv-8.6.0.tgz"
   integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
 
 dset@^2.0.1:
@@ -8287,7 +8287,7 @@ lodash-es@^4.17.15, lodash-es@^4.17.21:
   resolved "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
-lodash.debounce@^4.0.8:
+lodash.debounce@^4, lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
@@ -8768,7 +8768,12 @@ mute-stream@0.0.8:
   resolved "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.8.tgz"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nan@^2.12.1, nan@^2.13.2:
+nan@^2.12.1:
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.16.0.tgz#664f43e45460fb98faf00edca0bb0d7b8dce7916"
+  integrity sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==
+
+nan@^2.13.2:
   version "2.15.0"
   resolved "https://registry.npmjs.org/nan/-/nan-2.15.0.tgz"
   integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
@@ -10316,6 +10321,14 @@ react-content-loader@^6.1.0:
   resolved "https://registry.npmjs.org/react-content-loader/-/react-content-loader-6.2.0.tgz"
   integrity sha512-r1dI6S+uHNLW68qraLE2njJYOuy6976PpCExuCZUcABWbfnF3FMcmuESRI8L4Bj45wnZ7n8g71hkPLzbma7/Cw==
 
+react-debounce-input@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.npmjs.org/react-debounce-input/-/react-debounce-input-3.2.5.tgz"
+  integrity sha512-WDc9nvZ8E/cT4nW1RlD/r+Nsc5Z5+Jmj2v9HT9RzsPtxkwRTQUBCKJvdt1fCYy5ME/nQPoqVYmWUWSv7whGmig==
+  dependencies:
+    lodash.debounce "^4"
+    prop-types "^15.7.2"
+
 react-device-detect@^1.17.0:
   version "1.17.0"
   resolved "https://registry.npmjs.org/react-device-detect/-/react-device-detect-1.17.0.tgz"
@@ -10341,7 +10354,7 @@ react-dom@17.0.2:
 
 react-fast-marquee@^1.3.2:
   version "1.3.2"
-  resolved "https://registry.yarnpkg.com/react-fast-marquee/-/react-fast-marquee-1.3.2.tgz#b95150c99509cd5c0213b35c8fe776cc1d72580f"
+  resolved "https://registry.npmjs.org/react-fast-marquee/-/react-fast-marquee-1.3.2.tgz"
   integrity sha512-iTRVzu5c5Hig9FsgDgOveJC08PY7nQgbvnr8bBCnVibziA2onWdLJMmjxhgmxEWed7tSRffeXgkx/Gq0M/Q5OQ==
 
 react-focus-lock@^2.5.2:
@@ -10373,7 +10386,7 @@ react-hook-form@^7.29.0:
 
 react-hotkeys@^2.0.0:
   version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-hotkeys/-/react-hotkeys-2.0.0.tgz#a7719c7340cbba888b0e9184f806a9ec0ac2c53f"
+  resolved "https://registry.npmjs.org/react-hotkeys/-/react-hotkeys-2.0.0.tgz"
   integrity sha512-3n3OU8vLX/pfcJrR3xJ1zlww6KS1kEJt0Whxc4FiGV+MJrQ1mYSYI3qS/11d2MJDFm8IhOXMTFQirfu6AVOF6Q==
   dependencies:
     prop-types "^15.6.1"
@@ -10407,7 +10420,7 @@ react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0:
 
 react-keybind@^0.9.4:
   version "0.9.4"
-  resolved "https://registry.yarnpkg.com/react-keybind/-/react-keybind-0.9.4.tgz#bc1369ff92f5cc99c38dadf9d18eaa5dd48ec12b"
+  resolved "https://registry.npmjs.org/react-keybind/-/react-keybind-0.9.4.tgz"
   integrity sha512-JVlXJ4ONQFQtEDZqXpc5NZ3oLEJtj7lKCPMLsbAO6FfkXJ21VHKyDtiLUIMio3d3oSC8QfxDOQtUEeVrMW6HfQ==
 
 react-lifecycles-compat@^3.0.4:

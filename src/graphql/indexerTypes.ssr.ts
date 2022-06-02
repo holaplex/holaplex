@@ -646,12 +646,13 @@ export type FeedQueryVariables = Exact<{
 export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, createdAt: any, walletAddress: string, graphConnectionAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, walletAddress: string, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, listing?: { __typename?: 'ListingReceipt', address: string, bookkeeper: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, walletAddress: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, walletAddress: string, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, offer?: { __typename?: 'BidReceipt', address: string, buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, walletAddress: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, purchase?: { __typename?: 'PurchaseReceipt', address: string, buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | null }> };
 
 export type WhoToFollowQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars['Int']>;
+  wallet: Scalars['PublicKey'];
+  limit: Scalars['Int'];
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, bids: Array<{ __typename?: 'Bid', lastBidTime: string, listing?: { __typename?: 'Listing', nfts: Array<{ __typename?: 'Nft', address: string, name: string, image: string }> } | null }>, connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number }, nftCounts: { __typename?: 'WalletNftCount', owned: number, offered: number, listed: number } }> };
+export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
 
 export type FeaturedBuyNowListingsQueryVariables = Exact<{
   marketplace: Scalars['String'];
@@ -743,6 +744,13 @@ export type AllConnectionsToQueryVariables = Exact<{
 
 
 export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } }> };
+
+export type GetCollectedByQueryVariables = Exact<{
+  creator: Scalars['PublicKey'];
+}>;
+
+
+export type GetCollectedByQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, owner?: { __typename?: 'NftOwner', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, profileImageUrlLowres: string, handle: string } | null } | null }> };
 
 export type GetProfileFollowerOverviewQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
@@ -1217,32 +1225,12 @@ export const FeedDocument = gql`
 }
     `;
 export const WhoToFollowDocument = gql`
-    query whoToFollow($limit: Int = 25, $offset: Int = 0) {
-  followWallets(limit: $limit, offset: $offset) {
-    __typename
+    query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
+  followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
+    address
     profile {
       handle
-      profileImageUrl
-    }
-    address
-    bids {
-      lastBidTime
-      listing {
-        nfts {
-          address
-          name
-          image
-        }
-      }
-    }
-    connectionCounts {
-      fromCount
-      toCount
-    }
-    nftCounts {
-      owned
-      offered
-      listed
+      profileImageUrlLowres
     }
   }
 }
@@ -1795,6 +1783,20 @@ export const AllConnectionsToDocument = gql`
   }
 }
     ${ConnectionNodeFragmentDoc}`;
+export const GetCollectedByDocument = gql`
+    query getCollectedBy($creator: PublicKey!) {
+  nfts(creators: [$creator], limit: 1000, offset: 0) {
+    address
+    owner {
+      profile {
+        walletAddress
+        profileImageUrlLowres
+        handle
+      }
+    }
+  }
+}
+    `;
 export const GetProfileFollowerOverviewDocument = gql`
     query getProfileFollowerOverview($pubKey: PublicKey!) {
   wallet(address: $pubKey) {
@@ -1924,7 +1926,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     feed(variables: FeedQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FeedQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<FeedQuery>(FeedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'feed', 'query');
     },
-    whoToFollow(variables?: WhoToFollowQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WhoToFollowQuery> {
+    whoToFollow(variables: WhoToFollowQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WhoToFollowQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WhoToFollowQuery>(WhoToFollowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'whoToFollow', 'query');
     },
     featuredBuyNowListings(variables: FeaturedBuyNowListingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FeaturedBuyNowListingsQuery> {
@@ -1959,6 +1961,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     allConnectionsTo(variables: AllConnectionsToQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AllConnectionsToQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<AllConnectionsToQuery>(AllConnectionsToDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'allConnectionsTo', 'query');
+    },
+    getCollectedBy(variables: GetCollectedByQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCollectedByQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCollectedByQuery>(GetCollectedByDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCollectedBy', 'query');
     },
     getProfileFollowerOverview(variables: GetProfileFollowerOverviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileFollowerOverviewQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProfileFollowerOverviewQuery>(GetProfileFollowerOverviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileFollowerOverview', 'query');

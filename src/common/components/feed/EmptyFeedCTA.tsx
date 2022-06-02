@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Button from '../elements/Button';
 import { User, shuffleArray } from './feed.utils';
-import { INFLUENTIAL_WALLETS } from './WhoToFollowList';
 import { useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 
 import { Program } from '@holaplex/graph-program';
@@ -14,6 +13,7 @@ import { None } from '../forms/OfferForm';
 
 const EmptyFeedCTA = (props: {
   myFollowingList?: string[];
+  profilesToFollow?: User[];
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -29,14 +29,14 @@ const EmptyFeedCTA = (props: {
 
   useEffect(() => {
     if (!myFollowingList) return;
-    // Should probably move this up into a Feed context
-    setTopProfilesToFollow(
-      shuffleArray(INFLUENTIAL_WALLETS.filter((u) => !myFollowingList.includes(u.address))).slice(
-        0,
-        5
-      )
-    );
-  }, [myFollowingList, myFollowingList?.length]);
+    if (props.profilesToFollow) {
+      setTopProfilesToFollow(
+        shuffleArray(
+          props.profilesToFollow.filter((u) => !myFollowingList.includes(u.address))
+        ).slice(0, 5)
+      );
+    }
+  }, [myFollowingList, myFollowingList?.length, props.profilesToFollow]);
 
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
