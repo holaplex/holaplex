@@ -44,14 +44,14 @@ const NFTImage: FC<NFTImageProps> = ({ src, onLoad, className, alt }) => {
       >
         <div
           ref={expandedRef}
-          className={`relative flex w-full flex-col overflow-x-auto overflow-y-auto rounded-xl text-white shadow-md sm:h-auto sm:max-h-[60rem] sm:max-w-4xl`}
+          className={`relative z-50 flex aspect-auto w-full flex-col overflow-x-auto overflow-y-auto rounded-lg text-white shadow-md scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900 sm:h-auto sm:max-h-[60rem] sm:max-w-4xl`}
         >
           <div>
             <div className={`relative`}>
               <img
                 onLoad={onLoad}
                 src={src}
-                className={`aspect-auto w-full object-scale-down`}
+                className={`aspect-auto h-full w-full rounded-lg`}
                 alt={alt}
               />
             </div>

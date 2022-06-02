@@ -13,6 +13,9 @@ import { PublicKey } from '@solana/web3.js';
 import { SearchIcon, XIcon } from '@heroicons/react/outline';
 import { IShortcutProviderRenderProps, withShortcut } from 'react-keybind';
 import KeyboardShortcut from '../elements/KeyboardShortcut';
+import { DebounceInput } from 'react-debounce-input';
+import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const schema = zod.object({
   query: zod.string().nonempty({ message: `Must enter something` }),
@@ -37,6 +40,7 @@ export const isPublicKey = (address: string) => {
 
 const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   const searchResultsRef = useRef<HTMLDivElement>(null!);
+  const searchInputRef = useRef<HTMLInputElement>(null!);
 
   const router = useRouter();
 
@@ -50,7 +54,25 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
   useOutsideAlerter(searchResultsRef, () => setShowResults(false));
 
-  const [searchQuery, { data, loading, called }] = useSearchLazyQuery();
+  const { track } = useAnalytics();
+  const [searchQuery, { data, loading, called, variables: searchVariables }] = useSearchLazyQuery();
+
+  const wallet = useWallet();
+
+  useEffect(() => {
+    // keeping this as own side effect instead of moving it in with handleChange
+    // debounced either way
+
+    if (searchVariables?.term) {
+      track('Search Queried', {
+        term: searchVariables?.term,
+        event_category: 'Search',
+        event_label: searchVariables?.term,
+        connected: wallet.connected,
+        wallet: wallet.publicKey?.toBase58(),
+      });
+    }
+  }, [searchVariables?.term]);
 
   const handleSearch = ({ query }: SearchQuerySchema) => {
     // handle enter
@@ -90,14 +112,18 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
   // Keybinds
   const openSearch = () => {
-    setFocus('query', { shouldSelect: true });
+    // setFocus('query', { shouldSelect: true }); // had to switch because of debounce
+    searchInputRef?.current?.focus();
   };
 
   useEffect(() => {
     if (shortcut && shortcut.registerShortcut) {
       shortcut.registerShortcut(openSearch, ['ctrl+k', 'ctrl+k'], 'Search', 'Start searching');
+
       return () => {
-        if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(['ctrl+k', 'ctrl+k']);
+        if (shortcut.unregisterShortcut) {
+          shortcut.unregisterShortcut(['ctrl+k', 'ctrl+k']);
+        }
       };
     }
   }, []);
@@ -120,17 +146,19 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
             <div className="relative block transition-all ">
               <span
-                onClick={() => setFocus('query', { shouldSelect: true })}
+                onClick={() => searchInputRef?.current?.focus()}
                 className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
               >
                 <Search className="h-6 w-6 text-white " aria-hidden="true" />
               </span>
 
-              <input
+              <DebounceInput
+                minLength={2}
+                debounceTimeout={300}
                 id="search"
                 autoComplete={`off`}
                 autoCorrect={`off`}
-                className="block w-full rounded-full border border-transparent bg-transparent py-3 pl-12 pr-2 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
+                className="block w-full rounded-full border border-transparent bg-transparent py-3 pl-14 pr-2 text-base placeholder-transparent transition-all focus:border-white focus:placeholder-gray-500 focus:outline-none focus:ring-white sm:text-sm"
                 type="search"
                 {...register('query', { required: true })}
                 onFocus={() => {
@@ -138,8 +166,9 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   setShowKeybind(true);
                 }}
                 onBlur={() => setShowKeybind(false)}
-                onChange={handleOnChange}
                 placeholder={`Search Holaplex...`}
+                onChange={handleOnChange}
+                inputRef={searchInputRef}
               />
 
               {hasSearch && (
@@ -182,6 +211,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
           )}
           {data && called && (
             <SearchResults
+              term={searchVariables?.term}
               results={data?.metadataJsons as MetadataJson[]}
               profileResults={data?.profiles as Wallet[]}
               walletResult={data.wallet as Wallet}
