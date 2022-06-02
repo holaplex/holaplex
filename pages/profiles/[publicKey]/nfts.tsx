@@ -122,15 +122,15 @@ export const NFTCard = ({
               />
               {shownCreatorAddress && (
                 <div className={`absolute left-0 top-0 flex flex-row items-center p-4`}>
-                  <Link href={`/profiles/${shownCreatorAddress}`}>
-                    <a className="text-gray-300">
+                  <Link href={`/profiles/${shownCreatorAddress}`} passHref>
+                    <div className="text-gray-300">
                       <Avatar
                         address={shownCreatorAddress}
                         showAddress={false}
                         border={true}
                         data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
                       />
-                    </a>
+                    </div>
                   </Link>
 
                   {offers.length > 0 && (

@@ -39,6 +39,7 @@ import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import { Avatar } from '../elements/Avatar';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -128,6 +129,21 @@ export function FeedCard(props: {
           )}
         </a>
       </Link>
+      {/* <div className={`absolute top-4 left-4`}>
+        <Link href={`/profiles/${attrs.nft.creators[0].address}/created`} passHref>
+          <span className={`hover:cursor-pointer`}>
+            <Avatar
+              address={attrs.nft.creators[0].address}
+              showAddress={false}
+              border={true}
+              data={{
+                pfpUrl: attrs?.nft?.creators[0]?.profile?.profileImageUrlLowres,
+                twitterHandle: attrs?.nft?.creators[0]?.twitterHandle || ``,
+              }}
+            />
+          </span>
+        </Link>
+      </div> */}
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
         <FeedActionBanner attrs={attrs} event={props.event} options={props.options} />
@@ -613,7 +629,7 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className={`flex flex-col rounded-lg bg-gray-900 p-4 shadow-2xl shadow-black`}>
+    <div className={`flex flex-col rounded-lg bg-gray-900 p-4 pb-0 shadow-2xl shadow-black`}>
       <div className={`flex w-full items-center gap-4 border-b border-b-gray-800 pb-4`}>
         <AggregateProfiles event={props.event} />
         <div className={`flex w-full flex-col gap-2`}>
@@ -627,7 +643,7 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
         </div>
       </div>
       <div
-        className={`flex w-full gap-4 overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
+        className={`flex w-full gap-4 overflow-x-scroll pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
       >
         {props.event.eventsAggregated.map((e: any) => (
           <ProfileMiniCard
@@ -713,6 +729,21 @@ export const NFTCarousel = ({
           />
         </a>
       </Link>
+      {/* <div className={`absolute top-4 left-4`}>
+        <Link href={`/profiles/${currAttr?.creators[0].address}/created`} passHref>
+          <span className={`hover:cursor-pointer`}>
+            <Avatar
+              address={currAttr?.creators[0]?.address}
+              showAddress={false}
+              border={true}
+              data={{
+                pfpUrl: currAttr?.creators[0]?.profile?.profileImageUrlLowres,
+                twitterHandle: currAttr?.creators[0]?.twitterHandle || ``,
+              }}
+            />
+          </span>
+        </Link>
+      </div> */}
       <ShareMenu className="absolute top-4 right-4 " address={currAttr?.address!} />
       <div
         className={`absolute left-4 top-1/2 flex items-center rounded-full p-2 hover:bg-gray-900/40 hover:backdrop-blur-3xl`}

@@ -33,7 +33,7 @@ import { Button5 } from '@/common/components/elements/Button2';
 import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
 const AGGREGATE_EVENT_LIMIT = 6;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
