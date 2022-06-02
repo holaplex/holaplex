@@ -1,0 +1,63 @@
+query nftCollection($address: String!, $limit: Int = 25, $offset: Int = 0) {
+  nft(address: "DTjENPCxVnukLh5wbdBsb3CDttSfQzdNeRyk7dzr6vjr") {
+    address
+    name
+    mintAddress
+    creators {
+      position
+      address
+      twitterHandle
+    }
+  }
+  nfts(collection: "FbMgyHab7LxdhnSAFueCR9JGdCZKQNornmHEf4vocGGQ", limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+}
