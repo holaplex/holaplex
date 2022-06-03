@@ -1,4 +1,4 @@
-import DiscoverLayout, { FilterOption } from "./shared";
+import { DiscoverLayout, FilterOption } from "./index";
 
 const options: FilterOption[] = [
     {
@@ -29,6 +29,9 @@ export default function DiscoverNFTsPage(): JSX.Element {
                 <DiscoverLayout.FiltersSection.Filter title="Type" options={options} onChange={s => console.log(s)}/>
                 <DiscoverLayout.FiltersSection.Filter title="Type2" options={options} onChange={s => console.log(s)}/>
             </DiscoverLayout.FiltersSection>
+            <DiscoverLayout.MainContentSection>
+                <span>NFTs</span>
+            </DiscoverLayout.MainContentSection>
         </DiscoverLayout>
     );
 }
