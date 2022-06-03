@@ -764,7 +764,7 @@ export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
 }>;
 
 
-export type GetProfileInfoFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null } };
+export type GetProfileInfoFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } };
 
 export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
   handle: Scalars['String'];
@@ -1822,7 +1822,7 @@ export const GetProfileInfoFromPubKeyDocument = gql`
   wallet(address: $pubKey) {
     profile {
       handle
-      profileImageUrl
+      profileImageUrlLowres
       bannerImageUrl
     }
   }
