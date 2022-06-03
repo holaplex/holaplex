@@ -23,12 +23,7 @@ export interface DiscoverLayoutProps {
 
 export function DiscoverLayout(props: DiscoverLayoutProps): JSX.Element {
   return (
-    <div
-      className={classNames('mt-10', [
-        'flex flex-col px-2',
-        'md:flex-row md:px-20',
-      ])}
-    >
+    <div className={classNames('mt-10', ['flex flex-col px-2', 'md:flex-row md:px-20'])}>
       {props.children}
     </div>
   );
@@ -42,16 +37,15 @@ function FiltersSection(props: FiltersSectionProps): JSX.Element {
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   return (
-    <div
-      className={classNames('flex flex-col justify-center', [{'basis-[320px]': !collapsed}])}>
+    <div className={classNames('flex flex-col justify-center', [{ 'basis-[320px]': !collapsed }])}>
       <div title="Show filters">
         <FilterIcon
-          className={classNames('h-6 w-6 mr-2', { hidden: !collapsed }, 'hover:cursor-pointer')}
+          className={classNames('mr-2 h-6 w-6', { hidden: !collapsed }, 'hover:cursor-pointer')}
           onClick={() => setCollapsed(false)}
         />
       </div>
       {/* TODO correctly transition the filter menu collapsing */}
-      <div className={classNames({"hidden": collapsed}, 'mr-2', 'md:mr-10')}>
+      <div className={classNames({ hidden: collapsed }, ['mr-2', 'md:mr-10'])}>
         <div className={classNames('flex flex-col space-y-4')}>
           <span
             className={classNames(
@@ -61,10 +55,10 @@ function FiltersSection(props: FiltersSectionProps): JSX.Element {
           >
             <span className="text-2xl">Filters</span>
             <div title="Hide filters">
-                <ArrowLeftIcon
+              <ArrowLeftIcon
                 onClick={() => setCollapsed(true)}
                 className={classNames('h-6 w-6', { hidden: collapsed }, 'hover:cursor-pointer')}
-                />
+              />
             </div>
           </span>
           {props.children}
@@ -127,13 +121,17 @@ function Filter(props: FilterProps): JSX.Element {
     return (
       <div
         key={id}
-        className={classNames('flex flex-row flex-nowrap items-center space-x-4 p-4', 'w-full')}
+        className={classNames(
+          'flex flex-row flex-nowrap items-center space-x-4 p-4',
+          'w-full',
+          'hover:underline'
+        )}
       >
         <input
           onChange={() => onSelect(option)}
           className={classNames('h-3 w-3', [
-            'appearance-none border-none bg-gray-800 outline outline-1 outline-gray-500',
-            'checked:bg-white',
+            '!bg-gray-800 !outline !outline-0 !outline-gray-500 !ring-1 !ring-gray-500 !ring-offset-0 !ring-offset-transparent',
+            'checked:!bg-white',
           ])}
           type="radio"
           name={filterName}
@@ -142,7 +140,7 @@ function Filter(props: FilterProps): JSX.Element {
         <label htmlFor={id} className={classNames('flex-grow', 'text-base')}>
           {option.label}
         </label>
-        <span className={'text-base'}>{option.numberOfItems?.toLocaleString()}</span>
+        <span className={classNames('text-base')}>{option.numberOfItems?.toLocaleString()}</span>
       </div>
     );
   }

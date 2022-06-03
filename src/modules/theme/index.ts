@@ -191,18 +191,6 @@ export function stylesheet({
     background-color: ${lesserContrastBackgroundColor};
     box-shadow: none;
   }
-  .action-field .field-info, .radio-subtitle {
-    color: ${subtleTextColor};
-  }
-  .ant-radio, .ant-radio-wrapper {
-    color: ${textColor};
-  }
-  .ant-radio-checked .ant-radio-inner, .ant-radio-checked:hover .ant-radio-inner, .ant-radio .ant-radio-inner, .ant-radio:hover .ant-radio-inner {
-    border-color: ${primaryColor};
-  }
-  .ant-radio-checked .ant-radio-inner::after, .ant-radio-checked:hover .ant-radio-inner::after {
-    background-color: ${primaryColor};
-  }
   .ant-picker-content th {
     color: ${textColor};
   }
