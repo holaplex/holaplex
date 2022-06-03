@@ -1,29 +1,9 @@
-query whoToFollow($limit: Int = 25, $offset: Int = 0) {
-  followWallets(limit: $limit, offset: $offset) {
-    __typename
+query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
+  followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
+    address
     profile {
       handle
-      profileImageUrl
-    }
-    address
-    bids {
-      lastBidTime
-      listing {
-        nfts {
-          address
-          name
-          image
-        }
-      }
-    }
-    connectionCounts {
-      fromCount
-      toCount
-    }
-    nftCounts {
-      owned
-      offered
-      listed
+      profileImageUrlLowres
     }
   }
 }

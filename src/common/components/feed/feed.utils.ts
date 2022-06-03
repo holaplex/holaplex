@@ -1,18 +1,15 @@
 import { shortenAddress } from '@/modules/utils/string';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { DateTime } from 'luxon';
 import {
   BidReceipt,
   FeedQuery,
-  FollowEvent,
-  ListingEvent,
   ListingReceipt,
   MintEvent,
-  OfferEvent,
   PurchaseReceipt,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
-type Profile = MintEvent['profile'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
 type QueryNFT =
   | MintEvent['nft']
@@ -37,7 +34,15 @@ export interface AggregateEvent {
   profile?: FeedQueryEvent['profile'];
 }
 
-export type FeedItem = FeedQueryEvent | AggregateEvent;
+export interface AggregateSaleEvent extends Omit<AggregateEvent, '__typename'> {
+  __typename: 'AggregateSaleEvent';
+}
+
+export interface AggregateFollowEvent extends Omit<AggregateEvent, '__typename'> {
+  __typename: 'AggregateFollowEvent';
+}
+
+export type FeedItem = FeedQueryEvent | AggregateEvent | AggregateSaleEvent | AggregateFollowEvent;
 
 export type FeedCardAttributes =
   | {
@@ -87,8 +92,8 @@ export function generateFeedCardAttributes(
         ...base,
         type: 'FollowEvent',
         content: myFollowingList?.includes(to.address)
-          ? 'Was followed by ' + getHandle(to)
-          : 'Followed ' + getHandle(to),
+          ? 'was followed by ' + getHandle(to)
+          : 'followed ' + getHandle(to),
 
         // I thought the source would be from, but aparently it's to
         // sourceUser: event.connection?.from!,
@@ -100,7 +105,7 @@ export function generateFeedCardAttributes(
       const creator = event.nft?.creators[0]!;
       return {
         ...base,
-        content: 'Created ', //  + shortenAddress(event.nft?.address),
+        content: 'created ', //  + shortenAddress(event.nft?.address),
         /*         sourceUser: {
           address: creator.address,
           profile: creator.profile,
@@ -113,7 +118,7 @@ export function generateFeedCardAttributes(
       return {
         ...base,
         content:
-          (event.purchase?.buyer === event.walletAddress ? 'Bought' : 'Sold') +
+          (event.purchase?.buyer === event.walletAddress ? 'bought' : 'sold') +
           ' for ' +
           solAmount +
           ' SOL',
@@ -127,7 +132,7 @@ export function generateFeedCardAttributes(
       solAmount = event.offer?.price / LAMPORTS_PER_SOL;
       return {
         ...base,
-        content: 'Offered ' + solAmount + ` SOL`,
+        content: 'offered ' + solAmount + ` SOL`,
         solAmount,
         /*      sourceUser: {
           address: event.offer?.buyer!,
@@ -138,7 +143,41 @@ export function generateFeedCardAttributes(
   }
 }
 
-export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: FeedQueryEvent) {
+export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => {
+  if (aggregateEvent.eventsAggregated.length < 2) {
+    return [
+      {
+        address: aggregateEvent.walletAddress,
+        profile: aggregateEvent.profile,
+      },
+    ];
+  }
+  const users: User[] = [];
+  aggregateEvent.eventsAggregated.map((user) => {
+    if (!users?.find((u) => u?.address === user.walletAddress)) {
+      users.push({
+        address: user.walletAddress,
+        profile: user.profile,
+      });
+    } else {
+      // do nothing
+    }
+  });
+  return users as User[];
+};
+
+export const aggregateEventsTime = (events: FeedQueryEvent[]) => {
+  let avgTime = 0;
+  events.forEach((event) => {
+    const date = DateTime.fromISO(event.createdAt).toMillis();
+    avgTime += date;
+  });
+  avgTime = avgTime / events.length;
+  const avgDate = DateTime.fromMillis(avgTime);
+  return avgDate;
+};
+
+export function shouldAggregateFollows(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: FeedQueryEvent) {
   // for now
 
   if (!e1 || !e2 || !e3) return false;
@@ -146,10 +185,40 @@ export function shouldAggregate(e1: FeedQueryEvent, e2: FeedQueryEvent, e3: Feed
   return (
     e1.__typename === e2.__typename &&
     e2.__typename == e3.__typename &&
-    e1.walletAddress === e2.walletAddress &&
-    e2.walletAddress === e3.walletAddress
+    // e1.walletAddress === e2.walletAddress &&
+    // e2.walletAddress === e3.walletAddress &&
+    e1.__typename === 'FollowEvent' &&
+    e2.__typename === 'FollowEvent' &&
+    e3.__typename === 'FollowEvent'
   );
 }
+
+export const shouldAggregateSaleEvents = (
+  e1: FeedQueryEvent,
+  e2: FeedQueryEvent,
+  e3: FeedQueryEvent
+) => {
+  if (!e1 || !e2 || !e3) return false;
+
+  const isNFTEvent = (e: FeedQueryEvent): boolean => {
+    return (
+      e.__typename === 'ListingEvent' ||
+      e.__typename === 'OfferEvent' ||
+      e.__typename === 'PurchaseEvent' ||
+      e.__typename === 'MintEvent'
+    );
+  };
+
+  return (
+    e1.__typename === e2.__typename &&
+    e2.__typename == e3.__typename &&
+    // e1.walletAddress === e2.walletAddress &&
+    // e2.walletAddress === e3.walletAddress &&
+    isNFTEvent(e1) &&
+    isNFTEvent(e2) &&
+    isNFTEvent(e3)
+  );
+};
 
 export function shuffleArray<T>(array: T[]) {
   let currentIndex = array.length,

@@ -4,15 +4,14 @@ import { GetServerSideProps } from 'next';
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   FeedQuery,
-  useAllConnectionsFromQuery,
   useAllConnectionsFromLazyQuery,
   useFeedLazyQuery,
+  useWhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
 import {
   FeedCard,
   LoadingFeedCard,
   LoadingFeedItem,
-  ProfilePFP,
 } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
@@ -20,7 +19,9 @@ import {
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAttributes,
-  shouldAggregate,
+  shouldAggregateFollows,
+  shouldAggregateSaleEvents,
+  User
 } from '@/common/components/feed/feed.utils';
 
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
@@ -29,10 +30,10 @@ import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
-import Link from 'next/link';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
+const AGGREGATE_EVENT_LIMIT = 6;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -44,14 +45,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const AlphaPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
-  const { connection } = useConnection();
   const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
     connecting,
-    disconnecting,
   } = useWallet();
 
   const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
@@ -69,24 +64,20 @@ const AlphaPage = ({ address }: { address: string }) => {
   const feedEvents = data?.feedEvents ?? [];
 
   // Switching to this as soon as we get it to auoto refetch on new follows
-  const [connectionQuery, { data: myConnectionsFromData, refetch }] =
+  const [connectionQuery, { data: myConnectionsFromData }] =
     useAllConnectionsFromLazyQuery({
       variables: {
         from: anchorWallet?.publicKey.toBase58() || myPubkey,
       },
     });
 
+  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
+  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
+
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
     ...new Set(myConnectionsFromData?.connections.map((c) => c.to.address)),
   ];
-
-  /*  const allConnectionsFromQuery = useGetAllConnectionsFromWithTwitter(myPubkey, connection);
-  const myFollowingList =
-    !allConnectionsFromQuery.isFetched || !myPubkey
-      ? // we need to keep this undefined until the list is actually loaded
-        undefined
-      : allConnectionsFromQuery.data?.map((u) => u.account.to.toBase58()); */
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
 
@@ -133,11 +124,11 @@ const AlphaPage = ({ address }: { address: string }) => {
   }
 
   async function loadMore(inView: boolean) {
-    console.log('in view', {
-      inView,
-      loading,
-      feedEventsN: feedEvents.length,
-    });
+    // console.log('in view', {
+    //   inView,
+    //   loading,
+    //   feedEventsN: feedEvents.length,
+    // });
     if (!inView || loading || feedEvents.length <= 0) {
       return;
     }
@@ -155,11 +146,6 @@ const AlphaPage = ({ address }: { address: string }) => {
         if (moreFeedEvents.length === 0) {
           setHasMoreFeedEvents(false);
         }
-
-        console.log('update query', {
-          prevFeedEventsN: prevFeedEvents?.length,
-          moreFeedEventsN: moreFeedEvents?.length,
-        });
 
         fetchMoreResult.feedEvents = prevFeedEvents.concat(moreFeedEvents);
 
@@ -188,7 +174,7 @@ const AlphaPage = ({ address }: { address: string }) => {
         return feedItems;
       }
 
-      const noAggregation = true;
+      const noAggregation = false;
       if (noAggregation) {
         feedItems.push(event);
         return feedItems;
@@ -203,13 +189,16 @@ const AlphaPage = ({ address }: { address: string }) => {
       const nextNextEvent = feedEvents[i + 2];
       feedItems.push(event);
 
-      if (shouldAggregate(event, nextEvent, nextNextEvent)) {
+      // Single person aggregate
+      if (shouldAggregateFollows(event, nextEvent, nextNextEvent)) {
+        // remove the item that would start the aggregation
+        feedItems.pop();
         // const eventsAggregated: FeedQueryEvent[] = feedEvents
         //   .slice(i)
         //   .filter((fe, i, arr) => shouldAggregate(fe, arr[i + 1]));
         const eventsAggregated: FeedQueryEvent[] = [feedEvents[i]];
         let j = i + 1;
-        while (shouldAggregate(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
+        while (shouldAggregateFollows(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
           eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
           j++;
         }
@@ -218,12 +207,39 @@ const AlphaPage = ({ address }: { address: string }) => {
         skipIndex = j + 2;
 
         feedItems.push({
-          feedEventId: 'agg_' + event.feedEventId,
+          feedEventId: `agg_${event.feedEventId}`,
           __typename: 'AggregateEvent',
           createdAt: event.createdAt,
           walletAddress: event.walletAddress,
           profile: event.profile,
           eventsAggregated,
+        });
+      }
+
+      if (shouldAggregateSaleEvents(event, nextEvent, nextNextEvent)) {
+        feedItems.pop();
+
+        const salesAggregated: FeedQueryEvent[] = [feedEvents[i]];
+        let k = i + 1;
+        let y = k;
+        while (shouldAggregateSaleEvents(feedEvents[k], feedEvents[k + 1], feedEvents[k + 2])) {
+          salesAggregated.push(feedEvents[k] as FeedQueryEvent);
+          k++;
+          if (k - y > AGGREGATE_EVENT_LIMIT) {
+            break;
+          }
+        }
+        salesAggregated.push(feedEvents[k] as FeedQueryEvent);
+        salesAggregated.push(feedEvents[k + 1] as FeedQueryEvent);
+        skipIndex = k + 2;
+
+        feedItems.push({
+          feedEventId: `agg_${event.feedEventId}`,
+          __typename: 'AggregateSaleEvent',
+          createdAt: event.createdAt,
+          walletAddress: event.walletAddress,
+          profile: event.profile,
+          eventsAggregated: salesAggregated,
         });
       }
 
@@ -234,12 +250,6 @@ const AlphaPage = ({ address }: { address: string }) => {
   const feedItems = getFeedItems(feedEvents);
 
   const fetchMoreIndex = feedItems.length - Math.floor(INFINITE_SCROLL_AMOUNT_INCREMENT / 2);
-
-  console.log('Feed', {
-    feedEvents,
-    feedItems,
-    feedAttrs,
-  });
 
   return (
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
@@ -265,11 +275,11 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {feedEvents.length === 0 && !loading && (
-              <EmptyFeedCTA myFollowingList={myFollowingList} refetch={refetchFeed} />
+              <EmptyFeedCTA myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} refetch={refetchFeed} />
             )}
-            {feedItems.map((fEvent) => (
+            {feedItems.map((fEvent, i) => (
               <FeedCard
-                key={fEvent.feedEventId + fEvent.walletAddress}
+                key={fEvent.feedEventId + fEvent.walletAddress + i}
                 event={fEvent}
                 myFollowingList={myFollowingList}
                 allEventsRef={feedItems}
@@ -321,7 +331,7 @@ const AlphaPage = ({ address }: { address: string }) => {
             )} */}
         </div>
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
-          <WhoToFollowList myFollowingList={myFollowingList} />
+          <WhoToFollowList myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} />
           {/* <MyActivityList /> */}
           {/*     <TestFeeds /> */}
           <div className="relative  py-10 ">
@@ -391,60 +401,3 @@ function BackToTopBtn() {
     </button>
   );
 }
-
-const TestFeeds = () => {
-  const TEST_FEEDS = [
-    {
-      address: 'GeCRaiFKTbFzBV1UWWFZHBd7kKcCDXZK61QvFpFLen66',
-      handle: 'empty',
-    },
-    {
-      address: 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H', // kris
-      handle: '@kristianeboe',
-    },
-    {
-      address: 'GJMCz6W1mcjZZD8jK5kNSPzKWDVTD4vHZCgm8kCdiVNS', // kayla
-      handle: '@itskay_k',
-    },
-    {
-      address: '7oUUEdptZnZVhSet4qobU9PtpPfiNUEJ8ftPnrC6YEaa', // dan
-      handle: '@dandelzzz',
-    },
-    {
-      address: 'FeikG7Kui7zw8srzShhrPv2TJgwAn61GU7m8xmaK9GnW', // kevin
-      handle: '@misterkevin_rs',
-    },
-    {
-      address: '2fLigDC5sgXmcVMzQUz3vBqoHSj2yCbAJW1oYX8qbyoR', // Belle
-      handle: '@belle__sol',
-    },
-    {
-      address: '7r8oBPs3vNqgqEG8gnyPWUPgWuScxXyUxtmoLd1bg17F', // Alex
-      handle: '@afkehaya',
-    },
-  ];
-
-  return (
-    <div>
-      <div className="mb-6 flex items-center justify-between border-b border-gray-800 pb-4">
-        <h3 className="m-0 text-base font-medium text-white">
-          Test feeds (click to view their feeds){' '}
-        </h3>
-      </div>
-
-      <div className="space-y-4">
-        {TEST_FEEDS.map((u) => (
-          // <FollowListItem key={p.handle} profile={p} />
-          <div key={u.address} className="flex items-center space-x-4">
-            <ProfilePFP user={u} />
-            <Link passHref href={'/feed?address=' + u.address}>
-              <a className="">
-                <span>{u.handle}</span>
-              </a>
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
