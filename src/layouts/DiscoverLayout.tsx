@@ -50,5 +50,3 @@ interface MainContentSectionProps {
 function MainContentSection(props: MainContentSectionProps): JSX.Element {
   return <div className="flex flex-grow border border-white">{props.children}</div>;
 }
-
-DiscoverLayout.MainContentSection = MainContentSection;
