@@ -1,5 +1,59 @@
-import React from 'react';
+import { CollectionRaisedCard } from '@/common/components/collections/CollectionRaisedCard';
+import { CollectionPage } from '@/common/components/collections/collections.util';
+import { FollowItem } from '@/common/components/elements/FollowModal';
+import CollectionLayout from '@/layouts/CollectionLayout';
+import { GetServerSideProps } from 'next';
+import React, { ReactElement } from 'react';
+import { graphqlRequestClient } from 'src/graphql/graphql-request';
+import { GetCollectionQuery } from 'src/graphql/indexerTypes';
+import { getSdk } from 'src/graphql/indexerTypes.ssr';
 
-export default function CollectionAboutPage() {
-  return <div>about</div>;
+export const getServerSideProps: GetServerSideProps<CollectionPage> = async (context) => {
+  const collectionAddress = (context.query.collectionAddress || '') as string;
+
+  const { getCollection } = getSdk(graphqlRequestClient);
+
+  const collection = await getCollection({
+    address: collectionAddress,
+  });
+
+  return {
+    props: {
+      collectionAddress,
+      collection: collection.nft,
+    },
+  };
+};
+
+export default function CollectionAboutPage(props: CollectionPage) {
+  return (
+    <div className="mt-20 space-y-20">
+      <CollectionRaisedCard>
+        <h2 className="text-2xl font-semibold">About this collection</h2>
+        <p>{props.collection?.description}</p>
+      </CollectionRaisedCard>
+      <CollectionRaisedCard>
+        <h2 className="text-2xl font-semibold">Creators of this collection</h2>
+        <div className="mt-10 space-y-10">
+          {props.collection?.creators.map((cc) => (
+            <FollowItem
+              key={cc.address}
+              source="collectionCreators"
+              user={{
+                address: cc.address,
+                profile: {
+                  handle: cc.profile?.handle,
+                  profileImageUrl: cc.profile?.profileImageUrlLowres,
+                } as any,
+              }}
+            />
+          ))}
+        </div>
+      </CollectionRaisedCard>
+    </div>
+  );
 }
+
+CollectionAboutPage.getLayout = function getLayout(page: ReactElement) {
+  return <CollectionLayout {...page.props}>{page}</CollectionLayout>;
+};

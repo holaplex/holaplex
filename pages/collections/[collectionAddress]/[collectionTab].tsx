@@ -128,7 +128,10 @@ export default function CollectionTab(props: CollectionPage) {
 
   const nfts = data?.nfts || [];
 
-  const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+  const walletConnectionPair = useMemo(() => {
+    if (!wallet) return null;
+    return { wallet, connection };
+  }, [wallet, connection]);
 
   return (
     <div className="container mx-auto ">
@@ -143,7 +146,7 @@ export default function CollectionTab(props: CollectionPage) {
             <div>
               <span className="text-base text-gray-300">Collection of {nfts.length}</span>
               <h1 className="mt-4 text-5xl"> {props.collection?.name} </h1>
-              {!connection || !wallet ? null : (
+              {!walletConnectionPair ? null : (
                 <FollowUnfollowButton
                   toProfile={{
                     address: props.collection?.address!,
@@ -232,7 +235,7 @@ export default function CollectionTab(props: CollectionPage) {
               <div className="mt-20 flex ">
                 <div className="mr-10 w-80">Sidebar Placeholder</div>
                 <NFTGrid
-                  ctaVariant={`collection`}
+                  ctaVariant={`collectionPage`}
                   hasMore={hasMore && nfts.length > INITIAL_FETCH - 1}
                   onLoadMore={async (inView) => {
                     if (!inView || loading || nfts.length <= 0) {
@@ -263,7 +266,7 @@ export default function CollectionTab(props: CollectionPage) {
                   gridView={'3x3'}
                   refetch={refetch}
                   loading={loading}
-                  marketplace={data?.marketplace}
+                  marketplace={data?.marketplace as any}
                 />
               </div>
             </div>
@@ -296,8 +299,9 @@ function CollectionAbout(props: { collection: NFTCollection }) {
               user={{
                 address: cc.address,
                 profile: {
-                  handle: cc.twitterHandle,
-                },
+                  handle: cc.profile?.handle,
+                  profileImageUrl: cc.profile?.profileImageUrlLowres,
+                } as any,
               }}
             />
           ))}

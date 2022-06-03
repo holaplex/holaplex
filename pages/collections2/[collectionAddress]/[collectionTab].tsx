@@ -311,7 +311,7 @@ function CollectionAbout(props: { collection: NFTCollection }) {
                 profile: {
                   handle: cc.profile?.handle,
                   profileImageUrl: cc.profile?.profileImageUrlLowres,
-                },
+                } as any,
               }}
             />
           ))}
