@@ -6,13 +6,10 @@ import {
   FeedQuery,
   useAllConnectionsFromLazyQuery,
   useFeedLazyQuery,
+  useFeedQuery,
   useWhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
-import {
-  FeedCard,
-  LoadingFeedCard,
-  LoadingFeedItem,
-} from '@/common/components/feed/FeedCard';
+import { FeedCard, LoadingFeedCard, LoadingFeedItem } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
   FeedCardAttributes,
@@ -21,7 +18,7 @@ import {
   generateFeedCardAttributes,
   shouldAggregateFollows,
   shouldAggregateSaleEvents,
-  User
+  User,
 } from '@/common/components/feed/feed.utils';
 
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
@@ -31,6 +28,7 @@ import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from '@/common/components/elements/Button2';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
 const AGGREGATE_EVENT_LIMIT = 6;
@@ -44,39 +42,49 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const AlphaPage = ({ address }: { address: string }) => {
-  const anchorWallet = useAnchorWallet();
-  const {
-    connecting,
-  } = useWallet();
+  const { connecting } = useWallet();
 
-  const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const myPubkey = connectedProfile?.pubkey;
+  const feedPubkey = address ?? myPubkey;
+
+  console.log('alpha', {
+    myPubkey,
+    feedPubkey,
+  });
 
   const [showConnectCTA, setShowConnectCTA] = useState(false);
 
-  const [feedQuery, { data, loading, called, fetchMore, refetch: refetchFeed }] = useFeedLazyQuery({
+  const {
+    data,
+    loading,
+    called,
+    fetchMore,
+    refetch: refetchFeed,
+  } = useFeedQuery({
     notifyOnNetworkStatusChange: true,
     variables: {
-      address: myPubkey,
+      address: feedPubkey,
       offset: 0,
       limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
     },
+    skip: !feedPubkey,
   });
   const feedEvents = data?.feedEvents ?? [];
 
-  // Switching to this as soon as we get it to auoto refetch on new follows
-  const [connectionQuery, { data: myConnectionsFromData }] =
-    useAllConnectionsFromLazyQuery({
-      variables: {
-        from: anchorWallet?.publicKey.toBase58() || myPubkey,
-      },
-    });
-
-  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
-  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
+  const { data: whoToFollowData } = useWhoToFollowQuery({
+    variables: { wallet: myPubkey, limit: 25 },
+    skip: !myPubkey,
+  });
+  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map((u) => ({
+    address: u.address,
+    profile: { handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres },
+  }));
 
   // API is returning duplicates for some reason
-  const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
-    ...new Set(myConnectionsFromData?.connections.map((c) => c.to.address)),
+  const myFollowingList: string[] | undefined = [
+    ...new Set(connectedProfile?.following?.map((f) => f.address)),
   ];
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
@@ -84,9 +92,9 @@ const AlphaPage = ({ address }: { address: string }) => {
   // Effect to check connection 2 seconds after loading
   useEffect(() => {
     let timerId: any;
-    if (!myPubkey) {
+    if (!feedPubkey) {
       timerId = setTimeout(() => {
-        if (!myPubkey) {
+        if (!feedPubkey) {
           setShowConnectCTA(true);
         }
       }, 2000);
@@ -95,14 +103,7 @@ const AlphaPage = ({ address }: { address: string }) => {
     }
 
     return () => clearTimeout(timerId);
-  }, [myPubkey]);
-
-  useEffect(() => {
-    if (myPubkey) {
-      feedQuery();
-      connectionQuery();
-    }
-  }, [myPubkey]);
+  }, [feedPubkey]);
 
   const { setVisible } = useWalletModal();
   if (showConnectCTA) {
@@ -135,7 +136,7 @@ const AlphaPage = ({ address }: { address: string }) => {
 
     await fetchMore({
       variables: {
-        address: myPubkey,
+        address: feedPubkey,
         limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
         offset: feedEvents.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
       },
@@ -275,7 +276,11 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {feedEvents.length === 0 && !loading && (
-              <EmptyFeedCTA myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} refetch={refetchFeed} />
+              <EmptyFeedCTA
+                myFollowingList={myFollowingList}
+                profilesToFollow={profilesToFollow}
+                refetch={refetchFeed}
+              />
             )}
             {feedItems.map((fEvent, i) => (
               <FeedCard

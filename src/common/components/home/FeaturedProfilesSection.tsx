@@ -19,6 +19,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
@@ -234,29 +235,15 @@ export const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; classN
 }) => {
   const wallet = useAnchorWallet();
   const { connection } = useConnection();
-  const [userIsFollowingThisAccountQuery, userIsFollowingThisAccountContext] =
-    useIsXFollowingYLazyQuery();
+  const { connectedProfile } = useConnectedWalletProfile();
 
-  const userWalletAddress: string | undefined = wallet?.publicKey.toBase58();
-  const targetIsUserWallet = targetPubkey === userWalletAddress;
+  const userIsFollowingThisAccount = connectedProfile?.following?.find(
+    (f) => f.address === targetPubkey
+  );
 
-  if (userWalletAddress && !targetIsUserWallet && !userIsFollowingThisAccountContext.called) {
-    userIsFollowingThisAccountQuery({
-      variables: { xPubKey: userWalletAddress, yPubKey: targetPubkey },
-    });
-  }
+  const targetIsUserWallet = targetPubkey === connectedProfile?.pubkey;
 
-  const canAssessFollowState: boolean =
-    userWalletAddress !== undefined &&
-    !targetIsUserWallet &&
-    userIsFollowingThisAccountContext !== undefined &&
-    userIsFollowingThisAccountContext.error === undefined &&
-    !userIsFollowingThisAccountContext.loading &&
-    userIsFollowingThisAccountContext.data !== undefined &&
-    userIsFollowingThisAccountContext.data.connections !== undefined;
-
-  const userIsFollowingThisAccount: boolean =
-    canAssessFollowState && userIsFollowingThisAccountContext!.data!.connections.length > 0;
+  const canAssessFollowState: boolean = !!connectedProfile && !targetIsUserWallet;
 
   const hideButton: boolean = targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
 

@@ -259,7 +259,8 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
       getTwitterHandleAndSetState();
     }
   }, []);
@@ -518,7 +519,9 @@ export function ProfilePFP({ user }: { user: User }) {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
+
       getTwitterHandleAndSetState();
     }
   }, []);
