@@ -132,7 +132,7 @@ export default function CollectionTab(props: CollectionPage) {
 
   return (
     <div className="container mx-auto ">
-      <div className="flex justify-between">
+      <div className="flex items-start justify-between">
         <div>
           <div className="mb-10 flex">
             <img
@@ -214,7 +214,7 @@ export default function CollectionTab(props: CollectionPage) {
       <div className="w-full   ">
         <div className="flex space-x-1   p-1">
           <Tab1
-            title={`NFTs ${6}`}
+            title={`NFTs`}
             selected={props.collectionTab === 'nfts'}
             url={`/collections/${props.collectionAddress}/nfts`}
           />
@@ -230,7 +230,7 @@ export default function CollectionTab(props: CollectionPage) {
               <div>Search and filter</div>
 
               <div className="mt-20 flex ">
-                <div className="mr-10 w-80">Placeholder</div>
+                <div className="mr-10 w-80">Sidebar Placeholder</div>
                 <NFTGrid
                   ctaVariant={`collection`}
                   hasMore={hasMore && nfts.length > INITIAL_FETCH - 1}

@@ -52,10 +52,16 @@ query nftsInCollection(
     }
     creators {
       address
+      share
       verified
+      profile {
+        handle
+        profileImageUrlLowres
+      }
     }
     owner {
       address
+      associatedTokenAccountAddress
     }
     purchases {
       address

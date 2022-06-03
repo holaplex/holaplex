@@ -30,6 +30,7 @@ export type FollowUnfollowSource =
   | 'feed'
   | 'whotofollow'
   | 'collectedBy'
+  | 'collectionPage'
   | 'collectionCreators';
 
 type FollowUnfollowButtonProps = {

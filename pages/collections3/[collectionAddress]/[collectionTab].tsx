@@ -1,3 +1,5 @@
+import { Button5 } from '@/common/components/elements/Button2';
+import { FilterOptions, SortOptions } from '@/common/components/home/home.interfaces';
 import classNames from 'classnames';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
@@ -11,6 +13,7 @@ import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import {
   GetCollectionQuery,
   useAllConnectionsToQuery,
+  useIsXFollowingYQuery,
   useNftsInCollectionQuery,
 } from 'src/graphql/indexerTypes';
 import { FollowUnfollowButton } from '@/common/components/elements/FollowUnfollowButton';
@@ -22,7 +25,6 @@ import { User } from '@/common/components/feed/feed.utils';
 import { AvatarIcons } from '@/common/components/elements/Avatar';
 import { CollectedBy } from '@/common/components/elements/FollowerCount';
 import { useRouter } from 'next/router';
-import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 
 enum TabRoute {
   NFTS = 'nfts',
@@ -62,10 +64,28 @@ export const getServerSideProps: GetServerSideProps<CollectionPage> = async (con
 
   const collectionTab = context.query.collectionTab as TabRoute;
 
+  // const queryFilter = (context.query.filter as string) || '';
+
+  // const initialFilterBy: string | undefined =
+  //   Object.values(FilterOptions).includes(queryFilter) && context.query.filter;
+
+  // const initialSortBy: string | undefined =
+  //   Object.values(SortOptions).includes(context.query.sort || '') && context.query.sort;
+
+  // const initialSearchBy: string[] | undefined = context.query.search
+  //   ?.split(',')
+  //   .map((term) => term.toLowerCase());
+
   const { getCollection } = getSdk(graphqlRequestClient);
 
   const collection = await getCollection({
     address: collectionAddress,
+  });
+
+  console.log('query', {
+    collectionAddress,
+    collectionTab,
+    collection,
   });
 
   return {
@@ -73,19 +93,21 @@ export const getServerSideProps: GetServerSideProps<CollectionPage> = async (con
       collectionAddress,
       collectionTab,
       collection: collection.nft,
+      // initialFilterBy: initialFilterBy || FilterOptions.Auctions,
+      // initialSortBy: initialSortBy || SortOptions.Trending,
+      // initialSearchBy: initialSearchBy || [],
     },
   };
 };
 
 export default function CollectionTab(props: CollectionPage) {
   const wallet = useAnchorWallet();
+  const [hasMore, setHasMore] = useState(true);
   const { connection } = useConnection();
+  const myPubkey = wallet?.publicKey.toBase58();
   const router = useRouter();
 
-  const [hasMore, setHasMore] = useState(true);
-  const myPubkey = wallet?.publicKey.toBase58();
-
-  const nftsInCollectionVariables = {
+  const variables = {
     marketplaceSubdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     collectionMintAddress: props.collection?.mintAddress,
     limit: INITIAL_FETCH,
@@ -93,34 +115,27 @@ export default function CollectionTab(props: CollectionPage) {
   };
 
   const { data, loading, fetchMore, refetch } = useNftsInCollectionQuery({
-    variables: nftsInCollectionVariables,
+    variables,
   });
 
-  const { data: collectionFollowersData } = useAllConnectionsToQuery({
+  const { data: followersData } = useAllConnectionsToQuery({
     variables: {
       to: props.collectionAddress,
     },
   });
+  const followers = followersData?.connections || [];
 
-  const collectionFollowers = collectionFollowersData?.connections || [];
-
-  const amIFollowingThisCollection = useMemo(
-    () => !!collectionFollowers.find((f) => f.from.address === myPubkey),
-    [collectionFollowers, myPubkey]
-  );
+  const amIFollowingThisCollection = !!followers.find((f) => f.from.address === myPubkey);
 
   const creators = props.collection?.creators || [];
 
   const nfts = data?.nfts || [];
 
-  const walletConnectionPair = useMemo(() => {
-    if (!wallet) return null;
-    return { wallet, connection };
-  }, [wallet, connection]);
+  const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
 
   return (
     <div className="container mx-auto ">
-      <div className="flex items-start justify-between">
+      <div className="flex justify-between">
         <div>
           <div className="mb-10 flex">
             <img
@@ -131,7 +146,7 @@ export default function CollectionTab(props: CollectionPage) {
             <div>
               <span className="text-base text-gray-300">Collection of {nfts.length}</span>
               <h1 className="mt-4 text-5xl"> {props.collection?.name} </h1>
-              {!walletConnectionPair ? null : (
+              {!connection || !wallet ? null : (
                 <FollowUnfollowButton
                   toProfile={{
                     address: props.collection?.address!,
@@ -172,12 +187,10 @@ export default function CollectionTab(props: CollectionPage) {
             <div>
               <div className="cursor-pointer text-sm font-medium text-gray-200">Followed by</div>
               <div className="flex items-center">
-                <span className={`mr-2 text-left text-2xl font-semibold`}>
-                  {collectionFollowers.length}
-                </span>
+                <span className={`mr-2 text-left text-2xl font-semibold`}>{followers.length}</span>
 
                 <AvatarIcons
-                  profiles={collectionFollowers.map((f) => ({
+                  profiles={followers.map((f) => ({
                     address: f.from.address,
                     data: {
                       twitterHandle: f.from.profile?.handle,
@@ -201,52 +214,48 @@ export default function CollectionTab(props: CollectionPage) {
         </CollectionRaisedCard>
       </div>
 
-      <div className="w-full">
+      <div className="w-full   ">
         <Tab.Group
           defaultIndex={props.collectionTab === TabRoute.NFTS ? 0 : 1}
           onChange={(index) => {
-            // this does trigger a new getServersideQuery, but it is not noticable for the user
+            console.log('Changed selected tab to:', index);
+
             router.replace(
               `/collections2/${props.collectionAddress}/${index === 0 ? 'nfts' : 'about'}`
             );
           }}
         >
-          <Tab.List className="flex space-x-1 p-1">
-            {/* This could be made into a list of tabs that is mapped into the Tab component, to avoid further duplication */}
-            <Tab as={Fragment}>
-              {({ selected }) => (
-                <button
-                  className={classNames(
-                    'w-full  border-b py-2.5 text-center text-sm font-medium text-white ',
-                    selected ? ' border-white' : 'border-gray-800  text-gray-300 hover:text-white'
-                  )}
-                >
-                  NFTs
-                  {/* {nfts.length} We need to know the numer of nfts in the collection, not just the amount rendered on screen */}
-                </button>
+          <Tab.List className="flex space-x-1   p-1">
+            <Tab
+              className={classNames(
+                'w-full  border-b py-2.5 text-center text-sm font-medium text-white ',
+                props.collectionTab === 'nfts'
+                  ? ' border-white'
+                  : 'border-gray-800  text-gray-300 hover:text-white'
               )}
+            >
+              Nfts {nfts.length}
             </Tab>
-            <Tab as={Fragment}>
-              {({ selected }) => (
-                <button
-                  className={classNames(
-                    'w-full  border-b py-2.5 text-center text-sm font-medium text-white ',
-                    selected ? ' border-white' : 'border-gray-800  text-gray-300 hover:text-white'
-                  )}
-                >
-                  About
-                </button>
+            <Tab
+              className={classNames(
+                'w-full  border-b py-2.5 text-center text-sm font-medium text-white ',
+                props.collectionTab === 'about'
+                  ? ' border-white'
+                  : 'border-gray-800  text-gray-300 hover:text-white'
               )}
+            >
+              About
             </Tab>
           </Tab.List>
-          <Tab.Panels>
+          <Tab.Panels className="">
             <Tab.Panel>
               <div className="mt-10">
                 <div>Search and filter</div>
+
                 <div className="mt-20 flex ">
-                  <div className="mr-10 w-80">Sidebar Placeholder</div>
+                  <div className="mr-10 w-80">Placeholder</div>
                   <NFTGrid
-                    ctaVariant={`collectionPage`}
+                    ctaVariant={`collection`}
                     hasMore={hasMore && nfts.length > INITIAL_FETCH - 1}
                     onLoadMore={async (inView) => {
                       if (!inView || loading || nfts.length <= 0) {
@@ -255,7 +264,7 @@ export default function CollectionTab(props: CollectionPage) {
 
                       const { data: newData } = await fetchMore({
                         variables: {
-                          ...nftsInCollectionVariables,
+                          ...variables,
                           limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
                           offset: nfts.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
                         },
@@ -277,7 +286,7 @@ export default function CollectionTab(props: CollectionPage) {
                     gridView={'3x3'}
                     refetch={refetch}
                     loading={loading}
-                    marketplace={data?.marketplace as Marketplace}
+                    marketplace={data?.marketplace}
                   />
                 </div>
               </div>
@@ -290,6 +299,10 @@ export default function CollectionTab(props: CollectionPage) {
       </div>
     </div>
   );
+}
+
+function CollectionNFTs() {
+  return <div>NFTs</div>;
 }
 
 function CollectionAbout(props: { collection: NFTCollection }) {
@@ -309,8 +322,7 @@ function CollectionAbout(props: { collection: NFTCollection }) {
               user={{
                 address: cc.address,
                 profile: {
-                  handle: cc.profile?.handle,
-                  profileImageUrl: cc.profile?.profileImageUrlLowres,
+                  handle: cc.twitterHandle,
                 },
               }}
             />
@@ -320,3 +332,17 @@ function CollectionAbout(props: { collection: NFTCollection }) {
     </div>
   );
 }
+
+const Tab1 = (props: { url: string; selected: boolean; title: string }) => (
+  <Link href={props.url} passHref>
+    {/* maybe use shallow in Link */}
+    <a
+      className={classNames(
+        'w-full  py-2.5 text-center text-sm font-medium text-white ',
+        props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
+      )}
+    >
+      {props.title}
+    </a>
+  </Link>
+);
