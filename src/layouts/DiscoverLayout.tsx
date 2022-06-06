@@ -4,6 +4,12 @@ import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+enum TabRoute {
+  NFTS = '/discover/nfts',
+  COLLECTIONS = '/discover/collections',
+  PROFILES = '/discover/profiles',
+}
+
 export interface DiscoverPageProps {}
 
 export interface DiscoverLayoutProps<T> {
@@ -23,21 +29,19 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
       </FiltersSection>
       <div className="w-full">
         <div className="flex space-x-1 p-1">
-          <Tab title={`NFTs`} selected={router.pathname.includes('discover/nfts')} url={`/discover/nfts`} />
+          <Tab title="NFTs" selected={router.pathname === TabRoute.NFTS} url={TabRoute.NFTS} />
           <Tab
-            title={'Collections'}
-            selected={router.pathname.includes('discover/collections')}
-            url={`/discover/collections`}
+            title="Collections"
+            selected={router.pathname === TabRoute.COLLECTIONS}
+            url={TabRoute.COLLECTIONS}
           />
           <Tab
-            title={'Profiles'}
-            selected={router.pathname.includes('discover/profiles')}
-            url={`/discover/profiles`}
+            title="Profiles"
+            selected={router.pathname === TabRoute.PROFILES}
+            url={TabRoute.PROFILES}
           />
         </div>
-        <MainContentSection>
-            {props.content}
-        </MainContentSection>
+        <MainContentSection>{props.content}</MainContentSection>
       </div>
     </div>
   );
