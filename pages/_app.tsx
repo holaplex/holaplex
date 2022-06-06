@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactNode,  useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -6,8 +6,6 @@ import '@/styles/globals.less';
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import { Layout } from 'antd';
-import { isNil } from 'ramda';
 import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
@@ -29,7 +27,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -43,8 +41,6 @@ import { NextPage } from 'next';
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
 
-const { Content } = Layout;
-
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
     ? WalletAdapterNetwork.Devnet
@@ -52,12 +48,13 @@ const getSolanaNetwork = () => {
 };
 
 type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
-};
+  //@ts-ignore not sure why but typescript is bugging out on {children: ReactNode}
+  getLayout?: ({ children: ReactNode }) => ReactNode
+}
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
-};
+  Component: NextPageWithLayout
+}
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const network = getSolanaNetwork();
@@ -82,7 +79,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const getLayout = Component.getLayout || ((page) => page);
+  const Layout = Component.getLayout ?? (({ children }) => children);
 
   return (
     <>
@@ -119,7 +116,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                 {() => (
                                   <AnalyticsProvider>
                                     <AppHeader />
-                                    {getLayout(<Component {...pageProps} />)}
+                                    <Layout {...pageProps}>
+                                      <Component {...pageProps} />
+                                    </Layout>
                                   </AnalyticsProvider>
                                 )}
                               </MarketplaceProvider>
