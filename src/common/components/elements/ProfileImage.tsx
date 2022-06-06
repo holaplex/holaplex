@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { Popover } from 'antd';
 import { useEffect, useRef, useState } from 'react';
-import { ButtonReset } from '@/common/styles/ButtonReset';
 import { ProfilePopover } from './ProfilePopover';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import {
@@ -61,13 +60,3 @@ export const ProfileImage = () => {
     </>
   );
 };
-
-const ProfileImageWrapper = styled.button`
-  ${ButtonReset};
-  min-width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 200px;
-`;

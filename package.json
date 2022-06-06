@@ -113,6 +113,7 @@
     "tweetnacl": "^1.0.3",
     "use-onclickoutside": "^0.4.0",
     "uuid": "^8.3.2",
+    "webpack": "^5.73.0",
     "yarn": "^1.22.10",
     "zod": "^3.14.4"
   },
@@ -126,6 +127,7 @@
     "@storybook/addon-essentials": "^6.5.7",
     "@storybook/addon-interactions": "^6.5.7",
     "@storybook/addon-links": "^6.5.7",
+    "@storybook/addon-postcss": "^2.0.0",
     "@storybook/builder-webpack5": "^6.5.7",
     "@storybook/manager-webpack5": "^6.5.7",
     "@storybook/react": "^6.5.7",

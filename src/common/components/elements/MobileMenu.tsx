@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { Close } from '../icons/Close';
-import { ButtonReset } from '@/common/styles/ButtonReset';
+
 import { mq } from '@/common/styles/MediaQuery';
 import Link from 'next/link';
 import { PopoverBoxContents } from './ProfilePopover';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
-import { SelectWalletButton } from '@/common/components/elements/Button';
+import { ButtonReset, SelectWalletButton } from '@/common/components/elements/Button';
 import { FC } from 'react';
 
 type OnCloseProps = {
@@ -114,33 +114,6 @@ const ItemsContainer = styled(PaddedContainer)`
 
 const ProfileContainer = styled(PaddedContainer)`
   margin-bottom: 24px;
-`;
-
-const MenuItemRow = styled.a`
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding-left: 16px;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 32px;
-  color: #ffffff;
-`;
-
-const MenuItemButtonRow = styled.button`
-  ${ButtonReset}
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding-left: 16px;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 32px;
-  color: #ffffff;
 `;
 
 const Container = styled.aside`

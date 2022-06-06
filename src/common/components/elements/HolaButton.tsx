@@ -2,21 +2,31 @@ import classNames from 'classnames';
 import { ReactNode } from 'react';
 
 type ButtonType = 'primary' | 'secondary' | 'ghost' | 'text';
+type ButtonSize = 'sm' | 'md' | 'lg';
 
 const BUTTON_BASE_CLASSES = {
   primary:
-    'rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:text-gray-700 hover:bg-gray-100',
+    'rounded-full bg-white  font-medium  text-gray-900 hover:text-gray-700 hover:bg-gray-100 disabled:bg-gray-300',
   secondary:
-    'rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-700 hover:text-gray-100',
+    'rounded-full bg-gray-800  font-medium text-white hover:bg-gray-700 hover:text-gray-100 disabled:text-gray-300',
   ghost:
-    'w-full rounded-full border border-gray-800 bg-gray-900 px-9 py-2 font-sans text-sm font-medium text-white hover:bg-gray-700 focus:outline-none  focus:ring-2 focus:ring-gray-600 focus:ring-offset-2  sm:text-base md:w-auto',
-  text: '',
+    'w-full rounded-full border border-gray-800 bg-gray-900 font-sans text-sm font-medium text-white hover:bg-gray-700 focus:outline-none  focus:ring-2 focus:ring-gray-600 focus:ring-offset-2  sm:text-base md:w-auto',
+  text: 'text-white',
 };
 
-const BtnSpinnner = () => (
+const BUTTON_SIZE_CLASSES = {
+  sm: '',
+  md: 'px-6 py-2 text-base',
+  lg: 'px-6 py-3 text-2xl ',
+};
+
+const BtnSpinnner = (props: { size: ButtonSize }) => (
   <svg
     role="status"
-    className="h-5 w-5 animate-spin fill-black text-gray-200 dark:text-gray-600"
+    className={classNames(
+      'animate-spin fill-black text-gray-200 dark:text-gray-600',
+      props.size === 'md' ? 'h-6 w-6' : props.size === 'sm' ? 'h-4 w-4' : 'h-8 w-8'
+    )}
     viewBox="0 0 100 101"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -32,21 +42,45 @@ const BtnSpinnner = () => (
   </svg>
 );
 
-export function Button5({
+interface HolaButtonProps {
+  version?: ButtonType;
+  /**
+   * Used to render button content
+   */
+  children?: ReactNode;
+  /**
+   * Use label if you want to skip children
+   */
+  label?: string;
+  type?: 'button' | 'submit' | 'reset';
+  className?: string;
+  disabled?: boolean;
+  /**
+   * Used to render loading spinner
+   */
+  loading?: boolean;
+  /**
+   * How large should the button be?
+   */
+  size?: 'sm' | 'md' | 'lg';
+  /**
+   * Optional click handler
+   */
+  onClick?: () => void;
+}
+
+/**
+ * Primary UI component for user interaction
+ */
+export function HolaButton({
+  version = 'primary',
   type = 'button',
   disabled = false,
+  size = 'md',
   children,
   onClick,
   ...props
-}: {
-  onClick?: (...args: any) => void;
-  className?: string;
-  children: ReactNode;
-  disabled?: boolean;
-  loading?: boolean;
-  v: ButtonType;
-  type?: 'button' | 'submit';
-}) {
+}: HolaButtonProps) {
   return (
     <button
       type={type}
@@ -54,11 +88,12 @@ export function Button5({
       onClick={onClick}
       className={classNames(
         'flex items-center justify-center transition-all',
-        BUTTON_BASE_CLASSES[props.v],
+        BUTTON_BASE_CLASSES[version],
+        BUTTON_SIZE_CLASSES[size],
         props.className
       )}
     >
-      {props.loading ? <BtnSpinnner /> : children}
+      {props.loading ? <BtnSpinnner size={size} /> : props.label ? props.label : children}
     </button>
   );
 }

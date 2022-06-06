@@ -7,8 +7,9 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/common/utils';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
-import { Button5 } from './Button2';
+
 import { useTwitterHandleFromPubKeyQuery } from 'src/graphql/indexerTypes';
+import { HolaButton } from './HolaButton';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
   const from = (activity.sourceUser || activity?.nft?.creators?.[0])!;
@@ -213,9 +214,9 @@ export function ActivityCard(props: { activity: IFeedItem }) {
         className="ml-auto w-full pt-4 sm:block md:w-auto md:pl-4 md:pt-0"
         rel="noreferrer"
       >
-        <Button5 v="ghost" onClick={() => activitySelected()}>
+        <HolaButton version="ghost" onClick={() => activitySelected()}>
           View
-        </Button5>
+        </HolaButton>
       </a>
     </div>
   );

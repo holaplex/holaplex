@@ -9,7 +9,7 @@ import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
 import { mq } from '@/common/styles/MediaQuery';
 import { MobileMenu } from './MobileMenu';
-import { ButtonReset } from '@/common/styles/ButtonReset';
+
 import { Menu as MenuIcon } from '@/components/icons/Menu';
 import { ChevronRight } from '../icons/ChevronRight';
 import { toast } from 'react-toastify';
@@ -19,7 +19,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
 import classNames from 'classnames';
-import { Button5 } from './Button2';
+import { HolaButton } from './HolaButton';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -192,14 +192,13 @@ export function AppHeader() {
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button5
-                v="primary"
+              <HolaButton
                 loading={connecting}
                 onClick={() => setVisible(true)}
-                className={`min-h-full text-lg font-medium`}
+                // className={`min-h-full text-lg font-medium`}
               >
                 Connect
-              </Button5>
+              </HolaButton>
             )}
           </div>
         )}

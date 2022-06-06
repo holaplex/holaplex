@@ -8,11 +8,7 @@ import {
   useFeedLazyQuery,
   useWhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
-import {
-  FeedCard,
-  LoadingFeedCard,
-  LoadingFeedItem,
-} from '@/common/components/feed/FeedCard';
+import { FeedCard, LoadingFeedCard, LoadingFeedItem } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
   FeedCardAttributes,
@@ -21,7 +17,7 @@ import {
   generateFeedCardAttributes,
   shouldAggregateFollows,
   shouldAggregateSaleEvents,
-  User
+  User,
 } from '@/common/components/feed/feed.utils';
 
 import Footer, { SmallFooter } from '@/common/components/home/Footer';
@@ -29,8 +25,8 @@ import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import { Button5 } from '@/common/components/elements/Button2';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
+import { HolaButton } from '@/common/components/elements/HolaButton';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
 const AGGREGATE_EVENT_LIMIT = 6;
@@ -45,9 +41,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const AlphaPage = ({ address }: { address: string }) => {
   const anchorWallet = useAnchorWallet();
-  const {
-    connecting,
-  } = useWallet();
+  const { connecting } = useWallet();
 
   const myPubkey = address ?? anchorWallet?.publicKey.toBase58() ?? null;
 
@@ -64,15 +58,19 @@ const AlphaPage = ({ address }: { address: string }) => {
   const feedEvents = data?.feedEvents ?? [];
 
   // Switching to this as soon as we get it to auoto refetch on new follows
-  const [connectionQuery, { data: myConnectionsFromData }] =
-    useAllConnectionsFromLazyQuery({
-      variables: {
-        from: anchorWallet?.publicKey.toBase58() || myPubkey,
-      },
-    });
+  const [connectionQuery, { data: myConnectionsFromData }] = useAllConnectionsFromLazyQuery({
+    variables: {
+      from: anchorWallet?.publicKey.toBase58() || myPubkey,
+    },
+  });
 
-  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
-  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
+  const { data: whoToFollowData } = useWhoToFollowQuery({
+    variables: { wallet: anchorWallet?.publicKey, limit: 25 },
+  });
+  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map((u) => ({
+    address: u.address,
+    profile: { handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres },
+  }));
 
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = myConnectionsFromData?.connections && [
@@ -113,9 +111,9 @@ const AlphaPage = ({ address }: { address: string }) => {
             header="Connect your wallet to view your feed"
             body="Follow your favorite collectors and creators, and get your own personalized feed of activities across the Holaplex ecosystem."
           >
-            <Button5 v="primary" loading={connecting} onClick={() => setVisible(true)}>
+            <HolaButton loading={connecting} onClick={() => setVisible(true)}>
               Connect
-            </Button5>
+            </HolaButton>
           </EmptyStateCTA>
         </div>
         <Footer />
@@ -275,7 +273,11 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {feedEvents.length === 0 && !loading && (
-              <EmptyFeedCTA myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} refetch={refetchFeed} />
+              <EmptyFeedCTA
+                myFollowingList={myFollowingList}
+                profilesToFollow={profilesToFollow}
+                refetch={refetchFeed}
+              />
             )}
             {feedItems.map((fEvent, i) => (
               <FeedCard

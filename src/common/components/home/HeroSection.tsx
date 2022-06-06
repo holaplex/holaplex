@@ -2,11 +2,11 @@ import { ArrowRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import React, { useEffect, useState, useMemo } from 'react';
 import { useFeedQuery } from 'src/graphql/indexerTypes';
-import { Button5 } from '../elements/Button2';
 import { FeedQueryEvent } from '../feed/feed.utils';
 import { FeedCard, LoadingFeedCard } from '../feed/FeedCard';
 import Marquee from 'react-fast-marquee';
 import classNames from 'classnames';
+import { HolaButton } from '../elements/HolaButton';
 
 const ALPHA_WALLET = 'ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz'; // backup 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H';
 const N_ITEMS = 12;
@@ -67,9 +67,9 @@ export default function HeroSection() {
         </h1>
         <Link href="/alpha">
           <a className="mt-10">
-            <Button5 className="!py-3 !px-6 !text-2xl !font-medium" v="primary">
+            <HolaButton size="lg">
               Get started <ArrowRightIcon className="ml-3 h-8 w-8" />
-            </Button5>
+            </HolaButton>
           </a>
         </Link>
       </div>
