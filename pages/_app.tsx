@@ -1,4 +1,4 @@
-import React, { ReactNode,  useMemo } from 'react';
+import React, { ReactElement, ReactNode,  useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -48,8 +48,7 @@ const getSolanaNetwork = () => {
 };
 
 type NextPageWithLayout = NextPage & {
-  //@ts-ignore not sure why but typescript is bugging out on {children: ReactNode}
-  getLayout?: ({ children: ReactNode }) => ReactNode
+  getLayout?: (props: {children: ReactElement}) => ReactElement
 }
 
 type AppPropsWithLayout = AppProps & {
@@ -79,7 +78,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const Layout = Component.getLayout ?? (({ children }) => children);
+  const Layout = Component.getLayout ?? ((props: {children: ReactElement}) => props.children);
 
   return (
     <>
