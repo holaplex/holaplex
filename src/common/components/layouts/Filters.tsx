@@ -94,7 +94,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
       {/* to "collapse", wrap the filter options in a div that with overflow hidden and then move the options up */}
       <div className="overflow-hidden">
         <div
-          className={classNames({'-translate-full': collapsed}, 'transition-all duration-300 ease-in')}
+          className={classNames({'-translate-y-full': collapsed}, 'transition-all duration-300 ease-in')}
         >
           {props.options.map((o) =>
             makeOption(o, props.title, onChange, o.value === selection?.value)
