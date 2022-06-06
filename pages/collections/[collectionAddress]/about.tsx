@@ -1,31 +1,20 @@
 import { CollectionRaisedCard } from '@/common/components/collections/CollectionRaisedCard';
-import { CollectionPage } from '@/common/components/collections/collections.util';
+import {
+  CollectionPageProps,
+  getCollectionPageServerSideProps,
+} from '@/common/components/collections/collections.utils';
 import { FollowItem } from '@/common/components/elements/FollowModal';
 import CollectionLayout from '@/layouts/CollectionLayout';
 import { GetServerSideProps } from 'next';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import { GetCollectionQuery } from 'src/graphql/indexerTypes';
 import { getSdk } from 'src/graphql/indexerTypes.ssr';
 
-export const getServerSideProps: GetServerSideProps<CollectionPage> = async (context) => {
-  const collectionAddress = (context.query.collectionAddress || '') as string;
+export const getServerSideProps: GetServerSideProps<CollectionPageProps> =
+  getCollectionPageServerSideProps;
 
-  const { getCollection } = getSdk(graphqlRequestClient);
-
-  const collection = await getCollection({
-    address: collectionAddress,
-  });
-
-  return {
-    props: {
-      collectionAddress,
-      collection: collection.nft,
-    },
-  };
-};
-
-export default function CollectionAboutPage(props: CollectionPage) {
+export default function CollectionAboutPage(props: CollectionPageProps) {
   return (
     <div className="mt-20 space-y-20">
       <CollectionRaisedCard>
@@ -54,6 +43,10 @@ export default function CollectionAboutPage(props: CollectionPage) {
   );
 }
 
-CollectionAboutPage.getLayout = function getLayout(page: ReactElement) {
-  return <CollectionLayout {...page.props}>{page}</CollectionLayout>;
+CollectionAboutPage.getLayout = function getLayout(
+  collectionPageProps: CollectionPageProps & { children: ReactNode }
+) {
+  return (
+    <CollectionLayout {...collectionPageProps}>{collectionPageProps.children}</CollectionLayout>
+  );
 };

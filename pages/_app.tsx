@@ -6,8 +6,6 @@ import '@/styles/globals.less';
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import { Layout } from 'antd';
-import { isNil } from 'ramda';
 import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
@@ -43,8 +41,6 @@ import { NextPage } from 'next';
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
 
-const { Content } = Layout;
-
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
     ? WalletAdapterNetwork.Devnet
@@ -52,7 +48,7 @@ const getSolanaNetwork = () => {
 };
 
 type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (props: { children: ReactElement }) => ReactElement;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -82,7 +78,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const getLayout = Component.getLayout || ((page) => page);
+  const PageLayout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
 
   return (
     <>
@@ -119,7 +115,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                 {() => (
                                   <AnalyticsProvider>
                                     <AppHeader />
-                                    {getLayout(<Component {...pageProps} />)}
+                                    <PageLayout {...pageProps}>
+                                      <Component {...pageProps} />
+                                    </PageLayout>
                                   </AnalyticsProvider>
                                 )}
                               </MarketplaceProvider>

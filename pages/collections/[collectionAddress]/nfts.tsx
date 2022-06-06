@@ -1,8 +1,9 @@
 import { CollectionRaisedCard } from '@/common/components/collections/CollectionRaisedCard';
 import {
-  CollectionPage,
+  CollectionPageProps,
   CollectionTabRoute,
-} from '@/common/components/collections/collections.util';
+  getCollectionPageServerSideProps,
+} from '@/common/components/collections/collections.utils';
 import { FollowItem } from '@/common/components/elements/FollowModal';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import CollectionLayout from '@/layouts/CollectionLayout';
@@ -12,29 +13,15 @@ import {
   INITIAL_FETCH,
   NFTGrid,
 } from 'pages/profiles/[publicKey]/nfts';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { graphqlRequestClient } from 'src/graphql/graphql-request';
 import { GetCollectionQuery, useNftsInCollectionQuery } from 'src/graphql/indexerTypes';
 import { getSdk } from 'src/graphql/indexerTypes.ssr';
 
-export const getServerSideProps: GetServerSideProps<CollectionPage> = async (context) => {
-  const collectionAddress = (context.query.collectionAddress || '') as string;
+export const getServerSideProps: GetServerSideProps<CollectionPageProps> =
+  getCollectionPageServerSideProps;
 
-  const { getCollection } = getSdk(graphqlRequestClient);
-
-  const collection = await getCollection({
-    address: collectionAddress,
-  });
-
-  return {
-    props: {
-      collectionAddress,
-      collection: collection.nft,
-    },
-  };
-};
-
-export default function CollectionNFTsPage(props: CollectionPage) {
+export default function CollectionNFTsPage(props: CollectionPageProps) {
   const [hasMore, setHasMore] = useState(true);
   const variables = {
     marketplaceSubdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
@@ -94,6 +81,10 @@ export default function CollectionNFTsPage(props: CollectionPage) {
   );
 }
 
-CollectionNFTsPage.getLayout = function getLayout(page: ReactElement) {
-  return <CollectionLayout {...page.props}>{page}</CollectionLayout>;
+CollectionNFTsPage.getLayout = function getLayout(
+  collectionPageProps: CollectionPageProps & { children: ReactNode }
+) {
+  return (
+    <CollectionLayout {...collectionPageProps}>{collectionPageProps.children}</CollectionLayout>
+  );
 };

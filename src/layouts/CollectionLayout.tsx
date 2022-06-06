@@ -1,24 +1,15 @@
 import { CollectionRaisedCard } from '@/common/components/collections/CollectionRaisedCard';
-import {
-  CollectionTabRoute,
-  NFTCollection,
-} from '@/common/components/collections/collections.util';
+import { CollectionPageProps } from '@/common/components/collections/collections.utils';
 import { AvatarIcons } from '@/common/components/elements/Avatar';
 import { FollowUnfollowButton } from '@/common/components/elements/FollowUnfollowButton';
 import { User } from '@/common/components/feed/feed.utils';
 import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { INITIAL_FETCH } from 'pages/profiles/[publicKey]/nfts';
-import React, { ReactElement, useMemo, useState } from 'react';
-import {
-  GetCollectionQuery,
-  useAllConnectionsToQuery,
-  useNftsInCollectionQuery,
-} from 'src/graphql/indexerTypes';
+import React, { ReactNode, useMemo } from 'react';
+import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
 
 function CreatorChip(props: { user: User }) {
   return (
@@ -31,13 +22,9 @@ function CreatorChip(props: { user: User }) {
 
 export default function CollectionLayout({
   children,
-  ...props
-}: {
-  collectionAddress: string;
-  collectionTab: CollectionTabRoute;
-  collection: NFTCollection;
-  children: ReactElement;
-}) {
+  collectionAddress,
+  collection,
+}: CollectionPageProps & { children: ReactNode }) {
   const wallet = useAnchorWallet();
   const router = useRouter();
 
@@ -46,14 +33,14 @@ export default function CollectionLayout({
 
   const { data: collectionFollowersData } = useAllConnectionsToQuery({
     variables: {
-      to: props.collectionAddress,
+      to: collectionAddress,
     },
   });
   const collectionFollowers = collectionFollowersData?.connections || [];
 
   const amIFollowingThisCollection = !!collectionFollowers.find((f) => f.from.address === myPubkey);
 
-  const creators = props.collection?.creators || [];
+  const creators = collection?.creators || [];
 
   const walletConnectionPair = useMemo(() => {
     if (!wallet) return null;
@@ -66,17 +53,17 @@ export default function CollectionLayout({
         <div>
           <div className="mb-10 flex">
             <img
-              src={props.collection?.image}
+              src={collection?.image}
               className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 shadow-2xl ring-8 ring-gray-900"
               alt="Collection logo"
             />
             <div>
               <span className="text-base text-gray-300">Collection of X</span>
-              <h1 className="mt-4 text-5xl"> {props.collection?.name} </h1>
+              <h1 className="mt-4 text-5xl"> {collection?.name} </h1>
               {!walletConnectionPair ? null : (
                 <FollowUnfollowButton
                   toProfile={{
-                    address: props.collection?.address!,
+                    address: collection?.address!,
                   }}
                   type={amIFollowingThisCollection ? 'Unfollow' : 'Follow'}
                   walletConnectionPair={walletConnectionPair}
@@ -145,30 +132,24 @@ export default function CollectionLayout({
 
       <div className="w-full   ">
         <div className="flex space-x-1   p-1">
-          <Tab1
+          <Tab
             title={`NFTs`}
             selected={router.pathname.includes('nfts')}
-            url={`/collections3/${props.collectionAddress}/nfts`}
+            url={`/collections/${collectionAddress}/nfts`}
           />
-          <Tab1
+          <Tab
             title={'About'}
             selected={router.pathname.includes('about')}
-            url={`/collections3/${props.collectionAddress}/about`}
+            url={`/collections/${collectionAddress}/about`}
           />
         </div>
-        <div className="">
-          {React.cloneElement(children, {
-            ...children.props,
-            collectionFollowers,
-            creators,
-          })}
-        </div>
+        <div>{children}</div>
       </div>
     </div>
   );
 }
 
-const Tab1 = (props: { url: string; selected: boolean; title: string }) => (
+const Tab = (props: { url: string; selected: boolean; title: string }) => (
   <Link href={props.url} passHref>
     {/* maybe use shallow in Link */}
     <a
