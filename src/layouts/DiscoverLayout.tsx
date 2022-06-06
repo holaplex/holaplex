@@ -22,11 +22,13 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
 
   return (
     <div className={classNames('mt-10', ['flex flex-col px-2', 'md:flex-row md:px-20'])}>
-      <FiltersSection>
-        {props.filters.map((f) => (
-          <FiltersSection.Filter key={f.title} {...f} />
-        ))}
-      </FiltersSection>
+      <div className={classNames('mb-10', 'md:mb-0 md:sticky md:top-0 md:h-screen')}>
+        <FiltersSection>
+          {props.filters.map((f) => (
+            <FiltersSection.Filter key={f.title} {...f} />
+          ))}
+        </FiltersSection>
+      </div>
       <div className="w-full">
         <div className="flex space-x-1 p-1">
           <Tab title="NFTs" selected={router.pathname === TabRoute.NFTS} url={TabRoute.NFTS} />
@@ -52,5 +54,5 @@ interface MainContentSectionProps {
 }
 
 function MainContentSection(props: MainContentSectionProps): JSX.Element {
-  return <div className="flex flex-grow border border-white">{props.children}</div>;
+  return <div className="flex flex-grow">{props.children}</div>;
 }
