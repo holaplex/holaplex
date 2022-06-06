@@ -73,7 +73,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
       if (props.queryId) {
         const queryParams = {...router.query};
         queryParams[`${props.queryId}`] = `${selected.value}`;
-        router.replace({
+        router.push({
           query: queryParams,
        });
       }
