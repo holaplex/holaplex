@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode,  useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -48,12 +48,12 @@ const getSolanaNetwork = () => {
 };
 
 type NextPageWithLayout = NextPage & {
-  getLayout?: (props: {children: ReactElement}) => ReactElement
-}
+  getLayout?: (props: { children: ReactElement }) => ReactElement;
+};
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
-}
+  Component: NextPageWithLayout;
+};
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const network = getSolanaNetwork();
@@ -78,7 +78,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const Layout = Component.getLayout ?? ((props: {children: ReactElement}) => props.children);
+  const Layout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
 
   return (
     <>
