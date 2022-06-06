@@ -5,6 +5,7 @@ import {
   ChevronUpIcon,
 } from '@heroicons/react/outline';
 import classNames from 'classnames';
+import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
 export interface FiltersSectionProps {
@@ -56,9 +57,11 @@ export interface FilterProps<T> {
   options: FilterOption<T>[];
   onChange: (selected: FilterOption<T>) => void;
   default?: T;
+  queryId?: string;
 }
 
 function Filter<T>(props: FilterProps<T>): JSX.Element {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [selection, setSelection] = useState<FilterOption<T> | undefined>(
     props.default === undefined ? undefined : props.options.find((o) => o.value === props.default)
@@ -67,9 +70,16 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
   const onChange: (selected: FilterOption<T>) => void = useCallback(
     (selected) => {
       setSelection(selected);
+      if (props.queryId) {
+        const queryParams = {...router.query};
+        queryParams[`${props.queryId}`] = `${selected.value}`;
+        router.replace({
+          query: queryParams,
+       });
+      }
       props.onChange(selected);
     },
-    [props]
+    [props, router]
   );
 
   if (new Set(props.options.map((o) => o.value)).size < props.options.length) {
