@@ -6,19 +6,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import {
-  LAMPORTS_PER_SOL,
-} from '@solana/web3.js';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
+import { HolaButton } from '../elements/HolaButton';
 
 interface BuyFormProps {
   nft: Nft;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouse: AuctionHouse };
   listing: Listing;
   className?: string;
   refetch:
@@ -105,14 +104,14 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
 
   return (
     <form className={`flex w-full ${className}`} onSubmit={handleSubmit(buyTx)}>
-      <Button
-        htmlType={`submit`}
+      <HolaButton
+        type="submit"
         disabled={isSubmitting || hasActionPending}
         loading={isSubmitting || hasActionPending}
         className={className}
       >
         Buy now
-      </Button>
+      </HolaButton>
     </form>
   );
 };

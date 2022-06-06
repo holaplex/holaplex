@@ -1,8 +1,18 @@
 import styled, { css } from 'styled-components';
 import { WalletDisconnectButton, WalletModalButton } from '@solana/wallet-adapter-react-ui';
-import { ButtonReset } from '@/common/styles/ButtonReset';
+
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { TailSpin } from 'react-loader-spinner';
+
+export const ButtonReset = css`
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+`;
 
 interface ButtonProps {
   children?: any;

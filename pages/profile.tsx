@@ -1,11 +1,12 @@
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useState } from 'react';
-import { Button5 } from '@/common/components/elements/Button2';
+
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
 import Footer from '@/common/components/home/Footer';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { HolaButton } from '@/common/components/elements/HolaButton';
 
 const ProfileLanding = () => {
   const anchorWallet = useAnchorWallet();
@@ -52,9 +53,9 @@ const ProfileLanding = () => {
             header="Connect your wallet to view your profile"
             body="Follow your favorite collectors and creators, view your nfts, and more..."
           >
-            <Button5 v="primary" loading={connecting} onClick={() => setVisible(true)}>
+            <HolaButton loading={connecting} onClick={() => setVisible(true)}>
               Connect
-            </Button5>
+            </HolaButton>
           </EmptyStateCTA>
         </div>
         <Footer />

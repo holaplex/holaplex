@@ -1,6 +1,8 @@
 import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import { GetServerSideProps, NextPage } from 'next';
 import { FC, useMemo, useState } from 'react';
+import ReactDom from 'react-dom';
+
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
@@ -40,6 +42,7 @@ import classNames from 'classnames';
 import NoProfileItems, {
   NoProfileVariant,
 } from '../../../src/common/components/elements/NoProfileItems';
+import { HolaButton } from '@/common/components/elements/HolaButton';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -200,12 +203,12 @@ export const NFTCard = ({
             )}
             {isOwner && hasDefaultListing && (
               <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
-                <Button
+                <HolaButton
                   className={`md:w-full xl:w-32`}
                   onClick={() => setUpdateListingVisibility(true)}
                 >
                   Update
-                </Button>
+                </HolaButton>
               </div>
             )}
             {!isOwner && !hasAddedOffer && hasDefaultListing && (
@@ -251,31 +254,41 @@ export const NFTCard = ({
           marketplace={marketplace}
         />
       </Modal>
-      <Modal
-        open={updateListingVisibility}
-        setOpen={setUpdateListingVisibility}
-        title={`Update listing price`}
-      >
-        <UpdateSellForm
-          nft={nft as Nft | any}
-          refetch={refetch}
-          marketplace={marketplace as Marketplace}
-          listing={defaultListing as Listing}
+      {ReactDom.createPortal(
+        <Modal
+          open={updateListingVisibility}
           setOpen={setUpdateListingVisibility}
-          offer={topOffer as Offer}
-        />
-      </Modal>
-      <Modal open={updateOfferVisibility} setOpen={setUpdateOfferVisibility} title={`Update offer`}>
-        <UpdateOfferForm
-          nft={nft as Nft | any}
-          refetch={refetch}
-          marketplace={marketplace as Marketplace}
-          listing={defaultListing as Listing}
+          title={`Update listing price`}
+        >
+          <UpdateSellForm
+            nft={nft as Nft | any}
+            refetch={refetch}
+            marketplace={marketplace as Marketplace}
+            listing={defaultListing as Listing}
+            setOpen={setUpdateListingVisibility}
+            offer={topOffer as Offer}
+          />
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
+      {ReactDom.createPortal(
+        <Modal
+          open={updateOfferVisibility}
           setOpen={setUpdateOfferVisibility}
-          loading={loading}
-          hasListing={hasDefaultListing}
-        />
-      </Modal>
+          title={`Update offer`}
+        >
+          <UpdateOfferForm
+            nft={nft as Nft | any}
+            refetch={refetch}
+            marketplace={marketplace as Marketplace}
+            listing={defaultListing as Listing}
+            setOpen={setUpdateOfferVisibility}
+            loading={loading}
+            hasListing={hasDefaultListing}
+          />
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
     </>
   );
 };

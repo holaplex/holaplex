@@ -8,7 +8,6 @@ import { Connection } from '@solana/web3.js';
 import React, { FC } from 'react';
 import { useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
-import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import { useProfileData } from '@/common/context/ProfileData';
@@ -22,6 +21,7 @@ import {
   GetProfileFollowerOverviewDocument,
   GetCollectedByDocument,
 } from 'src/graphql/indexerTypes';
+import { HolaButton } from './HolaButton';
 
 export type FollowUnfollowSource =
   | 'modalFollowing'
@@ -197,13 +197,13 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const loading = connectTo.status === 'loading' || disconnectTo.status === 'loading';
 
   return (
-    <Button5
-      v={type === 'Follow' ? 'primary' : 'secondary'}
+    <HolaButton
+      version={type === 'Follow' ? 'primary' : 'secondary'}
       className={classNames('h-8 w-24 lg:h-10 lg:w-28', className)}
       onClick={() => handleClick()}
       loading={loading}
     >
       {type === 'Follow' ? 'Follow' : 'Unfollow'}
-    </Button5>
+    </HolaButton>
   );
 };

@@ -12,7 +12,13 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { FeeItem } from './SellForm';
 import AcceptOfferForm from './AcceptOfferForm';
-import { initMarketplaceSDK, Nft, Listing, Offer, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import {
+  initMarketplaceSDK,
+  Nft,
+  Listing,
+  Offer,
+  AuctionHouse,
+} from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import Modal from '../elements/Modal';
@@ -20,10 +26,11 @@ import Modal from '../elements/Modal';
 import * as htmlToImage from 'html-to-image';
 
 import DownloadNFTCard from './DownloadableNFTCard';
+import { HolaButton } from '../elements/HolaButton';
 
 interface UpdateSellFormProps {
   nft: Nft;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouse: AuctionHouse };
   listing: Listing;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -219,16 +226,14 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
               </div>
             </ul>
             <div className={`mt-8 w-full`}>
-              <Button
+              <HolaButton
+                type={`submit`}
                 disabled={isSubmitting || hasActionPending}
-                secondary
                 loading={isSubmitting || hasActionPending}
-                htmlType={`submit`}
-                block
                 className={`w-full`}
               >
                 Update price
-              </Button>
+              </HolaButton>
             </div>
           </div>
         </form>

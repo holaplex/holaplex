@@ -16,7 +16,6 @@ import {
   useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
 } from 'src/graphql/indexerTypes';
-import { Button5 } from '../elements/Button2';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
 import Modal from '../elements/Modal';
 import MoreDropdown from '../elements/MoreDropdown';
@@ -40,6 +39,7 @@ import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { Avatar } from '../elements/Avatar';
+import { HolaButton } from '../elements/HolaButton';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -296,8 +296,7 @@ function FeedActionBanner(props: {
     action = (
       <Link href={'/nfts/' + attrs.nft?.address}>
         <a target="_blank">
-          <Button5
-            v="primary"
+          <HolaButton
             onClick={() => {
               track('Feed Accept Offer Initiated', {
                 event_category: 'Alpha',
@@ -308,7 +307,7 @@ function FeedActionBanner(props: {
             className="w-full sm:w-auto"
           >
             Accept offer
-          </Button5>
+          </HolaButton>
         </a>
       </Link>
     );
@@ -378,8 +377,7 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
       <Link href={'/nfts/' + props.nft.address} passHref>
         <a target="_blank">
           {/* Buy in feed context onClick={() => setModalOpen(true)} */}
-          <Button5
-            v="primary"
+          <HolaButton
             onClick={() => {
               track('Feed Purchase Initiated', {
                 event_category: 'Alpha',
@@ -390,7 +388,7 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
             className="w-full sm:w-auto"
           >
             Buy now
-          </Button5>
+          </HolaButton>
         </a>
       </Link>
       {ReactDom.createPortal(
@@ -437,8 +435,7 @@ const OfferAction = (props: { nft: any }) => {
 
   return (
     <>
-      <Button5
-        v="primary"
+      <HolaButton
         onClick={() => {
           setModalOpen(true);
           track('Feed Offer Initiated', {
@@ -450,7 +447,7 @@ const OfferAction = (props: { nft: any }) => {
         className="w-full sm:w-auto"
       >
         Make offer
-      </Button5>
+      </HolaButton>
       {ReactDom.createPortal(
         <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
           {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
@@ -584,13 +581,12 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
         <ProfileHandle user={user} shorten={true} />
       </p>
       {user.address === anchorWallet?.publicKey.toBase58() ? (
-        <Button5
-          v={`secondary`}
-          type={`button`}
+        <HolaButton
+          version={`secondary`}
           className={`h-8 !w-full sm:ml-auto sm:w-auto lg:h-10 lg:w-28`}
         >
           View
-        </Button5>
+        </HolaButton>
       ) : (
         <FollowUnfollowButton
           source={'feed'}
