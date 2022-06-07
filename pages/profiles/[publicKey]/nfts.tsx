@@ -40,6 +40,7 @@ import classNames from 'classnames';
 import NoProfileItems, {
   NoProfileVariant,
 } from '../../../src/common/components/elements/NoProfileItems';
+import { SearchIcon } from '@heroicons/react/outline';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -522,13 +523,7 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
               hideLabel
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              leadingIcon={
-                <FeatherIcon
-                  icon="search"
-                  aria-hidden="true"
-                  className={searchFocused ? 'text-white' : 'text-gray-500'}
-                />
-              }
+              leadingIcon={<SearchIcon aria-hidden="true" className={classNames('w-5 h-5', searchFocused ? 'text-white' : 'text-gray-500')}/>}
               placeholder="Search"
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
