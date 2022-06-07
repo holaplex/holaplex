@@ -1,9 +1,25 @@
-import { FilterOption } from "@/common/components/layouts/Filters";
-import { DiscoverLayout } from "@/layouts/DiscoverLayout";
+import {CardGridWithSearchAndSize} from '@/common/components/elements/CardGrid';
+import ProfilePreviewCard, {
+  ProfilePreviewLoadingCard,
+  ProfilePreviewProps,
+} from '@/common/components/elements/ProfilePreviewCard';
+import { FilterOption } from '@/common/components/layouts/Filters';
+import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
+import { useRouter } from 'next/router';
+import { isEmpty } from 'ramda';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  useDiscoverProfilesAllLazyQuery,
+} from 'src/graphql/indexerTypes';
+import { routerQueryParamToSingleValue } from '.';
 
 enum TypeOption {
-    ALL, CREATORS, COLLECTORS
+  ALL = 'all',
+  CREATORS = 'creators',
+  COLLECTORS = 'collectors',
 }
+
+const DEFAULT_TYPE: TypeOption = TypeOption.ALL;
 
 const options: FilterOption<TypeOption>[] = [
   {
@@ -11,29 +27,152 @@ const options: FilterOption<TypeOption>[] = [
     value: TypeOption.ALL,
     numberOfItems: Math.round(Math.random() * 10000),
   },
-  {
-    label: 'Creators',
-    value: TypeOption.CREATORS,
-    numberOfItems: Math.round(Math.random() * 10000),
-  },
-  {
-    label: 'Collectors',
-    value: TypeOption.COLLECTORS,
-    numberOfItems: Math.round(Math.random() * 10000),
-  }
 ];
 
 export default function DiscoverProfilesTab(): JSX.Element {
-  return <></>;
-}
+  const INITIAL_FETCH: number = 24;
+  const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
 
-DiscoverProfilesTab.getLayout = function getLayout(): JSX.Element {
-  return (
-    <DiscoverLayout
-      filters={[{ title: 'Type', options: options, default: TypeOption.ALL, onChange: (s) => console.log(s) }]}
-      content={
-        <span>Collections</span>
+  const router = useRouter();
+  const [hasMore, setHasMore] = useState(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [typeFilter, setTypeFilter] = useState<TypeOption>(TypeOption.ALL);
+  const [profileData, setProfileData] = useState<ProfilePreviewProps[]>([]);
+
+  // set default filters if the URL doesnt already contain them, and get the filter otherwise
+  useEffect(() => {
+    let result: TypeOption = DEFAULT_TYPE;
+    if (router) {
+      const queryValue: TypeOption | undefined = routerQueryParamToSingleValue(
+        router,
+        'type',
+        (v) => (v ? (v as TypeOption) : undefined)
+      );
+      if (queryValue === undefined) {
+        router.push({ query: { type: result } });
       }
+      if (queryValue) setTypeFilter(queryValue);
+    }
+  }, [router]);
+
+  //TODO add connected wallet to query
+  const queryContext = useQuery(typeFilter, INITIAL_FETCH, 0);
+
+  // when the server returns a profile with insufficient data to display the
+  //  preview, remove it from the carousel
+  const onInsufficientDataForAProfile = useCallback<(profileAddress: string) => void>(
+    (profileAddress) => {
+      setProfileData(profileData.filter((p) => p.address !== profileAddress));
+    },
+    [profileData]
+  );
+
+  useEffect(() => {
+    const searchTermLowerCase: string = searchTerm.toLocaleLowerCase();
+    if (queryContext.data) {
+      setProfileData(
+        queryContext.data.followWallets
+          .filter(
+            (w) =>
+              searchTermLowerCase === '' ||
+              w.profile?.handle.toLocaleLowerCase().includes(searchTermLowerCase)
+          )
+          .map((w) => ({
+            address: w.address,
+            onInsufficientData: onInsufficientDataForAProfile,
+            data: {
+              address: w.address ?? '',
+              profile: w.profile ?? {},
+              nftCounts: w.nftCounts,
+            },
+          }))
+      );
+    }
+  }, [queryContext.data, searchTerm]);
+
+  const onLoadMore = useCallback(
+    async (inView: boolean) => {
+      if (!inView || queryContext.loading || profileData.length <= 0) {
+        return;
+      }
+
+      await queryContext.fetchMore({
+        variables: {
+          limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+          offset: profileData.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          const prevProfiles = prev.followWallets;
+          const moreProfiles = fetchMoreResult.followWallets;
+          if (isEmpty(moreProfiles)) {
+            setHasMore(false);
+          }
+
+          fetchMoreResult.followWallets = [...prevProfiles, ...moreProfiles];
+
+          return { ...fetchMoreResult };
+        },
+      });
+    },
+    [queryContext, profileData]
+  );
+
+  return (
+    <CardGridWithSearchAndSize<ProfilePreviewProps>
+      cardContext={{
+        noDataFallback: <div className='flex justify-center p-4'>No matching profiles</div>,
+        cardCreator: (data) => <ProfilePreviewCard {...data} />,
+        loadingCardCreator: () => <ProfilePreviewLoadingCard />,
+      }}
+      dataContext={{
+        data: profileData,
+        refetch: queryContext.refetch,
+        onLoadMore: onLoadMore,
+        hasMore: hasMore,
+        loading: queryContext.loading,
+      }}
+      search={{ onChange: (v) => setSearchTerm(v) }}
     />
   );
+}
+
+DiscoverProfilesTab.getLayout = function getLayout(
+  discoverPage: DiscoverPageProps & { children: JSX.Element }
+): JSX.Element {
+  return (
+    <DiscoverLayout
+      filters={[
+        {
+          title: 'Type',
+          options: options,
+          default: TypeOption.ALL,
+          queryId: 'type',
+          onChange: () => {},
+        },
+      ]}
+      content={discoverPage.children}
+    />
+  );
+};
+
+const useQuery = (type: TypeOption, limit: number, offset: number) => {
+  const [allQuery, allQueryContext] = useDiscoverProfilesAllLazyQuery();
+
+  useEffect(() => {
+    switch (type) {
+      case TypeOption.ALL: {
+        allQuery({ variables: { limit: limit, offset: offset } });
+        break;
+      }
+      default: //do-nothing
+    }
+  }, [type, limit, offset, allQuery]);
+
+  switch (type) {
+    case TypeOption.ALL:
+      return allQueryContext;
+    default:
+      return allQueryContext;
+  }
 };
