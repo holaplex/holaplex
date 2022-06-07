@@ -10,8 +10,19 @@ import { TripleGrid } from '../icons/TripleGrid';
 import TextInput2 from './TextInput2';
 
 export interface CardGridWithSearchAndSize<T> {
+    /**
+   * Attributes for creating/displaying cards.
+   */
   cardContext: CardGridProps<T>['cardContext'];
+
+  /**
+   * Attributes for fetching/updating data and triggering more data with infinite scroll.
+   */
   dataContext: CardGridProps<T>['dataContext'];
+
+    /**
+     * Attributes for the search bar.
+     */
   search: SearchBarProps;
 }
 
@@ -128,6 +139,9 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
 }
 
 export interface SearchBarProps {
+    /**
+     * Callback each time the value of the search term changes.
+     */
   onChange: (value: string) => void;
 }
 
