@@ -43,11 +43,6 @@ const AlphaPage = ({ address }: { address: string }) => {
   const myPubkey = connectedProfile?.pubkey;
   const feedPubkey = address ?? myPubkey;
 
-  console.log('alpha', {
-    myPubkey,
-    feedPubkey,
-  });
-
   const [showConnectCTA, setShowConnectCTA] = useState(false);
 
   const {

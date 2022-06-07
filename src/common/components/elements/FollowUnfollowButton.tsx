@@ -20,6 +20,7 @@ import {
   IsXFollowingYDocument,
   GetProfileFollowerOverviewDocument,
   GetCollectedByDocument,
+  GetConnectedWalletProfileDataDocument,
 } from 'src/graphql/indexerTypes';
 
 export type FollowUnfollowSource =
@@ -99,6 +100,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
           IsXFollowingYDocument,
           GetProfileFollowerOverviewDocument,
           GetCollectedByDocument,
+          GetConnectedWalletProfileDataDocument,
         ],
       });
 
@@ -152,6 +154,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
           IsXFollowingYDocument,
           GetProfileFollowerOverviewDocument,
           GetCollectedByDocument,
+          GetConnectedWalletProfileDataDocument,
         ],
       });
 
