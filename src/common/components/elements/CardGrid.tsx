@@ -29,6 +29,7 @@ export interface CardGridWithSearchAndSize<T> {
 /**
  * Grid layout component with triggers for fetching more data for infinite scroll, search bar, and grid size selection.
  *
+ * @template T type of data being fetched and used to create cards
  * @param props
  * @returns
  */
@@ -181,6 +182,9 @@ export type RefetchFunction = (
   variables?: Partial<OperationVariables> | undefined
 ) => Promise<ApolloQueryResult<{}>>;
 
+/**
+ * @template T type of data being fetched and used to create cards
+ */
 export interface CardGridProps<T> {
   /**
    * Dimensions of the visible portion of the grid.
@@ -242,6 +246,7 @@ export interface CardGridProps<T> {
 /**
  * Grid layout component with trigger for fetching more data for infinite scroll
  *
+ * @template T type of data being fetched and used to create cards
  * @param props
  * @returns
  */
