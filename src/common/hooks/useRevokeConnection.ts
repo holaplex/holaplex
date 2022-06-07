@@ -9,10 +9,18 @@ type RevokeConnectionOptions = Omit<
 >;
 
 export const useRevokeConnection = (
-  { connection, wallet }: { connection: anchor.web3.Connection; wallet: AnchorWallet },
+  walletConnectionPair:
+    | { connection: anchor.web3.Connection; wallet: AnchorWallet }
+    | null
+    | undefined,
   options?: RevokeConnectionOptions
 ) =>
   useMutation(async (targetPubKey: string) => {
+    if (!walletConnectionPair) {
+      return new Promise<string[]>((res, rej) => res(['hellos']));
+    }
+    const wallet = walletConnectionPair.wallet;
+    const connection = walletConnectionPair.connection;
     const provider = new anchor.AnchorProvider(connection, wallet, {});
     const graphProgram = Program.getGraphProgram(provider);
     const target = new anchor.web3.PublicKey(targetPubKey);

@@ -3,7 +3,7 @@ import { errorCodeHelper } from '../../modules/utils/marketplace';
 import Button from '../components/elements/Button';
 import Modal from '../components/elements/Modal';
 
-type AsyncFunction = (arg?: any) => Promise<void>;
+type AsyncFunction = (arg?: any) => Promise<any>;
 export type Action = {
   name: string;
   id: string;

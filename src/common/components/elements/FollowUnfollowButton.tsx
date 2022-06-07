@@ -3,7 +3,7 @@ import { useRevokeConnection } from '@/common/hooks/useRevokeConnection';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { AnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
 import React, { FC, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -22,6 +22,8 @@ import {
   GetCollectedByDocument,
   GetConnectedWalletProfileDataDocument,
 } from 'src/graphql/indexerTypes';
+import { useMultiTransactionModal } from '@/common/context/MultiTransaction';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 export type FollowUnfollowSource =
   | 'modalFollowing'
@@ -48,7 +50,6 @@ type FollowUnfollowButtonProps = {
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   source,
   type,
-  walletConnectionPair: wcProp,
   className,
   toProfile,
 }) => {
@@ -60,8 +61,10 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const myWallet = connectedProfile?.pubkey; //  wallet.publicKey.toBase58();
   const toWallet = toProfile.address;
 
+  const { connect } = useWallet();
+
   //! Inelegant I know, but hopefully we can drop the prop entierly and rework this once we have a way to "connect and do action" at the same time
-  const walletConnectionPair = (wcProp ?? connectedProfile?.walletConnectionPair)!;
+  const walletConnectionPair = connectedProfile?.walletConnectionPair;
 
   const sharedTrackingParams = {
     source,
@@ -70,6 +73,24 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
     from: myWallet,
     to: toWallet,
   } as const;
+
+  const { runActions } = useMultiTransactionModal();
+  const { setVisible } = useWalletModal();
+
+  async function connectWalletPromise() {
+    setVisible(true);
+
+    await waitUserInput();
+
+    return;
+  }
+
+  const timeout = async (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+  async function waitUserInput() {
+    while (!connection) await timeout(1000); // pauses script
+    // next = false; // reset var
+  }
 
   const trackInitiateTransaction = () => track(type + ' initiated', sharedTrackingParams);
   const trackSuccess = () => track(type + ' succeeded', sharedTrackingParams);
@@ -189,14 +210,30 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
     },
   });
 
-  const handleClick = (pubKeyOverride?: string) => {
-    const pk = pubKeyOverride ?? toWallet;
+  const handleClick = () => {
     trackInitiateTransaction();
 
-    if (type === 'Follow') {
-      connectTo.mutate(pk);
+    if (!connection) {
+      runActions([
+        {
+          id: 'Connect',
+          name: 'Connecting wallet',
+          action: connect, // connectWalletPromise,
+          param: null,
+        },
+        {
+          id: type,
+          action: type === 'Follow' ? connectTo.mutateAsync : disconnectTo.mutateAsync,
+          name: type,
+          param: toWallet,
+        },
+      ]);
     } else {
-      disconnectTo.mutate(pk);
+      if (type === 'Follow') {
+        connectTo.mutate(toWallet);
+      } else {
+        disconnectTo.mutate(toWallet);
+      }
     }
   };
 
