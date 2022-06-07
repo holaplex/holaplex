@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useMemo, useRef } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useMemo, useRef } from 'react';
 import cx from 'classnames';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
 import { Close } from '../icons/Close';
@@ -15,6 +15,7 @@ import {
 import { useProfileData } from '@/common/context/ProfileData';
 import { cleanUpFollowers, cleanUpFollowing } from './FollowerCount';
 import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
+import { useRouter } from 'next/router';
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 
 type FollowModalProps = {
@@ -31,8 +32,18 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
   const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
   const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
 
+  const router = useRouter();
+
   const modalRef = useRef<HTMLDivElement>(null!);
-  useOutsideAlerter(modalRef, () => setVisibility('hidden'));
+  const hideModal = () => setVisibility('hidden');
+  useOutsideAlerter(modalRef, hideModal);
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', hideModal);
+    return () => {
+      router.events.off('routeChangeStart', hideModal);
+    };
+  }, [router.events]);
 
   return (
     <div

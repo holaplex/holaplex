@@ -13,6 +13,9 @@ import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from '@/common/context/ProfileData';
 import { FollowUnfollowButtonDataWrapper } from '../home/FeaturedProfilesSection';
+import { FollowUnfollowButton } from './FollowUnfollowButton';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
+import classNames from 'classnames';
 
 export const ProfileContainer: FC = ({ children }) => {
   const { banner, profilePicture, twitterHandle, publicKey } = useProfileData();
@@ -20,6 +23,12 @@ export const ProfileContainer: FC = ({ children }) => {
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
+
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const userIsFollowingThisAccount = connectedProfile?.following?.find(
+    (f) => f.address === publicKey
+  );
 
   return (
     <WalletIdentityProvider appName="Holaplex" appTwitter="@holaplex">
@@ -55,6 +64,14 @@ export const ProfileContainer: FC = ({ children }) => {
                     className={`pointer-events-auto absolute right-0 flex`}
                   />
                 )}
+                <FollowUnfollowButton
+                  source="modalFollowing"
+                  type={userIsFollowingThisAccount ? 'Unfollow' : 'Follow'}
+                  toProfile={{
+                    address: publicKey,
+                  }}
+                  className={classNames('pointer-events-auto absolute right-0 flex')}
+                />
               </div>
             </div>
 
