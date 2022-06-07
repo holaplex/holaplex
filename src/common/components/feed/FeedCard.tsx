@@ -2,9 +2,8 @@ import ReactDom from 'react-dom';
 
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
-import { shortenAddress } from '@/modules/utils/string';
+import { shortenAddress, shortenHandle } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
@@ -24,10 +23,13 @@ import NFTPreview from '../elements/NFTPreview';
 import OfferForm from '../forms/OfferForm';
 import {
   AggregateEvent,
+  aggregateEventsTime,
+  AggregateSaleEvent,
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
   generateFeedCardAttributes,
+  getAggregateProfiles,
   User,
 } from './feed.utils';
 import BuyForm from '../forms/BuyForm';
@@ -35,6 +37,9 @@ import { TailSpin } from 'react-loader-spinner';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import { Avatar } from '../elements/Avatar';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -52,14 +57,14 @@ export function FeedCard(props: {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   if (props.event.__typename === 'AggregateEvent') {
-    return <AggregateCard event={props.event} />;
+    return <FollowAggregateCard event={props.event} myFollowingList={props.myFollowingList} />;
   }
 
   const attrs = generateFeedCardAttributes(props.event, props.myFollowingList);
-  // console.log('Feed card', props.event.feedEventId, {
-  //   event: props.event,
-  //   attrs,
-  // });
+
+  if (props.event.__typename === 'AggregateSaleEvent') {
+    return <SaleAggregateCard event={props.event} myFollowingList={props.myFollowingList} />;
+  }
 
   if (!attrs) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -124,6 +129,21 @@ export function FeedCard(props: {
           )}
         </a>
       </Link>
+      {/* <div className={`absolute top-4 left-4`}>
+        <Link href={`/profiles/${attrs.nft.creators[0].address}/created`} passHref>
+          <span className={`hover:cursor-pointer`}>
+            <Avatar
+              address={attrs.nft.creators[0].address}
+              showAddress={false}
+              border={true}
+              data={{
+                pfpUrl: attrs?.nft?.creators[0]?.profile?.profileImageUrlLowres,
+                twitterHandle: attrs?.nft?.creators[0]?.twitterHandle || ``,
+              }}
+            />
+          </span>
+        </Link>
+      </div> */}
       <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
         <FeedActionBanner attrs={attrs} event={props.event} options={props.options} />
@@ -140,12 +160,8 @@ function FollowCard(props: {
 }) {
   const myFollowingList = props.myFollowingList || [];
   const attrs = props.attrs;
-  const { connection } = useConnection();
-  const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
+
+  const { connectedProfile } = useConnectedWalletProfile();
 
   if (!attrs) return <div>Not enough data</div>;
 
@@ -163,26 +179,33 @@ function FollowCard(props: {
           profile: props.event.profile,
         }}
       />
-      <div className="ml-4">
+      <div className="ml-4 flex flex-col justify-start gap-2">
         <div className="text-base font-semibold">
-          Followed <ProfileHandle user={attrs.toUser!} />
+          <ProfileHandle user={attrs.sourceUser} />
+          &nbsp;
+          {myFollowingList.includes(attrs.sourceUser!.address) &&
+          attrs.toUser!.address === connectedProfile?.pubkey ? (
+            <>
+              <span className={`text-base font-normal`}>followed you back</span>
+            </>
+          ) : (
+            <>
+              <span className={`text-base font-normal`}>followed</span>
+              &nbsp;
+              <ProfileHandle user={attrs.toUser!} />
+            </>
+          )}
         </div>
-        <div className="flex space-x-4 text-sm">
-          <ProfileHandle
-            user={{
-              address: props.event.walletAddress,
-              profile: props.event.profile,
-            }}
-          />
-          <span>{DateTime.fromISO(attrs.createdAt).toRelative()}</span>
-        </div>
+        <p className={`m-0 text-xs text-gray-300`}>
+          {DateTime.fromISO(attrs.createdAt).toRelative()}
+        </p>
       </div>
-      {walletConnectionPair.wallet && (
+      {connectedProfile?.walletConnectionPair && (
         <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
           <FollowUnfollowButton
             source="feed"
             className="!w-full sm:ml-auto sm:w-auto"
-            walletConnectionPair={walletConnectionPair}
+            walletConnectionPair={connectedProfile.walletConnectionPair}
             toProfile={{
               address: attrs.toUser!.address,
             }}
@@ -194,7 +217,34 @@ function FollowCard(props: {
   );
 }
 
-export const ProfileHandle = ({ user }: { user: User }) => {
+export const ProfileHandleStack = ({ users }: { users: User[] }) => {
+  return (
+    <div>
+      {users.length > 2 ? (
+        <p className={`m-0 text-base font-bold`}>
+          <ProfileHandle user={users[0]} />
+
+          <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
+          <span className={`m-0`}>{users.length - 1} others</span>
+        </p>
+      ) : (
+        <p className={`m-0`}>
+          {users.slice(0, 2).map((user, i) => (
+            <span key={user.address} className={`m-0 text-base font-bold`}>
+              <ProfileHandle user={user} />
+
+              {i === 0 && users.length > 1 && (
+                <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
+              )}
+            </span>
+          ))}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?: boolean }) => {
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
@@ -205,26 +255,33 @@ export const ProfileHandle = ({ user }: { user: User }) => {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
       getTwitterHandleAndSetState();
     }
   }, []);
 
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-      <a>{(twitterHandle && '@' + twitterHandle) || shortenAddress(user.address)}</a>
+      <a>
+        {(twitterHandle && '@' + (shorten ? shortenHandle(twitterHandle) : twitterHandle)) ||
+          shortenAddress(user.address)}
+      </a>
     </Link>
   );
 };
 
 function FeedActionBanner(props: {
-  event: FeedQueryEvent; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
+  event: FeedItem; //  Omit<FeedQueryEvent, 'FollowEvent' | 'AggregateEvent'>;
   attrs: FeedCardAttributes;
   options?: FeedCardOptions;
 }) {
   const attrs = props.attrs;
-  const anchorWallet = useAnchorWallet();
-  const myPubkey = anchorWallet?.publicKey.toBase58();
+
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const myPubkey = connectedProfile?.pubkey;
+
   const { track } = useAnalytics();
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -262,7 +319,7 @@ function FeedActionBanner(props: {
   return (
     <div
       className={classNames(
-        'flex w-full flex-wrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        'flex w-full flex-nowrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
         props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
       )}
     >
@@ -272,11 +329,21 @@ function FeedActionBanner(props: {
           profile: props.event.profile,
         }}
       />
-      <div className="ml-2">
-        <div className="text-base font-semibold">{attrs.content}</div>
-        <div className="flex text-sm">
-          {/* {getHandle(attrs.sourceUser)}  */}
+      <div className="ml-2 flex max-w-xs flex-col gap-2">
+        <div className={`flex text-base font-semibold`}>
           <ProfileHandle user={attrs.sourceUser} />
+          &nbsp;
+          <div className="text-base font-normal">{attrs.content}</div>
+          &nbsp;
+          {attrs.type === `MintEvent` && (
+            <div className={`truncate text-clip text-base`}>
+              {attrs?.nft?.name.slice(0, 8)}
+              {(attrs.nft?.name?.length || 0) > 8 && `...`}
+            </div>
+          )}
+        </div>
+        <div className="flex text-xs">
+          {/* {getHandle(attrs.sourceUser)}  */}
           &nbsp;
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </div>
@@ -412,6 +479,30 @@ const OfferAction = (props: { nft: any }) => {
   );
 };
 
+export const ProfilePFPStack = ({ users }: { users: User[] }) => {
+  return (
+    <div className={`inline-flex items-center`}>
+      {users.slice(0, 3).map((user, i) => (
+        <div
+          key={user.address}
+          className={`${
+            i > 0 && `-ml-6`
+          } transition duration-100 ease-in hover:z-10 hover:scale-105`}
+        >
+          <ProfilePFP user={user} />
+        </div>
+      ))}
+      {users.length > 4 && (
+        <button
+          className={`-ml-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition duration-100 ease-in hover:z-10 hover:scale-105`}
+        >
+          +{users.length - 3}
+        </button>
+      )}
+    </div>
+  );
+};
+
 export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
@@ -427,7 +518,9 @@ export function ProfilePFP({ user }: { user: User }) {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
+
       getTwitterHandleAndSetState();
     }
   }, []);
@@ -474,62 +567,254 @@ function ShareMenu(props: { address: string; className: string }) {
   );
 }
 
-// A card to house aggregated Mint events, and maybe follow events
-function AggregateCard(props: { event: AggregateEvent }) {
-  const [modalOpen, setModalOpen] = useState(false);
+const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingList?: string[] }) => {
+  const { connectedProfile } = useConnectedWalletProfile();
 
-  // return (
-  //   <div className="relative  flex -space-x-96 -space-y-4  ">
-  //     {props.event.eventsAggregated.slice(1, 5).map((e, i, l) => (
-  //       // <FeedCard
-  //       //   event={e}
-  //       //   key={e.feedEventId}
-  //       //   anchorWallet={props.anchorWallet}
-  //       //   className={` hover:z-50 z-${(l.length - i) * 10}  `}
-  //       // />
-  //       <img
-  //         key={e.feedEventId}
-  //         className={classNames(
-  //           ` hover:z-50 z-${(l.length - i) * 10}  `,
-  //           'aspect-square w-full rounded-lg '
-  //         )}
-  //         src={e.nft?.image}
-  //         alt={e.nft?.name}
-  //       />
-  //     ))}
-  //   </div>
-  // );
+  if (!user.address) {
+    return null;
+  }
 
   return (
-    <div
-      className={classNames(
-        'flex flex-wrap items-center rounded-full bg-gray-800 p-4 shadow-2xl shadow-black',
-        false && 'hover:scale-[1.02]'
-      )}
-    >
-      <div className="mx-auto flex justify-center sm:mx-0">
-        and {props.event.eventsAggregated.length - 1} similar events
-      </div>
-      <Button5 className="ml-auto w-full sm:w-auto" v="ghost" onClick={() => setModalOpen(true)}>
-        View all
-      </Button5>
-      {ReactDom.createPortal(
-        <Modal
-          open={modalOpen}
-          setOpen={setModalOpen}
-          title={'Aggregate (' + props.event.eventsAggregated.length + ')'}
+    <div className={`flex w-64 max-w-xs flex-col items-center gap-2 p-4`}>
+      <ProfilePFP user={user} />
+      <p className={`m-0 text-base font-semibold`}>
+        <ProfileHandle user={user} shorten={true} />
+      </p>
+      {user.address === connectedProfile?.pubkey ? (
+        <Button5
+          v={`secondary`}
+          type={`button`}
+          className={`h-8 !w-full sm:ml-auto sm:w-auto lg:h-10 lg:w-28`}
         >
-          <div className="space-y-10 p-4">
-            {props.event.eventsAggregated.map((e) => (
-              <FeedCard event={e} key={e.feedEventId} />
-            ))}
-          </div>
-        </Modal>,
-        document.getElementsByTagName('body')[0]!
+          View
+        </Button5>
+      ) : (
+        <FollowUnfollowButton
+          source={'feed'}
+          className={`!w-full sm:ml-auto sm:w-auto`}
+          walletConnectionPair={connectedProfile?.walletConnectionPair!}
+          toProfile={{ address: user.address }}
+          type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
+        />
       )}
     </div>
   );
+};
+
+const AggregateProfiles = (props: { event: AggregateEvent }) => {
+  const users = getAggregateProfiles(props.event);
+
+  return (
+    <div className={`flex min-w-max`}>
+      <ProfilePFPStack users={users} />
+    </div>
+  );
+};
+
+const AggregateHandles = (props: { event: AggregateEvent }) => {
+  const users = getAggregateProfiles(props.event);
+  return (
+    <div className={`inline-flex`}>
+      <ProfileHandleStack users={users} />
+    </div>
+  );
+};
+
+// A card to house aggregated Mint events, and maybe follow events
+function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: string[] }) {
+  const CAROUSEL_COLS: number = 3;
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <div className={`flex flex-col rounded-lg bg-gray-900 p-4 pb-0 shadow-2xl shadow-black`}>
+      <div className={`flex w-full items-center gap-4 border-b border-b-gray-800 pb-4`}>
+        <AggregateProfiles event={props.event} />
+        <div className={`flex w-full flex-col gap-2`}>
+          <div className={`text-base`}>
+            <AggregateHandles event={props.event} />
+            &nbsp;followed {props.event.eventsAggregated.length} people
+          </div>
+          <p className={`m-0 text-xs text-gray-300`}>
+            {aggregateEventsTime(props.event.eventsAggregated).toRelative()}
+          </p>
+        </div>
+      </div>
+      <div
+        className={`flex w-full gap-4 overflow-x-scroll pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
+      >
+        {props.event.eventsAggregated.map((e: any) => (
+          <ProfileMiniCard
+            key={e.feedEventId + e?.connection?.to?.address}
+            user={{
+              address: e?.connection?.to?.address,
+              profile: e.connection?.to?.profile,
+            }}
+            myFollowingList={props.myFollowingList}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
+
+export const NFTCarousel = ({
+  nfts,
+  feedEvent,
+  interval = 5000,
+  attrs,
+}: {
+  nfts: Nft[];
+  feedEvent: FeedItem;
+  interval?: number;
+  attrs?: FeedCardAttributes[];
+}) => {
+  const STARTING_INDEX = 0;
+  const [currAttr, setCurrAttr] = useState<Nft>(nfts[STARTING_INDEX]);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const getNextEvent = (list: any[], currIndex: number) => {
+    if (list.length === currIndex + 1) {
+      return list[0];
+    } else {
+      return list[currIndex + 1];
+    }
+  };
+
+  const getPreviousEvent = (list: any[], currIndex: number) => {
+    if (currIndex === 0) {
+      return list[list.length - 1];
+    } else {
+      return list[currIndex - 1];
+    }
+  };
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const nextEvent = getNextEvent(
+        nfts,
+        nfts.findIndex((nfts) => nfts?.address === currAttr?.address)
+      );
+      if (!isHovered) setCurrAttr(nextEvent);
+    }, interval ?? 3000);
+
+    return () => clearInterval(intervalId);
+  }, [currAttr, interval, nfts, isHovered]);
+
+  const setNextEvent = (nft: Nft) => {
+    setCurrAttr(nft);
+  };
+
+  const getCurrentIndex = () => {
+    return nfts.findIndex((nft) => nft?.address === currAttr?.address);
+  };
+
+  if (!nfts) {
+    return null;
+  }
+
+  return (
+    <div
+      onMouseOver={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`group relative transition-all duration-300 hover:scale-[1.02]`}
+    >
+      <Link href={`/nfts/${currAttr?.address}`} passHref>
+        <a>
+          <img
+            src={currAttr?.image}
+            className={`aspect-square w-full rounded-lg object-cover`}
+            alt={currAttr?.name}
+          />
+        </a>
+      </Link>
+      {/* <div className={`absolute top-4 left-4`}>
+        <Link href={`/profiles/${currAttr?.creators[0].address}/created`} passHref>
+          <span className={`hover:cursor-pointer`}>
+            <Avatar
+              address={currAttr?.creators[0]?.address}
+              showAddress={false}
+              border={true}
+              data={{
+                pfpUrl: currAttr?.creators[0]?.profile?.profileImageUrlLowres,
+                twitterHandle: currAttr?.creators[0]?.twitterHandle || ``,
+              }}
+            />
+          </span>
+        </Link>
+      </div> */}
+      <ShareMenu className="absolute top-4 right-4 " address={currAttr?.address!} />
+      <div
+        className={`absolute left-4 top-1/2 flex items-center rounded-full p-2 hover:bg-gray-900/40 hover:backdrop-blur-3xl`}
+      >
+        <button
+          onClick={() =>
+            setNextEvent(
+              getPreviousEvent(
+                nfts,
+                nfts.findIndex((nft) => nft?.address === currAttr?.address)
+              )
+            )
+          }
+        >
+          <ChevronLeftIcon className="h-4 w-4" />
+        </button>
+      </div>
+      <div
+        className={`absolute right-4 top-1/2 flex items-center rounded-full p-2 hover:bg-gray-900/40 hover:backdrop-blur-3xl`}
+      >
+        <button
+          onClick={() =>
+            setNextEvent(
+              getNextEvent(
+                nfts,
+                nfts.findIndex((nft) => nft?.address === currAttr?.address)
+              )
+            )
+          }
+        >
+          <ChevronRightIcon className="h-4 w-4" />
+        </button>
+      </div>
+      <div
+        className={`absolute ${
+          attrs ? `bottom-24` : `bottom-4`
+        } left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2 transition-all duration-300 ease-in-out`}
+      >
+        {nfts.map((nft, i) => (
+          <button
+            onClick={() => setNextEvent(nft)}
+            className={`h-2 w-2 rounded-full ${
+              currAttr?.address === nft?.address ? `bg-white` : `bg-gray-300`
+            }`}
+            key={`indicator-${i}`}
+          />
+        ))}
+      </div>
+      {attrs && (
+        <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
+          <FeedActionBanner attrs={attrs[getCurrentIndex()]} event={feedEvent} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const SaleAggregateCard = (props: { event: AggregateSaleEvent; myFollowingList?: string[] }) => {
+  const attrs = props.event.eventsAggregated.map((e, i) => {
+    return generateFeedCardAttributes(e, props.myFollowingList);
+  });
+  const nfts = attrs.map((attr) => {
+    return attr?.nft;
+  });
+
+  return (
+    <div
+      id={props.event.feedEventId}
+      className={`group relative transition-all hover:scale-[1.02]`}
+    >
+      <NFTCarousel nfts={nfts as Partial<Nft> as any} feedEvent={props.event} attrs={attrs} />
+    </div>
+  );
+};
 
 export const LoadingFeedCard = () => {
   return (

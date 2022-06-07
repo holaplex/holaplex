@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import styled from 'styled-components';
 import {
   GetProfileFollowerOverviewQuery,
@@ -15,33 +15,17 @@ import { useProfileData } from '@/common/context/ProfileData';
 import Modal from './Modal';
 import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 type FollowerCountProps = {
+  wallet?: AnchorWallet;
   setShowFollowsModal: (s: FollowsModalState) => void;
   showButton?: boolean;
 };
 
-export const FollowerCount: FC<FollowerCountProps> = ({
-  setShowFollowsModal,
-  showButton = true,
-}) => {
-  const wallet = useAnchorWallet();
-  return (
-    <FollowerCountContent
-      wallet={wallet}
-      setShowFollowsModal={setShowFollowsModal}
-      showButton={showButton}
-    />
-  );
-};
-
-type FollowerCountContentProps = FollowerCountProps & {
-  wallet?: AnchorWallet;
-};
-
 type FollowsModalState = 'hidden' | 'followers' | 'following';
 
-export const FollowerCountContent: FC<FollowerCountContentProps> = ({
+export const FollowerCount: FC<FollowerCountProps> = ({
   wallet,
   setShowFollowsModal,
   showButton,
@@ -49,7 +33,10 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const { publicKey } = useProfileData();
 
   const { connection } = useConnection();
-  const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const walletConnectionPair2 = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+  const walletConnectionPair = connectedProfile?.walletConnectionPair;
 
   const profileFollowerOverview = useGetProfileFollowerOverviewQuery({
     variables: { pubKey: publicKey },
@@ -239,7 +226,7 @@ export const CollectedBy: FC<CollectedByProps> = ({ creatorPubkey, onOtherCollec
                   address: p.walletAddress,
                   profile: {
                     handle: p.handle,
-                    profileImageUrl: p.profileImageUrlLowres,
+                    profileImageUrlLowres: p.profileImageUrlLowres,
                   },
                 }}
               />

@@ -110,7 +110,7 @@ export default function CollectionLayout({
                     address: f.from.address,
                     data: {
                       twitterHandle: f.from.profile?.handle,
-                      pfpUrl: f.from.profile?.profileImageUrl,
+                      pfpUrl: f.from.profile?.profileImageUrlLowres,
                     },
                   }))}
                 />

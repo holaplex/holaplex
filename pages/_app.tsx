@@ -40,6 +40,7 @@ import { NextPage } from 'next';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
+import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
 
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
@@ -108,22 +109,24 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <WalletProviderDeprecated>
                     {({ wallet }) => (
                       <MultiTransactionProvider>
-                        <StorefrontProvider wallet={wallet}>
-                          {({}) => {
-                            return (
-                              <MarketplaceProvider wallet={wallet}>
-                                {() => (
-                                  <AnalyticsProvider>
-                                    <AppHeader />
-                                    <PageLayout {...pageProps}>
-                                      <Component {...pageProps} />
-                                    </PageLayout>
-                                  </AnalyticsProvider>
-                                )}
-                              </MarketplaceProvider>
-                            );
-                          }}
-                        </StorefrontProvider>
+                        <ConnectedWalletProfileProvider>
+                          <StorefrontProvider wallet={wallet}>
+                            {({}) => {
+                              return (
+                                <MarketplaceProvider wallet={wallet}>
+                                  {() => (
+                                    <AnalyticsProvider>
+                                      <AppHeader />
+                                      <PageLayout {...pageProps}>
+                                        <Component {...pageProps} />
+                                      </PageLayout>
+                                    </AnalyticsProvider>
+                                  )}
+                                </MarketplaceProvider>
+                              );
+                            }}
+                          </StorefrontProvider>
+                        </ConnectedWalletProfileProvider>
                       </MultiTransactionProvider>
                     )}
                   </WalletProviderDeprecated>

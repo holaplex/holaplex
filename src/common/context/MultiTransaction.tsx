@@ -1,4 +1,4 @@
-import React, { FC, createContext, useState } from 'react';
+import React, { FC, createContext, useState, useContext } from 'react';
 import { errorCodeHelper } from '../../modules/utils/marketplace';
 import Button from '../components/elements/Button';
 import Modal from '../components/elements/Modal';
@@ -214,4 +214,12 @@ export const MultiTransactionProvider: FC = ({ children }) => {
       {children}
     </MultiTransactionContext.Provider>
   );
+};
+
+export const useMultiTransactionModal = () => {
+  const multiTransactionModal = useContext(MultiTransactionContext);
+  if (!multiTransactionModal) {
+    throw new Error('useMultiTransactionModal must be used within a MultiTransactionContext');
+  }
+  return multiTransactionModal;
 };
