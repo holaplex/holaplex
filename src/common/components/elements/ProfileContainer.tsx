@@ -12,7 +12,7 @@ import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from '@/common/context/ProfileData';
-import { FollowUnfollowButtonDataWrapper } from '../home/FeaturedProfilesSection';
+import { FollowUnfollowButtonDataWrapper } from './ProfilePreviewCard';
 
 export const ProfileContainer: FC = ({ children }) => {
   const { banner, profilePicture, twitterHandle, publicKey } = useProfileData();
