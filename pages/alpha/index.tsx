@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
-import {
-  FeedQuery,
-  useAllConnectionsFromLazyQuery,
-  useFeedLazyQuery,
-  useFeedQuery,
-  useWhoToFollowQuery,
-} from 'src/graphql/indexerTypes';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { FeedQuery, useFeedQuery, useWhoToFollowQuery } from 'src/graphql/indexerTypes';
 import { FeedCard, LoadingFeedCard, LoadingFeedItem } from '@/common/components/feed/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {

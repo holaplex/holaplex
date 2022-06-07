@@ -52,6 +52,7 @@ export function ConnectedWalletProfileProvider(props: { children: React.ReactNod
     skip: !pubkey,
   });
 
+  // should maybe be put in a useMemo
   const connectedWalletProfileData: ConnectedWalletProfileData = {
     connectedProfile:
       pubkey && data

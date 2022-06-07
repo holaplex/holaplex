@@ -1,4 +1,4 @@
-import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
+import {  useWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useState } from 'react';
 import { Button5 } from '@/common/components/elements/Button2';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
@@ -8,7 +8,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 const ProfileLanding = () => {
-  const anchorWallet = useAnchorWallet();
   const { connecting, publicKey } = useWallet();
   const { setVisible } = useWalletModal();
 
