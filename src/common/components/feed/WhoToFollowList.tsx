@@ -1,4 +1,4 @@
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 import { Connection } from '@solana/web3.js';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
@@ -11,10 +11,7 @@ function FollowListItem({
   ...props
 }: {
   user: User;
-  walletConnectionPair: {
-    wallet: AnchorWallet;
-    connection: Connection;
-  };
+
   myFollowingList: string[];
 }) {
   return (
@@ -30,7 +27,6 @@ function FollowListItem({
 
       <FollowUnfollowButton
         source="whotofollow"
-        walletConnectionPair={props.walletConnectionPair}
         toProfile={{
           address: user.address,
         }}
@@ -40,13 +36,11 @@ function FollowListItem({
   );
 }
 
-export default function WhoToFollowList(props: { myFollowingList?: string[], profilesToFollow?: User[] }) {
-  const { connection } = useConnection();
-  const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
+export default function WhoToFollowList(props: {
+  myFollowingList?: string[];
+  profilesToFollow?: User[];
+}) {
+  const { connectedProfile } = useConnectedWalletProfile();
 
   const [topProfilesToFollow, setTopProfilesToFollow] = useState<User[]>([]);
   const [currentFollowingList, setCurrentFollowingList] = useState<string[]>([]);
@@ -55,7 +49,9 @@ export default function WhoToFollowList(props: { myFollowingList?: string[], pro
   useEffect(() => {
     if (props.myFollowingList && !topProfilesToFollow.length && props.profilesToFollow) {
       setTopProfilesToFollow(
-        props.profilesToFollow.filter(u => !props.myFollowingList?.includes(u.address)).slice(0, 5)
+        props.profilesToFollow
+          .filter((u) => !props.myFollowingList?.includes(u.address))
+          .slice(0, 5)
       );
       setCurrentFollowingList(props.myFollowingList);
     }
@@ -80,11 +76,13 @@ export default function WhoToFollowList(props: { myFollowingList?: string[], pro
           setTopProfilesToFollow(
             [
               ...topProfilesToFollow.slice(0, topProfileIndexToChange),
-              (props.profilesToFollow || []).filter(
-                (u) =>
-                  !topProfilesToFollow.some((tu) => tu.address === u.address) &&
-                  !props.myFollowingList?.includes(u.address)
-              ).splice(0, 1)[0],
+              (props.profilesToFollow || [])
+                .filter(
+                  (u) =>
+                    !topProfilesToFollow.some((tu) => tu.address === u.address) &&
+                    !props.myFollowingList?.includes(u.address)
+                )
+                .splice(0, 1)[0],
               ...topProfilesToFollow.slice(topProfileIndexToChange + 1),
             ].filter((u) => u)
             // filter to handle case when INFLUENTIAL_WALLETS is empty
@@ -115,16 +113,11 @@ export default function WhoToFollowList(props: { myFollowingList?: string[], pro
           </>
         )}
 
-        {anchorWallet &&
+        {connectedProfile?.walletConnectionPair &&
           topProfilesToFollow.map((u) => (
-            <FollowListItem
-              key={u.address}
-              user={u}
-              walletConnectionPair={walletConnectionPair}
-              myFollowingList={myFollowingList}
-            />
+            <FollowListItem key={u.address} user={u} myFollowingList={myFollowingList} />
           ))}
-        {!anchorWallet && myFollowingList && <div>Connect wallet to see suggestions</div>}
+        {!connectedProfile && myFollowingList && <div>Connect wallet to see suggestions</div>}
       </div>
     </div>
   );

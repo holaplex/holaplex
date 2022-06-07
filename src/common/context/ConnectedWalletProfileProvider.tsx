@@ -2,9 +2,12 @@ import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-ada
 import { Connection } from '@solana/web3.js';
 import React, { useContext, useEffect, useMemo } from 'react';
 import {
+  GetConnectedWalletProfileDataQuery,
   useGetConnectedWalletProfileDataLazyQuery,
   useGetConnectedWalletProfileDataQuery,
 } from 'src/graphql/indexerTypes';
+
+type WalletProfile = GetConnectedWalletProfileDataQuery['followers'][0]['from'];
 
 interface ConnectedWalletProfileData {
   connectedProfile: {
@@ -24,8 +27,8 @@ interface ConnectedWalletProfileData {
       fromCount: number;
       toCount: number;
     };
-    followers: any[] | null;
-    following: any[] | null;
+    followers: WalletProfile[] | null;
+    following: WalletProfile[] | null;
     walletConnectionPair: {
       wallet: AnchorWallet;
       connection: Connection;
@@ -67,13 +70,6 @@ export function ConnectedWalletProfileProvider(props: { children: React.ReactNod
           }
         : null,
   };
-
-  console.log('connectedWalletProfileProvider', {
-    pubkey,
-    data,
-    connectedWalletProfileData,
-    loading,
-  });
 
   return (
     <ConnectedWalletProfileContext.Provider value={connectedWalletProfileData}>
