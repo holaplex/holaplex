@@ -149,29 +149,23 @@ export const Avatar = ({
     lg: 'h-16 w-16',
   };
   const [getProfileInfoQuery, getProfileInfoQueryContext] = useGetProfileInfoFromPubKeyLazyQuery();
-  const [twitterHandle, setTwitterHandle] = useState<string | undefined>(data?.twitterHandle);
-  const [pfpUrl, setPfpUrl] = useState<string | undefined>(data?.pfpUrl);
   const { publicKey } = useWallet();
 
   useEffect(
     () => {
       async function getProfileInfoAndSetState(): Promise<void> {
         await getProfileInfoQuery({ variables: { pubKey: address } });
-        if (getProfileInfoQueryContext.data) {
-          if (getProfileInfoQueryContext.data.wallet.profile?.handle) {
-            setTwitterHandle(getProfileInfoQueryContext.data.wallet.profile?.handle);
-          }
-          if (getProfileInfoQueryContext.data.wallet.profile?.profileImageUrl) {
-            setPfpUrl(getProfileInfoQueryContext.data.wallet.profile?.profileImageUrl);
-          }
-        }
       }
 
       if (!data) getProfileInfoAndSetState();
     },
+    
     // dont include results of the query to avoid re-triggering
-    [data, useGetProfileInfoFromPubKeyLazyQuery, address]
+    [data, address, getProfileInfoQuery]
   );
+
+  const twitterHandle = data?.twitterHandle || getProfileInfoQueryContext.data?.wallet.profile?.handle;
+  const pfpUrl = data?.pfpUrl || getProfileInfoQueryContext.data?.wallet.profile?.profileImageUrlLowres;
 
   const isYou = publicKey?.toBase58() === address;
   const displayName = isYou
