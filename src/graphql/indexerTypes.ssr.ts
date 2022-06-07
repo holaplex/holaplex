@@ -635,6 +635,23 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type DiscoverNftsBuyNowQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverNftsBuyNowQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
+
+export type DiscoverProfilesAllQueryVariables = Exact<{
+  userWallet?: InputMaybe<Scalars['PublicKey']>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverProfilesAllQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
+
 export type FeedQueryVariables = Exact<{
   address: Scalars['PublicKey'];
   limit?: InputMaybe<Scalars['Int']>;
@@ -1039,6 +1056,97 @@ export const WalletProfileDocument = gql`
     profileImageUrlLowres
     profileImageUrlHighres
     bannerImageUrl
+  }
+}
+    `;
+export const DiscoverNftsBuyNowDocument = gql`
+    query discoverNftsBuyNow($limit: Int!, $offset: Int!) {
+  nfts(
+    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
+    listed: true
+    limit: $limit
+    offset: $offset
+  ) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+  marketplace(subdomain: "haus") {
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+}
+    `;
+export const DiscoverProfilesAllDocument = gql`
+    query discoverProfilesAll($userWallet: PublicKey, $limit: Int!, $offset: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: $offset) {
+    address
+    profile {
+      handle
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    nftCounts {
+      owned
+      created
+    }
   }
 }
     `;
@@ -1922,6 +2030,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     walletProfile(variables: WalletProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WalletProfileQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WalletProfileQuery>(WalletProfileDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'walletProfile', 'query');
+    },
+    discoverNftsBuyNow(variables: DiscoverNftsBuyNowQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DiscoverNftsBuyNowQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DiscoverNftsBuyNowQuery>(DiscoverNftsBuyNowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'discoverNftsBuyNow', 'query');
+    },
+    discoverProfilesAll(variables: DiscoverProfilesAllQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DiscoverProfilesAllQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DiscoverProfilesAllQuery>(DiscoverProfilesAllDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'discoverProfilesAll', 'query');
     },
     feed(variables: FeedQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FeedQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<FeedQuery>(FeedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'feed', 'query');

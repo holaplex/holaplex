@@ -635,6 +635,23 @@ export type WalletProfileQueryVariables = Exact<{
 
 export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type DiscoverNftsBuyNowQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverNftsBuyNowQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
+
+export type DiscoverProfilesAllQueryVariables = Exact<{
+  userWallet?: InputMaybe<Scalars['PublicKey']>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverProfilesAllQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
+
 export type FeedQueryVariables = Exact<{
   address: Scalars['PublicKey'];
   limit?: InputMaybe<Scalars['Int']>;
@@ -1160,6 +1177,156 @@ export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
 export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
+export const DiscoverNftsBuyNowDocument = gql`
+    query discoverNftsBuyNow($limit: Int!, $offset: Int!) {
+  nfts(
+    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
+    listed: true
+    limit: $limit
+    offset: $offset
+  ) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      address
+      buyer
+      auctionHouse
+      price
+      createdAt
+    }
+    listings {
+      address
+      tradeState
+      seller
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      address
+      tradeState
+      buyer
+      metadata
+      auctionHouse
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+  marketplace(subdomain: "haus") {
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+}
+    `;
+
+/**
+ * __useDiscoverNftsBuyNowQuery__
+ *
+ * To run a query within a React component, call `useDiscoverNftsBuyNowQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverNftsBuyNowQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverNftsBuyNowQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useDiscoverNftsBuyNowQuery(baseOptions: Apollo.QueryHookOptions<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>(DiscoverNftsBuyNowDocument, options);
+      }
+export function useDiscoverNftsBuyNowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>(DiscoverNftsBuyNowDocument, options);
+        }
+export type DiscoverNftsBuyNowQueryHookResult = ReturnType<typeof useDiscoverNftsBuyNowQuery>;
+export type DiscoverNftsBuyNowLazyQueryHookResult = ReturnType<typeof useDiscoverNftsBuyNowLazyQuery>;
+export type DiscoverNftsBuyNowQueryResult = Apollo.QueryResult<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>;
+export const DiscoverProfilesAllDocument = gql`
+    query discoverProfilesAll($userWallet: PublicKey, $limit: Int!, $offset: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: $offset) {
+    address
+    profile {
+      handle
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    nftCounts {
+      owned
+      created
+    }
+  }
+}
+    `;
+
+/**
+ * __useDiscoverProfilesAllQuery__
+ *
+ * To run a query within a React component, call `useDiscoverProfilesAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverProfilesAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverProfilesAllQuery({
+ *   variables: {
+ *      userWallet: // value for 'userWallet'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useDiscoverProfilesAllQuery(baseOptions: Apollo.QueryHookOptions<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>(DiscoverProfilesAllDocument, options);
+      }
+export function useDiscoverProfilesAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>(DiscoverProfilesAllDocument, options);
+        }
+export type DiscoverProfilesAllQueryHookResult = ReturnType<typeof useDiscoverProfilesAllQuery>;
+export type DiscoverProfilesAllLazyQueryHookResult = ReturnType<typeof useDiscoverProfilesAllLazyQuery>;
+export type DiscoverProfilesAllQueryResult = Apollo.QueryResult<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>;
 export const FeedDocument = gql`
     query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
   feedEvents(
