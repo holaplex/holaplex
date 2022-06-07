@@ -15,25 +15,49 @@ export interface CardGridWithSearchAndSize<T> {
   search: SearchBarProps;
 }
 
+/**
+ * Grid layout component with triggers for fetching more data for infinite scroll, search bar, and grid size selection.
+ *
+ * @param props
+ * @returns
+ */
 export function CardGridWithSearchAndSize<T>(props: CardGridWithSearchAndSize<T>): JSX.Element {
   const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
 
   return (
     <div>
       <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
-        <div className={`flex w-full lg:justify-end`}>
+        <div className="flex w-full lg:justify-end">
           <SearchBar onChange={(v) => props.search.onChange(v)} />
           <GridSelector onChange={(v) => setGridView(v)} />
         </div>
       </div>
-      <CardGrid gridView={gridView} cardContext={props.cardContext} dataContext={props.dataContext} />
+      <CardGrid
+        gridView={gridView}
+        cardContext={props.cardContext}
+        dataContext={props.dataContext}
+      />
     </div>
   );
 }
 
+/**
+ * Dimensions of the visible portion of the grid. Name implies rows-by-columns.
+ */
 enum GridView {
+  /**
+   * 1x1 (1 card visible at a time)
+   */
   ONE_BY_ONE = '1x1',
+
+  /**
+   * 2x2 (4 cards visible at a time)
+   */
   TWO_BY_TWO = '2x2',
+
+  /**
+   * 3x3 (9 cards visible at a time)
+   */
   THREE_BY_THREE = '3x3',
 }
 
@@ -144,23 +168,73 @@ export type RefetchFunction = (
 ) => Promise<ApolloQueryResult<{}>>;
 
 export interface CardGridProps<T> {
+  /**
+   * Dimensions of the visible portion of the grid.
+   */
   gridView: GridView;
+
+  /**
+   * Attributes for creating/displaying cards.
+   */
   cardContext: {
+    /**
+     * Element to use when there are no data. Defaults to an empty `<div/>`.
+     */
     noDataFallback?: JSX.Element;
+
+    /**
+     * Function to create each card element from the data provided.
+     */
     cardCreator: (data: T, refetch: RefetchFunction, loading: boolean) => JSX.Element;
+
+    /**
+     * Function to create a each card in a row of loading previews before any data have been fetched.
+     */
     loadingCardCreator: () => JSX.Element;
   };
+  /**
+   * Attributes for fetching/updating data and triggering more data with infinite scroll.
+   */
   dataContext: {
+    /**
+     * Data for all cards to be displayed in the grid. You must pass in the data, but this component
+     * will take care of determining when cards should be created and rendered.
+     */
     data?: T[];
+
+    /**
+     * Function to be used to fetch data again (e.g. Apollo query.refetch).
+     */
     refetch: RefetchFunction;
+
+    /**
+     * Function to be called when infinite scroll deems it's time to load more data. You should
+     * hook this up to a function that will update your data array.
+     */
     onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
+
+    /**
+     * Are there more data to display (e.g. test for additional data fetched during onLoadMore being empty)?
+     */
     hasMore: boolean;
+
+    /**
+     * Is data currently being loaded (e.g. Apollog query.loading)
+     */
     loading?: boolean;
   };
 }
 
+/**
+ * Grid layout component with trigger for fetching more data for infinite scroll
+ *
+ * @param props
+ * @returns
+ */
 export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
-  const [bodyElements, setBodyElements] = useState<JSX.Element[]>([props.cardContext.noDataFallback ?? <></>]);
+  const [bodyElements, setBodyElements] = useState<JSX.Element[]>([
+    props.cardContext.noDataFallback ?? <></>,
+  ]);
   const gridId: string = useMemo(() => `grid-${Math.round(Math.random() * 100000)}`, []);
 
   let gridViewClasses: string;
@@ -183,14 +257,22 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
     }
   }
 
+  // set the body of the grid based on data loading state
   useEffect(() => {
     if (props.dataContext.loading) {
-      setBodyElements(Array(gridCols).fill(null).map(_ => props.cardContext.loadingCardCreator()));
+      // loading previews
+      setBodyElements(
+        Array(gridCols)
+          .fill(null)
+          .map((_) => props.cardContext.loadingCardCreator())
+      );
     } else if (props.dataContext.data === undefined || props.dataContext.data.length === 0) {
+      // no-data fallback
       setBodyElements([props.cardContext.noDataFallback ?? <></>]);
     } else {
+      // loaded data
       setBodyElements(
-        props.dataContext.data.map(cardData =>
+        props.dataContext.data.map((cardData) =>
           props.cardContext.cardCreator(
             cardData,
             props.dataContext.refetch,
@@ -208,6 +290,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
           <div key={`${gridId}-${i}`}>{e}</div>
         ))}
       </div>
+      {/* infinite scroll display and load-more trigger */}
       <div className={classNames({ hidden: !props.dataContext.hasMore })}>
         <InView threshold={0.1} onChange={props.dataContext.onLoadMore}>
           <div className={`my-6 flex w-full items-center justify-center font-bold`}>

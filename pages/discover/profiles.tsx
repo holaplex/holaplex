@@ -25,7 +25,6 @@ const options: FilterOption<TypeOption>[] = [
   {
     label: 'All',
     value: TypeOption.ALL,
-    numberOfItems: Math.round(Math.random() * 10000),
   },
 ];
 
