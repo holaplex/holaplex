@@ -42,6 +42,7 @@ import { NextPage } from 'next';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
+import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
 
 const { Content } = Layout;
 
@@ -112,20 +113,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <WalletProviderDeprecated>
                     {({ wallet }) => (
                       <MultiTransactionProvider>
-                        <StorefrontProvider wallet={wallet}>
-                          {({}) => {
-                            return (
-                              <MarketplaceProvider wallet={wallet}>
-                                {() => (
-                                  <AnalyticsProvider>
-                                    <AppHeader />
-                                    {getLayout(<Component {...pageProps} />)}
-                                  </AnalyticsProvider>
-                                )}
-                              </MarketplaceProvider>
-                            );
-                          }}
-                        </StorefrontProvider>
+                        <ConnectedWalletProfileProvider>
+                          <StorefrontProvider wallet={wallet}>
+                            {({}) => {
+                              return (
+                                <MarketplaceProvider wallet={wallet}>
+                                  {() => (
+                                    <AnalyticsProvider>
+                                      <AppHeader />
+                                      {getLayout(<Component {...pageProps} />)}
+                                    </AnalyticsProvider>
+                                  )}
+                                </MarketplaceProvider>
+                              );
+                            }}
+                          </StorefrontProvider>
+                        </ConnectedWalletProfileProvider>
                       </MultiTransactionProvider>
                     )}
                   </WalletProviderDeprecated>

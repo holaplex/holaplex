@@ -30,7 +30,7 @@ interface AnalyticsUserProperties {
   pubkey: string; // same as user_id, but for use in custom reports
 }
 
-const debugAnalytics = true;
+const debugAnalytics = false;
 
 interface GenericTrackingAttributes {
   [key: string]: string | number | boolean | any[] | null | undefined;

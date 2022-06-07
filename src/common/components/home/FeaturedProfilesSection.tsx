@@ -1,4 +1,5 @@
 import { FC, useCallback, useEffect, useState, VFC } from 'react';
+import ReactDom from 'react-dom';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { getFallbackImage } from '@/modules/utils/image';
@@ -11,14 +12,14 @@ import {
 import { AvatarImage } from '../elements/Avatar';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { FollowUnfollowButton } from '../elements/FollowUnfollowButton';
-import {
-  useAnchorWallet,
-  useConnection,
-  useWallet,
-  WalletContextState,
-} from '@solana/wallet-adapter-react';
+import { useConnection, useWallet, WalletContextState } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
+import Modal from '../elements/Modal';
+import { Button5 } from '../elements/Button2';
+import { useMultiTransactionModal } from '@/common/context/MultiTransaction';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
@@ -232,41 +233,24 @@ export const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; classN
   targetPubkey,
   className,
 }) => {
-  const wallet = useAnchorWallet();
-  const { connection } = useConnection();
-  const [userIsFollowingThisAccountQuery, userIsFollowingThisAccountContext] =
-    useIsXFollowingYLazyQuery();
+  const { connectedProfile } = useConnectedWalletProfile();
 
-  const userWalletAddress: string | undefined = wallet?.publicKey.toBase58();
-  const targetIsUserWallet = targetPubkey === userWalletAddress;
+  const userIsFollowingThisAccount = connectedProfile?.following?.find(
+    (f) => f.address === targetPubkey
+  );
 
-  if (userWalletAddress && !targetIsUserWallet && !userIsFollowingThisAccountContext.called) {
-    userIsFollowingThisAccountQuery({
-      variables: { xPubKey: userWalletAddress, yPubKey: targetPubkey },
-    });
-  }
+  const targetIsUserWallet = targetPubkey === connectedProfile?.pubkey;
 
-  const canAssessFollowState: boolean =
-    userWalletAddress !== undefined &&
-    !targetIsUserWallet &&
-    userIsFollowingThisAccountContext !== undefined &&
-    userIsFollowingThisAccountContext.error === undefined &&
-    !userIsFollowingThisAccountContext.loading &&
-    userIsFollowingThisAccountContext.data !== undefined &&
-    userIsFollowingThisAccountContext.data.connections !== undefined;
+  const canAssessFollowState: boolean = !!connectedProfile && !targetIsUserWallet;
 
-  const userIsFollowingThisAccount: boolean =
-    canAssessFollowState && userIsFollowingThisAccountContext!.data!.connections.length > 0;
-
-  const hideButton: boolean = targetIsUserWallet || !canAssessFollowState || !wallet || !connection;
+  const hideButton: boolean = targetIsUserWallet || !canAssessFollowState;
 
   if (hideButton) {
-    return null;
+    return null; // <ConnectAndFollowButton />;
   }
 
   return (
     <FollowUnfollowButton
-      walletConnectionPair={{ connection, wallet: wallet! }}
       source="modalFollowing"
       type={userIsFollowingThisAccount ? 'Unfollow' : 'Follow'}
       toProfile={{
@@ -278,3 +262,61 @@ export const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; classN
 };
 
 export default FeaturedProfilesSection;
+
+// WIP: Ignore for now
+function ConnectAndFollowButton() {
+  const [showModal, setShowModal] = useState(false);
+
+  const { connection } = useConnection();
+
+  const { runActions } = useMultiTransactionModal();
+  const { setVisible } = useWalletModal();
+
+  async function connectWalletPromise() {
+    setVisible(true);
+
+    await waitUserInput();
+
+    return;
+  }
+
+  const timeout = async (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+  async function waitUserInput() {
+    while (!connection) await timeout(1000); // pauses script
+    // next = false; // reset var
+  }
+
+  return (
+    <div>
+      {ReactDom.createPortal(
+        <Modal priority title={'Connect and Follow'} open={showModal} setOpen={setShowModal}>
+          <p>
+            You&apos;ll get two wallet prompts, one to connect and one to confirm the follow
+            transaction
+          </p>
+          <p>When you are connected in the future, you won&apos;t receive this message</p>
+          <Button5
+            onClick={() =>
+              runActions([
+                {
+                  id: 'Connect',
+                  name: 'Connecting wallet',
+                  action: connectWalletPromise,
+                  param: null,
+                },
+              ])
+            }
+            v="primary"
+          >
+            Connect and Follow
+          </Button5>
+        </Modal>,
+        document.getElementsByTagName('body')[0]!
+      )}
+      <Button5 v="primary" onClick={() => setShowModal(true)}>
+        Follow
+      </Button5>
+    </div>
+  );
+}

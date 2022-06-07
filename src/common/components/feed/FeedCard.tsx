@@ -4,7 +4,6 @@ import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, shortenHandle } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
@@ -40,6 +39,7 @@ import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { Avatar } from '../elements/Avatar';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -160,12 +160,8 @@ function FollowCard(props: {
 }) {
   const myFollowingList = props.myFollowingList || [];
   const attrs = props.attrs;
-  const { connection } = useConnection();
-  const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
+
+  const { connectedProfile } = useConnectedWalletProfile();
 
   if (!attrs) return <div>Not enough data</div>;
 
@@ -188,7 +184,7 @@ function FollowCard(props: {
           <ProfileHandle user={attrs.sourceUser} />
           &nbsp;
           {myFollowingList.includes(attrs.sourceUser!.address) &&
-          attrs.toUser!.address === anchorWallet?.publicKey.toBase58() ? (
+          attrs.toUser!.address === connectedProfile?.pubkey ? (
             <>
               <span className={`text-base font-normal`}>followed you back</span>
             </>
@@ -204,12 +200,12 @@ function FollowCard(props: {
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </p>
       </div>
-      {walletConnectionPair.wallet && (
+      {connectedProfile?.walletConnectionPair && (
         <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
           <FollowUnfollowButton
             source="feed"
             className="!w-full sm:ml-auto sm:w-auto"
-            walletConnectionPair={walletConnectionPair}
+            walletConnectionPair={connectedProfile.walletConnectionPair}
             toProfile={{
               address: attrs.toUser!.address,
             }}
@@ -259,7 +255,8 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
       getTwitterHandleAndSetState();
     }
   }, []);
@@ -280,8 +277,11 @@ function FeedActionBanner(props: {
   options?: FeedCardOptions;
 }) {
   const attrs = props.attrs;
-  const anchorWallet = useAnchorWallet();
-  const myPubkey = anchorWallet?.publicKey.toBase58();
+
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const myPubkey = connectedProfile?.pubkey;
+
   const { track } = useAnalytics();
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -518,7 +518,9 @@ export function ProfilePFP({ user }: { user: User }) {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
+
       getTwitterHandleAndSetState();
     }
   }, []);
@@ -566,12 +568,7 @@ function ShareMenu(props: { address: string; className: string }) {
 }
 
 const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingList?: string[] }) => {
-  const { connection } = useConnection();
-  const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
+  const { connectedProfile } = useConnectedWalletProfile();
 
   if (!user.address) {
     return null;
@@ -583,7 +580,7 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
       <p className={`m-0 text-base font-semibold`}>
         <ProfileHandle user={user} shorten={true} />
       </p>
-      {user.address === anchorWallet?.publicKey.toBase58() ? (
+      {user.address === connectedProfile?.pubkey ? (
         <Button5
           v={`secondary`}
           type={`button`}
@@ -595,7 +592,7 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
         <FollowUnfollowButton
           source={'feed'}
           className={`!w-full sm:ml-auto sm:w-auto`}
-          walletConnectionPair={walletConnectionPair}
+          walletConnectionPair={connectedProfile?.walletConnectionPair!}
           toProfile={{ address: user.address }}
           type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
         />
