@@ -53,7 +53,7 @@ const getSolanaNetwork = () => {
 };
 
 type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (props: { children: ReactElement }) => ReactElement;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -83,7 +83,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const getLayout = Component.getLayout || ((page) => page);
+  const Layout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
 
   return (
     <>
@@ -121,7 +121,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                   {() => (
                                     <AnalyticsProvider>
                                       <AppHeader />
-                                      {getLayout(<Component {...pageProps} />)}
+                                      <Layout {...pageProps}>
+                                        <Component {...pageProps} />
+                                      </Layout>
                                     </AnalyticsProvider>
                                   )}
                                 </MarketplaceProvider>
