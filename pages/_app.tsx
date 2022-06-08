@@ -40,6 +40,7 @@ import { NextPage } from 'next';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
+import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
 
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')

@@ -4,7 +4,6 @@ import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, shortenHandle } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
@@ -40,6 +39,7 @@ import { LoadingContainer } from '../elements/LoadingPlaceholders';
 import { imgOpt } from '@/common/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { Avatar } from '../elements/Avatar';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -160,12 +160,8 @@ function FollowCard(props: {
 }) {
   const myFollowingList = props.myFollowingList || [];
   const attrs = props.attrs;
-  const { connection } = useConnection();
-  const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
+
+  const { connectedProfile } = useConnectedWalletProfile();
 
   if (!attrs) return <div>Not enough data</div>;
 
@@ -188,7 +184,7 @@ function FollowCard(props: {
           <ProfileHandle user={attrs.sourceUser} />
           &nbsp;
           {myFollowingList.includes(attrs.sourceUser!.address) &&
-          attrs.toUser!.address === anchorWallet?.publicKey.toBase58() ? (
+          attrs.toUser!.address === connectedProfile?.pubkey ? (
             <>
               <span className={`text-base font-normal`}>followed you back</span>
             </>
@@ -204,12 +200,12 @@ function FollowCard(props: {
           {DateTime.fromISO(attrs.createdAt).toRelative()}
         </p>
       </div>
-      {walletConnectionPair.wallet && (
+      {connectedProfile?.walletConnectionPair && (
         <div className="mt-4 w-full sm:ml-auto sm:mt-0 sm:w-auto">
           <FollowUnfollowButton
             source="feed"
             className="!w-full sm:ml-auto sm:w-auto"
-            walletConnectionPair={walletConnectionPair}
+            walletConnectionPair={connectedProfile.walletConnectionPair}
             toProfile={{
               address: attrs.toUser!.address,
             }}
@@ -259,7 +255,8 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
       getTwitterHandleAndSetState();
     }
   }, []);
@@ -267,7 +264,8 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a>
-        {(twitterHandle && '@' + (shorten ? shortenHandle(twitterHandle) : twitterHandle)) ||
+        {(twitterHandle &&
+          '@' + (shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle)) ||
           shortenAddress(user.address)}
       </a>
     </Link>
@@ -280,8 +278,11 @@ function FeedActionBanner(props: {
   options?: FeedCardOptions;
 }) {
   const attrs = props.attrs;
-  const anchorWallet = useAnchorWallet();
-  const myPubkey = anchorWallet?.publicKey.toBase58();
+
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const myPubkey = connectedProfile?.pubkey;
+
   const { track } = useAnalytics();
   if (!attrs?.sourceUser) return <div>Can not describe {props.event.__typename} </div>;
 
@@ -319,33 +320,38 @@ function FeedActionBanner(props: {
   return (
     <div
       className={classNames(
-        'flex w-full flex-nowrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        'flex w-full flex-col flex-nowrap items-center justify-between bg-gray-900/40  p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:flex-row ',
         props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
       )}
     >
-      <ProfilePFP
-        user={{
-          address: props.event.walletAddress,
-          profile: props.event.profile,
-        }}
-      />
-      <div className="ml-2 flex max-w-xs flex-col gap-2">
-        <div className={`flex text-base font-semibold`}>
-          <ProfileHandle user={attrs.sourceUser} />
-          &nbsp;
-          <div className="text-base font-normal">{attrs.content}</div>
-          &nbsp;
-          {attrs.type === `MintEvent` && (
-            <div className={`truncate text-clip text-base`}>
-              {attrs?.nft?.name.slice(0, 8)}
-              {(attrs.nft?.name?.length || 0) > 8 && `...`}
-            </div>
-          )}
-        </div>
-        <div className="flex text-xs">
-          {/* {getHandle(attrs.sourceUser)}  */}
-          &nbsp;
-          {DateTime.fromISO(attrs.createdAt).toRelative()}
+      <div className={`flex items-center`}>
+        {attrs && (
+          <ProfilePFP
+            user={{
+              address: attrs.sourceUser.address,
+              profile: attrs.sourceUser.profile,
+            }}
+          />
+        )}
+
+        <div className="ml-2 flex max-w-xs flex-col gap-2">
+          <div className={`flex text-base font-semibold`}>
+            <ProfileHandle user={attrs.sourceUser} />
+            &nbsp;
+            <div className="text-base font-normal">{attrs.content}</div>
+            &nbsp;
+            {attrs.type === `MintEvent` && (
+              <div className={`truncate text-clip text-base`}>
+                {attrs?.nft?.name.slice(0, 8)}
+                {(attrs.nft?.name?.length || 0) > 8 && `...`}
+              </div>
+            )}
+          </div>
+          <div className="flex text-xs">
+            {/* {getHandle(attrs.sourceUser)}  */}
+            &nbsp;
+            {DateTime.fromISO(attrs.createdAt).toRelative()}
+          </div>
         </div>
       </div>
       {!props.options?.hideAction && (
@@ -447,7 +453,7 @@ const OfferAction = (props: { nft: any }) => {
             nftAddress: props.nft?.address,
           });
         }}
-        className="w-full sm:w-auto"
+        className="w-full whitespace-nowrap sm:w-auto"
       >
         Make offer
       </Button5>
@@ -518,10 +524,12 @@ export function ProfilePFP({ user }: { user: User }) {
         setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
       }
     }
-    if (!twitterHandle) {
+    if (!twitterHandle && false) {
+      // pausing requesting additional twitter handles as it leads to too many requests
+
       getTwitterHandleAndSetState();
     }
-  }, []);
+  }, [user, twitterHandle, twitterHandleQuery]);
 
   const [walletProfileQuery, walletProfile] = useWalletProfileLazyQuery({
     variables: {
@@ -537,7 +545,7 @@ export function ProfilePFP({ user }: { user: User }) {
         }
       });
     }
-  }, [twitterHandle]);
+  }, [twitterHandle, user, walletProfileQuery]);
 
   /*  const { track } = useAnalytics(); // track navigation to profile from pfp */
 
@@ -546,7 +554,7 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={walletProfile.data?.profile?.profileImageUrlLowres || pfpUrl}
+          src={user?.profile?.profileImageUrl || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>
@@ -566,12 +574,7 @@ function ShareMenu(props: { address: string; className: string }) {
 }
 
 const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingList?: string[] }) => {
-  const { connection } = useConnection();
-  const anchorWallet = useAnchorWallet();
-  const walletConnectionPair = useMemo(
-    () => ({ wallet: anchorWallet!, connection }),
-    [anchorWallet, connection]
-  );
+  const { connectedProfile } = useConnectedWalletProfile();
 
   if (!user.address) {
     return null;
@@ -583,7 +586,7 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
       <p className={`m-0 text-base font-semibold`}>
         <ProfileHandle user={user} shorten={true} />
       </p>
-      {user.address === anchorWallet?.publicKey.toBase58() ? (
+      {user.address === connectedProfile?.pubkey ? (
         <Button5
           v={`secondary`}
           type={`button`}
@@ -595,7 +598,7 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
         <FollowUnfollowButton
           source={'feed'}
           className={`!w-full sm:ml-auto sm:w-auto`}
-          walletConnectionPair={walletConnectionPair}
+          walletConnectionPair={connectedProfile?.walletConnectionPair!}
           toProfile={{ address: user.address }}
           type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
         />
@@ -779,7 +782,7 @@ export const NFTCarousel = ({
       </div>
       <div
         className={`absolute ${
-          attrs ? `bottom-24` : `bottom-4`
+          attrs ? `top-6` : `top-6`
         } left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2 transition-all duration-300 ease-in-out`}
       >
         {nfts.map((nft, i) => (

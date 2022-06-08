@@ -1,0 +1,34 @@
+#import "./connectionNode.graphql"
+
+query getConnectedWalletProfileData($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+  wallet(address: $address) {
+    address
+    nftCounts {
+      owned
+      created
+      offered
+      listed
+    }
+    connectionCounts {
+      fromCount
+      toCount
+    }
+    profile {
+      handle
+      profileImageUrlLowres
+      profileImageUrlHighres
+    }
+  }
+
+  followers: connections(to: [$address], limit: $limit, offset: $offset) {
+    from {
+      ...ConnectionNode
+    }
+  }
+
+  following: connections(from: [$address], limit: $limit, offset: $offset) {
+    to {
+      ...ConnectionNode
+    }
+  }
+}

@@ -2,6 +2,6 @@ fragment ConnectionNode on Wallet {
   address
   profile {
     handle
-    profileImageUrl
+    profileImageUrlLowres
   }
 }

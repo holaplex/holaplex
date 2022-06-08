@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import styled from 'styled-components';
 import {
   GetProfileFollowerOverviewQuery,
@@ -15,33 +15,17 @@ import { useProfileData } from '@/common/context/ProfileData';
 import Modal from './Modal';
 import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 type FollowerCountProps = {
+  wallet?: AnchorWallet;
   setShowFollowsModal: (s: FollowsModalState) => void;
   showButton?: boolean;
 };
 
-export const FollowerCount: FC<FollowerCountProps> = ({
-  setShowFollowsModal,
-  showButton = true,
-}) => {
-  const wallet = useAnchorWallet();
-  return (
-    <FollowerCountContent
-      wallet={wallet}
-      setShowFollowsModal={setShowFollowsModal}
-      showButton={showButton}
-    />
-  );
-};
-
-type FollowerCountContentProps = FollowerCountProps & {
-  wallet?: AnchorWallet;
-};
-
 type FollowsModalState = 'hidden' | 'followers' | 'following';
 
-export const FollowerCountContent: FC<FollowerCountContentProps> = ({
+export const FollowerCount: FC<FollowerCountProps> = ({
   wallet,
   setShowFollowsModal,
   showButton,
@@ -49,7 +33,10 @@ export const FollowerCountContent: FC<FollowerCountContentProps> = ({
   const { publicKey } = useProfileData();
 
   const { connection } = useConnection();
-  const walletConnectionPair = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+  const { connectedProfile } = useConnectedWalletProfile();
+
+  const walletConnectionPair2 = useMemo(() => ({ wallet, connection }), [wallet, connection]);
+  const walletConnectionPair = connectedProfile?.walletConnectionPair;
 
   const profileFollowerOverview = useGetProfileFollowerOverviewQuery({
     variables: { pubKey: publicKey },
@@ -238,7 +225,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
                   address: p.walletAddress,
                   profile: {
                     handle: p.handle,
-                    profileImageUrl: p.profileImageUrlLowres,
+                    profileImageUrlLowres: p.profileImageUrlLowres,
                   },
                 }}
               />
@@ -276,47 +263,58 @@ const OtherFollowersNumberBubble = styled.button`
   background-color: #262626;
 `;
 
-
 interface FollowerConnection {
   from: {
     address: string;
-    profile?: {
-      handle?: string | null | undefined;
-    } | null | undefined
-  }
+    profile?:
+      | {
+          handle?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  };
 }
 
 interface FollowingConnection {
   to: {
     address: string;
-    profile?: {
-      handle?: string | null | undefined;
-    } | null | undefined
-  }
+    profile?:
+      | {
+          handle?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  };
 }
 
 /**
-   * Processes raw follower connections returned from backend for further use 
-   * 
-   * @param connections follower data returned from backend
-   * @param sort sort followers? Defaults to <code>true</code>
-   * @returns prepped array of follower connections
-   */
- export function cleanUpFollowers(connections: FollowerConnection[] | undefined, sort=true): FollowerConnection[] {
-  const uniqueFollowers = [...new Map(connections?.map(f => [f.from.address, f])).values()];
+ * Processes raw follower connections returned from backend for further use
+ *
+ * @param connections follower data returned from backend
+ * @param sort sort followers? Defaults to <code>true</code>
+ * @returns prepped array of follower connections
+ */
+export function cleanUpFollowers(
+  connections: FollowerConnection[] | undefined,
+  sort = true
+): FollowerConnection[] {
+  const uniqueFollowers = [...new Map(connections?.map((f) => [f.from.address, f])).values()];
   if (sort) uniqueFollowers.sort(compareFollowersForSorting);
   return uniqueFollowers;
 }
 
 /**
- * Processes raw following connections returned from backend for further use 
- * 
+ * Processes raw following connections returned from backend for further use
+ *
  * @param connections following data returned from backend
  * @param sort sort following connections? Defaults to <code>true</code>
  * @returns prepped array of following connections
  */
-export function cleanUpFollowing(connections: FollowingConnection[] | undefined, sort=true): FollowingConnection[] {
-  const uniqueFollowing = [...new Map(connections?.map(f => [f.to.address, f])).values()];
+export function cleanUpFollowing(
+  connections: FollowingConnection[] | undefined,
+  sort = true
+): FollowingConnection[] {
+  const uniqueFollowing = [...new Map(connections?.map((f) => [f.to.address, f])).values()];
   if (sort) uniqueFollowing.sort(compareFollowingForSorting);
   return uniqueFollowing;
 }
@@ -328,7 +326,8 @@ export function cleanUpFollowing(connections: FollowingConnection[] | undefined,
  * @returns string comparison (where applicable)
  */
 function compareFollowersForSorting(a: FollowerConnection, b: FollowerConnection): number {
-  if (a.from.profile?.handle && b.from.profile?.handle) return a.from.profile.handle.localeCompare(b.from.profile.handle);
+  if (a.from.profile?.handle && b.from.profile?.handle)
+    return a.from.profile.handle.localeCompare(b.from.profile.handle);
   else if (a.from.profile?.handle && !b.from.profile?.handle) return -1;
   else if (!a.from.profile?.handle && b.from.profile?.handle) return 1;
   else return a.from.address.localeCompare(b.from.address);
@@ -341,12 +340,12 @@ function compareFollowersForSorting(a: FollowerConnection, b: FollowerConnection
  * @returns string comparison (where applicable)
  */
 function compareFollowingForSorting(a: FollowingConnection, b: FollowingConnection): number {
-  if (a.to.profile?.handle && b.to.profile?.handle) return a.to.profile.handle.localeCompare(b.to.profile.handle);
+  if (a.to.profile?.handle && b.to.profile?.handle)
+    return a.to.profile.handle.localeCompare(b.to.profile.handle);
   else if (a.to.profile?.handle && !b.to.profile?.handle) return -1;
   else if (!a.to.profile?.handle && b.to.profile?.handle) return 1;
   else return a.to.address.localeCompare(b.to.address);
 }
-
 
 /**
  * Compares two following (users) alphabetically by wallet or handle, giving priority to twitter handles over wallets
@@ -354,11 +353,12 @@ function compareFollowingForSorting(a: FollowingConnection, b: FollowingConnecti
  * @param b second followers
  * @returns string comparison (where applicable)
  */
- function compareTwitterProfilesForSorting(a: TwitterProfile, b: TwitterProfile): number {
+function compareTwitterProfilesForSorting(a: TwitterProfile, b: TwitterProfile): number {
   if (a.handle && b.handle) return a.handle.localeCompare(b.handle);
   else if (a.handle && !b.handle) return -1;
   else if (!a.handle && b.handle) return 1;
-  else if (a.walletAddress && b.walletAddress) return a.walletAddress.localeCompare(b.walletAddress);
+  else if (a.walletAddress && b.walletAddress)
+    return a.walletAddress.localeCompare(b.walletAddress);
   else if (a.walletAddress && !b.walletAddress) return -1;
   else if (!a.walletAddress && b.walletAddress) return 1;
   else return 0;

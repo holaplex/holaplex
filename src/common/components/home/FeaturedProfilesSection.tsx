@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, VFC } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { ProfilePreviewData } from '@/types/types';
 import {
@@ -77,4 +77,4 @@ export default function FeaturedProfilesSection(): JSX.Element {
       </HomeSection.Body>
     </HomeSection>
   );
-};
+}

@@ -61,7 +61,11 @@ export const ProfileContainer: FC = ({ children }) => {
             <div className="mt-10 flex justify-center lg:justify-start">
               <ProfileDisplayName />
             </div>
-            <FollowerCount setShowFollowsModal={setShowFollowsModal} showButton={false} />
+            <FollowerCount
+              wallet={anchorWallet}
+              setShowFollowsModal={setShowFollowsModal}
+              showButton={false}
+            />
           </div>
           <div className="mt-10 w-full">
             <ProfileMenu />
