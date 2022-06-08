@@ -320,36 +320,38 @@ function FeedActionBanner(props: {
   return (
     <div
       className={classNames(
-        'flex w-full flex-nowrap items-center  bg-gray-900/40 p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 ',
+        'flex w-full flex-col flex-nowrap items-center justify-between bg-gray-900/40  p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:flex-row ',
         props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
       )}
     >
-      {attrs && (
-        <ProfilePFP
-          user={{
-            address: attrs.sourceUser.address,
-            profile: attrs.sourceUser.profile,
-          }}
-        />
-      )}
+      <div className={`flex items-center`}>
+        {attrs && (
+          <ProfilePFP
+            user={{
+              address: attrs.sourceUser.address,
+              profile: attrs.sourceUser.profile,
+            }}
+          />
+        )}
 
-      <div className="ml-2 flex max-w-xs flex-col gap-2">
-        <div className={`flex text-base font-semibold`}>
-          <ProfileHandle user={attrs.sourceUser} />
-          &nbsp;
-          <div className="text-base font-normal">{attrs.content}</div>
-          &nbsp;
-          {attrs.type === `MintEvent` && (
-            <div className={`truncate text-clip text-base`}>
-              {attrs?.nft?.name.slice(0, 8)}
-              {(attrs.nft?.name?.length || 0) > 8 && `...`}
-            </div>
-          )}
-        </div>
-        <div className="flex text-xs">
-          {/* {getHandle(attrs.sourceUser)}  */}
-          &nbsp;
-          {DateTime.fromISO(attrs.createdAt).toRelative()}
+        <div className="ml-2 flex max-w-xs flex-col gap-2">
+          <div className={`flex text-base font-semibold`}>
+            <ProfileHandle user={attrs.sourceUser} />
+            &nbsp;
+            <div className="text-base font-normal">{attrs.content}</div>
+            &nbsp;
+            {attrs.type === `MintEvent` && (
+              <div className={`truncate text-clip text-base`}>
+                {attrs?.nft?.name.slice(0, 8)}
+                {(attrs.nft?.name?.length || 0) > 8 && `...`}
+              </div>
+            )}
+          </div>
+          <div className="flex text-xs">
+            {/* {getHandle(attrs.sourceUser)}  */}
+            &nbsp;
+            {DateTime.fromISO(attrs.createdAt).toRelative()}
+          </div>
         </div>
       </div>
       {!props.options?.hideAction && (
@@ -451,7 +453,7 @@ const OfferAction = (props: { nft: any }) => {
             nftAddress: props.nft?.address,
           });
         }}
-        className="w-full sm:w-auto"
+        className="w-full whitespace-nowrap sm:w-auto"
       >
         Make offer
       </Button5>
@@ -552,7 +554,7 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={user.profile?.profileImageUrl}
+          src={user?.profile?.profileImageUrl || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>
@@ -780,7 +782,7 @@ export const NFTCarousel = ({
       </div>
       <div
         className={`absolute ${
-          attrs ? `bottom-24` : `bottom-4`
+          attrs ? `top-6` : `top-6`
         } left-1/2 flex -translate-x-1/2 items-center gap-1 space-x-3 rounded-full bg-gray-900/80 p-2 transition-all duration-300 ease-in-out`}
       >
         {nfts.map((nft, i) => (
