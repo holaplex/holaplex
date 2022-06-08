@@ -279,8 +279,6 @@ function FeedActionBanner(props: {
 }) {
   const attrs = props.attrs;
 
-  console.log(attrs);
-
   const { connectedProfile } = useConnectedWalletProfile();
 
   const myPubkey = connectedProfile?.pubkey;
@@ -674,8 +672,6 @@ export const NFTCarousel = ({
   interval?: number;
   attrs?: FeedCardAttributes[];
 }) => {
-  // console.log(feedEvent);
-  // console.log(attrs);
   const STARTING_INDEX = 0;
   const [currAttr, setCurrAttr] = useState<Nft>(nfts[STARTING_INDEX]);
   const [isHovered, setIsHovered] = useState(false);
