@@ -4,6 +4,7 @@ import ProfilePreviewCard, {
   ProfilePreviewProps,
 } from '@/common/components/elements/ProfilePreviewCard';
 import { FilterOption } from '@/common/components/layouts/Filters';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 import { routerQueryParamToEnumValue } from '@/common/utils/router';
 import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
 import { useRouter } from 'next/router';
@@ -40,7 +41,11 @@ export default function DiscoverProfilesTab(): JSX.Element {
   useEffect(() => {
     let result: TypeOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', v => v as TypeOption);
+      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(
+        router,
+        'type',
+        (v) => v as TypeOption
+      );
       if (queryValue === undefined) {
         router.push({ query: { type: result } });
       }
@@ -48,8 +53,13 @@ export default function DiscoverProfilesTab(): JSX.Element {
     }
   }, [router]);
 
-  //TODO add connected wallet to query
-  const queryContext = useQuery(typeFilter, INITIAL_FETCH, 0);
+  const userProfile = useConnectedWalletProfile();
+  const queryContext = useQuery(
+    userProfile.connectedProfile?.pubkey ?? undefined,
+    typeFilter,
+    INITIAL_FETCH,
+    0
+  );
 
   // when the server returns a profile with insufficient data to display the
   //  preview, remove it from the carousel
@@ -149,18 +159,23 @@ DiscoverProfilesTab.getLayout = function getLayout(
   );
 };
 
-const useQuery = (type: TypeOption, limit: number, offset: number) => {
+const useQuery = (
+  userWallet: string | undefined,
+  type: TypeOption,
+  limit: number,
+  offset: number
+) => {
   const [allQuery, allQueryContext] = useDiscoverProfilesAllLazyQuery();
 
   useEffect(() => {
     switch (type) {
       case TypeOption.ALL: {
-        allQuery({ variables: { limit: limit, offset: offset } });
+        allQuery({ variables: { userWallet: userWallet, limit: limit, offset: offset } });
         break;
       }
       default: //do-nothing
     }
-  }, [type, limit, offset, allQuery]);
+  }, [type, limit, offset, userWallet, allQuery]);
 
   switch (type) {
     case TypeOption.ALL:
