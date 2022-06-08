@@ -11,7 +11,6 @@ import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
-import { useTwitterHandle } from '@/common/hooks/useTwitterHandle';
 import { useConnection } from '@solana/wallet-adapter-react';
 import React, { FC, useState, useEffect, useMemo } from 'react';
 import Button from '@/components/elements/Button';
@@ -91,22 +90,22 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
   }, [uniqueSenders]);
 
   return (
-    <div className='container'>
-      <div className='flex'>
-        <div className='relative border-r border-gray-800'>
+    <div className="container">
+      <div className="flex">
+        <div className="relative border-r border-gray-800">
           <div
             className={
-              'fixed top-0 right-0 bottom-0 left-0 z-10 bg-gray-900 flex-row flex-none space-y-2 sm:sticky sm:block sm:w-64 sm:mr-8  overflow-auto h-screen'
+              'fixed top-0 right-0 bottom-0 left-0 z-10 h-screen flex-none flex-row space-y-2 overflow-auto bg-gray-900 sm:sticky sm:mr-8  sm:block sm:w-64'
             }
           >
-            <div className='grid-flow-col gap-4'>
-              <div className={'px-2 py-2 mx-2 my-4 rounded-md '}>
+            <div className="grid-flow-col gap-4">
+              <div className={'mx-2 my-4 rounded-md px-2 py-2 '}>
                 <form>
                   <input
-                    type='text'
-                    name='newMessageReceipient'
-                    className='z-0 w-full pl-10 pr-20 text-white bg-[#161616] border border-gray-600 rounded-lg h-14'
-                    placeholder='To...'
+                    type="text"
+                    name="newMessageReceipient"
+                    className="z-0 h-14 w-full rounded-lg border border-gray-600 bg-[#161616] pl-10 pr-20 text-white"
+                    placeholder="To..."
                   />
                 </form>
               </div>
@@ -117,88 +116,90 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
                 }
                 return (
                   <div
-                    className={'px-2 py-2 mx-2 my-4 rounded-md ' + cx}
+                    className={'mx-2 my-4 rounded-md px-2 py-2 ' + cx}
                     onClick={() => {
                       setSelectedMessage(us);
                       setReceiver(us);
                     }}
                   >
-                    <span className='inline-block'>
+                    <span className="inline-block">
                       <ProfilePFP user={{ address: us }} />
                     </span>
-                    <span className='inline-block pl-2'>{showFirstAndLastFour(us)}</span>
+                    <span className="inline-block pl-2">{showFirstAndLastFour(us)}</span>
                   </div>
                 );
               })}
-              <span className='absolute ml-8 text-center bottom-10 left-4'>
+              <span className="absolute bottom-10 left-4 ml-8 text-center">
                 <Button secondary={true}>New message</Button>
               </span>
             </div>
           </div>
         </div>
-        <div className='grow'>
-          <div className='relative h-full grid-flow-col gap-4'>
-            {//@ts-ignore
-            selectedMessage != '' && messages[selectedMessage] ? (
+        <div className="grow">
+          <div className="relative h-full grid-flow-col gap-4">
+            {
               //@ts-ignore
-              messages[selectedMessage].map((message: any, index) => {
-                let cx,
-                  dx = '';
-                if (message.sender.toBase58() == publicKey) {
-                  cx = 'text-right';
-                  dx = 'float-right';
-                } else {
-                  cx = 'text-left';
-                  dx = 'float-left';
-                }
+              selectedMessage != '' && messages[selectedMessage] ? (
+                //@ts-ignore
+                messages[selectedMessage].map((message: any, index) => {
+                  let cx,
+                    dx = '';
+                  if (message.sender.toBase58() == publicKey) {
+                    cx = 'text-right';
+                    dx = 'float-right';
+                  } else {
+                    cx = 'text-left';
+                    dx = 'float-left';
+                  }
 
-                var nextSame = '  ';
+                  var nextSame = '  ';
 
-                if (
-                  //@ts-ignore
-                  messages[selectedMessage].length < index + 1 &&
-                  message.sender.toBase58() ==
+                  if (
                     //@ts-ignore
-                    messages[selectedMessage][index + 1].sender.toBase58()
-                ) {
-                  nextSame = ' hidden ';
-                }
+                    messages[selectedMessage].length < index + 1 &&
+                    message.sender.toBase58() ==
+                      //@ts-ignore
+                      messages[selectedMessage][index + 1].sender.toBase58()
+                  ) {
+                    nextSame = ' hidden ';
+                  }
 
-                return (
-                  <div className={'py-2 ml-4 ' + cx}>
-                    <div
-                      className={
-                        'h12 max-h-12 px-10 py-10  text-white inline-flex focus:border-[#72a4e1aa] active:scale-[0.99] hover:opacity-100 items-center justify-center border-[3px] border-transparent opacity-90 transition-all bg-gray-800 false whitespace-nowrap border-opacity-10 rounded-xl w-[33%] '
-                      }
-                    >
-                      <span>
-                        {message.data.body}
-                        <br />
-                        {String(message.data.ts.toDateString())}
-                      </span>
+                  return (
+                    <div className={'ml-4 py-2 ' + cx}>
+                      <div
+                        className={
+                          'h12 false inline-flex max-h-12  w-[33%] items-center justify-center whitespace-nowrap rounded-xl border-[3px] border-transparent border-opacity-10 bg-gray-800 px-10 py-10 text-white opacity-90 transition-all hover:opacity-100 focus:border-[#72a4e1aa] active:scale-[0.99] '
+                        }
+                      >
+                        <span>
+                          {message.data.body}
+                          <br />
+                          {String(message.data.ts.toDateString())}
+                        </span>
+                      </div>
+                      <div className={'inline-block ' + dx + nextSame}>
+                        <ProfilePFP user={{ address: message.sender.toBase58() }} />
+                      </div>
                     </div>
-                    <div className={'inline-block ' + dx + nextSame}>
-                      <ProfilePFP user={{ address: message.sender.toBase58() }} />
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <></>
-            )}
-            <span className='absolute w-full ml-8 bottom-10'>
+                  );
+                })
+              ) : (
+                <></>
+              )
+            }
+            <span className="absolute bottom-10 ml-8 w-full">
               <form onSubmit={sendMessage}>
-                <div className='relative'>
+                <div className="relative">
                   <input
-                    type='text'
-                    name='message'
-                    className='z-0 w-full pl-10 pr-20 text-white bg-[#161616] border border-gray-600 rounded-lg h-14'
-                    placeholder='Message...'
+                    type="text"
+                    name="message"
+                    className="z-0 h-14 w-full rounded-lg border border-gray-600 bg-[#161616] pl-10 pr-20 text-white"
+                    placeholder="Message..."
                   />
-                  <div className='absolute top-2 right-2'>
+                  <div className="absolute top-2 right-2">
                     <button
-                      className='w-20 h-10 text-black bg-white rounded-lg hover:bg-gray-600'
-                      type='submit'
+                      className="h-10 w-20 rounded-lg bg-white text-black hover:bg-gray-600"
+                      type="submit"
                     >
                       Send
                     </button>

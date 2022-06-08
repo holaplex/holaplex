@@ -19,10 +19,12 @@ const Footer: VFC = () => {
     <footer className="mt-20 bg-gray-800 p-10">
       <div className="flex flex-row flex-wrap justify-center md:justify-between">
         <div className="mb-7 flex max-w-md flex-col items-center space-y-7 md:items-start">
-          <div className="flex flex-nowrap items-center text-center text-2xl">
-            <div className="flex h-10 w-10 items-center justify-center">👋</div>
-            <span className="font-medium text-gray-25">Holaplex</span>
-          </div>
+          <InternalLink href="/">
+            <div className="flex flex-nowrap items-center text-center text-2xl">
+              <div className="flex h-10 w-10 items-center justify-center">👋</div>
+              <span className="font-medium text-gray-25">Holaplex</span>
+            </div>
+          </InternalLink>
           <div className="text-center text-base text-gray-300 md:text-left">
             The only truly open-sourced, decentralized & community-governed NFT platform on Solana.
           </div>
@@ -59,7 +61,10 @@ const Footer: VFC = () => {
                 </InternalLink>
               </li>
               <li>
-                <InternalLink href="/storefront/new">Set up a storefront</InternalLink>
+                <InternalLink href="/storefront/new">New storefront</InternalLink>
+              </li>
+              <li>
+                <InternalLink href="/storefront/edit">Edit storefront</InternalLink>
               </li>
             </ul>
           </div>
@@ -68,6 +73,14 @@ const Footer: VFC = () => {
             <ul className="mt-4 space-y-2">
               <li>
                 <ExternalLink href="https://github.com/holaplex">GitHub Repos</ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href={'https://blog.holaplex.com/'}>Blog</ExternalLink>
+              </li>
+              <li>
+                <ExternalLink href={'https://holaplex2.activehosted.com/f/3'}>
+                  Newsletter
+                </ExternalLink>
               </li>
               <li>
                 <ExternalLink href="#">Hola Collective</ExternalLink>
@@ -83,14 +96,10 @@ const Footer: VFC = () => {
             <span className="text-base font-medium text-white">Help</span>
             <ul className="mt-4 space-y-2">
               <li>
-                <ExternalLink href="https://holaplex-support.zendesk.com/hc/en-us/sections/4407417107475-FAQ">
-                  FAQs
-                </ExternalLink>
+                <ExternalLink href="https://wiki.holaplex.com/Help-Desk/FAQ">FAQs</ExternalLink>
               </li>
               <li>
-                <ExternalLink href="https://holaplex-support.zendesk.com/hc/en-us/requests/new">
-                  Support
-                </ExternalLink>
+                <ExternalLink href="https://wiki.holaplex.com/">Support</ExternalLink>
               </li>
               <li>
                 <ExternalLink href="https://twitter.com/holastatus">HolaStatus</ExternalLink>

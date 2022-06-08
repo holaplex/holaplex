@@ -5,6 +5,10 @@ query marketplacePreview($subdomain: String!) {
     bannerUrl
     creators {
       creatorAddress
+      profile {
+        handle
+        profileImageUrlHighres
+      }
     }
     auctionHouse {
       stats {

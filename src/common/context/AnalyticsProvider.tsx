@@ -30,7 +30,7 @@ interface AnalyticsUserProperties {
   pubkey: string; // same as user_id, but for use in custom reports
 }
 
-const debugAnalytics = true;
+const debugAnalytics = false;
 
 interface GenericTrackingAttributes {
   [key: string]: string | number | boolean | any[] | null | undefined;
@@ -45,7 +45,8 @@ export interface TrackingAttributes extends GenericTrackingAttributes {
     | 'Misc'
     | 'Profile'
     | 'NFTs'
-    | 'Alpha';
+    | 'Alpha'
+    | 'Search';
   event_label: string;
   value?: number;
   sol_value?: number;

@@ -29,6 +29,10 @@ export interface MarketplacePreviewData {
   bannerUrl: string;
   creators: {
     creatorAddress: string;
+    profile?: {
+      profileImageUrlHighres?: string;
+      handle?: string;
+    }
   }[]
   auctionHouse: {
     stats?: {
@@ -47,14 +51,11 @@ export type BuyNowListingPreviewData = {
 };
 
 
-export type FeaturedProfilesData = {address: string}[];
-
-
 export interface ProfilePreviewData {
   address: string;
   profile: {
     handle?: string;
-    profileImageUrl?: string;
+    profileImageUrlHighres?: string;
     bannerImageUrl?: string;
   }
   nftCounts: {

@@ -1,12 +1,12 @@
-import { HomeSection, HomeSectionCarousel } from 'pages/home-v2-wip';
-import React, { FC, useCallback, useEffect, useState, VFC } from 'react';
+import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import React, { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { imgOpt, isTouchScreenOnly } from '../../utils';
 import { MarketplacePreviewData } from '@/types/types';
 import { SolIcon } from '../elements/Price';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
-import { AvatarIcons } from '../elements/Avatar';
-import { useMarketplacePreviewQuery } from 'src/graphql/indexerTypes';
+import { AvatarIcons, AvatarIconsProps } from '../elements/Avatar';
+import { useMarketplacePreviewLazyQuery } from 'src/graphql/indexerTypes';
 import { getFallbackImage } from '@/modules/utils/image';
 
 const previewSubdomains: string[] = [
@@ -15,7 +15,8 @@ const previewSubdomains: string[] = [
   'skeletoncrew',
   'thechimpions',
   'monkedao',
-  'cityshop',
+  'event',
+  // 'cityshop',
   // 'ursmarket',
   // 'thislooksrare',
   // 'shiguardians',
@@ -23,6 +24,7 @@ const previewSubdomains: string[] = [
   // 'kurumanft',
   // 'paragon',
 ];
+
 
 const FeaturedMarketplacesSection: VFC = () => {
   return (
@@ -36,10 +38,8 @@ const FeaturedMarketplacesSection: VFC = () => {
       <HomeSection.Body>
         <HomeSectionCarousel cols={3} rows={2}>
           {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s}>
-              <div key={s} className="aspect-[16/10] w-full p-2">
-                <MarketplacePreview subdomain={s} />
-              </div>
+            <HomeSectionCarousel.Item key={s} className="aspect-[560/360] w-full p-4">
+              <MarketplacePreview subdomain={s} />
             </HomeSectionCarousel.Item>
           ))}
         </HomeSectionCarousel>
@@ -58,9 +58,10 @@ const LoadingPreview = () => {
 
 interface MarketplacePreviewProps {
   subdomain: string;
+  data?: MarketplacePreviewData;
 }
 
-const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
+const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) => {
   const { track } = useAnalytics();
 
   const [showDetails, setShowDetails] = useState(false);
@@ -68,15 +69,24 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
   const onMouseEnter = useCallback(() => setShowDetails(true), []);
   const onMouseLeave = useCallback(() => setShowDetails(isTouchScreenOnly()), []);
 
-  const marketplaceQuery = useMarketplacePreviewQuery({
-    variables: {
-      subdomain: subdomain,
-    },
+  const [marketplacePreviewQuery, { data: queriedData, loading, called }] =
+    useMarketplacePreviewLazyQuery();
+
+  useEffect(() => {
+    if (!data && !loading && !called) {
+      marketplacePreviewQuery({ variables: { subdomain: subdomain } });
+    }
   });
-  let data: MarketplacePreviewData | undefined = marketplaceQuery?.data?.marketplace
-    ? (marketplaceQuery.data.marketplace as MarketplacePreviewData)
-    : undefined;
-  const loading: boolean = marketplaceQuery?.loading;
+
+  let finalData: MarketplacePreviewData | undefined = useMemo(() => {
+    let result: MarketplacePreviewData | undefined;
+    if (data) {
+      result = data;
+    } else if (!loading && called) {
+      result = queriedData?.marketplace as MarketplacePreviewData;
+    }
+    return result;
+  }, [queriedData, loading, called, data]);
 
   const onClickMarketplaceLink = useCallback(() => {
     track('Marketplace Selected', {
@@ -85,17 +95,17 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
     });
   }, [data, track]);
 
-  if (loading || !dataAreSufficient(data)) {
+  if (loading || !dataAreSufficient(finalData)) {
     return <LoadingPreview />;
   }
 
   // sufficient data are available after checking dataAreSufficient()
-  data = data!;
+  finalData = finalData!;
 
-  const marketplaceUrl: string = `https://${data.subdomain}.holaplex.market`;
-  const nftVolumeStr: string = Number.parseInt(data.stats.nfts).toLocaleString();
+  const marketplaceUrl: string = `https://${finalData.subdomain}.holaplex.market`;
+  const nftVolumeStr: string = Number.parseInt(finalData.stats.nfts).toLocaleString();
   const floorPriceSol: number =
-    Number.parseFloat(data.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
+    Number.parseFloat(finalData.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
 
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -103,8 +113,8 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
       <div className="relative flex">
         <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
           <img
-            src={imgOpt(data.bannerUrl, 800)}
-            alt={`${data.name}`}
+            src={imgOpt(finalData.bannerUrl, 800)}
+            alt={`${finalData.name}`}
             className="min-h-full min-w-full object-cover"
             // provide a fallback image in case the banner isnt found
             onError={({ currentTarget }) => {
@@ -125,18 +135,14 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
       <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
         <div className="pointer-events-auto">
           <AvatarIcons
-            creators={
-              data.creators.map((c) => {
-                return { address: c.creatorAddress };
-              }) || []
-            }
+            profiles={finalData.creators.map(convertCreatorDataToAvatarIconProps) || []}
           />
         </div>
       </div>
 
       {/* marketplace name, NFT volume, and floor price section */}
       <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-sm font-semibold text-white lg:text-xl">{data.name}</span>
+        <span className="text-sm font-semibold text-white lg:text-lg">{finalData.name}</span>
 
         {/* NFT volume and floor price row container
                 Using height and opacity (rather than 'display') to animate bottom-text appearing */}
@@ -145,11 +151,11 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain }) => {
             showDetails ? 'h-8 opacity-100' : 'h-0 opacity-0'
           } flex flex-row items-center justify-between overflow-hidden duration-150`}
         >
-          <span className="text-left text-xs font-medium lg:text-base">{`${nftVolumeStr} NFTs`}</span>
+          <span className="text-left text-xs font-medium lg:text-sm">{`${nftVolumeStr} NFTs`}</span>
           <div
             className={`${
               floorPriceSol == 0 ? 'hidden' : ''
-            } flex flex-row text-right text-xs  font-medium lg:text-base`}
+            } flex flex-row text-right text-xs font-medium lg:text-sm`}
           >
             <span className="mr-1 lg:mr-3">Floor price</span>
             <Price priceSol={floorPriceSol} />
@@ -173,6 +179,19 @@ function dataAreSufficient(data?: MarketplacePreviewData): boolean {
   );
 }
 
+function convertCreatorDataToAvatarIconProps(
+  data: MarketplacePreviewData['creators'][0]
+): AvatarIconsProps['profiles'][0] {
+  // always supply 'data' so that the avatar component doesnt attempt to
+  //  retrieve the data itself (it will find nothing since we already know it's not there)
+  const result: AvatarIconsProps['profiles'][0] = { address: data.creatorAddress, data: {} };
+  if (data.profile) {
+    result.data!.pfpUrl = data.profile.profileImageUrlHighres;
+    result.data!.twitterHandle = data.profile.profileImageUrlHighres;
+  }
+  return result;
+}
+
 const Price: VFC<{ priceSol: number }> = (props) => {
   const priceString: string = props.priceSol.toLocaleString(undefined, {
     minimumFractionDigits: 0,
@@ -188,7 +207,7 @@ const Price: VFC<{ priceSol: number }> = (props) => {
 const Container: FC<any> = (props) => {
   return (
     <div
-      className="relative flex h-full w-full overflow-clip rounded-lg duration-150 hover:scale-[1.02] shadow-md shadow-black"
+      className="relative flex h-full w-full overflow-clip rounded-lg shadow-md shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );

@@ -7,16 +7,21 @@ interface ProfileSearchItemProps {
   address: string;
   handle?: string | null;
   profileImage?: string;
+  onClick?: () => void;
 }
 
 export const ProfileSearchItem: FC<ProfileSearchItemProps> = ({
   address,
   handle,
   profileImage,
+  onClick,
 }) => {
   return (
     <Link href={`/profiles/${address}`}>
-      <a className={`flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`}>
+      <a
+        onClick={onClick}
+        className={`flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`}
+      >
         <div className={`flex flex-row items-center gap-6`}>
           <Avatar size={`md`} address={address} showAddress={false} />
           <p className={`m-0 text-sm`}>{handle ? `@${handle}` : shortenAddress(address)}</p>
@@ -35,6 +40,7 @@ interface NFTSearchItemProps {
   creatorAddress?: string | null;
   creatorHandle?: string | null;
   address: string;
+  onClick?: () => void;
 }
 
 export const NFTSearchItem: FC<NFTSearchItemProps> = ({
@@ -43,10 +49,14 @@ export const NFTSearchItem: FC<NFTSearchItemProps> = ({
   creatorAddress,
   address,
   creatorHandle,
+  onClick,
 }) => {
   return (
     <Link href={`/nfts/${address}`}>
-      <a className={`flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`}>
+      <a
+        onClick={onClick}
+        className={`flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`}
+      >
         <div className={`flex flex-row items-center gap-6`}>
           <img
             src={image}
@@ -56,7 +66,11 @@ export const NFTSearchItem: FC<NFTSearchItemProps> = ({
           <p className={`m-0 text-sm`}>{name}</p>
         </div>
         <p className={`m-0 hidden text-sm text-gray-300 md:inline-block`}>
-          {creatorHandle ? `@${creatorHandle}` : creatorAddress ? shortenAddress(creatorAddress) : null}
+          {creatorHandle
+            ? `@${creatorHandle}`
+            : creatorAddress
+            ? shortenAddress(creatorAddress)
+            : null}
         </p>
       </a>
     </Link>

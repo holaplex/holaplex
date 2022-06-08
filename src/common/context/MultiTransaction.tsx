@@ -1,13 +1,7 @@
-import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { isEmpty } from 'ramda';
-import React, { FC, createContext, useState } from 'react';
-import { toast } from 'react-toastify';
-import { v4 } from 'uuid';
+import React, { FC, createContext, useState, useContext } from 'react';
 import { errorCodeHelper } from '../../modules/utils/marketplace';
 import Button from '../components/elements/Button';
 import Modal from '../components/elements/Modal';
-import { None } from '../components/forms/OfferForm';
 
 type AsyncFunction = (arg?: any) => Promise<void>;
 export type Action = {
@@ -87,7 +81,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
-        if (errorMsg.includes(`User rejected the request`)) {
+        if (
+          errorMsg.includes(`User rejected the request`) ||
+          errorMsg.includes(`was not confirmed`) ||
+          errorMsg.includes(`It is unknown if it succeeded or failed`)
+        ) {
           setActions([]);
           setHasRemainingActions(false);
         } else {
@@ -138,7 +136,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
-        if (errorMsg.includes(`User rejected the request`)) {
+        if (
+          errorMsg.includes(`User rejected the request`) ||
+          errorMsg.includes(`was not confirmed`) ||
+          errorMsg.includes(`It is unknown if it succeeded or failed`)
+        ) {
           setActions([]);
           setHasRemainingActions(false);
         } else {
@@ -212,4 +214,12 @@ export const MultiTransactionProvider: FC = ({ children }) => {
       {children}
     </MultiTransactionContext.Provider>
   );
+};
+
+export const useMultiTransactionModal = () => {
+  const multiTransactionModal = useContext(MultiTransactionContext);
+  if (!multiTransactionModal) {
+    throw new Error('useMultiTransactionModal must be used within a MultiTransactionContext');
+  }
+  return multiTransactionModal;
 };

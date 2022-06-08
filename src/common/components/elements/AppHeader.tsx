@@ -19,6 +19,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
 import classNames from 'classnames';
+import { Button5 } from './Button2';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -188,33 +189,26 @@ export function AppHeader() {
             </Popover> */}
 
             {connectedAndInstalledWallet && (
-                            
-                            <Link href={"/profiles/" +publicKey+ "/messages"}  passHref>
-                              <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
-                                Messages
-                              </a>
-                            </Link>
-
-              
+              <Link href={'/profiles/' + publicKey + '/messages'} passHref>
+                <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
+                  Messages
+                </a>
+              </Link>
             )}
 
-            {connectedAndInstalledWallet && (
-              <div className={`rounded-full p-4 shadow-lg shadow-black hover:bg-gray-800`}>
-                <DialectNotificationsButton />
-              </div>
-            )}
+            {connectedAndInstalledWallet && <DialectNotificationsButton />}
 
             {connectedAndInstalledWallet ? (
               <ProfileImage />
             ) : (
-              <Button
+              <Button5
+                v="primary"
                 loading={connecting}
                 onClick={() => setVisible(true)}
-                size="small"
-                className={`text-lg font-medium`}
+                className={`min-h-full text-lg font-medium`}
               >
                 Connect
-              </Button>
+              </Button5>
             )}
           </div>
         )}
@@ -236,26 +230,25 @@ const MobileHeader = () => {
           {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
-        <MenuButton onClick={() => setDisplayMenu(true)}>
+        <button
+          className="flex items-center justify-center rounded-full shadow-lg shadow-black hover:bg-gray-800"
+          onClick={() => setDisplayMenu(true)}
+        >
           <MenuIcon color="#fff" />
-        </MenuButton>
+        </button>
       </MobileHeaderContainer>
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
     </>
   );
 };
 
-const MenuButton = styled.button`
-  ${ButtonReset}
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const EmojiLogoAnchor = styled.a`
   width: 40px;
   height: 40px;
-  font-size: 24px;
+  font-size: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const MobileHeaderContainer = styled.div`

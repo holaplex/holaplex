@@ -3,27 +3,37 @@ import { useRevokeConnection } from '@/common/hooks/useRevokeConnection';
 import { IProfile } from '@/modules/feed/feed.interfaces';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
 import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
-import { useProfileData } from '@/common/context/ProfileData';
-
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 import classNames from 'classnames';
 import { useApolloClient } from '@apollo/client';
 import {
   AllConnectionsFromDocument,
   AllConnectionsToDocument,
   IsXFollowingYDocument,
+  GetProfileFollowerOverviewDocument,
+  GetCollectedByDocument,
+  GetConnectedWalletProfileDataDocument,
 } from 'src/graphql/indexerTypes';
 
+export type FollowUnfollowSource =
+  | 'modalFollowing'
+  | 'modalFollowers'
+  | 'profileButton'
+  | 'feed'
+  | 'whotofollow'
+  | 'collectedBy';
+
 type FollowUnfollowButtonProps = {
-  source: 'modalFollowing' | 'modalFollowers' | 'profileButton' | 'feed' | 'whotofollow';
-  walletConnectionPair: {
+  source: FollowUnfollowSource;
+  walletConnectionPair?: {
     wallet: AnchorWallet;
     connection: Connection;
   };
@@ -38,15 +48,20 @@ type FollowUnfollowButtonProps = {
 export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   source,
   type,
-  walletConnectionPair,
+  walletConnectionPair: wcProp,
   className,
   toProfile,
 }) => {
   const { track } = useAnalytics();
   const queryClient = useQueryClient(); // TODO: Remove
-  const { connection, wallet } = walletConnectionPair;
-  const myWallet = wallet.publicKey.toBase58();
+  const apolloClient = useApolloClient();
+  const { connection } = useConnection();
+  const { connectedProfile } = useConnectedWalletProfile();
+  const myWallet = connectedProfile?.pubkey; //  wallet.publicKey.toBase58();
   const toWallet = toProfile.address;
+
+  //! Inelegant I know, but hopefully we can drop the prop entierly and rework this once we have a way to "connect and do action" at the same time
+  const walletConnectionPair = (wcProp ?? connectedProfile?.walletConnectionPair)!;
 
   const sharedTrackingParams = {
     source,
@@ -59,7 +74,6 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   const trackInitiateTransaction = () => track(type + ' initiated', sharedTrackingParams);
   const trackSuccess = () => track(type + ' succeeded', sharedTrackingParams);
   const trackError = () => track(type + ' errored', sharedTrackingParams);
-  const apolloClient = useApolloClient();
 
   const connectTo = useMakeConnection(walletConnectionPair, {
     onSuccess: async (txId, toWallet) => {
@@ -80,7 +94,14 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
       await connection.confirmTransaction(txId, 'processed');
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
+          GetConnectedWalletProfileDataDocument,
+        ],
       });
 
       trackSuccess();
@@ -127,7 +148,14 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
 
       await queryClient.invalidateQueries();
       await apolloClient.refetchQueries({
-        include: [AllConnectionsFromDocument, AllConnectionsToDocument, IsXFollowingYDocument],
+        include: [
+          AllConnectionsFromDocument,
+          AllConnectionsToDocument,
+          IsXFollowingYDocument,
+          GetProfileFollowerOverviewDocument,
+          GetCollectedByDocument,
+          GetConnectedWalletProfileDataDocument,
+        ],
       });
 
       trackSuccess();
@@ -177,7 +205,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   return (
     <Button5
       v={type === 'Follow' ? 'primary' : 'secondary'}
-      className={classNames('h-10 w-28', className)}
+      className={classNames('h-8 w-24 lg:h-10 lg:w-28', className)}
       onClick={() => handleClick()}
       loading={loading}
     >

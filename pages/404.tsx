@@ -1,9 +1,3 @@
-import Error from 'next/error';
-import styled from 'styled-components';
-
-const ErrorWrapper = styled(Error)`
-  background: black;
-`;
 export default function Custom404() {
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-black text-center text-black">
