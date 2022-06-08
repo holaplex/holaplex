@@ -42,7 +42,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
   useEffect(() => {
     let result: TypeOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', TypeOption);
+      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', v => v as TypeOption);
       if (queryValue === undefined) {
         router.push({ query: { type: result } });
       }

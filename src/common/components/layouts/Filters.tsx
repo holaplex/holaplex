@@ -27,7 +27,7 @@ export default function FiltersSection(props: FiltersSectionProps): JSX.Element 
         <div className={classNames('flex flex-col space-y-4')}>
           <span
             className={classNames(
-              'flex w-full flex-row flex-nowrap items-center justify-between p-4',
+              'flex w-full flex-row flex-nowrap items-center justify-between p-4 space-x-4',
               'border-b border-b-gray-800'
             )}
           >

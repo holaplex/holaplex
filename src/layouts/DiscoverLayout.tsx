@@ -22,7 +22,7 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
 
   return (
     <div className={classNames('mt-10', ['flex flex-col px-2', 'md:flex-row md:px-20'])}>
-      <div className={classNames('mb-10', 'md:mb-0 md:sticky md:top-0 md:h-screen')}>
+      <div className={classNames('mb-10', 'md:sticky md:top-0 md:mb-0 md:h-screen')}>
         <FiltersSection>
           {props.filters.map((f) => (
             <FiltersSection.Filter key={f.title} {...f} />

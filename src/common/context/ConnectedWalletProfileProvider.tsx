@@ -9,7 +9,7 @@ import {
 
 type WalletProfile = GetConnectedWalletProfileDataQuery['followers'][0]['from'];
 
-interface ConnectedWalletProfileData {
+export interface ConnectedWalletProfileData {
   connectedProfile: {
     pubkey: string | null;
     profile?: {

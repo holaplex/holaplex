@@ -33,14 +33,14 @@ export default function DiscoverProfilesTab(): JSX.Element {
   const router = useRouter();
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [typeFilter, setTypeFilter] = useState<TypeOption>(TypeOption.ALL);
+  const [typeFilter, setTypeFilter] = useState<TypeOption>(DEFAULT_TYPE);
   const [profileData, setProfileData] = useState<ProfilePreviewProps[]>([]);
 
   // set default filters if the URL doesnt already contain them, and get the filter otherwise
   useEffect(() => {
     let result: TypeOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', TypeOption);
+      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', v => v as TypeOption);
       if (queryValue === undefined) {
         router.push({ query: { type: result } });
       }
