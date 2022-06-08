@@ -188,20 +188,20 @@ function DiscoverMenu(): JSX.Element {
           </MenuLink>
         </li>
         <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/discover?tab=nfts">
+          <MenuLink href="/discover/nfts">
             <PhotographIcon className="h-5 w-5" />
             <span>NFTs</span>
           </MenuLink>
         </li>
         {/* TODO restore once collection discovery is ready */}
         {/* <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/discover?tab=collections">
+          <MenuLink href="/discover/collections">
             <CollectionIcon className="h-5 w-5" />
             <span>Collections</span>
           </MenuLink>
         </li> */}
         <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/discover?tab=profiles">
+          <MenuLink href="/discover/profiles">
             <UsersIcon className="h-5 w-5" />
             <span>Profiles</span>
           </MenuLink>
