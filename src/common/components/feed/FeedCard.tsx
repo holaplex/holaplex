@@ -264,7 +264,8 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a>
-        {(twitterHandle && '@' + (shorten ? shortenHandle(twitterHandle) : twitterHandle)) ||
+        {(twitterHandle &&
+          '@' + (shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle)) ||
           shortenAddress(user.address)}
       </a>
     </Link>
@@ -277,6 +278,8 @@ function FeedActionBanner(props: {
   options?: FeedCardOptions;
 }) {
   const attrs = props.attrs;
+
+  console.log(attrs);
 
   const { connectedProfile } = useConnectedWalletProfile();
 
@@ -323,12 +326,15 @@ function FeedActionBanner(props: {
         props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
       )}
     >
-      <ProfilePFP
-        user={{
-          address: props.event.walletAddress,
-          profile: props.event.profile,
-        }}
-      />
+      {attrs && (
+        <ProfilePFP
+          user={{
+            address: attrs.sourceUser.address,
+            profile: attrs.sourceUser.profile,
+          }}
+        />
+      )}
+
       <div className="ml-2 flex max-w-xs flex-col gap-2">
         <div className={`flex text-base font-semibold`}>
           <ProfileHandle user={attrs.sourceUser} />
@@ -523,7 +529,7 @@ export function ProfilePFP({ user }: { user: User }) {
 
       getTwitterHandleAndSetState();
     }
-  }, []);
+  }, [user, twitterHandle, twitterHandleQuery]);
 
   const [walletProfileQuery, walletProfile] = useWalletProfileLazyQuery({
     variables: {
@@ -539,7 +545,7 @@ export function ProfilePFP({ user }: { user: User }) {
         }
       });
     }
-  }, [twitterHandle]);
+  }, [twitterHandle, user, walletProfileQuery]);
 
   /*  const { track } = useAnalytics(); // track navigation to profile from pfp */
 
@@ -548,7 +554,7 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={walletProfile.data?.profile?.profileImageUrlLowres || pfpUrl}
+          src={user.profile?.profileImageUrl}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>
@@ -668,6 +674,8 @@ export const NFTCarousel = ({
   interval?: number;
   attrs?: FeedCardAttributes[];
 }) => {
+  // console.log(feedEvent);
+  // console.log(attrs);
   const STARTING_INDEX = 0;
   const [currAttr, setCurrAttr] = useState<Nft>(nfts[STARTING_INDEX]);
   const [isHovered, setIsHovered] = useState(false);
