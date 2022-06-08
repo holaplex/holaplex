@@ -59,7 +59,14 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
   } | null = null;
   if (publicKey) {
     const result = await getProfileInfoFromPubKey({ pubKey: publicKey.toBase58() });
-    profileInfo = result?.wallet?.profile ?? null;
+    if (result?.wallet?.profile) {
+      profileInfo = {
+        walletAddress: publicKey.toBase58(),
+        handle: result.wallet.profile.handle,
+        profileImageUrl: result.wallet.profile.profileImageUrlLowres,
+        bannerImageUrl: result.wallet.profile.bannerImageUrl,
+      };
+    }
   } else if (isTwitterUsername(input)) {
     const result = await getProfileInfoFromTwitterHandle({ handle: input });
     profileInfo = result?.profile ?? null;
