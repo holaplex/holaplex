@@ -155,6 +155,9 @@
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.4"
   },
+  "overrides": {
+    "autoprefixer": "10.4.5"
+  },
   "engines": {
     "node": "16.14.2"
   }

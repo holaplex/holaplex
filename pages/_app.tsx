@@ -122,6 +122,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                 <MarketplaceProvider wallet={wallet}>
                                   {() => (
                                     <AnalyticsProvider>
+                                      {/* Maybe we should move Mailbox provider to only wrap its dedicated page */}
                                       <MailboxProvider>
                                         <AppHeader />
                                         <PageLayout {...pageProps}>
