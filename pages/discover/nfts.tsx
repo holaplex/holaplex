@@ -5,8 +5,8 @@ import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
-import { routerQueryParamToSingleValue } from '.';
-import {CardGridWithSearchAndSize} from '@/common/components/elements/CardGrid';
+import { CardGridWithSearchAndSize } from '@/common/components/elements/CardGrid';
+import { routerQueryParamToEnumValue } from '@/common/utils/router';
 
 enum TypeOption {
   ALL = 'all',
@@ -21,11 +21,7 @@ const options: FilterOption<TypeOption>[] = [
   {
     label: 'Buy now',
     value: TypeOption.BUY_NOW,
-  },
-  {
-    label: 'Active offers',
-    value: TypeOption.ACTIVE_OFFERS,
-  },
+  }
 ];
 
 interface NFTCardCreatorData {
@@ -46,11 +42,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
   useEffect(() => {
     let result: TypeOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToSingleValue(
-        router,
-        'type',
-        (v) => (v ? (v as TypeOption) : undefined)
-      );
+      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', TypeOption);
       if (queryValue === undefined) {
         router.push({ query: { type: result } });
       }

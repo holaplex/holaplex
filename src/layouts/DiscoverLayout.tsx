@@ -33,11 +33,6 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
         <div className="flex space-x-1 p-1">
           <Tab title="NFTs" selected={router.pathname === TabRoute.NFTS} url={TabRoute.NFTS} />
           <Tab
-            title="Collections"
-            selected={router.pathname === TabRoute.COLLECTIONS}
-            url={TabRoute.COLLECTIONS}
-          />
-          <Tab
             title="Profiles"
             selected={router.pathname === TabRoute.PROFILES}
             url={TabRoute.PROFILES}

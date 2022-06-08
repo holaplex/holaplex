@@ -109,22 +109,24 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <WalletProviderDeprecated>
                     {({ wallet }) => (
                       <MultiTransactionProvider>
-                        <StorefrontProvider wallet={wallet}>
-                          {({}) => {
-                            return (
-                              <MarketplaceProvider wallet={wallet}>
-                                {() => (
-                                  <AnalyticsProvider>
-                                    <AppHeader />
-                                    <Layout {...pageProps}>
-                                      <Component {...pageProps} />
-                                    </Layout>
-                                  </AnalyticsProvider>
-                                )}
-                              </MarketplaceProvider>
-                            );
-                          }}
-                        </StorefrontProvider>
+                        <ConnectedWalletProfileProvider>
+                          <StorefrontProvider wallet={wallet}>
+                            {({}) => {
+                              return (
+                                <MarketplaceProvider wallet={wallet}>
+                                  {() => (
+                                    <AnalyticsProvider>
+                                      <AppHeader />
+                                      <Layout {...pageProps}>
+                                        <Component {...pageProps} />
+                                      </Layout>
+                                    </AnalyticsProvider>
+                                  )}
+                                </MarketplaceProvider>
+                              );
+                            }}
+                          </StorefrontProvider>
+                        </ConnectedWalletProfileProvider>
                       </MultiTransactionProvider>
                     )}
                   </WalletProviderDeprecated>

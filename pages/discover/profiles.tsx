@@ -1,17 +1,15 @@
-import {CardGridWithSearchAndSize} from '@/common/components/elements/CardGrid';
+import { CardGridWithSearchAndSize } from '@/common/components/elements/CardGrid';
 import ProfilePreviewCard, {
   ProfilePreviewLoadingCard,
   ProfilePreviewProps,
 } from '@/common/components/elements/ProfilePreviewCard';
 import { FilterOption } from '@/common/components/layouts/Filters';
+import { routerQueryParamToEnumValue } from '@/common/utils/router';
 import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
 import { useRouter } from 'next/router';
 import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  useDiscoverProfilesAllLazyQuery,
-} from 'src/graphql/indexerTypes';
-import { routerQueryParamToSingleValue } from '.';
+import { useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
 
 enum TypeOption {
   ALL = 'all',
@@ -42,11 +40,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
   useEffect(() => {
     let result: TypeOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToSingleValue(
-        router,
-        'type',
-        (v) => (v ? (v as TypeOption) : undefined)
-      );
+      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', TypeOption);
       if (queryValue === undefined) {
         router.push({ query: { type: result } });
       }
@@ -120,7 +114,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
   return (
     <CardGridWithSearchAndSize<ProfilePreviewProps>
       cardContext={{
-        noDataFallback: <div className='flex justify-center p-4'>No matching profiles</div>,
+        noDataFallback: <div className="flex justify-center p-4">No matching profiles</div>,
         cardCreator: (data) => <ProfilePreviewCard {...data} />,
         loadingCardCreator: () => <ProfilePreviewLoadingCard />,
       }}
