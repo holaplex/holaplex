@@ -24,7 +24,7 @@ import { Button5 } from '@/common/components/elements/Button2';
 import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
 import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 4;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
 const AGGREGATE_EVENT_LIMIT = 6;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
