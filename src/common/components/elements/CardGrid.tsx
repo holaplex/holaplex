@@ -37,8 +37,8 @@ export function CardGridWithSearchAndSize<T>(props: CardGridWithSearchAndSize<T>
   const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
 
   return (
-    <div>
-      <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+    <div className="w-full">
+      <div className="w-fullflex sticky top-0 z-10 flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
         <div className="flex w-full lg:justify-end">
           <SearchBar onChange={(v) => props.search.onChange(v)} />
           <GridSelector onChange={(v) => setGridView(v)} />
@@ -93,7 +93,7 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
   );
 
   return (
-    <div className="ml-4  hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
+    <div className="ml-4 hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
       <button
         className={classNames(
           'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
@@ -310,13 +310,14 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
         ))}
       </div>
       {/* infinite scroll display and load-more trigger */}
-      <div className={classNames({ hidden: !props.dataContext.hasMore })}>
-        <InView threshold={0.1} onChange={props.dataContext.onLoadMore}>
-          <div className={`my-6 flex w-full items-center justify-center font-bold`}>
-            <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
-          </div>
-        </InView>
-      </div>
+      <InView threshold={0.1} onChange={props.dataContext.onLoadMore}>
+        <div className={classNames('my-6 flex w-full items-center justify-center font-bold', {'hidden':
+          (!props.dataContext.hasMore ||
+            (props.dataContext.data && props.dataContext.data.length === 0)) || !props.dataContext.loading
+      })}>
+          <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
+        </div>
+      </InView>
     </>
   );
 }
