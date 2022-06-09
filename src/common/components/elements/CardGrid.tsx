@@ -37,7 +37,7 @@ export function CardGridWithSearchAndSize<T>(props: CardGridWithSearchAndSize<T>
   const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
       <div className="w-fullflex sticky top-0 z-10 flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
         <div className="flex w-full lg:justify-end">
           <SearchBar onChange={(v) => props.search.onChange(v)} />
