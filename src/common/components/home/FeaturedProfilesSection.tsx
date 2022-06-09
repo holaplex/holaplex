@@ -57,10 +57,9 @@ export default function FeaturedProfilesSection(): JSX.Element {
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>Profiles to follow</HomeSection.Title>
-        {/* //TODO revert once discovery is ready  */}
-        {/* <HomeSection.HeaderAction external href="https://google.com">
+        <HomeSection.HeaderAction href="/discover/profiles">
           Discover All
-        </HomeSection.HeaderAction> */}
+        </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>

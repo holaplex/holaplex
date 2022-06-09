@@ -88,10 +88,9 @@ const FeaturedBuyNowListingsSection: VFC = () => {
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>What&apos;s hot</HomeSection.Title>
-        {/* //TODO revert once discovery is ready */}
-        {/* <HomeSection.HeaderAction external href="https://holaplex.com">
+        <HomeSection.HeaderAction href="/discover/nfts">
           Discover All
-        </HomeSection.HeaderAction> */}
+        </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={carouselCols}>

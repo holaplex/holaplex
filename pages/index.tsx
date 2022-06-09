@@ -32,7 +32,6 @@ interface HomeLinkProps {
 const InternalLink: FC<HomeLinkProps> = ({ href, children }) => (
   <Link href={href} passHref>
     <a
-      href={href}
       className="flex flex-nowrap items-center stroke-gray-300 text-sm font-medium text-gray-300 hover:scale-105 hover:stroke-white hover:transition"
     >
       {children}
@@ -83,7 +82,7 @@ type HomeSectionSubtypes = {
  *  <HomeSection>
  *      <HomeSection.Header>
  *          <HomeSection.Title>Holaplex Preview</HomeSection.Title>
- *          <HomeSection.HeaderAction newTab href="www.holaplex.com">Go home</HomeSection.HeaderAction>
+ *          <HomeSection.HeaderAction external href="www.holaplex.com">Go home</HomeSection.HeaderAction>
  *      </HomeSection.Header>
  *      <HomeSection.Body>
  *          <SomeAmazingCustomContent/>
