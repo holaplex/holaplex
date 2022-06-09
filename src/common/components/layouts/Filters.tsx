@@ -13,7 +13,7 @@ export interface FiltersSectionProps {
 }
 
 export default function FiltersSection(props: FiltersSectionProps): JSX.Element {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [collapsed, setCollapsed] = useState<boolean>(true);
 
   return (
     <div className={classNames('flex flex-col justify-center', [{ 'basis-[320px]': !collapsed }])}>
