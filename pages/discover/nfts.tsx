@@ -102,7 +102,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
   return (
     <CardGridWithSearchAndSize<NFTCardCreatorData>
       cardContext={{
-        noDataFallback: <div>Nothing to see here</div>,
+        noDataFallback: <div>No matching NFTs</div>,
         cardCreator: (data, refetch, loading) => (
           <NFTCard
             nft={data.nft}
