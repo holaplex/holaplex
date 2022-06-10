@@ -264,9 +264,9 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a>
-        {(twitterHandle &&
-          '@' + (shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle)) ||
-          shortenAddress(user.address)}
+        {user.profile?.handle
+          ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
+          : `@${shortenAddress(user.address)}`}
       </a>
     </Link>
   );
