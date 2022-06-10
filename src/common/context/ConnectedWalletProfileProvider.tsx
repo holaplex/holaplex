@@ -1,9 +1,8 @@
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
   GetConnectedWalletProfileDataQuery,
-  useGetConnectedWalletProfileDataLazyQuery,
   useGetConnectedWalletProfileDataQuery,
 } from 'src/graphql/indexerTypes';
 
