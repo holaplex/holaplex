@@ -7,23 +7,27 @@ import {
   ListingReceipt,
   MintEvent,
   PurchaseReceipt,
+  WhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
+export type User = WhoToFollowQuery['followWallets'][0];
+export type UserProfile = User['profile'];
+
 type QueryNFT =
   | MintEvent['nft']
   | ListingReceipt['nft']
   | PurchaseReceipt['nft']
   | BidReceipt['nft'];
 
-export interface User {
-  address: string;
-  profile?: {
-    handle?: string;
-    profileImageUrl?: string;
-  } | null;
-}
+// export interface User {
+//   address: string;
+//   profile?: {
+//     handle?: string;
+//     profileImageUrlLowres?: string;
+//   } | null;
+// }
 
 export interface AggregateEvent {
   feedEventId: string;
@@ -72,7 +76,7 @@ export function generateFeedCardAttributes(
     sourceUser: {
       address: event.walletAddress,
       profile: event.profile,
-    },
+    } as User,
   };
   let solAmount: number | undefined;
   switch (event.__typename) {
@@ -87,7 +91,7 @@ export function generateFeedCardAttributes(
 
     case 'FollowEvent':
       const from = event.connection?.from!;
-      const to = event.connection?.to!;
+      const to = event.connection?.to! as User;
       return {
         ...base,
         type: 'FollowEvent',
@@ -148,7 +152,7 @@ export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => 
     return [
       {
         address: aggregateEvent.walletAddress,
-        profile: aggregateEvent.profile,
+        profile: aggregateEvent.profile as UserProfile,
       },
     ];
   }
@@ -157,7 +161,7 @@ export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => 
     if (!users?.find((u) => u?.address === user.walletAddress)) {
       users.push({
         address: user.walletAddress,
-        profile: user.profile,
+        profile: user.profile as UserProfile,
       });
     } else {
       // do nothing
