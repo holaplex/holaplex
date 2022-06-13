@@ -539,6 +539,7 @@ const ProfileNFTs = (props: WalletDependantPageProps) => {
               limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
               offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
             },
+
             updateQuery: (prev, { fetchMoreResult }) => {
               if (!fetchMoreResult) return prev;
               const prevNfts = prev.nfts;
@@ -546,37 +547,20 @@ const ProfileNFTs = (props: WalletDependantPageProps) => {
               if (isEmpty(moreNfts)) {
                 setHasMore(false);
               }
-            const { data: newData } = await fetchMore({
-              variables: {
-                ...variables,
-                limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-                offset:
-                  nftsToShow.length === INFINITE_SCROLL_AMOUNT_INCREMENT
-                    ? INFINITE_SCROLL_AMOUNT_INCREMENT
-                    : nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
-              },
-              updateQuery: (prev, { fetchMoreResult }) => {
-                if (!fetchMoreResult) return prev;
-                const prevNfts = prev.nfts;
-                const moreNfts = fetchMoreResult.nfts;
-                if (isEmpty(moreNfts)) {
-                  setHasMore(false);
-                }
 
-                fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+              fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
 
-                return { ...fetchMoreResult };
-              },
-            });
-          }}
-          nfts={filteredNfts}
-          gridView={gridView}
-          refetch={refetch}
-          loading={ownedNFTs.loading}
-          marketplace={marketplace as Marketplace}
-        />
-      </ProfileContainer>
-    </ProfileDataProvider>
+              return { ...fetchMoreResult };
+            },
+          });
+        }}
+        nfts={filteredNfts}
+        gridView={gridView}
+        refetch={refetch}
+        loading={ownedNFTs.loading}
+        marketplace={marketplace as Marketplace}
+      />
+    </>
   );
 };
 
