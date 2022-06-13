@@ -1,4 +1,3 @@
-import { ProfileContainer } from '@/common/components/elements/ProfileContainer';
 import { GetServerSideProps, NextPage } from 'next';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
@@ -35,11 +34,11 @@ import { Avatar } from '@/common/components/elements/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
-import { ProfilePageHead } from '../[publicKey]';
 import classNames from 'classnames';
 import NoProfileItems, {
   NoProfileVariant,
 } from '../../../src/common/components/elements/NoProfileItems';
+import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -365,7 +364,7 @@ enum ListingFilters {
 export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
 export const INITIAL_FETCH = 25;
 
-const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
+function ProfileNFTs(props: WalletDependantPageProps) {
   const { publicKey: pk } = props;
   const [listedFilter, setListedFilter] = useState<ListingFilters>(ListingFilters.ALL);
   const [searchFocused, setSearchFocused] = useState(false);
@@ -489,93 +488,92 @@ const ProfileNFTs: NextPage<WalletDependantPageProps> = (props) => {
     );
   };
 
+  const onLoadMore = async (inView: boolean) => {
+    if (!inView || loading || filteredNfts.length <= 0) {
+      return;
+    }
+
+    const { data: newData } = await fetchMore({
+      variables: {
+        ...variables,
+        limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+        offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+      },
+
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        const prevNfts = prev.nfts;
+        const moreNfts = fetchMoreResult.nfts;
+        if (isEmpty(moreNfts)) {
+          setHasMore(false);
+        }
+
+        fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+
+        return { ...fetchMoreResult };
+      },
+    });
+  };
+
   return (
-    <ProfileDataProvider profileData={props}>
-      <ProfilePageHead
-        publicKey={props.publicKey}
-        twitterProfile={{
-          twitterHandle: props.twitterHandle,
-          banner: props.banner,
-          pfp: props.profilePicture,
-        }}
-        description="View owned and created NFTs for this, or any other pubkey, in the Holaplex ecosystem."
-      />
-      <ProfileContainer>
-        <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
-          <div className={`flex w-full justify-start gap-4 lg:items-center`}>
-            <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
-            <ListingFilter
-              title={`Listed`}
-              filterToCheck={ListingFilters.LISTED}
-              count={listedCount}
-            />
-            <ListingFilter
-              title={`Unlisted`}
-              filterToCheck={ListingFilters.UNLISTED}
-              count={unlistedCount}
-            />
-          </div>
-          <div className={`flex w-full lg:justify-end`}>
-            <TextInput2
-              id="owned-search"
-              label="owned search"
-              hideLabel
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              leadingIcon={
-                <FeatherIcon
-                  icon="search"
-                  aria-hidden="true"
-                  className={searchFocused ? 'text-white' : 'text-gray-500'}
-                />
-              }
-              placeholder="Search"
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-            />
-            <GridSelector />
-          </div>
+    <>
+      <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+        <div className={`flex w-full justify-start gap-4 lg:items-center`}>
+          <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
+          <ListingFilter
+            title={`Listed`}
+            filterToCheck={ListingFilters.LISTED}
+            count={listedCount}
+          />
+          <ListingFilter
+            title={`Unlisted`}
+            filterToCheck={ListingFilters.UNLISTED}
+            count={unlistedCount}
+          />
         </div>
-        <NFTGrid
-          ctaVariant={`collected`}
-          hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
-          onLoadMore={async (inView) => {
-            if (!inView || loading || filteredNfts.length <= 0) {
-              return;
+        <div className={`flex w-full lg:justify-end`}>
+          <TextInput2
+            id="owned-search"
+            label="owned search"
+            hideLabel
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            leadingIcon={
+              <FeatherIcon
+                icon="search"
+                aria-hidden="true"
+                className={searchFocused ? 'text-white' : 'text-gray-500'}
+              />
             }
+            placeholder="Search"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+          />
+          <GridSelector />
+        </div>
+      </div>
+      <NFTGrid
+        ctaVariant={`collected`}
+        hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
+        onLoadMore={onLoadMore}
+        nfts={filteredNfts}
+        gridView={gridView}
+        refetch={refetch}
+        loading={ownedNFTs.loading}
+        marketplace={marketplace as Marketplace}
+      />
+    </>
+  );
+}
 
-            const { data: newData } = await fetchMore({
-              variables: {
-                ...variables,
-                limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-                offset:
-                  nftsToShow.length === INFINITE_SCROLL_AMOUNT_INCREMENT
-                    ? INFINITE_SCROLL_AMOUNT_INCREMENT
-                    : nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
-              },
-              updateQuery: (prev, { fetchMoreResult }) => {
-                if (!fetchMoreResult) return prev;
-                const prevNfts = prev.nfts;
-                const moreNfts = fetchMoreResult.nfts;
-                if (isEmpty(moreNfts)) {
-                  setHasMore(false);
-                }
+export default ProfileNFTs;
 
-                fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
-
-                return { ...fetchMoreResult };
-              },
-            });
-          }}
-          nfts={filteredNfts}
-          gridView={gridView}
-          refetch={refetch}
-          loading={ownedNFTs.loading}
-          marketplace={marketplace as Marketplace}
-        />
-      </ProfileContainer>
+ProfileNFTs.getLayout = function getLayout(
+  profileData: WalletDependantPageProps & { children: JSX.Element }
+): JSX.Element {
+  return (
+    <ProfileDataProvider profileData={profileData}>
+      <ProfileLayout profileData={profileData}>{profileData.children}</ProfileLayout>
     </ProfileDataProvider>
   );
 };
-
-export default ProfileNFTs;
