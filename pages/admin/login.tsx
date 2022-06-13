@@ -1,7 +1,4 @@
-import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
-//import LitJsSdk from 'lit-js-sdk';
-import jwt_decode from "jwt-decode";
 const LitJsSdk = require('lit-js-sdk');
 
 
