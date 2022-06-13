@@ -364,7 +364,7 @@ enum ListingFilters {
 export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
 export const INITIAL_FETCH = 25;
 
-const ProfileNFTs = (props: WalletDependantPageProps) => {
+function ProfileNFTs(props: WalletDependantPageProps) {
   const { publicKey: pk } = props;
   const [listedFilter, setListedFilter] = useState<ListingFilters>(ListingFilters.ALL);
   const [searchFocused, setSearchFocused] = useState(false);
@@ -488,6 +488,33 @@ const ProfileNFTs = (props: WalletDependantPageProps) => {
     );
   };
 
+  const onLoadMore = async (inView: boolean) => {
+    if (!inView || loading || filteredNfts.length <= 0) {
+      return;
+    }
+
+    const { data: newData } = await fetchMore({
+      variables: {
+        ...variables,
+        limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+        offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+      },
+
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        const prevNfts = prev.nfts;
+        const moreNfts = fetchMoreResult.nfts;
+        if (isEmpty(moreNfts)) {
+          setHasMore(false);
+        }
+
+        fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
+
+        return { ...fetchMoreResult };
+      },
+    });
+  };
+
   return (
     <>
       <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
@@ -528,32 +555,7 @@ const ProfileNFTs = (props: WalletDependantPageProps) => {
       <NFTGrid
         ctaVariant={`collected`}
         hasMore={hasMore && filteredNfts.length > INITIAL_FETCH - 1}
-        onLoadMore={async (inView) => {
-          if (!inView || loading || filteredNfts.length <= 0) {
-            return;
-          }
-
-          const { data: newData } = await fetchMore({
-            variables: {
-              ...variables,
-              limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-              offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
-            },
-
-            updateQuery: (prev, { fetchMoreResult }) => {
-              if (!fetchMoreResult) return prev;
-              const prevNfts = prev.nfts;
-              const moreNfts = fetchMoreResult.nfts;
-              if (isEmpty(moreNfts)) {
-                setHasMore(false);
-              }
-
-              fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
-
-              return { ...fetchMoreResult };
-            },
-          });
-        }}
+        onLoadMore={onLoadMore}
         nfts={filteredNfts}
         gridView={gridView}
         refetch={refetch}
@@ -562,7 +564,7 @@ const ProfileNFTs = (props: WalletDependantPageProps) => {
       />
     </>
   );
-};
+}
 
 export default ProfileNFTs;
 

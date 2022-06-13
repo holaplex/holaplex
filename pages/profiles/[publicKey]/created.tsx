@@ -17,6 +17,7 @@ import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/ma
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty } from 'ramda';
 import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
+import classNames from 'classnames';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
 
@@ -138,7 +139,12 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
 
   return (
     <>
-      <div className="sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4 lg:flex-row lg:justify-between lg:gap-4">
+      <div
+        className={classNames(
+          'sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4',
+          'lg:flex-row lg:justify-between lg:gap-4'
+        )}
+      >
         <div className={`flex w-full justify-start gap-4 lg:items-center`}>
           <ListingFilter title={`All`} filterToCheck={ListingFilters.ALL} count={totalCount} />
           <ListingFilter

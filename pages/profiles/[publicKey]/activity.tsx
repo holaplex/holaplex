@@ -10,7 +10,9 @@ import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout'
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
 
-const ActivityPage = ({ publicKey, ...props }: WalletDependantPageProps) => <ActivityContent />;
+function ActivityPage({ publicKey, ...props }: WalletDependantPageProps) {
+  return <ActivityContent />;
+}
 
 export default ActivityPage;
 

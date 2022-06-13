@@ -211,14 +211,4 @@ const Banner = styled.div`
   }
 `;
 
-// export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) => {
-//   const result = await getProfileServerSideProps(context);
-//   if ((result as { redirect?: boolean }).redirect) {
-//     return result;
-//   } else {
-//     const { props } = result as { props: WalletDependantPageProps };
-//     return { redirect: { destination: `/profiles/${props.publicKey}/nfts`, statusCode: 302 } };
-//   }
-// }; // Do server side redirection for SEO purposes.
-
 export default ProfileLayout;
