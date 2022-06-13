@@ -5,8 +5,8 @@ import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
-import { CardGridWithSearchAndSize } from '@/common/components/elements/CardGrid';
 import { routerQueryParamToEnumValue } from '@/common/utils/router';
+import { CardGridWithSearchAndSize } from '@/common/components/elements/CardGrid';
 
 enum TypeOption {
   ALL = 'all',

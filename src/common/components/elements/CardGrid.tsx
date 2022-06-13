@@ -9,7 +9,7 @@ import { SingleGrid } from '../icons/SingleGrid';
 import { TripleGrid } from '../icons/TripleGrid';
 import TextInput2 from './TextInput2';
 
-export interface CardGridWithSearchAndSize<T> {
+export interface CardGridWithSearchAndSizeProps<T> {
   /**
    * Attributes for creating/displaying cards.
    */
@@ -33,7 +33,7 @@ export interface CardGridWithSearchAndSize<T> {
  * @param props
  * @returns
  */
-export function CardGridWithSearchAndSize<T>(props: CardGridWithSearchAndSize<T>): JSX.Element {
+export function CardGridWithSearchAndSize<T>(props: CardGridWithSearchAndSizeProps<T>): JSX.Element {
   const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
 
   return (
