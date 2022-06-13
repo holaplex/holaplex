@@ -11,6 +11,7 @@ import { PhotographIcon, TrendingUpIcon } from '@heroicons/react/outline';
 enum TabRoute {
   COLLECTED,
   CREATED,
+  COLLECTIONS,
   OFFERS,
   ACTIVITY,
 }
@@ -24,6 +25,8 @@ export const ProfileMenu: FC = () => {
       ? TabRoute.ACTIVITY
       : router.pathname === `/profiles/[publicKey]/created`
       ? TabRoute.CREATED
+      : router.pathname === `/profiles/[publicKey]/collections`
+      ? TabRoute.COLLECTIONS
       : router.pathname === `/profiles/[publicKey]/offers`
       ? TabRoute.OFFERS
       : TabRoute.COLLECTED;
@@ -40,6 +43,12 @@ export const ProfileMenu: FC = () => {
       title: 'Created',
       icon: <FeatherIcon height={16} width={16} icon="plus-square" className="mr-4" />,
       path: `/profiles/${publicKey}/created`,
+    },
+    {
+      id: TabRoute.COLLECTIONS,
+      title: 'Collections',
+      icon: <FeatherIcon height={16} width={16} icon="folder" className="mr-4" />,
+      path: `/profiles/${publicKey}/collections`,
     },
     {
       id: TabRoute.OFFERS,
