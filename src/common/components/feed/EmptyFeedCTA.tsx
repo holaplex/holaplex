@@ -59,7 +59,7 @@ const EmptyFeedCTA = (props: {
     const actions: Action[] = [
       {
         name: `Following ${
-          topProfilesToFollow[0].profile?.handle || shortenAddress(topProfilesToFollow[0].address)
+          topProfilesToFollow[0].handle || shortenAddress(topProfilesToFollow[0].address)
         }`,
         id: `follow${topProfilesToFollow[0].address}}`,
         action: followTx,
@@ -67,7 +67,7 @@ const EmptyFeedCTA = (props: {
       },
       {
         name: `Following ${
-          topProfilesToFollow[1].profile?.handle || shortenAddress(topProfilesToFollow[1].address)
+          topProfilesToFollow[1].handle || shortenAddress(topProfilesToFollow[1].address)
         }`,
         id: `follow${topProfilesToFollow[1].address}}`,
         action: followTx,
@@ -75,7 +75,7 @@ const EmptyFeedCTA = (props: {
       },
       {
         name: `Following ${
-          topProfilesToFollow[2].profile?.handle || shortenAddress(topProfilesToFollow[2].address)
+          topProfilesToFollow[2].handle || shortenAddress(topProfilesToFollow[2].address)
         }`,
         id: `follow${topProfilesToFollow[2].address}}`,
         action: followTx,
@@ -83,7 +83,7 @@ const EmptyFeedCTA = (props: {
       },
       {
         name: `Following ${
-          topProfilesToFollow[3].profile?.handle || shortenAddress(topProfilesToFollow[3].address)
+          topProfilesToFollow[3].handle || shortenAddress(topProfilesToFollow[3].address)
         }`,
         id: `follow${topProfilesToFollow[3].address}}`,
         action: followTx,
@@ -91,7 +91,7 @@ const EmptyFeedCTA = (props: {
       },
       {
         name: `Following ${
-          topProfilesToFollow[4].profile?.handle || shortenAddress(topProfilesToFollow[4].address)
+          topProfilesToFollow[4].handle || shortenAddress(topProfilesToFollow[4].address)
         }`,
         id: `follow${topProfilesToFollow[4].address}}`,
         action: followTx,

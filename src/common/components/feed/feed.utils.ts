@@ -7,6 +7,7 @@ import {
   ListingReceipt,
   MintEvent,
   PurchaseReceipt,
+  WhoToFollowQuery,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
@@ -19,10 +20,35 @@ type QueryNFT =
 
 export interface User {
   address: string;
-  profile?: {
-    handle?: string;
-    profileImageUrl?: string;
-  } | null;
+  handle?: string;
+  profileImageUrl?: string;
+}
+
+
+export class User implements User {
+  static fromWhoToFollowQuery(queryData?: WhoToFollowQuery['followWallets'][0] | null): User {
+    if (!queryData) throw new Error('Insufficient data to transform');
+    return User.from(queryData.address, queryData.profile?.handle, queryData.profile?.profileImageUrlLowres);
+  }
+
+  static fromFeedQuery(queryData?: FeedQueryEvent | null): User {
+    if (!queryData) throw new Error('Insufficient data to transform');
+    return User.from(queryData.walletAddress, queryData.profile?.handle, queryData.profile?.profileImageUrl);
+  }
+
+  static fromFeedItem(queryData?: FeedItem | null): User {
+    if (!queryData) throw new Error('Insufficient data to transform');
+    return User.from(queryData.walletAddress, queryData.profile?.handle, queryData.profile?.profileImageUrl);
+  }
+  
+  static fromAggregateEvent(queryData?: AggregateEvent | null): User {
+    if (!queryData) throw new Error('Insufficient data to transform');
+    return User.from(queryData.walletAddress, queryData.profile?.handle, queryData.profile?.profileImageUrl);
+  }
+
+  private static from(address: string, handle?: string | undefined, profileImageUrl?: string | undefined): User {
+    return {address, handle, profileImageUrl};
+  }
 }
 
 export interface AggregateEvent {
@@ -58,7 +84,7 @@ export type FeedCardAttributes =
   | undefined;
 
 export function getHandle(u: User) {
-  return (u.profile?.handle && '@' + u.profile?.handle) || shortenAddress(u.address);
+  return (u.handle && '@' + u.handle) || shortenAddress(u.address);
 }
 
 export function generateFeedCardAttributes(
@@ -148,7 +174,8 @@ export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => 
     return [
       {
         address: aggregateEvent.walletAddress,
-        profile: aggregateEvent.profile,
+        handle: aggregateEvent.profile?.handle,
+        profileImageUrl: aggregateEvent.profile?.profileImageUrl
       },
     ];
   }
@@ -156,9 +183,10 @@ export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => 
   aggregateEvent.eventsAggregated.map((user) => {
     if (!users?.find((u) => u?.address === user.walletAddress)) {
       users.push({
-        address: user.walletAddress,
-        profile: user.profile,
-      });
+        address: aggregateEvent.walletAddress,
+        handle: aggregateEvent.profile?.handle,
+        profileImageUrl: aggregateEvent.profile?.profileImageUrl
+      },);
     } else {
       // do nothing
     }

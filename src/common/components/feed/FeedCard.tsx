@@ -174,10 +174,7 @@ function FollowCard(props: {
       )}
     >
       <ProfilePFP
-        user={{
-          address: props.event.walletAddress, // props.event.walletAddress,
-          profile: props.event.profile,
-        }}
+        user={User.fromFeedQuery(props.event)}
       />
       <div className="ml-4 flex flex-col justify-start gap-2">
         <div className="text-base font-semibold">
@@ -245,7 +242,7 @@ export const ProfileHandleStack = ({ users }: { users: User[] }) => {
 };
 
 export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?: boolean }) => {
-  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
+  const [twitterHandle, setTwitterHandle] = useState(user.handle);
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
   useEffect(() => {
@@ -264,8 +261,8 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a>
-        {user.profile?.handle
-          ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
+        {user.handle
+          ? `@${shorten ? shortenHandle(user.handle) : user.handle}`
           : `@${shortenAddress(user.address)}`}
       </a>
     </Link>
@@ -327,10 +324,7 @@ function FeedActionBanner(props: {
       <div className={`flex items-center`}>
         {attrs && (
           <ProfilePFP
-            user={{
-              address: attrs.sourceUser.address,
-              profile: attrs.sourceUser.profile,
-            }}
+            user={User.fromFeedItem(props.event)}
           />
         )}
 
@@ -511,9 +505,9 @@ export const ProfilePFPStack = ({ users }: { users: User[] }) => {
 
 export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
-  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
+  const [twitterHandle, setTwitterHandle] = useState(user.handle);
   const [pfpUrl, setPfpUrl] = useState(
-    user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
+    user.profileImageUrl || getPFPFromPublicKey(user.address)
   );
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
@@ -538,7 +532,7 @@ export function ProfilePFP({ user }: { user: User }) {
   });
 
   useEffect(() => {
-    if (twitterHandle && !user.profile?.profileImageUrl) {
+    if (twitterHandle && !user.profileImageUrl) {
       walletProfileQuery().then((q) => {
         if (q.data?.profile?.profileImageUrlLowres) {
           setPfpUrl(q.data?.profile?.profileImageUrlLowres);
@@ -554,8 +548,8 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={user?.profile?.profileImageUrl || getPFPFromPublicKey(user.address)}
-          alt={'profile picture for ' + user.profile?.handle || user.address}
+          src={user?.profileImageUrl || getPFPFromPublicKey(user.address)}
+          alt={'profile picture for ' + user.handle || user.address}
         />
       </a>
     </Link>
@@ -651,10 +645,7 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
         {props.event.eventsAggregated.map((e: any) => (
           <ProfileMiniCard
             key={e.feedEventId + e?.connection?.to?.address}
-            user={{
-              address: e?.connection?.to?.address,
-              profile: e.connection?.to?.profile,
-            }}
+            user={User.fromAggregateEvent(props.event)}
             myFollowingList={props.myFollowingList}
           />
         ))}
