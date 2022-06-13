@@ -11,18 +11,53 @@ import * as web3 from '@solana/web3.js';
 import { useMailbox } from '@/common/context/MailboxProvider';
 import { Mailbox, MessageAccount } from '@usedispatch/client';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useRouter } from 'next/router';
+import { useLocalStorage } from '@/common/hooks/useLocalStorage';
+import { DateTime } from 'luxon';
+
+interface Conversations {
+  [conversationId: string]: MessageAccount[];
+}
 
 const MessagesPage: NextPage<WalletDependantPageProps> = () => {
-  const [conversations, setConversations] = useState<Map<string, MessageAccount[]>>(new Map());
   const [uniqueSenders, setUniqueSenders] = useState<string[]>([]);
   const [mailboxAddress, setMailboxAddress] = useState<web3.PublicKey | null>(null);
   const wallet = useWallet();
   const myPubkey = wallet.publicKey?.toBase58();
 
+  // const [conversationsStorage, setConversations] = useLocalStorage<Map<string, MessageAccount[]>>(
+  //   'conversationsState',
+  //   new Map()
+  // );
+
+  // const conversations = new Map(Object.entries(conversationsStorage));
+  // const [conversations, setConversations] = useState<Map<string, MessageAccount[]>>(new Map());
+  // const [conversations, setConversations] = useState<Conversations>({});
+  const [conversations, setConversations] = useLocalStorage<Conversations>(
+    'conversationsState',
+    {}
+  );
+
+  function addMessageToConversation(conversationId: string, msg: MessageAccount) {
+    setConversations((prevState) => {
+      return {
+        ...prevState,
+        [conversationId]: [
+          ...(prevState[conversationId] ?? []), // need the ?? [] to account for new conversations
+          msg,
+        ],
+      };
+    });
+  }
   const mailbox = useMailbox();
 
+  const router = useRouter();
+
+  const sendToAddress = router.query.to ?? '';
+
   async function setupConversations(mb: Mailbox) {
-    const allConversations = new Map<string, MessageAccount[]>();
+    console.log('Setting up conversations');
+    const allConversations: Conversations = {}; // new Map<string, MessageAccount[]>();
 
     const mbAddress = await mb.getMailboxAddress();
     setMailboxAddress(mbAddress);
@@ -38,31 +73,43 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
     );
 
     uniqueSenders.forEach((senderAddress, i) => {
-      allConversations.set(
-        senderAddress,
-        [
-          ...allMySentMessages[i],
-          ...allReceivedMessages.filter(
-            // Are we not always the receiver anyway?
-            (m) => m.receiver.toBase58() === myPubkey && m.sender.toBase58() === senderAddress
-          ),
-        ].sort((a, b) => {
-          if (new Date(String(a.data.ts)).getTime() > new Date(String(b.data.ts)).getTime()) {
-            return -1;
-          }
+      // allConversations.set(
+      //   senderAddress,
+      //   [
+      //     ...allMySentMessages[i],
+      //     ...allReceivedMessages.filter(
+      //       // Are we not always the receiver anyway?
+      //       (m) => m.receiver.toBase58() === myPubkey && m.sender.toBase58() === senderAddress
+      //     ),
+      //   ].sort((a, b) => {
+      //     if (new Date(String(a.data.ts)).getTime() > new Date(String(b.data.ts)).getTime()) {
+      //       return -1;
+      //     }
 
-          if (new Date(String(a.data.ts)).getTime() < new Date(String(b.data.ts)).getTime()) {
-            return -1;
-          }
+      //     if (new Date(String(a.data.ts)).getTime() < new Date(String(b.data.ts)).getTime()) {
+      //       return -1;
+      //     }
 
-          return 0;
-        })
-      );
+      //     return 0;
+      //   })
+      // );
 
-      console.log('allConversations', allConversations);
-      setUniqueSenders(uniqueSenders);
-      setConversations(allConversations);
+      allConversations[senderAddress] = [
+        ...allMySentMessages[i],
+        ...allReceivedMessages.filter(
+          // Are we not always the receiver anyway?
+          (m) => m.receiver.toBase58() === myPubkey && m.sender.toBase58() === senderAddress
+        ),
+      ].sort((a, b) => {
+        if (!a.data.ts) return 1;
+        if (!b.data.ts) return -1;
+
+        return a.data.ts.getTime() - b.data.ts.getTime();
+      });
     });
+    console.log('allConversations', allConversations);
+    setUniqueSenders(uniqueSenders);
+    setConversations(allConversations);
   }
 
   useEffect(() => {
@@ -73,14 +120,20 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
     }
   }, [mailbox]);
 
-  return !myPubkey ? null : (
+  return !myPubkey || !mailbox ? null : (
     <ProfileMessages
       publicKey={myPubkey}
-      conversations={conversations}
+      conversations={conversations || new Map()}
       mailboxAddress={mailboxAddress}
       mailbox={mailbox}
       uniqueSenders={uniqueSenders}
+      receiver={sendToAddress}
+      addMessageToConversation={addMessageToConversation}
     />
   );
 };
 export default MessagesPage;
+
+// make a ticket for fetching multiple wallet profiles based on a list of addressess
+
+// stretch goal: setup a message listeners

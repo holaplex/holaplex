@@ -189,7 +189,7 @@ export function AppHeader() {
             </Popover> */}
 
             {connectedAndInstalledWallet && (
-              <Link href={'/profiles/' + publicKey + '/messages'} passHref>
+              <Link href={'/messages'} passHref>
                 <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
                   Messages
                 </a>

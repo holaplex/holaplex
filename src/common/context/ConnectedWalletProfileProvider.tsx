@@ -11,6 +11,7 @@ type WalletProfile = GetConnectedWalletProfileDataQuery['followers'][0]['from'];
 
 interface ConnectedWalletProfileData {
   connectedProfile: {
+    // pubkey should maybe be renamed to address
     pubkey: string | null;
     profile?: {
       handle: string;

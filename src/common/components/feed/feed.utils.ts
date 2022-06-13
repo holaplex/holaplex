@@ -21,7 +21,7 @@ export interface User {
   address: string;
   profile?: {
     handle?: string;
-    profileImageUrl?: string;
+    profileImageUrlLowres?: string;
   } | null;
 }
 

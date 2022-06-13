@@ -16,11 +16,9 @@ import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfi
 export const ProfileImage = () => {
   const { connectedProfile } = useConnectedWalletProfile();
 
-  const { connected, publicKey } = useWallet();
-
-  const profilePictureUrl = connected
-    ? connectedProfile?.profile?.profileImageUrlHighres?.replace('_normal', '')
-    : getPFPFromPublicKey(publicKey);
+  const profilePictureUrl =
+    connectedProfile?.profile?.profileImageUrlHighres?.replace('_normal', '') ??
+    getPFPFromPublicKey(connectedProfile?.pubkey);
 
   const [isShowingProfilePopover, setIsShowingProfilePopover] = useState(false);
 

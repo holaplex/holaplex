@@ -149,7 +149,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                 onClick={() => searchInputRef?.current?.focus()}
                 className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
               >
-                <Search className="h-6 w-6 text-white " aria-hidden="true" />
+                <SearchIcon className="h-6 w-6 text-white " aria-hidden="true" />
               </span>
 
               <DebounceInput
