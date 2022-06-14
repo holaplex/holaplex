@@ -8,9 +8,9 @@ import { Connection } from '@solana/web3.js';
 import { useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
 import { DateTime } from 'luxon';
-import { Button5 } from './Button2';
-import { FailureToast } from './FailureToast';
-import { SuccessToast } from './SuccessToast';
+import { Button5 } from '../elements/Button2';
+import { FailureToast } from '../elements/FailureToast';
+import { SuccessToast } from '../elements/SuccessToast';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
 import { useConnection } from '@solana/wallet-adapter-react';
 import React, { FC, useState, useEffect, useMemo, useRef, Fragment } from 'react';
@@ -26,7 +26,8 @@ import { Combobox } from '@headlessui/react';
 import { useProfileSearchLazyQuery, ProfileSearchQuery } from 'src/graphql/indexerTypes';
 import { DebounceInput } from 'react-debounce-input';
 import { ProfileSearchItem } from '../search/SearchItems';
-import { Avatar } from './Avatar';
+import { Avatar } from '../elements/Avatar';
+import ProfileSearchCombobox from './ProfileSearchCombobox';
 
 interface ProfileMessagesInterface {
   publicKey: string;
@@ -47,6 +48,14 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
   const { mailbox, conversations, uniqueSenders, mailboxAddress, addMessageToConversation } = props;
   const [selectedConversation, setSelectedConversation] = useState<string>('');
   const [recipient, setRecipient] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (props.receiver && !recipient) {
+      setRecipient({
+        address: props.receiver,
+      });
+    }
+  }, [props.receiver]);
   const [messageTransactionInProgress, setmessageTransactionInProgress] = useState(false);
 
   const { connectedProfile } = useConnectedWalletProfile();
@@ -126,6 +135,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
               // start new conversation
               setReceiver('');
               setSelectedConversation('');
+              setRecipient(null);
               recipientInput?.current?.focus();
             }}
             className=" flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  "
@@ -173,7 +183,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
             <>
               <span>To:</span>
               <div className="w-full">
-                <SearchCombobox setRecipient={setRecipient} />
+                <ProfileSearchCombobox setRecipient={setRecipient} />
               </div>
               {/* <form className=" w-full">
                 <input
@@ -198,29 +208,18 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
         </div>
 
         <form
-          className="mt-full flex justify-between space-x-4 border-t border-gray-800 p-5 pb-10"
+          className="mt-full flex items-center justify-between space-x-4 border-t border-gray-800 p-5 pb-10"
           onSubmit={sendMessage}
         >
-          {false ? (
-            <input
-              type="text"
-              name="message"
-              disabled={messageTransactionInProgress}
-              className="w-full rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white"
-              placeholder={'Message ' + shortenAddress(selectedConversation) + '...'}
-              value={newMessageText}
-              onChange={(e) => setNewMessageText(e.target.value)}
-            />
-          ) : (
-            <textarea
-              name="message"
-              disabled={messageTransactionInProgress}
-              className="w-full resize-none rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white"
-              placeholder={'Message ' + shortenAddress(selectedConversation) + '...'}
-              value={newMessageText}
-              onChange={(e) => setNewMessageText(e.target.value)}
-            />
-          )}
+          <textarea
+            name="message"
+            disabled={messageTransactionInProgress}
+            className="w-full resize-none rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white"
+            placeholder={'Message ' + shortenAddress(selectedConversation) + '...'}
+            value={newMessageText}
+            onChange={(e) => setNewMessageText(e.target.value)}
+          />
+
           <div className="top-2 right-2">
             <Button5 loading={messageTransactionInProgress} v="secondary" type="submit">
               Send
@@ -311,12 +310,10 @@ function createMessageBlocks(messagesInConversation: MessageAccount[]) {
   messagesInConversation.forEach((curMsg, i, conversation) => {
     const nextMsg = conversation[i + 1];
     if (
-      curMsg.sender.toBase58() === nextMsg?.sender.toBase58() ||
-      !nextMsg
-      // && // same sender
-      // nextMsg.data.ts &&
-      // curMsg.data.ts &&
-      // nextMsg.data.ts.getTime() - curMsg.data.ts.getTime() < 4 * 3600_000 // less than 4 hours apart
+      (curMsg.sender.toBase58() === nextMsg?.sender.toBase58() || !nextMsg) && // same sender
+      nextMsg?.data.ts &&
+      curMsg.data.ts &&
+      nextMsg?.data.ts.getTime() - curMsg.data.ts.getTime() < 4 * 3600_000 // less than 4 hours apart
     ) {
       if (!messageBlocks[currentBlock]) {
         messageBlocks[currentBlock] = [];
@@ -330,78 +327,4 @@ function createMessageBlocks(messagesInConversation: MessageAccount[]) {
   }, []);
 
   return messageBlocks;
-}
-
-function SearchCombobox(props: { setRecipient: any }) {
-  const { track } = useAnalytics();
-  const [showResults, setShowResults] = useState(false);
-
-  const [searchQuery, { data, loading, called, variables: searchVariables }] =
-    useProfileSearchLazyQuery();
-  const [selectedPerson, setSelectedPerson] = useState<User | null>(null);
-
-  const profileResults = (showResults && data?.profiles.slice(0, 5)) || [];
-
-  const handleOnChange = (e: any) => {
-    if (!e.target.value.length) {
-      setShowResults(false);
-    } else {
-      setShowResults(true);
-      searchQuery({
-        variables: {
-          term: e.target.value,
-        },
-      });
-    }
-  };
-
-  return (
-    <div className="relative">
-      <Combobox
-        value={selectedPerson}
-        onChange={(p) => {
-          console.log('select p', p);
-          setSelectedPerson(p);
-          props.setRecipient(p);
-        }}
-      >
-        <DebounceInput
-          minLength={2}
-          debounceTimeout={300}
-          id="search"
-          autoComplete={`off`}
-          autoCorrect={`off`}
-          className="w-full rounded-lg border-transparent bg-gray-900 text-white focus:border-white focus:ring-white"
-          type="search"
-          placeholder={`Search Holaplex...`}
-          onChange={handleOnChange}
-          element={Combobox.Input}
-        />
-        <Combobox.Options className={'absolute top-12 w-full max-w-lg bg-gray-900 shadow-2xl'}>
-          {profileResults.map(({ address, profile }) => (
-            <Combobox.Option key={address} value={{ address, profile }} as={Fragment}>
-              {({ active, selected }) => (
-                <div
-                  className={classNames(
-                    `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
-                    active && 'bg-gray-800'
-                  )}
-                >
-                  <div className={`flex flex-row items-center gap-6`}>
-                    <Avatar size={`md`} address={address} showAddress={false} />
-                    <p className={`m-0 text-sm`}>
-                      {profile?.handle ? `@${profile.handle}` : shortenAddress(address)}
-                    </p>
-                  </div>
-                  <p className={`m-0 hidden text-sm text-gray-300 md:inline-block`}>
-                    {shortenAddress(address)}
-                  </p>
-                </div>
-              )}
-            </Combobox.Option>
-          ))}
-        </Combobox.Options>
-      </Combobox>
-    </div>
-  );
 }

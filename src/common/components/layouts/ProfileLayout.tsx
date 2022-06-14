@@ -103,7 +103,7 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                   />
                 </div>
                 <div className="mt-16 flex justify-center lg:justify-start">
-                  {anchorWallet?.publicKey.toString() == publicKey.toString() && !twitterHandle && (
+                  {anchorWallet?.publicKey.toString() == publicKey && !twitterHandle && (
                     <ConnectTwitterButton
                       address={new PublicKey(publicKey)}
                       connection={connection}
@@ -130,12 +130,22 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                 setShowFollowsModal={setShowFollowsModal}
                 showButton={false}
               />
-            </div>
-            <div>
-              <Link href="/messages" passHref>
-                <a>Message</a>
+              <Link href={'/messages?address=' + publicKey} passHref>
+                <a className="mt-10 flex max-w-fit items-center space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300">
+                  <span>Message</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                    <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+                  </svg>
+                </a>
               </Link>
             </div>
+
             <div className="mt-10 w-full">
               <ProfileMenu />
               {children}

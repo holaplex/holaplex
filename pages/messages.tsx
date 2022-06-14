@@ -1,11 +1,11 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { ProfileMessages } from '@/common/components/elements/ProfileMessages';
+import { ProfileMessages } from '@/common/components/messages/ProfileMessages';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/modules/server-side/getProfile';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
-import { ProfilePageHead } from './profiles/[publicKey]';
+
 import { ReactNode, useEffect, useState } from 'react';
 import * as web3 from '@solana/web3.js';
 import { useMailbox } from '@/common/context/MailboxProvider';
