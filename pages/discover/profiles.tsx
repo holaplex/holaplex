@@ -88,7 +88,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
           }))
       );
     }
-  }, [queryContext.data, searchTerm]);
+  }, [queryContext, searchTerm]);
 
   const onLoadMore = useCallback(
     async (inView: boolean) => {
