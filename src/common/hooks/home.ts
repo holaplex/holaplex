@@ -15,25 +15,23 @@ const DISALLOWED_PROFILES: string[] = ['ho1aVYd4TDWCi1pMqFvboPPc3J13e4LgWkWzGJpP
 function useFeaturedProfilesData() {
   const wallet: WalletContextState = useWallet();
   const [featuredProfilesQuery, queryContext] = useFeaturedProfilesLazyQuery();
-
+  
   useEffect(() => {
     async function query(): Promise<void> {
       await featuredProfilesQuery({ variables: { limit: 25, userWallet: wallet?.publicKey } });
     }
-
+    
+    // TODO implement better checking for whether we need to call 
     if (!queryContext.loading && !queryContext.called) {
       query();
     }
-  }, [wallet, featuredProfilesQuery, queryContext.called, queryContext.loading]);
-
-  console.log(queryContext.data);
+  }, [wallet, featuredProfilesQuery, queryContext.loading, queryContext.called]);
 
   return queryContext;
 }
 
 // fetching the list of profiles to feature (only need their address)
 export function useFeaturedProfiles(): QueryContext<string[]> {
-    console.log('useFeaturedProfiles');
   const queryContext = useFeaturedProfilesData();
 
   //TODO implement caching of transformed object
@@ -49,9 +47,9 @@ export function useFeaturedProfiles(): QueryContext<string[]> {
 
 // fetching data for a single profile preview card
 export function useProfilePreview(address: string): QueryContext<ProfilePreviewData> {
-  console.log('useProfilePreview');
-    const queryContext = useFeaturedProfilesData();
-
+  const queryContext = useFeaturedProfilesData();
+  
+  console.log(address, queryContext);
   const gqlObject: FeaturedProfilesQuery['followWallets'][0] | null | undefined =
     queryContext.data?.followWallets.find((w) => w.address === address);
 
@@ -67,14 +65,17 @@ export function useProfilePreview(address: string): QueryContext<ProfilePreviewD
   if (error) return { loading: false, error: error };
 
   //TODO implement caching of transformed object
-  const data: ProfilePreviewData = {
-    address: gqlObject?.address,
-    nftsOwned: gqlObject?.nftCounts.owned!,
-    nftsCreated: gqlObject?.nftCounts.created!,
-    handle: gqlObject?.profile?.handle,
-    profileImageUrl: gqlObject?.profile?.profileImageUrlHighres,
-    bannerImageUrl: gqlObject?.profile?.bannerImageUrl,
-  };
+  let data: ProfilePreviewData | undefined;
+  if (gqlObject) {
+    data = {
+      address: gqlObject.address,
+      nftsOwned: gqlObject.nftCounts.owned,
+      nftsCreated: gqlObject.nftCounts.created,
+      handle: gqlObject.profile?.handle,
+      profileImageUrl: gqlObject.profile?.profileImageUrlHighres,
+      bannerImageUrl: gqlObject.profile?.bannerImageUrl,
+    };
+  }
 
   return {
     data: data,

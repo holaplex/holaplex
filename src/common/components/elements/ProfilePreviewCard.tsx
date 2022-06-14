@@ -40,7 +40,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
     return <></>;
   }
 
-  if (queryContext.loading) {
+  if (queryContext.loading || !queryContext.data) {
     return <ProfilePreviewLoadingCard />;
   }
 
