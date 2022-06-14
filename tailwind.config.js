@@ -28,6 +28,9 @@ module.exports = {
         },
         'hola-black': '#262626',
       },
+      backgroundImage: {
+        'colorful-gradient': "url('/images/gradients/gradient-3.png')",
+      },
       fontFamily: {
         sans: ['Inter ', ...defaultTheme.fontFamily.sans],
         mono: ['Space_Mono', ...defaultTheme.fontFamily.mono],

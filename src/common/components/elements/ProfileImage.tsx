@@ -1,14 +1,7 @@
-import styled from 'styled-components';
-import Image from 'next/image';
 import { Popover } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import { ButtonReset } from '@/common/styles/ButtonReset';
+import { useRef, useState } from 'react';
 import { ProfilePopover } from './ProfilePopover';
 import { useOutsideAlerter } from '@/common/hooks/useOutsideAlerter';
-import {
-  useTwitterHandleFromPubKeyQuery,
-  useWalletProfileLazyQuery,
-} from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
@@ -16,9 +9,10 @@ import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfi
 export const ProfileImage = () => {
   const { connectedProfile } = useConnectedWalletProfile();
 
-  const profilePictureUrl =
-    connectedProfile?.profile?.profileImageUrlHighres?.replace('_normal', '') ??
-    getPFPFromPublicKey(connectedProfile?.pubkey);
+  const { publicKey } = useWallet();
+
+  const profilePictureUrl: string =
+    connectedProfile?.profile?.profileImageUrlLowres ?? getPFPFromPublicKey(publicKey);
 
   const [isShowingProfilePopover, setIsShowingProfilePopover] = useState(false);
 

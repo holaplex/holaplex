@@ -809,7 +809,7 @@ export type ProfileSearchQueryVariables = Exact<{
 }>;
 
 
-export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string } | null }> };
+export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> };
 
 export type SearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -2634,10 +2634,10 @@ export type MetadataSearchLazyQueryHookResult = ReturnType<typeof useMetadataSea
 export type MetadataSearchQueryResult = Apollo.QueryResult<MetadataSearchQuery, MetadataSearchQueryVariables>;
 export const ProfileSearchDocument = gql`
     query profileSearch($term: String!) {
-  profiles(term: $term, limit: 10, offset: 0) {
+  profiles(term: $term, limit: 5, offset: 0) {
     address
-    twitterHandle
     profile {
+      handle
       profileImageUrl
     }
   }

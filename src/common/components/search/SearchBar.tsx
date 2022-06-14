@@ -18,7 +18,7 @@ import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 const schema = zod.object({
-  query: zod.string().nonempty({ message: `Must enter something` }),
+  query: zod.string().min(1, `Must enter something`),
 });
 
 interface SearchQuerySchema {

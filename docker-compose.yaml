@@ -1,18 +1,19 @@
 version: '3.3'
 
 volumes:
-    postgres:
+  postgres:
 
 services:
   db:
-    image: "postgres:12"
+    image: 'postgres:12'
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "holaplex"
-      PGDATA: "/data/postgres"
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: 'holaplex'
+      PGDATA: '/data/postgres'
     volumes:
-       - postgres:/data/postgres
+      - postgres:/data/postgres
     ports:
-      - "5432:5432"
+      - '5432:5432'
+
     restart: unless-stopped

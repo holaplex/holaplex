@@ -21,6 +21,15 @@ module.exports = withPlugins(plugins, {
   experimental: {
     outputStandalone: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/profiles/:publicKey',
+        destination: '/profiles/:publicKey/nfts',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     domains: [
       'pbs.twimg.com',

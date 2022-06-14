@@ -13,7 +13,7 @@ import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import { ProfileDataProvider } from '@/common/context/ProfileData';
 import { useConnection } from '@solana/wallet-adapter-react';
-import React, { FC, useState, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useState, useEffect, useMemo, useRef, Fragment } from 'react';
 import Button from '@/components/elements/Button';
 import * as web3 from '@solana/web3.js';
 import { Mailbox, MessageAccount } from '@usedispatch/client';
@@ -22,6 +22,11 @@ import classNames from 'classnames';
 import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { User } from '../feed/feed.utils';
+import { Combobox } from '@headlessui/react';
+import { useProfileSearchLazyQuery, ProfileSearchQuery } from 'src/graphql/indexerTypes';
+import { DebounceInput } from 'react-debounce-input';
+import { ProfileSearchItem } from '../search/SearchItems';
+import { Avatar } from './Avatar';
 
 interface ProfileMessagesInterface {
   publicKey: string;
@@ -41,6 +46,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
   const [newMessageText, setNewMessageText] = useState('');
   const { mailbox, conversations, uniqueSenders, mailboxAddress, addMessageToConversation } = props;
   const [selectedConversation, setSelectedConversation] = useState<string>('');
+  const [recipient, setRecipient] = useState<User | null>(null);
   const [messageTransactionInProgress, setmessageTransactionInProgress] = useState(false);
 
   const { connectedProfile } = useConnectedWalletProfile();
@@ -56,7 +62,9 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
       alert('wallet is not connected, not sending message');
       return;
     }
-    const receiverPublicKey: web3.PublicKey = new web3.PublicKey(selectedConversation);
+
+    if (!recipient) return;
+    const receiverPublicKey: web3.PublicKey = new web3.PublicKey(recipient.address);
 
     // TODO: can add a subject here via a new form element
     setmessageTransactionInProgress(true);
@@ -64,7 +72,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
       .sendMessage('Holaplex chat', newMessageText, receiverPublicKey!)
       .then((tx) => {
         setLastTxId(tx);
-        addMessageToConversation(selectedConversation, {
+        addMessageToConversation(recipient.address, {
           sender: new web3.PublicKey(publicKey),
           messageId: 10, // TODO make random
           receiver: receiverPublicKey,
@@ -98,28 +106,12 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
       });
   };
 
-  const senderTwitter: Map<String, any> = new Map();
-
-  useEffect(() => {
-    if (uniqueSenders.length > 0) {
-      for (var i = 0; i < uniqueSenders.length; i++) {
-        // const { data } = useTwitterHandle(null, uniqueSenders[i]);
-        // senderTwitter.set(uniqueSenders[i], data);
-      }
-    }
-  }, [uniqueSenders]);
-
-  console.log('profile messages', {
-    mailbox,
-    publicKey,
-    messagesInConversation,
-  });
   // messages grouped by time and person
   const messageBlocks: MessageAccount[][] = createMessageBlocks(messagesInConversation);
 
   return (
     <div className="-mt-20 flex h-full max-h-screen  pt-20 ">
-      {/* Conversations */}
+      {/* Conversations / Contacts */}
       <div className="relative  flex  w-64 max-w-lg  flex-col border-t border-r border-gray-800 transition-all hover:min-w-fit lg:w-2/5 ">
         <div className="flex items-center justify-between p-5 ">
           <ProfilePFP
@@ -142,21 +134,12 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           </span>
         </div>
         <div className="spacy-y-6 h-full overflow-auto px-5">
-          {selectedConversation !== '' && !uniqueSenders.includes(selectedConversation) && (
-            <ConversationItem
-              selected={true}
-              user={{
-                address: selectedConversation,
-              }}
-              onSelect={() => {
-                setSelectedConversation(selectedConversation);
-                setReceiver(selectedConversation);
-              }}
-            />
+          {recipient && !uniqueSenders.includes(recipient.address) && (
+            <Contact selected={true} user={recipient} />
           )}
           {uniqueSenders.length ? (
             uniqueSenders.map((us) => (
-              <ConversationItem
+              <Contact
                 key={us}
                 selected={selectedConversation === us}
                 user={{
@@ -165,6 +148,9 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
                 onSelect={() => {
                   setSelectedConversation(us);
                   setReceiver(us);
+                  setRecipient({
+                    address: us,
+                  });
                 }}
               />
             ))
@@ -178,19 +164,18 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
       {/* Messages */}
       <div className=" flex grow flex-col justify-between border-t border-gray-800 ">
         <div className="flex items-center space-x-4 border-b border-gray-800  p-5">
-          {selectedConversation ? (
+          {recipient ? (
             <>
-              <ProfilePFP
-                user={{
-                  address: selectedConversation,
-                }}
-              />
-              <h2> {shortenAddress(selectedConversation)} </h2>
+              <ProfilePFP user={recipient} />
+              <h2> {recipient.profile?.handle || shortenAddress(recipient.address)} </h2>
             </>
           ) : (
             <>
               <span>To:</span>
-              <form className=" w-full">
+              <div className="w-full">
+                <SearchCombobox setRecipient={setRecipient} />
+              </div>
+              {/* <form className=" w-full">
                 <input
                   onBlur={() => setSelectedConversation(receiver)}
                   autoFocus
@@ -202,7 +187,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
                   className="w-full rounded-lg border-transparent bg-gray-900 text-white focus:border-white focus:ring-white"
                   placeholder="To pubkey..."
                 />
-              </form>
+              </form> */}
             </>
           )}
         </div>
@@ -216,15 +201,26 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           className="mt-full flex justify-between space-x-4 border-t border-gray-800 p-5 pb-10"
           onSubmit={sendMessage}
         >
-          <input
-            type="text"
-            name="message"
-            disabled={messageTransactionInProgress}
-            className="w-full rounded-lg border-transparent bg-gray-900 text-white focus:border-white focus:ring-white"
-            placeholder={'Message ' + shortenAddress(selectedConversation) + '...'}
-            value={newMessageText}
-            onChange={(e) => setNewMessageText(e.target.value)}
-          />
+          {false ? (
+            <input
+              type="text"
+              name="message"
+              disabled={messageTransactionInProgress}
+              className="w-full rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white"
+              placeholder={'Message ' + shortenAddress(selectedConversation) + '...'}
+              value={newMessageText}
+              onChange={(e) => setNewMessageText(e.target.value)}
+            />
+          ) : (
+            <textarea
+              name="message"
+              disabled={messageTransactionInProgress}
+              className="w-full resize-none rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white"
+              placeholder={'Message ' + shortenAddress(selectedConversation) + '...'}
+              value={newMessageText}
+              onChange={(e) => setNewMessageText(e.target.value)}
+            />
+          )}
           <div className="top-2 right-2">
             <Button5 loading={messageTransactionInProgress} v="secondary" type="submit">
               Send
@@ -236,11 +232,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
   );
 };
 
-function ConversationItem(props: {
-  selected: boolean;
-  onSelect: () => void;
-  user: User;
-}): JSX.Element {
+function Contact(props: { selected: boolean; onSelect?: () => void; user: User }): JSX.Element {
   return (
     <div
       id={props.user.address}
@@ -252,58 +244,8 @@ function ConversationItem(props: {
     >
       <ProfilePFP user={props.user} />
 
-      <div className="text-base">{shortenAddress(props.user.address)}</div>
-    </div>
-  );
-}
-
-function Message({
-  index,
-  message,
-  publicKey,
-  conversation,
-}: {
-  index: number;
-  publicKey: string;
-
-  message: MessageAccount;
-  conversation: MessageAccount[];
-}) {
-  const iAmSender = message.sender.toBase58() == publicKey;
-  let cx,
-    dx = '';
-  if (iAmSender) {
-    cx = 'text-right';
-    dx = 'float-right';
-  } else {
-    cx = 'text-left';
-    dx = 'float-left';
-  }
-
-  var nextSame = '  ';
-
-  if (
-    conversation.length < index + 1 &&
-    message.sender.toBase58() == conversation[index + 1].sender.toBase58()
-  ) {
-    nextSame = ' hidden ';
-  }
-
-  return (
-    <div key={message.messageId} className={classNames('', cx)}>
-      <div
-        className={
-          'flex items-center justify-center whitespace-nowrap rounded-xl border-transparent bg-gray-800 px-10 py-10 text-white opacity-90 transition-all hover:opacity-100 focus:border-[#72a4e1aa] active:scale-[0.99] '
-        }
-      >
-        <span>
-          {message.data.body}
-          <br />
-          {message.data.ts && String(message.data.ts.toDateString())}
-        </span>
-      </div>
-      <div className={'inline-block ' + dx + nextSame}>
-        <ProfilePFP user={{ address: message.sender.toBase58() }} />
+      <div className="text-base">
+        {props.user.profile?.handle ?? shortenAddress(props.user.address)}
       </div>
     </div>
   );
@@ -320,7 +262,8 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
   const [firstMsg, ...rest] = props.messageBlock;
   const msgBaseClasses = classNames(
     'px-6 py-4 rounded-full',
-    msgIsForMe ? 'bg-gray-800 text-white ml-4' : 'bg-white text-black mr-4'
+    msgIsForMe ? 'bg-gray-800 text-white ml-4' : ' text-black mr-4',
+    iAmSender && 'bg-colorful-gradient bg-repeat-round '
   );
 
   const lastMsgIndex = rest.length - 1;
@@ -331,7 +274,7 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
       <div
         className={classNames(
           'flex flex-col  space-y-2   text-white opacity-90',
-          msgIsForMe ? 'items-start' : 'items-end'
+          msgIsForMe ? 'items-start' : 'items-end '
         )}
       >
         {ts && <div className="ml-6 text-xs text-gray-300">{timestamp}</div>}
@@ -386,10 +329,79 @@ function createMessageBlocks(messagesInConversation: MessageAccount[]) {
     }
   }, []);
 
-  console.log('Message blocks', {
-    messagesInConversation,
-    messageBlocks,
-  });
-
   return messageBlocks;
+}
+
+function SearchCombobox(props: { setRecipient: any }) {
+  const { track } = useAnalytics();
+  const [showResults, setShowResults] = useState(false);
+
+  const [searchQuery, { data, loading, called, variables: searchVariables }] =
+    useProfileSearchLazyQuery();
+  const [selectedPerson, setSelectedPerson] = useState<User | null>(null);
+
+  const profileResults = (showResults && data?.profiles.slice(0, 5)) || [];
+
+  const handleOnChange = (e: any) => {
+    if (!e.target.value.length) {
+      setShowResults(false);
+    } else {
+      setShowResults(true);
+      searchQuery({
+        variables: {
+          term: e.target.value,
+        },
+      });
+    }
+  };
+
+  return (
+    <div className="relative">
+      <Combobox
+        value={selectedPerson}
+        onChange={(p) => {
+          console.log('select p', p);
+          setSelectedPerson(p);
+          props.setRecipient(p);
+        }}
+      >
+        <DebounceInput
+          minLength={2}
+          debounceTimeout={300}
+          id="search"
+          autoComplete={`off`}
+          autoCorrect={`off`}
+          className="w-full rounded-lg border-transparent bg-gray-900 text-white focus:border-white focus:ring-white"
+          type="search"
+          placeholder={`Search Holaplex...`}
+          onChange={handleOnChange}
+          element={Combobox.Input}
+        />
+        <Combobox.Options className={'absolute top-12 w-full max-w-lg bg-gray-900 shadow-2xl'}>
+          {profileResults.map(({ address, profile }) => (
+            <Combobox.Option key={address} value={{ address, profile }} as={Fragment}>
+              {({ active, selected }) => (
+                <div
+                  className={classNames(
+                    `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
+                    active && 'bg-gray-800'
+                  )}
+                >
+                  <div className={`flex flex-row items-center gap-6`}>
+                    <Avatar size={`md`} address={address} showAddress={false} />
+                    <p className={`m-0 text-sm`}>
+                      {profile?.handle ? `@${profile.handle}` : shortenAddress(address)}
+                    </p>
+                  </div>
+                  <p className={`m-0 hidden text-sm text-gray-300 md:inline-block`}>
+                    {shortenAddress(address)}
+                  </p>
+                </div>
+              )}
+            </Combobox.Option>
+          ))}
+        </Combobox.Options>
+      </Combobox>
+    </div>
+  );
 }
