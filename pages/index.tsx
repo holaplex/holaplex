@@ -1,29 +1,47 @@
 import FeaturedAuctionsSection from '@/common/components/home/FeaturedAuctionsSection';
 import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyNowListingsSection';
 import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
-import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
+import FeaturedProfilesSection, {
+  FeaturedProfilesData,
+} from '@/common/components/home/FeaturedProfilesSection';
 import Footer from '@/common/components/home/Footer';
 import HeroSection from '@/common/components/home/HeroSection';
+import { QueryContext, useHomeQueryWithTransforms } from '@/common/components/home/query';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { FC, ReactNode } from 'react';
 import Carousel from 'react-grid-carousel';
 
-const Home: FC = () => {
+export interface HomeData {
+  //TODO add other sections
+  featuredProfiles: FeaturedProfilesData;
+}
+
+export default function Home(): JSX.Element {
+  const wallet = useWallet();
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, 24);
+
   return (
     <div>
       <HeroSection />
       <div className="container mx-auto w-[88%] md:w-3/4">
         <FeaturedBuyNowListingsSection />
-        <FeaturedProfilesSection />
+        <FeaturedProfilesSection
+          context={{
+            data: dataQueryContext.data?.featuredProfiles,
+            loading: dataQueryContext.loading,
+            error: dataQueryContext.error,
+          }}
+        />
         <FeaturedAuctionsSection />
         <FeaturedMarketplacesSection />
       </div>
       <Footer />
     </div>
   );
-};
+}
 
 interface HomeLinkProps {
   href: string;
@@ -31,9 +49,7 @@ interface HomeLinkProps {
 
 const InternalLink: FC<HomeLinkProps> = ({ href, children }) => (
   <Link href={href} passHref>
-    <a
-      className="flex flex-nowrap items-center stroke-gray-300 text-sm font-medium text-gray-300 hover:scale-105 hover:stroke-white hover:transition"
-    >
+    <a className="flex flex-nowrap items-center stroke-gray-300 text-sm font-medium text-gray-300 hover:scale-105 hover:stroke-white hover:transition">
       {children}
     </a>
   </Link>
@@ -169,5 +185,3 @@ const HomeSectionCarouselItem: Item = ({ children, className }) => (
 // https://github.com/x3388638/react-grid-carousel/blob/master/src/components/Carousel.js#L206-L212
 HomeSectionCarouselItem.displayName = 'CAROUSEL_ITEM';
 HomeSectionCarousel.Item = HomeSectionCarouselItem;
-
-export default Home;

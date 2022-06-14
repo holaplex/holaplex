@@ -679,13 +679,15 @@ export type FeaturedBuyNowListingsQueryVariables = Exact<{
 
 export type FeaturedBuyNowListingsQuery = { __typename?: 'QueryRoot', featuredListings: Array<{ __typename?: 'ListingReceipt', address: string, metadata: any, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
 
-export type FeaturedProfilesQueryVariables = Exact<{
+export type ProfilePreviewFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } };
+
+export type HomeQueryVariables = Exact<{
   userWallet?: InputMaybe<Scalars['PublicKey']>;
-  limit: Scalars['Int'];
+  featuredProfileLimit: Scalars['Int'];
 }>;
 
 
-export type FeaturedProfilesQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
+export type HomeQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
 
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -836,6 +838,20 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null } };
 
+export const ProfilePreviewFragmentDoc = gql`
+    fragment ProfilePreview on Wallet {
+  address
+  profile {
+    handle
+    profileImageUrlHighres
+    bannerImageUrl
+  }
+  nftCounts {
+    owned
+    created
+  }
+}
+    `;
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {
   address
@@ -1693,51 +1709,42 @@ export function useFeaturedBuyNowListingsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type FeaturedBuyNowListingsQueryHookResult = ReturnType<typeof useFeaturedBuyNowListingsQuery>;
 export type FeaturedBuyNowListingsLazyQueryHookResult = ReturnType<typeof useFeaturedBuyNowListingsLazyQuery>;
 export type FeaturedBuyNowListingsQueryResult = Apollo.QueryResult<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>;
-export const FeaturedProfilesDocument = gql`
-    query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
-  followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
-    address
-    profile {
-      handle
-      profileImageUrlHighres
-      bannerImageUrl
-    }
-    nftCounts {
-      owned
-      created
-    }
+export const HomeDocument = gql`
+    query home($userWallet: PublicKey, $featuredProfileLimit: Int!) {
+  followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
+    ...ProfilePreview
   }
 }
-    `;
+    ${ProfilePreviewFragmentDoc}`;
 
 /**
- * __useFeaturedProfilesQuery__
+ * __useHomeQuery__
  *
- * To run a query within a React component, call `useFeaturedProfilesQuery` and pass it any options that fit your needs.
- * When your component renders, `useFeaturedProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useHomeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHomeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useFeaturedProfilesQuery({
+ * const { data, loading, error } = useHomeQuery({
  *   variables: {
  *      userWallet: // value for 'userWallet'
- *      limit: // value for 'limit'
+ *      featuredProfileLimit: // value for 'featuredProfileLimit'
  *   },
  * });
  */
-export function useFeaturedProfilesQuery(baseOptions: Apollo.QueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>) {
+export function useHomeQuery(baseOptions: Apollo.QueryHookOptions<HomeQuery, HomeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(FeaturedProfilesDocument, options);
+        return Apollo.useQuery<HomeQuery, HomeQueryVariables>(HomeDocument, options);
       }
-export function useFeaturedProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>) {
+export function useHomeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HomeQuery, HomeQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(FeaturedProfilesDocument, options);
+          return Apollo.useLazyQuery<HomeQuery, HomeQueryVariables>(HomeDocument, options);
         }
-export type FeaturedProfilesQueryHookResult = ReturnType<typeof useFeaturedProfilesQuery>;
-export type FeaturedProfilesLazyQueryHookResult = ReturnType<typeof useFeaturedProfilesLazyQuery>;
-export type FeaturedProfilesQueryResult = Apollo.QueryResult<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>;
+export type HomeQueryHookResult = ReturnType<typeof useHomeQuery>;
+export type HomeLazyQueryHookResult = ReturnType<typeof useHomeLazyQuery>;
+export type HomeQueryResult = Apollo.QueryResult<HomeQuery, HomeQueryVariables>;
 export const MarketplacePreviewDocument = gql`
     query marketplacePreview($subdomain: String!) {
   marketplace(subdomain: $subdomain) {

@@ -35,6 +35,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TypeOption>(DEFAULT_TYPE);
+  // TODO use query with transforms
   const [profileData, setProfileData] = useState<ProfilePreviewProps[]>([]);
 
   // set default filters if the URL doesnt already contain them, and get the filter otherwise
@@ -61,15 +62,6 @@ export default function DiscoverProfilesTab(): JSX.Element {
     0
   );
 
-  // when the server returns a profile with insufficient data to display the
-  //  preview, remove it from the carousel
-  const onInsufficientDataForAProfile = useCallback<(profileAddress: string) => void>(
-    (profileAddress) => {
-      setProfileData(profileData.filter((p) => p.address !== profileAddress));
-    },
-    [profileData]
-  );
-
   useEffect(() => {
     const searchTermLowerCase: string = searchTerm.toLocaleLowerCase();
     if (queryContext.data) {
@@ -82,12 +74,17 @@ export default function DiscoverProfilesTab(): JSX.Element {
           )
           .map((w) => ({
             address: w.address,
-            onInsufficientData: onInsufficientDataForAProfile,
-            data: {
-              address: w.address ?? '',
-              profile: w.profile ?? {},
-              nftCounts: w.nftCounts,
-            },
+            context: {
+              data: {
+                address: w.address ?? '',
+                nftsCreated: w.nftCounts.created ?? 0,
+                nftsOwned: w.nftCounts.owned ?? 0,
+                bannerImageUrl: w.profile?.bannerImageUrl,
+                profileImageUrl: w.profile?.profileImageUrlHighres
+              },
+              loading: queryContext.loading,
+              error: queryContext.error
+            }
           }))
       );
     }

@@ -50,20 +50,6 @@ export type BuyNowListingPreviewData = {
   marketplace: OwnedNfTsQuery['marketplace'][0]
 };
 
-
-export interface ProfilePreviewData {
-  address: string;
-  profile: {
-    handle?: string;
-    profileImageUrlHighres?: string;
-    bannerImageUrl?: string;
-  }
-  nftCounts: {
-    owned?: number;
-    created?: number;
-  }
-}
-
 interface GraphQLObject {
   __typename: string;
 }
