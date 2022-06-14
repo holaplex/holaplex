@@ -328,7 +328,12 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
   return (
     <div className={classNames('flex items-end ', iAmSender ? 'flex-row-reverse' : '')}>
       <ProfilePFP user={{ address: sender }} />
-      <div className={'flex flex-col items-start space-y-2   text-white opacity-90'}>
+      <div
+        className={classNames(
+          'flex flex-col  space-y-2   text-white opacity-90',
+          msgIsForMe ? 'items-start' : 'items-end'
+        )}
+      >
         {ts && <div className="ml-6 text-xs text-gray-300">{timestamp}</div>}
         <div
           className={classNames(msgBaseClasses, msgIsForMe ? 'rounded-bl-none' : 'rounded-br-none')}
