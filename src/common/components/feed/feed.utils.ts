@@ -213,8 +213,8 @@ export const shouldAggregateSaleEvents = (
   return (
     e1.__typename === e2.__typename &&
     e2.__typename == e3.__typename &&
-    // e1.walletAddress === e2.walletAddress &&
-    // e2.walletAddress === e3.walletAddress &&
+    e1.walletAddress === e2.walletAddress &&
+    e2.walletAddress === e3.walletAddress &&
     isNFTEvent(e1) &&
     isNFTEvent(e2) &&
     isNFTEvent(e3)

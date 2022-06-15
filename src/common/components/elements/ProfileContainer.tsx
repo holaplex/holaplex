@@ -86,12 +86,12 @@ export const ProfileContainer: FC = ({ children }) => {
 const ProfileDisplayName: FC = () => {
   const { publicKey, twitterHandle } = useProfileData();
 
-  const [copied, setCopeied] = useState(false);
+  const [copied, setCopied] = useState(false);
   const copyPubKey = async () => {
     if (publicKey) {
       await navigator.clipboard.writeText(publicKey);
-      setCopeied(true);
-      setTimeout(() => setCopeied(false), 2000);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
