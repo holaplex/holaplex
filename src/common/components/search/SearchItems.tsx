@@ -2,12 +2,14 @@ import React, { FC } from 'react';
 import { Avatar } from '../elements/Avatar';
 import { shortenAddress } from '@/modules/utils/string';
 import Link from 'next/link';
+import classNames from 'classnames';
 
 interface ProfileSearchItemProps {
   address: string;
   handle?: string | null;
   profileImage?: string;
   onClick?: () => void;
+  active?: boolean;
 }
 
 export const ProfileSearchItem: FC<ProfileSearchItemProps> = ({
@@ -15,12 +17,16 @@ export const ProfileSearchItem: FC<ProfileSearchItemProps> = ({
   handle,
   profileImage,
   onClick,
+  active,
 }) => {
   return (
     <Link href={`/profiles/${address}`}>
       <a
         onClick={onClick}
-        className={`flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`}
+        className={classNames(
+          `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
+          active && 'bg-gray-800'
+        )}
       >
         <div className={`flex flex-row items-center gap-6`}>
           <Avatar size={`md`} address={address} showAddress={false} />
@@ -41,6 +47,7 @@ interface NFTSearchItemProps {
   creatorHandle?: string | null;
   address: string;
   onClick?: () => void;
+  active?: boolean;
 }
 
 export const NFTSearchItem: FC<NFTSearchItemProps> = ({
@@ -50,12 +57,16 @@ export const NFTSearchItem: FC<NFTSearchItemProps> = ({
   address,
   creatorHandle,
   onClick,
+  active,
 }) => {
   return (
     <Link href={`/nfts/${address}`}>
       <a
         onClick={onClick}
-        className={`flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`}
+        className={classNames(
+          `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
+          active && 'bg-gray-800'
+        )}
       >
         <div className={`flex flex-row items-center gap-6`}>
           <img

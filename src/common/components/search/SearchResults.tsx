@@ -5,6 +5,7 @@ import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
 import { profile } from 'console';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { Combobox } from '@headlessui/react';
 
 interface SearchResultsProps {
   term?: string;
@@ -50,63 +51,78 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
     <>
       {profileResults && profileResults?.length > 0 && (
         <>
-          <h6 className={`text-base font-medium text-gray-300`}>Profiles</h6>
+          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Profiles</h6>
           {profileResults?.map((profile) => (
             <>
               {profile?.address && (
-                <ProfileSearchItem
-                  address={profile?.address}
-                  handle={profile?.twitterHandle}
-                  profileImage={profile?.profile?.profileImageUrl}
-                  onClick={() =>
-                    trackSearchResultSelected({
-                      resultType: 'Profile',
-                      profileAddress: profile.address,
-                      profileHandle: profile.twitterHandle,
-                    })
-                  }
-                />
+                <Combobox.Option key={'profile-' + profile.address} value={profile}>
+                  {({ active }) => (
+                    <ProfileSearchItem
+                      address={profile?.address}
+                      handle={profile?.twitterHandle}
+                      profileImage={profile?.profile?.profileImageUrl}
+                      onClick={() =>
+                        trackSearchResultSelected({
+                          resultType: 'Profile',
+                          profileAddress: profile.address,
+                          profileHandle: profile.twitterHandle,
+                        })
+                      }
+                      active={active}
+                    />
+                  )}
+                </Combobox.Option>
               )}
             </>
           ))}
         </>
       )}
       {walletResult && isPublicKey(walletResult.address) && (
-        <ProfileSearchItem
-          address={walletResult?.address}
-          handle={walletResult?.twitterHandle}
-          profileImage={walletResult?.profile?.profileImageUrl}
-          onClick={() =>
-            trackSearchResultSelected({
-              resultType: 'Wallet',
-              profileAddress: walletResult.address,
-              profileHandle: walletResult.twitterHandle,
-            })
-          }
-        />
+        <Combobox.Option value={walletResult}>
+          {({ active }) => (
+            <ProfileSearchItem
+              address={walletResult?.address}
+              handle={walletResult?.twitterHandle}
+              profileImage={walletResult?.profile?.profileImageUrl}
+              onClick={() =>
+                trackSearchResultSelected({
+                  resultType: 'Wallet',
+                  profileAddress: walletResult.address,
+                  profileHandle: walletResult.twitterHandle,
+                })
+              }
+              active={active}
+            />
+          )}
+        </Combobox.Option>
       )}
       {results && results.length > 0 && (
         <>
-          <h6 className={`text-base font-medium text-gray-300`}>NFTs</h6>
+          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>NFTs</h6>
           {results?.map((nft) => (
             <>
               {nft.address && nft.image && nft.name && (
-                <NFTSearchItem
-                  creatorHandle={nft.creatorTwitterHandle}
-                  creatorAddress={nft.creatorAddress}
-                  key={nft.address}
-                  address={nft.address}
-                  image={nft.image}
-                  name={nft.name}
-                  onClick={() =>
-                    trackSearchResultSelected({
-                      resultType: 'NFT',
-                      nftName: nft.name,
-                      nftImage: nft.image as string | undefined,
-                      nftAddress: nft.address,
-                    })
-                  }
-                />
+                <Combobox.Option key={nft.address} value={walletResult}>
+                  {({ active }) => (
+                    <NFTSearchItem
+                      creatorHandle={nft.creatorTwitterHandle}
+                      creatorAddress={nft.creatorAddress}
+                      key={nft.address}
+                      address={nft.address}
+                      image={nft.image!}
+                      name={nft.name}
+                      onClick={() =>
+                        trackSearchResultSelected({
+                          resultType: 'NFT',
+                          nftName: nft.name,
+                          nftImage: nft.image as string | undefined,
+                          nftAddress: nft.address,
+                        })
+                      }
+                      active={active}
+                    />
+                  )}
+                </Combobox.Option>
               )}
             </>
           ))}
