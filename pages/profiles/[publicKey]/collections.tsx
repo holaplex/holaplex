@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = 
 
 function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
   return (
-    <div className={`mt-10 grid grid-cols-2 gap-6 lg:grid-cols-3`}>
+    <div className={`mt-10 grid grid-cols-2 gap-6 xl:grid-cols-3`}>
       <CollectionCard
         address={'FbMgyHab7LxdhnSAFueCR9JGdCZKQNornmHEf4vocGGQ'}
         name={`Solana Monke Rejects`}
