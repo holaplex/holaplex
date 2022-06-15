@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 import Button from './Button';
 
-export type NoProfileVariant = 'collected' | 'created' | 'offers' | 'activity';
+export type NoProfileVariant = 'collected' | 'created' | 'offers' | 'activity' | 'collectionPage';
 
 interface NoProfileItemsProps {
   variant?: NoProfileVariant;

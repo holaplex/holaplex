@@ -2,7 +2,7 @@ name: Heroku - Build and deploy (dev)
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, kebo/milo/collections]
 
 jobs:
   build:
