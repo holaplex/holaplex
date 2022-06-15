@@ -113,7 +113,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
         {(filter === OfferFilters.ALL || filter === OfferFilters.RECEIVED) &&
           receivedOffers?.map((receivedOffer) => {
             const defaultListing = receivedOffer?.listings.find(
-              (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+              (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
             );
             return receivedOffer.offers
               ?.slice()
@@ -205,7 +205,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
         {(filter === OfferFilters.ALL || filter === OfferFilters.MADE) &&
           sentOffers?.map((sentOffer) => {
             const defaultListing = sentOffer?.listings.find(
-              (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+              (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
             );
 
             return sentOffer.offers

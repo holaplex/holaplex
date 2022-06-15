@@ -49,7 +49,10 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
   const onCancelListing = async () => {
     if (listing && isOwner && nft) {
       toast(`Canceling listing for ${nft.name}`);
-      await sdk.listings(marketplace.auctionHouse).cancel({ listing, nft });
+      await sdk
+        .transaction()
+        .add(sdk.listings(listing.auctionHouse).cancel({ listing, nft }))
+        .send();
     }
   };
 

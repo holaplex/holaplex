@@ -23,7 +23,7 @@ import {
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
 import CancelOfferForm from '@/components/forms/CancelOfferForm';
-import { Listing, Marketplace, Nft, Offer } from '@/types/types';
+import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { useRouter } from 'next/router';
 import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
 import SellForm from '../../src/common/components/forms/SellForm';
@@ -191,7 +191,7 @@ export default function NftByAddress({
 
   // has listed via default Holaplex marketplace (disregards others)
   const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());

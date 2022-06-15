@@ -76,7 +76,7 @@ export const NFTCard = ({
   newTab = false,
 }: {
   nft: OwnedNFT;
-  marketplace: { auctionHouse: AuctionHouse };
+  marketplace: { auctionHouses: AuctionHouse[] };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -106,7 +106,7 @@ export const NFTCard = ({
   const hasAddedOffer = Boolean(addedOffer);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
   const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;

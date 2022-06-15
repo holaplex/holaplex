@@ -7,7 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
 import { toast } from 'react-toastify';
-import { Nft, Offer, Listing, initMarketplaceSDK, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import {
+  Nft,
+  Offer,
+  Listing,
+  initMarketplaceSDK,
+  AuctionHouse,
+} from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
@@ -16,7 +22,7 @@ interface AcceptOfferFormProps {
   nft: Nft;
   offer: Offer;
   listing?: Listing;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouses: AuctionHouse[] };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;
@@ -63,9 +69,15 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   const onAcceptOffer = async () => {
     if (offer) {
       if (listing) {
-        await sdk.offers(marketplace.auctionHouse).accept({ offer, nft, cancel: [listing] });
+        await sdk
+          .transaction()
+          .add(sdk.offers(marketplace.auctionHouses[0]).accept({ offer, nft, cancel: [listing] }))
+          .send();
       } else {
-        await sdk.offers(marketplace.auctionHouse).accept({ offer, nft });
+        await sdk
+          .transaction()
+          .add(sdk.offers(marketplace.auctionHouses[0]).accept({ offer, nft }))
+          .send();
       }
     }
   };

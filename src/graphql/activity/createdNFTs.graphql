@@ -10,7 +10,7 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       creatorAddress
       storeConfigAddress
     }
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury
@@ -47,7 +47,9 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
     purchases {
       address
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       createdAt
     }
@@ -56,7 +58,9 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       createdAt
@@ -67,7 +71,9 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       tokenAccount

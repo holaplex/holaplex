@@ -22,7 +22,9 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
       purchases {
         address
         buyer
-        auctionHouse
+        auctionHouse {
+          address
+        }
         price
         createdAt
       }
@@ -31,7 +33,9 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         tradeState
         seller
         metadata
-        auctionHouse
+        auctionHouse {
+          address
+        }
         price
         tradeStateBump
         createdAt
@@ -42,7 +46,9 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         tradeState
         buyer
         metadata
-        auctionHouse
+        auctionHouse {
+          address
+        }
         price
         tradeStateBump
         tokenAccount
@@ -52,7 +58,7 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
     }
   }
   marketplace(subdomain: $marketplace) {
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury

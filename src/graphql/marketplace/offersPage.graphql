@@ -10,7 +10,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       creatorAddress
       storeConfigAddress
     }
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury
@@ -51,7 +51,9 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     purchases {
       address
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       createdAt
     }
@@ -60,7 +62,9 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       createdAt
@@ -71,7 +75,9 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       tokenAccount
@@ -98,7 +104,9 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     purchases {
       address
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       createdAt
     }
@@ -107,7 +115,9 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       createdAt
@@ -118,7 +128,9 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       tokenAccount

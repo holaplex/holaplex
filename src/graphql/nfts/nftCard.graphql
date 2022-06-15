@@ -19,7 +19,9 @@ query nftCard($subdomain: String!, $address: String!) {
     purchases {
       address
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       createdAt
     }
@@ -28,7 +30,9 @@ query nftCard($subdomain: String!, $address: String!) {
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       createdAt
@@ -39,7 +43,9 @@ query nftCard($subdomain: String!, $address: String!) {
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+      }
       price
       tradeStateBump
       tokenAccount
@@ -48,7 +54,7 @@ query nftCard($subdomain: String!, $address: String!) {
     }
   }
   marketplace(subdomain: $subdomain) {
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury

@@ -6,9 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import Button from '../elements/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import {
-  LAMPORTS_PER_SOL,
-} from '@solana/web3.js';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
@@ -18,7 +16,7 @@ import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 
 interface BuyFormProps {
   nft: Nft;
-  marketplace: {auctionHouse: AuctionHouse};
+  marketplace: { auctionHouses: AuctionHouse[] };
   listing: Listing;
   className?: string;
   refetch:
@@ -60,7 +58,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
   const onBuy = async () => {
     if (listing && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
-      await sdk.listings(marketplace.auctionHouse).buy({ listing, nft });
+      await sdk.transaction().add(sdk.listings(listing.auctionHouse).buy({ listing, nft })).send();
     }
   };
 

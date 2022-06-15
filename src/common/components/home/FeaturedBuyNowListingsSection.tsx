@@ -166,7 +166,7 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
     <NFTCard
       newTab={false}
       nft={nft!}
-      marketplace={{ auctionHouse: auctionHouse! }}
+      marketplace={{ auctionHouses: [auctionHouse!] }}
       refetch={refetch}
       loading={loading}
     />
