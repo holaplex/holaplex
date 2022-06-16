@@ -148,7 +148,10 @@ export const NFTCard = ({
           >
             {shownCollection ? (
               <Link href={`/collections/${shownCollection.address}`} passHref>
-                <div className="flex transform items-center gap-2 rounded-lg bg-gray-700 bg-opacity-50 p-2 text-gray-300 transition duration-[300ms] hover:scale-[1.02] hover:cursor-pointer">
+                <div
+                  style={{ backdropFilter: `blur(10px)` }}
+                  className="flex transform items-center gap-2 rounded-lg bg-gray-900 bg-opacity-50 p-2 text-gray-300 transition duration-[300ms] hover:scale-[1.02] hover:cursor-pointer"
+                >
                   <img
                     src={shownCollection.image}
                     alt={shownCollection.name}
@@ -172,7 +175,7 @@ export const NFTCard = ({
 
             {offers.length > 0 && (
               <div
-                className={`flex h-6 items-center rounded-full bg-gray-700 bg-opacity-50 px-2  text-xs font-medium`}
+                className={`flex h-6 items-center rounded-full bg-gray-900 bg-opacity-50 px-2  text-xs font-medium`}
                 style={{ backdropFilter: `blur(10px)` }}
               >
                 {offers.length} OFFER{offers.length > 1 && `S`}
