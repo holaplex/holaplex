@@ -76,15 +76,14 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
   const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
 
   // Note: unique check to cover indexer duplicates
-  const filteredNfts = uniq(
+  const filteredNfts =
     listedFilter === ListingFilters.ALL
       ? nftsToShow
       : listedFilter === ListingFilters.LISTED
       ? listedNfts
       : listedFilter === ListingFilters.UNLISTED
       ? unlistedNfts
-      : nftsToShow
-  );
+      : nftsToShow;
 
   const ListingFilter = ({
     filterToCheck,
@@ -210,7 +209,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
             },
           });
         }}
-        nfts={filteredNfts}
+        nfts={uniq(filteredNfts)}
         gridView={gridView}
         refetch={refetch}
         loading={createdNFTs.loading}

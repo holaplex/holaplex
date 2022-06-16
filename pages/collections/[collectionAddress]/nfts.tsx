@@ -52,7 +52,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
   });
 
   // Note: unique check to backup indexer
-  const nfts = uniq(data?.nfts || []);
+  const nfts = data?.nfts || [];
   const nftsToShow =
     query === ''
       ? nfts
@@ -144,7 +144,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
               },
             });
           }}
-          nfts={nftsToShow}
+          nfts={uniq(nftsToShow)}
           gridView={gridView}
           refetch={refetch}
           loading={loading}
