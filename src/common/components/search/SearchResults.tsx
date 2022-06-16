@@ -102,7 +102,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
           {results?.map((nft) => (
             <>
               {nft.address && nft.image && nft.name && (
-                <Combobox.Option key={nft.address} value={walletResult}>
+                <Combobox.Option key={nft.address} value={nft}>
                   {({ active }) => (
                     <NFTSearchItem
                       creatorHandle={nft.creatorTwitterHandle}

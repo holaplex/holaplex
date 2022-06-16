@@ -17,6 +17,8 @@ import { DebounceInput } from 'react-debounce-input';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Combobox, Transition } from '@headlessui/react';
+import { route } from 'next/dist/server/router';
+import { toast } from 'react-toastify';
 
 const schema = zod.object({
   query: zod.string().nonempty({ message: `Must enter something` }),
@@ -63,6 +65,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
     | SearchQuery['wallet'];
   const [selected, setSelected] = useState<SearchResultItem | null>(null);
   const wallet = useWallet();
+  console.log(selected);
 
   useEffect(() => {
     // keeping this as own side effect instead of moving it in with handleChange
@@ -147,7 +150,17 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
           value={selected}
           onChange={(v) => {
             setSelected(v);
-            router.push(`/profiles/${v?.address}/nfts`);
+            switch (v?.__typename) {
+              case 'MetadataJson':
+                router.push(`/nfts/${v.address}`);
+                break;
+              case 'Wallet':
+                router.push(`/profiles/${v.address}`);
+                break;
+              default:
+                toast.error(`Unknown Content`);
+                break;
+            }
           }}
         >
           <div className="relative z-0 flex flex-1 items-center  px-2 sm:absolute sm:inset-0">
