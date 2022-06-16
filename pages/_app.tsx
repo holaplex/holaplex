@@ -6,8 +6,6 @@ import '@/styles/globals.less';
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import { Layout } from 'antd';
-import { isNil } from 'ramda';
 import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
@@ -43,8 +41,6 @@ import { NextPage } from 'next';
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
 import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
-
-const { Content } = Layout;
 
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
@@ -83,7 +79,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const Layout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
+  const PageLayout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
 
   return (
     <>
@@ -121,9 +117,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                   {() => (
                                     <AnalyticsProvider>
                                       <AppHeader />
-                                      <Layout {...pageProps}>
+                                      <PageLayout {...pageProps}>
                                         <Component {...pageProps} />
-                                      </Layout>
+                                      </PageLayout>
                                     </AnalyticsProvider>
                                   )}
                                 </MarketplaceProvider>

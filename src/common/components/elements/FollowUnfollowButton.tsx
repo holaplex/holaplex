@@ -29,7 +29,9 @@ export type FollowUnfollowSource =
   | 'profileButton'
   | 'feed'
   | 'whotofollow'
-  | 'collectedBy';
+  | 'collectedBy'
+  | 'collectionPage'
+  | 'collectionCreators';
 
 type FollowUnfollowButtonProps = {
   source: FollowUnfollowSource;

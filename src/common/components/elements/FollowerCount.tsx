@@ -52,8 +52,9 @@ export const FollowerCount: FC<FollowerCountProps> = ({
   const isSameWallet = wallet?.publicKey.equals(new PublicKey(publicKey)) ?? false;
 
   //TODO these numbers will be wrong until the indexer is able to remove duplicates
-  const followers = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
-  const following = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
+  const followers = profileFollowerOverview.data?.connections || [];
+  const followerCount = profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
+  const followingCount = profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
   const amIFollowingThisAccount = !!isXFollowingY.data?.connections?.length ?? 0 > 0;
   return (
     <>
@@ -65,10 +66,13 @@ export const FollowerCount: FC<FollowerCountProps> = ({
               className="flex flex-col text-left"
             >
               <div className=" text-sm font-medium text-gray-200">Followers</div>
-              <div className=" font-semibold">{followers}</div>
+              <div className=" font-semibold">{followerCount}</div>
             </button>
-            {followers ? (
-              <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
+            {followers?.length ? (
+              <FollowedBy
+                followers={followers}
+                onOtherFollowersClick={() => setShowFollowsModal('followers')}
+              />
             ) : null}
           </div>
 
@@ -78,9 +82,9 @@ export const FollowerCount: FC<FollowerCountProps> = ({
               className="flex flex-col text-left"
             >
               <div className="text-sm font-medium text-gray-200">Following</div>
-              <div className=" font-semibold">{following}</div>
+              <div className=" font-semibold">{followingCount}</div>
             </button>
-            <CollectedBy />
+            <CollectedBy creatorPubkey={publicKey} />
           </div>
 
           {showButton && (
@@ -111,20 +115,18 @@ export const FollowerCount: FC<FollowerCountProps> = ({
 
 type FollowedByProps = {
   onOtherFollowersClick?: VoidFunction;
+  followers: GetProfileFollowerOverviewQuery['connections'];
 };
 
-const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
+export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick, followers }) => {
   const { publicKey } = useProfileData();
-  const { data, loading } = useGetProfileFollowerOverviewQuery({
-    variables: { pubKey: publicKey },
-  });
-  if (loading) return null;
+  if (!followers.length) return null;
 
-  const uniqueFollowers = cleanUpFollowers(data?.connections);
+  const uniqueFollowers = cleanUpFollowers(followers);
   if (uniqueFollowers.length === 0) return null;
 
   // this number will be wrong until the backend removes duplicates
-  const followerCount = data?.wallet.connectionCounts.toCount ?? 0;
+  const followerCount = uniqueFollowers.length ?? 0;
 
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
@@ -158,16 +160,15 @@ const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
 };
 
 type CollectedByProps = {
+  creatorPubkey: string;
   onOtherCollectedClick?: VoidFunction;
 };
 
-const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
-  const { publicKey } = useProfileData();
-
+export const CollectedBy: FC<CollectedByProps> = ({ creatorPubkey, onOtherCollectedClick }) => {
   const [showCollectedByModal, setShowCollectedByModal] = useState(false);
 
   const { data, loading } = useGetCollectedByQuery({
-    variables: { creator: publicKey },
+    variables: { creator: creatorPubkey },
   });
   if (loading) return null;
   const collectedProfiles: TwitterProfile[] = [];
@@ -176,7 +177,7 @@ const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
       !collectedProfiles.find(
         (profile) => nft.owner?.profile?.walletAddress === profile?.walletAddress
       ) &&
-      publicKey !== nft.owner?.profile?.walletAddress &&
+      creatorPubkey !== nft.owner?.profile?.walletAddress &&
       nft?.owner?.profile !== null
     ) {
       collectedProfiles.push(nft.owner?.profile as TwitterProfile);
