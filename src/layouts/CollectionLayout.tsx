@@ -5,20 +5,16 @@ import { FollowUnfollowButton } from '@/common/components/elements/FollowUnfollo
 import { User } from '@/common/components/feed/feed.utils';
 import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+//@ts-ignore
+import FeatherIcon from 'feather-icons-react';
 import classNames from 'classnames';
-import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useMemo } from 'react';
-import {
-  GetCollectionDocument,
-  GetCollectionQuery,
-  useAllConnectionsToQuery,
-} from 'src/graphql/indexerTypes';
-import { apolloClient } from '../graphql/apollo';
-import { seededRandomBetween } from '../modules/utils/random';
+import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
+import { ExplorerIcon } from '../common/components/icons/Explorer';
+import { SolscanIcon } from '../common/components/icons/Solscan';
 
 function CreatorChip(props: { user: User }) {
   return (
@@ -112,16 +108,49 @@ export default function CollectionLayout({
               <div>
                 <span className="text-base text-gray-300">Collection of X</span>
                 <h1 className="mt-4 text-5xl"> {collection?.name} </h1>
-                {!walletConnectionPair ? null : (
-                  <FollowUnfollowButton
-                    toProfile={{
-                      address: collection?.address!,
-                    }}
-                    type={amIFollowingThisCollection ? 'Unfollow' : 'Follow'}
-                    walletConnectionPair={walletConnectionPair}
-                    source="collectionPage"
-                  />
-                )}
+                <div className={`flex items-center justify-start gap-6`}>
+                  {creators[0]?.profile?.handle && (
+                    <Link href={`https://twitter.com/${creators[0]?.profile?.handle}`}>
+                      <a target={`_blank`}>
+                        <FeatherIcon
+                          fill={'white'}
+                          icon="twitter"
+                          aria-hidden="true"
+                          className={`h-4 w-4 text-white hover:text-gray-300`}
+                        />
+                      </a>
+                    </Link>
+                  )}
+
+                  <Link href={`https://explorer.solana.com/address/${collection?.mintAddress}`}>
+                    <a target={`_blank`}>
+                      <ExplorerIcon
+                        width={16}
+                        height={16}
+                        className={`ease-in-out hover:text-gray-300`}
+                      />
+                    </a>
+                  </Link>
+                  <Link href={`https://solscan.io/account/${collection?.mintAddress}`}>
+                    <a target={`_blank`}>
+                      <SolscanIcon
+                        width={16}
+                        height={16}
+                        className={`ease-in-out hover:text-gray-300`}
+                      />
+                    </a>
+                  </Link>
+                  {!walletConnectionPair ? null : (
+                    <FollowUnfollowButton
+                      toProfile={{
+                        address: collection?.address!,
+                      }}
+                      type={amIFollowingThisCollection ? 'Unfollow' : 'Follow'}
+                      walletConnectionPair={walletConnectionPair}
+                      source="collectionPage"
+                    />
+                  )}
+                </div>
               </div>
             </div>
             {creators.length === 1 ? (
