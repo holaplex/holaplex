@@ -38,23 +38,23 @@ function CollectionLayoutHead(props: {
   return (
     <Head>
       <meta charSet={`utf-8`} />
-      <title>{name} Collection | Holaplex</title>
+      <title>{props.name} Collection | Holaplex</title>
       {/* Search Engine */}
       <meta property="description" key="description" content={props.description} />
       <meta property="image" key="image" content={props.image} />
       {/* Schema */}
-      <meta itemProp="name" content={`${name} Collection | Holaplex`} />
+      <meta itemProp="name" content={`${props.name} Collection | Holaplex`} />
       <meta itemProp="description" content={props.description} />
       <meta itemProp="image" content={props.image} />
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={`${name} Collection | Holaplex`} />
+      <meta name="twitter:title" content={`${props.name} Collection | Holaplex`} />
       <meta name="twitter:description" content={props.description} />
       <meta name="twitter:image:src" content={props.image} />
       <meta name="twitter:image" content={props.image} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}
-      <meta name="og-title" content={`${name} Collection | Holaplex`} />
+      <meta name="og-title" content={`${props.name} Collection | Holaplex`} />
       <meta name="og-description" content={props.description} />
       <meta name="og-image" content={props.image} />
       <meta name="og-url" content={`https://holaplex.com/collections/${props.address}`} />
