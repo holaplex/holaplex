@@ -75,6 +75,7 @@ export const NFTCard = ({
   loading = false,
   showName = true,
   newTab = false,
+  showCollection = true,
 }: {
   nft: OwnedNFT;
   marketplace: { auctionHouse: AuctionHouse };
@@ -84,6 +85,7 @@ export const NFTCard = ({
   loading: boolean;
   showName?: boolean;
   newTab?: boolean;
+  showCollection?: boolean;
 }) => {
   const { publicKey } = useWallet();
   const [listNFTVisibility, setListNFTVisibility] = useState(false);
@@ -141,12 +143,12 @@ export const NFTCard = ({
         {(shownCreatorAddress || shownCollection) && (
           <div
             className={`absolute left-4 top-4 flex ${
-              shownCollection
+              shownCollection && showCollection
                 ? `flex-col items-start justify-start gap-2`
                 : `flex-row items-center gap-2`
             } flex-row  p-4`}
           >
-            {shownCollection ? (
+            {shownCollection && showCollection ? (
               <Link href={`/collections/${shownCollection.address}`} passHref>
                 <div
                   style={{ backdropFilter: `blur(10px)` }}
@@ -313,6 +315,7 @@ interface NFTGridProps {
   ) => Promise<ApolloQueryResult<None>>;
   onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
   hasMore: boolean;
+  showCollection?: boolean;
   loading?: boolean;
 }
 
@@ -324,6 +327,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
   onLoadMore,
   hasMore,
   ctaVariant,
+  showCollection,
   loading = false,
 }) => {
   return (
@@ -353,6 +357,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
             ) : (
               nfts.map((nft) => (
                 <NFTCard
+                  showCollection={showCollection}
                   key={nft.address}
                   nft={nft}
                   refetch={refetch}

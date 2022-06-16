@@ -116,6 +116,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
 
       <div className="mt-20 w-full">
         <NFTGrid
+          showCollection={false}
           ctaVariant={`collectionPage`}
           hasMore={hasMore && nfts.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView) => {
