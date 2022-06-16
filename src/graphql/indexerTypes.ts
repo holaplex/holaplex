@@ -679,6 +679,7 @@ export type NftCollectionQuery = { __typename?: 'QueryRoot', nft?: { __typename?
 
 export type NftsInCollectionQueryVariables = Exact<{
   collectionMintAddress: Scalars['PublicKey'];
+  listed?: InputMaybe<Scalars['Boolean']>;
   marketplaceSubdomain: Scalars['String'];
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -1468,7 +1469,7 @@ export type NftCollectionQueryHookResult = ReturnType<typeof useNftCollectionQue
 export type NftCollectionLazyQueryHookResult = ReturnType<typeof useNftCollectionLazyQuery>;
 export type NftCollectionQueryResult = Apollo.QueryResult<NftCollectionQuery, NftCollectionQueryVariables>;
 export const NftsInCollectionDocument = gql`
-    query nftsInCollection($collectionMintAddress: PublicKey!, $marketplaceSubdomain: String!, $limit: Int = 25, $offset: Int = 0) {
+    query nftsInCollection($collectionMintAddress: PublicKey!, $listed: Boolean, $marketplaceSubdomain: String!, $limit: Int = 25, $offset: Int = 0) {
   marketplace(subdomain: $marketplaceSubdomain) {
     subdomain
     name
@@ -1502,7 +1503,12 @@ export const NftsInCollectionDocument = gql`
       }
     }
   }
-  nfts(collection: $collectionMintAddress, limit: $limit, offset: $offset) {
+  nfts(
+    collection: $collectionMintAddress
+    listed: $listed
+    limit: $limit
+    offset: $offset
+  ) {
     address
     name
     sellerFeeBasisPoints
@@ -1580,6 +1586,7 @@ export const NftsInCollectionDocument = gql`
  * const { data, loading, error } = useNftsInCollectionQuery({
  *   variables: {
  *      collectionMintAddress: // value for 'collectionMintAddress'
+ *      listed: // value for 'listed'
  *      marketplaceSubdomain: // value for 'marketplaceSubdomain'
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'

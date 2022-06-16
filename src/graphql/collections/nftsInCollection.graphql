@@ -1,5 +1,6 @@
 query nftsInCollection(
   $collectionMintAddress: PublicKey!
+  $listed: Boolean
   $marketplaceSubdomain: String!
   $limit: Int = 25
   $offset: Int = 0
@@ -37,7 +38,7 @@ query nftsInCollection(
       }
     }
   }
-  nfts(collection: $collectionMintAddress, limit: $limit, offset: $offset) {
+  nfts(collection: $collectionMintAddress, listed: $listed, limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints

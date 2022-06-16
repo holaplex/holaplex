@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useMemo } from 'react';
-import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
+import { useAllConnectionsToQuery, useProfilePreviewQuery } from 'src/graphql/indexerTypes';
 
 function CreatorChip(props: { user: User }) {
   return (
@@ -36,6 +36,7 @@ export default function CollectionLayout({
       to: collectionAddress,
     },
   });
+
   const collectionFollowers = collectionFollowersData?.connections || [];
 
   const amIFollowingThisCollection = !!collectionFollowers.find((f) => f.from.address === myPubkey);

@@ -39,6 +39,7 @@ import NoProfileItems, {
   NoProfileVariant,
 } from '../../../src/common/components/elements/NoProfileItems';
 import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
+import GridSelector from '../../../src/common/components/elements/GridSelector';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -93,12 +94,12 @@ export const NFTCard = ({
 
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
-  const shownCollection = nft.collections.length > 0 ? nft.collections[0] : null;
-  const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
+  const shownCollection = nft?.collections?.length > 0 ? nft?.collections[0] : null;
+  const shownCreatorAddress = sortedCreators?.length > 0 ? sortedCreators[0].address : null;
   const shownCreatorHandle =
-    sortedCreators.length > 0 ? sortedCreators[0].profile?.handle : undefined;
+    sortedCreators?.length > 0 ? sortedCreators[0].profile?.handle : undefined;
   const shownCreatorPfpUrl =
-    sortedCreators.length > 0 ? sortedCreators[0].profile?.profileImageUrlLowres : undefined;
+    sortedCreators?.length > 0 ? sortedCreators[0].profile?.profileImageUrlLowres : undefined;
 
   const offers = nft?.offers;
   const topOffers = offers?.slice()?.sort((a, b) => Number(a.price) - Number(b.price));
@@ -462,54 +463,6 @@ function ProfileNFTs(props: WalletDependantPageProps) {
     );
   };
 
-  const GridSelector = () => {
-    return (
-      <div className="ml-4  hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
-        <button
-          className={cx(
-            'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
-            {
-              'bg-gray-800': gridView === '1x1',
-            }
-          )}
-          onClick={() => setGridView('1x1')}
-        >
-          <SingleGrid
-            className={gridView !== '1x1' ? 'transition hover:scale-110 ' : ''}
-            color={gridView === '1x1' ? 'white' : '#707070'}
-          />
-        </button>
-
-        <button
-          className={cx('flex w-10 items-center justify-center', {
-            'bg-gray-800': gridView === '2x2',
-          })}
-          onClick={() => setGridView('2x2')}
-        >
-          <DoubleGrid
-            className={gridView !== '2x2' ? 'transition hover:scale-110 ' : ''}
-            color={gridView === '2x2' ? 'white' : '#707070'}
-          />
-        </button>
-
-        <button
-          className={cx(
-            'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
-            {
-              'bg-gray-800': gridView === '3x3',
-            }
-          )}
-          onClick={() => setGridView('3x3')}
-        >
-          <TripleGrid
-            className={gridView !== '3x3' ? 'transition hover:scale-110' : ''}
-            color={gridView === '3x3' ? 'white' : '#707070'}
-          />
-        </button>
-      </div>
-    );
-  };
-
   const onLoadMore = async (inView: boolean) => {
     if (!inView || loading || filteredNfts.length <= 0) {
       return;
@@ -571,7 +524,7 @@ function ProfileNFTs(props: WalletDependantPageProps) {
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
           />
-          <GridSelector />
+          <GridSelector gridView={gridView} setGridView={setGridView} />
         </div>
       </div>
       <NFTGrid
