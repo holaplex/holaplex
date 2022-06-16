@@ -1,24 +1,171 @@
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { GetServerSideProps } from 'next';
-import React from 'react';
-import CollectionCard from '../../../src/common/components/collections/CollectionCard';
+import { isEmpty } from 'ramda';
+import React, { FC, useState } from 'react';
+import { InView } from 'react-intersection-observer';
+import { TailSpin } from 'react-loader-spinner';
+import CollectionProfileCard, {
+  LoadingCollectionProfileCard,
+} from '../../../src/common/components/collections/CollectionProfileCard';
+import NoProfileItems, {
+  NoProfileVariant,
+} from '../../../src/common/components/elements/NoProfileItems';
+import { None } from '../../../src/common/components/forms/OfferForm';
 import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
 import { ProfileDataProvider } from '../../../src/common/context/ProfileData';
+import { CollectionNfTsQuery, useCollectionNfTsQuery } from '../../../src/graphql/indexerTypes';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
 } from '../../../src/modules/server-side/getProfile';
+import { INITIAL_FETCH } from './nfts';
+
+const COLLECTION_FETCH = 100;
+const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 100;
+
+type Collection = CollectionNfTsQuery['ownedCollection'][0]['collections'][0];
+
+interface CollectionGridProps {
+  collections: Collection[];
+  refetch: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<None>>;
+  onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
+  hasMore: boolean;
+  loading?: boolean;
+  ctaVariant?: NoProfileVariant;
+}
+
+export const CollectionGrid: FC<CollectionGridProps> = ({ collections, ...props }) => {
+  return (
+    <>
+      <div className={`mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3`}>
+        {props.loading ? (
+          <>
+            <LoadingCollectionProfileCard />
+            <LoadingCollectionProfileCard />
+            <LoadingCollectionProfileCard />
+          </>
+        ) : (
+          <>
+            {collections.length === 0 ? (
+              <div className={`col-span-full`}>
+                <NoProfileItems variant={props.ctaVariant} />
+              </div>
+            ) : (
+              collections.map((collection, i) =>
+                !collection ? null : (
+                  <CollectionProfileCard
+                    key={`${collection.address}-${i}`}
+                    address={collection?.address}
+                    name={collection.name}
+                    image={collection.image}
+                  />
+                )
+              )
+            )}
+          </>
+        )}
+      </div>
+      {props.hasMore && (
+        <div>
+          <InView threshold={0.1} onChange={props.onLoadMore}>
+            <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+              <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-collections`} />
+            </div>
+          </InView>
+        </div>
+      )}
+    </>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
 
 function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
+  const [hasMore, setHasMore] = useState(true);
+
+  const variables = {
+    creator: publicKey,
+    owner: publicKey,
+    limit: COLLECTION_FETCH,
+    offset: 0,
+  };
+
+  const { data, loading, refetch, fetchMore } = useCollectionNfTsQuery({
+    variables: variables,
+  });
+
+  const unique = (
+    collectionNFTs: CollectionNfTsQuery['ownedCollection'],
+    createdCollectionNFTs: CollectionNfTsQuery['createdCollection']
+  ): Collection[] => {
+    let uniqueCollections: Collection[] = [];
+    collectionNFTs?.forEach((collectionNft) => {
+      collectionNft.collections.forEach((collection) => {
+        if (!uniqueCollections.find((u) => u.address === collection.address)) {
+          uniqueCollections.push(collection);
+        }
+      });
+    });
+    createdCollectionNFTs?.forEach((collectionNft) => {
+      collectionNft.collections.forEach((collection) => {
+        if (!uniqueCollections.find((u) => u.address === collection.address)) {
+          uniqueCollections.push(collection);
+        }
+      });
+    });
+    return uniqueCollections;
+  };
+  const ownedCollections = data?.ownedCollection || [];
+  const createdCollections = data?.createdCollection || [];
+
+  const collections = unique(ownedCollections, createdCollections);
+
+  const onLoadMore = async (inView: boolean) => {
+    if (!inView || loading || ownedCollections.length <= 0 || createdCollections.length <= 0) {
+      return;
+    }
+
+    const { data: newData } = await fetchMore({
+      variables: {
+        ...variables,
+        limit: COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT,
+        offset: ownedCollections.length + COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT,
+      },
+
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        const prevOwnedCollections = prev.ownedCollection;
+        const moreOwnedCollections = fetchMoreResult.ownedCollection;
+        const prevCreatedCollections = prev.createdCollection;
+        const moreCreatedCollections = fetchMoreResult.createdCollection;
+        if (isEmpty(moreOwnedCollections) && isEmpty(moreCreatedCollections)) {
+          setHasMore(false);
+        }
+
+        fetchMoreResult.ownedCollection = [...prevOwnedCollections, ...moreOwnedCollections];
+        fetchMoreResult.createdCollection = [...prevCreatedCollections, ...moreCreatedCollections];
+
+        return { ...fetchMoreResult };
+      },
+    });
+  };
+
   return (
-    <div className={`mt-10 grid grid-cols-2 gap-6 xl:grid-cols-3`}>
-      <CollectionCard
-        address={'FbMgyHab7LxdhnSAFueCR9JGdCZKQNornmHEf4vocGGQ'}
-        name={`Solana Monke Rejects`}
-        amount={6000}
-        image={`https://fz2ooqyvd4vuknw6veebcewtz6r2cznvmvnveihrywp6xu4mxy3q.arweave.net/LnTnQxUfK0U23qkIERLTz6OhZbVlW1Ig8cWf69OMvjc`}
+    <div>
+      <CollectionGrid
+        hasMore={
+          hasMore &&
+          ownedCollections.length > INITIAL_FETCH - 1 &&
+          createdCollections.length > INITIAL_FETCH - 1
+        }
+        onLoadMore={onLoadMore}
+        loading={loading}
+        refetch={refetch}
+        collections={collections}
+        ctaVariant={`collections`}
       />
     </div>
   );
