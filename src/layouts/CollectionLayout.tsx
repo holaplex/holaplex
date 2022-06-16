@@ -29,45 +29,6 @@ function CreatorChip(props: { user: User }) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const nftAddress = context?.params?.address ?? '';
-
-  try {
-    const { data } = await apolloClient.query<GetCollectionQuery>({
-      query: GetCollectionDocument,
-      variables: {
-        address: context?.params?.address,
-      },
-    });
-
-    return {
-      props: {
-        address: nftAddress,
-        name: data.nft?.name || nftAddress,
-        description: data.nft?.description || '',
-        image:
-          data.nft?.image ||
-          `/images/gradients/gradient-${seededRandomBetween(
-            new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
-            1,
-            8
-          )}.png`,
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        address: nftAddress,
-        name: '',
-        description: '',
-        image: '',
-        listedPrice: 0,
-        offerPrice: 0,
-      },
-    };
-  }
-};
-
 function CollectionLayoutHead(props: {
   name: string;
   image: string;
@@ -133,6 +94,12 @@ export default function CollectionLayout({
 
   return (
     <>
+      <CollectionLayoutHead
+        address={collection?.address || ``}
+        image={collection?.image || ``}
+        name={collection?.name || ``}
+        description={collection?.description || ``}
+      />
       <div className="container mx-auto ">
         <div className="flex items-start justify-between">
           <div>
