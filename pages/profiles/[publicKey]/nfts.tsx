@@ -32,7 +32,7 @@ import BuyForm from '@/components/forms/BuyForm';
 import UpdateOfferForm from '@/common/components/forms/UpdateOfferForm';
 import { Avatar } from '@/common/components/elements/Avatar';
 import { InView } from 'react-intersection-observer';
-import { isEmpty } from 'ramda';
+import { isEmpty, uniq } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import classNames from 'classnames';
 import NoProfileItems, {
@@ -93,6 +93,7 @@ export const NFTCard = ({
 
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
+  const shownCollection = nft.collections.length > 0 ? nft.collections[0] : null;
   const shownCreatorAddress = sortedCreators.length > 0 ? sortedCreators[0].address : null;
   const shownCreatorHandle =
     sortedCreators.length > 0 ? sortedCreators[0].profile?.handle : undefined;
@@ -136,22 +137,41 @@ export const NFTCard = ({
             </div>
           </a>
         </Link>
-        {shownCreatorAddress && (
-          <div className={`absolute left-4 top-4 flex flex-row items-center p-4`}>
-            <Link href={`/profiles/${shownCreatorAddress}`}>
-              <a className="text-gray-300">
-                <Avatar
-                  address={shownCreatorAddress}
-                  showAddress={false}
-                  border={true}
-                  data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
-                />
-              </a>
-            </Link>
+        {(shownCreatorAddress || shownCollection) && (
+          <div
+            className={`absolute left-4 top-4 flex ${
+              shownCollection
+                ? `flex-col items-start justify-start gap-2`
+                : `flex-row items-center gap-2`
+            } flex-row  p-4`}
+          >
+            {shownCollection ? (
+              <Link href={`/collections/${shownCollection.address}`} passHref>
+                <div className="flex transform items-center gap-2 rounded-lg bg-gray-700 bg-opacity-50 p-2 text-gray-300 transition duration-[300ms] hover:scale-[1.02] hover:cursor-pointer">
+                  <img
+                    src={shownCollection.image}
+                    alt={shownCollection.name}
+                    className={`h-4 w-4 rounded-md`}
+                  />
+                  <p className={`m-0 text-sm font-medium text-white`}>{shownCollection.name}</p>
+                </div>
+              </Link>
+            ) : (
+              <Link href={`/profiles/${shownCreatorAddress}`}>
+                <a className="text-gray-300">
+                  <Avatar
+                    address={shownCreatorAddress || ''}
+                    showAddress={false}
+                    border={true}
+                    data={{ pfpUrl: shownCreatorPfpUrl, twitterHandle: shownCreatorHandle }}
+                  />
+                </a>
+              </Link>
+            )}
 
             {offers.length > 0 && (
               <div
-                className={`ml-2 flex h-6 items-center rounded-full bg-gray-900 bg-opacity-60 px-2 font-mono text-sm`}
+                className={`flex h-6 items-center rounded-full bg-gray-700 bg-opacity-50 px-2  text-xs font-medium`}
                 style={{ backdropFilter: `blur(10px)` }}
               >
                 {offers.length} OFFER{offers.length > 1 && `S`}
@@ -408,14 +428,16 @@ function ProfileNFTs(props: WalletDependantPageProps) {
 
   const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
 
-  const filteredNfts =
+  // Note: unique check to ensure even if duplicates occur on the backend we are removing them
+  const filteredNfts = uniq(
     listedFilter === ListingFilters.ALL
       ? nftsToShow
       : listedFilter === ListingFilters.LISTED
       ? listedNfts
       : listedFilter === ListingFilters.UNLISTED
       ? unlistedNfts
-      : nftsToShow;
+      : nftsToShow
+  );
 
   const ListingFilter = ({
     filterToCheck,

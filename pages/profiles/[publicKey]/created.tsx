@@ -15,7 +15,7 @@ import TextInput2 from '@/components/elements/TextInput2';
 import { INFINITE_SCROLL_AMOUNT_INCREMENT, INITIAL_FETCH, NFTGrid } from './nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { isEmpty } from 'ramda';
+import { isEmpty, uniq } from 'ramda';
 import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
 import classNames from 'classnames';
 
@@ -75,14 +75,16 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
 
   const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
 
-  const filteredNfts =
+  // Note: unique check to cover indexer duplicates
+  const filteredNfts = uniq(
     listedFilter === ListingFilters.ALL
       ? nftsToShow
       : listedFilter === ListingFilters.LISTED
       ? listedNfts
       : listedFilter === ListingFilters.UNLISTED
       ? unlistedNfts
-      : nftsToShow;
+      : nftsToShow
+  );
 
   const ListingFilter = ({
     filterToCheck,

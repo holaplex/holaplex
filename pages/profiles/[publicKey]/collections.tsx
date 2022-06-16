@@ -36,7 +36,7 @@ interface CollectionGridProps {
   ctaVariant?: NoProfileVariant;
 }
 
-export const CollectionGrid: FC<CollectionGridProps> = ({ collections, ...props }) => {
+const CollectionGrid: FC<CollectionGridProps> = ({ collections, ...props }) => {
   return (
     <>
       <div className={`mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3`}>
