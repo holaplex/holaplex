@@ -63,18 +63,15 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       toast(`Canceling current offer of ${Number(currOffer.price)}`);
       await sdk
         .transaction()
-        .add(sdk.offers(marketplace.auctionHouses[0]).cancel({ nft, offer: currOffer }))
+        .add(sdk.offers(currOffer.auctionHouse).cancel({ nft, offer: currOffer }))
         .send();
     }
   };
 
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
-    if (amount) {
+    if (currOffer && amount) {
       toast(`Updating current offer to: ${amount} SOL`);
-      await sdk
-        .transaction()
-        .add(sdk.offers(marketplace.auctionHouses[0]).make({ amount, nft }))
-        .send();
+      await sdk.transaction().add(sdk.offers(currOffer.auctionHouse).make({ amount, nft })).send();
     }
   };
 

@@ -58,6 +58,19 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       buyer
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       createdAt
@@ -69,6 +82,19 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump
@@ -82,6 +108,19 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump

@@ -24,6 +24,19 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         buyer
         auctionHouse {
           address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
         }
         price
         createdAt
@@ -35,6 +48,19 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         metadata
         auctionHouse {
           address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
         }
         price
         tradeStateBump
@@ -48,6 +74,19 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         metadata
         auctionHouse {
           address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
         }
         price
         tradeStateBump

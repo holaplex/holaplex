@@ -21,6 +21,19 @@ query nftCard($subdomain: String!, $address: String!) {
       buyer
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       createdAt
@@ -32,6 +45,19 @@ query nftCard($subdomain: String!, $address: String!) {
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump
@@ -45,6 +71,19 @@ query nftCard($subdomain: String!, $address: String!) {
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump

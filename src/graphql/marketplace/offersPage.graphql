@@ -53,6 +53,19 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       buyer
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       createdAt
@@ -64,6 +77,19 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump
@@ -77,6 +103,19 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump
@@ -106,6 +145,19 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       buyer
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       createdAt
@@ -117,6 +169,19 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump
@@ -130,6 +195,19 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       metadata
       auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
       price
       tradeStateBump

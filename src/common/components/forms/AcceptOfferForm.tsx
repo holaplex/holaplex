@@ -71,13 +71,10 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
       if (listing) {
         await sdk
           .transaction()
-          .add(sdk.offers(marketplace.auctionHouses[0]).accept({ offer, nft, cancel: [listing] }))
+          .add(sdk.offers(offer.auctionHouse).accept({ offer, nft, cancel: [listing] }))
           .send();
       } else {
-        await sdk
-          .transaction()
-          .add(sdk.offers(marketplace.auctionHouses[0]).accept({ offer, nft }))
-          .send();
+        await sdk.transaction().add(sdk.offers(offer.auctionHouse).accept({ offer, nft })).send();
       }
     }
   };
