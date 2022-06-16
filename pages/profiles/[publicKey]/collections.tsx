@@ -18,10 +18,9 @@ import {
   getProfileServerSideProps,
   WalletDependantPageProps,
 } from '../../../src/modules/server-side/getProfile';
-import { INITIAL_FETCH } from './nfts';
 
-const COLLECTION_FETCH = 100;
-const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 100;
+const COLLECTION_FETCH = 500;
+const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 500;
 
 type Collection = CollectionNfTsQuery['ownedCollection'][0]['collections'][0];
 
@@ -121,10 +120,16 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
   const ownedCollections = data?.ownedCollection || [];
   const createdCollections = data?.createdCollection || [];
 
+  console.log(
+    ownedCollections.length > COLLECTION_FETCH - 1 ||
+      createdCollections.length > COLLECTION_FETCH - 1
+  );
+
   const collections = unique(ownedCollections, createdCollections);
 
   const onLoadMore = async (inView: boolean) => {
-    if (!inView || loading || ownedCollections.length <= 0 || createdCollections.length <= 0) {
+    console.log(`Hello`);
+    if (!inView || loading || (ownedCollections.length <= 0 && createdCollections.length <= 0)) {
       return;
     }
 
@@ -157,9 +162,9 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
     <div>
       <CollectionGrid
         hasMore={
-          hasMore &&
-          ownedCollections.length > INITIAL_FETCH - 1 &&
-          createdCollections.length > INITIAL_FETCH - 1
+          (ownedCollections.length > COLLECTION_FETCH - 1 ||
+            createdCollections.length > COLLECTION_FETCH - 1) &&
+          hasMore
         }
         onLoadMore={onLoadMore}
         loading={loading}
