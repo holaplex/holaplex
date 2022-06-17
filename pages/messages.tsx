@@ -33,10 +33,23 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
   // const conversations = new Map(Object.entries(conversationsStorage));
   // const [conversations, setConversations] = useState<Map<string, MessageAccount[]>>(new Map());
   // const [conversations, setConversations] = useState<Conversations>({});
-  const [conversations, setConversations] = useLocalStorage<Conversations>(
+  const [conversationsst, setConversations] = useLocalStorage<Conversations>(
     'conversationsState',
     {}
   );
+
+  const conversations = Object.entries(conversationsst).reduce((acc, [recipientId, messages]) => {
+    acc[recipientId] = messages.map((m) => ({
+      ...m,
+      data: {
+        ...m.data,
+        ts: m.data.ts && new Date(m.data.ts),
+      },
+      receiver: new web3.PublicKey(m.receiver),
+      sender: new web3.PublicKey(m.sender),
+    }));
+    return acc;
+  }, {} as Conversations);
 
   function addMessageToConversation(conversationId: string, msg: MessageAccount) {
     setConversations((prevState) => {
@@ -109,7 +122,10 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
     });
     console.log('allConversations', allConversations);
     setUniqueSenders(uniqueSenders);
-    setConversations(allConversations);
+    setConversations({
+      ...conversations,
+      ...allConversations,
+    });
   }
 
   useEffect(() => {
@@ -123,7 +139,7 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
   return !myPubkey || !mailbox ? null : (
     <ProfileMessages
       publicKey={myPubkey}
-      conversations={conversations || new Map()}
+      conversations={conversations}
       mailboxAddress={mailboxAddress}
       mailbox={mailbox}
       uniqueSenders={uniqueSenders}

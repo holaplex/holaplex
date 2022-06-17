@@ -3906,10 +3906,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz#aa58042711d6e3275dd37dc597e5d31e8c290a44"
   integrity sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==
 
-"@usedispatch/client@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@usedispatch/client/-/client-0.7.0.tgz#d28895edea5d2f849b157b8828280f375deae9d6"
-  integrity sha512-htqCZJHvQ4/x99l6I1x0Q9l0xpVye7BGllpQ+QTszFGz33QMvEpnqi2LfIZ8dKtOL8wwtenuPvZO2VFuLQeOKA==
+"@usedispatch/client@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@usedispatch/client/-/client-0.8.3.tgz#caf192ad609d1bf4bdce12fed1da67439fd5ca64"
+  integrity sha512-0jzAOS5Z21X2AxPWHI7tFjcCZwgkMo9K21MFVprDf3CRtoPu8SocfLfWNtVg4ZUUBgJl4Abx2UnMEKScY39Xlw==
   dependencies:
     "@bonfida/spl-name-service" "^0.1.30"
     "@project-serum/anchor" "^0.24.2"
