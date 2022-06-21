@@ -154,15 +154,7 @@ export default function CollectionLayout({
               </div>
             </div>
             {creators.length === 1 ? (
-              <CreatorChip
-                user={{
-                  address: creators[0].address,
-                  profile: {
-                    handle: creators[0].profile?.handle,
-                    profileImageUrl: creators[0].profile?.profileImageUrlLowres,
-                  },
-                }}
-              />
+              <CreatorChip user={creators[0]} />
             ) : (
               <AvatarIcons
                 profiles={

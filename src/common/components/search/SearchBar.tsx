@@ -17,7 +17,6 @@ import { DebounceInput } from 'react-debounce-input';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Combobox, Transition } from '@headlessui/react';
-import { route } from 'next/dist/server/router';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({

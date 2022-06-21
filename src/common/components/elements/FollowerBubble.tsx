@@ -48,7 +48,8 @@ export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) =
         <FollowedByImage
           className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
           src={
-            follower.from?.profile?.profileImageUrl ?? getPFPFromPublicKey(follower.from.address!)
+            follower.from?.profile?.profileImageUrlLowres ??
+            getPFPFromPublicKey(follower.from.address!)
           }
           width={32}
           height={32}

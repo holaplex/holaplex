@@ -12,7 +12,7 @@ query getProfileFollowerOverview($pubKey: PublicKey!) {
       address
       profile {
         handle
-        profileImageUrl
+        profileImageUrlLowres
         bannerImageUrl
       }
     }

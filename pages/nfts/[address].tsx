@@ -660,9 +660,7 @@ export default function NftByAddress({
                               <p className="label mb-1 truncate text-base font-medium text-gray-300">
                                 {a.traitType}
                               </p>
-                              <p className="mb-0 truncate text-ellipsis" title={a.value}>
-                                {a.value}
-                              </p>
+                              <p className="mb-0 truncate text-ellipsis">{a.value}</p>
                             </div>
                           ))
                         )}
