@@ -6,8 +6,6 @@ import '@/styles/globals.less';
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import { Layout } from 'antd';
-import { isNil } from 'ramda';
 import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/common/components/elements/AppHeader';
@@ -45,8 +43,6 @@ import { MailboxProvider } from '@/common/context/MailboxProvider';
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
 
-const { Content } = Layout;
-
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
     ? WalletAdapterNetwork.Devnet
@@ -58,7 +54,7 @@ type NextPageWithLayout = NextPage & {
 };
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+  Component: any; // NextPageWithLayout;
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -122,8 +118,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                 <MarketplaceProvider wallet={wallet}>
                                   {() => (
                                     <AnalyticsProvider>
+                                      <AppHeader />
                                       <MailboxProvider>
-                                        <AppHeader />
                                         <PageLayout {...pageProps}>
                                           <Component {...pageProps} />
                                         </PageLayout>

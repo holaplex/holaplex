@@ -341,13 +341,11 @@ export const NFTGrid: FC<NFTGridProps> = ({
         )}
       </div>
       {hasMore && (
-        <div>
-          <InView threshold={0.1} onChange={onLoadMore}>
-            <div className={`my-6 flex w-full items-center justify-center font-bold`}>
-              <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
-            </div>
-          </InView>
-        </div>
+        <InView as="div" threshold={0.1} onChange={onLoadMore}>
+          <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+            <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
+          </div>
+        </InView>
       )}
     </>
   );

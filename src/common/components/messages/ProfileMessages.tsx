@@ -47,7 +47,6 @@ interface ProfileMessagesInterface {
 
 export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterface) => {
   const [lastTxId, setLastTxId] = useState<string>('');
-  const [receiver, setReceiver] = useState<string>(props.receiver ?? '');
   const [newMessageText, setNewMessageText] = useState('');
   const { mailbox, conversations, uniqueSenders, mailboxAddress, addMessageToConversation } = props;
   // const [selectedConversation, setSelectedConversation] = useState<string>('');
@@ -87,10 +86,19 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           address: c,
         }))
       ).sort((c1, c2) => {
+        console.log('ec sort', {
+          conversations,
+          c1,
+          c2,
+          contacts,
+        });
+
         const conversation1 = conversations[c1.address];
+        const conversation2 = conversations[c2.address];
+        if (!conversation1 || !conversation2) return 0;
+
         const timeOfLastMessageInConvo1 =
           conversation1[conversation1.length - 1].data.ts?.getTime();
-        const conversation2 = conversations[c2.address];
         const timeOfLastMessageInConvo2 =
           conversation2[conversation2.length - 1].data.ts?.getTime();
 
@@ -185,8 +193,6 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           <span
             onClick={() => {
               // start new conversation
-              setReceiver('');
-
               setRecipient(null);
               recipientInput?.current?.focus();
             }}
@@ -206,7 +212,6 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
                 selected={recipient?.address === contact.address}
                 user={contact}
                 onSelect={() => {
-                  setReceiver(contact.address);
                   setRecipient(contact);
                 }}
               />
@@ -244,10 +249,8 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           {messageBlocks.map((block, index) => (
             <MessageBlock key={index} messageBlock={block} myPubkey={publicKey} />
           ))}
-          {messagesInConversation.every(
-            (m) => m.sender.toBase58() === messagesInConversation[0].sender.toBase58()
-          ) ? (
-            <div className="mx-auto max-w-md rounded-full p-4 shadow-lg shadow-black">
+          {messagesInConversation.every((m) => m.sender.toBase58() === publicKey) && recipient ? (
+            <div className="mx-auto max-w-md rounded-full p-4 text-sm shadow-lg shadow-black">
               Until the other sender responds, your messages will only be available in this browser.
             </div>
           ) : null}
