@@ -1,36 +1,16 @@
-import { useMakeConnection } from '@/common/hooks/useMakeConnection';
-import { useRevokeConnection } from '@/common/hooks/useRevokeConnection';
-import { IProfile } from '@/modules/feed/feed.interfaces';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
-import { AnchorWallet, useLocalStorage } from '@solana/wallet-adapter-react';
-import { Connection } from '@solana/web3.js';
-import { useQueryClient } from 'react-query';
-import { toast } from 'react-toastify';
 import { DateTime } from 'luxon';
 import { Button5 } from '../elements/Button2';
-import { FailureToast } from '../elements/FailureToast';
-import { SuccessToast } from '../elements/SuccessToast';
-import { ProfileDataProvider } from '@/common/context/ProfileData';
-import { useConnection } from '@solana/wallet-adapter-react';
 import React, { FC, useState, useEffect, useMemo, useRef, Fragment, RefObject } from 'react';
-import Button from '@/components/elements/Button';
 import * as web3 from '@solana/web3.js';
 import { Mailbox, MessageAccount } from '@usedispatch/client';
-import { ProfileHandle, ProfilePFP } from '@/common/components/feed/FeedCard';
+import { ProfilePFP } from '@/common/components/feed/FeedCard';
 import classNames from 'classnames';
 import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { User } from '../feed/feed.utils';
-import { Combobox } from '@headlessui/react';
-import {
-  useProfileSearchLazyQuery,
-  ProfileSearchQuery,
-  useGetProfilesQuery,
-} from 'src/graphql/indexerTypes';
-import { DebounceInput } from 'react-debounce-input';
-import { ProfileSearchItem } from '../search/SearchItems';
-import { Avatar } from '../elements/Avatar';
+import { useGetProfilesQuery } from 'src/graphql/indexerTypes';
 import ProfileSearchCombobox from './ProfileSearchCombobox';
 
 interface ProfileMessagesInterface {
@@ -39,30 +19,29 @@ interface ProfileMessagesInterface {
   conversations: {
     [conversationId: string]: MessageAccount[];
   };
-  mailboxAddress: web3.PublicKey | null;
-  receiver?: any;
-  uniqueSenders: string[];
+  receiverAddress?: string;
   addMessageToConversation: (conversationId: string, msg: MessageAccount) => void;
 }
 
 export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterface) => {
-  const [lastTxId, setLastTxId] = useState<string>('');
+  // Some notes for the future
+  // 1. This is more email than IM, from Dispatch's point of view anyway.
+  // 2. The messages listener can be used to notify people of new messages (as long as they stay on the site.). Should probably be put in the provider. Might be possible to integrate with dialect or notify in the future
+  // 3. TODO: Add in delete messages
   const [newMessageText, setNewMessageText] = useState('');
-  const { mailbox, conversations, uniqueSenders, mailboxAddress, addMessageToConversation } = props;
-  // const [selectedConversation, setSelectedConversation] = useState<string>('');
+  const { mailbox, conversations, addMessageToConversation } = props;
   const [recipient, setRecipient] = useState<User | null>(null);
-  // const [messagesInConversation, setMessagesInConversation] = useState<MessageAccount[]>([]);
+  const [messageTransactionInProgress, setmessageTransactionInProgress] = useState(false);
 
-  const contacts = [...new Set(uniqueSenders.concat(Object.keys(conversations)))];
+  const contacts = Object.keys(conversations);
 
   useEffect(() => {
-    if (props.receiver && !recipient) {
+    if (props.receiverAddress && !recipient) {
       setRecipient({
-        address: props.receiver,
+        address: props.receiverAddress,
       });
     }
-  }, [props.receiver]);
-  const [messageTransactionInProgress, setmessageTransactionInProgress] = useState(false);
+  }, [props.receiverAddress]);
 
   const { connectedProfile } = useConnectedWalletProfile();
 
@@ -81,21 +60,13 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
   const enrichedContacts = useMemo(
     () =>
       (
-        data?.wallets.slice() ||
+        data?.wallets.slice() || // We need to do the sorting on a copy of the list returned from the query
         contacts.map((c) => ({
           address: c,
         }))
       ).sort((c1, c2) => {
-        console.log('ec sort', {
-          conversations,
-          c1,
-          c2,
-          contacts,
-        });
-
         const conversation1 = conversations[c1.address];
         const conversation2 = conversations[c2.address];
-        if (!conversation1 || !conversation2) return 0;
 
         const timeOfLastMessageInConvo1 =
           conversation1[conversation1.length - 1].data.ts?.getTime();
@@ -124,14 +95,10 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
     // TODO: can add a subject here via a new form element
     setmessageTransactionInProgress(true);
 
-    // this is actually email, not IM
-
-    // might be able to switch this to the
-
-    // the messages listener can be used to notify people of new messages (as long as they stay on the site.). Should probably be put in the provider. Might be possible to integrate with dialect or notify in the future
     mailbox
       .sendMessage(
-        'Holaplex chat', // should be user defined
+        // Keeping this as Holaplex chat for now, but could be moved to empty string or something user defined in the future
+        'Holaplex chat',
         newMessageText,
         receiverPublicKey!,
         {}, // options // might be used in the future to add attatchements to message
@@ -140,10 +107,11 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
         }
       )
       .then((tx) => {
-        setLastTxId(tx);
+        // at(-1) is new es 2022 feature
+        const lastMessage = messagesInConversation.at(-1);
         addMessageToConversation(recipient.address, {
           sender: new web3.PublicKey(publicKey),
-          messageId: 10, // TODO make random
+          messageId: lastMessage ? lastMessage.messageId + 1 : 0,
           receiver: receiverPublicKey,
           data: {
             body: newMessageText,
@@ -158,7 +126,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
 
         // This is how to retrieve the title and error message
         // for a popup dialog when something fails
-
+        // TODO
         /* setModalInfo({
          *   title:
          *         error.error?.code === 4001
@@ -177,10 +145,10 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
 
   // messages grouped by time and person
   const messageBlocks: MessageAccount[][] = createMessageBlocks(messagesInConversation);
-  // TODO Add in delete messages
+
   return (
     <div className="-mt-20 flex h-full max-h-screen  pt-20 ">
-      {/* Conversations / Contacts */}
+      {/*  Contacts */}
       <div className="relative  flex  w-full  max-w-md flex-col border-t border-r border-gray-800 transition-all hover:min-w-fit ">
         <div className="flex items-center justify-between p-5 ">
           <ProfilePFP
@@ -203,6 +171,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
         </div>
         <div className="spacy-y-6 h-full overflow-auto px-5">
           {recipient && !enrichedContacts.some((c) => c.address === recipient.address) && (
+            // Create a temporary contact card while typing in a messsage for a new recipient
             <Contact selected={true} user={recipient} />
           )}
           {enrichedContacts.length ? (
@@ -270,11 +239,6 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
               value={newMessageText}
               autoFocus={true}
               onChange={(e) => setNewMessageText(e.target.value)}
-              onFocus={function (e) {
-                var val = e.target.value;
-                e.target.value = '';
-                e.target.value = val;
-              }}
             />
           ) : (
             <textarea
@@ -287,6 +251,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
               autoFocus={true}
               onChange={(e) => setNewMessageText(e.target.value)}
               onFocus={function (e) {
+                // used to keep focus when the input changes to a text area
                 var val = e.target.value;
                 e.target.value = '';
                 e.target.value = val;
@@ -388,31 +353,19 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
 
 function createMessageBlocks(messagesInConversation: MessageAccount[]) {
   const messageBlocks: MessageAccount[][] = [];
-  let currentBlockIndex = -1;
+  let currentBlockIndex = -1; // I think there might be a better way to do this, but I'm blanking
 
   messagesInConversation.forEach((curMsg, i, conversation) => {
     const prevMsg = conversation[i - 1];
 
-    const nextMsg = conversation[i + 1];
-    console.log('msg block', {
-      curMsg,
-      nextMsg,
-      conversation,
-    });
     const timeOfPrevMsg = prevMsg?.data?.ts?.getTime();
     const timeOfCurMsg = curMsg.data?.ts?.getTime();
-    const timeOfNextMsg = nextMsg?.data?.ts?.getTime();
+
     const prevSenderIsSame = prevMsg?.sender.toBase58() == curMsg.sender.toBase58();
     const messageIsWithin4HoursOfLast =
       timeOfCurMsg && timeOfPrevMsg && timeOfCurMsg - timeOfPrevMsg < 4 * 3600_000;
-    if (
-      prevSenderIsSame &&
-      messageIsWithin4HoursOfLast
-      // (curMsg.sender.toBase58() === nextMsg?.sender.toBase58() && ) ||
-      // (!nextMsg && curMsg.sender.toBase58() === prevMsg.sender.toBase58())
-      //   && // same sender
-      // (!nextMsg || (timeOfCurMsg && timeOfNextMsg && timeOfNextMsg - timeOfCurMsg < 4 * 3600_000)) // less than 4 hours apart
-    ) {
+
+    if (prevSenderIsSame && messageIsWithin4HoursOfLast) {
       // add to current msg block
       if (!messageBlocks[currentBlockIndex]) {
         messageBlocks[currentBlockIndex] = [];

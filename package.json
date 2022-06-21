@@ -24,7 +24,7 @@
     "storefronts:update": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/update-store-json.ts"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.8",
+    "@apollo/client": "^3.6.8",
     "@aws-sdk/client-secrets-manager": "^3.30.0",
     "@aws-sdk/types": "^3.29.0",
     "@bugsnag/js": "^7.14.1",
@@ -116,10 +116,10 @@
     "zod": "^3.14.4"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.4.0",
-    "@graphql-codegen/typescript": "^2.4.2",
-    "@graphql-codegen/typescript-operations": "^2.2.3",
-    "@graphql-codegen/typescript-react-apollo": "^3.2.4",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typescript": "^2.5.1",
+    "@graphql-codegen/typescript-operations": "^2.4.2",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.16",
     "@tailwindcss/forms": "^0.4.0",
     "@types/chai": "^4.2.19",
     "@types/color": "^3.0.2",
@@ -153,7 +153,7 @@
     "prettier-plugin-tailwindcss": "^0.1.4",
     "tailwindcss": "^3.0.18",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.3.4"
+    "typescript": "^4.7.4"
   },
   "overrides": {
     "autoprefixer": "10.4.5"
