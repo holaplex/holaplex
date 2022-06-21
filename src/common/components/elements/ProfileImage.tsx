@@ -11,7 +11,8 @@ export const ProfileImage = () => {
 
   const { publicKey } = useWallet();
 
-  const profilePictureUrl: string = connectedProfile?.profile?.profileImageUrlLowres ?? getPFPFromPublicKey(publicKey);
+  const profilePictureUrl: string =
+    connectedProfile?.profile?.profileImageUrlHighres ?? getPFPFromPublicKey(publicKey);
 
   const [isShowingProfilePopover, setIsShowingProfilePopover] = useState(false);
 

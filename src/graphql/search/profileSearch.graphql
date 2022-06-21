@@ -3,7 +3,7 @@ query profileSearch($term: String!) {
     address
     twitterHandle
     profile {
-      profileImageUrl
+      profileImageUrlLowres
     }
   }
 }

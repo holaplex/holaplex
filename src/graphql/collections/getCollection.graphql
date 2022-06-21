@@ -11,6 +11,7 @@ query getCollection($address: String!) {
       profile {
         handle
         profileImageUrlLowres
+        profileImageUrlHighres
       }
     }
   }

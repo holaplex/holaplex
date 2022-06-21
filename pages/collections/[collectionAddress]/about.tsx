@@ -30,10 +30,7 @@ export default function CollectionAboutPage(props: CollectionPageProps) {
               source="collectionCreators"
               user={{
                 address: cc.address,
-                profile: {
-                  handle: cc.profile?.handle,
-                  profileImageUrl: cc.profile?.profileImageUrlLowres,
-                } as any,
+                profile: cc.profile,
               }}
             />
           ))}

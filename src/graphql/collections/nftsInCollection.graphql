@@ -58,6 +58,7 @@ query nftsInCollection(
       profile {
         handle
         profileImageUrlLowres
+        profileImageUrlHighres
       }
     }
     owner {

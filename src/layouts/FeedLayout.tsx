@@ -4,9 +4,7 @@ import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
-import {
-  useAllConnectionsFromLazyQuery, useWhoToFollowQuery,
-} from 'src/graphql/indexerTypes';
+import { useAllConnectionsFromLazyQuery, useWhoToFollowQuery } from 'src/graphql/indexerTypes';
 import { User } from '@/common/components/feed/feed.utils';
 
 export default function FeedLayout({ children }: { children: any }) {
@@ -38,8 +36,10 @@ export default function FeedLayout({ children }: { children: any }) {
 
   const myFollowingList: string[] | undefined = data?.connections.map((c) => c.to.address);
 
-  const {data: whoToFollowData} = useWhoToFollowQuery({variables: {wallet: anchorWallet?.publicKey, limit: 25}});
-  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map(u => ({address: u.address, profile: {handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres}}));
+  const { data: whoToFollowData } = useWhoToFollowQuery({
+    variables: { wallet: anchorWallet?.publicKey, limit: 25 },
+  });
+  const profilesToFollow: User[] = whoToFollowData?.followWallets || [];
 
   useEffect(() => {
     if (!anchorWallet) {
@@ -69,11 +69,9 @@ export default function FeedLayout({ children }: { children: any }) {
   return (
     <div className="container mx-auto mt-10 px-6 pb-20  xl:px-44  ">
       <div className="mt-12 flex justify-between">
-        <div className="mx-auto w-full  sm:w-[600px] xl:mx-0 ">
-          {children}
-        </div>
+        <div className="mx-auto w-full  sm:w-[600px] xl:mx-0 ">{children}</div>
         <div className="sticky top-10 ml-20 hidden h-fit w-full max-w-sm  xl:block ">
-          <WhoToFollowList myFollowingList={myFollowingList} profilesToFollow={profilesToFollow}/>
+          <WhoToFollowList myFollowingList={myFollowingList} profilesToFollow={profilesToFollow} />
           <div className="relative  py-10 ">
             <div className="absolute  inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-gray-800" />

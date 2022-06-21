@@ -5,6 +5,7 @@ query getProfileInfoFromPubKey($pubKey: PublicKey!) {
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
       bannerImageUrl
     }
   }

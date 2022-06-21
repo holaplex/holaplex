@@ -60,7 +60,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
                     <ProfileSearchItem
                       address={profile?.address}
                       handle={profile?.twitterHandle}
-                      profileImage={profile?.profile?.profileImageUrl}
+                      profileImage={profile?.profile?.profileImageUrlLowres}
                       onClick={() =>
                         trackSearchResultSelected({
                           resultType: 'Profile',
@@ -83,7 +83,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
             <ProfileSearchItem
               address={walletResult?.address}
               handle={walletResult?.twitterHandle}
-              profileImage={walletResult?.profile?.profileImageUrl}
+              profileImage={walletResult?.profile?.profileImageUrlLowres}
               onClick={() =>
                 trackSearchResultSelected({
                   resultType: 'Wallet',
