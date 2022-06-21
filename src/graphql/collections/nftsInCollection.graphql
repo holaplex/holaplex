@@ -1,5 +1,11 @@
-query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
-  marketplace(subdomain: $subdomain) {
+query nftsInCollection(
+  $collectionMintAddress: PublicKey!
+  $listed: Boolean
+  $marketplaceSubdomain: String!
+  $limit: Int = 25
+  $offset: Int = 0
+) {
+  marketplace(subdomain: $marketplaceSubdomain) {
     subdomain
     name
     description
@@ -25,9 +31,14 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       sellerFeeBasisPoints
       requiresSignOff
       canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
+      }
     }
   }
-  nfts(creators: [$creator], limit: $limit, offset: $offset) {
+  nfts(collection: $collectionMintAddress, listed: $listed, limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -35,19 +46,28 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
     description
     image
     primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
     creators {
       address
       share
       verified
+      profile {
+        handle
+        profileImageUrlLowres
+      }
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
     }
     collections {
       address
       name
       image
-    }
-    owner {
-      address
-      associatedTokenAccountAddress
     }
     purchases {
       address

@@ -7,6 +7,7 @@ import {
   ListingReceipt,
   MintEvent,
   PurchaseReceipt,
+  GetCollectionQuery,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];

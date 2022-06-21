@@ -218,7 +218,9 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           {messageBlocks.map((block, index) => (
             <MessageBlock key={index} messageBlock={block} myPubkey={publicKey} />
           ))}
-          {messagesInConversation.every((m) => m.sender.toBase58() === publicKey) && recipient ? (
+          {messagesInConversation.length &&
+          messagesInConversation.every((m) => m.sender.toBase58() === publicKey) &&
+          recipient ? (
             <div className="mx-auto max-w-md rounded-full p-4 text-sm shadow-lg shadow-black">
               Until the other sender responds, your messages will only be available in this browser.
             </div>
