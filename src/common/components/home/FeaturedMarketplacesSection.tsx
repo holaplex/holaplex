@@ -11,11 +11,13 @@ import { getFallbackImage } from '@/modules/utils/image';
 
 const previewSubdomains: string[] = [
   'junglecats',
+  'womeninnfts',
+  'nft4good',
+  'monkedao',
   'pixelbands',
+  'event',
   'skeletoncrew',
   'thechimpions',
-  'monkedao',
-  'event',
   // 'cityshop',
   // 'ursmarket',
   // 'thislooksrare',
@@ -24,7 +26,6 @@ const previewSubdomains: string[] = [
   // 'kurumanft',
   // 'paragon',
 ];
-
 
 const FeaturedMarketplacesSection: VFC = () => {
   return (
