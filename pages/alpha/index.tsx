@@ -66,10 +66,7 @@ const AlphaPage = ({ address }: { address: string }) => {
     variables: { wallet: myPubkey, limit: 25 },
     skip: !myPubkey,
   });
-  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map((u) => ({
-    address: u.address,
-    profile: { handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres },
-  }));
+  const profilesToFollow: User[] = whoToFollowData?.followWallets || [];
 
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = [

@@ -21,8 +21,8 @@ type QueryNFT =
 export interface User {
   address: string;
   profile?: {
-    handle?: string;
-    profileImageUrlLowres?: string;
+    handle: string;
+    profileImageUrlLowres: string;
   } | null;
 }
 

@@ -554,11 +554,7 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={
-            user?.profile?.profileImageUrlLowres ||
-            user?.profile?.profileImageUrl ||
-            getPFPFromPublicKey(user.address)
-          }
+          src={user?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>
