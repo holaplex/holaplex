@@ -18,7 +18,7 @@ export default function ProfileSearchCombobox(props: { setRecipient: any }) {
 
   const profileResults = (showResults && data?.profiles.slice(0, 5)) || [];
 
-  const handleOnChange = (e: any) => {
+  function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.value.length) {
       setShowResults(false);
     } else {
@@ -29,14 +29,13 @@ export default function ProfileSearchCombobox(props: { setRecipient: any }) {
         },
       });
     }
-  };
+  }
 
   return (
     <div className="relative">
       <Combobox
         value={selectedPerson}
         onChange={(p) => {
-          console.log('select p', p);
           setSelectedPerson(p);
           props.setRecipient(p);
         }}
@@ -64,13 +63,13 @@ export default function ProfileSearchCombobox(props: { setRecipient: any }) {
                     active && 'bg-gray-800'
                   )}
                 >
-                  <div className={`flex flex-row items-center gap-6`}>
-                    <Avatar size={`md`} address={address} showAddress={false} />
-                    <p className={`m-0 text-sm`}>
+                  <div className={'flex flex-row items-center gap-6'}>
+                    <Avatar size={'md'} address={address} showAddress={false} />
+                    <p className={'m-0 text-sm'}>
                       {profile?.handle ? `@${profile.handle}` : shortenAddress(address)}
                     </p>
                   </div>
-                  <p className={`m-0 hidden text-sm text-gray-300 md:inline-block`}>
+                  <p className={'m-0 hidden text-sm text-gray-300 md:inline-block'}>
                     {shortenAddress(address)}
                   </p>
                 </div>

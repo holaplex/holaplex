@@ -21,6 +21,7 @@ import {
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import MessagesIcon from '@/common/assets/icons/MessagesIcon';
 
 const ProfilePageHead = (props: {
   publicKey: string;
@@ -133,15 +134,7 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
               <Link href={'/messages?address=' + publicKey} passHref>
                 <a className="mt-10 flex max-w-fit items-center space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300">
                   <span>Message</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                    <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
-                  </svg>
+                  <MessagesIcon className="h-5 w-5" />
                 </a>
               </Link>
             </div>

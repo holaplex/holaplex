@@ -14,8 +14,8 @@ import { useGetProfilesQuery } from 'src/graphql/indexerTypes';
 import ProfileSearchCombobox from './ProfileSearchCombobox';
 
 interface ProfileMessagesInterface {
-  publicKey: string;
-  mailbox: Mailbox | undefined;
+  myPubkey: string;
+  mailbox: Mailbox;
   conversations: {
     [conversationId: string]: MessageAccount[];
   };
@@ -23,17 +23,50 @@ interface ProfileMessagesInterface {
   addMessageToConversation: (conversationId: string, msg: MessageAccount) => void;
 }
 
-export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterface) => {
+function groupMessages(messagesInConversation: MessageAccount[]) {
+  const THRESHOLD_TO_GROUP_MESSAGES_MS = 4 * 3600_000;
+  const messageBlocks: MessageAccount[][] = [];
+  let currentBlockIndex = -1; // I think there might be a better way to do this, but I'm blanking
+
+  messagesInConversation.forEach((curMsg, i, conversation) => {
+    const prevMsg = i === 0 ? null : conversation[i - 1];
+
+    const timeOfPrevMsg = prevMsg?.data?.ts?.getTime();
+    const timeOfCurMsg = curMsg.data?.ts?.getTime();
+
+    const prevSenderIsSame = prevMsg?.sender.toBase58() == curMsg.sender.toBase58();
+    const messageIsWithin4HoursOfLast =
+      timeOfCurMsg && timeOfPrevMsg && timeOfCurMsg - THRESHOLD_TO_GROUP_MESSAGES_MS;
+
+    const shouldGroupWithPrevious = prevSenderIsSame && messageIsWithin4HoursOfLast;
+
+    if (shouldGroupWithPrevious) {
+      // add to current msg block
+      if (!messageBlocks[currentBlockIndex]) {
+        messageBlocks[currentBlockIndex] = [];
+      }
+
+      messageBlocks[currentBlockIndex].push(curMsg);
+    } else {
+      // create a new msg block
+      messageBlocks.push([curMsg]);
+      currentBlockIndex++;
+    }
+  }, []);
+
+  return messageBlocks;
+}
+
+export function ProfileMessages(props: ProfileMessagesInterface) {
   // Some notes for the future
   // 1. This is more email than IM, from Dispatch's point of view anyway.
   // 2. The messages listener can be used to notify people of new messages (as long as they stay on the site.). Should probably be put in the provider. Might be possible to integrate with dialect or notify in the future
   // 3. TODO: Add in delete messages
   const [newMessageText, setNewMessageText] = useState('');
-  const { mailbox, conversations, addMessageToConversation } = props;
   const [recipient, setRecipient] = useState<User | null>(null);
-  const [messageTransactionInProgress, setmessageTransactionInProgress] = useState(false);
+  const [messageTransactionInProgress, setMessageTransactionInProgress] = useState(false);
 
-  const contacts = Object.keys(conversations);
+  const contacts = Object.keys(props.conversations);
 
   useEffect(() => {
     if (props.receiverAddress && !recipient) {
@@ -46,7 +79,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
   const { connectedProfile } = useConnectedWalletProfile();
 
   const messagesInConversation: MessageAccount[] =
-    (recipient?.address && conversations[recipient.address]) || [];
+    (recipient?.address && props.conversations[recipient.address]) || [];
 
   const recipientInput = useRef<HTMLInputElement>(null);
   const newMessageInput = useRef<HTMLTextAreaElement | HTMLInputElement>(null);
@@ -57,7 +90,7 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
     },
   });
 
-  const enrichedContacts = useMemo(
+  const enrichedContacts: User[] = useMemo(
     () =>
       (
         data?.wallets.slice() || // We need to do the sorting on a copy of the list returned from the query
@@ -65,8 +98,20 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           address: c,
         }))
       ).sort((c1, c2) => {
-        const conversation1 = conversations[c1.address];
-        const conversation2 = conversations[c2.address];
+        const conversation1 = props.conversations[c1.address];
+        const conversation2 = props.conversations[c2.address];
+        console.log('ec', {
+          c: props.conversations,
+          conversation1,
+          conversation2,
+        });
+        if (
+          !conversation1 ||
+          !conversation1.length || // You'd think a conversation would always have lenght, but dispatch actually returned an empty array for an earlier conversation
+          !conversation2 ||
+          !conversation2.length
+        )
+          return 0;
 
         const timeOfLastMessageInConvo1 =
           conversation1[conversation1.length - 1].data.ts?.getTime();
@@ -81,21 +126,16 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
     [data?.wallets, contacts]
   );
 
-  const sendMessage = async (event: React.SyntheticEvent) => {
+  async function sendMessage(event: React.SyntheticEvent) {
     event.preventDefault();
-
-    if (!mailbox || messageTransactionInProgress) {
-      alert('wallet is not connected, not sending message');
-      return;
-    }
 
     if (!recipient) return;
     const receiverPublicKey: web3.PublicKey = new web3.PublicKey(recipient.address);
 
     // TODO: can add a subject here via a new form element
-    setmessageTransactionInProgress(true);
+    setMessageTransactionInProgress(true);
 
-    mailbox
+    props.mailbox
       .sendMessage(
         // Keeping this as Holaplex chat for now, but could be moved to empty string or something user defined in the future
         'Holaplex chat',
@@ -107,10 +147,9 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
         }
       )
       .then((tx) => {
-        // at(-1) is new es 2022 feature
         const lastMessage = messagesInConversation.at(-1);
-        addMessageToConversation(recipient.address, {
-          sender: new web3.PublicKey(publicKey),
+        props.addMessageToConversation(recipient.address, {
+          sender: new web3.PublicKey(props.myPubkey),
           messageId: lastMessage ? lastMessage.messageId + 1 : 0,
           receiver: receiverPublicKey,
           data: {
@@ -139,16 +178,18 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
          * }); */
       })
       .finally(() => {
-        setmessageTransactionInProgress(false);
+        setMessageTransactionInProgress(false);
       });
-  };
+  }
 
   // messages grouped by time and person
-  const messageBlocks: MessageAccount[][] = createMessageBlocks(messagesInConversation);
+  const messageBlocks: MessageAccount[][] = messagesInConversation.length
+    ? groupMessages(messagesInConversation)
+    : [];
 
   return (
     <div className="-mt-20 flex h-full max-h-screen  pt-20 ">
-      {/*  Contacts */}
+      {/*  Contacts sidebar */}
       <div className="relative  flex  w-full  max-w-md flex-col border-t border-r border-gray-800 transition-all hover:min-w-fit ">
         <div className="flex items-center justify-between p-5 ">
           <ProfilePFP
@@ -192,13 +233,13 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
           )}
         </div>
       </div>
-      {/* Messages */}
+      {/* Conversation main view */}
       <div className=" flex grow flex-col justify-between border-t border-gray-800 ">
         <div className="flex items-center space-x-4 border-b border-gray-800  p-5">
           {recipient ? (
             <>
               <ProfilePFP user={recipient} />
-              <h2> {recipient.profile?.handle || shortenAddress(recipient.address)} </h2>
+              <h2> {recipient.profile?.handle ?? shortenAddress(recipient.address)} </h2>
             </>
           ) : (
             <>
@@ -216,10 +257,10 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
         </div>
         <div className="h-full space-y-4 overflow-auto p-4">
           {messageBlocks.map((block, index) => (
-            <MessageBlock key={index} messageBlock={block} myPubkey={publicKey} />
+            <MessageBlock key={index} messageBlock={block} myPubkey={props.myPubkey} />
           ))}
           {messagesInConversation.length &&
-          messagesInConversation.every((m) => m.sender.toBase58() === publicKey) &&
+          messagesInConversation.every((m) => m.sender.toBase58() === props.myPubkey) &&
           recipient ? (
             <div className="mx-auto max-w-md rounded-full p-4 text-sm shadow-lg shadow-black">
               Until the other sender responds, your messages will only be available in this browser.
@@ -235,9 +276,9 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
             <input
               name="message"
               ref={newMessageInput as RefObject<HTMLInputElement>}
-              disabled={messageTransactionInProgress || !recipient?.address}
+              disabled={messageTransactionInProgress ?? !recipient?.address}
               className="w-full resize-none rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white disabled:bg-gray-800 "
-              placeholder={'Message ' + shortenAddress(recipient?.address || '') + '...'}
+              placeholder={'Message ' + shortenAddress(recipient?.address ?? '') + '...'}
               value={newMessageText}
               autoFocus={true}
               onChange={(e) => setNewMessageText(e.target.value)}
@@ -248,7 +289,6 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
               ref={newMessageInput as RefObject<HTMLTextAreaElement>}
               disabled={messageTransactionInProgress || !recipient?.address}
               className="w-full resize-none rounded-lg  bg-gray-900 px-4 py-2 text-white ring-1  ring-gray-800  focus:ring-white"
-              placeholder={'Message ' + shortenAddress(recipient?.address || '') + '...'}
               value={newMessageText}
               autoFocus={true}
               onChange={(e) => setNewMessageText(e.target.value)}
@@ -270,14 +310,14 @@ export const ProfileMessages = ({ publicKey, ...props }: ProfileMessagesInterfac
       </div>
     </div>
   );
-};
+}
 
 function Contact(props: { selected: boolean; onSelect?: () => void; user: User }): JSX.Element {
   return (
     <div
       id={props.user.address}
       className={classNames(
-        ' flex cursor-pointer items-center space-x-2 rounded-md  px-2 py-2',
+        ' flex cursor-pointer items-center space-x-2 rounded-md px-2 py-2',
         props.selected && 'bg-gray-800'
       )}
       onClick={props.onSelect}
@@ -293,7 +333,7 @@ function Contact(props: { selected: boolean; onSelect?: () => void; user: User }
 
 const ONE_WEEK_IN_MS = 7 * 24 * 3600 * 1000;
 
-function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] }) {
+function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] }): JSX.Element {
   const sender = props.messageBlock[0].sender.toBase58();
   const iAmSender = sender === props.myPubkey;
   const msgIsForMe = !iAmSender;
@@ -351,35 +391,4 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
       </div>
     </div>
   );
-}
-
-function createMessageBlocks(messagesInConversation: MessageAccount[]) {
-  const messageBlocks: MessageAccount[][] = [];
-  let currentBlockIndex = -1; // I think there might be a better way to do this, but I'm blanking
-
-  messagesInConversation.forEach((curMsg, i, conversation) => {
-    const prevMsg = conversation[i - 1];
-
-    const timeOfPrevMsg = prevMsg?.data?.ts?.getTime();
-    const timeOfCurMsg = curMsg.data?.ts?.getTime();
-
-    const prevSenderIsSame = prevMsg?.sender.toBase58() == curMsg.sender.toBase58();
-    const messageIsWithin4HoursOfLast =
-      timeOfCurMsg && timeOfPrevMsg && timeOfCurMsg - timeOfPrevMsg < 4 * 3600_000;
-
-    if (prevSenderIsSame && messageIsWithin4HoursOfLast) {
-      // add to current msg block
-      if (!messageBlocks[currentBlockIndex]) {
-        messageBlocks[currentBlockIndex] = [];
-      }
-
-      messageBlocks[currentBlockIndex].push(curMsg);
-    } else {
-      // create a new msg block
-      messageBlocks.push([curMsg]);
-      currentBlockIndex++;
-    }
-  }, []);
-
-  return messageBlocks;
 }

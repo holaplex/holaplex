@@ -14,7 +14,6 @@ enum TabRoute {
   COLLECTIONS,
   OFFERS,
   ACTIVITY,
-  MESSAGES,
 }
 
 export const ProfileMenu: FC = () => {
@@ -62,12 +61,6 @@ export const ProfileMenu: FC = () => {
       title: 'Activity',
       icon: <TrendingUpIcon className="mr-4 h-5 w-5" />,
       path: `/profiles/${publicKey}/activity`,
-    },
-    {
-      id: TabRoute.MESSAGES,
-      title: 'Messages',
-      icon: <TrendingUpIcon className="mr-4 h-5 w-5" />,
-      path: `/profiles/${publicKey}/messages `,
     },
   ];
 

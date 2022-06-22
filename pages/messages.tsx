@@ -9,18 +9,24 @@ import { Mailbox, MessageAccount } from '@usedispatch/client';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
 import { useLocalStorage } from '@/common/hooks/useLocalStorage';
+import { CONVERSATIONS_STATE } from '@/common/constants/localStorageKeys';
+import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
 
 interface Conversations {
   [conversationId: string]: MessageAccount[];
 }
 
 const MessagesPage: NextPage<WalletDependantPageProps> = () => {
-  const wallet = useWallet();
-  const myPubkey = wallet.publicKey?.toBase58();
+  const { connectedProfile } = useConnectedWalletProfile();
+  const myPubkey = connectedProfile?.pubkey;
+  const mailbox = useMailbox();
+  const router = useRouter();
+  // used to initialize inbox with a recipient
+  const receiverAddress = router.query.to as string | undefined;
 
   // load existing conversations from local storage to display conversations where the other party has not replied yet
   const [conversationsState, setConversationsState] = useLocalStorage<Conversations>(
-    'conversationsState',
+    CONVERSATIONS_STATE,
     {}
   );
 
@@ -53,22 +59,17 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
       };
     });
   }
-  const mailbox = useMailbox();
 
-  const router = useRouter();
-  // used to initialize inbox with a recipient
-  const receiverAddress = router.query.to as string | undefined;
-
-  async function setupConversations(mb: Mailbox) {
+  async function setUpConversations(mailbox: Mailbox) {
     const allConversations: Conversations = {};
-    const allReceivedMessages = await mb.fetchMessages();
+    const allReceivedMessages = await mailbox.fetchMessages();
 
     const uniqueSenders = [
       ...new Set(allReceivedMessages.map((message) => message.sender.toBase58())),
     ];
 
     const allMySentMessages = await Promise.all(
-      uniqueSenders.map((u) => mb.fetchSentMessagesTo(new web3.PublicKey(u)))
+      uniqueSenders.map((u) => mailbox.fetchSentMessagesTo(new web3.PublicKey(u)))
     );
 
     // merge and sort messages pr conversation
@@ -94,13 +95,13 @@ const MessagesPage: NextPage<WalletDependantPageProps> = () => {
 
   useEffect(() => {
     if (mailbox) {
-      setupConversations(mailbox);
+      setUpConversations(mailbox);
     }
   }, [mailbox]);
 
   return !myPubkey || !mailbox ? null : (
     <ProfileMessages
-      publicKey={myPubkey}
+      myPubkey={myPubkey}
       conversations={conversations}
       mailbox={mailbox}
       receiverAddress={receiverAddress}
