@@ -339,6 +339,16 @@ export type NftOwner = {
   twitterHandle?: Maybe<Scalars['String']>;
 };
 
+export type NftsStats = {
+  __typename?: 'NftsStats';
+  /** The total number of buy-now listings */
+  buyNowListings: Scalars['Int'];
+  /** The total number of NFTs with active offers */
+  nftsWithActiveOffers: Scalars['Int'];
+  /** The total number of indexed NFTs */
+  totalNfts: Scalars['Int'];
+};
+
 export type OfferEvent = {
   __typename?: 'OfferEvent';
   bidReceiptAddress: Scalars['PublicKey'];
@@ -361,6 +371,12 @@ export type PricePoint = {
   __typename?: 'PricePoint';
   date: Scalars['DateTimeUtc'];
   price: Scalars['U64'];
+};
+
+export type ProfilesStats = {
+  __typename?: 'ProfilesStats';
+  /** The total number of indexed profiles */
+  totalProfiles: Scalars['Int'];
 };
 
 export type PurchaseEvent = {
@@ -408,10 +424,14 @@ export type QueryRoot = {
   nft?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
+  /** Stats aggregated across all indexed NFTs */
+  nftsStats: NftsStats;
   offer?: Maybe<BidReceipt>;
   profile?: Maybe<TwitterProfile>;
   /** returns profiles matching the search term */
   profiles: Array<Wallet>;
+  /** returns stats about profiles */
+  profilesStats: ProfilesStats;
   /** A storefront */
   storefront?: Maybe<Storefront>;
   storefronts: Array<Storefront>;
@@ -841,6 +861,13 @@ export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
 
 export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type GetProfilesQueryVariables = Exact<{
+  addresses: Array<Scalars['PublicKey']> | Scalars['PublicKey'];
+}>;
+
+
+export type GetProfilesQuery = { __typename?: 'QueryRoot', wallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
+
 export type IsXFollowingYQueryVariables = Exact<{
   xPubKey: Scalars['PublicKey'];
   yPubKey: Scalars['PublicKey'];
@@ -868,7 +895,7 @@ export type ProfileSearchQueryVariables = Exact<{
 }>;
 
 
-export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string } | null }> };
+export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
 
 export type SearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -2975,6 +3002,45 @@ export function useGetProfileInfoFromTwitterHandleLazyQuery(baseOptions?: Apollo
 export type GetProfileInfoFromTwitterHandleQueryHookResult = ReturnType<typeof useGetProfileInfoFromTwitterHandleQuery>;
 export type GetProfileInfoFromTwitterHandleLazyQueryHookResult = ReturnType<typeof useGetProfileInfoFromTwitterHandleLazyQuery>;
 export type GetProfileInfoFromTwitterHandleQueryResult = Apollo.QueryResult<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>;
+export const GetProfilesDocument = gql`
+    query getProfiles($addresses: [PublicKey!]!) {
+  wallets(addresses: $addresses) {
+    address
+    profile {
+      handle
+      profileImageUrlLowres
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetProfilesQuery__
+ *
+ * To run a query within a React component, call `useGetProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProfilesQuery({
+ *   variables: {
+ *      addresses: // value for 'addresses'
+ *   },
+ * });
+ */
+export function useGetProfilesQuery(baseOptions: Apollo.QueryHookOptions<GetProfilesQuery, GetProfilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfilesQuery, GetProfilesQueryVariables>(GetProfilesDocument, options);
+      }
+export function useGetProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfilesQuery, GetProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfilesQuery, GetProfilesQueryVariables>(GetProfilesDocument, options);
+        }
+export type GetProfilesQueryHookResult = ReturnType<typeof useGetProfilesQuery>;
+export type GetProfilesLazyQueryHookResult = ReturnType<typeof useGetProfilesLazyQuery>;
+export type GetProfilesQueryResult = Apollo.QueryResult<GetProfilesQuery, GetProfilesQueryVariables>;
 export const IsXFollowingYDocument = gql`
     query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
   connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
@@ -3089,10 +3155,10 @@ export type MetadataSearchLazyQueryHookResult = ReturnType<typeof useMetadataSea
 export type MetadataSearchQueryResult = Apollo.QueryResult<MetadataSearchQuery, MetadataSearchQueryVariables>;
 export const ProfileSearchDocument = gql`
     query profileSearch($term: String!) {
-  profiles(term: $term, limit: 10, offset: 0) {
+  profiles(term: $term, limit: 5, offset: 0) {
     address
-    twitterHandle
     profile {
+      handle
       profileImageUrlLowres
     }
   }

@@ -20,7 +20,7 @@ import { Combobox, Transition } from '@headlessui/react';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({
-  query: zod.string().nonempty({ message: `Must enter something` }),
+  query: zod.string().min(1, `Must enter something`),
 });
 
 interface SearchQuerySchema {
@@ -64,7 +64,6 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
     | SearchQuery['wallet'];
   const [selected, setSelected] = useState<SearchResultItem | null>(null);
   const wallet = useWallet();
-  console.log(selected);
 
   useEffect(() => {
     // keeping this as own side effect instead of moving it in with handleChange
@@ -87,7 +86,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
 
   // handle ctrl/cmd + k
 
-  const handleOnChange = (e: any) => {
+  function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.value === '') {
       setHasSearch(false);
     } else {
@@ -99,7 +98,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
         walletAddress: e.target.value,
       },
     });
-  };
+  }
 
   const handleReset = () => {
     setValue('query', '');

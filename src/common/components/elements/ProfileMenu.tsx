@@ -65,7 +65,7 @@ export const ProfileMenu: FC = () => {
   ];
 
   return (
-    <div className="mb-2 border-b-2  border-gray-800">
+    <div className="mb-2 border-b-2 border-gray-800">
       <Tab.Group defaultIndex={defaultTabIndex}>
         <Tab.List className="-mb-0.5 flex h-14 w-full justify-between overflow-x-auto no-scrollbar  sm:justify-start ">
           {tabs.map((tab) => (

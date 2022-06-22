@@ -339,6 +339,16 @@ export type NftOwner = {
   twitterHandle?: Maybe<Scalars['String']>;
 };
 
+export type NftsStats = {
+  __typename?: 'NftsStats';
+  /** The total number of buy-now listings */
+  buyNowListings: Scalars['Int'];
+  /** The total number of NFTs with active offers */
+  nftsWithActiveOffers: Scalars['Int'];
+  /** The total number of indexed NFTs */
+  totalNfts: Scalars['Int'];
+};
+
 export type OfferEvent = {
   __typename?: 'OfferEvent';
   bidReceiptAddress: Scalars['PublicKey'];
@@ -361,6 +371,12 @@ export type PricePoint = {
   __typename?: 'PricePoint';
   date: Scalars['DateTimeUtc'];
   price: Scalars['U64'];
+};
+
+export type ProfilesStats = {
+  __typename?: 'ProfilesStats';
+  /** The total number of indexed profiles */
+  totalProfiles: Scalars['Int'];
 };
 
 export type PurchaseEvent = {
@@ -408,10 +424,14 @@ export type QueryRoot = {
   nft?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
+  /** Stats aggregated across all indexed NFTs */
+  nftsStats: NftsStats;
   offer?: Maybe<BidReceipt>;
   profile?: Maybe<TwitterProfile>;
   /** returns profiles matching the search term */
   profiles: Array<Wallet>;
+  /** returns stats about profiles */
+  profilesStats: ProfilesStats;
   /** A storefront */
   storefront?: Maybe<Storefront>;
   storefronts: Array<Storefront>;
@@ -841,6 +861,13 @@ export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
 
 export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
+export type GetProfilesQueryVariables = Exact<{
+  addresses: Array<Scalars['PublicKey']> | Scalars['PublicKey'];
+}>;
+
+
+export type GetProfilesQuery = { __typename?: 'QueryRoot', wallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
+
 export type IsXFollowingYQueryVariables = Exact<{
   xPubKey: Scalars['PublicKey'];
   yPubKey: Scalars['PublicKey'];
@@ -868,7 +895,7 @@ export type ProfileSearchQueryVariables = Exact<{
 }>;
 
 
-export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string } | null }> };
+export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
 
 export type SearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -2212,6 +2239,17 @@ export const GetProfileInfoFromTwitterHandleDocument = gql`
   }
 }
     `;
+export const GetProfilesDocument = gql`
+    query getProfiles($addresses: [PublicKey!]!) {
+  wallets(addresses: $addresses) {
+    address
+    profile {
+      handle
+      profileImageUrlLowres
+    }
+  }
+}
+    `;
 export const IsXFollowingYDocument = gql`
     query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
   connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
@@ -2241,10 +2279,10 @@ export const MetadataSearchDocument = gql`
     `;
 export const ProfileSearchDocument = gql`
     query profileSearch($term: String!) {
-  profiles(term: $term, limit: 10, offset: 0) {
+  profiles(term: $term, limit: 5, offset: 0) {
     address
-    twitterHandle
     profile {
+      handle
       profileImageUrlLowres
     }
   }
@@ -2362,6 +2400,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getProfileInfoFromTwitterHandle(variables: GetProfileInfoFromTwitterHandleQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileInfoFromTwitterHandleQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProfileInfoFromTwitterHandleQuery>(GetProfileInfoFromTwitterHandleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfileInfoFromTwitterHandle', 'query');
+    },
+    getProfiles(variables: GetProfilesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfilesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProfilesQuery>(GetProfilesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProfiles', 'query');
     },
     isXFollowingY(variables: IsXFollowingYQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<IsXFollowingYQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<IsXFollowingYQuery>(IsXFollowingYDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'isXFollowingY', 'query');

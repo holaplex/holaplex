@@ -20,6 +20,8 @@ import {
 } from '../../../modules/server-side/getProfile';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
+import Link from 'next/link';
+import MessagesIcon from '@/common/assets/icons/MessagesIcon';
 
 const ProfilePageHead = (props: {
   publicKey: string;
@@ -102,7 +104,7 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                   />
                 </div>
                 <div className="mt-16 flex justify-center lg:justify-start">
-                  {anchorWallet?.publicKey.toString() == publicKey.toString() && !twitterHandle && (
+                  {anchorWallet?.publicKey.toString() == publicKey && !twitterHandle && (
                     <ConnectTwitterButton
                       address={new PublicKey(publicKey)}
                       connection={connection}
@@ -129,7 +131,14 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                 setShowFollowsModal={setShowFollowsModal}
                 showButton={false}
               />
+              <Link href={'/messages?address=' + publicKey} passHref>
+                <a className="mt-10 flex max-w-fit items-center space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300">
+                  <span>Message</span>
+                  <MessagesIcon className="h-5 w-5" />
+                </a>
+              </Link>
             </div>
+
             <div className="mt-10 w-full">
               <ProfileMenu />
               {children}

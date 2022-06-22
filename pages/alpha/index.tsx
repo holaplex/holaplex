@@ -308,7 +308,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {/* In case you manage to jump over the midway loadpoint */}
-            <InView threshold={0.1} onChange={loadMore}></InView>
+            <InView as="div" threshold={0.1} onChange={loadMore}></InView>
           </div>
           {/*       {!hasMoreFeedEvents && (
               <EmptyStateCTA header="No more events to load">
