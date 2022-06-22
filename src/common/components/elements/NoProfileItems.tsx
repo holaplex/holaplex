@@ -2,7 +2,13 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 import Button from './Button';
 
-export type NoProfileVariant = 'collected' | 'created' | 'offers' | 'activity';
+export type NoProfileVariant =
+  | 'collected'
+  | 'created'
+  | 'collections'
+  | 'offers'
+  | 'activity'
+  | 'collectionPage';
 
 interface NoProfileItemsProps {
   variant?: NoProfileVariant;
@@ -15,8 +21,22 @@ const NoProfileItems: FC<NoProfileItemsProps> = ({ variant = 'collected' }) => {
         <div
           className={`mt-12 flex w-full flex-col rounded-lg border border-gray-800 p-4 text-center`}
         >
-          <span className="text-center text-2xl font-semibold">No NFts collected yet</span>
+          <span className="text-center text-2xl font-semibold">No NFTs collected yet</span>
           <span className="mt-2 text-gray-300 ">{`NFTs this user collects will show up here`}</span>
+        </div>
+      );
+    case 'collections':
+      return (
+        <div
+          className={`mt-12 flex w-full flex-col rounded-lg border border-gray-800 p-4 text-center`}
+        >
+          <span className="text-center text-2xl font-semibold">No Verified Collections yet</span>
+          <span className="mt-2 text-gray-300 ">{`Verified Collections that this user collects will show up here`}</span>
+          <div className={`mt-2`}>
+            <Link href={`https://collections.metaplex.com/`} passHref>
+              <Button>Verify Collection</Button>
+            </Link>
+          </div>
         </div>
       );
     case 'activity':

@@ -7,6 +7,7 @@ import {
   ListingReceipt,
   MintEvent,
   PurchaseReceipt,
+  GetCollectionQuery,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
@@ -20,8 +21,8 @@ type QueryNFT =
 export interface User {
   address: string;
   profile?: {
-    handle?: string;
-    profileImageUrl?: string;
+    handle: string;
+    profileImageUrlLowres: string;
   } | null;
 }
 
@@ -212,8 +213,8 @@ export const shouldAggregateSaleEvents = (
   return (
     e1.__typename === e2.__typename &&
     e2.__typename == e3.__typename &&
-    // e1.walletAddress === e2.walletAddress &&
-    // e2.walletAddress === e3.walletAddress &&
+    e1.walletAddress === e2.walletAddress &&
+    e2.walletAddress === e3.walletAddress &&
     isNFTEvent(e1) &&
     isNFTEvent(e2) &&
     isNFTEvent(e3)

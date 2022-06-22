@@ -15,14 +15,7 @@ import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
 import classNames from 'classnames';
 import { Button5 } from './Button2';
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CollectionIcon,
-  LightBulbIcon,
-  PhotographIcon,
-  UsersIcon,
-} from '@heroicons/react/outline';
+import { ChevronDownIcon, ChevronUpIcon, CollectionIcon, LightBulbIcon, PhotographIcon, UsersIcon } from '@heroicons/react/outline';
 import { isTouchScreenOnly } from '@/common/utils';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
@@ -30,7 +23,14 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader() {
   const router = useRouter();
 
-  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
+  const {
+    connected,
+    wallet: userWallet,
+    connect: connectUserWallet,
+    publicKey,
+    connecting,
+    disconnecting,
+  } = useWallet();
   const hasWalletTypeSelected =
     userWallet?.readyState === WalletReadyState.Installed ||
     userWallet?.readyState === WalletReadyState.Loadable;
@@ -73,32 +73,56 @@ export function AppHeader() {
               👋&nbsp;&nbsp;<span>Holaplex</span>
             </a>
           </Link>
+          {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
-            <DiscoverMenu />
+            <DiscoverMenu/>
+            {connected && (
+              <Link href="/alpha" passHref>
+                <a
+                  key="alpha"
+                  className={classNames(
+                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
+                  )}
+                >
+                  Alpha
+                </a>
+              </Link>
+            )}
+
+            <Link href="/nfts/new" passHref>
+              <a
+                key="create"
+                className={classNames(
+                  'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
+                  router.pathname === '/nfts/new' ? 'text-white' : 'text-gray-300'
+                )}
+              >
+                Create
+              </a>
+            </Link>
 
             {connectedAndInstalledWallet && (
-              <>
-                <DialectNotificationsButton />
-                <ProfileImage />
-                {/* eslint-disable-next-line @next/next/link-passhref */}
-                <Link href="/nfts/new">
-                  <Button5 v="primary" key="create" disabled={router.pathname === '/nfts/new'}>
-                    Create
-                  </Button5>
-                </Link>
-              </>
+              <Link href={'/messages'} passHref>
+                <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
+                  Messages
+                </a>
+              </Link>
             )}
-            {!connectedAndInstalledWallet && (
+
+            {connectedAndInstalledWallet && <DialectNotificationsButton />}
+
+            {connectedAndInstalledWallet ? (
+              <ProfileImage />
+            ) : (
               <Button5
                 v="primary"
                 loading={connecting}
                 onClick={() => setVisible(true)}
-                className={classNames(`min-h-full text-lg font-medium`, {
-                  hidden: connectedAndInstalledWallet,
-                })}
+                className={`min-h-full text-lg font-medium`}
               >
                 Connect
               </Button5>
@@ -110,6 +134,52 @@ export function AppHeader() {
     </>
   );
 }
+
+const MobileHeader = () => {
+  const [displayMenu, setDisplayMenu] = useState(false);
+  return (
+    <>
+      <MobileHeaderContainer>
+        <div className={`mr-4 flex w-full flex-row items-center gap-4 text-2xl`}>
+          <Link href="/" passHref>
+            <EmojiLogoAnchor>👋</EmojiLogoAnchor>
+          </Link>
+          {/* TODO: temp disabled for deploy */}
+          <SearchBar />
+        </div>
+        <button
+          className="flex items-center justify-center rounded-full shadow-lg shadow-black hover:bg-gray-800"
+          onClick={() => setDisplayMenu(true)}
+        >
+          <MenuIcon color="#fff" />
+        </button>
+      </MobileHeaderContainer>
+      {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
+    </>
+  );
+};
+
+const EmojiLogoAnchor = styled.a`
+  width: 40px;
+  height: 40px;
+  font-size: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const MobileHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 24px;
+  padding-right: 24px;
+  min-height: 72px;
+  ${mq('md')} {
+    display: none;
+  }
+`;
 
 function DiscoverMenu(): JSX.Element {
   const [isTouchAndShowItems, setIsTouchAndShowItems] = useState<boolean>(false);
@@ -193,13 +263,12 @@ function DiscoverMenu(): JSX.Element {
             <span>NFTs</span>
           </MenuLink>
         </li>
-        {/* TODO restore once collection discovery is ready */}
-        {/* <li onClick={onClickHideTemporarily}>
+        <li onClick={onClickHideTemporarily}>
           <MenuLink href="/discover/collections">
             <CollectionIcon className="h-5 w-5" />
             <span>Collections</span>
           </MenuLink>
-        </li> */}
+        </li>
         <li onClick={onClickHideTemporarily}>
           <MenuLink href="/discover/profiles">
             <UsersIcon className="h-5 w-5" />
@@ -228,48 +297,3 @@ function DiscoverMenu(): JSX.Element {
     );
   }
 }
-
-const MobileHeader = () => {
-  const [displayMenu, setDisplayMenu] = useState(false);
-  return (
-    <>
-      <MobileHeaderContainer>
-        <div className={`mr-4 flex w-full flex-row items-center gap-4 text-2xl`}>
-          <Link href="/" passHref>
-            <EmojiLogoAnchor>👋</EmojiLogoAnchor>
-          </Link>
-          <SearchBar />
-        </div>
-        <button
-          className="flex items-center justify-center rounded-full shadow-lg shadow-black hover:bg-gray-800"
-          onClick={() => setDisplayMenu(true)}
-        >
-          <MenuIcon color="#fff" />
-        </button>
-      </MobileHeaderContainer>
-      {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
-    </>
-  );
-};
-
-const EmojiLogoAnchor = styled.a`
-  width: 40px;
-  height: 40px;
-  font-size: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const MobileHeaderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 24px;
-  padding-right: 24px;
-  min-height: 72px;
-  ${mq('md')} {
-    display: none;
-  }
-`;

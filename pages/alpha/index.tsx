@@ -66,10 +66,7 @@ const AlphaPage = ({ address }: { address: string }) => {
     variables: { wallet: myPubkey, limit: 25 },
     skip: !myPubkey,
   });
-  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map((u) => ({
-    address: u.address,
-    profile: { handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres },
-  }));
+  const profilesToFollow: User[] = whoToFollowData?.followWallets || [];
 
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = [
@@ -311,7 +308,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {/* In case you manage to jump over the midway loadpoint */}
-            <InView threshold={0.1} onChange={loadMore}></InView>
+            <InView as="div" threshold={0.1} onChange={loadMore}></InView>
           </div>
           {/*       {!hasMoreFeedEvents && (
               <EmptyStateCTA header="No more events to load">

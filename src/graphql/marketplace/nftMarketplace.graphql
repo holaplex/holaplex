@@ -41,7 +41,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
     category
     image
     primarySaleHappened
-    files{
+    files {
       uri
       fileType
     }
@@ -53,6 +53,12 @@ query nftMarketplace($subdomain: String!, $address: String!) {
     creators {
       address
       verified
+    }
+    collection {
+      address
+      name
+      image
+      mintAddress
     }
     owner {
       address

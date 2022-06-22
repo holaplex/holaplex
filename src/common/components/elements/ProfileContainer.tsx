@@ -12,6 +12,8 @@ import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from '@/common/context/ProfileData';
+import { Button5 } from './Button2';
+import Link from 'next/link';
 import { FollowUnfollowButtonDataWrapper } from './ProfilePreviewCard';
 
 export const ProfileContainer: FC = ({ children }) => {
@@ -58,9 +60,14 @@ export const ProfileContainer: FC = ({ children }) => {
               </div>
             </div>
 
-            <div className="mt-10 flex justify-center lg:justify-start">
+            <div className="mt-10 flex items-center justify-center space-x-4 lg:justify-start">
               <ProfileDisplayName />
             </div>
+            <Link href={'/messages?to=' + publicKey} passHref>
+              <a>
+                <Button5 v="secondary">Message</Button5>
+              </a>
+            </Link>
             <FollowerCount
               wallet={anchorWallet}
               setShowFollowsModal={setShowFollowsModal}
@@ -86,12 +93,12 @@ export const ProfileContainer: FC = ({ children }) => {
 const ProfileDisplayName: FC = () => {
   const { publicKey, twitterHandle } = useProfileData();
 
-  const [copied, setCopeied] = useState(false);
+  const [copied, setCopied] = useState(false);
   const copyPubKey = async () => {
     if (publicKey) {
       await navigator.clipboard.writeText(publicKey);
-      setCopeied(true);
-      setTimeout(() => setCopeied(false), 2000);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 

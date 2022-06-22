@@ -214,10 +214,29 @@ export default function NftByAddress({
     setSellUpdateModalVisibility(true);
   };
 
-  const DetailAddressRow = ({ address, title }: { address?: string; title: string }) => (
+  const DetailAddressRow = ({
+    address,
+    title,
+    viewOnSite = false,
+  }: {
+    address?: string;
+    title: string;
+    viewOnSite?: boolean;
+  }) => (
     <div className={`flex items-center justify-between`}>
       <p className={`m-0 text-base font-normal text-gray-300`}>{title}</p>
       <div className={`flex flex-row items-center justify-end gap-2`}>
+        {viewOnSite && (
+          <Link href={`/collections/${address}`}>
+            <a target={`_self`}>
+              <FeatherIcon
+                icon="folder"
+                aria-hidden="true"
+                className={`h-4 w-4 text-white hover:text-gray-300`}
+              />
+            </a>
+          </Link>
+        )}
         <Link href={`https://explorer.solana.com/address/${address}`}>
           <a target={`_blank`}>
             <ExplorerIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
@@ -641,9 +660,7 @@ export default function NftByAddress({
                               <p className="label mb-1 truncate text-base font-medium text-gray-300">
                                 {a.traitType}
                               </p>
-                              <p className="mb-0 truncate text-ellipsis" title={a.value}>
-                                {a.value}
-                              </p>
+                              <p className="mb-0 truncate text-ellipsis">{a.value}</p>
                             </div>
                           ))
                         )}
@@ -658,6 +675,20 @@ export default function NftByAddress({
                       <div className={`grid grid-cols-1 gap-4`}>
                         <DetailAddressRow title={`Mint address`} address={nft.mintAddress} />
                         <DetailAddressRow title={`Token address`} address={nft.address} />
+                        {nft.collection && (
+                          <>
+                            <DetailAddressRow
+                              title={`Collection`}
+                              address={nft.collection.mintAddress}
+                            />
+                            <DetailAddressRow
+                              viewOnSite={true}
+                              title={`Collection token address`}
+                              address={nft.collection.address}
+                            />
+                          </>
+                        )}
+
                         {/*                         <DetailAddressRow
                           title={`Auction house`}
                           address={defaultListing?.address}

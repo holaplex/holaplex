@@ -37,10 +37,11 @@ import '@fontsource/material-icons';
 import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
 import { apolloClient } from 'src/graphql/apollo';
 import { NextPage } from 'next';
+import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
+import { MailboxProvider } from '@/common/context/MailboxProvider';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
-import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
 
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
@@ -79,7 +80,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     []
   );
 
-  const Layout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
+  const PageLayout = Component.getLayout ?? ((props: { children: ReactElement }) => props.children);
 
   return (
     <>
@@ -101,6 +102,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
           closeButton={() => <Close color="#fff" />}
         />
+
         <ApolloProvider client={apolloClient}>
           <ShortcutProvider preventDefault={true}>
             <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
@@ -117,9 +119,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                                   {() => (
                                     <AnalyticsProvider>
                                       <AppHeader />
-                                      <Layout {...pageProps}>
-                                        <Component {...pageProps} />
-                                      </Layout>
+                                      <MailboxProvider>
+                                        <PageLayout {...pageProps}>
+                                          <Component {...pageProps} />
+                                        </PageLayout>
+                                      </MailboxProvider>
                                     </AnalyticsProvider>
                                   )}
                                 </MarketplaceProvider>
