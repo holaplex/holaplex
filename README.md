@@ -2,6 +2,11 @@
 
 ## Local project setup
 
+Be sure you git clone command, or in case you don't know it below:
+```
+git clone https://github.com/holaplex/holaplex.git
+```
+
 First, install dependencies
 
 ```
