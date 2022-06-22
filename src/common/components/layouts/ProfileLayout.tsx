@@ -11,7 +11,6 @@ import styled from 'styled-components';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { ProfileDataProvider, useProfileData } from '@/common/context/ProfileData';
-import { FollowUnfollowButtonDataWrapper } from '../home/FeaturedProfilesSection';
 import { FollowerCount } from '../elements/FollowerCount';
 import { FollowModal, FollowModalVisibility } from '../elements/FollowModal';
 import {
@@ -22,6 +21,7 @@ import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import MessagesIcon from '@/common/assets/icons/MessagesIcon';
+import { FollowUnfollowButtonDataWrapper } from '../elements/ProfilePreviewCard';
 
 const ProfilePageHead = (props: {
   publicKey: string;
