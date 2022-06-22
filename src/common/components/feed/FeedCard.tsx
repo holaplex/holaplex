@@ -291,7 +291,7 @@ function FeedActionBanner(props: {
   const youOwnThisNFT = attrs.nft?.owner?.address === myPubkey;
   if (props.options?.hideAction) {
     action = null;
-  } else if (props.event.__typename === 'ListingEvent' && !yourEvent) {
+  } else if (props.event.__typename === 'ListingEvent' && !yourEvent && attrs.nft) {
     action = <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />;
   } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
     action = (
@@ -313,7 +313,7 @@ function FeedActionBanner(props: {
         </a>
       </Link>
     );
-  } else if (!yourEvent) {
+  } else if (!yourEvent && attrs.nft) {
     action = <OfferAction nft={attrs.nft} />;
   }
 
@@ -595,13 +595,15 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
           View
         </Button5>
       ) : (
-        <FollowUnfollowButton
-          source={'feed'}
-          className={`!w-full sm:ml-auto sm:w-auto`}
-          walletConnectionPair={connectedProfile?.walletConnectionPair!}
-          toProfile={{ address: user.address }}
-          type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
-        />
+        connectedProfile?.walletConnectionPair && (
+          <FollowUnfollowButton
+            source={'feed'}
+            className={`!w-full sm:ml-auto sm:w-auto`}
+            walletConnectionPair={connectedProfile.walletConnectionPair}
+            toProfile={{ address: user.address }}
+            type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
+          />
+        )
       )}
     </div>
   );
