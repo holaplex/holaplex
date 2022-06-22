@@ -167,6 +167,7 @@ function FollowCard(props: {
 
   return (
     <div
+      id={props.event.feedEventId}
       className={classNames(
         'flex flex-wrap items-center rounded-3xl bg-gray-900 p-4 shadow-2xl shadow-black md:rounded-full',
         false && 'hover:scale-[1.02]',
@@ -634,7 +635,10 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className={`flex flex-col rounded-lg bg-gray-900 p-4 pb-0 shadow-2xl shadow-black`}>
+    <div
+      id={props.event.feedEventId}
+      className={`flex flex-col rounded-lg bg-gray-900 p-4 pb-0 shadow-2xl shadow-black`}
+    >
       <div className={`flex w-full items-center gap-4 border-b border-b-gray-800 pb-4`}>
         <AggregateProfiles event={props.event} />
         <div className={`flex w-full flex-col gap-2`}>
