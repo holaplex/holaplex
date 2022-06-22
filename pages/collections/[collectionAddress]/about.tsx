@@ -16,7 +16,7 @@ export const getServerSideProps: GetServerSideProps<CollectionPageProps> =
 
 export default function CollectionAboutPage(props: CollectionPageProps) {
   return (
-    <div className="mt-20 space-y-20">
+    <div className="mt-20 space-y-20 mb-20">
       <CollectionRaisedCard>
         <h2 className="text-2xl font-semibold">About this collection</h2>
         <p>{props.collection?.description}</p>
