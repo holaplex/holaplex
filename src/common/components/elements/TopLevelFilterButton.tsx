@@ -12,7 +12,7 @@ function TopLevelFilterButton({
   return (
     <div
       onClick={onClick}
-      className={`flex w-28 flex-row items-center justify-center gap-2 rounded-full p-2 font-medium ${
+      className={`flex w-28 flex-row items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-full p-2 font-medium ${
         selected
           ? `bg-gray-800`
           : `cursor-pointer border border-gray-800 bg-gray-900 text-gray-300 hover:bg-gray-800`
