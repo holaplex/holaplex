@@ -513,7 +513,7 @@ export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [pfpUrl, setPfpUrl] = useState(
-    user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
+    user.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)
   );
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
@@ -538,7 +538,7 @@ export function ProfilePFP({ user }: { user: User }) {
   });
 
   useEffect(() => {
-    if (twitterHandle && !user.profile?.profileImageUrl) {
+    if (twitterHandle && !user.profile?.profileImageUrlLowres) {
       walletProfileQuery().then((q) => {
         if (q.data?.profile?.profileImageUrlLowres) {
           setPfpUrl(q.data?.profile?.profileImageUrlLowres);
@@ -554,7 +554,7 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={user?.profile?.profileImageUrl || getPFPFromPublicKey(user.address)}
+          src={user?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>

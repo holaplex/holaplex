@@ -54,7 +54,7 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
   let profileInfo: {
     walletAddress?: string | null;
     handle: string;
-    profileImageUrl: string;
+    profileImageUrlHighres: string;
     bannerImageUrl: string;
   } | null = null;
   if (publicKey) {
@@ -63,7 +63,7 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
       profileInfo = {
         walletAddress: publicKey.toBase58(),
         handle: result.wallet.profile.handle,
-        profileImageUrl: result.wallet.profile.profileImageUrlLowres,
+        profileImageUrlHighres: result.wallet.profile.profileImageUrlHighres,
         bannerImageUrl: result.wallet.profile.bannerImageUrl,
       };
     }
@@ -93,7 +93,8 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
     publicKey: publicKey!.toBase58(),
     twitterHandle: profileInfo?.handle ?? null,
     profilePicture:
-      profileInfo?.profileImageUrl?.replace('_normal', '') ?? getPFPFromPublicKey(publicKey!),
+      profileInfo?.profileImageUrlHighres?.replace('_normal', '') ??
+      getPFPFromPublicKey(publicKey!),
     banner: profileInfo?.bannerImageUrl ?? getBannerFromPublicKey(publicKey!),
   };
 

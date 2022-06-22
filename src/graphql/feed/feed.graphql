@@ -7,7 +7,8 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       walletAddress
       profile {
         handle
-        profileImageUrl
+        profileImageUrlLowres
+        profileImageUrlHighres
       }
       nft {
         name
@@ -25,7 +26,8 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
           position
           profile {
             handle
-            profileImageUrl
+            profileImageUrlLowres
+            profileImageUrlHighres
           }
         }
         address
@@ -38,7 +40,8 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       walletAddress
       profile {
         handle
-        profileImageUrl
+        profileImageUrlLowres
+        profileImageUrlHighres
       }
       graphConnectionAddress
       connection {
@@ -47,14 +50,16 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
           address
           profile {
             handle
-            profileImageUrl
+            profileImageUrlLowres
+            profileImageUrlHighres
           }
         }
         to {
           address
           profile {
             handle
-            profileImageUrl
+            profileImageUrlLowres
+            profileImageUrlHighres
           }
         }
       }
@@ -65,7 +70,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       walletAddress
       profile {
         handle
-        profileImageUrl
+        profileImageUrlLowres
       }
       purchase {
         address
@@ -88,7 +93,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
             position
             profile {
               handle
-              profileImageUrl
+              profileImageUrlLowres
             }
           }
           address
@@ -102,7 +107,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       walletAddress
       profile {
         handle
-        profileImageUrl
+        profileImageUrlLowres
       }
       lifecycle
       listing {
@@ -126,7 +131,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
             position
             profile {
               handle
-              profileImageUrl
+              profileImageUrlLowres
             }
           }
           address
@@ -140,7 +145,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       walletAddress
       profile {
         handle
-        profileImageUrl
+        profileImageUrlLowres
       }
       lifecycle
       offer {
@@ -163,7 +168,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
             position
             profile {
               handle
-              profileImageUrl
+              profileImageUrlLowres
             }
           }
           address

@@ -49,6 +49,11 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
         profileImageUrlLowres
       }
     }
+    collections {
+      address
+      name
+      image
+    }
     owner {
       address
       associatedTokenAccountAddress
