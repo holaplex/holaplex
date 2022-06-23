@@ -54,6 +54,8 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
     itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-focus:block';
   }
 
+  const titleElement: JSX.Element = typeof props.title === 'string' ? <span className="whitespace-nowrap align-middle">{props.title}</span> : props.title;
+
   return (
     <div
       className={classNames('relative inline-block', containerDisplayClasses, props.className)}
@@ -67,7 +69,7 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
         ])}
         onClick={onClickHeader}
       >
-        <span className="whitespace-nowrap">{props.title}</span>
+        {titleElement}
         <ChevronDownIcon className={classNames('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
         <ChevronUpIcon className={classNames('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
       </button>

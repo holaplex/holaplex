@@ -13,7 +13,7 @@ enum TabRoute {
 export interface DiscoverPageProps {}
 
 export interface DiscoverLayoutProps<T> {
-  filters: FilterProps<T>[];
+  filters?: FilterProps<T>[];
   content: JSX.Element;
 }
 
@@ -22,13 +22,15 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
 
   return (
     <div className={classNames('mt-10', ['flex flex-col px-2', 'md:flex-row md:px-20'])}>
-      <div className={classNames('mb-10', 'md:sticky md:top-0 md:mb-0 md:h-screen')}>
-        <FiltersSection>
-          {props.filters.map((f) => (
-            <FiltersSection.Filter key={f.title} {...f} />
-          ))}
-        </FiltersSection>
-      </div>
+      {props.filters && (
+        <div className={classNames('mb-10', 'md:sticky md:top-0 md:mb-0 md:h-screen')}>
+          <FiltersSection>
+            {props.filters.map((f) => (
+              <FiltersSection.Filter key={f.title} {...f} />
+            ))}
+          </FiltersSection>
+        </div>
+      )}
       <div className="w-full">
         <div className="flex space-x-1 p-1">
           <Tab title="NFTs" selected={router.pathname === TabRoute.NFTS} url={TabRoute.NFTS} />

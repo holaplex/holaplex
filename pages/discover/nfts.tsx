@@ -6,22 +6,43 @@ import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
 import { routerQueryParamToEnumValue } from '@/common/utils/router';
-import { CardGridWithSearchAndSize } from '@/common/components/elements/CardGrid';
+import { CardGridWithHeader } from '@/common/components/elements/CardGrid';
+import DropdownSelect from '@/common/components/elements/DropdownSelect';
+import { Option, Options } from '@/common/components/discover/discover.interfaces';
 
-enum TypeOption {
+enum TypeFilterOption {
   ALL = 'all',
   BUY_NOW = 'buy-now',
   ACTIVE_OFFERS = 'active-offers',
   LIVE_AUCTIONS = 'auctions',
 }
 
-const DEFAULT_TYPE: TypeOption = TypeOption.BUY_NOW;
+const DEFAULT_TYPE: TypeFilterOption = TypeFilterOption.BUY_NOW;
 
-const options: FilterOption<TypeOption>[] = [
+const TYPE_OPTIONS: FilterOption<TypeFilterOption>[] = [
   {
-    label: 'Buy now',
-    value: TypeOption.BUY_NOW,
+    label: 'Recently Listed',
+    value: TypeFilterOption.BUY_NOW,
   }
+];
+
+enum SortOptionName {
+  RECENTLY_LISTED,
+  HIGHEST_SALES
+}
+
+
+const PRIMARY_SORT_OPTIONS: Option<SortOptionName>[] = [
+  {
+    label: 'Recently listed',
+    value: SortOptionName.RECENTLY_LISTED,
+    queryValue: 'recent'
+  },
+  {
+    label: 'Highest sales',
+    value: SortOptionName.HIGHEST_SALES,
+    queryValue: 'sales'
+  },
 ];
 
 interface NFTCardCreatorData {
@@ -36,13 +57,14 @@ export default function DiscoverNFTsTab(): JSX.Element {
   const router = useRouter();
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [typeFilter, setTypeFilter] = useState<TypeOption>(TypeOption.BUY_NOW);
+  const [typeFilter, setTypeFilter] = useState<TypeFilterOption>(TypeFilterOption.BUY_NOW);
+  const primarySortOptions: Options<SortOptionName> = useMemo(() => Options<SortOptionName>.of(PRIMARY_SORT_OPTIONS, 0), [PRIMARY_SORT_OPTIONS]);
 
   // set default filters if the URL doesnt already contain them, and get the filter otherwise
   useEffect(() => {
-    let result: TypeOption = DEFAULT_TYPE;
+    let result: TypeFilterOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(router, 'type', v => v as TypeOption);
+      const queryValue: TypeFilterOption | undefined = routerQueryParamToEnumValue(router, 'type', v => v as TypeFilterOption);
       if (queryValue === undefined) {
         router.replace({ query: { type: result } });
       }
@@ -100,7 +122,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
   );
 
   return (
-    <CardGridWithSearchAndSize<NFTCardCreatorData>
+    <CardGridWithHeader<NFTCardCreatorData>
       cardContext={{
         noDataFallback: <div>No matching NFTs</div>,
         cardCreator: (data, refetch, loading) => (
@@ -122,6 +144,14 @@ export default function DiscoverNFTsTab(): JSX.Element {
         loading: nftQuery.loading,
       }}
       search={{ onChange: (v) => setSearchTerm(v) }}
+      //TODO add submenus and hook them up to setting the router and queries
+      menus={
+        <CardGridWithHeader.HeaderElement>
+          <DropdownSelect onSelect={i => primarySortOptions.setSelected(i)} default={primarySortOptions.getDefaultIndex() ?? undefined}>
+            {primarySortOptions.getLabels()}
+          </DropdownSelect>
+        </CardGridWithHeader.HeaderElement>
+      }
     />
   );
 }
@@ -134,7 +164,7 @@ DiscoverNFTsTab.getLayout = function getLayout(
       filters={[
         {
           title: 'Type',
-          options: options,
+          options: TYPE_OPTIONS,
           default: DEFAULT_TYPE,
           queryId: 'type',
           onChange: () => {},
@@ -145,12 +175,12 @@ DiscoverNFTsTab.getLayout = function getLayout(
   );
 };
 
-const useQuery = (type: TypeOption, limit: number, offset: number) => {
+const useQuery = (type: TypeFilterOption, limit: number, offset: number) => {
   const [buyNowQuery, buyNowQueryContext] = useDiscoverNftsBuyNowLazyQuery();
 
   useEffect(() => {
     switch (type) {
-      case TypeOption.BUY_NOW: {
+      case TypeFilterOption.BUY_NOW: {
         buyNowQuery({ variables: { limit: limit, offset: offset } });
         break;
       }
@@ -159,7 +189,7 @@ const useQuery = (type: TypeOption, limit: number, offset: number) => {
   }, [type, limit, offset, buyNowQuery]);
 
   switch (type) {
-    case TypeOption.BUY_NOW:
+    case TypeFilterOption.BUY_NOW:
       return buyNowQueryContext;
     default:
       return buyNowQueryContext;

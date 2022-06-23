@@ -27,7 +27,7 @@ const options: FilterOption<TypeOption>[] = [
   },
 ];
 
-export default function DiscoverProfilesTab(): JSX.Element {
+export default function DiscoverCollectionsTab(): JSX.Element {
   const INITIAL_FETCH: number = 24;
   const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
 
@@ -140,7 +140,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
   );
 }
 
-DiscoverProfilesTab.getLayout = function getLayout(
+DiscoverCollectionsTab.getLayout = function getLayout(
   discoverPage: DiscoverPageProps & { children: JSX.Element }
 ): JSX.Element {
   return (

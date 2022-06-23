@@ -15,8 +15,16 @@ import SearchBar from '../search/SearchBar';
 import DialectNotificationsButton from './DialectNotificationsButton';
 import classNames from 'classnames';
 import { Button5 } from './Button2';
-import { ChevronDownIcon, ChevronUpIcon, CollectionIcon, LightBulbIcon, PhotographIcon, UsersIcon } from '@heroicons/react/outline';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CollectionIcon,
+  LightBulbIcon,
+  PhotographIcon,
+  UsersIcon,
+} from '@heroicons/react/outline';
 import { isTouchScreenOnly } from '@/common/utils';
+import DropdownMenu from './DropdownMenu';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -78,7 +86,7 @@ export function AppHeader() {
         </div>
         {!WHICHDAO && (
           <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
-            <DiscoverMenu/>
+            <DiscoverMenu />
             {connected && (
               <Link href="/alpha" passHref>
                 <a
@@ -182,118 +190,33 @@ const MobileHeaderContainer = styled.div`
 `;
 
 function DiscoverMenu(): JSX.Element {
-  const [isTouchAndShowItems, setIsTouchAndShowItems] = useState<boolean>(false);
-  const [isTouch, setIsTouch] = useState<boolean>(false);
-  const [forceHide, setForceHide] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsTouch(isTouchScreenOnly());
-  }, [setIsTouch]);
-
-  const onClickHeader = useCallback(() => {
-    if (isTouch) setIsTouchAndShowItems(!isTouchAndShowItems);
-  }, [isTouchAndShowItems, isTouch]);
-
-  const onClickHideTemporarily = useCallback(() => {
-    setIsTouchAndShowItems(false);
-    setForceHide(true);
-    setTimeout(() => setForceHide(false), 100);
-  }, []);
-
-  let containerDisplayClasses: string | undefined;
-  let buttonDisplayBasedTextClasses: string;
-  let arrowDownDisplayClasses: string;
-  let arrowUpDisplayClasses: string;
-  let itemContainerDisplayClasses: string;
-  if (!isTouch) {
-    containerDisplayClasses = 'group';
-    buttonDisplayBasedTextClasses = 'text-gray-300 hover:text-white focus:text-white group-hover:text-white group-focus:text-white';
-    arrowDownDisplayClasses = forceHide ? 'block' : 'block group-hover:hidden group-focus:hidden';
-    arrowUpDisplayClasses = forceHide ? 'hidden' : 'hidden group-hover:block group-focus:block';
-    itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-hover:block group-focus:block';
-  } else if (isTouchAndShowItems) {
-    buttonDisplayBasedTextClasses = 'text-white group-focus:text-white';
-    arrowDownDisplayClasses = forceHide ? 'block' : 'hidden group-focus:block';
-    arrowUpDisplayClasses = forceHide ? 'hidden' : 'block group-focus:hidden';
-    itemContainerDisplayClasses = forceHide ? 'hidden' : 'block group-focus:block';
-  } else {
-    buttonDisplayBasedTextClasses = 'text-gray-300 group-focus:text-white';
-    arrowDownDisplayClasses = 'block';
-    arrowUpDisplayClasses = 'hidden';
-    itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-focus:block';
-  }
-
   return (
-    <div
-      className={classNames('relative inline-block', containerDisplayClasses)}
-      // setTimeout is a hack to allow the click to propagate to the menu item before closing
-      onBlur={() => setTimeout(() => setIsTouchAndShowItems(false), 50)}
-    >
-      {/* Header */}
-      <button
-        className={classNames('flex flex-row flex-nowrap items-center justify-center', [
-          'text-lg font-medium',
-          buttonDisplayBasedTextClasses,
-        ])}
-        onClick={onClickHeader}
-      >
-        Discover
-        <ChevronDownIcon className={classNames('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
-        <ChevronUpIcon className={classNames('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
-      </button>
-
-      {/* Options */}
-      <ul
-        className={classNames(
-          itemContainerDisplayClasses,
-          'absolute left-1/2 z-20 -translate-x-1/2',
-          'list-none overflow-clip',
-          'rounded-b-lg shadow-lg shadow-black'
-        )}
-      >
-        <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/alpha">
-            <LightBulbIcon className="h-5 w-5" />
-            <span>Alpha</span>
-          </MenuLink>
-        </li>
-        <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/discover/nfts">
-            <PhotographIcon className="h-5 w-5" />
-            <span>NFTs</span>
-          </MenuLink>
-        </li>
-        <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/discover/collections">
-            <CollectionIcon className="h-5 w-5" />
-            <span>Collections</span>
-          </MenuLink>
-        </li>
-        <li onClick={onClickHideTemporarily}>
-          <MenuLink href="/discover/profiles">
-            <UsersIcon className="h-5 w-5" />
-            <span>Profiles</span>
-          </MenuLink>
-        </li>
-      </ul>
-    </div>
+    <DropdownMenu title="Discover">
+      <MenuItem title="Alpha" href="/alpha" icon={LightBulbIcon} />
+      <MenuItem title="NFTs" href="/discover/nfts" icon={PhotographIcon} />
+      <MenuItem title="Collections" href="/discover/collections" icon={CollectionIcon} />
+      <MenuItem title="Profiles" href="/discover/profiles" icon={UsersIcon} />
+    </DropdownMenu>
   );
 
-  function MenuLink(props: { children: JSX.Element[]; href: string }): JSX.Element {
+  // using (props: any) => JSX.Element for icon lets react/ts know this is a functional
+  //  component we can pass className to
+  function MenuItem(props: {title: string, href: string, icon: (props: any) => JSX.Element}): JSX.Element {
     return (
-      <Link href={props.href}>
-        <a
-          className={classNames(
-            'w-full',
-            'flex flex-row flex-nowrap justify-start',
-            'space-x-4 p-4',
-            'text-lg',
-            'bg-gray-900 hover:bg-gray-700 focus:bg-gray-700'
-          )}
-        >
-          {props.children}
-        </a>
-      </Link>
+      <DropdownMenu.Item>
+        <Link href={props.href}>
+          <a
+            className={classNames(
+              'flex flex-row flex-nowrap justify-start',
+              'space-x-4 p-4',
+              'text-lg'
+            )}
+          >
+            <props.icon className="h-5 w-5"/>
+            <span>{props.title}</span>
+          </a>
+        </Link>
+      </DropdownMenu.Item>
     );
   }
 }
