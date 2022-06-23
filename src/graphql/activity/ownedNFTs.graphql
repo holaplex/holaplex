@@ -49,7 +49,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
         profileImageUrlLowres
       }
     }
-    collections {
+    collection {
       address
       name
       image

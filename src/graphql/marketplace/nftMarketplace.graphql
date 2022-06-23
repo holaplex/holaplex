@@ -54,7 +54,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       address
       verified
     }
-    collections {
+    collection {
       address
       name
       image
