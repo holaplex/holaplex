@@ -675,16 +675,16 @@ export default function NftByAddress({
                       <div className={`grid grid-cols-1 gap-4`}>
                         <DetailAddressRow title={`Mint address`} address={nft.mintAddress} />
                         <DetailAddressRow title={`Token address`} address={nft.address} />
-                        {nft.collections.length > 0 && (
+                        {nft.collection && (
                           <>
                             <DetailAddressRow
                               title={`Collection`}
-                              address={nft.collections[0].mintAddress}
+                              address={nft.collection.mintAddress}
                             />
                             <DetailAddressRow
                               viewOnSite={true}
                               title={`Collection token address`}
-                              address={nft.collections[0].address}
+                              address={nft.collection.address}
                             />
                           </>
                         )}

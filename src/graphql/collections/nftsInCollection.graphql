@@ -65,7 +65,7 @@ query nftsInCollection(
       address
       associatedTokenAccountAddress
     }
-    collections {
+    collection {
       address
       name
       image

@@ -96,7 +96,7 @@ export const NFTCard = ({
 
   const creatorsCopy = [...nft.creators];
   const sortedCreators = creatorsCopy.sort((a, b) => b.share - a.share);
-  const shownCollection = nft?.collections?.length > 0 ? nft?.collections[0] : null;
+  const shownCollection = nft?.collection ? nft?.collection : null;
   const shownCreatorAddress = sortedCreators?.length > 0 ? sortedCreators[0].address : null;
   const shownCreatorHandle =
     sortedCreators?.length > 0 ? sortedCreators[0].profile?.handle : undefined;
