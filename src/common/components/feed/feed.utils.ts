@@ -7,6 +7,7 @@ import {
   ListingReceipt,
   MintEvent,
   PurchaseReceipt,
+  GetCollectionQuery,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
@@ -20,8 +21,8 @@ type QueryNFT =
 export interface User {
   address: string;
   profile?: {
-    handle?: string;
-    profileImageUrl?: string;
+    handle: string;
+    profileImageUrlLowres: string;
   } | null;
 }
 

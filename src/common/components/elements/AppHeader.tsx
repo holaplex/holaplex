@@ -134,7 +134,7 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex min-w-fit items-center">
+              <a className="flex items-center min-w-fit">
                 About <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover> */}
@@ -183,10 +183,19 @@ export function AppHeader() {
                 </div>
               }
             >
-              <a className="flex min-w-fit items-center">
+              <a className="flex items-center min-w-fit">
                 Help <ChevronRight color="#fff" className="ml-2 rotate-90 " />{' '}
               </a>
             </Popover> */}
+
+            {connectedAndInstalledWallet && (
+              <Link href={'/messages'} passHref>
+                <a className="text-lg font-medium text-gray-300 duration-100 ease-in hover:text-white focus:text-white">
+                  Messages
+                </a>
+              </Link>
+            )}
+
             {connectedAndInstalledWallet && <DialectNotificationsButton />}
 
             {connectedAndInstalledWallet ? (

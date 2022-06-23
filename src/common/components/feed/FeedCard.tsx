@@ -167,6 +167,7 @@ function FollowCard(props: {
 
   return (
     <div
+      id={props.event.feedEventId}
       className={classNames(
         'flex flex-wrap items-center rounded-3xl bg-gray-900 p-4 shadow-2xl shadow-black md:rounded-full',
         false && 'hover:scale-[1.02]',
@@ -291,7 +292,7 @@ function FeedActionBanner(props: {
   const youOwnThisNFT = attrs.nft?.owner?.address === myPubkey;
   if (props.options?.hideAction) {
     action = null;
-  } else if (props.event.__typename === 'ListingEvent' && !yourEvent) {
+  } else if (props.event.__typename === 'ListingEvent' && !yourEvent && attrs.nft) {
     action = <PurchaseAction listingEvent={props.event as ListingEvent} nft={attrs.nft} />;
   } else if (props.event.__typename === 'OfferEvent' && youOwnThisNFT) {
     action = (
@@ -313,7 +314,7 @@ function FeedActionBanner(props: {
         </a>
       </Link>
     );
-  } else if (!yourEvent) {
+  } else if (!yourEvent && attrs.nft) {
     action = <OfferAction nft={attrs.nft} />;
   }
 
@@ -513,7 +514,7 @@ export function ProfilePFP({ user }: { user: User }) {
   // Note, we only invoke extra queries if the prop user does not have necceary info
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [pfpUrl, setPfpUrl] = useState(
-    user.profile?.profileImageUrl || getPFPFromPublicKey(user.address)
+    user.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)
   );
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
@@ -538,7 +539,7 @@ export function ProfilePFP({ user }: { user: User }) {
   });
 
   useEffect(() => {
-    if (twitterHandle && !user.profile?.profileImageUrl) {
+    if (twitterHandle && !user.profile?.profileImageUrlLowres) {
       walletProfileQuery().then((q) => {
         if (q.data?.profile?.profileImageUrlLowres) {
           setPfpUrl(q.data?.profile?.profileImageUrlLowres);
@@ -554,7 +555,7 @@ export function ProfilePFP({ user }: { user: User }) {
       <a target="_blank">
         <img
           className={classNames('rounded-full', 'h-10 w-10')}
-          src={user?.profile?.profileImageUrl || getPFPFromPublicKey(user.address)}
+          src={user?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
       </a>
@@ -595,13 +596,15 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
           View
         </Button5>
       ) : (
-        <FollowUnfollowButton
-          source={'feed'}
-          className={`!w-full sm:ml-auto sm:w-auto`}
-          walletConnectionPair={connectedProfile?.walletConnectionPair!}
-          toProfile={{ address: user.address }}
-          type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
-        />
+        connectedProfile?.walletConnectionPair && (
+          <FollowUnfollowButton
+            source={'feed'}
+            className={`!w-full sm:ml-auto sm:w-auto`}
+            walletConnectionPair={connectedProfile.walletConnectionPair}
+            toProfile={{ address: user.address }}
+            type={myFollowingList?.includes(user.address) ? 'Unfollow' : 'Follow'}
+          />
+        )
       )}
     </div>
   );
@@ -632,7 +635,10 @@ function FollowAggregateCard(props: { event: AggregateEvent; myFollowingList?: s
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className={`flex flex-col rounded-lg bg-gray-900 p-4 pb-0 shadow-2xl shadow-black`}>
+    <div
+      id={props.event.feedEventId}
+      className={`flex flex-col rounded-lg bg-gray-900 p-4 pb-0 shadow-2xl shadow-black`}
+    >
       <div className={`flex w-full items-center gap-4 border-b border-b-gray-800 pb-4`}>
         <AggregateProfiles event={props.event} />
         <div className={`flex w-full flex-col gap-2`}>
