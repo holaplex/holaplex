@@ -414,8 +414,6 @@ export type QueryRoot = {
   feedEvents: Array<FeedEvent>;
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
-  /** Returns the latest on chain events using the graph_program. */
-  latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
@@ -499,13 +497,6 @@ export type QueryRootFollowWalletsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   wallet?: InputMaybe<Scalars['PublicKey']>;
-};
-
-
-export type QueryRootLatestFeedEventsArgs = {
-  excludeTypes?: InputMaybe<Array<Scalars['String']>>;
-  limit: Scalars['Int'];
-  offset: Scalars['Int'];
 };
 
 
