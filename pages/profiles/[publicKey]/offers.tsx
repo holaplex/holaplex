@@ -120,7 +120,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
               ?.sort(byDate)
               .map((offer) => (
                 <div
-                  key={offer.address}
+                  key={offer.id}
                   className={`flex  flex-row justify-between rounded-lg border border-gray-800 p-4`}
                 >
                   <div className={`flex items-center justify-start`}>
@@ -213,7 +213,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
               ?.sort(byDate)
               .map((offer) => (
                 <div
-                  key={offer.address}
+                  key={offer.id}
                   className={`flex flex-row flex-wrap justify-between gap-4 rounded-lg border border-gray-800 p-4`}
                 >
                   <div className={`flex items-center justify-start`}>

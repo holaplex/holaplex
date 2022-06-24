@@ -4,9 +4,9 @@ import { DateTime } from 'luxon';
 import {
   BidReceipt,
   FeedQuery,
-  ListingReceipt,
+  AhListing,
   MintEvent,
-  PurchaseReceipt,
+  Purchase,
   GetCollectionQuery,
 } from 'src/graphql/indexerTypes';
 
@@ -14,8 +14,8 @@ type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
 type QueryNFT =
   | MintEvent['nft']
-  | ListingReceipt['nft']
-  | PurchaseReceipt['nft']
+  | AhListing['nft']
+  | Purchase['nft']
   | BidReceipt['nft'];
 
 export interface User {

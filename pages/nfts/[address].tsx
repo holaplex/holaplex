@@ -741,7 +741,7 @@ export default function NftByAddress({
                 {hasOffers &&
                   offers?.map((o: Offer) => (
                     <article
-                      key={o.address}
+                      key={o.id}
                       className={`mb-4 grid rounded border border-gray-800 p-4 ${
                         isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
                       }`}
