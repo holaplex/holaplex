@@ -3,43 +3,38 @@ import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
-import { SingleGrid } from '@/common/components/icons/SingleGrid';
-import { DoubleGrid } from '@/common/components/icons/DoubleGrid';
-import { TripleGrid } from '@/common/components/icons/TripleGrid';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
 import Link from 'next/link';
-import TextInput2 from '@/common/components/elements/TextInput2';
+import TextInput2 from 'src/components/TextInput2';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '@/modules/server-side/getProfile';
-import { ProfileDataProvider } from '@/common/context/ProfileData';
-import { imgOpt } from '@/common/utils';
+} from '@/views/profiles/getProfileServerSideProps';
+import { ProfileDataProvider } from 'src/views/profiles/ProfileDataProvider';
+import { imgOpt } from 'src/lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-} from '@/common/constants/marketplace';
-import Button from '@/components/elements/Button';
-import { DisplaySOL } from '@/components/CurrencyHelpers';
-import Modal from '@/components/elements/Modal';
-import SellForm from '@/components/forms/SellForm';
+} from 'src/views/_global/holaplexConstants';
+import Button from '@/components/Button';
+import { DisplaySOL } from 'src/components/CurrencyHelpers';
+import Modal from 'src/components/Modal';
+import SellForm from 'src/components/SellForm';
 import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { None } from '@/components/forms/OfferForm';
-import UpdateSellForm from '@/components/forms/UpdateSellForm';
-import BuyForm from '@/components/forms/BuyForm';
-import UpdateOfferForm from '@/common/components/forms/UpdateOfferForm';
-import { Avatar } from '@/common/components/elements/Avatar';
+import { None } from 'src/components/OfferForm';
+import UpdateSellForm from 'src/components/UpdateSellForm';
+import BuyForm from 'src/components/BuyForm';
+import UpdateOfferForm from 'src/components/UpdateOfferForm';
+import { Avatar } from 'src/components/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty, uniq } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import classNames from 'classnames';
-import NoProfileItems, {
-  NoProfileVariant,
-} from '../../../src/common/components/elements/NoProfileItems';
-import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
-import GridSelector from '../../../src/common/components/elements/GridSelector';
+import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
+import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
+import GridSelector from '@/components/GridSelector';
 
 type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 

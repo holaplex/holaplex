@@ -5,41 +5,41 @@ import cx from 'classnames';
 import { shortenAddress } from '../../src/modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
-import Accordion from '../../src/common/components/elements/Accordion';
-import MoreDropdown from '../../src/common/components/elements/MoreDropdown';
+import Accordion from '@/components/Accordion';
+import MoreDropdown from '@/components/MoreDropdown';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { SolIcon } from '../../src/common/components/elements/Price';
+import { SolIcon } from '@/components/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-import { Tag } from '@/components/icons/Tag';
-import Button from '@/components/elements/Button';
+import { Tag } from '@/assets/icons/Tag';
+import Button from '@/components/Button';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-} from '@/constants/marketplace';
-import { DisplaySOL } from '@/components/CurrencyHelpers';
-import Modal from '@/components/elements/Modal';
-import CancelOfferForm from '@/components/forms/CancelOfferForm';
+} from 'src/views/_global/holaplexConstants';
+import { DisplaySOL } from 'src/components/CurrencyHelpers';
+import Modal from 'src/components/Modal';
+import CancelOfferForm from 'src/components/CancelOfferForm';
 import { Listing, Marketplace, Nft, Offer } from '@/types/types';
 import { useRouter } from 'next/router';
-import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
-import SellForm from '../../src/common/components/forms/SellForm';
-import CancelSellForm from '../../src/common/components/forms/CancelSellForm';
-import BuyForm from '../../src/common/components/forms/BuyForm';
-import UpdateSellForm from '../../src/common/components/forms/UpdateSellForm';
-import AcceptOfferForm from '../../src/common/components/forms/AcceptOfferForm';
+import UpdateOfferForm from '@/components/UpdateOfferForm';
+import SellForm from '@/components/SellForm';
+import CancelSellForm from '@/components/CancelSellForm';
+import BuyForm from '@/components/BuyForm';
+import UpdateSellForm from '@/components/UpdateSellForm';
+import AcceptOfferForm from '@/components/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
 import { apolloClient } from '../../src/graphql/apollo';
 import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
 import Head from 'next/head';
-import { Avatar, AvatarIcons } from '@/common/components/elements/Avatar';
+import { Avatar, AvatarIcons } from 'src/components/Avatar';
 import { seededRandomBetween } from '../../src/modules/utils/random';
-import { SolscanIcon } from '../../src/common/components/icons/Solscan';
-import { ExplorerIcon } from '../../src/common/components/icons/Explorer';
-import NFTFile from '../../src/common/components/elements/NFTFile';
+import { SolscanIcon } from '../../src/assets/icons/Solscan';
+import { ExplorerIcon } from '../../src/assets/icons/Explorer';
+import NFTFile from '@/components/NFTFile';
 
 const Activities = ({
   listings,

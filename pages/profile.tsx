@@ -1,8 +1,8 @@
-import {  useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useState } from 'react';
-import { Button5 } from '@/common/components/elements/Button2';
-import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
-import Footer from '@/common/components/home/Footer';
+import { Button5 } from 'src/components/Button2';
+import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
+import Footer from 'src/views/home/Footer';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
