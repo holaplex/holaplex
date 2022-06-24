@@ -477,7 +477,10 @@ function ProfileNFTs(props: WalletDependantPageProps) {
       variables: {
         ...variables,
         limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-        offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+        offset:
+          filteredNfts.length > INFINITE_SCROLL_AMOUNT_INCREMENT
+            ? filteredNfts.length
+            : INFINITE_SCROLL_AMOUNT_INCREMENT,
       },
 
       updateQuery: (prev, { fetchMoreResult }) => {
