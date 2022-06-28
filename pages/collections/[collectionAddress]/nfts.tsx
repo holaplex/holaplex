@@ -128,7 +128,10 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
               variables: {
                 ...variables,
                 limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-                offset: nfts.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+                offset:
+                  nfts.length > INFINITE_SCROLL_AMOUNT_INCREMENT
+                    ? nfts.length
+                    : INFINITE_SCROLL_AMOUNT_INCREMENT,
               },
               updateQuery: (prev, { fetchMoreResult }) => {
                 if (!fetchMoreResult) return prev;

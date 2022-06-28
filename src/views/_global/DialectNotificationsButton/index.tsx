@@ -52,7 +52,7 @@ export default function DialectNotificationsButton() {
     >
       <NotificationsButton
         wallet={wallet}
-        publicKey={HOLAPLEX_MONITORING_PUBLIC_KEY}
+        publicKey={new PublicKey(HOLAPLEX_MONITORING_PUBLIC_KEY)}
         notifications={[{ name: 'Offer on NFT', detail: 'Event' }]}
         rpcUrl={process.env.NEXT_PUBLIC_SOLANA_ENDPOINT}
         theme="dark"

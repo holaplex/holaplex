@@ -96,17 +96,17 @@ export default function CollectionLayout({
         name={collection?.name || ``}
         description={collection?.description || ``}
       />
-      <div className="container mx-auto ">
-        <div className="flex items-start justify-between">
+      <div className="container lg:mx-auto ">
+        <div className="relative flex w-full flex-col items-start lg:flex-row lg:justify-between">
           <div>
-            <div className="mb-10 flex">
+            <div className="mx-4 mb-10 flex flex-col lg:mx-0 lg:flex-row">
               <img
                 src={collection?.image}
                 className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 shadow-2xl ring-8 ring-gray-900"
                 alt="Collection logo"
               />
               <div>
-                <span className="text-base text-gray-300">Collection of X</span>
+                {/* <span className="text-base text-gray-300">Collection of X</span> */}
                 <h1 className="mt-4 text-5xl"> {collection?.name} </h1>
                 <div className={`flex items-center justify-start gap-6`}>
                   {creators[0]?.profile?.handle && (
@@ -169,42 +169,81 @@ export default function CollectionLayout({
               />
             )}
           </div>
-          <CollectionRaisedCard>
-            <div className="grid grid-cols-2 grid-rows-2 gap-x-5 gap-y-4">
-              <div>
-                <div className="cursor-pointer text-sm font-medium text-gray-200">Followed by</div>
-                <div className="flex items-center">
-                  <span className={`mr-2 text-left text-2xl font-semibold`}>
-                    {collectionFollowers.length}
-                  </span>
+          <div className={`absolute top-0 right-0 overflow-hidden lg:hidden`}>
+            <CollectionRaisedCard>
+              <div className="grid grid-cols-2 grid-rows-2 gap-x-5 gap-y-4">
+                <div>
+                  <div className="cursor-pointer text-sm font-medium text-gray-200">
+                    Followed by
+                  </div>
+                  <div className="flex items-center">
+                    <span className={`mr-2 text-left text-2xl font-semibold`}>
+                      {collectionFollowers.length}
+                    </span>
 
-                  <AvatarIcons
-                    profiles={collectionFollowers.map((f) => ({
-                      address: f.from.address,
-                      data: {
-                        twitterHandle: f.from.profile?.handle,
-                        pfpUrl: f.from.profile?.profileImageUrlLowres,
-                      },
-                    }))}
-                  />
+                    <AvatarIcons
+                      profiles={collectionFollowers.map((f) => ({
+                        address: f.from.address,
+                        data: {
+                          twitterHandle: f.from.profile?.handle,
+                          pfpUrl: f.from.profile?.profileImageUrlLowres,
+                        },
+                      }))}
+                    />
+                  </div>
                 </div>
+
+                {/* 
+                <div>
+                  // ! Need to think about this some more, might need a new query
+                  <div>Collected by</div>
+                  <CollectedBy creatorPubkey={creators[0].address} />
+                </div>
+                  */}
+                {/* <div>Floor price</div>
+                <div>Total volume</div> */}
               </div>
+            </CollectionRaisedCard>
+          </div>
+          <div className={`hidden lg:flex`}>
+            <CollectionRaisedCard>
+              <div className="grid grid-cols-2 grid-rows-2 gap-x-5 gap-y-4">
+                <div>
+                  <div className="cursor-pointer text-sm font-medium text-gray-200">
+                    Followed by
+                  </div>
+                  <div className="flex items-center">
+                    <span className={`mr-2 text-left text-2xl font-semibold`}>
+                      {collectionFollowers.length}
+                    </span>
+                    <AvatarIcons
+                      profiles={collectionFollowers.map((f) => ({
+                        address: f.from.address,
+                        data: {
+                          twitterHandle: f.from.profile?.handle,
+                          pfpUrl: f.from.profile?.profileImageUrlLowres,
+                        },
+                      }))}
+                    />
+                  </div>
+                </div>
 
-              {/* 
-        <div>
-          // ! Need to think about this some more, might need a new query
-          <div>Collected by</div>
-          <CollectedBy creatorPubkey={creators[0].address} />
-        </div>
-          */}
-              {/* <div>Floor price</div>
-        <div>Total volume</div> */}
-            </div>
-          </CollectionRaisedCard>
+                {/* 
+                <div>
+                  // ! Need to think about this some more, might need a new query
+                  <div>Collected by</div>
+                  <CollectedBy creatorPubkey={creators[0].address} />
+                </div>
+                  */}
+                {/* <div>Floor price</div>
+                <div>Total volume</div> */}
+              </div>
+            </CollectionRaisedCard>
+          </div>
         </div>
 
-        <div className="w-full   ">
-          <div className="flex space-x-1   p-1">
+        <div className="w-full">
+          <div className="flex space-x-1 p-1">
             <Tab
               title={`NFTs`}
               selected={router.pathname.includes('nfts')}
