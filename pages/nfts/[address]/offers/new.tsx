@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import Modal from 'src/components/Modal';
+import Modal from '@/components/ui/Modal';
 import OfferForm from '@/components/OfferForm';
 import BlurPage from '@/views/nfts/BlurPage';
 import { useNftMarketplaceQuery } from '../../../../src/graphql/indexerTypes';

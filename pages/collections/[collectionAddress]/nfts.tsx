@@ -17,7 +17,7 @@ import { uniq } from 'ramda';
 import React, { ReactNode, useState } from 'react';
 import { useNftsInCollectionQuery } from 'src/graphql/indexerTypes';
 import GridSelector from 'src/components/GridSelector';
-import TextInput2 from 'src/components/TextInput2';
+import TextInput2 from '@/components/ui/TextInput2';
 import TopLevelFilterButton from 'src/components/TopLevelFilterButton';
 
 export const getServerSideProps: GetServerSideProps<CollectionPageProps> =

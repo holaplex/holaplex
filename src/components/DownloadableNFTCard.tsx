@@ -1,5 +1,5 @@
 import React, { FC, MutableRefObject, useRef } from 'react';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import * as htmlToImage from 'html-to-image';

@@ -1,4 +1,4 @@
-import { ProfileMenu } from 'src/components/ProfileMenu';
+import { ProfileMenu } from '@/views/profiles/ProfileMenu';
 import { mq } from '@/assets/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';

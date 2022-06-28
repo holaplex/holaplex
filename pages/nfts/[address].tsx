@@ -5,7 +5,7 @@ import cx from 'classnames';
 import { shortenAddress } from '../../src/modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
-import Accordion from '@/components/Accordion';
+import Accordion from '@/components/ui/Accordion';
 import MoreDropdown from '@/components/MoreDropdown';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -15,13 +15,13 @@ import { SolIcon } from '@/components/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 import { Tag } from '@/assets/icons/Tag';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
 } from 'src/views/_global/holaplexConstants';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
-import Modal from 'src/components/Modal';
+import Modal from '@/components/ui/Modal';
 import CancelOfferForm from 'src/components/CancelOfferForm';
 import { Listing, Marketplace, Nft, Offer } from '@/types/types';
 import { useRouter } from 'next/router';

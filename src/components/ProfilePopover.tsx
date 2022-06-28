@@ -10,7 +10,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 import { WalletLabel } from 'src/components/WalletIndicator';
 import { SolBalance } from 'src/components/SolBalance';
-import { DisconnectWalletButton } from '@/components/Button';
+import { DisconnectWalletButton } from '@/components/ui/Button';
 
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { ChevronRightIcon } from '@heroicons/react/outline';

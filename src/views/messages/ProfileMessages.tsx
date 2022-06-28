@@ -1,7 +1,7 @@
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { shortenAddress } from '@/modules/utils/string';
 import { DateTime } from 'luxon';
-import { Button5 } from '@/components/Button2';
+import { Button5 } from '@/components/ui/Button2';
 import React, { useState, useEffect, useMemo, useRef, RefObject } from 'react';
 import * as web3 from '@solana/web3.js';
 import { Mailbox, MessageAccount } from '@usedispatch/client';

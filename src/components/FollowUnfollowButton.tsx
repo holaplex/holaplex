@@ -7,7 +7,7 @@ import { Connection } from '@solana/web3.js';
 import React, { FC } from 'react';
 import { useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
-import { Button5 } from './Button2';
+import { Button5 } from './ui/Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';

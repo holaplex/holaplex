@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Button from '../../components/Button';
+import Button from '../../components/ui/Button';
 import { User, shuffleArray } from './feed.utils';
 import { useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 

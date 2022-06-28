@@ -10,7 +10,7 @@ import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';

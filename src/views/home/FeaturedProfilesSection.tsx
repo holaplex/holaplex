@@ -12,8 +12,8 @@ import { useConnection, useWallet, WalletContextState } from '@solana/wallet-ada
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
-import Modal from '../../components/Modal';
-import { Button5 } from '../../components/Button2';
+import Modal from '../../components/ui/Modal';
+import { Button5 } from '../../components/ui/Button2';
 import { useMultiTransactionModal } from 'src/views/_global/MultiTransaction';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 

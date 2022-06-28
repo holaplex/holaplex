@@ -15,9 +15,9 @@ import {
   useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
 } from 'src/graphql/indexerTypes';
-import { Button5 } from '@/components/Button2';
+import { Button5 } from '@/components/ui/Button2';
 import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';
-import Modal from '@/components/Modal';
+import Modal from '@/components/ui/Modal';
 import MoreDropdown from '@/components/MoreDropdown';
 import NFTPreview from '@/components/NFTPreview';
 import OfferForm from '@/components/OfferForm';

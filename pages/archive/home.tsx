@@ -16,7 +16,7 @@ import {
   Select,
   SelectProps,
 } from 'antd';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import {
   take,

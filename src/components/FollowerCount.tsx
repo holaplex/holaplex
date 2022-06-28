@@ -12,7 +12,7 @@ import {
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { FollowerBubble, FollowerBubbleImage } from './FollowerBubble';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
-import Modal from './Modal';
+import Modal from './ui/Modal';
 import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';

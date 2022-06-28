@@ -1,3 +1,4 @@
+// This component / file should probably be deleted and refactored into the profile/activity page
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Col } from 'antd';
@@ -5,13 +6,13 @@ import { Col } from 'antd';
 import { Bid, useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/assets/styles/MediaQuery';
-import TextInput2 from './TextInput2';
+import TextInput2 from '../../components/ui/TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { IFeedItem } from 'src/views/alpha/feed.interfaces';
-import { ActivityCard } from './ActivityCard';
+import { ActivityCard } from '../../components/ActivityCard';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
-import { LoadingBox, LoadingLine } from './LoadingPlaceholders';
+import { LoadingBox, LoadingLine } from '../../components/LoadingPlaceholders';
 
 export function getActivityItemsFromBids(bids: Bid[]) {
   return (

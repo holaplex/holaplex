@@ -2,7 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useState } fr
 import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
-import Button from './Button';
+import Button from './ui/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';

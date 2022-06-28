@@ -1,4 +1,4 @@
-import { ActivityContent } from 'src/components/ActivityContent';
+import { ActivityContent } from '@/views/profiles/ActivityContent';
 import { GetServerSideProps } from 'next';
 import {
   getProfileServerSideProps,

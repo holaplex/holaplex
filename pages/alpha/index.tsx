@@ -20,7 +20,7 @@ import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
 import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import { Button5 } from 'src/components/Button2';
+import { Button5 } from '@/components/ui/Button2';
 import EmptyFeedCTA from 'src/views/alpha/EmptyFeedCTA';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 

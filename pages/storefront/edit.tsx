@@ -1,7 +1,7 @@
 import DomainFormItem from 'src/components/DomainFormItem';
 import FontSelect from 'src/components/FontSelect';
 import Upload from 'src/components/Upload';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import ColorPicker from 'src/components/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';

@@ -15,7 +15,7 @@ import { Check } from '@/assets/icons/Check';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import DialectNotificationsButton from '@/views/_global/DialectNotificationsButton';
 import classNames from 'classnames';
-import { Button5 } from './Button2';
+import { Button5 } from './ui/Button2';
 import SearchBar from 'src/views/_global/SearchBar';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;

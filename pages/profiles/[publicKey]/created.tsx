@@ -11,7 +11,7 @@ import cx from 'classnames';
 import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
 import { ProfileDataProvider } from '../../../src/views/profiles/ProfileDataProvider';
-import TextInput2 from 'src/components/TextInput2';
+import TextInput2 from '@/components/ui/TextInput2';
 import { INFINITE_SCROLL_AMOUNT_INCREMENT, INITIAL_FETCH, NFTGrid } from './nfts';
 import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/views/_global/holaplexConstants';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';

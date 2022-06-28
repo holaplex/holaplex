@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { PopoverBoxContents } from './ProfilePopover';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
-import { SelectWalletButton } from '@/components/Button';
+import { SelectWalletButton } from '@/components/ui/Button';
 import { FC } from 'react';
 
 type OnCloseProps = {

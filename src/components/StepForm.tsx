@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Row, Space, FormInstance } from 'antd';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import { FormProps } from 'antd';
 import { useRouter } from 'next/router';
 

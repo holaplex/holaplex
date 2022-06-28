@@ -16,11 +16,11 @@ import Link from 'next/link';
 import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import { format as formatTime } from 'timeago.js';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import AcceptOfferForm from '@/components/AcceptOfferForm';
 import UpdateOfferForm from '@/components/UpdateOfferForm';
 import { useWallet } from '@solana/wallet-adapter-react';
-import Modal from '@/components/Modal';
+import Modal from '@/components/ui/Modal';
 import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
 
 enum OfferFilters {

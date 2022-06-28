@@ -1,6 +1,6 @@
 import { programs, Wallet } from '@metaplex/js';
 import DomainFormItem from 'src/components/DomainFormItem';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import Upload from 'src/components/Upload';
 import FillSpace from 'src/components/FillSpace';
 import StepForm from 'src/components/StepForm';

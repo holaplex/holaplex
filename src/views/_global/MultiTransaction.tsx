@@ -1,7 +1,7 @@
 import React, { FC, createContext, useState, useContext } from 'react';
 import { errorCodeHelper } from '../../modules/utils/marketplace';
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
+import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
 
 type AsyncFunction = (arg?: any) => Promise<void>;
 export type Action = {

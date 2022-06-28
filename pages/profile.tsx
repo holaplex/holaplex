@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useState } from 'react';
-import { Button5 } from 'src/components/Button2';
+import { Button5 } from '@/components/ui/Button2';
 import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
 import Footer from 'src/views/home/Footer';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';

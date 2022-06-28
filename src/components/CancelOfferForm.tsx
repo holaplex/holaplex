@@ -1,5 +1,5 @@
 import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react';
-import Button from './Button';
+import Button from './ui/Button';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';

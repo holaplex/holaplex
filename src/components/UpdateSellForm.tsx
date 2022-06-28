@@ -3,7 +3,7 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import NFTPreview from '@/components/NFTPreview';
 import { PriceDisplay } from './CurrencyHelpers';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as zod from 'zod';
@@ -21,7 +21,7 @@ import {
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
-import Modal from '@/components/Modal';
+import Modal from '@/components/ui/Modal';
 //@ts-ignore
 import * as htmlToImage from 'html-to-image';
 

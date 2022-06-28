@@ -3,7 +3,7 @@ import React from 'react';
 import Head from 'next/head';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Row, Card, Space, Typography } from 'antd';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import MintModal from 'src/components/MintModal';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 

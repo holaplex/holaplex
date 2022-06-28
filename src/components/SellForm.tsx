@@ -7,7 +7,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
-import Button from './Button';
+import Button from './ui/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { toast } from 'react-toastify';
 import { AuctionHouse, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';

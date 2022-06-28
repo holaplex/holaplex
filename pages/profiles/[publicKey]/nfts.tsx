@@ -5,7 +5,7 @@ import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
 import Link from 'next/link';
-import TextInput2 from 'src/components/TextInput2';
+import TextInput2 from '@/components/ui/TextInput2';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
@@ -17,9 +17,9 @@ import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
 } from 'src/views/_global/holaplexConstants';
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
-import Modal from 'src/components/Modal';
+import Modal from '@/components/ui/Modal';
 import SellForm from 'src/components/SellForm';
 import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';

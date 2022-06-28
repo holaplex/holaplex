@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from 'src/lib/utils';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
-import { Button5 } from './Button2';
+import { Button5 } from './ui/Button2';
 import { useTwitterHandleFromPubKeyQuery } from 'src/graphql/indexerTypes';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {

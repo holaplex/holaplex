@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { FC } from 'react';
-import Button from './Button';
+import Button from './ui/Button';
 
 export type NoProfileVariant =
   | 'collected'

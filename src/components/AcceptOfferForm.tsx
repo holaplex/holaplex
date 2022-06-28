@@ -5,7 +5,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
-import Button from './Button';
+import Button from './ui/Button';
 import { toast } from 'react-toastify';
 import {
   Nft,

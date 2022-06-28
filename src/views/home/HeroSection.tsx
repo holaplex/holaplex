@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 import { useFeedQuery } from 'src/graphql/indexerTypes';
-import { Button5 } from '../../components/Button2';
+import { Button5 } from '../../components/ui/Button2';
 import { FeedQueryEvent } from '../alpha/feed.utils';
 import { FeedCard, LoadingFeedCard } from '../alpha/FeedCard';
 import Marquee from 'react-fast-marquee';
