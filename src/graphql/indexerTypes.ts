@@ -236,7 +236,7 @@ export type Marketplace = {
 export type MetadataJson = {
   __typename?: 'MetadataJson';
   address: Scalars['String'];
-  creatorAddress: Scalars['String'];
+  creatorAddress?: Maybe<Scalars['String']>;
   creatorTwitterHandle?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   mintAddress: Scalars['String'];
@@ -459,9 +459,14 @@ export type QueryRoot = {
   marketplaces: Array<Marketplace>;
   /** returns metadata_jsons matching the term */
   metadataJsons: Array<MetadataJson>;
+  /** Get an NFT by metadata address. */
   nft?: Maybe<Nft>;
+  /** Get an NFT by mint address. */
+  nftByMintAddress?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
+  /** Get a list of NFTs by mint address. */
+  nftsByMintAddress: Array<Nft>;
   /** Stats aggregated across all indexed NFTs */
   nftsStats: NftsStats;
   offer?: Maybe<BidReceipt>;
@@ -470,6 +475,8 @@ export type QueryRoot = {
   profiles: Array<Wallet>;
   /** returns stats about profiles */
   profilesStats: ProfilesStats;
+  /** returns all the collections matching the search term */
+  searchCollections: Array<MetadataJson>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
   storefronts: Array<Storefront>;
@@ -570,6 +577,11 @@ export type QueryRootNftArgs = {
 };
 
 
+export type QueryRootNftByMintAddressArgs = {
+  address: Scalars['String'];
+};
+
+
 export type QueryRootNftCountsArgs = {
   creators: Array<Scalars['PublicKey']>;
 };
@@ -590,6 +602,11 @@ export type QueryRootNftsArgs = {
 };
 
 
+export type QueryRootNftsByMintAddressArgs = {
+  addresses: Array<Scalars['PublicKey']>;
+};
+
+
 export type QueryRootOfferArgs = {
   address: Scalars['String'];
 };
@@ -601,6 +618,13 @@ export type QueryRootProfileArgs = {
 
 
 export type QueryRootProfilesArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  term: Scalars['String'];
+};
+
+
+export type QueryRootSearchCollectionsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   term: Scalars['String'];
@@ -935,7 +959,7 @@ export type MetadataSearchQueryVariables = Exact<{
 }>;
 
 
-export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }> };
+export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress?: string | null, creatorTwitterHandle?: string | null }> };
 
 export type ProfileSearchQueryVariables = Exact<{
   term: Scalars['String'];
@@ -950,7 +974,7 @@ export type SearchQueryVariables = Exact<{
 }>;
 
 
-export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress: string, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null } };
+export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress?: string | null, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null } };
 
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {

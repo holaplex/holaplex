@@ -1,4 +1,4 @@
-import StyleVariables from '@/common/constants/styles';
+import StyleVariables from '@/styles/styleConstants';
 import { Card, Col, Typography } from 'antd';
 import Color from 'color';
 import { NextRouter } from 'next/router';
@@ -9,7 +9,7 @@ import { ArweaveScope } from '../arweave/client';
 import { ArweaveFile } from '../arweave/types';
 import { PageMetaData, Storefront, StorefrontTheme } from './types';
 import { putStorefront } from './put-storefront';
-import { TrackingFunctionSignature } from '../../common/context/AnalyticsProvider';
+import { TrackingFunctionSignature } from '@/views/_global/AnalyticsProvider';
 import { WalletContextState } from '@solana/wallet-adapter-react';
 
 export const { Text, Title, Paragraph } = Typography;

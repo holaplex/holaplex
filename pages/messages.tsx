@@ -1,16 +1,16 @@
 import { NextPage } from 'next';
-import { ProfileMessages } from '@/common/components/messages/ProfileMessages';
-import { WalletDependantPageProps } from '@/modules/server-side/getProfile';
+import { ProfileMessages } from 'src/views/messages/ProfileMessages';
 
 import { useEffect, useMemo, useState } from 'react';
 import * as web3 from '@solana/web3.js';
-import { useMailbox } from '@/common/context/MailboxProvider';
+import { useMailbox } from 'src/views/messages/MailboxProvider';
 import { Mailbox, MessageAccount } from '@usedispatch/client';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-import { useLocalStorage } from '@/common/hooks/useLocalStorage';
-import { CONVERSATIONS_STATE } from '@/common/constants/localStorageKeys';
-import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { CONVERSATIONS_STATE } from '@/views/_global/localStorageKeys';
+import { WalletDependantPageProps } from '@/views/profiles/getProfileServerSideProps';
 
 interface Conversations {
   [conversationId: string]: MessageAccount[];

@@ -3,7 +3,6 @@
 
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import StorePreview from '@/components/elements/StorePreview';
 import FeaturedStoreSDK, { StorefrontFeature } from '@/modules/storefront/featured';
 import {
   PageHeader,
@@ -17,7 +16,7 @@ import {
   Select,
   SelectProps,
 } from 'antd';
-import Button from '@/components/elements/Button';
+import Button from '@/components/Button';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import {
   take,
@@ -42,19 +41,19 @@ import {
   generateListingShell,
   ListingPreview,
   SkeletonListing,
-} from '@/common/components/elements/ListingPreview';
+} from 'src/components/ListingPreview';
 import Link from 'next/link';
 import { SelectValue } from 'antd/lib/select';
-import { useAnalytics } from '@/common/context/AnalyticsProvider';
-import SocialLinks from '@/common/components/elements/SocialLinks';
+import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import SocialLinks from 'src/components/SocialLinks';
 import { StorefrontContext } from '@/modules/storefront';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletContext } from '@/modules/wallet';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
-import HeroSection from '@/common/components/home/HeroSection';
-import { FilterOptions, SortOptions } from '@/common/components/home/home.interfaces';
+import FeaturedMarketplacesSection from 'src/views/home/FeaturedMarketplacesSection';
+import HeroSection from 'src/views/home/HeroSection';
+import { FilterOptions, SortOptions } from 'src/views/home/home.interfaces';
 
 const { Title, Text } = Typography;
 const Option = Select.Option;
