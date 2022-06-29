@@ -2,13 +2,18 @@ import { FilterOption } from '@/common/components/layouts/Filters';
 import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
 import { useRouter } from 'next/router';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
-import { isEmpty } from 'ramda';
+import { isEmpty, props } from 'ramda';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
 import { routerQueryParamToEnumValue } from '@/common/utils/router';
 import { CardGridWithHeader } from '@/common/components/elements/CardGrid';
 import DropdownSelect from '@/common/components/elements/DropdownSelect';
-import { SelectOption, SelectOptions, SelectOptionsSpec } from '@/common/components/discover/discover.models';
+import {
+  SelectOption,
+  SelectOptions,
+  SelectOptionsSpec,
+} from '@/common/components/discover/discover.models';
+import { useSelectOptions } from '@/common/components/discover/discover.hooks';
 
 enum TypeFilterOption {
   ALL = 'all',
@@ -23,24 +28,24 @@ const TYPE_OPTIONS: FilterOption<TypeFilterOption>[] = [
   {
     label: 'Recently Listed',
     value: TypeFilterOption.BUY_NOW,
-  }
+  },
 ];
 
 enum SortOptionName {
   PRICE,
   RECENTLY_LISTED,
-  HIGHEST_SALES
+  HIGHEST_SALES,
 }
 
 enum PriceSortOptionName {
   PRICE_DESC,
-  PRICE_ASC
+  PRICE_ASC,
 }
 
 enum SalesSortOptionName {
   PAST_DAY,
   PAST_WEEK,
-  ALL_TIME
+  ALL_TIME,
 }
 
 const SORT_OPTIONS: SelectOptionsSpec[] = [
@@ -48,18 +53,19 @@ const SORT_OPTIONS: SelectOptionsSpec[] = [
     label: 'Price',
     value: SortOptionName.PRICE,
     queryValue: 'price',
+    defaultSubOptionValue: PriceSortOptionName.PRICE_DESC,
     subOptions: [
       {
         label: 'High to Low',
         value: PriceSortOptionName.PRICE_DESC,
-        queryValue: 'desc'
+        queryValue: 'desc',
       },
       {
         label: 'Low to High',
         value: PriceSortOptionName.PRICE_ASC,
-        queryValue: 'asc'
+        queryValue: 'asc',
       },
-    ]
+    ],
   },
   {
     label: 'Recently listed',
@@ -75,21 +81,21 @@ const SORT_OPTIONS: SelectOptionsSpec[] = [
       {
         label: 'Last 24 hours',
         value: SalesSortOptionName.PAST_DAY,
-        queryValue: '24h'
+        queryValue: '24h',
       },
       {
         label: 'Last 7 days',
         value: SalesSortOptionName.PAST_WEEK,
-        queryValue: '7d'
+        queryValue: '7d',
       },
       {
         label: 'All time',
         value: SalesSortOptionName.ALL_TIME,
-        queryValue: 'all'
+        queryValue: 'all',
       },
-    ]
+    ],
   },
-]
+];
 
 interface NFTCardCreatorData {
   nft: OwnedNfTsQuery['nfts'][0];
@@ -104,13 +110,17 @@ export default function DiscoverNFTsTab(): JSX.Element {
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TypeFilterOption>(TypeFilterOption.BUY_NOW);
-  const sortOptions: SelectOptions = useMemo(() => SelectOptions.from(SORT_OPTIONS, SortOptionName.PRICE), []);
+  const sortOptions = useSelectOptions(SORT_OPTIONS, SortOptionName.PRICE);
 
   // set default filters if the URL doesnt already contain them, and get the filter otherwise
   useEffect(() => {
     let result: TypeFilterOption = DEFAULT_TYPE;
     if (router) {
-      const queryValue: TypeFilterOption | undefined = routerQueryParamToEnumValue(router, 'type', v => v as TypeFilterOption);
+      const queryValue: TypeFilterOption | undefined = routerQueryParamToEnumValue(
+        router,
+        'type',
+        (v) => v as TypeFilterOption
+      );
       if (queryValue === undefined) {
         router.replace({ query: { type: result } });
       }
@@ -167,6 +177,36 @@ export default function DiscoverNFTsTab(): JSX.Element {
     [nftQuery, nfts]
   );
 
+  const menus: JSX.Element[] = [
+    <CardGridWithHeader.HeaderElement key="primary-sort">
+      <DropdownSelect
+        onSelect={(i) => sortOptions.setNthSelectedByIndex(i, 0)}
+        defaultIndex={sortOptions.getNthDefaultValue(0)}
+        selectedIndex={sortOptions.getNthSelectedIndex(0)}
+      >
+        {sortOptions.getNthLabels(0)}
+      </DropdownSelect>
+    </CardGridWithHeader.HeaderElement>,
+  ];
+  if (sortOptions.nthLevelHasOptions(1)) {
+    menus.push(
+      <CardGridWithHeader.HeaderElement key="secondary-sort">
+        <DropdownSelect
+          onSelect={(i) => sortOptions.setNthSelectedByIndex(i, 1)}
+          defaultIndex={sortOptions.getNthDefaultValue(1)}
+          // setting the selected index here because react reuses the
+          //  dropdown component across selection options and ends up 
+          //  storing the index from the most recently
+          //  selected sub-option, which causes the selected option to be
+          //  the wrong one after change the parent option.
+          selectedIndex={sortOptions.getNthSelectedIndex(1)}
+        >
+          {sortOptions.getNthLabels(1)}
+        </DropdownSelect>
+      </CardGridWithHeader.HeaderElement>
+    );
+  }
+
   return (
     <CardGridWithHeader<NFTCardCreatorData>
       cardContext={{
@@ -190,21 +230,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
         loading: nftQuery.loading,
       }}
       search={{ onChange: (v) => setSearchTerm(v) }}
-      //TODO add submenus and hook them up to setting the router and queries
-      menus={
-        [<CardGridWithHeader.HeaderElement key="primary-sort">
-          <DropdownSelect onSelect={i => sortOptions.setNthSelectedByIndex(i, 0)} defaultIndex={sortOptions.getNthDefaultValue(0)}>
-            {sortOptions.getNthLabels(0)}
-          </DropdownSelect>
-        </CardGridWithHeader.HeaderElement>,
-        (!sortOptions.nthLevelHasOptions(1)) ? <></> : (
-          <CardGridWithHeader.HeaderElement key="secondary-sort">
-          <DropdownSelect onSelect={i => sortOptions.setNthSelectedByIndex(i, 1)} defaultIndex={sortOptions.getNthDefaultValue(1)}>
-            {sortOptions.getNthLabels(1)}
-          </DropdownSelect>
-        </CardGridWithHeader.HeaderElement>
-        )]
-      }
+      menus={menus}
     />
   );
 }

@@ -43,9 +43,7 @@ export function CardGridWithHeader<T>(props: CardGridWithHeaderProps<T>): JSX.El
       <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
         <div className={classNames(['flex space-x-4', 'lg:justify-end'], 'w-full')}>
           <SearchBar onChange={(v) => props.search.onChange(v)} />
-          <div className='flex flex-shrink'>
           {props.menus}
-          </div>
           <GridSelector onChange={(v) => setGridView(v)} />
         </div>
       </div>

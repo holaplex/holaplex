@@ -35,7 +35,7 @@ export class SelectOptions implements SelectOption {
   ) {
     this.options = options;
     this.order = order;
-    if (defaultValue) {
+    if (defaultValue !== undefined) {
       this.validateValue(defaultValue);
       this.defaultValue = defaultValue;
       this.selectedValue = defaultValue;
@@ -73,16 +73,15 @@ export class SelectOptions implements SelectOption {
     }
   }
 
-  public getSelected(): SelectOption[] | undefined {
-    if (this.selectedValue === undefined) return undefined;
+  public getSelected(): SelectOption[] {
     const result: SelectOption[] = [];
-    let selectedValue: SelectOption | SelectOptions | undefined = this.selectedValue;
-    if (selectedValue instanceof SelectOptions) {
-      const subSelection: SelectOption[] | undefined = selectedValue.getSelected();
-      if (subSelection !== undefined) result.push(...subSelection);
-    } else if (selectedValue !== undefined) {
-      // selectedValue will be of type SelectOption
-      result.push(selectedValue);
+    if (this.selectedValue !== undefined) {
+      const selected: SelectOption | SelectOptions = this.options.get(this.selectedValue)!;
+      result.push(selected);
+      if (selected instanceof SelectOptions) {
+        const subSelection: SelectOption[] | undefined = selected.getSelected();
+        if (subSelection !== undefined) result.push(...subSelection);
+      }
     }
     return result;
   }
@@ -107,9 +106,7 @@ export class SelectOptions implements SelectOption {
     } else if (this.selectedValue === undefined) {
       throw new Error('Tried to set a nested option before its parent.');
     } else {
-      const option: SelectOption | SelectOptions = this.options.get(
-        this.options.get(this.selectedValue)
-      )!;
+      const option: SelectOption | SelectOptions = this.options.get(this.selectedValue)!;
       if (option instanceof SelectOptions) {
         option.setNthSelected(value, level - 1);
       } else {
@@ -131,13 +128,11 @@ export class SelectOptions implements SelectOption {
       if (index < 0 || index >= this.order.length) {
         throw new Error(`Index ${index} out of bounds (0 - ${this.order.length - 1})`);
       }
-      this.selectedValue = this.order[index];
+      this.setNthSelected(this.order[index], 0);
     } else if (this.selectedValue === undefined) {
       throw new Error('Tried to set a nested option before its parent.');
     } else {
-      const option: SelectOption | SelectOptions = this.options.get(
-        this.options.get(this.selectedValue)
-      )!;
+      const option: SelectOption | SelectOptions = this.options.get(this.selectedValue)!;
       if (option instanceof SelectOptions) {
         option.setNthSelectedByIndex(index, level - 1);
       } else {
@@ -194,12 +189,12 @@ export class SelectOptions implements SelectOption {
   private getNthOptions(level: number): SelectOptions {
     if (level < 0) throw new Error('Level must be non-negative');
     else if (level === 0) return this;
-    else if (this.selectedValue === undefined)
+    else if (this.selectedValue === undefined) {
       throw new Error('Tried to get nested option before selecting a parent option.');
-    else {
+    } else {
       const option: SelectOption | SelectOptions = this.options.get(this.selectedValue)!;
       if (option instanceof SelectOptions) {
-        return this.getNthOptions(level - 1);
+        return option.getNthOptions(level - 1);
       } else {
         throw new Error('Tried to get a nested option on an option without children.');
       }
