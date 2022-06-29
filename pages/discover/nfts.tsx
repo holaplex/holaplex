@@ -8,7 +8,7 @@ import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/inde
 import { routerQueryParamToEnumValue } from '@/common/utils/router';
 import { CardGridWithHeader } from '@/common/components/elements/CardGrid';
 import DropdownSelect from '@/common/components/elements/DropdownSelect';
-import { Option, Options } from '@/common/components/discover/discover.interfaces';
+import { SelectOption, SelectOptions, SelectOptionsSpec } from '@/common/components/discover/discover.models';
 
 enum TypeFilterOption {
   ALL = 'all',
@@ -27,23 +27,69 @@ const TYPE_OPTIONS: FilterOption<TypeFilterOption>[] = [
 ];
 
 enum SortOptionName {
+  PRICE,
   RECENTLY_LISTED,
   HIGHEST_SALES
 }
 
+enum PriceSortOptionName {
+  PRICE_DESC,
+  PRICE_ASC
+}
 
-const PRIMARY_SORT_OPTIONS: Option<SortOptionName>[] = [
+enum SalesSortOptionName {
+  PAST_DAY,
+  PAST_WEEK,
+  ALL_TIME
+}
+
+const SORT_OPTIONS: SelectOptionsSpec[] = [
+  {
+    label: 'Price',
+    value: SortOptionName.PRICE,
+    queryValue: 'price',
+    subOptions: [
+      {
+        label: 'High to Low',
+        value: PriceSortOptionName.PRICE_DESC,
+        queryValue: 'desc'
+      },
+      {
+        label: 'Low to High',
+        value: PriceSortOptionName.PRICE_ASC,
+        queryValue: 'asc'
+      },
+    ]
+  },
   {
     label: 'Recently listed',
     value: SortOptionName.RECENTLY_LISTED,
-    queryValue: 'recent'
+    queryValue: 'recent',
   },
   {
     label: 'Highest sales',
     value: SortOptionName.HIGHEST_SALES,
-    queryValue: 'sales'
+    queryValue: 'sales',
+    defaultSubOptionValue: SalesSortOptionName.PAST_DAY,
+    subOptions: [
+      {
+        label: 'Last 24 hours',
+        value: SalesSortOptionName.PAST_DAY,
+        queryValue: '24h'
+      },
+      {
+        label: 'Last 7 days',
+        value: SalesSortOptionName.PAST_WEEK,
+        queryValue: '7d'
+      },
+      {
+        label: 'All time',
+        value: SalesSortOptionName.ALL_TIME,
+        queryValue: 'all'
+      },
+    ]
   },
-];
+]
 
 interface NFTCardCreatorData {
   nft: OwnedNfTsQuery['nfts'][0];
@@ -58,7 +104,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TypeFilterOption>(TypeFilterOption.BUY_NOW);
-  const primarySortOptions: Options<SortOptionName> = useMemo(() => Options<SortOptionName>.of(PRIMARY_SORT_OPTIONS, 0), [PRIMARY_SORT_OPTIONS]);
+  const sortOptions: SelectOptions = useMemo(() => SelectOptions.from(SORT_OPTIONS, SortOptionName.PRICE), []);
 
   // set default filters if the URL doesnt already contain them, and get the filter otherwise
   useEffect(() => {
@@ -146,11 +192,18 @@ export default function DiscoverNFTsTab(): JSX.Element {
       search={{ onChange: (v) => setSearchTerm(v) }}
       //TODO add submenus and hook them up to setting the router and queries
       menus={
-        <CardGridWithHeader.HeaderElement>
-          <DropdownSelect onSelect={i => primarySortOptions.setSelected(i)} default={primarySortOptions.getDefaultIndex() ?? undefined}>
-            {primarySortOptions.getLabels()}
+        [<CardGridWithHeader.HeaderElement key="primary-sort">
+          <DropdownSelect onSelect={i => sortOptions.setNthSelectedByIndex(i, 0)} defaultIndex={sortOptions.getNthDefaultValue(0)}>
+            {sortOptions.getNthLabels(0)}
+          </DropdownSelect>
+        </CardGridWithHeader.HeaderElement>,
+        (!sortOptions.nthLevelHasOptions(1)) ? <></> : (
+          <CardGridWithHeader.HeaderElement key="secondary-sort">
+          <DropdownSelect onSelect={i => sortOptions.setNthSelectedByIndex(i, 1)} defaultIndex={sortOptions.getNthDefaultValue(1)}>
+            {sortOptions.getNthLabels(1)}
           </DropdownSelect>
         </CardGridWithHeader.HeaderElement>
+        )]
       }
     />
   );

@@ -3,7 +3,7 @@ import DropdownMenu from './DropdownMenu';
 
 export interface DropdownSelectProps<T extends JSX.Element | string> {
   children: T[];
-  default?: number;
+  defaultIndex?: number;
   title?: JSX.Element | string;
   onSelect?: (index: number) => void;
 }
@@ -21,7 +21,7 @@ export default function DropdownSelect<T extends JSX.Element | string>(
   let title: JSX.Element | string;
   if (props.title) title = props.title;
   else if (selected !== null) title = props.children[selected];
-  else if (props.default !== undefined) title = props.children[props.default];
+  else if (props.defaultIndex !== undefined) title = props.children[props.defaultIndex];
   else title = 'Select';
 
   const titleElement: JSX.Element = wrapItem(title);
