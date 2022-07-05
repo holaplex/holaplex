@@ -3,4 +3,4 @@
 *.md
 /.git
 /test
-/spec
+/spec 

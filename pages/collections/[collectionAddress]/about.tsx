@@ -1,15 +1,12 @@
-import { CollectionRaisedCard } from '@/common/components/collections/CollectionRaisedCard';
+import { CollectionRaisedCard } from '@/views/collections/CollectionRaisedCard';
 import {
   CollectionPageProps,
   getCollectionPageServerSideProps,
-} from '@/common/components/collections/collections.utils';
-import { FollowItem } from '@/common/components/elements/FollowModal';
-import CollectionLayout from '@/layouts/CollectionLayout';
+} from '@/views/collections/collections.utils';
+import { FollowItem } from 'src/components/FollowModal';
+import CollectionLayout from 'src/views/collections/CollectionLayout';
 import { GetServerSideProps } from 'next';
-import React, { ReactElement, ReactNode } from 'react';
-import { graphqlRequestClient } from 'src/graphql/graphql-request';
-import { GetCollectionQuery } from 'src/graphql/indexerTypes';
-import { getSdk } from 'src/graphql/indexerTypes.ssr';
+import React, { ReactNode } from 'react';
 
 export const getServerSideProps: GetServerSideProps<CollectionPageProps> =
   getCollectionPageServerSideProps;

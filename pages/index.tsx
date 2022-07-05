@@ -1,9 +1,9 @@
-import FeaturedAuctionsSection from '@/common/components/home/FeaturedAuctionsSection';
-import FeaturedBuyNowListingsSection from '@/common/components/home/FeaturedBuyNowListingsSection';
-import FeaturedMarketplacesSection from '@/common/components/home/FeaturedMarketplacesSection';
-import FeaturedProfilesSection from '@/common/components/home/FeaturedProfilesSection';
-import Footer from '@/common/components/home/Footer';
-import HeroSection from '@/common/components/home/HeroSection';
+import FeaturedAuctionsSection from 'src/views/home/FeaturedAuctionsSection';
+import FeaturedBuyNowListingsSection from 'src/views/home/FeaturedBuyNowListingsSection';
+import FeaturedMarketplacesSection from 'src/views/home/FeaturedMarketplacesSection';
+import FeaturedProfilesSection from 'src/views/home/FeaturedProfilesSection';
+import Footer from 'src/views/home/Footer';
+import HeroSection from 'src/views/home/HeroSection';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
 import Link from 'next/link';

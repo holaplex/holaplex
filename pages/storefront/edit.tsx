@@ -1,13 +1,13 @@
-import DomainFormItem from '@/common/components/elements/DomainFormItem';
-import FontSelect from '@/common/components/elements/FontSelect';
-import Upload from '@/common/components/elements/Upload';
-import Button from '@/components/elements/Button';
-import ColorPicker from '@/components/elements/ColorPicker';
+import DomainFormItem from 'src/components/DomainFormItem';
+import FontSelect from 'src/components/FontSelect';
+import Upload from 'src/components/Upload';
+import Button from '@/components/Button';
+import ColorPicker from 'src/components/ColorPicker';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/common/context/AnalyticsProvider';
+import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { StorefrontContext } from '@/modules/storefront';
-import Loading from '@/components/elements/Loading';
+import Loading from 'src/components/Loading';
 import styled from 'styled-components';
 import {
   FieldData,

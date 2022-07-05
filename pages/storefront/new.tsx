@@ -1,15 +1,15 @@
-import DomainFormItem from '@/common/components/elements/DomainFormItem';
-import FontSelect from '@/common/components/elements/FontSelect';
-import Upload from '@/common/components/elements/Upload';
-import Button from '@/components/elements/Button';
-import ColorPicker from '@/components/elements/ColorPicker';
-import FillSpace from '@/components/elements/FillSpace';
-import StepForm from '@/components/elements/StepForm';
+import DomainFormItem from 'src/components/DomainFormItem';
+import FontSelect from 'src/components/FontSelect';
+import Upload from 'src/components/Upload';
+import Button from '@/components/Button';
+import ColorPicker from 'src/components/ColorPicker';
+import FillSpace from 'src/components/FillSpace';
+import StepForm from 'src/components/StepForm';
 import { StorefrontContext } from '@/modules/storefront';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/common/context/AnalyticsProvider';
-import Loading from '@/common/components/elements/Loading';
+import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import Loading from 'src/components/Loading';
 import {
   FieldData,
   getTextColor,

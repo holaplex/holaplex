@@ -8,9 +8,9 @@ import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
-import { AppHeader } from '@/common/components/elements/AppHeader';
-import { Close } from '@/common/components/icons/Close';
-import { AnalyticsProvider } from '@/common/context/AnalyticsProvider';
+import { AppHeader } from '@/components/AppHeader';
+import { Close } from '@/assets/icons/Close';
+import { AnalyticsProvider } from 'src/views/_global/AnalyticsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -34,11 +34,11 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
-import { MultiTransactionProvider } from '@/common/context/MultiTransaction';
+import { MultiTransactionProvider } from 'src/views/_global/MultiTransaction';
 import { apolloClient } from 'src/graphql/apollo';
 import { NextPage } from 'next';
-import { ConnectedWalletProfileProvider } from '@/common/context/ConnectedWalletProfileProvider';
-import { MailboxProvider } from '@/common/context/MailboxProvider';
+import { ConnectedWalletProfileProvider } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { MailboxProvider } from 'src/views/messages/MailboxProvider';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
