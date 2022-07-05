@@ -1,3 +1,4 @@
+import { useUrlQueryParam } from '@/common/components/discover/discover.hooks';
 import { CardGridWithHeader } from '@/common/components/elements/CardGrid';
 import ProfilePreviewCard, {
   ProfilePreviewLoadingCard,
@@ -5,9 +6,7 @@ import ProfilePreviewCard, {
 } from '@/common/components/elements/ProfilePreviewCard';
 import { FilterOption } from '@/common/components/layouts/Filters';
 import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
-import { routerQueryParamToEnumValue } from '@/common/utils/router';
 import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
-import { useRouter } from 'next/router';
 import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useState } from 'react';
 import { useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
@@ -31,27 +30,10 @@ export default function DiscoverCollectionsTab(): JSX.Element {
   const INITIAL_FETCH: number = 24;
   const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
 
-  const router = useRouter();
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [typeFilter, setTypeFilter] = useState<TypeOption>(DEFAULT_TYPE);
+  const {value: typeFilter} = useUrlQueryParam<TypeOption>('type', DEFAULT_TYPE, true);
   const [profileData, setProfileData] = useState<ProfilePreviewProps[]>([]);
-
-  // set default filters if the URL doesnt already contain them, and get the filter otherwise
-  useEffect(() => {
-    let result: TypeOption = DEFAULT_TYPE;
-    if (router) {
-      const queryValue: TypeOption | undefined = routerQueryParamToEnumValue(
-        router,
-        'type',
-        (v) => v as TypeOption
-      );
-      if (queryValue === undefined) {
-        router.replace({ query: { type: result } });
-      }
-      if (queryValue) setTypeFilter(queryValue);
-    }
-  }, [router]);
 
   const userProfile = useConnectedWalletProfile();
   const queryContext = useQuery(

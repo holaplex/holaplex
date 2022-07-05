@@ -92,13 +92,13 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
   );
 }
 
-export interface ItemProps {
+export interface DropdownMenuItemProps {
   onClick?: () => void;
   className?: string;
   children: JSX.Element | JSX.Element[];
 }
 
-function Item(props: ItemProps): JSX.Element {
+function Item(props: DropdownMenuItemProps): JSX.Element {
   return (
     <div
       onClick={props.onClick}

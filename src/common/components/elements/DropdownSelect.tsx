@@ -6,7 +6,7 @@ export interface DropdownSelectProps<T extends JSX.Element | string> {
   defaultIndex?: number;
   selectedIndex?: number;
   title?: JSX.Element | string;
-  onSelect?: (index: number) => void;
+  onSelect?: (element: JSX.Element, index: number) => void;
 }
 
 export default function DropdownSelect<T extends JSX.Element | string>(
@@ -14,9 +14,9 @@ export default function DropdownSelect<T extends JSX.Element | string>(
 ): JSX.Element {
   const [selected, setSelected] = useState<number | null>(null);
 
-  function onSelect(selection: number): void {
+  function onSelect(element: JSX.Element, selection: number): void {
     setSelected(selection);
-    if (props.onSelect) props.onSelect(selection);
+    if (props.onSelect) props.onSelect(element, selection);
   }
 
   let title: JSX.Element | string;
@@ -30,11 +30,14 @@ export default function DropdownSelect<T extends JSX.Element | string>(
 
   return (
     <DropdownMenu title={titleElement}>
-      {props.children.map((option, i) => (
-        <DropdownMenu.Item key={i} onClick={() => onSelect(i)}>
-          {wrapItem(option)}
-        </DropdownMenu.Item>
-      ))}
+      {props.children.map((option, i) => {
+        const element: JSX.Element = wrapItem(option);
+        return (
+          <DropdownMenu.Item key={i} onClick={() => onSelect(element, i)}>
+            {element}
+          </DropdownMenu.Item>
+        );
+      })}
     </DropdownMenu>
   );
 
