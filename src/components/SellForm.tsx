@@ -92,7 +92,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
 
   const onSell = async (amount: number) => {
     if (amount && nft) {
-      await sdk.listings(marketplace.auctionHouse).post({ amount, nft });
+      await sdk.listings(marketplace.auctionHouse).post({ amount: amount * LAMPORTS_PER_SOL, nft });
     }
   };
 

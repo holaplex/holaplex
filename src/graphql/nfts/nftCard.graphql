@@ -31,6 +31,7 @@ query nftCard($subdomain: String!, $address: String!) {
       auctionHouse
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
@@ -41,6 +42,7 @@ query nftCard($subdomain: String!, $address: String!) {
       metadata
       auctionHouse
       price
+      purchaseId
       tradeStateBump
       tokenAccount
       createdAt

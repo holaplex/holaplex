@@ -858,14 +858,14 @@ export type NftCardQueryVariables = Exact<{
 }>;
 
 
-export type NftCardQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
+export type NftCardQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, purchaseId?: any | null, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, purchaseId?: any | null, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
 
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
 
 
-export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> } | null };
+export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, purchaseId?: any | null, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, purchaseId?: any | null, createdAt: any, canceledAt?: any | null }> } | null };
 
 export type ShareNftQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -2537,6 +2537,7 @@ export const NftCardDocument = gql`
       auctionHouse
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
@@ -2547,6 +2548,7 @@ export const NftCardDocument = gql`
       metadata
       auctionHouse
       price
+      purchaseId
       tradeStateBump
       tokenAccount
       createdAt
@@ -2639,6 +2641,7 @@ export const NftPageDocument = gql`
       auctionHouse
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
@@ -2651,6 +2654,7 @@ export const NftPageDocument = gql`
       price
       tradeStateBump
       tokenAccount
+      purchaseId
       createdAt
       canceledAt
     }

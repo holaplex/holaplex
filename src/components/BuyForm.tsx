@@ -8,7 +8,7 @@ import Button from './Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
@@ -17,7 +17,7 @@ import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 interface BuyFormProps {
   nft: Nft;
   marketplace: { auctionHouse: AuctionHouse };
-  listing: Listing;
+  listing: AhListing;
   className?: string;
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)

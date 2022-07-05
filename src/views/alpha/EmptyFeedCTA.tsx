@@ -107,7 +107,7 @@ const EmptyFeedCTA = (props: {
         console.error(err);
       },
       onComplete: async () => {
-        props.refetch();
+        await props.refetch();
       },
     });
   };

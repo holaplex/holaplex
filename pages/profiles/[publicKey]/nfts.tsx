@@ -21,7 +21,7 @@ import Button from '@/components/Button';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
 import SellForm from 'src/components/SellForm';
-import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AuctionHouse, AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from 'src/components/OfferForm';
 import UpdateSellForm from 'src/components/UpdateSellForm';
@@ -233,7 +233,7 @@ export const NFTCard = ({
                 <BuyForm
                   nft={nft as Nft | any}
                   marketplace={marketplace}
-                  listing={defaultListing as Listing}
+                  listing={defaultListing as AhListing}
                   refetch={refetch}
                   className={`w-32 md:w-full xl:w-32`}
                 />
@@ -280,7 +280,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           marketplace={marketplace as Marketplace}
-          listing={defaultListing as Listing}
+          listing={defaultListing as AhListing}
           setOpen={setUpdateListingVisibility}
           offer={topOffer as Offer}
         />
@@ -290,7 +290,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           marketplace={marketplace as Marketplace}
-          listing={defaultListing as Listing}
+          listing={defaultListing as AhListing}
           setOpen={setUpdateOfferVisibility}
           loading={loading}
           hasListing={hasDefaultListing}
