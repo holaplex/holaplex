@@ -8,7 +8,7 @@ import DropdownSelect from '@/common/components/elements/DropdownSelect';
 import {
   NestedSelectOption,
 } from '@/common/components/discover/discover.models';
-import { useUrlQueryParam } from '@/common/components/discover/discover.hooks';
+import { useUrlQueryParam, UseUrlQueryParamData } from '@/common/components/discover/discover.hooks';
 
 // values are what appears in the URL
 enum UrlParamKey {
@@ -346,28 +346,28 @@ interface UseUrlParamsSetters {
 }
 
 function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
-  const search = useUrlQueryParam<string | null>(
+  const search: UseUrlQueryParamData<string | null> = useUrlQueryParam(
     UrlParamKey.SEARCH,
     URL_PARAM_DEFAULTS[UrlParamKey.SEARCH]
   );
   
-  const typeFilter = useUrlQueryParam<TypeFilterOption>(
+  const typeFilter: UseUrlQueryParamData<TypeFilterOption> = useUrlQueryParam(
       UrlParamKey.TYPE,
       URL_PARAM_DEFAULTS[UrlParamKey.TYPE]
     );
 
-  const primarySort = useUrlQueryParam<SortOption>(
+  const primarySort: UseUrlQueryParamData<SortOption> = useUrlQueryParam(
     UrlParamKey.BY,
     URL_PARAM_DEFAULTS[UrlParamKey.BY]
   );
 
-  const priceSort = useUrlQueryParam<PriceSortOption>(
+  const priceSort: UseUrlQueryParamData<PriceSortOption> = useUrlQueryParam(
     UrlParamKey.PRICE_DIRECTION,
     URL_PARAM_DEFAULTS[UrlParamKey.PRICE_DIRECTION],
     URL_PARAM_DEFAULTS[UrlParamKey.BY] === SortOption.PRICE
   );
 
-  const salesSort = useUrlQueryParam<SalesSortOption>(
+  const salesSort: UseUrlQueryParamData<SalesSortOption> = useUrlQueryParam(
     UrlParamKey.SALE_WINDOW,
     URL_PARAM_DEFAULTS[UrlParamKey.SALE_WINDOW],
     URL_PARAM_DEFAULTS[UrlParamKey.BY] === SortOption.HIGHEST_SALES
@@ -414,7 +414,7 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
       priceSort.setAndActivate(value);
       salesSort.setActive(false);
     },
-    []
+    [priceSort.setAndActivate, salesSort.setActive]
   );
 
   const salesSortSetter: UseUrlParamsSetters[UrlParamKey.SALE_WINDOW] = useCallback(
@@ -422,7 +422,7 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
       salesSort.setAndActivate(value);
       priceSort.setActive(false);
     },
-    []
+    [salesSort.setAndActivate, priceSort.setActive]
   );
 
   const setters: UseUrlParamsSetters = useMemo(
@@ -433,7 +433,7 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
       [UrlParamKey.PRICE_DIRECTION]: priceSortSetter,
       [UrlParamKey.SALE_WINDOW]: salesSortSetter,
     }),
-    []
+    [search.set, typeFilter.set, primarySortSetter, priceSortSetter, salesSortSetter]
   );
 
   return [values, setters];
