@@ -14,6 +14,7 @@ import { AuctionHouse, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { TOS_LINK } from '../modules/crossmint/constants';
 
 interface SellFormSchema {
   amount: string;
@@ -210,6 +211,14 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
             >
               List NFT
             </Button>
+          </div>
+          <div className={`mt-10 w-full`}>
+            <p className={`m-0 text-center text-xs text-gray-300`}>
+              By listing this NFT you are agreeing to Crossmint&apos;s{' '}
+              <a href={TOS_LINK} target={`_blank`} className={`underline`}>
+                Terms of Service
+              </a>
+            </p>
           </div>
         </form>
       </div>

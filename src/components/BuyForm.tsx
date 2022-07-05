@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo } from 'react';
+import React, { FC, useContext, useMemo, useState } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { useForm } from 'react-hook-form';
@@ -13,6 +13,10 @@ import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
+import Modal from './Modal';
+import NFTPreview from './NFTPreview';
+import { DisplaySOL } from './CurrencyHelpers';
+import ReactDom from 'react-dom';
 
 interface BuyFormProps {
   nft: Nft;
@@ -22,13 +26,29 @@ interface BuyFormProps {
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
     | (() => void);
+  loading: boolean;
+  crossmintEnabled?: boolean;
 }
 
 interface BuyFormSchema {
   amount: number;
 }
 
-const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, className }) => {
+enum PAYMENT_OPTION {
+  SOLANA,
+  ETHEREUM,
+  CREDIT_CARD,
+}
+
+const BuyForm: FC<BuyFormProps> = ({
+  nft,
+  marketplace,
+  listing,
+  refetch,
+  loading,
+  className,
+  crossmintEnabled = true,
+}) => {
   const schema = zod.object({
     amount: zod.number(),
   });
@@ -47,6 +67,9 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
       amount: Number(listing?.price),
     },
   });
+
+  const [showForm, setShowForm] = useState(false);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState(PAYMENT_OPTION.SOLANA);
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
@@ -99,6 +122,108 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
 
   if (isOwner) {
     return null;
+  }
+
+  if (crossmintEnabled) {
+    return (
+      <form className={`flex w-full ${className}`} onSubmit={handleSubmit(buyTx)}>
+        <Button
+          onClick={() => setShowForm(true)}
+          htmlType={`button`}
+          disabled={isSubmitting || hasActionPending}
+          loading={isSubmitting || hasActionPending}
+          className={className}
+        >
+          Buy now
+        </Button>
+
+        {ReactDom.createPortal(
+          <Modal
+            open={showForm}
+            setOpen={setShowForm}
+            title={`Select a payment method`}
+            priority={true}
+          >
+            <div className={`flex w-full flex-col justify-start gap-10`}>
+              {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
+
+              <div className={`flex flex-col gap-2`}>
+                <p className={`m-0 text-base font-medium text-gray-300`}>Price</p>
+                <DisplaySOL className={`font-medium`} amount={listing.price.toNumber()} />
+              </div>
+              <div className={`grid grid-cols-1 gap-4 lg:grid-cols-3`}>
+                <button
+                  onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.SOLANA)}
+                  className={`flex h-20 items-center justify-center rounded-lg bg-white ${
+                    selectedPaymentOption === PAYMENT_OPTION.SOLANA
+                      ? `opacity-100`
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
+                  }`}
+                  type={`button`}
+                >
+                  <img
+                    src={`/images/payment-options/solana-payment.png`}
+                    alt={`solana-payment`}
+                    className={`h-full w-full object-contain p-6 backdrop-opacity-70`}
+                  />
+                </button>
+                <button
+                  onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.ETHEREUM)}
+                  className={`h-20 rounded-lg bg-white ${
+                    selectedPaymentOption === PAYMENT_OPTION.ETHEREUM
+                      ? `opacity-100`
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
+                  }`}
+                  type={`button`}
+                >
+                  <img
+                    src={`/images/payment-options/ethereum-payment.png`}
+                    alt={`solana-payment`}
+                    className={`h-full w-full object-contain p-2 backdrop-opacity-70`}
+                  />
+                </button>
+                <button
+                  onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.CREDIT_CARD)}
+                  className={`h-20 rounded-lg bg-white ${
+                    selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD
+                      ? `opacity-100 `
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
+                  }`}
+                  type={`button`}
+                >
+                  <img
+                    src={`/images/payment-options/creditcard-payment.png`}
+                    alt={`solana-payment`}
+                    className={`h-full w-full rounded-lg object-cover backdrop-opacity-70`}
+                  />
+                </button>
+              </div>
+              {selectedPaymentOption === PAYMENT_OPTION.SOLANA ? (
+                <Button
+                  htmlType={`submit`}
+                  disabled={isSubmitting || hasActionPending}
+                  loading={isSubmitting || hasActionPending}
+                  className={`w-full`}
+                >
+                  Buy now with SOL
+                </Button>
+              ) : (
+                <Button htmlType={`button`} className={`w-full`}>
+                  Crossmint Button
+                </Button>
+              )}
+              <p className={`m-0 flex justify-center gap-1 text-center text-xs text-gray-300`}>
+                ETH and fiat options provided by{' '}
+                <a href={`https://crossmint.io`} target={`_blank`}>
+                  <img src={`/images/payment-options/crossmint.png`} alt={`crossmint`} />
+                </a>
+              </p>
+            </div>
+          </Modal>,
+          document.getElementsByTagName('body')[0]!
+        )}
+      </form>
+    );
   }
 
   return (
