@@ -8,7 +8,7 @@ import { DiscoverLayout, DiscoverPageProps } from '@/views/discover/DiscoverLayo
 import { NestedSelectOption } from '@/views/discover/discover.models';
 import { FilterOption } from '@/components/Filters';
 
-// TODO work on collections page
+const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
 
 // values are what appears in the URL
 enum UrlParamKey {
@@ -31,8 +31,16 @@ const DEFAULT_TYPE: TypeFilterOption = TypeFilterOption.BUY_NOW;
 
 const TYPE_OPTIONS: FilterOption<TypeFilterOption>[] = [
   {
-    label: 'Recently Listed',
+    label: 'All',
+    value: TypeFilterOption.ALL,
+  },
+  {
+    label: 'Buy now',
     value: TypeFilterOption.BUY_NOW,
+  },
+  {
+    label: 'Active Offers',
+    value: TypeFilterOption.ACTIVE_OFFERS,
   },
 ];
 
@@ -109,10 +117,14 @@ const SORT_OPTIONS: NestedSelectOption = {
 };
 
 const SORT_OPTION_ORDER = {
-  [UrlParamKey.BY]: Object.values(SORT_OPTIONS.subOptions!).map(o => o.value),
-  [UrlParamKey.SALE_WINDOW]: Object.values(SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].subOptions!).map(o => o.value),
-  [UrlParamKey.PRICE_DIRECTION]: Object.values(SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions!).map(o => o.value),
-}
+  [UrlParamKey.BY]: Object.values(SORT_OPTIONS.subOptions!).map((o) => o.value),
+  [UrlParamKey.SALE_WINDOW]: Object.values(
+    SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].subOptions!
+  ).map((o) => o.value),
+  [UrlParamKey.PRICE_DIRECTION]: Object.values(
+    SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions!
+  ).map((o) => o.value),
+};
 
 interface NFTCardCreatorData {
   nft: OwnedNfTsQuery['nfts'][0];
@@ -125,26 +137,26 @@ export default function DiscoverNFTsTab(): JSX.Element {
 
   const [hasMore, setHasMore] = useState(true);
   const [urlParams, urlParamSetters] = useUrlParams();
-  const nftQuery = useQuery(urlParams[UrlParamKey.TYPE], INITIAL_FETCH, 0);
+  const nftQuery = useQuery(
+    urlParams[UrlParamKey.TYPE],
+    urlParams[UrlParamKey.SEARCH],
+    INITIAL_FETCH,
+    0
+  );
 
   const nfts: NFTCardCreatorData[] = useMemo(() => {
     const marketplace = nftQuery.data?.marketplace;
     const result: NFTCardCreatorData[] = [];
-    const searchLowerCase: string = (urlParams[UrlParamKey.SEARCH] ?? '').toLocaleLowerCase();
     if (nftQuery.data) {
       result.push(
-        ...nftQuery.data.nfts
-          .filter(
-            (n) => searchLowerCase === '' || n.name.toLocaleLowerCase().includes(searchLowerCase)
-          )
-          .map((n) => ({
-            nft: n as NFTCardCreatorData['nft'],
-            marketplace: marketplace as NFTCardCreatorData['marketplace'],
-          }))
+        ...nftQuery.data.nfts.map((n) => ({
+          nft: n as NFTCardCreatorData['nft'],
+          marketplace: marketplace as NFTCardCreatorData['marketplace'],
+        }))
       );
     }
     return result;
-  }, [nftQuery.data, urlParams]);
+  }, [nftQuery.data]);
 
   const onLoadMore = useCallback(
     async (inView: boolean) => {
@@ -175,30 +187,31 @@ export default function DiscoverNFTsTab(): JSX.Element {
   );
 
   const primarySortLabels: string[] = useMemo(
-    () => SORT_OPTION_ORDER[UrlParamKey.BY].map(o => SORT_OPTIONS.subOptions![o].label),
+    () => SORT_OPTION_ORDER[UrlParamKey.BY].map((o) => SORT_OPTIONS.subOptions![o].label),
     []
   );
-  
-  const secondarySortLabels: string[] = useMemo(() => {
-      let result: string[];
-      if (urlParams[UrlParamKey.BY] === SortOption.PRICE) {
-        result = SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION].map(o => SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions![o].label);
 
-      } else if (urlParams[UrlParamKey.BY] === SortOption.HIGHEST_SALES) {
-        result = SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW].map(o => SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].subOptions![o].label);
-      
-      } else {
-        result = [];
-      }
-      return result;
-    }, [urlParams]
-  );
+  const secondarySortLabels: string[] = useMemo(() => {
+    let result: string[];
+    if (urlParams[UrlParamKey.BY] === SortOption.PRICE) {
+      result = SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION].map(
+        (o) => SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions![o].label
+      );
+    } else if (urlParams[UrlParamKey.BY] === SortOption.HIGHEST_SALES) {
+      result = SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW].map(
+        (o) => SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].subOptions![o].label
+      );
+    } else {
+      result = [];
+    }
+    return result;
+  }, [urlParams]);
 
   const menus: JSX.Element[] = [
     <CardGridWithHeader.HeaderElement key="primary-sort">
       <DropdownSelect
         keys={SORT_OPTION_ORDER[UrlParamKey.BY]}
-        onSelect={k => urlParamSetters[UrlParamKey.BY](k)}
+        onSelect={(k) => urlParamSetters[UrlParamKey.BY](k)}
         defaultKey={SORT_OPTIONS.defaultSubOptionValue}
       >
         {primarySortLabels}
@@ -211,10 +224,10 @@ export default function DiscoverNFTsTab(): JSX.Element {
       <CardGridWithHeader.HeaderElement key="sales-sort">
         <DropdownSelect
           keys={SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW]}
-          onSelect={k => urlParamSetters[UrlParamKey.SALE_WINDOW](k)}
+          onSelect={(k) => urlParamSetters[UrlParamKey.SALE_WINDOW](k)}
           defaultKey={SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].defaultSubOptionValue}
           selectedKey={urlParams[UrlParamKey.SALE_WINDOW]}
-          >
+        >
           {secondarySortLabels}
         </DropdownSelect>
       </CardGridWithHeader.HeaderElement>
@@ -224,7 +237,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
       <CardGridWithHeader.HeaderElement key="price-sort">
         <DropdownSelect
           keys={SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION]}
-          onSelect={k => urlParamSetters[UrlParamKey.PRICE_DIRECTION](k)}
+          onSelect={(k) => urlParamSetters[UrlParamKey.PRICE_DIRECTION](k)}
           defaultKey={SORT_OPTIONS.subOptions![SortOption.PRICE].defaultSubOptionValue}
           selectedKey={urlParams[UrlParamKey.PRICE_DIRECTION]}
         >
@@ -256,7 +269,10 @@ export default function DiscoverNFTsTab(): JSX.Element {
         hasMore: hasMore,
         loading: nftQuery.loading,
       }}
-      search={{ onChange: (v) => urlParamSetters[UrlParamKey.SEARCH](v) }}
+      search={{
+        onChange: (v) => urlParamSetters[UrlParamKey.SEARCH](v.trim()),
+        debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS,
+      }}
       menus={menus}
     />
   );
@@ -280,18 +296,24 @@ DiscoverNFTsTab.getLayout = function getLayout(
   );
 };
 
-function useQuery(type: TypeFilterOption, limit: number, offset: number) {
+function useQuery(
+  type: TypeFilterOption,
+  searchTerm: string | null,
+  limit: number,
+  offset: number
+) {
+  // TODO add other queries
   const [buyNowQuery, buyNowQueryContext] = useDiscoverNftsBuyNowLazyQuery();
 
   useEffect(() => {
     switch (type) {
       case TypeFilterOption.BUY_NOW: {
-        buyNowQuery({ variables: { limit: limit, offset: offset } });
+        buyNowQuery({ variables: { limit: limit, offset: offset, searchTerm: searchTerm } });
         break;
       }
       default: //do-nothing
     }
-  }, [type, limit, offset, buyNowQuery]);
+  }, [type, limit, offset, buyNowQuery, searchTerm]);
 
   switch (type) {
     case TypeFilterOption.BUY_NOW:
@@ -322,11 +344,11 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
     UrlParamKey.SEARCH,
     URL_PARAM_DEFAULTS[UrlParamKey.SEARCH]
   );
-  
+
   const typeFilter: UseUrlQueryParamData<TypeFilterOption> = useUrlQueryParam(
-      UrlParamKey.TYPE,
-      URL_PARAM_DEFAULTS[UrlParamKey.TYPE]
-    );
+    UrlParamKey.TYPE,
+    URL_PARAM_DEFAULTS[UrlParamKey.TYPE]
+  );
 
   const primarySort: UseUrlQueryParamData<SortOption> = useUrlQueryParam(
     UrlParamKey.BY,
@@ -399,7 +421,7 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
 
   const setters: UseUrlParamsSetters = useMemo(
     () => ({
-      [UrlParamKey.SEARCH]: search.set,
+      [UrlParamKey.SEARCH]: v => {search.set(v == null ? null : v.trim() || null)},
       [UrlParamKey.TYPE]: typeFilter.set,
       [UrlParamKey.BY]: primarySortSetter,
       [UrlParamKey.PRICE_DIRECTION]: priceSortSetter,

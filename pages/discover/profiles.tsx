@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
 import { DiscoverPageProps, DiscoverLayout } from '@/views/discover/DiscoverLayout';
 
+const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
+
 enum TypeOption {
   ALL = 'all',
   CREATORS = 'creators',
@@ -114,7 +116,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
         hasMore: hasMore,
         loading: queryContext.loading,
       }}
-      search={{ onChange: (v) => setSearchTerm(v) }}
+      search={{ onChange: (v) => setSearchTerm(v), debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS }}
     />
   );
 }
