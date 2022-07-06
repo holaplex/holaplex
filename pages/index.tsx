@@ -1,4 +1,4 @@
-import FeaturedAuctionsSection from '@/views/home/FeaturedAuctionsSection';
+import { FeaturedAuctionsSectionData, FeaturedAuctionsSection } from '@/views/home/FeaturedAuctionsSection';
 import { FeaturedBuyNowListingsData, FeaturedBuyNowListingsSection } from '@/views/home/FeaturedBuyNowListingsSection';
 import { FeaturedMarketplacesData, FeaturedMarketplacesSection } from '@/views/home/FeaturedMarketplacesSection';
 import { FeaturedProfilesData, FeaturedProfilesSection } from '@/views/home/FeaturedProfilesSection';
@@ -17,13 +17,14 @@ export interface HomeData {
   featuredBuyNowListings: FeaturedBuyNowListingsData;
   featuredProfiles: FeaturedProfilesData;
   featuredMarketplaces: FeaturedMarketplacesData;
+  featuredAuctions: FeaturedAuctionsSectionData;
 }
 
 export default function Home(): JSX.Element {
   const wallet = useWallet();
 
   //TODO export n-items in consts from sections
-  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, 24, 24, 12);
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, 24, 24, 12, 18);
 
   return (
     <div>
@@ -52,7 +53,14 @@ export default function Home(): JSX.Element {
             refetch: dataQueryContext.refetch
           }}
         />
-        <FeaturedAuctionsSection />
+        <FeaturedAuctionsSection 
+          context={{
+            data: dataQueryContext.data?.featuredAuctions,
+            loading: dataQueryContext.loading,
+            error: dataQueryContext.error,
+            refetch: dataQueryContext.refetch
+          }}
+        />
         <FeaturedMarketplacesSection
           context={{
             data: dataQueryContext.data?.featuredMarketplaces,

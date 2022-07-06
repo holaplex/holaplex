@@ -17,7 +17,6 @@ export interface HeroSectionProps {
 }
 
 export function HeroSection(props: HeroSectionProps): JSX.Element {
-  console.log(props.context.data);
   const feedEvents: FeedItem[] = props.context.data ?? [];
 
   return (
