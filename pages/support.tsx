@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
-import Footer from '@/common/components/home/Footer';
+import Footer from 'src/views/home/Footer';
 import Image from 'next/image';
 
 const Heading = styled.h2`
