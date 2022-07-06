@@ -1,38 +1,35 @@
 import { ArrowRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
-import { useFeedQuery } from 'src/graphql/indexerTypes';
+import React from 'react';
 import { Button5 } from '../../components/Button2';
-import { FeedQueryEvent } from '../alpha/feed.utils';
+import { FeedItem } from '../alpha/feed.utils';
 import { FeedCard, LoadingFeedCard } from '../alpha/FeedCard';
 import Marquee from 'react-fast-marquee';
 import classNames from 'classnames';
+import { QueryContext } from './home.hooks';
 
-const ALPHA_WALLET = 'ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz'; // backup 'NWswq7QR7E1i1jkdkddHQUFtRPihqBmJ7MfnMCcUf4H';
 const N_ITEMS = 12;
 
-export default function HeroSection() {
-  const { data, loading } = useFeedQuery({
-    variables: {
-      address: ALPHA_WALLET,
-      offset: 0,
-      limit: N_ITEMS,
-      excludeTypes: ['follow'],
-    },
-  });
-  const feedEvents = useMemo(() => data?.feedEvents || [], [data?.feedEvents]);
-  const feedItems: FeedQueryEvent[] = useMemo(() => feedEvents.slice(0, N_ITEMS), [feedEvents]);
+export type HeroSectionData = FeedItem[];
+
+export interface HeroSectionProps {
+  context: QueryContext<HeroSectionData>
+}
+
+export function HeroSection(props: HeroSectionProps): JSX.Element {
+  console.log(props.context.data);
+  const feedEvents: FeedItem[] = props.context.data ?? [];
 
   return (
-    <div className="">
-      <div className="relative h-[450px] ">
-        <Marquee speed={feedItems.length ? 40 : 0} gradient={false} pauseOnHover={true}>
+    <div>
+      <div className="relative h-[450px]">
+        <Marquee speed={feedEvents.length ? 40: 0} gradient={false} pauseOnHover={true}>
           <div
             className={classNames(
               'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'
             )}
           >
-            {feedItems.map((fi, i) => (
+            {feedEvents.map((fi, i) => (
               <div className="w-96 flex-shrink-0" key={i}>
                 <FeedCard
                   options={{ hideAction: true }}

@@ -11,13 +11,13 @@ import styled from 'styled-components';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
-import { FollowUnfollowButtonDataWrapper } from '../home/FeaturedProfilesSection';
 import { FollowerCount } from '../../components/FollowerCount';
 import { FollowModal, FollowModalVisibility } from '../../components/FollowModal';
 import { WalletDependantPageProps } from './getProfileServerSideProps';
 import Head from 'next/head';
 import Link from 'next/link';
 import MessagesIcon from 'src/assets/icons/MessagesIcon';
+import { FollowUnfollowButtonDataWrapper } from '@/components/ProfilePreviewCard';
 
 const ProfilePageHead = (props: {
   publicKey: string;

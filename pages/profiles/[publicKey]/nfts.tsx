@@ -36,7 +36,7 @@ import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
 import GridSelector from '@/components/GridSelector';
 
-type OwnedNFT = OwnedNfTsQuery['nfts'][0];
+export type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
@@ -74,9 +74,7 @@ export const NFTCard = ({
 }: {
   nft: OwnedNFT;
   marketplace: { auctionHouse: AuctionHouse };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
   loading: boolean;
   showName?: boolean;
   newTab?: boolean;
