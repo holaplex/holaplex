@@ -2,12 +2,11 @@ import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { SingleGrid } from '@/assets/icons/SingleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { SearchIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
-import { useState, useCallback, ChangeEventHandler, ChangeEvent, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { DebounceInput } from 'react-debounce-input';
 import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
-import TextInput2 from './TextInput2';
 
 export interface CardGridWithHeaderProps<T> {
   /**
@@ -39,10 +38,10 @@ export function CardGridWithHeader<T>(props: CardGridWithHeaderProps<T>): JSX.El
   const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-4 text-base">
       <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
         <div className={classNames(['flex space-x-4', 'lg:justify-end'], 'w-full')}>
-          <SearchBar onChange={(v) => props.search.onChange(v)} />
+          <SearchBar {...props.search} />
           {props.menus}
           <GridSelector onChange={(v) => setGridView(v)} />
         </div>
@@ -147,36 +146,31 @@ export interface SearchBarProps {
    * Callback each time the value of the search term changes.
    */
   onChange: (value: string) => void;
+
+  /**
+   * Time to wait between last keypress and registration of search term.
+   */
+  debounceTimeout: number;
+
+
+  /**
+   * Minimum number of characters required for a search to register. Defaults to 3.
+   */
+  minCharacters?: number;
 }
 
 function SearchBar(props: SearchBarProps): JSX.Element {
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [focused, setFocused] = useState<boolean>(false);
-
-  const onChange: ChangeEventHandler<HTMLInputElement> = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(event.target.value);
-      props.onChange(event.target.value);
-    },
-    [props, setSearchTerm]
-  );
-
   return (
-    <TextInput2
-      id="owned-search"
-      label="owned search"
-      hideLabel
-      value={searchTerm}
-      onChange={onChange}
-      leadingIcon={
-        <SearchIcon
-          aria-hidden="true"
-          className={classNames('h-5 w-5', focused ? 'text-white' : 'text-gray-500')}
-        />
-      }
-      placeholder="Search"
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
+    <DebounceInput
+      minLength={props.minCharacters ?? 3}
+      debounceTimeout={props.debounceTimeout}
+      id="nft-search"
+      autoComplete="off"
+      autoCorrect="off"
+      className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0"
+      type="search"
+      placeholder="Search NFTs"
+      onChange={e => props.onChange(e.target.value)}
     />
   );
 }
