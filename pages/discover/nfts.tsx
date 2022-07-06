@@ -10,6 +10,8 @@ import {
 } from '@/common/components/discover/discover.models';
 import { useUrlQueryParam, UseUrlQueryParamData } from '@/common/components/discover/discover.hooks';
 
+// TODO work on collections page
+
 // values are what appears in the URL
 enum UrlParamKey {
   SEARCH = 'search',
@@ -114,18 +116,6 @@ const SORT_OPTION_ORDER = {
   [UrlParamKey.PRICE_DIRECTION]: Object.values(SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions!).map(o => o.value),
 }
 
-const SORT_OPTION_VALUE_TO_INDEX = {
-  [UrlParamKey.BY]: Object.fromEntries(SORT_OPTION_ORDER[UrlParamKey.BY].map((v, i) => [v, i])),
-  [UrlParamKey.SALE_WINDOW]: Object.fromEntries(SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW].map((v, i) => [v, i])),
-  [UrlParamKey.PRICE_DIRECTION]: Object.fromEntries(SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION].map((v, i) => [v, i])),
-}
-
-const SORT_OPTION_INDEX_TO_VALUE = {
-  [UrlParamKey.BY]: Object.fromEntries(SORT_OPTION_ORDER[UrlParamKey.BY].map((v, i) => [i, v])),
-  [UrlParamKey.SALE_WINDOW]: Object.fromEntries(SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW].map((v, i) => [i, v])),
-  [UrlParamKey.PRICE_DIRECTION]: Object.fromEntries(SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION].map((v, i) => [i, v])),
-}
-
 interface NFTCardCreatorData {
   nft: OwnedNfTsQuery['nfts'][0];
   marketplace: OwnedNfTsQuery['marketplace'];
@@ -206,26 +196,12 @@ export default function DiscoverNFTsTab(): JSX.Element {
     }, [urlParams]
   );
 
-  const onSelectPrimarySort: (e: JSX.Element, i: number) => void = useCallback((_, i) => {
-    const option: SortOption = SORT_OPTION_INDEX_TO_VALUE[UrlParamKey.BY][i];
-    urlParamSetters[UrlParamKey.BY](option);
-  }, [urlParamSetters]);
-
-  const onSelectSalesSort: (e: JSX.Element, i: number) => void = useCallback((_, i) => {
-    const option: SalesSortOption = SORT_OPTION_INDEX_TO_VALUE[UrlParamKey.SALE_WINDOW][i];
-    urlParamSetters[UrlParamKey.SALE_WINDOW](option);
-  }, [urlParamSetters]);
-
-  const onSelectPriceSort: (e: JSX.Element, i: number) => void = useCallback((_, i) => {
-    const option: PriceSortOption = SORT_OPTION_INDEX_TO_VALUE[UrlParamKey.PRICE_DIRECTION][i];
-    urlParamSetters[UrlParamKey.PRICE_DIRECTION](option);
-  }, [urlParamSetters]);
-
   const menus: JSX.Element[] = [
     <CardGridWithHeader.HeaderElement key="primary-sort">
       <DropdownSelect
-        onSelect={onSelectPrimarySort}
-        defaultIndex={SORT_OPTION_VALUE_TO_INDEX[UrlParamKey.BY][SORT_OPTIONS.defaultSubOptionValue]}
+        keys={SORT_OPTION_ORDER[UrlParamKey.BY]}
+        onSelect={k => urlParamSetters[UrlParamKey.BY](k)}
+        defaultKey={SORT_OPTIONS.defaultSubOptionValue}
       >
         {primarySortLabels}
       </DropdownSelect>
@@ -233,28 +209,26 @@ export default function DiscoverNFTsTab(): JSX.Element {
   ];
 
   if (urlParams[UrlParamKey.BY] === SortOption.HIGHEST_SALES) {
-    const defaultValue: SalesSortOption = SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].defaultSubOptionValue;
-    const defaultIndex: number = SORT_OPTION_VALUE_TO_INDEX[UrlParamKey.SALE_WINDOW][defaultValue];
     menus.push(
       <CardGridWithHeader.HeaderElement key="sales-sort">
         <DropdownSelect
-          onSelect={onSelectSalesSort}
-          defaultIndex={defaultIndex}
-          selectedIndex={SORT_OPTION_VALUE_TO_INDEX[UrlParamKey.SALE_WINDOW][urlParams[UrlParamKey.SALE_WINDOW] ?? defaultValue]}
+          keys={SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW]}
+          onSelect={k => urlParamSetters[UrlParamKey.SALE_WINDOW](k)}
+          defaultKey={SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].defaultSubOptionValue}
+          selectedKey={urlParams[UrlParamKey.SALE_WINDOW]}
           >
           {secondarySortLabels}
         </DropdownSelect>
       </CardGridWithHeader.HeaderElement>
     );
   } else if (urlParams[UrlParamKey.BY] === SortOption.PRICE) {
-    const defaultValue: SalesSortOption = SORT_OPTIONS.subOptions![SortOption.PRICE].defaultSubOptionValue;
-    const defaultIndex: number = SORT_OPTION_VALUE_TO_INDEX[UrlParamKey.PRICE_DIRECTION][defaultValue];
     menus.push(
       <CardGridWithHeader.HeaderElement key="price-sort">
         <DropdownSelect
-          onSelect={onSelectPriceSort}
-          defaultIndex={defaultIndex}
-          selectedIndex={SORT_OPTION_VALUE_TO_INDEX[UrlParamKey.PRICE_DIRECTION][urlParams[UrlParamKey.PRICE_DIRECTION] ?? defaultValue]}
+          keys={SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION]}
+          onSelect={k => urlParamSetters[UrlParamKey.PRICE_DIRECTION](k)}
+          defaultKey={SORT_OPTIONS.subOptions![SortOption.PRICE].defaultSubOptionValue}
+          selectedKey={urlParams[UrlParamKey.PRICE_DIRECTION]}
         >
           {secondarySortLabels}
         </DropdownSelect>
