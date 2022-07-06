@@ -73,12 +73,12 @@ const URL_PARAM_DEFAULTS = {
 };
 
 const SORT_OPTIONS: NestedSelectOption = {
-  defaultSubOptionValue: SortOption.PRICE,
+  defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.BY],
   subOptions: {
     [SortOption.PRICE]: {
       label: 'Price',
       value: SortOption.PRICE,
-      defaultSubOptionValue: PriceSortOption.PRICE_DESC,
+      defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.PRICE_DIRECTION],
       subOptions: {
         [PriceSortOption.PRICE_DESC]: {
           label: 'High to Low',
@@ -97,7 +97,7 @@ const SORT_OPTIONS: NestedSelectOption = {
     [SortOption.HIGHEST_SALES]: {
       label: 'Highest sales',
       value: SortOption.HIGHEST_SALES,
-      defaultSubOptionValue: SalesSortOption.PAST_DAY,
+      defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.SALE_WINDOW],
       subOptions: {
         [SalesSortOption.PAST_DAY]: {
           label: 'Last 24 hours',
