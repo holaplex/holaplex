@@ -4,7 +4,7 @@ import DropdownSelect from '@/components/DropdownSelect';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
-import { DiscoverLayout, DiscoverPageProps } from 'src/layouts/DiscoverLayout';
+import { DiscoverLayout, DiscoverPageProps } from '@/views/discover/DiscoverLayout';
 import { NestedSelectOption } from '@/views/discover/discover.models';
 import { FilterOption } from '@/components/Filters';
 

@@ -6,7 +6,7 @@ import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfil
 import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useState } from 'react';
 import { useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
-import { DiscoverPageProps, DiscoverLayout } from 'src/layouts/DiscoverLayout';
+import { DiscoverPageProps, DiscoverLayout } from '@/views/discover/DiscoverLayout';
 
 enum TypeOption {
   ALL = 'all',
