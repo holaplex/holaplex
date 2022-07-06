@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
 import { useState, useEffect, useCallback } from 'react';
+import { isTouchScreenOnly } from 'src/lib/utils';
 
 export interface DropdownMenuProps {
   title: string | JSX.Element;
@@ -14,8 +15,7 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
   const [forceHide, setForceHide] = useState<boolean>(false);
 
   useEffect(() => {
-    // TODO revert
-    // setIsTouch(isTouchScreenOnly());
+    setIsTouch(isTouchScreenOnly());
   }, [setIsTouch]);
 
   const onClickHeader = useCallback(() => {
