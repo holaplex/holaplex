@@ -1,14 +1,12 @@
-import { FilterOption } from '@/common/components/layouts/Filters';
-import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
+import { UseUrlQueryParamData, useUrlQueryParam } from '@/views/discover/discover.hooks';
+import { CardGridWithHeader } from '@/components/CardGrid';
+import DropdownSelect from '@/components/DropdownSelect';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
-import { CardGridWithHeader } from '@/common/components/elements/CardGrid';
-import DropdownSelect from '@/common/components/elements/DropdownSelect';
-import {
-  NestedSelectOption,
-} from '@/common/components/discover/discover.models';
-import { useUrlQueryParam, UseUrlQueryParamData } from '@/common/components/discover/discover.hooks';
+import { DiscoverLayout, DiscoverPageProps } from 'src/layouts/DiscoverLayout';
+import { NestedSelectOption } from '@/views/discover/discover.models';
+import { FilterOption } from '@/components/Filters';
 
 // TODO work on collections page
 

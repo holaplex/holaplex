@@ -1,15 +1,12 @@
-import { useUrlQueryParam } from '@/common/components/discover/discover.hooks';
-import { CardGridWithHeader } from '@/common/components/elements/CardGrid';
-import ProfilePreviewCard, {
-  ProfilePreviewLoadingCard,
-  ProfilePreviewProps,
-} from '@/common/components/elements/ProfilePreviewCard';
-import { FilterOption } from '@/common/components/layouts/Filters';
-import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
-import { DiscoverLayout, DiscoverPageProps } from '@/layouts/DiscoverLayout';
+import { CardGridWithHeader } from '@/components/CardGrid';
+import { FilterOption } from '@/components/Filters';
+import ProfilePreviewCard, { ProfilePreviewProps, ProfilePreviewLoadingCard } from '@/components/ProfilePreviewCard';
+import { useUrlQueryParam } from '@/views/discover/discover.hooks';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useState } from 'react';
 import { useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
+import { DiscoverPageProps, DiscoverLayout } from 'src/layouts/DiscoverLayout';
 
 enum TypeOption {
   ALL = 'all',

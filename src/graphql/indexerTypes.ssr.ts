@@ -540,6 +540,7 @@ export type QueryRootNftsArgs = {
   offset: Scalars['Int'];
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
   term?: InputMaybe<Scalars['String']>;
+  updateAuthorities?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 
@@ -715,6 +716,7 @@ export type NftsInCollectionQueryVariables = Exact<{
 export type NftsInCollectionQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, collection?: { __typename?: 'Nft', address: string, name: string, image: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }> };
 
 export type DiscoverNftsBuyNowQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
   offset: Scalars['Int'];
 }>;
@@ -1417,12 +1419,13 @@ export const NftsInCollectionDocument = gql`
 }
     `;
 export const DiscoverNftsBuyNowDocument = gql`
-    query discoverNftsBuyNow($limit: Int!, $offset: Int!) {
+    query discoverNftsBuyNow($searchTerm: String, $limit: Int!, $offset: Int!) {
   nfts(
     auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
     listed: true
     limit: $limit
     offset: $offset
+    term: $searchTerm
   ) {
     address
     name

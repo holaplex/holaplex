@@ -1,5 +1,5 @@
-import FiltersSection, { FilterProps } from '@/common/components/layouts/Filters';
-import Tab from '@/common/components/layouts/Tab';
+import FiltersSection, { FilterProps } from '@/components/Filters';
+import Tab from '@/components/Tab';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import React from 'react';

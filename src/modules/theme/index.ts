@@ -4,7 +4,6 @@ import { rgba } from 'polished';
 // @ts-ignore
 import Color from 'color';
 import { pipe, map, replace, join } from 'ramda';
-import text from '@/common/constants/text';
 
 const joinFonts = pipe(map(replace(/\s+/g, '+')), join('&family='));
 

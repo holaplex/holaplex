@@ -5,7 +5,8 @@ import {
   GA4_ID,
   META_ID,
   GOOGLE_OPTIMIZE_ID,
-} from '../src/common/context/AnalyticsProvider';
+} from '@/views/_global/AnalyticsProvider';
+
 import Script from 'next/script';
 
 export default class MyDocument extends Document {
