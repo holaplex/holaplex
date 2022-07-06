@@ -62,7 +62,8 @@ export function useUrlQueryParam<T = string>(
   useEffect(() => {
     if (router !== undefined) {
       const query: ParsedUrlQuery = router.query;
-      if (!active || value === undefined || value === null) {
+      const valueIsEmpty: boolean = value == null || `${value}`.trim().length === 0;
+      if (!active || valueIsEmpty) {
         if (key in query) {
           delete query[key];
           router.replace({ query });
