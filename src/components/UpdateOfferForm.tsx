@@ -10,10 +10,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Button from '@/components/Button';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 interface UpdateOfferFormSchema {
   amount: string;
@@ -27,7 +28,7 @@ interface UpdateOfferFormProps {
   ) => Promise<ApolloQueryResult<None>>;
   loading: boolean;
   hasListing: boolean;
-  listing: Listing;
+  listing: AhListing;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
 
@@ -68,7 +69,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
     if (amount) {
       toast(`Updating current offer to: ${amount} SOL`);
-      await sdk.offers(marketplace.auctionHouse).make({ amount, nft });
+      await sdk.offers(marketplace.auctionHouse).make({ amount: amount * LAMPORTS_PER_SOL, nft });
     }
   };
 

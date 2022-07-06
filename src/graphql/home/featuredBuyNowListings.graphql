@@ -20,14 +20,14 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         associatedTokenAccountAddress
       }
       purchases {
-        address
+        id
         buyer
         auctionHouse
         price
         createdAt
       }
       listings {
-        address
+        id
         tradeState
         seller
         metadata
@@ -38,7 +38,7 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         canceledAt
       }
       offers {
-        address
+        id
         tradeState
         buyer
         metadata

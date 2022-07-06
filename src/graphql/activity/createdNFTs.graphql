@@ -50,14 +50,14 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse
       price
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -68,7 +68,7 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata

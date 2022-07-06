@@ -71,14 +71,14 @@ query nftsInCollection(
       image
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse
       price
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -89,7 +89,7 @@ query nftsInCollection(
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata

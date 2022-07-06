@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { ListingReceipt, useNftMarketplaceLazyQuery } from '../../src/graphql/indexerTypes';
+import { useNftMarketplaceLazyQuery } from '../../src/graphql/indexerTypes';
 import cx from 'classnames';
 import { shortenAddress } from '../../src/modules/utils/string';
 import Link from 'next/link';
@@ -9,9 +9,7 @@ import Accordion from '@/components/Accordion';
 import MoreDropdown from '@/components/MoreDropdown';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { DateTime } from 'luxon';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { SolIcon } from '@/components/Price';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 import { Tag } from '@/assets/icons/Tag';
@@ -23,7 +21,7 @@ import {
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
 import CancelOfferForm from 'src/components/CancelOfferForm';
-import { Listing, Marketplace, Nft, Offer } from '@/types/types';
+import { AhListing, Offer, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
 import { useRouter } from 'next/router';
 import UpdateOfferForm from '@/components/UpdateOfferForm';
 import SellForm from '@/components/SellForm';
@@ -41,46 +39,6 @@ import { SolscanIcon } from '../../src/assets/icons/Solscan';
 import { ExplorerIcon } from '../../src/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
 
-const Activities = ({
-  listings,
-}: {
-  listings: Omit<ListingReceipt, 'bookkeeper' | 'tokenSize' | 'bump'>[];
-}) => {
-  const activities = listings;
-  return (
-    <>
-      <div className="grid grid-cols-4 p-6 opacity-50">
-        <div>Event</div>
-
-        <div>Wallets</div>
-
-        <div>Price</div>
-        <div className="justify-self-end">Time</div>
-      </div>
-      {activities.map(({ createdAt, seller, price }) => (
-        <div
-          key={createdAt}
-          className=" mb-4 grid grid-cols-4 items-center rounded border border-gray-700 p-6 last:mb-0"
-        >
-          <div className="flex items-center">
-            <FeatherIcon height={16} width={16} icon="tag" />
-            <span className="ml-4">Listed</span>
-          </div>
-          <Link href={`/profiles/${seller}`}>
-            <a>
-              <Avatar address={seller} />
-            </a>
-          </Link>
-          <div className="flex items-center ">
-            <SolIcon className="h-4 w-4 " stroke="#ffffff" />
-            <span className="ml-[6px]">{parseInt(price) / LAMPORTS_PER_SOL}</span>
-          </div>
-          <div className="justify-self-end">{DateTime.fromISO(createdAt).toRelative()}</div>
-        </div>
-      ))}
-    </>
-  );
-};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -137,15 +95,11 @@ export default function NftByAddress({
   name,
   description,
   image,
-  listedPrice,
-  offerPrice,
 }: {
   address: string;
   name?: string;
   description?: string;
   image?: string;
-  listedPrice?: number;
-  offerPrice?: number;
 }) {
   const { publicKey } = useWallet();
   const router = useRouter();
@@ -179,7 +133,6 @@ export default function NftByAddress({
     refetch();
   }, [router, router.push, refetch]);
 
-  const [imgLoaded, setImgLoaded] = useState(false);
   const [offerModalVisibility, setOfferModalVisibility] = useState(false);
   const [offerUpdateModalVisibility, setOfferUpdateModalVisibility] = useState(false);
   const [sellModalVisibility, setSellModalVisibility] = useState(false);
@@ -380,10 +333,10 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
-                            className={`w-full bg-gray-900 `}
+                            className="w-full"
                           />
                         </div>
                       </div>
@@ -446,7 +399,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className={`w-full`}
@@ -491,10 +444,10 @@ export default function NftByAddress({
                                 <AcceptOfferForm
                                   nft={nft as Nft | any}
                                   offer={topOffer as Offer}
-                                  listing={defaultListing as Listing}
+                                  listing={defaultListing as AhListing}
                                   marketplace={marketplace as Marketplace}
                                   refetch={refetch}
-                                  className={`w-full`}
+                                  className="w-full"
                                 />
                               </div>
                               <Button secondary onClick={() => setSellCancelModalVisibility(true)}>
@@ -554,7 +507,7 @@ export default function NftByAddress({
                                   <BuyForm
                                     nft={nft as Nft | any}
                                     marketplace={marketplace as Marketplace}
-                                    listing={defaultListing as Listing}
+                                    listing={defaultListing as AhListing}
                                     refetch={refetch}
                                     className={`w-full`}
                                   />
@@ -587,7 +540,7 @@ export default function NftByAddress({
                             <BuyForm
                               nft={nft as Nft | any}
                               marketplace={marketplace as Marketplace}
-                              listing={defaultListing as Listing}
+                              listing={defaultListing as AhListing}
                               refetch={refetch}
                               className={`w-full`}
                             />
@@ -612,7 +565,7 @@ export default function NftByAddress({
                           <BuyForm
                             nft={nft as Nft | any}
                             marketplace={marketplace as Marketplace}
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             refetch={refetch}
                             className={`col-span-2 w-full sm:hidden`}
                           />
@@ -739,9 +692,9 @@ export default function NftByAddress({
                   </div>
                 )}
                 {hasOffers &&
-                  offers?.map((o: Offer) => (
+                  offers?.map((o) => (
                     <article
-                      key={o.address}
+                      key={o.id}
                       className={`mb-4 grid rounded border border-gray-800 p-4 ${
                         isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
                       }`}
@@ -754,7 +707,7 @@ export default function NftByAddress({
                         </Link>
                       </div>
                       <div className={`flex items-center`}>
-                        <DisplaySOL amount={Number(o.price)} />
+                        <DisplaySOL amount={o.price.toNumber()} />
                       </div>
                       <div className={`flex items-center`}>{formatTime(o.createdAt, `en_US`)}</div>
                       {(hasAddedOffer || isOwner) && (
@@ -768,7 +721,7 @@ export default function NftByAddress({
                             <AcceptOfferForm
                               nft={nft as Nft | any}
                               offer={o as Offer}
-                              listing={defaultListing as Listing}
+                              listing={defaultListing as AhListing}
                               marketplace={marketplace as Marketplace}
                               refetch={refetch}
                               className={`justify-end`}
@@ -831,7 +784,7 @@ export default function NftByAddress({
               title={`Update offer`}
             >
               <UpdateOfferForm
-                listing={defaultListing as Listing}
+                listing={defaultListing as AhListing}
                 setOpen={setOfferUpdateModalVisibility}
                 nft={nft as Nft | any}
                 marketplace={marketplace as Marketplace}
@@ -862,7 +815,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as Listing}
+                listing={defaultListing as AhListing}
                 setOpen={setSellCancelModalVisibility}
                 updateListing={updateListingFromCancel}
               />
@@ -876,7 +829,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as Listing}
+                listing={defaultListing as AhListing}
                 setOpen={setSellUpdateModalVisibility}
                 offer={topOffer as Offer}
               />

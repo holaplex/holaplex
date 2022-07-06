@@ -20,25 +20,26 @@ query nftPage($address: String!) {
       address
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse
       price
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
       auctionHouse
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata
@@ -46,6 +47,7 @@ query nftPage($address: String!) {
       price
       tradeStateBump
       tokenAccount
+      purchaseId
       createdAt
       canceledAt
     }

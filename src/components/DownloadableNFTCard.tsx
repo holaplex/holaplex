@@ -5,7 +5,7 @@ import FeatherIcon from 'feather-icons-react';
 import * as htmlToImage from 'html-to-image';
 
 import { DisplaySOL } from './CurrencyHelpers';
-import { Listing, Nft } from '@holaplex/marketplace-js-sdk';
+import { AhListing, Nft } from '@holaplex/marketplace-js-sdk';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import Link from 'next/link';
 import { Avatar } from 'src/components/Avatar';
@@ -13,7 +13,7 @@ import { shortenAddress } from '@/modules/utils/string';
 
 interface DownloadNFTCardProps {
   nft: Nft;
-  listing: Listing;
+  listing: AhListing;
   updatedPrice?: number;
   ref?: MutableRefObject<any>;
 }

@@ -39,7 +39,7 @@
     "@heroicons/react": "^1.0.6",
     "@holaplex/graph-program": "^1.2.0",
     "@holaplex/js": "^4.3.2",
-    "@holaplex/marketplace-js-sdk": "^0.1.7",
+    "@holaplex/marketplace-js-sdk": "0.1.8",
     "@holaplex/mpl-auction-house": "^0.0.3",
     "@holaplex/ui": "^0.0.38",
     "@hookform/resolvers": "^2.8.8",

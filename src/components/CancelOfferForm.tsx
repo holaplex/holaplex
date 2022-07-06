@@ -78,7 +78,7 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
         await refetch();
       },
       onComplete: async () => {
-        refetch();
+        await refetch();
         setOpen(false);
       },
     });
