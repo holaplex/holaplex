@@ -599,6 +599,7 @@ export type QueryRootNftsArgs = {
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
   term?: InputMaybe<Scalars['String']>;
   updateAuthorities?: InputMaybe<Array<Scalars['PublicKey']>>;
+  withOffers?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -785,6 +786,24 @@ export type NftsInCollectionQueryVariables = Exact<{
 
 export type NftsInCollectionQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null } | null } | null, nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, collection?: { __typename?: 'Nft', address: string, name: string, image: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }> };
 
+export type DiscoverNftsActiveOffersQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverNftsActiveOffersQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
+
+export type DiscoverNftsAllQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverNftsAllQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
+
 export type DiscoverNftsBuyNowQueryVariables = Exact<{
   searchTerm?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
@@ -792,7 +811,7 @@ export type DiscoverNftsBuyNowQueryVariables = Exact<{
 }>;
 
 
-export type DiscoverNftsBuyNowQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'PurchaseReceipt', address: string, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'ListingReceipt', address: string, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'BidReceipt', address: string, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
+export type DiscoverNftsBuyNowQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null } | null };
 
 export type DiscoverProfilesAllQueryVariables = Exact<{
   userWallet?: InputMaybe<Scalars['PublicKey']>;
@@ -821,6 +840,10 @@ export type WhoToFollowQueryVariables = Exact<{
 
 
 export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
+
+export type MarketplaceAuctionHouseFragment = { __typename?: 'Marketplace', auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null };
+
+export type NftCardFragment = { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, auctionHouse: any, price: any, createdAt: any }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, auctionHouse: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null }> };
 
 export type FeaturedBuyNowListingsQueryVariables = Exact<{
   marketplace: Scalars['String'];
@@ -994,6 +1017,76 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress?: string | null, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null } };
 
+export const MarketplaceAuctionHouseFragmentDoc = gql`
+    fragment MarketplaceAuctionHouse on Marketplace {
+  auctionHouse {
+    address
+    treasuryMint
+    auctionHouseTreasury
+    treasuryWithdrawalDestination
+    feeWithdrawalDestination
+    authority
+    creator
+    auctionHouseFeeAccount
+    bump
+    treasuryBump
+    feePayerBump
+    sellerFeeBasisPoints
+    requiresSignOff
+    canChangeSalePrice
+  }
+}
+    `;
+export const NftCardFragmentDoc = gql`
+    fragment NftCard on Nft {
+  address
+  name
+  sellerFeeBasisPoints
+  mintAddress
+  description
+  image
+  primarySaleHappened
+  creators {
+    address
+    share
+    verified
+  }
+  owner {
+    address
+    associatedTokenAccountAddress
+  }
+  purchases {
+    id
+    buyer
+    auctionHouse
+    price
+    createdAt
+  }
+  listings {
+    id
+    tradeState
+    seller
+    metadata
+    auctionHouse
+    price
+    tradeStateBump
+    createdAt
+    canceledAt
+  }
+  offers {
+    id
+    tradeState
+    buyer
+    metadata
+    auctionHouse
+    price
+    tradeStateBump
+    tokenAccount
+    createdAt
+    canceledAt
+  }
+}
+    `;
 export const ConnectionNodeFragmentDoc = gql`
     fragment ConnectionNode on Wallet {
   address
@@ -1728,6 +1821,99 @@ export function useNftsInCollectionLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NftsInCollectionQueryHookResult = ReturnType<typeof useNftsInCollectionQuery>;
 export type NftsInCollectionLazyQueryHookResult = ReturnType<typeof useNftsInCollectionLazyQuery>;
 export type NftsInCollectionQueryResult = Apollo.QueryResult<NftsInCollectionQuery, NftsInCollectionQueryVariables>;
+export const DiscoverNftsActiveOffersDocument = gql`
+    query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
+  nfts(
+    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
+    withOffers: true
+    limit: $limit
+    offset: $offset
+    term: $searchTerm
+  ) {
+    ...NftCard
+  }
+  marketplace(subdomain: "haus") {
+    ...MarketplaceAuctionHouse
+  }
+}
+    ${NftCardFragmentDoc}
+${MarketplaceAuctionHouseFragmentDoc}`;
+
+/**
+ * __useDiscoverNftsActiveOffersQuery__
+ *
+ * To run a query within a React component, call `useDiscoverNftsActiveOffersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverNftsActiveOffersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverNftsActiveOffersQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useDiscoverNftsActiveOffersQuery(baseOptions: Apollo.QueryHookOptions<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>(DiscoverNftsActiveOffersDocument, options);
+      }
+export function useDiscoverNftsActiveOffersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>(DiscoverNftsActiveOffersDocument, options);
+        }
+export type DiscoverNftsActiveOffersQueryHookResult = ReturnType<typeof useDiscoverNftsActiveOffersQuery>;
+export type DiscoverNftsActiveOffersLazyQueryHookResult = ReturnType<typeof useDiscoverNftsActiveOffersLazyQuery>;
+export type DiscoverNftsActiveOffersQueryResult = Apollo.QueryResult<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>;
+export const DiscoverNftsAllDocument = gql`
+    query discoverNftsAll($searchTerm: String, $limit: Int!, $offset: Int!) {
+  nfts(
+    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
+    limit: $limit
+    offset: $offset
+    term: $searchTerm
+  ) {
+    ...NftCard
+  }
+  marketplace(subdomain: "haus") {
+    ...MarketplaceAuctionHouse
+  }
+}
+    ${NftCardFragmentDoc}
+${MarketplaceAuctionHouseFragmentDoc}`;
+
+/**
+ * __useDiscoverNftsAllQuery__
+ *
+ * To run a query within a React component, call `useDiscoverNftsAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverNftsAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverNftsAllQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useDiscoverNftsAllQuery(baseOptions: Apollo.QueryHookOptions<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>(DiscoverNftsAllDocument, options);
+      }
+export function useDiscoverNftsAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>(DiscoverNftsAllDocument, options);
+        }
+export type DiscoverNftsAllQueryHookResult = ReturnType<typeof useDiscoverNftsAllQuery>;
+export type DiscoverNftsAllLazyQueryHookResult = ReturnType<typeof useDiscoverNftsAllLazyQuery>;
+export type DiscoverNftsAllQueryResult = Apollo.QueryResult<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>;
 export const DiscoverNftsBuyNowDocument = gql`
     query discoverNftsBuyNow($searchTerm: String, $limit: Int!, $offset: Int!) {
   nfts(
@@ -1737,73 +1923,14 @@ export const DiscoverNftsBuyNowDocument = gql`
     offset: $offset
     term: $searchTerm
   ) {
-    address
-    name
-    sellerFeeBasisPoints
-    mintAddress
-    description
-    image
-    primarySaleHappened
-    creators {
-      address
-      share
-      verified
-    }
-    owner {
-      address
-      associatedTokenAccountAddress
-    }
-    purchases {
-      address
-      buyer
-      auctionHouse
-      price
-      createdAt
-    }
-    listings {
-      address
-      tradeState
-      seller
-      metadata
-      auctionHouse
-      price
-      tradeStateBump
-      createdAt
-      canceledAt
-    }
-    offers {
-      address
-      tradeState
-      buyer
-      metadata
-      auctionHouse
-      price
-      tradeStateBump
-      tokenAccount
-      createdAt
-      canceledAt
-    }
+    ...NftCard
   }
   marketplace(subdomain: "haus") {
-    auctionHouse {
-      address
-      treasuryMint
-      auctionHouseTreasury
-      treasuryWithdrawalDestination
-      feeWithdrawalDestination
-      authority
-      creator
-      auctionHouseFeeAccount
-      bump
-      treasuryBump
-      feePayerBump
-      sellerFeeBasisPoints
-      requiresSignOff
-      canChangeSalePrice
-    }
+    ...MarketplaceAuctionHouse
   }
 }
-    `;
+    ${NftCardFragmentDoc}
+${MarketplaceAuctionHouseFragmentDoc}`;
 
 /**
  * __useDiscoverNftsBuyNowQuery__

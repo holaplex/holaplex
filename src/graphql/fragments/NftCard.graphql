@@ -1,0 +1,48 @@
+fragment NftCard on Nft {
+  address
+  name
+  sellerFeeBasisPoints
+  mintAddress
+  description
+  image
+  primarySaleHappened
+  creators {
+    address
+    share
+    verified
+  }
+  owner {
+    address
+    associatedTokenAccountAddress
+  }
+  purchases {
+    id
+    buyer
+    auctionHouse
+    price
+    createdAt
+  }
+  listings {
+    id
+    tradeState
+    seller
+    metadata
+    auctionHouse
+    price
+    tradeStateBump
+    createdAt
+    canceledAt
+  }
+  offers {
+    id
+    tradeState
+    buyer
+    metadata
+    auctionHouse
+    price
+    tradeStateBump
+    tokenAccount
+    createdAt
+    canceledAt
+  }
+}
