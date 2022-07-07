@@ -10,9 +10,10 @@ import { toast } from 'react-toastify';
 import {
   Nft,
   Offer,
-  Listing,
+  AhListing,
   initMarketplaceSDK,
   AuctionHouse,
+  AcceptOfferParams,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
@@ -21,7 +22,7 @@ import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 interface AcceptOfferFormProps {
   nft: Nft;
   offer: Offer;
-  listing?: Listing;
+  listing?: AhListing;
   marketplace: { auctionHouse: AuctionHouse };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -67,12 +68,17 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { trackNFTEvent } = useAnalytics();
   const onAcceptOffer = async () => {
+    let acceptParams = {
+      offer,
+      nft,
+    } as AcceptOfferParams
+
+    if (listing) {
+      acceptParams.cancel = [listing];
+    }
+
     if (offer) {
-      if (listing) {
-        await sdk.offers(marketplace.auctionHouse).accept({ offer, nft, cancel: [listing] });
-      } else {
-        await sdk.offers(marketplace.auctionHouse).accept({ offer, nft });
-      }
+      await sdk.offers(marketplace.auctionHouse).accept(acceptParams);
     }
   };
 
@@ -108,6 +114,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
     });
   };
 
+  
   return (
     <form className={`flex w-full ${className}`} onSubmit={handleSubmit(acceptOfferTx)}>
       <Button

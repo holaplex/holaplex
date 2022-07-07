@@ -13,7 +13,7 @@ import {
 } from '../../../src/views/_global/holaplexConstants';
 import { imgOpt } from '../../../src/lib/utils';
 import Link from 'next/link';
-import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import { format as formatTime } from 'timeago.js';
 import Button from '@/components/Button';
@@ -119,7 +119,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
               ?.sort(byDate)
               .map((offer) => (
                 <div
-                  key={offer.address}
+                  key={offer.id}
                   className={`flex  flex-row justify-between rounded-lg border border-gray-800 p-4`}
                 >
                   <div className={`flex items-center justify-start`}>
@@ -162,7 +162,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
                       <AcceptOfferForm
                         nft={receivedOffer as Nft | any}
                         offer={offer as Offer}
-                        listing={defaultListing as Listing}
+                        listing={defaultListing as AhListing}
                         marketplace={marketplace as Marketplace}
                         refetch={refetch}
                       />
@@ -186,7 +186,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
                           title={`Update offer`}
                         >
                           <UpdateOfferForm
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             setOpen={setShowUpdateOfferModal}
                             nft={currNFT as Nft | any}
                             marketplace={marketplace as Marketplace}
@@ -212,7 +212,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
               ?.sort(byDate)
               .map((offer) => (
                 <div
-                  key={offer.address}
+                  key={offer.id}
                   className={`flex flex-row flex-wrap justify-between gap-4 rounded-lg border border-gray-800 p-4`}
                 >
                   <div className={`flex items-center justify-start`}>
@@ -270,7 +270,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
                           title={`Update offer`}
                         >
                           <UpdateOfferForm
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             setOpen={setShowUpdateOfferModal}
                             nft={currNFT as Nft | any}
                             marketplace={marketplace as Marketplace}
