@@ -410,8 +410,8 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
                 listing={props.listingEvent.listing!}
                 nft={marketplaceQuery.data.nft as any}
                 marketplace={marketplaceQuery.data.marketplace as Marketplace}
-                refetch={() => {
-                  marketplaceQuery.refetch();
+                refetch={async () => {
+                  await marketplaceQuery.refetch();
                   setModalOpen(false);
                 }}
               />
@@ -470,8 +470,8 @@ const OfferAction = (props: { nft: any }) => {
               <OfferForm
                 nft={marketplaceQuery.data.nft as any}
                 marketplace={marketplaceQuery.data.marketplace as Marketplace}
-                refetch={() => {
-                  marketplaceQuery.refetch();
+                refetch={async () => {
+                  await marketplaceQuery.refetch();
                   setModalOpen(false);
                 }}
                 reroute={false}

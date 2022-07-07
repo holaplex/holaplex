@@ -101,9 +101,8 @@ interface AddressKeyType {
 export type KeyType = AddressKeyType;
 
 export interface Listing {
-  address: string;
+  id: string;
   auctionHouse: string;
-  bookkepper: string;
   seller: string;
   metadata: string;
   purchaseReceipt: string;
@@ -117,7 +116,7 @@ export interface Listing {
 }
 
 export interface Purchase {
-  address: string;
+  id: string;
   buyer: string;
   seller: string;
   auctionHouse: string;
@@ -126,7 +125,7 @@ export interface Purchase {
 }
 
 export interface Offer {
-  address: string;
+  id: string;
   buyer: string;
   price: BN;
   createdAt: string;

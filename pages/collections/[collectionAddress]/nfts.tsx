@@ -66,9 +66,9 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
         <div className={`flex w-full justify-start gap-4 lg:items-center`}>
           <TopLevelFilterButton
             title={`Show all`}
-            onClick={() => {
+            onClick={async () => {
               setSelectedFilter(SelectedFilter.ALL);
-              refetch({
+              await refetch({
                 ...variables,
                 listed: null,
               });
@@ -77,17 +77,17 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
           />
           <TopLevelFilterButton
             title={`Buy now`}
-            onClick={() => {
+            onClick={async () => {
               setSelectedFilter(SelectedFilter.LISTED);
-              refetch({ ...variables, listed: true });
+              await refetch({ ...variables, listed: true });
             }}
             selected={selectedFilter === SelectedFilter.LISTED}
           />
           <TopLevelFilterButton
             title={`Unlisted`}
-            onClick={() => {
+            onClick={async () => {
               setSelectedFilter(SelectedFilter.UNLISTED);
-              refetch({ ...variables, listed: false });
+              await refetch({ ...variables, listed: false });
             }}
             selected={selectedFilter === SelectedFilter.UNLISTED}
           />

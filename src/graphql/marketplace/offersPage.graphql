@@ -49,14 +49,14 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse
       price
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -67,7 +67,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata
@@ -96,14 +96,14 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse
       price
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -114,7 +114,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata

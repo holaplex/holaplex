@@ -72,7 +72,7 @@ fragment PurchaseEventPreview on PurchaseEvent {
     profileImageUrlLowres
   }
   purchase {
-    address
+    id
     buyer
     seller
     price
@@ -111,8 +111,7 @@ fragment ListingEventPreview on ListingEvent {
   }
   lifecycle
   listing {
-    address
-    bookkeeper
+    id
     seller
     price
     nft {
@@ -150,7 +149,7 @@ fragment OfferEventPreview on OfferEvent {
   }
   lifecycle
   offer {
-    address
+    id
     buyer
     price
     nft {

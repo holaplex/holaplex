@@ -1,11 +1,10 @@
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
-// import { Nft, Marketplace } from '@/types/types';
 import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -68,14 +67,8 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
-    console.log('onOffer', {
-      myPubkey: publicKey?.toBase58(),
-      nft,
-      amount,
-      marketplace,
-    });
     if (nft) {
-      await sdk.offers(marketplace.auctionHouse).make({ amount, nft });
+      await sdk.offers(marketplace.auctionHouse).make({ amount: amount * LAMPORTS_PER_SOL, nft });
     }
   };
 

@@ -15,7 +15,7 @@ import AcceptOfferForm from './AcceptOfferForm';
 import {
   initMarketplaceSDK,
   Nft,
-  Listing,
+  AhListing,
   Offer,
   AuctionHouse,
 } from '@holaplex/marketplace-js-sdk';
@@ -30,7 +30,7 @@ import DownloadNFTCard from './DownloadableNFTCard';
 interface UpdateSellFormProps {
   nft: Nft;
   marketplace: { auctionHouse: AuctionHouse };
-  listing: Listing;
+  listing: AhListing;
   refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
   offer: Offer;
@@ -115,7 +115,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const onUpdateListing = async ({ amount }: { amount: number }) => {
     if (amount && nft) {
       toast(`Updating current listing to ${amount} SOL`);
-      await sdk.listings(marketplace.auctionHouse).post({ amount, nft });
+      await sdk.listings(marketplace.auctionHouse).post({ amount: amount * LAMPORTS_PER_SOL, nft });
     }
   };
 
