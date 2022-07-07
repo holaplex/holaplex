@@ -42,11 +42,13 @@ export function useHomeQueryWithTransforms(
     },
   });
 
-  const featuredAuctionContext = usePrepareFeaturedAuctions(featuredAuctionsLimit);
+  const featuredAuctionContext: QueryContext<Listing[]> = usePrepareFeaturedAuctions(featuredAuctionsLimit);
+
+  const loading: boolean = queryContext.loading || featuredAuctionContext.loading;
 
   const data: HomeData | undefined = useMemo(() => {
     let result: HomeData | undefined;
-    if (!queryContext.loading && queryContext.called && !queryContext.error && !featuredAuctionContext.loading) {
+    if (!loading && queryContext.called && !queryContext.error) {
       result = {
         feedEvents: transformHeroSectionData(queryContext.data?.feedEvents),
         featuredProfiles: transformFeaturedProfiles(queryContext.data?.followWallets),
@@ -68,11 +70,11 @@ export function useHomeQueryWithTransforms(
       };
     }
     return result;
-  }, [queryContext, featuredAuctionContext]);
+  }, [queryContext, featuredAuctionContext, loading]);
 
   return {
     data: data,
-    loading: queryContext.loading,
+    loading: loading,
     error: queryContext.error,
     refetch: queryContext.refetch,
   };
