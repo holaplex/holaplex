@@ -58,6 +58,7 @@
     "@types/amqplib": "^0.8.2",
     "@types/mixpanel-browser": "^2.36.0",
     "@usedispatch/client": "^0.8.3",
+    "@usedispatch/forum": "^0.0.23",
     "ajv": "^8.6.2",
     "amqplib": "^0.8.0",
     "antd": "^4.16.7",

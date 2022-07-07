@@ -4,7 +4,7 @@ import { AvatarIcons } from 'src/components/Avatar';
 import { FollowUnfollowButton } from 'src/components/FollowUnfollowButton';
 import { User } from 'src/views/alpha/feed.utils';
 import { ProfileHandle, ProfilePFP } from 'src/views/alpha/FeedCard';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import classNames from 'classnames';
@@ -15,6 +15,8 @@ import React, { ReactNode, useMemo } from 'react';
 import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import { SolscanIcon } from '@/assets/icons/Solscan';
+import { DispatchProvider, DispatchAppProps } from '@usedispatch/forum';
+// require('@usedispatch/forum/dist/main.css');
 
 function CreatorChip(props: { user: User }) {
   return (
@@ -96,13 +98,13 @@ export default function CollectionLayout({
         name={collection?.name || ``}
         description={collection?.description || ``}
       />
-      <div className="container lg:mx-auto ">
+      <div className="container lg:mx-auto">
         <div className="relative flex w-full flex-col items-start lg:flex-row lg:justify-between">
           <div>
             <div className="mx-4 mb-10 flex flex-col lg:mx-0 lg:flex-row">
               <img
                 src={collection?.image}
-                className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 shadow-2xl ring-8 ring-gray-900"
+                className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 object-cover shadow-2xl ring-8 ring-gray-900"
                 alt="Collection logo"
               />
               <div>
@@ -253,6 +255,11 @@ export default function CollectionLayout({
               title={'About'}
               selected={router.pathname.includes('about')}
               url={`/collections/${collectionAddress}/about`}
+            />
+            <Tab
+              title={`Forum`}
+              selected={router.pathname.includes('forum')}
+              url={`/collections/${collectionAddress}/forum`}
             />
           </div>
           <div>{children}</div>

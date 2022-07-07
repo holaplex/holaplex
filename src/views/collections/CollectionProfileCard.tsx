@@ -26,7 +26,7 @@ function CollectionProfileCard({ address, image, amount, name }: CollectionCardP
         <img
           src={image}
           alt={`${name}-collection-mini`}
-          className={`aspect-square w-full rounded-lg border-2 border-gray-900`}
+          className={`aspect-square w-full rounded-lg border-2 border-gray-900 object-cover`}
         />
         {amount && (
           <div className={`w-full rounded-lg bg-gray-800 p-2 py-3`}>

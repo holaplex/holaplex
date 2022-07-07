@@ -24,6 +24,7 @@ export async function getCollectionPageServerSideProps(context: GetServerSidePro
   const collection = await getCollection({
     address: collectionAddress,
   });
+  console.log('collection serverside', collection);
 
   return {
     props: {

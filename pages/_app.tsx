@@ -28,6 +28,7 @@ import {
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
+import '@/styles/dispatch-forum-style-overrides.less';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 

@@ -1,0 +1,69 @@
+@import '@usedispatch/forum/dist/main.css';
+
+.App {
+    // @import '@usedispatch/forum/dist/main.css';
+    // require('@usedispatch/forum/dist/main.css')
+  .forumView {
+    padding: 0;
+  }
+
+  .forumViewContainer {
+    @apply bg-gray-900;
+  }
+
+  .emptyTitle {
+    color: white;
+  }
+
+  .okInfoButton {
+    background-color: white;
+    color: black;
+    @apply rounded-full bg-white px-6 py-2 font-sans text-base font-medium   text-gray-900 hover:bg-gray-100 hover:text-gray-700;
+  }
+
+  .createForumIconContainer > svg > path {
+    // fill: black;
+    @apply fill-current;
+  }
+
+  .disconnectedView {
+    // background-color: black;
+    @apply bg-gray-900;
+    color: white;
+  }
+
+  .modalBox {
+    @apply !bg-gray-900;
+  }
+
+  .cancelCreateForumButton {
+    @apply rounded-full bg-gray-800 px-6 py-2 text-base font-medium text-white hover:bg-gray-700 hover:text-gray-100;
+    @apply border-transparent;
+  }
+
+  .acceptCreateForumButton {
+    @apply rounded-full bg-white px-6 py-2 text-base font-medium  text-gray-900 hover:text-gray-700 hover:bg-gray-100;
+  }
+
+  input, textarea    {
+    @apply text-gray-900;
+  }
+
+  .collapsibleContainer {
+    @apply !bg-gray-900;
+  }
+
+
+}
+
+.hidden {
+    display: contents;
+}
+//   .emptyTitle {
+//     @apply text-white;
+//   }
+
+//   .okInfoButton {
+//     @apply bg-gray-800;
+//   }
+// }
