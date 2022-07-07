@@ -225,7 +225,7 @@ const BuyForm: FC<BuyFormProps> = ({
                   loading={isSubmitting || hasActionPending}
                   className={`w-full`}
                 >
-                  Buy now with SOL
+                  Buy with SOL
                 </Button>
               ) : (
                 <>
