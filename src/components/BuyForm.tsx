@@ -17,6 +17,9 @@ import Modal from './Modal';
 import NFTPreview from './NFTPreview';
 import { DisplaySOL } from './CurrencyHelpers';
 import ReactDom from 'react-dom';
+import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
+import { useQuery } from 'react-query';
+import { verifyTOS } from '../modules/crossmint';
 
 interface BuyFormProps {
   nft: Nft;
@@ -70,6 +73,12 @@ const BuyForm: FC<BuyFormProps> = ({
 
   const [showForm, setShowForm] = useState(false);
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(PAYMENT_OPTION.SOLANA);
+
+  const { data, isLoading } = useQuery({
+    onSuccess: (data) => {},
+    onError: (err) => {},
+    queryFn: () => verifyTOS(listing.seller),
+  });
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
@@ -145,12 +154,13 @@ const BuyForm: FC<BuyFormProps> = ({
             priority={true}
           >
             <div className={`flex w-full flex-col justify-start gap-10`}>
-              {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
+              {nft && <NFTPreview loading={loading || isLoading} nft={nft as Nft | any} />}
 
               <div className={`flex flex-col gap-2`}>
                 <p className={`m-0 text-base font-medium text-gray-300`}>Price</p>
                 <DisplaySOL className={`font-medium`} amount={listing.price.toNumber()} />
               </div>
+
               <div className={`grid grid-cols-1 gap-4 lg:grid-cols-3`}>
                 <button
                   onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.SOLANA)}
@@ -168,32 +178,42 @@ const BuyForm: FC<BuyFormProps> = ({
                   />
                 </button>
                 <button
-                  onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.ETHEREUM)}
+                  disabled={!data?.data.accepted}
+                  onClick={() => {
+                    setSelectedPaymentOption(PAYMENT_OPTION.ETHEREUM);
+                  }}
                   className={`h-20 rounded-lg bg-white ${
                     selectedPaymentOption === PAYMENT_OPTION.ETHEREUM
                       ? `opacity-100`
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${
+                          !data?.data.accepted && `cursor-not-allowed`
+                        }`
                   }`}
                   type={`button`}
                 >
                   <img
                     src={`/images/payment-options/ethereum-payment.png`}
-                    alt={`solana-payment`}
+                    alt={`eth-payment`}
                     className={`h-full w-full object-contain p-2 backdrop-opacity-70`}
                   />
                 </button>
                 <button
-                  onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.CREDIT_CARD)}
+                  disabled={!data?.data.accepted}
+                  onClick={() => {
+                    setSelectedPaymentOption(PAYMENT_OPTION.CREDIT_CARD);
+                  }}
                   className={`h-20 rounded-lg bg-white ${
                     selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD
                       ? `opacity-100 `
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${
+                          !data?.data.accepted && `cursor-not-allowed`
+                        }`
                   }`}
                   type={`button`}
                 >
                   <img
                     src={`/images/payment-options/creditcard-payment.png`}
-                    alt={`solana-payment`}
+                    alt={`creditcard-payment`}
                     className={`h-full w-full rounded-lg object-cover backdrop-opacity-70`}
                   />
                 </button>
@@ -208,16 +228,54 @@ const BuyForm: FC<BuyFormProps> = ({
                   Buy now with SOL
                 </Button>
               ) : (
-                <Button htmlType={`button`} className={`w-full`}>
-                  Crossmint Button
-                </Button>
+                <>
+                  {selectedPaymentOption === PAYMENT_OPTION.ETHEREUM && (
+                    <CrossmintPayButton
+                      paymentMethod={`ETH`}
+                      collectionTitle={nft.name}
+                      collectionDescription={nft.description}
+                      clientId={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID || ''}
+                      collectionPhoto={nft.image}
+                      // @ts-ignore
+                      mintConfig={{
+                        mintHash: nft.mintAddress,
+                        buyPrice: String(listing.price.toNumber() / LAMPORTS_PER_SOL),
+                        sellerWallet: listing.seller,
+                      }}
+                      style={{ borderRadius: 999, paddingTop: 8, paddingBottom: 8 }}
+                    />
+                  )}
+                  {selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD && (
+                    <CrossmintPayButton
+                      paymentMethod={`fiat`}
+                      collectionTitle={nft.name}
+                      collectionDescription={nft.description}
+                      clientId={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID || ''}
+                      collectionPhoto={nft.image}
+                      // @ts-ignore
+                      mintConfig={{
+                        mintHash: nft.mintAddress,
+                        buyPrice: String(listing.price.toNumber() / LAMPORTS_PER_SOL),
+                        sellerWallet: listing.seller,
+                      }}
+                      style={{ borderRadius: 999, paddingTop: 8, paddingBottom: 8 }}
+                    />
+                  )}
+                </>
               )}
-              <p className={`m-0 flex justify-center gap-1 text-center text-xs text-gray-300`}>
-                ETH and fiat options provided by{' '}
-                <a href={`https://crossmint.io`} target={`_blank`}>
-                  <img src={`/images/payment-options/crossmint.png`} alt={`crossmint`} />
-                </a>
-              </p>
+              <div className={`flex flex-col gap-2`}>
+                <p className={`m-0 flex justify-center gap-1 text-center text-xs text-gray-300`}>
+                  ETH and fiat options provided by{' '}
+                  <a href={`https://crossmint.io`} target={`_blank`}>
+                    <img src={`/images/payment-options/crossmint.png`} alt={`crossmint`} />
+                  </a>
+                </p>
+                {!data?.data.accepted && (
+                  <p
+                    className={`m-0 text-center text-xs text-red-500`}
+                  >{`Seller hasn't enabled ETH & Credit Card payments`}</p>
+                )}
+              </div>
             </div>
           </Modal>,
           document.getElementsByTagName('body')[0]!
