@@ -81,7 +81,6 @@ export default function Support() {
           key="description"
           content="Our mission is to empower creators and collectors with a suite of tools to create, market, and sell NFTs."
         />
-        <body />
       </Head>
 
       <div className='relative'>
