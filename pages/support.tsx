@@ -138,7 +138,7 @@ export default function Support() {
               <SupportImage>
                 <SupportBlob><Image src='/images/page-support/blob-02.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
-                  <Image alt='' src={'/images/page-support/mint.jpg'} layout='fill' />
+                  <Image alt='' src='/images/page-support/mint.jpg' layout='fill' />
                 </div>
               </SupportImage>
               <SupportText>
@@ -156,7 +156,7 @@ export default function Support() {
               <SupportImage>
                 <SupportBlob><Image src='/images/page-support/blob-03.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
-                  <Image alt='' src={'/images/page-support/outkast.jpg'} layout='fill' />
+                  <Image alt='' src='/images/page-support/outkast.jpg' layout='fill' />
                 </div>
               </SupportImage>
               <SupportText>
@@ -174,7 +174,7 @@ export default function Support() {
               <SupportImage>
                 <SupportBlob><Image src='/images/page-support/blob-04.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
-                  <Image alt='' src={'/images/page-support/monkeydao.jpg'} layout='fill' />
+                  <Image alt='' src='/images/page-support/monkeydao.jpg' layout='fill' />
                 </div>
               </SupportImage>
               <SupportText>
@@ -192,7 +192,7 @@ export default function Support() {
               <SupportImage>
                 <SupportBlob><Image src='/images/page-support/blob-05.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
-                  <Image alt='' src={'/images/page-support/storefront.jpg'} layout='fill' />
+                  <Image alt='' src='/images/page-support/storefront.jpg' layout='fill' />
                 </div>
               </SupportImage>
               <SupportText>
