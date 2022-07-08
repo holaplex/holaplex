@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import Head from 'next/head';
 import Footer from 'src/views/home/Footer';
 import Image from 'next/image';
@@ -16,7 +15,7 @@ const Heading = function ({ children, className }: ChildProp) {
 }
 
 const HeadingSmall = function ({ children, className }: ChildProp) {
-  return (<h3 className={'font-bold font-sans text-2xl lg:text-4xl capitalize' + ' ' + className}>
+  return (<h3 className={'font-bold font-sans my-1 text-2xl lg:text-4xl capitalize' + ' ' + className}>
     {children}
   </h3>)
 }
@@ -66,37 +65,11 @@ const SupportText = function ({ children, className }: ChildProp) {
   </div>)
 }
 
-const HeroWrapper = styled.div`
-  position: relative;
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -100;
-    top: 0%;
-    left: -10%;
-    width: 100%;
-    height: 100%;
-    @media (min-width: 1200px) {
-      top: 0%;
-      width: 70%;
-      left: 15%;
-    }
-    background-image: url(/images/page-support/blob-01.svg);
-    background-repeat: no-repeat;
-    background-size: contain;
-    pointer-events: none;
-  }
-`;
-const SupportBlob = styled.div`
-  width: 100%;
-  height: 130%;
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  background-repeat: no-repeat;
-  background-size: contain;
-  pointer-events: none;
-`;
+const SupportBlob = function ({ children, className }: ChildProp) {
+  return (<div className={'absolute w-full h-[130%] top-[-15%] bottom-[-15%] bg-no-repeat bg-contain pointer-events-none' + ' ' + className}>
+    {children}
+  </div>)
+}
 
 export default function Support() {
   return (
@@ -111,7 +84,8 @@ export default function Support() {
         <body />
       </Head>
 
-      <HeroWrapper>
+      <div className='relative'>
+        <div className='absolute z-[-100] w-full h-full top-0 left-[-10%] lg:w-[70%] lg:left-[15%] bg-no-repeat bg-contain bg-[url(/images/page-support/blob-01.svg)] pointer-events-none' />
         <Section>
           <Content className="text-center lg:my-12">
             <div className='mx-auto max-w-5xl'>
@@ -123,7 +97,7 @@ export default function Support() {
             </div>
           </Content>
         </Section>
-      </HeroWrapper>
+      </div>
 
       <div className="container mx-auto px-6 md:px-12 lg:my-12">
         <Section>
