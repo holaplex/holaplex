@@ -182,7 +182,7 @@ export default function Support() {
           <Content>
             <SupportRow>
               <SupportImage>
-                <SupportBlob><Image src='/images/page-support/blob-02.svg' layout='fill' /></SupportBlob>
+                <SupportBlob><Image src='/images/page-support/blob-02.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/mint.jpg'} layout='fill' />
                 </div>
@@ -200,7 +200,7 @@ export default function Support() {
 
             <SupportRow>
               <SupportImage>
-                <SupportBlob><Image src='/images/page-support/blob-03.svg' layout='fill' /></SupportBlob>
+                <SupportBlob><Image src='/images/page-support/blob-03.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/outkast.jpg'} layout='fill' />
                 </div>
@@ -218,7 +218,7 @@ export default function Support() {
 
             <SupportRow>
               <SupportImage>
-                <SupportBlob><Image src='/images/page-support/blob-04.svg' layout='fill' /></SupportBlob>
+                <SupportBlob><Image src='/images/page-support/blob-04.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/monkeydao.jpg'} layout='fill' />
                 </div>
@@ -236,7 +236,7 @@ export default function Support() {
 
             <SupportRow>
               <SupportImage>
-                <SupportBlob><Image src='/images/page-support/blob-05.svg' layout='fill' /></SupportBlob>
+                <SupportBlob><Image src='/images/page-support/blob-05.svg' layout='fill' alt='' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/storefront.jpg'} layout='fill' />
                 </div>
@@ -256,7 +256,7 @@ export default function Support() {
       </div>
 
       <div className='relative lg:py-32'>
-        <Image src='/images/page-support/dots.jpg' layout='fill' />
+        <Image src='/images/page-support/dots.jpg' layout='fill' alt='' />
         <Section className='z-10'>
           <Content className="text-center lg:mb-16">
             <Heading>Submit a Bug Ticket</Heading>
@@ -269,7 +269,7 @@ export default function Support() {
       </div>
 
       <div className='relative -mb-20 lg:py-32'>
-        <Image src='/images/page-support/line-backdrop.svg' layout='fill' />
+        <Image src='/images/page-support/line-backdrop.svg' layout='fill' alt='' />
         <Section className='z-10'>
           <Content className="text-center">
             <SubHeading>Dev Support</SubHeading>
