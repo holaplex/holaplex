@@ -1,3 +1,4 @@
+import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
 import { getFallbackImage } from '@/modules/utils/image';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useAnalytics } from '@/views/_global/AnalyticsProvider';
@@ -6,7 +7,6 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useCallback, FC, VFC } from 'react';
 import { useIsXFollowingYLazyQuery } from 'src/graphql/indexerTypes';
-import { QueryContext } from 'src/lib/utils/graphQL';
 import { AvatarImage } from './Avatar';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 
