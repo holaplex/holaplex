@@ -14,6 +14,9 @@ import { AuctionHouse, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { TOS_LINK } from '../modules/crossmint/constants';
+import { useMutation } from 'react-query';
+import { acceptTOS } from '../modules/crossmint';
 
 interface SellFormSchema {
   amount: string;
@@ -81,6 +84,14 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     resolver: zodResolver(schema),
   });
 
+  const { mutate: acceptCrossmintTOS } = useMutation(acceptTOS, {
+    onSuccess: (data) => {},
+    onError: (err) => {
+      console.log(err);
+      toast.error(`Error whilst accepting Crossmint Terms of Service`);
+    },
+  });
+
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
@@ -100,6 +111,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     if (!publicKey || !signTransaction || !nft || !amount) {
       return;
     }
+    acceptCrossmintTOS(publicKey.toBase58());
     const sellAmount = Number(amount);
 
     const newActions: Action[] = [
@@ -210,6 +222,14 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
             >
               List NFT
             </Button>
+          </div>
+          <div className={`mt-10 w-full`}>
+            <p className={`m-0 text-center text-xs text-gray-300`}>
+              By listing this NFT you are agreeing to Crossmint&apos;s{' '}
+              <a href={TOS_LINK} target={`_blank`} className={`underline`}>
+                Terms of Service
+              </a>
+            </p>
           </div>
         </form>
       </div>

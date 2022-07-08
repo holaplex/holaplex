@@ -30,6 +30,7 @@
     "@bugsnag/js": "^7.14.1",
     "@bugsnag/plugin-react": "^7.14.0",
     "@cardinal/namespaces-components": "^3.0.0",
+    "@crossmint/client-sdk-react-ui": "^0.1.7-alpha.1",
     "@dialectlabs/react": "^0.5.4",
     "@dialectlabs/react-ui": "^0.8.6",
     "@fontsource/material-icons": "^4.5.2",

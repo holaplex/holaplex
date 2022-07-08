@@ -505,6 +505,7 @@ export default function NftByAddress({
                                 </ul>
                                 <div className={`w-1/2 sm:hidden`}>
                                   <BuyForm
+                                    loading={loading}
                                     nft={nft as Nft | any}
                                     marketplace={marketplace as Marketplace}
                                     listing={defaultListing as AhListing}
@@ -538,6 +539,7 @@ export default function NftByAddress({
                               </Link>
                             )}
                             <BuyForm
+                              loading={loading}
                               nft={nft as Nft | any}
                               marketplace={marketplace as Marketplace}
                               listing={defaultListing as AhListing}
@@ -548,6 +550,9 @@ export default function NftByAddress({
                         </>
                       )}
                     </div>
+                    <p className={`m-0 mt-4 text-right text-xs font-medium text-gray-300`}>
+                      SOL, ETH, and Credit Card supported
+                    </p>
                     {offer && (
                       <div
                         className={`mt-6 flex items-center justify-center border-t border-gray-700 pt-6 sm:justify-between`}
@@ -563,6 +568,7 @@ export default function NftByAddress({
 
                         <div className={`grid w-full grid-cols-2 gap-6 sm:w-auto sm:gap-4`}>
                           <BuyForm
+                            loading={loading}
                             nft={nft as Nft | any}
                             marketplace={marketplace as Marketplace}
                             listing={defaultListing as AhListing}

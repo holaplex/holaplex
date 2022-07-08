@@ -231,6 +231,7 @@ export const NFTCard = ({
             {!isOwner && !hasAddedOffer && hasDefaultListing && (
               <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-auto`}>
                 <BuyForm
+                  loading={loading}
                   nft={nft as Nft | any}
                   marketplace={marketplace}
                   listing={defaultListing as AhListing}
