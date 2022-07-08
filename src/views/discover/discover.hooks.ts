@@ -1,111 +1,81 @@
-import { NextRouter, useRouter } from 'next/router';
-import { ParsedUrlQuery } from 'querystring';
-import { useEffect, useRef, useState } from 'react';
+import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
+import {
+  LazyQueryContext,
+  useApolloLazyQueryWithTransform,
+} from '@/hooks/useGraphQLQueryWithTransform';
+import { useCallback, useReducer, useState } from 'react';
+import { ProfilePreviewFragment, useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
+import { DiscoverProfilesAllQuery } from 'src/graphql/indexerTypes.ssr';
 
-export interface UseUrlQueryParamData<T> {
-  /**
-   * current value of the parameter
-   */
-  value: T;
-
-  /**
-   * whether the parameter is currently active. Inactive parameters keep their value and can
-   * be set but are not shown in the URL.
-   */
-  active: boolean;
-
-  /**
-   * sets the value
-   */
-  set: (value: T) => void;
-
-  /**
-   * sets and activates the value, if needed
-   */
-  setAndActivate: (value: T) => void;
-
-  /**
-   * sets the active state of the value. Inactive parameters keep their value and can be set
-   * but are not shown in the URL.
-   */
-  setActive: (active: boolean) => void;
+interface DiscoverProfilesQueryParams {
+  userWallet: string | undefined;
+  limit: number;
+  offset: number;
 }
 
-/**
- * This hook gives simplified accessors for a single query parameter in the URL, including
- * being able to hide/deactivate the parameter without losing its value.
- * 
- * @param key key of the parameter in the URL query
- * @param defaultValue starting/fallback value the parameter should take if it is not set in the URL
- * @param startActive if false, the parameter will not be set in the URL intially; defaults to true
- * @param converter function to convert from the string value of the parameter in the URL to whatever type you wish to use
- * @returns parameter value, active state, and setters
- */
-export function useUrlQueryParam<T = string>(
-  key: string,
-  defaultValue: T,
-  startActive: boolean = true,
-  converter: (value: string) => T = (v) => v as unknown as T
-): UseUrlQueryParamData<T> {
-  const [active, setActive] = useState<boolean>(startActive);
-  const [value, setValue] = useState<T>(defaultValue);
+export interface DiscoverProfilesQueryContext extends LazyQueryContext<ProfilePreviewData[], DiscoverProfilesQueryParams, void> {
+  hasMore: boolean;
+  fetchMore: () => void;
+}
 
-  // hack to get Next to assign the router when on the client
-  let routerRef = useRef<NextRouter | undefined>();
-  const nextRouter: NextRouter = useRouter();
-  useEffect(() => {
-    if (nextRouter) routerRef.current = nextRouter;
-  }, [nextRouter]);
-  const router: NextRouter | undefined = routerRef.current;
+export function useDiscoverProfilesAllLazyQueryWithTransforms(
+  userWallet: string | undefined,
+  limit: number,
+  fetchMoreLimit: number
+): DiscoverProfilesQueryContext {
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [fetchMoreCallCount, incrementFetchMoreCallCount] = useReducer((c) => c + 1, 0);
 
-  // set the value in the URL
-  useEffect(() => {
-    if (router !== undefined) {
-      const query: ParsedUrlQuery = router.query;
-      const valueIsEmpty: boolean = value == null || `${value}`.trim().length === 0;
-      if (!active || valueIsEmpty) {
-        if (key in query) {
-          delete query[key];
-          router.replace({ query });
-        }
-      } else {
-        const newValueString: string = `${value}`;
-        if (newValueString !== query[key]) {
-          query[key] = newValueString;
-          router.replace({ query });
-        }
-      }
-    }
-  }, [router, key, value, active]);
+  const context: LazyQueryContext<
+    ProfilePreviewData[],
+    DiscoverProfilesQueryParams,
+    DiscoverProfilesAllQuery
+  > = useApolloLazyQueryWithTransform(
+    useDiscoverProfilesAllLazyQuery,
+    { userWallet, limit, offset: 0 },
+    (r) => r.followWallets.map(transformProfilePreview)
+  );
 
-  // get the value from the URL
-  useEffect(() => {
-    let queryValueString: string | undefined;
-    if (router !== undefined) {
-      if (router.query[key] !== undefined) {
-        if (Array.isArray(router.query[key])) {
-          throw new Error(`Found multiple values for single-value param ${key}`);
-        }
-        queryValueString = router.query[key] as string;
-      }
-    }
-
-    if (queryValueString !== undefined) {
-      const queryValue: T = converter(queryValueString);
-      if (queryValue !== value) {
-        setValue(queryValue);
-      }
-    }
-  }, [router, key, value, converter]);
+  const fetchMore = useCallback(() => {
+    context.fetchMore({
+      variables: {
+        userWallet: userWallet,
+        limit: fetchMoreLimit,
+        offset: limit + fetchMoreCallCount * fetchMoreLimit,
+      },
+      updateResults: (previous, more) => {
+        if (!more) return previous;
+        setHasMore(more.followWallets.length > 0);
+        more.followWallets = [...previous.followWallets, ...more.followWallets];
+        return { ...more };
+      },
+    });
+    incrementFetchMoreCallCount();
+  }, [context, fetchMoreCallCount, incrementFetchMoreCallCount, fetchMoreLimit, limit, userWallet]);
 
   return {
-    value: value,
-    active: active,
-    set: setValue,
-    setAndActivate: (value: T) => {
-      setValue(value);
-      setActive(true);
-    },
-    setActive: setActive,
+    ...context,
+    fetchMore: fetchMore,
+    hasMore: hasMore,
   };
+}
+
+function transformProfilePreview(data: ProfilePreviewFragment): ProfilePreviewData {
+  notNullish(data.nftCounts.created, 'data.nftCounts.created');
+  notNullish(data.nftCounts.owned, 'data.nftCounts.owned');
+
+  return {
+    address: data.address,
+    nftsOwned: data.nftCounts.owned,
+    nftsCreated: data.nftCounts.created,
+    handle: data.profile?.handle,
+    profileImageUrl: data.profile?.profileImageUrlHighres,
+    bannerImageUrl: data.profile?.bannerImageUrl,
+  };
+}
+
+function notNullish(value: any, name: string): void {
+  if (value === null || value === undefined) {
+    throw new Error(`${name} must not be nullish.`);
+  }
 }

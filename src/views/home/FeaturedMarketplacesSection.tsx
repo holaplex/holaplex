@@ -1,33 +1,45 @@
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import React, { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { imgOpt, isTouchScreenOnly } from '../../lib/utils';
-import { MarketplacePreviewData } from '@/types/types';
 import { SolIcon } from '../../components/Price';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { AvatarIcons, AvatarIconsProps } from '../../components/Avatar';
-import { useMarketplacePreviewLazyQuery } from 'src/graphql/indexerTypes';
 import { getFallbackImage } from '@/modules/utils/image';
+import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
 
-const previewSubdomains: string[] = [
-  'junglecats',
-  'womeninnfts',
-  'nft4good',
-  'monkedao',
-  'pixelbands',
-  'event',
-  'skeletoncrew',
-  'thechimpions',
-  // 'cityshop',
-  // 'ursmarket',
-  // 'thislooksrare',
-  // 'shiguardians',
-  // 'mortuary',
-  // 'kurumanft',
-  // 'paragon',
-];
+const CAROUSEL_COLS: number = 3;
+const CAROUSEL_ROWS: number = 2;
 
-const FeaturedMarketplacesSection: VFC = () => {
+export type FeaturedMarketplacesData = MarketplacePreviewData[];
+
+export interface FeaturedMarketplacesSectionProps {
+  context: QueryContext<FeaturedMarketplacesData>;
+}
+
+export function FeaturedMarketplacesSection(props: FeaturedMarketplacesSectionProps): JSX.Element {
+  const bodyElements: JSX.Element[] = useMemo(() => {
+    if (props.context.loading || !props.context.data) {
+      return [...Array(CAROUSEL_COLS * CAROUSEL_ROWS)].map((_, i) => (
+        <HomeSectionCarousel.Item key={i} className="p-4">
+          <LoadingPreview />
+        </HomeSectionCarousel.Item>
+      ));
+    } else {
+      return props.context.data.map((p) => (
+        <HomeSectionCarousel.Item key={p.subdomain} className="p-4">
+          <MarketplacePreview
+            subdomain={p.subdomain}
+            context={{ ...props.context, data: p }}
+          />
+        </HomeSectionCarousel.Item>
+      ));
+    }
+  }, [props.context]);
+
+  if (props.context.error) {
+    return <></>;
+  }
   return (
     <HomeSection>
       <HomeSection.Header>
@@ -37,17 +49,13 @@ const FeaturedMarketplacesSection: VFC = () => {
         </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
-        <HomeSectionCarousel cols={3} rows={2}>
-          {previewSubdomains.map((s) => (
-            <HomeSectionCarousel.Item key={s} className="aspect-[560/360] w-full p-4">
-              <MarketplacePreview subdomain={s} />
-            </HomeSectionCarousel.Item>
-          ))}
+        <HomeSectionCarousel cols={CAROUSEL_COLS} rows={CAROUSEL_ROWS}>
+          {bodyElements}
         </HomeSectionCarousel>
       </HomeSection.Body>
     </HomeSection>
   );
-};
+}
 
 const LoadingPreview = () => {
   return (
@@ -57,12 +65,25 @@ const LoadingPreview = () => {
   );
 };
 
-interface MarketplacePreviewProps {
+export interface MarketplacePreviewData {
   subdomain: string;
-  data?: MarketplacePreviewData;
+  name: string;
+  bannerUrl: string;
+  creators: {
+    address: string;
+    profileImageUrl?: string;
+    handle?: string;
+  }[];
+  floorPriceLamports?: number;
+  nftCount?: number;
 }
 
-const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) => {
+interface MarketplacePreviewProps {
+  subdomain: string;
+  context: QueryContext<MarketplacePreviewData>;
+}
+
+function MarketplacePreview(props: MarketplacePreviewProps): JSX.Element {
   const { track } = useAnalytics();
 
   const [showDetails, setShowDetails] = useState(false);
@@ -70,43 +91,20 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
   const onMouseEnter = useCallback(() => setShowDetails(true), []);
   const onMouseLeave = useCallback(() => setShowDetails(isTouchScreenOnly()), []);
 
-  const [marketplacePreviewQuery, { data: queriedData, loading, called }] =
-    useMarketplacePreviewLazyQuery();
-
-  useEffect(() => {
-    if (!data && !loading && !called) {
-      marketplacePreviewQuery({ variables: { subdomain: subdomain } });
-    }
-  });
-
-  let finalData: MarketplacePreviewData | undefined = useMemo(() => {
-    let result: MarketplacePreviewData | undefined;
-    if (data) {
-      result = data;
-    } else if (!loading && called) {
-      result = queriedData?.marketplace as MarketplacePreviewData;
-    }
-    return result;
-  }, [queriedData, loading, called, data]);
-
   const onClickMarketplaceLink = useCallback(() => {
     track('Marketplace Selected', {
       event_category: 'Discovery',
-      event_label: data ? data.subdomain : 'unknown-subdomain',
+      event_label: props.context.data ? props.context.data.subdomain : 'unknown-subdomain',
     });
-  }, [data, track]);
+  }, [props.context.data, track]);
 
-  if (loading || !dataAreSufficient(finalData)) {
+  if (props.context.loading || !props.context.data) {
     return <LoadingPreview />;
   }
 
-  // sufficient data are available after checking dataAreSufficient()
-  finalData = finalData!;
-
-  const marketplaceUrl: string = `https://${finalData.subdomain}.holaplex.market`;
-  const nftVolumeStr: string = Number.parseInt(finalData.stats.nfts).toLocaleString();
-  const floorPriceSol: number =
-    Number.parseFloat(finalData.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
+  const marketplaceUrl: string = `https://${props.subdomain}.holaplex.market`;
+  const nftVolumeStr: string = (props.context.data.nftCount ?? 0).toLocaleString();
+  const floorPriceSol: number = props.context.data.floorPriceLamports ?? 0 / LAMPORTS_PER_SOL;
 
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -114,8 +112,8 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
       <div className="relative flex">
         <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
           <img
-            src={imgOpt(finalData.bannerUrl, 800)}
-            alt={`${finalData.name}`}
+            src={imgOpt(props.context.data.bannerUrl, 800)}
+            alt={`${props.context.data.name}`}
             className="min-h-full min-w-full object-cover"
             // provide a fallback image in case the banner isnt found
             onError={({ currentTarget }) => {
@@ -136,14 +134,16 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
       <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
         <div className="pointer-events-auto">
           <AvatarIcons
-            profiles={finalData.creators.map(convertCreatorDataToAvatarIconProps) || []}
+            profiles={props.context.data.creators.map(convertCreatorDataToAvatarIconProps) || []}
           />
         </div>
       </div>
 
       {/* marketplace name, NFT volume, and floor price section */}
       <div className="pointer-events-none absolute bottom-0 left-0 flex w-full flex-col p-5">
-        <span className="text-sm font-semibold text-white lg:text-lg">{finalData.name}</span>
+        <span className="text-sm font-semibold text-white lg:text-lg">
+          {props.context.data.name}
+        </span>
 
         {/* NFT volume and floor price row container
                 Using height and opacity (rather than 'display') to animate bottom-text appearing */}
@@ -165,19 +165,6 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
       </div>
     </Container>
   );
-};
-
-function dataAreSufficient(data?: MarketplacePreviewData): boolean {
-  return (
-    data != undefined &&
-    data.auctionHouse != undefined &&
-    data.bannerUrl != undefined &&
-    data.creators != undefined &&
-    data.name != undefined &&
-    data.stats != undefined &&
-    data.stats.nfts != undefined &&
-    data.subdomain != undefined
-  );
 }
 
 function convertCreatorDataToAvatarIconProps(
@@ -185,10 +172,10 @@ function convertCreatorDataToAvatarIconProps(
 ): AvatarIconsProps['profiles'][0] {
   // always supply 'data' so that the avatar component doesnt attempt to
   //  retrieve the data itself (it will find nothing since we already know it's not there)
-  const result: AvatarIconsProps['profiles'][0] = { address: data.creatorAddress, data: {} };
-  if (data.profile) {
-    result.data!.pfpUrl = data.profile.profileImageUrlHighres;
-    result.data!.twitterHandle = data.profile.profileImageUrlHighres;
+  const result: AvatarIconsProps['profiles'][0] = { address: data.address, data: {} };
+  if (data.handle && data.profileImageUrl) {
+    result.data!.pfpUrl = data.profileImageUrl;
+    result.data!.twitterHandle = data.handle;
   }
   return result;
 }
@@ -213,5 +200,3 @@ const Container: FC<any> = (props) => {
     />
   );
 };
-
-export default FeaturedMarketplacesSection;

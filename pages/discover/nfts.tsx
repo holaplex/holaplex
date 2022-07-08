@@ -1,12 +1,12 @@
-import { UseUrlQueryParamData, useUrlQueryParam } from '@/views/discover/discover.hooks';
 import { CardGridWithHeader } from '@/components/CardGrid';
 import DropdownSelect from '@/components/DropdownSelect';
-import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
+import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nfts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
+import { AuctionHouse, OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
 import { DiscoverLayout, DiscoverPageProps } from '@/views/discover/DiscoverLayout';
 import { NestedSelectOption } from '@/views/discover/discover.models';
 import { FilterOption } from '@/components/Filters';
+import { useUrlQueryParam, UseUrlQueryParamData } from '@/hooks/useUrlQueryParam';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
 
@@ -126,9 +126,9 @@ const SORT_OPTION_ORDER = {
   ).map((o) => o.value),
 };
 
-interface NFTCardCreatorData {
-  nft: OwnedNfTsQuery['nfts'][0];
-  marketplace: OwnedNfTsQuery['marketplace'];
+export interface DiscoverNFTCardData {
+  nft: OwnedNFT;
+  marketplace: AuctionHouse;
 }
 
 export default function DiscoverNFTsTab(): JSX.Element {
@@ -144,14 +144,14 @@ export default function DiscoverNFTsTab(): JSX.Element {
     0
   );
 
-  const nfts: NFTCardCreatorData[] = useMemo(() => {
+  const nfts: DiscoverNFTCardData[] = useMemo(() => {
     const marketplace = nftQuery.data?.marketplace;
-    const result: NFTCardCreatorData[] = [];
+    const result: DiscoverNFTCardData[] = [];
     if (nftQuery.data) {
       result.push(
         ...nftQuery.data.nfts.map((n) => ({
-          nft: n as NFTCardCreatorData['nft'],
-          marketplace: marketplace as NFTCardCreatorData['marketplace'],
+          nft: n as DiscoverNFTCardData['nft'],
+          marketplace: marketplace as DiscoverNFTCardData['marketplace'],
         }))
       );
     }
@@ -248,7 +248,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
   }
 
   return (
-    <CardGridWithHeader<NFTCardCreatorData>
+    <CardGridWithHeader<DiscoverNFTCardData>
       cardContext={{
         noDataFallback: <div>No matching NFTs</div>,
         cardCreator: (data, refetch, loading) => (

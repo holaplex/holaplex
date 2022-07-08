@@ -189,9 +189,7 @@ function CardGridHeaderElement(props: CardGridHeaderElementProps): JSX.Element {
 
 CardGridWithHeader.HeaderElement = CardGridHeaderElement;
 
-export type RefetchFunction = (
-  variables?: Partial<OperationVariables> | undefined
-) => Promise<ApolloQueryResult<{}>>;
+export type RefetchFunction = () => void;
 
 /**
  * @template T type of data being fetched and used to create cards

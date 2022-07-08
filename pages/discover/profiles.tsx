@@ -1,14 +1,21 @@
 import { CardGridWithHeader } from '@/components/CardGrid';
 import { FilterOption } from '@/components/Filters';
-import ProfilePreviewCard, { ProfilePreviewProps, ProfilePreviewLoadingCard } from '@/components/ProfilePreviewCard';
-import { useUrlQueryParam } from '@/views/discover/discover.hooks';
+import ProfilePreviewCard, {
+  ProfilePreviewProps,
+  ProfilePreviewLoadingCard,
+} from '@/components/ProfilePreviewCard';
+import {
+  DiscoverProfilesQueryContext,
+  useDiscoverProfilesAllLazyQueryWithTransforms,
+} from '@/views/discover/discover.hooks';
 import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
-import { isEmpty } from 'ramda';
 import { useCallback, useEffect, useState } from 'react';
-import { useDiscoverProfilesAllLazyQuery } from 'src/graphql/indexerTypes';
 import { DiscoverPageProps, DiscoverLayout } from '@/views/discover/DiscoverLayout';
+import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
+const INITIAL_FETCH: number = 24;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
 
 enum TypeOption {
   ALL = 'all',
@@ -26,53 +33,27 @@ const options: FilterOption<TypeOption>[] = [
 ];
 
 export default function DiscoverProfilesTab(): JSX.Element {
-  const INITIAL_FETCH: number = 24;
-  const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
-
-  const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const {value: typeFilter} = useUrlQueryParam<TypeOption>('type', DEFAULT_TYPE, true);
+  const { value: typeFilter } = useUrlQueryParam<TypeOption>('type', DEFAULT_TYPE, true);
   const [profileData, setProfileData] = useState<ProfilePreviewProps[]>([]);
 
   const userProfile = useConnectedWalletProfile();
-  const queryContext = useQuery(
-    userProfile.connectedProfile?.pubkey ?? undefined,
-    typeFilter,
-    INITIAL_FETCH,
-    0
-  );
+  const queryContext = useQuery(typeFilter, userProfile.connectedProfile?.pubkey ?? undefined);
 
-  // when the server returns a profile with insufficient data to display the
-  //  preview, remove it from the carousel
-  const onInsufficientDataForAProfile = useCallback<(profileAddress: string) => void>(
-    (profileAddress) => {
-      setProfileData(profileData.filter((p) => p.address !== profileAddress));
-    },
-    [profileData]
-  );
-
+  // TODO send search to backend
   useEffect(() => {
     const searchTermLowerCase: string = searchTerm.toLocaleLowerCase();
     if (queryContext.data) {
       setProfileData(
-        queryContext.data.followWallets
-          .filter(
-            (w) =>
-              searchTermLowerCase === '' ||
-              w.profile?.handle.toLocaleLowerCase().includes(searchTermLowerCase)
-          )
+        queryContext.data
+          .filter((w) => w.handle?.toLocaleLowerCase().includes(searchTermLowerCase))
           .map((w) => ({
             address: w.address,
-            onInsufficientData: onInsufficientDataForAProfile,
-            data: {
-              address: w.address ?? '',
-              profile: w.profile ?? {},
-              nftCounts: w.nftCounts,
-            },
+            context: { ...queryContext, data: w },
           }))
       );
     }
-  }, [queryContext.data, searchTerm]);
+  }, [queryContext, searchTerm]);
 
   const onLoadMore = useCallback(
     async (inView: boolean) => {
@@ -80,24 +61,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
         return;
       }
 
-      await queryContext.fetchMore({
-        variables: {
-          limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-          offset: profileData.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          const prevProfiles = prev.followWallets;
-          const moreProfiles = fetchMoreResult.followWallets;
-          if (isEmpty(moreProfiles)) {
-            setHasMore(false);
-          }
-
-          fetchMoreResult.followWallets = [...prevProfiles, ...moreProfiles];
-
-          return { ...fetchMoreResult };
-        },
-      });
+      queryContext.fetchMore();
     },
     [queryContext, profileData]
   );
@@ -113,7 +77,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
         data: profileData,
         refetch: queryContext.refetch,
         onLoadMore: onLoadMore,
-        hasMore: hasMore,
+        hasMore: queryContext.hasMore,
         loading: queryContext.loading,
       }}
       search={{ onChange: (v) => setSearchTerm(v), debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS }}
@@ -140,28 +104,23 @@ DiscoverProfilesTab.getLayout = function getLayout(
   );
 };
 
-const useQuery = (
-  userWallet: string | undefined,
-  type: TypeOption,
-  limit: number,
-  offset: number
-) => {
-  const [allQuery, allQueryContext] = useDiscoverProfilesAllLazyQuery();
+function useQuery(type: TypeOption, userWallet: string | undefined): DiscoverProfilesQueryContext {
+  const allQueryContext: DiscoverProfilesQueryContext =
+    useDiscoverProfilesAllLazyQueryWithTransforms(
+      userWallet,
+      INITIAL_FETCH,
+      INFINITE_SCROLL_AMOUNT_INCREMENT
+    );
 
-  useEffect(() => {
-    switch (type) {
-      case TypeOption.ALL: {
-        allQuery({ variables: { userWallet: userWallet, limit: limit, offset: offset } });
-        break;
-      }
-      default: //do-nothing
-    }
-  }, [type, limit, offset, userWallet, allQuery]);
-
+  let context: DiscoverProfilesQueryContext;
   switch (type) {
     case TypeOption.ALL:
-      return allQueryContext;
+      context = allQueryContext;
+      break;
+
     default:
-      return allQueryContext;
+      context = allQueryContext;
   }
-};
+
+  return context;
+}

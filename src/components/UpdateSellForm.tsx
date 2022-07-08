@@ -31,9 +31,7 @@ interface UpdateSellFormProps {
   nft: Nft;
   marketplace: { auctionHouse: AuctionHouse };
   listing: AhListing;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
   offer: Offer;
 }

@@ -10,14 +10,14 @@ import styled from 'styled-components';
 
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
-import Head from 'next/head';
+import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+import { FollowerCount } from '../../components/FollowerCount';
+import { FollowModal, FollowModalVisibility } from '../../components/FollowModal';
 import { WalletDependantPageProps } from './getProfileServerSideProps';
-import { FollowModal, FollowModalVisibility } from '@/components/FollowModal';
-import { useProfileData } from './ProfileDataProvider';
-import { FollowUnfollowButtonDataWrapper } from '@/components/ProfilePreviewCard';
-import { FollowerCount } from '@/components/FollowerCount';
+import Head from 'next/head';
 import Link from 'next/link';
-import MessagesIcon from '@/assets/icons/MessagesIcon';
+import MessagesIcon from 'src/assets/icons/MessagesIcon';
+import { FollowUnfollowButtonDataWrapper } from '@/components/ProfilePreviewCard';
 
 const ProfilePageHead = (props: {
   publicKey: string;

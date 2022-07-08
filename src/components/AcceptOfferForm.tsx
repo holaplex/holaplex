@@ -24,9 +24,7 @@ interface AcceptOfferFormProps {
   offer: Offer;
   listing?: AhListing;
   marketplace: { auctionHouse: AuctionHouse };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
   className?: string;
   closeOuter?: () => void;
 }
