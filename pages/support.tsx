@@ -4,43 +4,32 @@ import Head from 'next/head';
 import Footer from 'src/views/home/Footer';
 import Image from 'next/image';
 
-const Heading = styled.h2`
-  font-size: 60px;
-  font-size: clamp(24px, 7vw, 60px);
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  text-transform: capitalize;
-
-  background: linear-gradient(90deg, #ffffff 0%, rgba(128, 128, 128, 1) 61.72%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-`;
-const HeadingSmall = styled.h3`
-  font-size: 40px;
-  font-size: clamp(24px, 5vw, 40px);
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  text-transform: capitalize;
-`;
-const SubHeading = styled.h4`
-  font-size: 24px;
-  font-size: clamp(20px, 3vw, 24px);
-  font-family: 'Inter', sans-serif;
-  color: #565656;
-  font-weight: 700;
-  margin-bottom: 1rem;
-`;
-const Paragraph = styled.p`
-  font-size: 16px;
-  font-size: clamp(16px, 2vw, 20px);
-  color: #a8a8a8;
-`;
-
 type ChildProp = {
-  children: React.ReactElement | Array<React.ReactElement> | string;
+  children: React.ReactElement | Array<React.ReactElement | string> | string;
   className?: string;
+}
+
+const Heading = function ({ children, className }: ChildProp) {
+  return (<h2 className={'font-bold font-sans text-3xl lg:text-6xl capitalize text-transparent bg-clip-text bg-gradient-to-r from-white to-[#808080]' + ' ' + className}>
+    {children}
+  </h2>)
+}
+
+const HeadingSmall = function ({ children, className }: ChildProp) {
+  return (<h3 className={'font-bold font-sans text-2xl lg:text-4xl capitalize' + ' ' + className}>
+    {children}
+  </h3>)
+}
+
+const SubHeading = function ({ children, className }: ChildProp) {
+  return (<h4 className={'font-bold text-[#565656] mb-4 font-sans text-xl lg:text-2xl' + ' ' + className}>
+    {children}
+  </h4>)
+}
+const Paragraph = function ({ children, className }: ChildProp) {
+  return (<p className={'text-gray-300 text-base lg:text-xl' + ' ' + className}>
+    {children}
+  </p>)
 }
 const Section = function ({ children, className }: ChildProp) {
   return (<div className={'flex flex-col flex-wrap justify-center px-12 lg:px-24 relative max-w-7xl w-full mx-auto' + ' ' + className}>
@@ -57,6 +46,24 @@ const Button = function ({ children, className }: ChildProp) {
   return (<button className={'text-white shadow rounded py-2 px-4 bg-gradient-to-b from-[#FDD85C] to-[#F5C927] ' + ' ' + className}>
     {children}
   </button>)
+}
+
+const SupportRow = function ({ children, className }: ChildProp) {
+  return (<div className={'my-16 lg:my-32 gap-4 lg:gap-12 lg:flex lg:items-center' + ' ' + className}>
+    {children}
+  </div>)
+}
+
+const SupportImage = function ({ children, className }: ChildProp) {
+  return (<div className={'w-full lg:max-w-md relative' + ' ' + className}>
+    {children}
+  </div>)
+}
+
+const SupportText = function ({ children, className }: ChildProp) {
+  return (<div className={'z-10 relative lg:mt-4' + ' ' + className}>
+    {children}
+  </div>)
 }
 
 const HeroWrapper = styled.div`
@@ -80,33 +87,6 @@ const HeroWrapper = styled.div`
     pointer-events: none;
   }
 `;
-
-const SupportRow = styled.div`
-  margin: 4rem 0;
-  gap: 1rem;
-  @media (min-width: 1200px) {
-    margin: 6rem 0;
-    gap: 3rem;
-    display: flex;
-    align-items: center;
-  }
-`;
-
-const SupportImage = styled.div`
-  position: relative;
-  width: 100%;
-  @media (min-width: 1200px) {
-    max-width: 450px;
-  }
-`;
-const SupportText = styled.div`
-  position: relative;
-  z-index: 10;
-  @media (max-width: 1200px) {
-    margin-top: 1rem;
-  }
-`;
-
 const SupportBlob = styled.div`
   width: 100%;
   height: 130%;
