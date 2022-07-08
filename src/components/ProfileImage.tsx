@@ -14,7 +14,7 @@ export const ProfileImage = () => {
 
   return (
     <>
-      <PopoverWidget isShowOnHover content={<ProfilePopover />}>
+      <PopoverWidget content={<ProfilePopover />}>
         <button className="flex items-center justify-center overflow-hidden rounded-full shadow-lg shadow-black ring-4 ring-gray-900 transition-transform  hover:scale-125">
           <img width={44} height={44} src={profilePictureUrl} className={` `} alt="Profile Image" />
         </button>
