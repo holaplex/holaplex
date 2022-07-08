@@ -164,7 +164,7 @@ export default function Support() {
               </div>
               <div>
                 <Paragraph>
-                  <b>Get help from the community</b><br />
+                  <span className="font-bold">Get help from the community</span><br />
                   Couldn’t find your answer from the documentation? Ask a member from the community.<br />
                   <a target='_blank' rel='noreferrer' href="https://discord.com/invite/holaplex" className='text-[#F7CC34]'>Join the Discord</a>
                 </Paragraph>
@@ -182,7 +182,7 @@ export default function Support() {
           <Content>
             <SupportRow>
               <SupportImage>
-                <SupportBlob style={{ backgroundImage: 'url(/images/page-support/blob-02.svg)' }} />
+                <SupportBlob><Image src='/images/page-support/blob-02.svg' layout='fill' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/mint.jpg'} layout='fill' />
                 </div>
@@ -200,7 +200,7 @@ export default function Support() {
 
             <SupportRow>
               <SupportImage>
-                <SupportBlob style={{ backgroundImage: 'url(/images/page-support/blob-03.svg)' }} />
+                <SupportBlob><Image src='/images/page-support/blob-03.svg' layout='fill' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/outkast.jpg'} layout='fill' />
                 </div>
@@ -218,7 +218,7 @@ export default function Support() {
 
             <SupportRow>
               <SupportImage>
-                <SupportBlob style={{ backgroundImage: 'url(/images/page-support/blob-04.svg)' }} />
+                <SupportBlob><Image src='/images/page-support/blob-04.svg' layout='fill' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/monkeydao.jpg'} layout='fill' />
                 </div>
@@ -236,7 +236,7 @@ export default function Support() {
 
             <SupportRow>
               <SupportImage>
-                <SupportBlob style={{ backgroundImage: 'url(/images/page-support/blob-05.svg)' }} />
+                <SupportBlob><Image src='/images/page-support/blob-05.svg' layout='fill' /></SupportBlob>
                 <div className='rounded-lg lg:rounded-2xl w-full overflow-hidden border border-gray-500 z-10 relative aspect-video'>
                   <Image alt='' src={'/images/page-support/storefront.jpg'} layout='fill' />
                 </div>
@@ -255,10 +255,9 @@ export default function Support() {
         </Section>
       </div>
 
-      <div style={{
-        backgroundImage: 'url(/images/page-support/dots.jpg)',
-      }} className='bg-center bg-no-repeat bg-cover lg:py-32'>
-        <Section>
+      <div className='relative lg:py-32'>
+        <Image src='/images/page-support/dots.jpg' layout='fill' />
+        <Section className='z-10'>
           <Content className="text-center lg:mb-16">
             <Heading>Submit a Bug Ticket</Heading>
             <Paragraph>Still can’t fix the problem or think that there is a bug that needs fixing? Submit a ticket for a community engineer to review. Submit a ticket on discord in the #support-ticket channel.</Paragraph>
@@ -269,11 +268,9 @@ export default function Support() {
         </Section>
       </div>
 
-      <div style={{
-        backgroundImage: 'url(/images/page-support/line-backdrop.svg)',
-        backgroundSize: '75%',
-      }} className='bg-center bg-repeat-y -mb-20 lg:py-32'>
-        <Section>
+      <div className='relative -mb-20 lg:py-32'>
+        <Image src='/images/page-support/line-backdrop.svg' layout='fill' />
+        <Section className='z-10'>
           <Content className="text-center">
             <SubHeading>Dev Support</SubHeading>
             <Heading>Get started building with our open source tools</Heading>
