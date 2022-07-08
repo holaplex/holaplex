@@ -93,7 +93,7 @@ export default function Support() {
               <Paragraph>
                 Web3 is an exciting place but sometimes we need help. We rely on collaboration from members from the community to provide assistance. Get involved by contributing to our wiki page or in our Discord.
               </Paragraph>
-              <a href='https://docs.holaplex.com/'><Button>Read The Docs</Button></a>
+              <a target='_blank' rel='noreferrer' href='https://docs.holaplex.com/'><Button>Read The Docs</Button></a>
             </div>
           </Content>
         </Section>
@@ -146,7 +146,7 @@ export default function Support() {
                 <Paragraph>
                   Collection minting of up to 10 NFTs. Found here: holaplex.com/nfts/new
                 </Paragraph>
-                <a href='https://wiki.holaplex.com/holawiki/minting/how-to-mint-on-holaplex'>
+                <a target='_blank' rel='noreferrer' href='https://wiki.holaplex.com/holawiki/minting/how-to-mint-on-holaplex'>
                   <Button>View Docs -&gt;</Button>
                 </a>
               </SupportText>
@@ -164,7 +164,7 @@ export default function Support() {
                 <Paragraph>
                   An individual wallet’s profile where you can follow creators, sell, buy and make offers on NFTs.
                 </Paragraph>
-                <a href='https://wiki.holaplex.com/holawiki/profiles/profiles'>
+                <a target='_blank' rel='noreferrer' href='https://wiki.holaplex.com/holawiki/profiles/profiles'>
                   <Button>View Docs -&gt;</Button>
                 </a>
               </SupportText>
@@ -182,7 +182,7 @@ export default function Support() {
                 <Paragraph>
                   Home for large collections of NFTs from DAOs, collectives or PFP drops.
                 </Paragraph>
-                <a href='https://wiki.holaplex.com/holawiki/marketplaces/marketplaces'>
+                <a target='_blank' rel='noreferrer' href='https://wiki.holaplex.com/holawiki/marketplaces/marketplaces'>
                   <Button>View Docs -&gt;</Button>
                 </a>
               </SupportText>
@@ -200,7 +200,7 @@ export default function Support() {
                 <Paragraph>
                   The original tool from Metaplex’s storefront protocol. Supports bidding, instant sale, and custom branded stores from creators.
                 </Paragraph>
-                <a href='https://wiki.holaplex.com/holawiki/storefronts/storefronts'>
+                <a target='_blank' rel='noreferrer' href='https://wiki.holaplex.com/holawiki/storefronts/storefronts'>
                   <Button>View Docs -&gt;</Button>
                 </a>
               </SupportText>
@@ -215,7 +215,7 @@ export default function Support() {
           <Content className="text-center lg:mb-16">
             <Heading>Submit a Bug Ticket</Heading>
             <Paragraph>Still can’t fix the problem or think that there is a bug that needs fixing? Submit a ticket for a community engineer to review. Submit a ticket on Discord in the #support-ticket channel.</Paragraph>
-            <a href='https://discord.com/invite/holaplex'>
+            <a target='_blank' rel='noreferrer' href='https://discord.com/invite/holaplex'>
               <Button>Join the Discord</Button>
             </a>
           </Content>
@@ -229,7 +229,7 @@ export default function Support() {
             <SubHeading>Dev Support</SubHeading>
             <Heading>Get started building with our open source tools</Heading>
             <Paragraph>At Holaplex we believe open source is the way to building long term success in the NFT ecosystem. We welcome contributors, integration partners and developers looking to utilize our code to build amazing things.</Paragraph>
-            <a href='https://github.com/holaplex'>
+            <a target='_blank' rel='noreferrer' href='https://github.com/holaplex'>
               <Button>View our GitHub</Button>
             </a>
           </Content>
