@@ -25,9 +25,7 @@ interface SellFormSchema {
 interface SellFormProps {
   nft?: Nft;
   marketplace: { auctionHouse: AuctionHouse };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
   loading: boolean;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
