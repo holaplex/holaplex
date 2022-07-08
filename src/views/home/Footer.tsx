@@ -96,10 +96,13 @@ const Footer: VFC = () => {
             <span className="text-base font-medium text-white">Help</span>
             <ul className="mt-4 space-y-2">
               <li>
+                <InternalLink href="/support">Support</InternalLink>
+              </li>
+              <li>
                 <ExternalLink href="https://wiki.holaplex.com/Help-Desk/FAQ">FAQs</ExternalLink>
               </li>
               <li>
-                <ExternalLink href="https://wiki.holaplex.com/">Support</ExternalLink>
+                <ExternalLink href="https://wiki.holaplex.com/">Wiki</ExternalLink>
               </li>
               <li>
                 <ExternalLink href="https://twitter.com/holastatus">HolaStatus</ExternalLink>
