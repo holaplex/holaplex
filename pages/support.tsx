@@ -8,64 +8,64 @@ type ChildProp = {
   className?: string;
 }
 
-const Heading = function ({ children, className }: ChildProp): JSX.Element {
+function Heading ({ children, className }: ChildProp): JSX.Element {
   return (<h2 className={'font-bold font-sans text-3xl lg:text-6xl capitalize text-transparent bg-clip-text bg-gradient-to-r from-white to-[#808080]' + ' ' + className}>
     {children}
   </h2>)
 }
 
-const HeadingSmall = function ({ children, className }: ChildProp): JSX.Element {
+function HeadingSmall ({ children, className }: ChildProp): JSX.Element {
   return (<h3 className={'font-bold font-sans my-1 text-2xl lg:text-4xl capitalize' + ' ' + className}>
     {children}
   </h3>)
 }
 
-const SubHeading = function ({ children, className }: ChildProp): JSX.Element {
+function SubHeading ({ children, className }: ChildProp): JSX.Element {
   return (<h4 className={'font-bold text-[#565656] mb-4 font-sans text-xl lg:text-2xl' + ' ' + className}>
     {children}
   </h4>)
 }
-const Paragraph = function ({ children, className }: ChildProp): JSX.Element {
+function Paragraph ({ children, className }: ChildProp): JSX.Element {
   return (<p className={'text-gray-300 text-base lg:text-xl' + ' ' + className}>
     {children}
   </p>)
 }
-const Section = function ({ children, className }: ChildProp): JSX.Element {
+function Section ({ children, className }: ChildProp): JSX.Element {
   return (<div className={'flex flex-col flex-wrap justify-center px-12 lg:px-24 relative max-w-7xl w-full mx-auto' + ' ' + className}>
     {children}
   </div>)
 }
 
-const Content = function ({ children, className }: ChildProp): JSX.Element {
+function Content ({ children, className }: ChildProp): JSX.Element {
   return (<div className={'max-w-7xl w-full m-auto box-border p-4 relative z-10' + ' ' + className}>
     {children}
   </div>)
 }
-const Button = function ({ children, className }: ChildProp): JSX.Element {
+function Button ({ children, className }: ChildProp): JSX.Element {
   return (<button className={'text-white shadow rounded py-2 px-4 bg-gradient-to-b from-[#FDD85C] to-[#F5C927] ' + ' ' + className}>
     {children}
   </button>)
 }
 
-const SupportRow = function ({ children, className }: ChildProp): JSX.Element {
+function SupportRow ({ children, className }: ChildProp): JSX.Element {
   return (<div className={'my-16 lg:my-32 gap-4 lg:gap-12 lg:flex lg:items-center' + ' ' + className}>
     {children}
   </div>)
 }
 
-const SupportImage = function ({ children, className }: ChildProp): JSX.Element {
+function SupportImage ({ children, className }: ChildProp): JSX.Element {
   return (<div className={'w-full lg:max-w-md relative' + ' ' + className}>
     {children}
   </div>)
 }
 
-const SupportText = function ({ children, className }: ChildProp): JSX.Element {
+function SupportText ({ children, className }: ChildProp): JSX.Element {
   return (<div className={'z-10 relative lg:mt-4' + ' ' + className}>
     {children}
   </div>)
 }
 
-const SupportBlob = function ({ children, className }: ChildProp): JSX.Element {
+function SupportBlob ({ children, className }: ChildProp): JSX.Element {
   return (<div className={'absolute w-full h-[130%] top-[-15%] bottom-[-15%] bg-no-repeat bg-contain pointer-events-none' + ' ' + className}>
     {children}
   </div>)
