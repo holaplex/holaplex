@@ -137,7 +137,7 @@ export default function Support() {
             <div className='mx-auto max-w-5xl'>
               <Heading>Solanas top community <br className='hidden lg:block' /> supported NFT platform</Heading>
               <Paragraph>
-                Web3 is an exciting place but sometimes we need help. We rely on collaboration from members from the community to provide assistance. Get involved by contributing to our wiki page or in our discord.
+                Web3 is an exciting place but sometimes we need help. We rely on collaboration from members from the community to provide assistance. Get involved by contributing to our wiki page or in our Discord.
               </Paragraph>
               <a href='https://docs.holaplex.com/'><Button>Read The Docs</Button></a>
             </div>
@@ -260,7 +260,7 @@ export default function Support() {
         <Section className='z-10'>
           <Content className="text-center lg:mb-16">
             <Heading>Submit a Bug Ticket</Heading>
-            <Paragraph>Still can’t fix the problem or think that there is a bug that needs fixing? Submit a ticket for a community engineer to review. Submit a ticket on discord in the #support-ticket channel.</Paragraph>
+            <Paragraph>Still can’t fix the problem or think that there is a bug that needs fixing? Submit a ticket for a community engineer to review. Submit a ticket on Discord in the #support-ticket channel.</Paragraph>
             <a href='https://discord.com/invite/holaplex'>
               <Button>Join the Discord</Button>
             </a>
