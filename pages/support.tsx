@@ -38,19 +38,26 @@ const Paragraph = styled.p`
   color: #a8a8a8;
 `;
 
-const Section = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 3rem 0;
-  @media (min-width: 1200px) {
-    padding: 4.5rem 0;
-  }
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
+type ChildProp = {
+  children: React.ReactElement | Array<React.ReactElement> | string;
+  className?: string;
+}
+const Section = function ({ children, className }: ChildProp) {
+  return (<div className={'flex flex-col flex-wrap justify-center px-12 lg:px-24 relative max-w-7xl w-full mx-auto' + ' ' + className}>
+    {children}
+  </div>)
+}
+
+const Content = function ({ children, className }: ChildProp) {
+  return (<div className={'max-w-7xl w-full m-auto box-border p-4 relative z-10' + ' ' + className}>
+    {children}
+  </div>)
+}
+const Button = function ({ children, className }: ChildProp) {
+  return (<button className={'text-white shadow rounded py-2 px-4 bg-gradient-to-b from-[#FDD85C] to-[#F5C927] ' + ' ' + className}>
+    {children}
+  </button>)
+}
 
 const HeroWrapper = styled.div`
   position: relative;
@@ -72,24 +79,6 @@ const HeroWrapper = styled.div`
     background-size: contain;
     pointer-events: none;
   }
-`;
-
-const Content = styled.div`
-  max-width: 1200px;
-  width: 100%;
-  margin: auto;
-  box-sizing: border-box;
-  padding: 1rem;
-  position: relative;
-  z-index: 10;
-`;
-
-const Button = styled.button`
-  background: linear-gradient(to bottom, #FDD85C 0%, #F5C927 100%);
-  color: white;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 0.25rem;
-  padding: 0.5rem 1rem;
 `;
 
 const SupportRow = styled.div`
@@ -144,8 +133,8 @@ export default function Support() {
 
       <HeroWrapper>
         <Section>
-          <Content className="text-center lg:my-8">
-            <div style={{ maxWidth: '1044px' }} className='mx-auto'>
+          <Content className="text-center lg:my-12">
+            <div className='mx-auto max-w-5xl'>
               <Heading>Solanas top community <br className='hidden lg:block' /> supported NFT platform</Heading>
               <Paragraph>
                 Web3 is an exciting place but sometimes we need help. We rely on collaboration from members from the community to provide assistance. Get involved by contributing to our wiki page or in our discord.
@@ -156,7 +145,7 @@ export default function Support() {
         </Section>
       </HeroWrapper>
 
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-6 md:px-12 lg:my-12">
         <Section>
           <div className="w-full lg:w-1/2">
             <Content>
@@ -170,21 +159,21 @@ export default function Support() {
                 <Paragraph>
                   <b>Information at your fingertips</b><br />
                   Our documentation is expanding by the day thanks to contributions from our community.<br />
-                  <a href="https://wiki.holaplex.com/" style={{ color: '#F7CC34' }}>Find your answer</a>
+                  <a target='_blank' rel='noreferrer' href="https://wiki.holaplex.com/" className='text-[#F7CC34]'>Find your answer</a>
                 </Paragraph>
               </div>
               <div>
                 <Paragraph>
                   <b>Get help from the community</b><br />
                   Couldn’t find your answer from the documentation? Ask a member from the community.<br />
-                  <a href="https://discord.com/invite/holaplex" style={{ color: '#F7CC34' }}>Join the Discord</a>
+                  <a target='_blank' rel='noreferrer' href="https://discord.com/invite/holaplex" className='text-[#F7CC34]'>Join the Discord</a>
                 </Paragraph>
               </div>
             </div>
           </Content>
         </Section>
 
-        <Section>
+        <Section className='lg:my-12'>
           <Content className="text-center">
             <SubHeading>What product do you need help with?</SubHeading>
             <Heading>Support for all of the <br className='hidden lg:block' /> Holaplex NFT products</Heading>
