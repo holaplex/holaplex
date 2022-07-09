@@ -148,35 +148,18 @@ query home(
     ...MarketplaceAuctionHouse
   }
 
-  featuredMarketplace0: marketplace(subdomain: "junglecats") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace1: marketplace(subdomain: "womeninnfts") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace2: marketplace(subdomain: "nft4good") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace3: marketplace(subdomain: "monkedao") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace4: marketplace(subdomain: "pixelbands") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace5: marketplace(subdomain: "event") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace6: marketplace(subdomain: "skeletoncrew") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace7: marketplace(subdomain: "thechimpions") {
+  featuredMarketplaces: marketplaces(
+    subdomains: [
+      "junglecats"
+      "womeninnfts"
+      "nft4good"
+      "monkedao"
+      "pixelbands"
+      "event"
+      "skeletoncrew"
+      "thechimpions"
+    ]
+  ) {
     ...MarketplacePreview
   }
 }

@@ -46,16 +46,7 @@ export function useHomeQueryWithTransforms(
       result = {
         feedEvents: transformHeroSectionData(queryContext.data?.feedEvents),
         featuredProfiles: transformFeaturedProfiles(queryContext.data?.followWallets),
-        featuredMarketplaces: transformFeaturedMarketplaces(
-          queryContext.data?.featuredMarketplace0,
-          queryContext.data?.featuredMarketplace1,
-          queryContext.data?.featuredMarketplace2,
-          queryContext.data?.featuredMarketplace3,
-          queryContext.data?.featuredMarketplace4,
-          queryContext.data?.featuredMarketplace5,
-          queryContext.data?.featuredMarketplace6,
-          queryContext.data?.featuredMarketplace7
-        ),
+        featuredMarketplaces: transformFeaturedMarketplaces(queryContext.data?.featuredMarketplaces),
         featuredBuyNowListings: transformFeaturedBuyNowListings(
           queryContext.data?.featuredListings,
           queryContext.data?.buyNowMarketplace
@@ -129,7 +120,7 @@ function transformProfilePreview(data: ProfilePreviewFragment): ProfilePreviewDa
 }
 
 function transformFeaturedMarketplaces(
-  ...data: (MarketplacePreviewFragment | null | undefined)[]
+  data?: MarketplacePreviewFragment[] | null | undefined
 ): FeaturedMarketplacesData {
   const result: FeaturedMarketplacesData = [];
   if (data) {
