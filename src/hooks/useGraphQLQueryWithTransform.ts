@@ -7,51 +7,60 @@ import {
 } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
 
-export interface QueryContext<V, P = void, R = void> {
-  data: V | undefined;
+export interface QueryContext<TData, TArgs = void, TGraphQLData = void> {
+  data: TData | undefined;
   loading: boolean;
   error?: Error | undefined;
   refetch: () => void;
-  fetchMore: (args: FetchMoreArgs<P, R>) => void;
+  fetchMore: (args: FetchMoreArgs<TArgs, TGraphQLData>) => void;
 }
 
-export interface LazyQueryContext<V, P = void, R = void> extends QueryContext<V, P, R> {
-  query: (variables: P) => void;
+export interface LazyQueryContext<TData, TArgs = void, TGraphQLData = void>
+  extends QueryContext<TData, TArgs, TGraphQLData> {
+  query: (variables?: TArgs) => void;
 }
 
-interface FetchMoreArgs<P, R> {
-  variables: P;
-  updateResults: (prev: R, more: R | null | undefined) => R;
+interface FetchMoreArgs<TArgs, TGraphQLData> {
+  variables: TArgs;
+  updateResults: (prev: TGraphQLData, more: TGraphQLData | null | undefined) => TGraphQLData;
 }
 
-export function useApolloLazyQueryWithTransform<V, P = void, R = void>(
-  hook: (baseOptions: LazyQueryHookOptions<R, P>) => LazyQueryResultTuple<R, P>,
-  variables: P,
-  transformer: (raw: R) => V,
-): LazyQueryContext<V, P, R> {
-  const [data, setData] = useState<V | undefined>(undefined);
+export function useApolloLazyQueryWithTransform<TData, TArgs = void, TGraphQLData = void>(
+  hook: (
+    baseOptions: LazyQueryHookOptions<TGraphQLData, TArgs>
+  ) => LazyQueryResultTuple<TGraphQLData, TArgs>,
+  variables: TArgs,
+  transformer: (raw: TGraphQLData) => TData
+): LazyQueryContext<TData, TArgs, TGraphQLData> {
+  const [data, setData] = useState<TData | undefined>(undefined);
 
-  const [query, context]: [LazyQueryContext<V, P, R>['query'], LazyQueryResult<R, P>] = useMemo(() => {
-    const hookArgs = {
-      variables: variables,
-      onCompleted: (raw: R) => {
-        setData(transformer(raw));
-      },
-    };
-    const [apolloQuery, context] = hook(hookArgs);
-    return [(v: P) => apolloQuery(hookArgs), context];
-  }, [hook, variables, transformer]);
+  const onCompleted: (raw: TGraphQLData) => void = useCallback(
+      (raw) => {
+      setData(transformer(raw));
+    },
+    [transformer, setData]
+  );
 
-  const fetchMore: (args: FetchMoreArgs<P, R>) => void = useCallback((args) => {
-    async function runFetch() {
-      context.fetchMore({
-        variables: { ...variables, ...args.variables },
-        updateQuery: (p, { fetchMoreResult }) => args.updateResults(p, fetchMoreResult)
-      });
-    }
+  const [apolloQuery, context] = hook({ variables: variables, onCompleted: onCompleted });
 
-    runFetch();
-  }, [context, variables]);
+  const query: LazyQueryContext<TData, TArgs, TGraphQLData>['query'] = useCallback(
+    (v?: TArgs) => apolloQuery({ variables: { ...variables, ...v }, onCompleted: onCompleted }),
+    [variables, apolloQuery, onCompleted]
+  );
+
+  const fetchMore: (args: FetchMoreArgs<TArgs, TGraphQLData>) => void = useCallback(
+    (args) => {
+      async function runFetch() {
+        context.fetchMore({
+          variables: { ...variables, ...args.variables },
+          updateQuery: (p, { fetchMoreResult }) => args.updateResults(p, fetchMoreResult),
+        });
+      }
+
+      runFetch();
+    },
+    [context, variables]
+  );
 
   return {
     data: data,
@@ -63,32 +72,35 @@ export function useApolloLazyQueryWithTransform<V, P = void, R = void>(
   };
 }
 
-export function useApolloQueryWithTransform<V, P = void, R = void>(
-  hook: (baseOptions: QueryHookOptions<R, P>) => QueryResult<R, P>,
-  variables: P,
-  transformer: (raw: R) => V,
-): QueryContext<V, P, R> {
-  const [data, setData] = useState<V | undefined>(undefined);
+export function useApolloQueryWithTransform<TData, TArgs = void, TGraphQLData = void>(
+  hook: (baseOptions: QueryHookOptions<TGraphQLData, TArgs>) => QueryResult<TGraphQLData, TArgs>,
+  variables: TArgs,
+  transformer: (raw: TGraphQLData) => TData
+): QueryContext<TData, TArgs, TGraphQLData> {
+  const [data, setData] = useState<TData | undefined>(undefined);
 
-  const context: QueryResult<R, P> = useMemo(() => {
+  const context: QueryResult<TGraphQLData, TArgs> = useMemo(() => {
     return hook({
       variables: variables,
-      onCompleted: (raw: R) => {
+      onCompleted: (raw: TGraphQLData) => {
         setData(transformer(raw));
       },
     });
   }, [hook, variables, transformer]);
 
-  const fetchMore: (args: FetchMoreArgs<P, R>) => void = useCallback((args) => {
-    async function runFetch() {
-      context.fetchMore({
-        variables: { ...variables, ...args.variables },
-        updateQuery: (p, { fetchMoreResult }) => args.updateResults(p, fetchMoreResult)
-      });
-    }
+  const fetchMore: (args: FetchMoreArgs<TArgs, TGraphQLData>) => void = useCallback(
+    (args) => {
+      async function runFetch() {
+        context.fetchMore({
+          variables: { ...variables, ...args.variables },
+          updateQuery: (p, { fetchMoreResult }) => args.updateResults(p, fetchMoreResult),
+        });
+      }
 
-    runFetch();
-  }, [context, variables]);
+      runFetch();
+    },
+    [context, variables]
+  );
 
   return {
     data: data,
