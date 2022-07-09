@@ -42,7 +42,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
 
   // TODO send search to backend
   useEffect(() => {
-    const searchTermLowerCase: string = searchTerm.toLocaleLowerCase();
+    const searchTermLowerCase: string = searchTerm && searchTerm.toLocaleLowerCase();
     if (queryContext.data) {
       setProfileData(
         queryContext.data
@@ -53,7 +53,8 @@ export default function DiscoverProfilesTab(): JSX.Element {
           }))
       );
     }
-  }, [queryContext, searchTerm]);
+    // only refresh when data are updated, not other aspects of the query context
+  }, [queryContext.data, searchTerm]);
 
   const onLoadMore = useCallback(
     async (inView: boolean) => {
@@ -90,15 +91,6 @@ DiscoverProfilesTab.getLayout = function getLayout(
 ): JSX.Element {
   return (
     <DiscoverLayout
-      filters={[
-        {
-          title: 'Type',
-          options: options,
-          default: TypeOption.ALL,
-          queryId: 'type',
-          onChange: () => {},
-        },
-      ]}
       content={discoverPage.children}
     />
   );
@@ -112,15 +104,20 @@ function useQuery(type: TypeOption, userWallet: string | undefined): DiscoverPro
       INFINITE_SCROLL_AMOUNT_INCREMENT
     );
 
-  let context: DiscoverProfilesQueryContext;
-  switch (type) {
-    case TypeOption.ALL:
-      context = allQueryContext;
-      break;
+  useEffect(() => {
+    switch (type) {
+      case TypeOption.ALL:
+        allQueryContext.query();
+        break;
 
-    default:
-      context = allQueryContext;
-  }
+      default:
+        allQueryContext.query();
+    }
+  }, [type]);
+
+  let context: DiscoverProfilesQueryContext;
+  if (type === TypeOption.ALL) context = allQueryContext;
+  else context = allQueryContext;
 
   return context;
 }

@@ -303,6 +303,7 @@ function useQuery(
   offset: number
 ) {
   // TODO add other queries
+  // TODO convert to new hook format
   const [buyNowQuery, buyNowQueryContext] = useDiscoverNftsBuyNowLazyQuery();
 
   useEffect(() => {

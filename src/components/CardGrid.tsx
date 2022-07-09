@@ -324,8 +324,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
           className={classNames('my-6 flex w-full items-center justify-center font-bold', {
             hidden:
               !props.dataContext.hasMore ||
-              (props.dataContext.data && props.dataContext.data.length === 0) ||
-              !props.dataContext.loading,
+              (props.dataContext.data && props.dataContext.data.length === 0)
           })}
         >
           <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
