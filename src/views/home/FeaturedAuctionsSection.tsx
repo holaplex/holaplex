@@ -4,7 +4,7 @@ import { Listing } from '@/modules/indexer';
 import { ListingPreview, SkeletonListing } from '../../components/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 1;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;

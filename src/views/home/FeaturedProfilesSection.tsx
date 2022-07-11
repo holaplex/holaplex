@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import ProfilePreview, { ProfilePreviewData, ProfilePreviewLoadingCard } from '@/components/ProfilePreviewCard';
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;

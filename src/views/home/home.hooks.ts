@@ -1,5 +1,5 @@
 import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import { PublicKey } from '@solana/web3.js';
 import { HomeData } from 'pages';

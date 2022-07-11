@@ -3,7 +3,7 @@ import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nf
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;

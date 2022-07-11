@@ -1,4 +1,4 @@
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 import { getFallbackImage } from '@/modules/utils/image';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useAnalytics } from '@/views/_global/AnalyticsProvider';

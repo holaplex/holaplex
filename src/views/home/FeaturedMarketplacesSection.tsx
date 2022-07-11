@@ -6,7 +6,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { AvatarIcons, AvatarIconsProps } from '../../components/Avatar';
 import { getFallbackImage } from '@/modules/utils/image';
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_COLS: number = 3;
 const CAROUSEL_ROWS: number = 2;

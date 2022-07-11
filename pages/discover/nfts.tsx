@@ -1,12 +1,26 @@
 import { CardGridWithHeader } from '@/components/CardGrid';
 import DropdownSelect from '@/components/DropdownSelect';
-import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nfts';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AuctionHouse, OwnedNfTsQuery, useDiscoverNftsBuyNowLazyQuery } from 'src/graphql/indexerTypes';
+import {
+  INFINITE_SCROLL_AMOUNT_INCREMENT,
+  INITIAL_FETCH,
+  LoadingNFTCard,
+  NFTCard,
+  OwnedNFT,
+} from 'pages/profiles/[publicKey]/nfts';
+import { useCallback, useEffect, useMemo } from 'react';
+import {
+  AuctionHouse,
+} from 'src/graphql/indexerTypes';
 import { DiscoverLayout, DiscoverPageProps } from '@/views/discover/DiscoverLayout';
 import { NestedSelectOption } from '@/views/discover/discover.models';
 import { FilterOption } from '@/components/Filters';
 import { useUrlQueryParam, UseUrlQueryParamData } from '@/hooks/useUrlQueryParam';
+import {
+  DiscoverNftsQueryContext,
+  useDiscoverNftsActiveOffersLazyQueryWithTransforms,
+  useDiscoverNftsAllLazyQueryWithTransforms,
+  useDiscoverNftsBuyNowLazyQueryWithTransforms,
+} from '@/views/discover/discover.hooks';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
 
@@ -132,58 +146,24 @@ export interface DiscoverNFTCardData {
 }
 
 export default function DiscoverNFTsTab(): JSX.Element {
-  const INITIAL_FETCH: number = 24;
-  const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
-
-  const [hasMore, setHasMore] = useState(true);
   const [urlParams, urlParamSetters] = useUrlParams();
-  const nftQuery = useQuery(
-    urlParams[UrlParamKey.TYPE],
-    urlParams[UrlParamKey.SEARCH],
-    INITIAL_FETCH,
-    0
-  );
+  const queryContext = useQuery(urlParams[UrlParamKey.TYPE], urlParams[UrlParamKey.SEARCH]);
 
-  const nfts: DiscoverNFTCardData[] = useMemo(() => {
-    const marketplace = nftQuery.data?.marketplace;
-    const result: DiscoverNFTCardData[] = [];
-    if (nftQuery.data) {
-      result.push(
-        ...nftQuery.data.nfts.map((n) => ({
-          nft: n as DiscoverNFTCardData['nft'],
-          marketplace: marketplace as DiscoverNFTCardData['marketplace'],
-        }))
-      );
-    }
-    return result;
-  }, [nftQuery.data]);
-
+  // TODO fix infinite scrolling... it seems to turn up the same NFTs repeatedly,
+  //  TODO might just be to do with swapping around the different query types
   const onLoadMore = useCallback(
     async (inView: boolean) => {
-      if (!inView || nftQuery.loading || nfts.length <= 0) {
+      if (
+        !inView ||
+        queryContext.loading ||
+        (queryContext.data && queryContext.data?.length === 0)
+      ) {
         return;
       }
 
-      await nftQuery.fetchMore({
-        variables: {
-          limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-          offset: nfts.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          const prevNfts = prev.nfts;
-          const moreNfts = fetchMoreResult.nfts;
-          if (moreNfts.length === 0) {
-            setHasMore(false);
-          }
-
-          fetchMoreResult.nfts = [...prevNfts, ...moreNfts];
-
-          return { ...fetchMoreResult };
-        },
-      });
+      queryContext.fetchMore();
     },
-    [nftQuery, nfts]
+    [queryContext]
   );
 
   const primarySortLabels: string[] = useMemo(
@@ -263,11 +243,11 @@ export default function DiscoverNFTsTab(): JSX.Element {
         loadingCardCreator: () => <LoadingNFTCard />,
       }}
       dataContext={{
-        data: nfts,
-        refetch: nftQuery.refetch,
+        data: queryContext.data,
+        refetch: queryContext.refetch,
         onLoadMore: onLoadMore,
-        hasMore: hasMore,
-        loading: nftQuery.loading,
+        hasMore: queryContext.hasMore,
+        loading: queryContext.loading,
       }}
       search={{
         onChange: (v) => urlParamSetters[UrlParamKey.SEARCH](v.trim()),
@@ -281,6 +261,11 @@ export default function DiscoverNFTsTab(): JSX.Element {
 DiscoverNFTsTab.getLayout = function getLayout(
   discoverPage: DiscoverPageProps & { children: JSX.Element }
 ): JSX.Element {
+
+  
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [_, urlParamSetters] = useUrlParams();
+
   return (
     <DiscoverLayout
       filters={[
@@ -288,7 +273,7 @@ DiscoverNFTsTab.getLayout = function getLayout(
           title: 'Type',
           options: TYPE_OPTIONS,
           default: DEFAULT_TYPE,
-          onChange: () => {},
+          onChange: t => urlParamSetters[UrlParamKey.TYPE](t.value),
         },
       ]}
       content={discoverPage.children}
@@ -296,32 +281,51 @@ DiscoverNFTsTab.getLayout = function getLayout(
   );
 };
 
-function useQuery(
-  type: TypeFilterOption,
-  searchTerm: string | null,
-  limit: number,
-  offset: number
-) {
-  // TODO add other queries
-  // TODO convert to new hook format
-  const [buyNowQuery, buyNowQueryContext] = useDiscoverNftsBuyNowLazyQuery();
+function useQuery(type: TypeFilterOption, searchTerm: string | null): DiscoverNftsQueryContext {
+  //TODO fix search term
+  const buyNowQueryContext: DiscoverNftsQueryContext = useDiscoverNftsBuyNowLazyQueryWithTransforms(
+    searchTerm,
+    INITIAL_FETCH,
+    INFINITE_SCROLL_AMOUNT_INCREMENT
+  );
+
+  const activeOffersQueryContext: DiscoverNftsQueryContext =
+    useDiscoverNftsActiveOffersLazyQueryWithTransforms(
+      searchTerm,
+      INITIAL_FETCH,
+      INFINITE_SCROLL_AMOUNT_INCREMENT
+    );
+
+  const allNftsQueryContext: DiscoverNftsQueryContext = useDiscoverNftsAllLazyQueryWithTransforms(
+    searchTerm,
+    INITIAL_FETCH,
+    INFINITE_SCROLL_AMOUNT_INCREMENT
+  );
 
   useEffect(() => {
     switch (type) {
-      case TypeFilterOption.BUY_NOW: {
-        buyNowQuery({ variables: { limit: limit, offset: offset, searchTerm: searchTerm } });
+      case TypeFilterOption.BUY_NOW:
+        buyNowQueryContext.query();
         break;
-      }
-      default: //do-nothing
-    }
-  }, [type, limit, offset, buyNowQuery, searchTerm]);
 
-  switch (type) {
-    case TypeFilterOption.BUY_NOW:
-      return buyNowQueryContext;
-    default:
-      return buyNowQueryContext;
-  }
+      case TypeFilterOption.ACTIVE_OFFERS:
+        activeOffersQueryContext.query();
+        break;
+
+      case TypeFilterOption.ALL:
+        allNftsQueryContext.query();
+        break;
+
+      default:
+        buyNowQueryContext.query();
+    }
+  }, [type, searchTerm]);
+
+  let context: DiscoverNftsQueryContext;
+  if (type === TypeFilterOption.BUY_NOW) context = buyNowQueryContext;
+  else context = buyNowQueryContext;
+
+  return context;
 }
 
 interface UseUrlParamsValues {
@@ -422,7 +426,9 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
 
   const setters: UseUrlParamsSetters = useMemo(
     () => ({
-      [UrlParamKey.SEARCH]: v => {search.set(v == null ? null : v.trim() || null)},
+      [UrlParamKey.SEARCH]: (v) => {
+        search.set(v == null ? null : v.trim() || null);
+      },
       [UrlParamKey.TYPE]: typeFilter.set,
       [UrlParamKey.BY]: primarySortSetter,
       [UrlParamKey.PRICE_DIRECTION]: priceSortSetter,

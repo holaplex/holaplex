@@ -1,4 +1,4 @@
-import { QueryContext } from '@/hooks/useGraphQLQueryWithTransform';
+import { QueryContext } from '@/hooks/useApolloQuery';
 import { FeaturedAuctionsSectionData, FeaturedAuctionsSection } from '@/views/home/FeaturedAuctionsSection';
 import { FeaturedBuyNowListingsData, FeaturedBuyNowListingsSection } from '@/views/home/FeaturedBuyNowListingsSection';
 import { FeaturedMarketplacesData, FeaturedMarketplacesSection } from '@/views/home/FeaturedMarketplacesSection';
