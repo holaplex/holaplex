@@ -49,6 +49,8 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 We expose a Graph QL layer for data produced by the indexer.
 
+https://graph.holaplex.com
+
 ### View Available Data
 
 View available data at https://docs.holaplex.com/
