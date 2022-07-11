@@ -10,11 +10,17 @@ FROM node:16.14-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate
 
 ARG GRAPHQL_URI
 ENV NEXT_PUBLIC_INDEXER_GRAPHQL_URL $GRAPHQL_URI
 
+#Crossmint
+ARG CROSSMINT_API_KEY
+ARG CROSSMINT_CLIENT_ID
+ENV NEXT_PUBLIC_CROSSMINT_API_KEY $CROSSMINT_API_KEY
+ENV NEXT_PUBLIC_CROSSMINT_CLIENT_ID $CROSSMINT_CLIENT_ID
+
+RUN npx prisma generate
 RUN yarn build
 
 # Production image, copy all the files and run next
@@ -39,11 +45,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 FROM runner AS frontend
-#Crossmint
-ARG CROSSMINT_API_KEY
-ARG CROSSMINT_CLIENT_ID
-ENV NEXT_PUBLIC_CROSSMINT_API_KEY $CROSSMINT_API_KEY
-ENV NEXT_PUBLIC_CROSSMINT_CLIENT_ID $CROSSMINT_CLIENT_ID
 
 EXPOSE 3000
 ENV PORT 3000
