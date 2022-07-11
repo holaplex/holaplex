@@ -20,6 +20,7 @@ import ReactDom from 'react-dom';
 import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
 import { useQuery } from 'react-query';
 import { verifyTOS } from '../modules/crossmint';
+import { crossmintConfig } from '../lib/utils';
 
 interface BuyFormProps {
   nft: Nft;
@@ -234,7 +235,7 @@ const BuyForm: FC<BuyFormProps> = ({
                       paymentMethod={`ETH`}
                       collectionTitle={nft.name}
                       collectionDescription={nft.description}
-                      clientId={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID || ''}
+                      clientId={crossmintConfig.clientId || ''}
                       collectionPhoto={nft.image}
                       // @ts-ignore
                       mintConfig={{
@@ -250,7 +251,7 @@ const BuyForm: FC<BuyFormProps> = ({
                       paymentMethod={`fiat`}
                       collectionTitle={nft.name}
                       collectionDescription={nft.description}
-                      clientId={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID || ''}
+                      clientId={crossmintConfig.clientId || ''}
                       collectionPhoto={nft.image}
                       // @ts-ignore
                       mintConfig={{
