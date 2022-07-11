@@ -27,5 +27,5 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: holaplex-builder-staging
           dockerfile_name: Dockerfile
-          docker_options: '--target signer'
+          docker_options: '--target signer --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }}'
           process_type: worker
