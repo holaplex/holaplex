@@ -599,6 +599,7 @@ export type QueryRootNftsArgs = {
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
   term?: InputMaybe<Scalars['String']>;
   updateAuthorities?: InputMaybe<Array<Scalars['PublicKey']>>;
+  withOffers?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -802,7 +803,7 @@ export type WhoToFollowQueryVariables = Exact<{
 }>;
 
 
-export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
+export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
 
 export type FeaturedBuyNowListingsQueryVariables = Exact<{
   marketplace: Scalars['String'];
@@ -1663,6 +1664,12 @@ export const WhoToFollowDocument = gql`
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    nftCounts {
+      owned
+      created
     }
   }
 }

@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';
 import { getHandle, User } from './feed.utils';
 import { ProfilePFP } from './FeedCard';
+import Popover from '../../components/Popover';
+import ProfilePreview from '../../components/ProfilePreview';
+import { getProfilePreivewDataFromUser } from '../../lib/utils/typeUtils';
 
 function FollowListItem({
   user,
@@ -114,7 +117,15 @@ export default function WhoToFollowList(props: {
 
         {connectedProfile?.walletConnectionPair &&
           topProfilesToFollow.map((u) => (
-            <FollowListItem key={u.address} user={u} myFollowingList={myFollowingList} />
+            <Popover
+              key={u.address}
+              isShowOnHover={true}
+              content={
+                <ProfilePreview address={u.address} data={getProfilePreivewDataFromUser(u)} />
+              }
+            >
+              <FollowListItem user={u} myFollowingList={myFollowingList} />
+            </Popover>
           ))}
         {!connectedProfile && myFollowingList && <div>Connect wallet to see suggestions</div>}
       </div>

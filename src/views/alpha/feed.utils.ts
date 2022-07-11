@@ -12,18 +12,20 @@ import {
 
 type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
-type QueryNFT =
-  | MintEvent['nft']
-  | AhListing['nft']
-  | Purchase['nft']
-  | BidReceipt['nft'];
+type QueryNFT = MintEvent['nft'] | AhListing['nft'] | Purchase['nft'] | BidReceipt['nft'];
 
 export interface User {
   address: string;
   profile?: {
     handle: string;
     profileImageUrlLowres: string;
+    profileImageUrlHighres?: string;
+    bannerImageUrl?: string;
   } | null;
+  nftCounts?: {
+    owned?: number;
+    created?: number;
+  };
 }
 
 export interface AggregateEvent {

@@ -1,4 +1,4 @@
-import { Popover, Transition } from '@headlessui/react';
+import { Popover as HeadlessPopover, Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { usePopper } from 'react-popper';
 
@@ -8,7 +8,7 @@ interface PopoverProps {
   isShowOnHover?: boolean;
 }
 
-const PopoverWidget = ({ children, content, isShowOnHover = false }: PopoverProps) => {
+const Popover = ({ children, content, isShowOnHover = false }: PopoverProps) => {
   let [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>();
   let [popperElement, setPopperElement] = useState<HTMLDivElement | null>();
   let { styles, attributes } = usePopper(buttonRef, popperElement);
@@ -30,28 +30,28 @@ const PopoverWidget = ({ children, content, isShowOnHover = false }: PopoverProp
   };
 
   return (
-    <Popover className="relative">
+    <HeadlessPopover className="relative">
       {({ open }) => (
         <div
           onMouseEnter={() => onHover(open, 'onMouseEnter')}
           onMouseLeave={() => onHover(open, 'onMouseLeave')}
         >
-          <Popover.Button ref={setButtonRef}>{children}</Popover.Button>
+          <HeadlessPopover.Button ref={setButtonRef}>{children}</HeadlessPopover.Button>
           <Transition show={open}>
-            <Popover.Panel
+            <HeadlessPopover.Panel
               static={isShowOnHover}
-              className="absolute z-10"
+              className="absolute z-20"
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
             >
               {content}
-            </Popover.Panel>
+            </HeadlessPopover.Panel>
           </Transition>
         </div>
       )}
-    </Popover>
+    </HeadlessPopover>
   );
 };
 
-export default PopoverWidget;
+export default Popover;

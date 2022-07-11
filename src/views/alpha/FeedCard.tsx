@@ -39,6 +39,9 @@ import { LoadingContainer } from '@/components/LoadingPlaceholders';
 import { imgOpt } from 'src/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import ProfilePreview from '../../components/ProfilePreview';
+import { getProfilePreivewDataFromUser } from '../../lib/utils/typeUtils';
+import Popover from '../../components/Popover';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -262,13 +265,18 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   }, []);
 
   return (
-    <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-      <a>
-        {user.profile?.handle
-          ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
-          : `@${shortenAddress(user.address)}`}
-      </a>
-    </Link>
+    <Popover
+      isShowOnHover={true}
+      content={<ProfilePreview address={user.address} data={getProfilePreivewDataFromUser(user)} />}
+    >
+      <Link href={'/profiles/' + user.address + '/nfts'} passHref>
+        <a>
+          {user.profile?.handle
+            ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
+            : `@${shortenAddress(user.address)}`}
+        </a>
+      </Link>
+    </Popover>
   );
 };
 
