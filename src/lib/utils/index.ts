@@ -27,12 +27,10 @@ export const getEnvironmentVariable = (environmentVariable: string): string => {
 };
 
 export const crossmintConfig = {
-  apiKey:
-    // getEnvironmentVariable('NEXT_PUBLIC_CROSSMINT_API_KEY') ||
-    'crossmintnft.f7yunI0q.dY23CUy13M1AA90btdtlD393mNwCpt19',
-  clientId:
-    // getEnvironmentVariable('NEXT_PUBLIC_CROSSMINT_CLIENT_ID') ||
-    'fec98fec-8281-4c5e-9348-4905ae1d150f',
+  apiKey: getEnvironmentVariable('NEXT_PUBLIC_CROSSMINT_API_KEY'),
+  // 'crossmintnft.f7yunI0q.dY23CUy13M1AA90btdtlD393mNwCpt19',
+  clientId: getEnvironmentVariable('NEXT_PUBLIC_CROSSMINT_CLIENT_ID'),
+  // 'fec98fec-8281-4c5e-9348-4905ae1d150f',
 };
 
 type IMAGE_SIZE =

@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react';
 import { Modal } from 'antd';
 import styled from 'styled-components';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
-import { WalletContext } from '@/modules/wallet';
 import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/hooks/useScrollBlock';
@@ -10,6 +9,7 @@ import { BulkMinter as TBulkMinter } from '@holaplex/ui';
 import { Connection } from '@solana/web3.js';
 import { StorefrontContext } from '@/modules/storefront';
 import { useRouter } from 'next/router';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const BulkMinter = dynamic(() => import('@holaplex/ui').then((mod) => mod.BulkMinter), {
   ssr: false,
@@ -51,7 +51,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
   const router = useRouter();
   const [blockScroll, allowScroll] = useScrollBlock();
   const { storefront } = useContext(StorefrontContext);
-  const { solana } = useContext(WalletContext);
+  const solana = useWallet();
 
   useEffect(() => {
     if (show) {

@@ -8,14 +8,6 @@ First, install dependencies
 yarn install
 ```
 
-A local database must be booted within a docker container using
-docker-compose. Run the following commands to start a database, load schema.
-
-```
-docker-compose up -d
-yarn db:migrate
-```
-
 You might also want to setup a `.env.local` file with the following overrides:
 
 ```env
@@ -30,8 +22,6 @@ NEXT_PUBLIC_MIXPANEL_TOKEN
 ```
 
 ## Development
-
-If you are developing the Storefront builder, make sure sure Docker is launched with the local database.
 
 Then, simply run the development server:
 

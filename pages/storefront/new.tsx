@@ -55,7 +55,6 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  // const { solana, wallet, looking } = useContext(WalletContext);
   const solana = useWallet();
   const { publicKey } = solana;
   const pubkey = publicKey?.toBase58();

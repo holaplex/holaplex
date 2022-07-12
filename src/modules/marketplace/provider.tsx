@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import { Wallet } from '@/modules/wallet/types';
 import { Marketplace } from './types';
 import { MarketplaceContext } from './context';
 

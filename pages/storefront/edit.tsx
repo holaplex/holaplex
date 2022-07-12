@@ -26,7 +26,6 @@ import {
   UploadedBanner,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
-import { WalletContext } from '@/modules/wallet';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Card, Col, Form, Input, Row, Space, Tabs } from 'antd';
 import { useRouter } from 'next/router';
@@ -61,12 +60,7 @@ export default function Edit() {
   const { setVisible } = useWalletModal();
   const ar = arweaveSDK.using(arweave);
   const { storefront, searching } = useContext(StorefrontContext);
-  console.log('storefront', {
-    storefront,
-    searching,
-  });
   const [form] = Form.useForm();
-  // const { solana, wallet, looking } = useContext(WalletContext);
   const solana = useWallet();
   const { publicKey } = solana;
   const pubkey = publicKey?.toBase58();
