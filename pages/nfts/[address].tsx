@@ -38,7 +38,7 @@ import { seededRandomBetween } from '../../src/modules/utils/random';
 import { SolscanIcon } from '../../src/assets/icons/Solscan';
 import { ExplorerIcon } from '../../src/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
-
+import { ButtonSkeleton } from '../../src/components/Skeletons';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -354,16 +354,23 @@ export default function NftByAddress({
                       )}
                       {!hasAddedOffer && !isOwner && (
                         <div>
-                          <Link href={`/nfts/${nft?.address}/offers/new`}>
-                            <a>
-                              <Button>Make offer</Button>
-                            </a>
-                          </Link>
+                          {loading ? (
+                            <ButtonSkeleton />
+                          ) : (
+                            <Link href={`/nfts/${nft?.address}/offers/new`}>
+                              <a>
+                                <Button>Make offer</Button>
+                              </a>
+                            </Link>
+                          )}
                         </div>
                       )}
-                      {isOwner && (
-                        <Button onClick={() => setSellModalVisibility(true)}>List NFT</Button>
-                      )}
+                      {isOwner &&
+                        (loading ? (
+                          <ButtonSkeleton />
+                        ) : (
+                          <Button onClick={() => setSellModalVisibility(true)}>List NFT</Button>
+                        ))}
                     </div>
                     {offer && (
                       <div
@@ -515,13 +522,17 @@ export default function NftByAddress({
                                 </div>
                               </div>
                               <div className={`mt-4 flex w-full border-t border-gray-700 pt-4`}>
-                                <Link href={`/nfts/${nft?.address}/offers/new`}>
-                                  <a className={`w-full`}>
-                                    <Button className={`w-full`} secondary>
-                                      Make offer
-                                    </Button>
-                                  </a>
-                                </Link>
+                                {loading ? (
+                                  <ButtonSkeleton />
+                                ) : (
+                                  <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                    <a className={`w-full`}>
+                                      <Button className={`w-full`} secondary>
+                                        Make offer
+                                      </Button>
+                                    </a>
+                                  </Link>
+                                )}
                               </div>
                             </div>
                           )}
@@ -531,13 +542,16 @@ export default function NftByAddress({
                               hasAddedOffer ? `w-1/2` : `grid grid-cols-2`
                             } hidden gap-4 sm:flex`}
                           >
-                            {!hasAddedOffer && (
-                              <Link href={`/nfts/${nft?.address}/offers/new`}>
-                                <a>
-                                  <Button secondary>Make offer</Button>
-                                </a>
-                              </Link>
-                            )}
+                            {!hasAddedOffer &&
+                              (loading ? (
+                                <ButtonSkeleton />
+                              ) : (
+                                <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                  <a>
+                                    <Button secondary>Make offer</Button>
+                                  </a>
+                                </Link>
+                              ))}
                             <BuyForm
                               loading={loading}
                               nft={nft as Nft | any}
@@ -676,69 +690,77 @@ export default function NftByAddress({
             </div>
           </div>
           <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
-            <Accordion title={`Offers`} amount={offers.length} defaultOpen>
-              <section className={`w-full`}>
-                {hasOffers && (
-                  <header
-                    className={`mb-2 grid ${
-                      isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
-                    } items-center px-4`}
-                  >
-                    <span className={`text-xs text-gray-300`}>WALLET</span>
-                    <span className={`text-xs text-gray-300`}>PRICE</span>
-                    <span className={`text-xs text-gray-300`}>TIME</span>
-                    {isOwner && <span className={`text-xs text-gray-300`}></span>}
-                  </header>
-                )}
-
-                {!hasOffers && (
-                  <div className="w-full rounded-lg border border-gray-800 p-10 text-center">
-                    <h3>No offers found</h3>
-                    <p className="mt- text-gray-500">There are currently no offers on this NFT.</p>
-                  </div>
-                )}
-                {hasOffers &&
-                  offers?.map((o) => (
-                    <article
-                      key={o.id}
-                      className={`mb-4 grid rounded border border-gray-800 p-4 ${
+            {loading ? (
+              <div className="h-32 w-full rounded-lg bg-gray-800" />
+            ) : (
+              <Accordion title={`Offers`} amount={offers.length} defaultOpen>
+                <section className={`w-full`}>
+                  {hasOffers && (
+                    <header
+                      className={`mb-2 grid ${
                         isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
-                      }`}
+                      } items-center px-4`}
                     >
-                      <div className={`flex items-center`}>
-                        <Link href={`/profiles/${o.buyer}`}>
-                          <a rel={`nofollower`}>
-                            {<Avatar address={o.buyer} /> || shortenAddress(o.buyer)}
-                          </a>
-                        </Link>
-                      </div>
-                      <div className={`flex items-center`}>
-                        <DisplaySOL amount={o.price.toNumber()} />
-                      </div>
-                      <div className={`flex items-center`}>{formatTime(o.createdAt, `en_US`)}</div>
-                      {(hasAddedOffer || isOwner) && (
-                        <div className={`flex w-full items-center justify-end gap-2`}>
-                          {o.buyer === (publicKey?.toBase58() as string) && !isOwner && (
-                            <Button secondary onClick={() => setOfferModalVisibility(true)}>
-                              Cancel offer
-                            </Button>
-                          )}
-                          {isOwner && (
-                            <AcceptOfferForm
-                              nft={nft as Nft | any}
-                              offer={o as Offer}
-                              listing={defaultListing as AhListing}
-                              marketplace={marketplace as Marketplace}
-                              refetch={refetch}
-                              className={`justify-end`}
-                            />
-                          )}
+                      <span className={`text-xs text-gray-300`}>WALLET</span>
+                      <span className={`text-xs text-gray-300`}>PRICE</span>
+                      <span className={`text-xs text-gray-300`}>TIME</span>
+                      {isOwner && <span className={`text-xs text-gray-300`}></span>}
+                    </header>
+                  )}
+
+                  {!hasOffers && (
+                    <div className="w-full rounded-lg border border-gray-800 p-10 text-center">
+                      <h3>No offers found</h3>
+                      <p className="mt- text-gray-500">
+                        There are currently no offers on this NFT.
+                      </p>
+                    </div>
+                  )}
+                  {hasOffers &&
+                    offers?.map((o) => (
+                      <article
+                        key={o.id}
+                        className={`mb-4 grid rounded border border-gray-800 p-4 ${
+                          isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
+                        }`}
+                      >
+                        <div className={`flex items-center`}>
+                          <Link href={`/profiles/${o.buyer}`}>
+                            <a rel={`nofollower`}>
+                              {<Avatar address={o.buyer} /> || shortenAddress(o.buyer)}
+                            </a>
+                          </Link>
                         </div>
-                      )}
-                    </article>
-                  ))}
-              </section>
-            </Accordion>
+                        <div className={`flex items-center`}>
+                          <DisplaySOL amount={o.price.toNumber()} />
+                        </div>
+                        <div className={`flex items-center`}>
+                          {formatTime(o.createdAt, `en_US`)}
+                        </div>
+                        {(hasAddedOffer || isOwner) && (
+                          <div className={`flex w-full items-center justify-end gap-2`}>
+                            {o.buyer === (publicKey?.toBase58() as string) && !isOwner && (
+                              <Button secondary onClick={() => setOfferModalVisibility(true)}>
+                                Cancel offer
+                              </Button>
+                            )}
+                            {isOwner && (
+                              <AcceptOfferForm
+                                nft={nft as Nft | any}
+                                offer={o as Offer}
+                                listing={defaultListing as AhListing}
+                                marketplace={marketplace as Marketplace}
+                                refetch={refetch}
+                                className={`justify-end`}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </article>
+                    ))}
+                </section>
+              </Accordion>
+            )}
           </div>
           {/* {loading ? (
           <div className="mb-4 grid grid-cols-4 gap-6 ">
