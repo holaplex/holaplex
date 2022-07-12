@@ -47,6 +47,7 @@ import {
 import React, { useContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const { TabPane } = Tabs;
 
@@ -60,8 +61,16 @@ export default function Edit() {
   const { setVisible } = useWalletModal();
   const ar = arweaveSDK.using(arweave);
   const { storefront, searching } = useContext(StorefrontContext);
+  console.log('storefront', {
+    storefront,
+    searching,
+  });
   const [form] = Form.useForm();
-  const { solana, wallet, looking } = useContext(WalletContext);
+  // const { solana, wallet, looking } = useContext(WalletContext);
+  const solana = useWallet();
+  const { publicKey } = solana;
+  const pubkey = publicKey?.toBase58();
+
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -116,13 +125,13 @@ export default function Edit() {
     ]);
   }, [storefront]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (isNil(solana) || isNil(pubkey)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button loading={solana?.connecting || looking} block onClick={() => setVisible(true)}>
+            <Button loading={solana?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -133,13 +142,13 @@ export default function Edit() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet?.pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, pubkey);
 
   const onSubmit = submitCallback({
     trackingFunction: () =>
       track('Storefront Updated', {
         event_category: 'Storefront',
-        event_label: wallet?.pubkey,
+        event_label: pubkey,
       }),
     router,
     solana,
@@ -166,7 +175,7 @@ export default function Edit() {
   const buttontextColor = getTextColor(values.theme.primaryColor);
 
   return (
-    <Loading loading={searching || looking}>
+    <Loading loading={searching}>
       <Row justify="center" align="middle">
         <Col xs={21} lg={18} xl={16} xxl={14}>
           <Form
@@ -225,7 +234,7 @@ export default function Edit() {
                     </Form.Item>
                   </Col>
                   <PrevCol sm={24} md={11} lg={10}>
-                    <PrevCard bgColor={values.theme.backgroundColor}>
+                    <PrevCard $bgColor={values.theme.backgroundColor}>
                       <Space direction="vertical">
                         {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
                           <UploadedBanner

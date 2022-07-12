@@ -27,7 +27,7 @@ import {
   UploadedBanner,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
-import { WalletContext } from '@/modules/wallet';
+
 import { Card, Col, Form, Input, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
 import {
@@ -46,6 +46,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { v4 as uuidv4 } from 'uuid';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
@@ -54,7 +55,11 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet, looking } = useContext(WalletContext);
+  // const { solana, wallet, looking } = useContext(WalletContext);
+  const solana = useWallet();
+  const { publicKey } = solana;
+  const pubkey = publicKey?.toBase58();
+
   const { setVisible } = useWalletModal();
   const { storefront, searching } = useContext(StorefrontContext);
   const [fields, setFields] = useState<FieldData[]>([
@@ -76,9 +81,9 @@ export default function New() {
     if (storefront) {
       router.push('/storefront/edit');
     }
-  }, [storefront, wallet, router]);
+  }, [storefront, pubkey, router]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (isNil(solana) || isNil(pubkey)) {
     return (
       <Row justify="center">
         <Card>
@@ -101,7 +106,7 @@ export default function New() {
     trackingFunction: () =>
       track('Storefront Created', {
         event_category: 'Storefront',
-        event_label: wallet?.pubkey,
+        event_label: pubkey,
       }),
     router,
     solana,
@@ -185,7 +190,7 @@ export default function New() {
         </Form.Item>
       </Col>
       <PrevCol sm={24} md={11} lg={10}>
-        <PrevCard bgColor={values.theme.backgroundColor}>
+        <PrevCard $bgColor={values.theme.backgroundColor}>
           <Space direction="vertical">
             {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
               <UploadedBanner
@@ -261,7 +266,7 @@ export default function New() {
   );
 
   return (
-    <Loading loading={searching || looking}>
+    <Loading loading={searching}>
       <Row justify="center" align="middle">
         <Col xs={21} lg={18} xl={16} xxl={14}>
           <StepForm

@@ -55,11 +55,11 @@ const Footer: VFC = () => {
               <li>
                 <InternalLink href="/nfts/new">Mint NFTs</InternalLink>
               </li>
-              <li>
+              {/* <li>
                 <InternalLink href="/marketplace/new">
                   <TaggedNew>Marketplaces</TaggedNew>
                 </InternalLink>
-              </li>
+              </li> */}
               <li>
                 <InternalLink href="/storefront/new">New storefront</InternalLink>
               </li>

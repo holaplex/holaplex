@@ -63,7 +63,7 @@ export const PrevText = styled(Text)`
   }
 `;
 type PrevCardProps = {
-  bgColor: string;
+  $bgColor: string;
 };
 
 export const PrevCard = styled(Card)`
@@ -72,7 +72,7 @@ export const PrevCard = styled(Card)`
     height: 100%;
     display: flex;
     align-items: center;
-    background-color: ${({ bgColor }: PrevCardProps) => bgColor};
+    background-color: ${({ $bgColor }: PrevCardProps) => $bgColor};
   }
 `;
 
