@@ -28,10 +28,7 @@ export function FeaturedMarketplacesSection(props: FeaturedMarketplacesSectionPr
     } else {
       return props.context.data.map((p) => (
         <HomeSectionCarousel.Item key={p.subdomain} className="p-4">
-          <MarketplacePreview
-            subdomain={p.subdomain}
-            context={{ ...props.context, data: p }}
-          />
+          <MarketplacePreview subdomain={p.subdomain} context={{ ...props.context, data: p }} />
         </HomeSectionCarousel.Item>
       ));
     }
@@ -109,7 +106,7 @@ function MarketplacePreview(props: MarketplacePreviewProps): JSX.Element {
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {/* preview image */}
-      <div className="relative flex">
+      <div className="relative flex h-48">
         <a href={marketplaceUrl} target="_blank" rel="noreferrer" onClick={onClickMarketplaceLink}>
           <img
             src={imgOpt(props.context.data.bannerUrl, 800)}
