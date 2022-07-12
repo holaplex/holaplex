@@ -303,26 +303,15 @@ function useQuery(type: TypeFilterOption, searchTerm: string | null): DiscoverNf
   );
 
   useEffect(() => {
-    switch (type) {
-      case TypeFilterOption.BUY_NOW:
-        buyNowQueryContext.query();
-        break;
-
-      case TypeFilterOption.ACTIVE_OFFERS:
-        activeOffersQueryContext.query();
-        break;
-
-      case TypeFilterOption.ALL:
-        allNftsQueryContext.query();
-        break;
-
-      default:
-        buyNowQueryContext.query();
-    }
+    if (type === TypeFilterOption.BUY_NOW) buyNowQueryContext.query();
+    else if (type === TypeFilterOption.ACTIVE_OFFERS) activeOffersQueryContext.query();
+    else if (type === TypeFilterOption.ALL) allNftsQueryContext.query();
   }, [type, searchTerm]);
 
   let context: DiscoverNftsQueryContext;
   if (type === TypeFilterOption.BUY_NOW) context = buyNowQueryContext;
+  else if (type === TypeFilterOption.ACTIVE_OFFERS) context = activeOffersQueryContext;
+  else if (type === TypeFilterOption.ALL) context = allNftsQueryContext;
   else context = buyNowQueryContext;
 
   return context;
