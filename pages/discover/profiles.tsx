@@ -81,7 +81,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
         hasMore: queryContext.hasMore,
         loading: queryContext.loading,
       }}
-      search={{ onChange: (v) => setSearchTerm(v), debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS }}
+      search={{ onChange: (v) => setSearchTerm(v), debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS, placeholder: "Search profiles" }}
     />
   );
 }

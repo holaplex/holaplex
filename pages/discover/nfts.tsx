@@ -1,8 +1,6 @@
 import { CardGridWithHeader } from '@/components/CardGrid';
 import DropdownSelect from '@/components/DropdownSelect';
 import {
-  INFINITE_SCROLL_AMOUNT_INCREMENT,
-  INITIAL_FETCH,
   LoadingNFTCard,
   NFTCard,
   OwnedNFT,
@@ -23,6 +21,8 @@ import {
 } from '@/views/discover/discover.hooks';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
+const INITIAL_FETCH = 24;
 
 // values are what appears in the URL
 enum UrlParamKey {
@@ -150,7 +150,6 @@ export default function DiscoverNFTsTab(): JSX.Element {
   const queryContext = useQuery(urlParams[UrlParamKey.TYPE], urlParams[UrlParamKey.SEARCH]);
 
   // TODO fix infinite scrolling... it seems to turn up the same NFTs repeatedly,
-  //  TODO might just be to do with swapping around the different query types
   const onLoadMore = useCallback(
     async (inView: boolean) => {
       if (
@@ -252,6 +251,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
       search={{
         onChange: (v) => urlParamSetters[UrlParamKey.SEARCH](v.trim()),
         debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS,
+        placeholder: "Search NFTs"
       }}
       menus={menus}
     />

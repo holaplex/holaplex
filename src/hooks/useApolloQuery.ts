@@ -56,7 +56,7 @@ export function useHolaplexInfiniteScrollQuery<
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [fetchMoreCallCount, incrementFetchMoreCallCount] = useReducer(
     (count: number) => count + 1,
-    -1
+    0
   );
   const fetchMoreOffset = initialLimit + fetchMoreCallCount * fetchMoreLimit;
 
@@ -77,10 +77,10 @@ export function useHolaplexInfiniteScrollQuery<
   const query: LazyQueryContext<TDatum, TArgs, TGraphQLDataObject>['query'] = useCallback(
     (v?: TArgs) =>
       apolloQuery({
-        variables: { ...variables, ...v, limit: fetchMoreLimit, offset: fetchMoreOffset },
+        variables: { ...variables, ...v, limit: initialLimit, offset: 0 },
         onCompleted: onCompleted,
       }),
-    [variables, apolloQuery, onCompleted, fetchMoreLimit, fetchMoreOffset]
+    [variables, apolloQuery, onCompleted, initialLimit]
   );
 
   const fetchMore: () => void = useCallback(

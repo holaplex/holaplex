@@ -157,6 +157,12 @@ export interface SearchBarProps {
    * Minimum number of characters required for a search to register. Defaults to 3.
    */
   minCharacters?: number;
+
+
+  /**
+   * Placeholder string for the search bar to prompt for search.
+   */
+  placeholder?: string;
 }
 
 function SearchBar(props: SearchBarProps): JSX.Element {
@@ -169,7 +175,7 @@ function SearchBar(props: SearchBarProps): JSX.Element {
       autoCorrect="off"
       className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0"
       type="search"
-      placeholder="Search NFTs"
+      placeholder={props.placeholder ?? "Search"}
       onChange={e => props.onChange(e.target.value)}
     />
   );
