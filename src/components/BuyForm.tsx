@@ -235,7 +235,11 @@ const BuyForm: FC<BuyFormProps> = ({
                       paymentMethod={`ETH`}
                       collectionTitle={nft.name}
                       collectionDescription={nft.description}
-                      clientId={crossmintConfig.clientId || ''}
+                      clientId={
+                        crossmintConfig.clientId ||
+                        process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID ||
+                        ''
+                      }
                       collectionPhoto={nft.image}
                       // @ts-ignore
                       mintConfig={{
@@ -251,7 +255,11 @@ const BuyForm: FC<BuyFormProps> = ({
                       paymentMethod={`fiat`}
                       collectionTitle={nft.name}
                       collectionDescription={nft.description}
-                      clientId={crossmintConfig.clientId || ''}
+                      clientId={
+                        crossmintConfig.clientId ||
+                        process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID ||
+                        ''
+                      }
                       collectionPhoto={nft.image}
                       // @ts-ignore
                       mintConfig={{

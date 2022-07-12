@@ -8,7 +8,7 @@ const client = axios.create({ baseURL: baseUrl });
 export const verifyTOS = async (wallet: string) => {
   const res = await client.get(`/tos/status?locator=sol:${wallet}`, {
     headers: {
-      'x-api-key': crossmintConfig.apiKey,
+      'x-api-key': crossmintConfig.apiKey || process.env.NEXT_PUBLIC_CROSSMINT_API_KEY || '',
     },
   });
   return res;
@@ -23,7 +23,7 @@ export const acceptTOS = async (wallet: string) => {
     },
     {
       headers: {
-        'x-api-key': crossmintConfig.apiKey,
+        'x-api-key': crossmintConfig.apiKey || process.env.NEXT_PUBLIC_CROSSMINT_API_KEY || '',
         'Access-Control-Allow-Origin': '*',
       },
     }
