@@ -10,7 +10,9 @@ enum TabRoute {
   PROFILES = '/discover/profiles',
 }
 
-export interface DiscoverPageProps {}
+export interface DiscoverPageProps {
+  
+}
 
 export interface DiscoverLayoutProps<T> {
   filters?: FilterProps<T>[];

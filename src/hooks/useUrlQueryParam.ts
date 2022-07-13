@@ -47,6 +47,7 @@ export interface UseUrlQueryParamData<T> {
     startActive: boolean = true,
     converter: (value: string) => T = (v) => v as unknown as T
   ): UseUrlQueryParamData<T> {
+    const [initialized, setInitialized] = useState<boolean>(false);
     const [active, setActive] = useState<boolean>(startActive);
     const [value, setValue] = useState<T>(defaultValue);
   
@@ -57,10 +58,34 @@ export interface UseUrlQueryParamData<T> {
       if (nextRouter) routerRef.current = nextRouter;
     }, [nextRouter]);
     const router: NextRouter | undefined = routerRef.current;
-  
+
+    // get the value from the URL on first load, if needed
+    useEffect(() => {
+      if (!initialized) {
+        let queryValueString: string | undefined;
+        if (router !== undefined && router.isReady) {
+          // need to set initialization state after the router has loaded so server-side
+          //  rendering doesnt skip this
+          setInitialized(true);
+          if (key in router.query) {
+            if (Array.isArray(router.query[key])) {
+              throw new Error(`Found multiple values for single-value param ${key}`);
+            }
+            queryValueString = router.query[key] as string;
+          }
+        }
+    
+        if (queryValueString != null) {
+          const queryValue: T = converter(queryValueString);
+          setValue(queryValue);
+          setActive(true);
+        }
+      }
+    }, [router, key, converter, initialized, setInitialized, setActive]);
+    
     // set the value in the URL
     useEffect(() => {
-      if (router !== undefined) {
+      if (router !== undefined && router.isReady && initialized) {
         const query: ParsedUrlQuery = router.query;
         const valueIsEmpty: boolean = value == null || `${value}`.trim().length === 0;
         if (!active || valueIsEmpty) {
@@ -70,33 +95,14 @@ export interface UseUrlQueryParamData<T> {
           }
         } else {
           const newValueString: string = `${value}`;
-          if (newValueString !== query[key]) {
+          const existingValueString: string = `${query[key] ?? ''}`;
+          if (newValueString !== existingValueString) {
             query[key] = newValueString;
             router.replace({ query });
           }
         }
       }
-    }, [router, key, value, active]);
-  
-    // get the value from the URL
-    useEffect(() => {
-      let queryValueString: string | undefined;
-      if (router !== undefined) {
-        if (router.query[key] !== undefined) {
-          if (Array.isArray(router.query[key])) {
-            throw new Error(`Found multiple values for single-value param ${key}`);
-          }
-          queryValueString = router.query[key] as string;
-        }
-      }
-  
-      if (queryValueString !== undefined) {
-        const queryValue: T = converter(queryValueString);
-        if (queryValue !== value) {
-          setValue(queryValue);
-        }
-      }
-    }, [router, key, value, converter]);
+    }, [router, key, value, active, initialized]);
   
     return {
       value: value,

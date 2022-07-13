@@ -149,7 +149,6 @@ export default function DiscoverNFTsTab(): JSX.Element {
   const [urlParams, urlParamSetters] = useUrlParams();
   const queryContext = useQuery(urlParams[UrlParamKey.TYPE], urlParams[UrlParamKey.SEARCH]);
 
-  // TODO fix infinite scrolling... it seems to turn up the same NFTs repeatedly,
   const onLoadMore = useCallback(
     async (inView: boolean) => {
       if (
@@ -262,10 +261,6 @@ DiscoverNFTsTab.getLayout = function getLayout(
   discoverPage: DiscoverPageProps & { children: JSX.Element }
 ): JSX.Element {
 
-  
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [_, urlParamSetters] = useUrlParams();
-
   return (
     <DiscoverLayout
       filters={[
@@ -273,7 +268,8 @@ DiscoverNFTsTab.getLayout = function getLayout(
           title: 'Type',
           options: TYPE_OPTIONS,
           default: DEFAULT_TYPE,
-          onChange: t => urlParamSetters[UrlParamKey.TYPE](t.value),
+          onChange: () => {},
+          queryId: UrlParamKey.TYPE
         },
       ]}
       content={discoverPage.children}

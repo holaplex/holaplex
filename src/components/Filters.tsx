@@ -1,3 +1,4 @@
+import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
 import {
   FilterIcon,
   ArrowLeftIcon,
@@ -61,25 +62,17 @@ export interface FilterProps<T> {
 }
 
 function Filter<T>(props: FilterProps<T>): JSX.Element {
-  const router = useRouter();
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const [selection, setSelection] = useState<FilterOption<T> | undefined>(
-    props.default === undefined ? undefined : props.options.find((o) => o.value === props.default)
-  );
+  const urlParam = useUrlQueryParam<T | null>(props.queryId ?? '', props.default ?? null, props.queryId != null);
 
   const onChange: (selected: FilterOption<T>) => void = useCallback(
     (selected) => {
-      setSelection(selected);
       if (props.queryId) {
-        const queryParams = {...router.query};
-        queryParams[`${props.queryId}`] = `${selected.value}`;
-        router.push({
-          query: queryParams,
-       });
+        urlParam.set(selected.value)
       }
       props.onChange(selected);
     },
-    [props, router]
+    [props, urlParam]
   );
 
   if (new Set(props.options.map((o) => o.value)).size < props.options.length) {
@@ -107,7 +100,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
           className={classNames({'-translate-y-full': collapsed}, 'transition-all duration-300 ease-in')}
         >
           {props.options.map((o) =>
-            makeOption(o, props.title, onChange, o.value === selection?.value)
+            makeOption(o, props.title, onChange, o.value === urlParam.value)
           )}
         </div>
       </div>
