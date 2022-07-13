@@ -6,7 +6,6 @@ import {
   ChevronUpIcon,
 } from '@heroicons/react/outline';
 import classNames from 'classnames';
-import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
 export interface FiltersSectionProps {
@@ -54,13 +53,39 @@ export interface FilterOption<T> {
 }
 
 export interface FilterProps<T> {
+  /**
+   * Filter title, e.g. the thing being filtered.
+   */
   title: string;
+
+  /**
+   * Filter options that can be selected.
+   */
   options: FilterOption<T>[];
-  onChange: (selected: FilterOption<T>) => void;
+
+  /**
+   * Callback to be fired when the filter selection is changed.
+   */
+  onChange?: (selected: FilterOption<T>) => void;
+
+  /**
+   * Default option value to use; defaults to nothing being selected; the value must match
+   * one of the options in the <code>options</code> field.
+   */
   default?: T;
+
+  /**
+   * Key to use for getting/setting the URL query param in the URL; defaults to no usage in the URL.
+   */
   queryId?: string;
 }
 
+/**
+ * A filter with optional auto-setting/getting from URL params
+ * 
+ * @param props
+ * @returns 
+ */
 function Filter<T>(props: FilterProps<T>): JSX.Element {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const urlParam = useUrlQueryParam<T | null>(props.queryId ?? '', props.default ?? null, props.queryId != null);
@@ -70,7 +95,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
       if (props.queryId) {
         urlParam.set(selected.value)
       }
-      props.onChange(selected);
+      if (props.onChange != null) props.onChange(selected);
     },
     [props, urlParam]
   );
