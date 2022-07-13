@@ -54,7 +54,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse {
         address
@@ -76,7 +76,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -102,7 +102,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata

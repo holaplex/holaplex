@@ -68,7 +68,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
         profileImageUrl
       }
       purchase {
-        address
+        id
         buyer
         seller
         price
@@ -106,8 +106,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       }
       lifecycle
       listing {
-        address
-        bookkeeper
+        id
         seller
         price
         nft {
@@ -144,7 +143,7 @@ query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTyp
       }
       lifecycle
       offer {
-        address
+        id
         buyer
         price
         nft {

@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import {
   Nft,
   Offer,
-  Listing,
+  AhListing,
   initMarketplaceSDK,
   AuctionHouse,
 } from '@holaplex/marketplace-js-sdk';
@@ -21,7 +21,7 @@ import { useAnalytics } from '@/common/context/AnalyticsProvider';
 interface AcceptOfferFormProps {
   nft: Nft;
   offer: Offer;
-  listing?: Listing;
+  listing?: AhListing;
   marketplace: { auctionHouses: AuctionHouse[] };
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -66,17 +66,29 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { trackNFTEvent } = useAnalytics();
+
   const onAcceptOffer = async () => {
-    if (offer) {
-      if (listing) {
-        await sdk
-          .transaction()
-          .add(sdk.offers(offer.auctionHouse).accept({ offer, nft, cancel: [listing] }))
-          .send();
-      } else {
-        await sdk.transaction().add(sdk.offers(offer.auctionHouse).accept({ offer, nft })).send();
-      }
+    if (!offer || !nft) {
+      return;
     }
+    toast('Sending the transaction to Solana.');
+    await sdk
+      .transaction()
+      .add(
+        sdk.offers(offer.auctionHouse!).accept({
+          nft,
+          offer,
+        })
+      )
+      .send();
+  };
+
+  const onCancelListing = async () => {
+    if (!listing || !nft) {
+      return;
+    }
+
+    await sdk.transaction().add(sdk.listings(offer.auctionHouse!).cancel({ listing, nft })).send();
   };
 
   const acceptOfferTx = async ({ amount }: AcceptOfferFormSchema) => {
@@ -84,7 +96,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
       return;
     }
 
-    const newActions: Action[] = [
+    let newActions: Action[] = [
       {
         name: `Accepting offer...`,
         id: `acceptOffer`,
@@ -92,6 +104,17 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         param: undefined,
       },
     ];
+    if (listing) {
+      newActions = [
+        ...newActions,
+        {
+          name: 'Cancel previous listing...',
+          id: 'cancelListing',
+          action: onCancelListing,
+          param: undefined,
+        },
+      ];
+    }
     trackNFTEvent('NFT Offer Accepted Init', Number(amount), nft);
 
     await runActions(newActions, {

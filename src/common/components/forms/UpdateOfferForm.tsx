@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Button from '../elements/Button';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Nft, Listing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 import { useAnalytics } from '@/common/context/AnalyticsProvider';
@@ -27,7 +27,7 @@ interface UpdateOfferFormProps {
   ) => Promise<ApolloQueryResult<None>>;
   loading: boolean;
   hasListing: boolean;
-  listing: Listing;
+  listing: AhListing;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
 
@@ -63,7 +63,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       toast(`Canceling current offer of ${Number(currOffer.price)}`);
       await sdk
         .transaction()
-        .add(sdk.offers(currOffer.auctionHouse).cancel({ nft, offer: currOffer }))
+        .add(sdk.offers(currOffer.auctionHouse!).cancel({ nft, offer: currOffer }))
         .send();
     }
   };
@@ -71,7 +71,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
     if (currOffer && amount) {
       toast(`Updating current offer to: ${amount} SOL`);
-      await sdk.transaction().add(sdk.offers(currOffer.auctionHouse).make({ amount, nft })).send();
+      await sdk.transaction().add(sdk.offers(currOffer.auctionHouse!).make({ amount, nft })).send();
     }
   };
 

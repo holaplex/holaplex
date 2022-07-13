@@ -14,11 +14,11 @@ export interface MarketplacePreviewData {
       handle?: string;
     };
   }[];
-  auctionHouse: {
+  auctionHouses: {
     stats?: {
       floor: string;
     };
-  };
+  }[];
   stats: {
     nfts: string;
   };

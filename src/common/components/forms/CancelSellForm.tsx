@@ -1,5 +1,5 @@
 import React, { Dispatch, FC, SetStateAction, useContext, useMemo, useState } from 'react';
-import { initMarketplaceSDK, Nft, Marketplace, Listing } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, Marketplace, AhListing } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import Button from '../elements/Button';
@@ -12,7 +12,7 @@ import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
 
 interface CancelSellFormProps {
-  listing: Listing;
+  listing: AhListing;
   nft: Nft;
   marketplace: Marketplace;
   refetch: (

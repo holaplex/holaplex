@@ -25,7 +25,6 @@ const previewSubdomains: string[] = [
   // 'paragon',
 ];
 
-
 const FeaturedMarketplacesSection: VFC = () => {
   return (
     <HomeSection>
@@ -105,7 +104,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
   const marketplaceUrl: string = `https://${finalData.subdomain}.holaplex.market`;
   const nftVolumeStr: string = Number.parseInt(finalData.stats.nfts).toLocaleString();
   const floorPriceSol: number =
-    Number.parseFloat(finalData.auctionHouse.stats?.floor || '0') / LAMPORTS_PER_SOL;
+    Number.parseFloat(finalData.auctionHouses[0].stats?.floor || '0') / LAMPORTS_PER_SOL;
 
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -169,7 +168,7 @@ const MarketplacePreview: FC<MarketplacePreviewProps> = ({ subdomain, data }) =>
 function dataAreSufficient(data?: MarketplacePreviewData): boolean {
   return (
     data != undefined &&
-    data.auctionHouse != undefined &&
+    data.auctionHouses[0] != undefined &&
     data.bannerUrl != undefined &&
     data.creators != undefined &&
     data.name != undefined &&

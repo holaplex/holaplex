@@ -23,7 +23,7 @@ import {
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
 import CancelOfferForm from '@/components/forms/CancelOfferForm';
-import { Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { Marketplace, Nft, AhListing, Offer } from '@holaplex/marketplace-js-sdk';
 import { useRouter } from 'next/router';
 import UpdateOfferForm from '../../src/common/components/forms/UpdateOfferForm';
 import SellForm from '../../src/common/components/forms/SellForm';
@@ -191,7 +191,7 @@ export default function NftByAddress({
 
   // has listed via default Holaplex marketplace (disregards others)
   const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
@@ -361,7 +361,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className={`w-full bg-gray-900 `}
@@ -427,7 +427,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className={`w-full`}
@@ -472,7 +472,7 @@ export default function NftByAddress({
                                 <AcceptOfferForm
                                   nft={nft as Nft | any}
                                   offer={topOffer as Offer}
-                                  listing={defaultListing as Listing}
+                                  listing={defaultListing as AhListing}
                                   marketplace={marketplace as Marketplace}
                                   refetch={refetch}
                                   className={`w-full`}
@@ -535,7 +535,7 @@ export default function NftByAddress({
                                   <BuyForm
                                     nft={nft as Nft | any}
                                     marketplace={marketplace as Marketplace}
-                                    listing={defaultListing as Listing}
+                                    listing={defaultListing as AhListing}
                                     refetch={refetch}
                                     className={`w-full`}
                                   />
@@ -568,7 +568,7 @@ export default function NftByAddress({
                             <BuyForm
                               nft={nft as Nft | any}
                               marketplace={marketplace as Marketplace}
-                              listing={defaultListing as Listing}
+                              listing={defaultListing as AhListing}
                               refetch={refetch}
                               className={`w-full`}
                             />
@@ -593,7 +593,7 @@ export default function NftByAddress({
                           <BuyForm
                             nft={nft as Nft | any}
                             marketplace={marketplace as Marketplace}
-                            listing={defaultListing as Listing}
+                            listing={defaultListing as AhListing}
                             refetch={refetch}
                             className={`col-span-2 w-full sm:hidden`}
                           />
@@ -641,7 +641,10 @@ export default function NftByAddress({
                               <p className="label mb-1 truncate text-base font-medium text-gray-300">
                                 {a.traitType}
                               </p>
-                              <p className="mb-0 truncate text-ellipsis" title={a.value}>
+                              <p
+                                className="mb-0 truncate text-ellipsis"
+                                title={a.value || undefined}
+                              >
                                 {a.value}
                               </p>
                             </div>
@@ -675,7 +678,7 @@ export default function NftByAddress({
                             Transaction fee
                           </p>
                           <p className={`m-0 text-base font-normal text-gray-300`}>
-                            {Number(marketplace?.auctionHouse?.sellerFeeBasisPoints) / 100}%
+                            {Number(marketplace?.auctionHouses[0]?.sellerFeeBasisPoints) / 100}%
                           </p>
                         </div>
                       </div>
@@ -708,9 +711,9 @@ export default function NftByAddress({
                   </div>
                 )}
                 {hasOffers &&
-                  offers?.map((o: Offer) => (
+                  offers?.map((o: any) => (
                     <article
-                      key={o.address}
+                      key={o.id}
                       className={`mb-4 grid rounded border border-gray-800 p-4 ${
                         isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
                       }`}
@@ -737,7 +740,7 @@ export default function NftByAddress({
                             <AcceptOfferForm
                               nft={nft as Nft | any}
                               offer={o as Offer}
-                              listing={defaultListing as Listing}
+                              listing={defaultListing as AhListing}
                               marketplace={marketplace as Marketplace}
                               refetch={refetch}
                               className={`justify-end`}
@@ -800,7 +803,7 @@ export default function NftByAddress({
               title={`Update offer`}
             >
               <UpdateOfferForm
-                listing={defaultListing as Listing}
+                listing={defaultListing as AhListing}
                 setOpen={setOfferUpdateModalVisibility}
                 nft={nft as Nft | any}
                 marketplace={marketplace as Marketplace}
@@ -831,7 +834,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as Listing}
+                listing={defaultListing as AhListing}
                 setOpen={setSellCancelModalVisibility}
                 updateListing={updateListingFromCancel}
               />
@@ -845,7 +848,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as Listing}
+                listing={defaultListing as AhListing}
                 setOpen={setSellUpdateModalVisibility}
                 offer={topOffer as Offer}
               />

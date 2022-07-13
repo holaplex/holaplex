@@ -48,9 +48,10 @@ const FeaturedBuyNowListingsSection: VFC = () => {
       dataQuery.data?.featuredListings &&
       dataQuery.data.featuredListings.length > 0 &&
       dataQuery.data.marketplace &&
-      dataQuery.data.marketplace.auctionHouse
+      dataQuery.data.marketplace.auctionHouses[0].address
     ) {
-      const auctionHouse: AuctionHouse = dataQuery.data.marketplace.auctionHouse as AuctionHouse;
+      const auctionHouse: AuctionHouse = dataQuery.data.marketplace
+        .auctionHouses[0] as AuctionHouse;
       setFeaturedListings(
         dataQuery.data.featuredListings
           .filter((v) => v.metadata !== undefined && v.nft !== undefined)
@@ -146,7 +147,7 @@ const NFTCardDataWrapper: VFC<ListingPreviewProps> = ({
       }
     } else if (!loading && called) {
       const auctionHouseMaybe: AuctionHouse | undefined | null =
-        queriedData?.marketplace?.auctionHouse;
+        queriedData?.marketplace?.auctionHouses[0];
       const nftMaybe: Nft | undefined | null = queriedData?.nft as Nft;
       if (!previewDataAreSufficient(nftMaybe, auctionHouseMaybe)) {
         onInsufficientData(address);

@@ -32,16 +32,16 @@ query shareNFT($subdomain: String!, $address: String!) {
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       price
     }
     listings {
-      address
+      id
       price
     }
     offers {
-      address
+      id
       buyer
       price
     }

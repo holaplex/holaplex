@@ -17,7 +17,7 @@ query nftCard($subdomain: String!, $address: String!) {
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse {
         address
@@ -39,7 +39,7 @@ query nftCard($subdomain: String!, $address: String!) {
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -65,7 +65,7 @@ query nftCard($subdomain: String!, $address: String!) {
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata

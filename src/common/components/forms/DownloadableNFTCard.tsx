@@ -5,24 +5,19 @@ import FeatherIcon from 'feather-icons-react';
 import * as htmlToImage from 'html-to-image';
 import { shortenAddress } from '../../../modules/utils/string';
 import { DisplaySOL } from '../CurrencyHelpers';
-import { Listing, Nft } from '@holaplex/marketplace-js-sdk';
+import { AhListing, Nft } from '@holaplex/marketplace-js-sdk';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import Link from 'next/link';
 import { Avatar } from '@/common/components/elements/Avatar';
 
 interface DownloadNFTCardProps {
   nft: Nft;
-  listing: Listing;
+  listing: AhListing;
   updatedPrice?: number;
   ref?: MutableRefObject<any>;
 }
 
-export const TwitterNFTCard: FC<DownloadNFTCardProps> = ({
-  nft,
-  listing,
-  updatedPrice,
-  ref,
-}) => {
+export const TwitterNFTCard: FC<DownloadNFTCardProps> = ({ nft, listing, updatedPrice, ref }) => {
   return (
     <div
       id={`shareNFTCard`}
@@ -82,11 +77,7 @@ export const TwitterNFTCard: FC<DownloadNFTCardProps> = ({
   );
 };
 
-const DownloadNFTCard: FC<DownloadNFTCardProps> = ({
-  nft,
-  listing,
-  updatedPrice,
-}) => {
+const DownloadNFTCard: FC<DownloadNFTCardProps> = ({ nft, listing, updatedPrice }) => {
   const downloadRef = useRef(null);
   const downloadSharableImage = async () => {
     if (window) {
@@ -103,12 +94,7 @@ const DownloadNFTCard: FC<DownloadNFTCardProps> = ({
 
   return (
     <>
-      <TwitterNFTCard
-        nft={nft}
-        listing={listing}
-        updatedPrice={updatedPrice}
-        ref={downloadRef}
-      />
+      <TwitterNFTCard nft={nft} listing={listing} updatedPrice={updatedPrice} ref={downloadRef} />
       <div className={`mt-16`}>
         <div className={`flex w-full justify-between gap-4`}>
           <Button secondary onClick={downloadSharableImage}>

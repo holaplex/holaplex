@@ -23,6 +23,24 @@ export type Scalars = {
   PublicKey: any;
   /** U64 */
   U64: any;
+  /** Uuid */
+  Uuid: any;
+};
+
+export type AhListing = {
+  __typename?: 'AhListing';
+  auctionHouse?: Maybe<AuctionHouse>;
+  canceledAt?: Maybe<Scalars['DateTimeUtc']>;
+  createdAt: Scalars['DateTimeUtc'];
+  id: Scalars['Uuid'];
+  metadata: Scalars['PublicKey'];
+  nft?: Maybe<Nft>;
+  price: Scalars['U64'];
+  purchaseId?: Maybe<Scalars['Uuid']>;
+  seller: Scalars['PublicKey'];
+  tokenSize: Scalars['Int'];
+  tradeState: Scalars['String'];
+  tradeStateBump: Scalars['Int'];
 };
 
 /** Filter on NFT attributes */
@@ -75,7 +93,7 @@ export type Bid = {
 export type BidReceipt = {
   __typename?: 'BidReceipt';
   address: Scalars['String'];
-  auctionHouse: Scalars['PublicKey'];
+  auctionHouse?: Maybe<AuctionHouse>;
   bookkeeper: Scalars['PublicKey'];
   bump: Scalars['Int'];
   buyer: Scalars['PublicKey'];
@@ -105,6 +123,7 @@ export type Creator = {
   profile?: Maybe<TwitterProfile>;
   stats: Array<MintStats>;
 };
+
 
 export type CreatorStatsArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
@@ -140,7 +159,7 @@ export type FollowEvent = {
   feedEventId: Scalars['String'];
   graphConnectionAddress: Scalars['PublicKey'];
   profile?: Maybe<TwitterProfile>;
-  walletAddress: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
 };
 
 export type GraphConnection = {
@@ -169,16 +188,16 @@ export type ListingEvent = {
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
   lifecycle: Scalars['String'];
-  listing?: Maybe<ListingReceipt>;
-  listingReceiptAddress: Scalars['PublicKey'];
+  listing?: Maybe<AhListing>;
+  listingId: Scalars['Uuid'];
   profile?: Maybe<TwitterProfile>;
-  walletAddress: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
 };
 
 export type ListingReceipt = {
   __typename?: 'ListingReceipt';
   address: Scalars['String'];
-  auctionHouse: Scalars['PublicKey'];
+  auctionHouse?: Maybe<AuctionHouse>;
   bookkeeper: Scalars['PublicKey'];
   bump: Scalars['Int'];
   canceledAt?: Maybe<Scalars['DateTimeUtc']>;
@@ -200,24 +219,23 @@ export type MarketStats = {
 
 export type Marketplace = {
   __typename?: 'Marketplace';
-  auctionHouse?: Maybe<AuctionHouse>;
-  auctionHouseAddress: Scalars['String'];
+  auctionHouses: Array<AuctionHouse>;
   bannerUrl: Scalars['String'];
-  configAddress: Scalars['String'];
+  configAddress: Scalars['PublicKey'];
   creators: Array<StoreCreator>;
   description: Scalars['String'];
   logoUrl: Scalars['String'];
   name: Scalars['String'];
   ownerAddress: Scalars['String'];
   stats?: Maybe<MarketStats>;
-  storeAddress?: Maybe<Scalars['String']>;
+  storeAddress?: Maybe<Scalars['PublicKey']>;
   subdomain: Scalars['String'];
 };
 
 export type MetadataJson = {
   __typename?: 'MetadataJson';
   address: Scalars['String'];
-  creatorAddress: Scalars['String'];
+  creatorAddress?: Maybe<Scalars['String']>;
   creatorTwitterHandle?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   mintAddress: Scalars['String'];
@@ -231,12 +249,12 @@ export type MintEvent = {
   metadataAddress: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   profile?: Maybe<TwitterProfile>;
-  walletAddress: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
 };
 
 export type MintStats = {
   __typename?: 'MintStats';
-  auctionHouse: Scalars['String'];
+  auctionHouse?: Maybe<AuctionHouse>;
   average?: Maybe<Scalars['U64']>;
   floor?: Maybe<Scalars['U64']>;
   mint: Scalars['String'];
@@ -250,15 +268,16 @@ export type Nft = {
   address: Scalars['String'];
   attributes: Array<NftAttribute>;
   category: Scalars['String'];
+  collection?: Maybe<Nft>;
   createdAt?: Maybe<Scalars['DateTimeUtc']>;
   creators: Array<NftCreator>;
   description: Scalars['String'];
   files: Array<NftFile>;
   image: Scalars['String'];
-  listings: Array<ListingReceipt>;
+  listings: Array<AhListing>;
   mintAddress: Scalars['String'];
   name: Scalars['String'];
-  offers: Array<BidReceipt>;
+  offers: Array<Offer>;
   owner?: Maybe<NftOwner>;
   /**
    * The JSON parser with which the NFT was processed by the indexer
@@ -271,9 +290,11 @@ export type Nft = {
    */
   parser?: Maybe<Scalars['String']>;
   primarySaleHappened: Scalars['Boolean'];
-  purchases: Array<PurchaseReceipt>;
+  purchases: Array<Purchase>;
   sellerFeeBasisPoints: Scalars['Int'];
+  updateAuthorityAddress: Scalars['String'];
 };
+
 
 export type NftImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
@@ -283,7 +304,7 @@ export type NftActivity = {
   __typename?: 'NftActivity';
   activityType: Scalars['String'];
   address: Scalars['String'];
-  auctionHouse: Scalars['String'];
+  auctionHouse?: Maybe<AuctionHouse>;
   createdAt: Scalars['DateTimeUtc'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
@@ -294,8 +315,8 @@ export type NftActivity = {
 export type NftAttribute = {
   __typename?: 'NftAttribute';
   metadataAddress: Scalars['String'];
-  traitType: Scalars['String'];
-  value: Scalars['String'];
+  traitType?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
 };
 
 export type NftCount = {
@@ -303,6 +324,7 @@ export type NftCount = {
   listed: Scalars['Int'];
   total: Scalars['Int'];
 };
+
 
 export type NftCountListedArgs = {
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
@@ -334,15 +356,42 @@ export type NftOwner = {
   twitterHandle?: Maybe<Scalars['String']>;
 };
 
+export type NftsStats = {
+  __typename?: 'NftsStats';
+  /** The total number of buy-now listings */
+  buyNowListings: Scalars['Int'];
+  /** The total number of NFTs with active offers */
+  nftsWithActiveOffers: Scalars['Int'];
+  /** The total number of indexed NFTs */
+  totalNfts: Scalars['Int'];
+};
+
+export type Offer = {
+  __typename?: 'Offer';
+  auctionHouse?: Maybe<AuctionHouse>;
+  buyer: Scalars['PublicKey'];
+  canceledAt?: Maybe<Scalars['DateTimeUtc']>;
+  createdAt: Scalars['DateTimeUtc'];
+  id: Scalars['Uuid'];
+  metadata: Scalars['PublicKey'];
+  nft?: Maybe<Nft>;
+  price: Scalars['U64'];
+  purchaseId?: Maybe<Scalars['Uuid']>;
+  tokenAccount?: Maybe<Scalars['String']>;
+  tokenSize: Scalars['Int'];
+  tradeState: Scalars['String'];
+  tradeStateBump: Scalars['Int'];
+};
+
 export type OfferEvent = {
   __typename?: 'OfferEvent';
-  bidReceiptAddress: Scalars['PublicKey'];
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
   lifecycle: Scalars['String'];
-  offer?: Maybe<BidReceipt>;
+  offer?: Maybe<Offer>;
+  offerId: Scalars['Uuid'];
   profile?: Maybe<TwitterProfile>;
-  walletAddress: Scalars['String'];
+  walletAddress: Scalars['PublicKey'];
 };
 
 export type PriceChart = {
@@ -358,26 +407,33 @@ export type PricePoint = {
   price: Scalars['U64'];
 };
 
+export type ProfilesStats = {
+  __typename?: 'ProfilesStats';
+  /** The total number of indexed profiles */
+  totalProfiles: Scalars['Int'];
+};
+
+export type Purchase = {
+  __typename?: 'Purchase';
+  auctionHouse?: Maybe<AuctionHouse>;
+  buyer: Scalars['PublicKey'];
+  createdAt: Scalars['DateTimeUtc'];
+  id: Scalars['Uuid'];
+  metadata: Scalars['PublicKey'];
+  nft?: Maybe<Nft>;
+  price: Scalars['U64'];
+  seller: Scalars['PublicKey'];
+  tokenSize: Scalars['Int'];
+};
+
 export type PurchaseEvent = {
   __typename?: 'PurchaseEvent';
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
   profile?: Maybe<TwitterProfile>;
-  purchase?: Maybe<PurchaseReceipt>;
-  purchaseReceiptAddress: Scalars['PublicKey'];
-  walletAddress: Scalars['String'];
-};
-
-export type PurchaseReceipt = {
-  __typename?: 'PurchaseReceipt';
-  address: Scalars['String'];
-  auctionHouse: Scalars['PublicKey'];
-  buyer: Scalars['PublicKey'];
-  createdAt: Scalars['DateTimeUtc'];
-  metadata: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
-  price: Scalars['U64'];
-  seller: Scalars['PublicKey'];
+  purchase?: Maybe<Purchase>;
+  purchaseId: Scalars['Uuid'];
+  walletAddress: Scalars['PublicKey'];
 };
 
 export type QueryRoot = {
@@ -393,28 +449,46 @@ export type QueryRoot = {
   feedEvents: Array<FeedEvent>;
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
+  /** Returns the latest on chain events using the graph_program. */
+  latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
   /** A marketplace */
   marketplace?: Maybe<Marketplace>;
+  /** Get multiple marketplaces; results will be in alphabetical order by subdomain */
+  marketplaces: Array<Marketplace>;
   /** returns metadata_jsons matching the term */
   metadataJsons: Array<MetadataJson>;
+  /** Get an NFT by metadata address. */
   nft?: Maybe<Nft>;
+  /** Get an NFT by mint address. */
+  nftByMintAddress?: Maybe<Nft>;
   nftCounts: NftCount;
   nfts: Array<Nft>;
+  /** Get a list of NFTs by mint address. */
+  nftsByMintAddress: Array<Nft>;
+  /** Stats aggregated across all indexed NFTs */
+  nftsStats: NftsStats;
   offer?: Maybe<BidReceipt>;
   profile?: Maybe<TwitterProfile>;
   /** returns profiles matching the search term */
   profiles: Array<Wallet>;
+  /** returns stats about profiles */
+  profilesStats: ProfilesStats;
+  /** returns all the collections matching the search term */
+  searchCollections: Array<MetadataJson>;
   /** A storefront */
   storefront?: Maybe<Storefront>;
   storefronts: Array<Storefront>;
   wallet: Wallet;
+  wallets: Array<Wallet>;
 };
+
 
 export type QueryRootActivitiesArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
+
 
 export type QueryRootChartsArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
@@ -423,6 +497,7 @@ export type QueryRootChartsArgs = {
   startDate: Scalars['DateTimeUtc'];
 };
 
+
 export type QueryRootConnectionsArgs = {
   from?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
@@ -430,9 +505,11 @@ export type QueryRootConnectionsArgs = {
   to?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
+
 export type QueryRootCreatorArgs = {
   address: Scalars['String'];
 };
+
 
 export type QueryRootEnrichedBondingChangesArgs = {
   address: Scalars['PublicKey'];
@@ -442,10 +519,15 @@ export type QueryRootEnrichedBondingChangesArgs = {
   stopUnixTime: Scalars['NaiveDateTime'];
 };
 
+
 export type QueryRootFeaturedListingsArgs = {
+  auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
-  offset: Scalars['Int'];
+  limitPerSeller?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  sellerExclusions?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
+
 
 export type QueryRootFeedEventsArgs = {
   excludeTypes?: InputMaybe<Array<Scalars['String']>>;
@@ -454,15 +536,33 @@ export type QueryRootFeedEventsArgs = {
   wallet: Scalars['PublicKey'];
 };
 
+
 export type QueryRootFollowWalletsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   wallet?: InputMaybe<Scalars['PublicKey']>;
 };
 
+
+export type QueryRootLatestFeedEventsArgs = {
+  cursor: Scalars['String'];
+  includeTypes?: InputMaybe<Array<Scalars['String']>>;
+  isForward: Scalars['Boolean'];
+  limit: Scalars['Int'];
+};
+
+
 export type QueryRootMarketplaceArgs = {
   subdomain: Scalars['String'];
 };
+
+
+export type QueryRootMarketplacesArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  subdomains?: InputMaybe<Array<Scalars['String']>>;
+};
+
 
 export type QueryRootMetadataJsonsArgs = {
   limit: Scalars['Int'];
@@ -470,13 +570,21 @@ export type QueryRootMetadataJsonsArgs = {
   term: Scalars['String'];
 };
 
+
 export type QueryRootNftArgs = {
   address: Scalars['String'];
 };
 
+
+export type QueryRootNftByMintAddressArgs = {
+  address: Scalars['String'];
+};
+
+
 export type QueryRootNftCountsArgs = {
   creators: Array<Scalars['PublicKey']>;
 };
+
 
 export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
@@ -488,15 +596,26 @@ export type QueryRootNftsArgs = {
   offerers?: InputMaybe<Array<Scalars['PublicKey']>>;
   offset: Scalars['Int'];
   owners?: InputMaybe<Array<Scalars['PublicKey']>>;
+  term?: InputMaybe<Scalars['String']>;
+  updateAuthorities?: InputMaybe<Array<Scalars['PublicKey']>>;
+  withOffers?: InputMaybe<Scalars['Boolean']>;
 };
+
+
+export type QueryRootNftsByMintAddressArgs = {
+  addresses: Array<Scalars['PublicKey']>;
+};
+
 
 export type QueryRootOfferArgs = {
   address: Scalars['String'];
 };
 
+
 export type QueryRootProfileArgs = {
   handle: Scalars['String'];
 };
+
 
 export type QueryRootProfilesArgs = {
   limit: Scalars['Int'];
@@ -504,12 +623,26 @@ export type QueryRootProfilesArgs = {
   term: Scalars['String'];
 };
 
+
+export type QueryRootSearchCollectionsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  term: Scalars['String'];
+};
+
+
 export type QueryRootStorefrontArgs = {
   subdomain: Scalars['String'];
 };
 
+
 export type QueryRootWalletArgs = {
   address: Scalars['PublicKey'];
+};
+
+
+export type QueryRootWalletsArgs = {
+  addresses: Array<Scalars['PublicKey']>;
 };
 
 export type StoreCreator = {
@@ -557,6 +690,7 @@ export type Wallet = {
   twitterHandle?: Maybe<Scalars['String']>;
 };
 
+
 export type WalletNftCountsArgs = {
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
@@ -569,9 +703,11 @@ export type WalletNftCount = {
   owned: Scalars['Int'];
 };
 
+
 export type WalletNftCountListedArgs = {
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
+
 
 export type WalletNftCountOfferedArgs = {
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
@@ -581,51 +717,8 @@ export type ActivityPageQueryVariables = Exact<{
   address: Scalars['PublicKey'];
 }>;
 
-export type ActivityPageQuery = {
-  __typename?: 'QueryRoot';
-  wallet: {
-    __typename: 'Wallet';
-    address: any;
-    bids: Array<{
-      __typename: 'Bid';
-      listingAddress: string;
-      bidderAddress: string;
-      lastBidTime: string;
-      lastBidAmount: any;
-      cancelled: boolean;
-      listing?: {
-        __typename?: 'Listing';
-        address: string;
-        ended: boolean;
-        storefront?: {
-          __typename: 'Storefront';
-          ownerAddress: string;
-          subdomain: string;
-          title: string;
-          description: string;
-          faviconUrl: string;
-          logoUrl: string;
-          bannerUrl: string;
-        } | null;
-        nfts: Array<{
-          __typename: 'Nft';
-          address: string;
-          name: string;
-          description: string;
-          image: string;
-        }>;
-        bids: Array<{
-          __typename?: 'Bid';
-          bidderAddress: string;
-          lastBidTime: string;
-          lastBidAmount: any;
-          cancelled: boolean;
-          listingAddress: string;
-        }>;
-      } | null;
-    }>;
-  };
-};
+
+export type ActivityPageQuery = { __typename?: 'QueryRoot', wallet: { __typename: 'Wallet', address: any, bids: Array<{ __typename: 'Bid', listingAddress: string, bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listing?: { __typename?: 'Listing', address: string, ended: boolean, storefront?: { __typename: 'Storefront', ownerAddress: string, subdomain: string, title: string, description: string, faviconUrl: string, logoUrl: string, bannerUrl: string } | null, nfts: Array<{ __typename: 'Nft', address: string, name: string, description: string, image: string }>, bids: Array<{ __typename?: 'Bid', bidderAddress: string, lastBidTime: string, lastBidAmount: any, cancelled: boolean, listingAddress: string }> } | null }> } };
 
 export type CreatedNfTsQueryVariables = Exact<{
   creator: Scalars['PublicKey'];
@@ -634,94 +727,8 @@ export type CreatedNfTsQueryVariables = Exact<{
   subdomain: Scalars['String'];
 }>;
 
-export type CreatedNfTsQuery = {
-  __typename?: 'QueryRoot';
-  marketplace?: {
-    __typename?: 'Marketplace';
-    subdomain: string;
-    name: string;
-    description: string;
-    logoUrl: string;
-    bannerUrl: string;
-    ownerAddress: string;
-    creators: Array<{
-      __typename?: 'StoreCreator';
-      creatorAddress: string;
-      storeConfigAddress: string;
-    }>;
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      treasuryMint: string;
-      auctionHouseTreasury: string;
-      treasuryWithdrawalDestination: string;
-      feeWithdrawalDestination: string;
-      authority: string;
-      creator: string;
-      auctionHouseFeeAccount: string;
-      bump: number;
-      treasuryBump: number;
-      feePayerBump: number;
-      sellerFeeBasisPoints: number;
-      requiresSignOff: boolean;
-      canChangeSalePrice: boolean;
-    } | null;
-  } | null;
-  nfts: Array<{
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  }>;
-};
+
+export type CreatedNfTsQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> } | null, nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }> };
 
 export type OwnedNfTsQueryVariables = Exact<{
   address: Scalars['PublicKey'];
@@ -730,120 +737,15 @@ export type OwnedNfTsQueryVariables = Exact<{
   subdomain: Scalars['String'];
 }>;
 
-export type OwnedNfTsQuery = {
-  __typename?: 'QueryRoot';
-  marketplace?: {
-    __typename?: 'Marketplace';
-    subdomain: string;
-    name: string;
-    description: string;
-    logoUrl: string;
-    bannerUrl: string;
-    ownerAddress: string;
-    creators: Array<{
-      __typename?: 'StoreCreator';
-      creatorAddress: string;
-      storeConfigAddress: string;
-    }>;
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      treasuryMint: string;
-      auctionHouseTreasury: string;
-      treasuryWithdrawalDestination: string;
-      feeWithdrawalDestination: string;
-      authority: string;
-      creator: string;
-      auctionHouseFeeAccount: string;
-      bump: number;
-      treasuryBump: number;
-      feePayerBump: number;
-      sellerFeeBasisPoints: number;
-      requiresSignOff: boolean;
-      canChangeSalePrice: boolean;
-      stats?: {
-        __typename?: 'MintStats';
-        floor?: any | null;
-        average?: any | null;
-        volume24hr?: any | null;
-      } | null;
-    } | null;
-  } | null;
-  nfts: Array<{
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrlLowres: string;
-      } | null;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  }>;
-};
+
+export type OwnedNfTsQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null }> } | null, nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }> };
 
 export type WalletProfileQueryVariables = Exact<{
   handle: Scalars['String'];
 }>;
 
-export type WalletProfileQuery = {
-  __typename?: 'QueryRoot';
-  profile?: {
-    __typename?: 'TwitterProfile';
-    handle: string;
-    profileImageUrlLowres: string;
-    profileImageUrlHighres: string;
-    bannerImageUrl: string;
-  } | null;
-};
+
+export type WalletProfileQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null };
 
 export type FeedQueryVariables = Exact<{
   address: Scalars['PublicKey'];
@@ -852,195 +754,8 @@ export type FeedQueryVariables = Exact<{
   excludeTypes?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
-export type FeedQuery = {
-  __typename?: 'QueryRoot';
-  feedEvents: Array<
-    | {
-        __typename: 'FollowEvent';
-        feedEventId: string;
-        createdAt: any;
-        walletAddress: string;
-        graphConnectionAddress: any;
-        profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrl: string } | null;
-        connection?: {
-          __typename?: 'GraphConnection';
-          address: string;
-          from: {
-            __typename?: 'Wallet';
-            address: any;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              handle: string;
-              profileImageUrl: string;
-            } | null;
-          };
-          to: {
-            __typename?: 'Wallet';
-            address: any;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              handle: string;
-              profileImageUrl: string;
-            } | null;
-          };
-        } | null;
-      }
-    | {
-        __typename: 'ListingEvent';
-        feedEventId: string;
-        createdAt: any;
-        walletAddress: string;
-        lifecycle: string;
-        profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrl: string } | null;
-        listing?: {
-          __typename?: 'ListingReceipt';
-          address: string;
-          bookkeeper: any;
-          seller: any;
-          price: any;
-          nft?: {
-            __typename?: 'Nft';
-            name: string;
-            image: string;
-            description: string;
-            sellerFeeBasisPoints: number;
-            primarySaleHappened: boolean;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            creators: Array<{
-              __typename?: 'NftCreator';
-              address: string;
-              position?: number | null;
-              profile?: {
-                __typename?: 'TwitterProfile';
-                handle: string;
-                profileImageUrl: string;
-              } | null;
-            }>;
-          } | null;
-        } | null;
-      }
-    | {
-        __typename: 'MintEvent';
-        feedEventId: string;
-        createdAt: any;
-        walletAddress: string;
-        profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrl: string } | null;
-        nft?: {
-          __typename?: 'Nft';
-          name: string;
-          image: string;
-          description: string;
-          sellerFeeBasisPoints: number;
-          primarySaleHappened: boolean;
-          address: string;
-          mintAddress: string;
-          owner?: {
-            __typename?: 'NftOwner';
-            address: string;
-            associatedTokenAccountAddress: string;
-            twitterHandle?: string | null;
-          } | null;
-          creators: Array<{
-            __typename?: 'NftCreator';
-            address: string;
-            position?: number | null;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              handle: string;
-              profileImageUrl: string;
-            } | null;
-          }>;
-        } | null;
-      }
-    | {
-        __typename: 'OfferEvent';
-        feedEventId: string;
-        createdAt: any;
-        walletAddress: string;
-        lifecycle: string;
-        profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrl: string } | null;
-        offer?: {
-          __typename?: 'BidReceipt';
-          address: string;
-          buyer: any;
-          price: any;
-          nft?: {
-            __typename?: 'Nft';
-            name: string;
-            image: string;
-            description: string;
-            sellerFeeBasisPoints: number;
-            primarySaleHappened: boolean;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            creators: Array<{
-              __typename?: 'NftCreator';
-              address: string;
-              position?: number | null;
-              profile?: {
-                __typename?: 'TwitterProfile';
-                handle: string;
-                profileImageUrl: string;
-              } | null;
-            }>;
-          } | null;
-        } | null;
-      }
-    | {
-        __typename: 'PurchaseEvent';
-        feedEventId: string;
-        createdAt: any;
-        walletAddress: string;
-        profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrl: string } | null;
-        purchase?: {
-          __typename?: 'PurchaseReceipt';
-          address: string;
-          buyer: any;
-          seller: any;
-          price: any;
-          nft?: {
-            __typename?: 'Nft';
-            name: string;
-            image: string;
-            description: string;
-            sellerFeeBasisPoints: number;
-            primarySaleHappened: boolean;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            creators: Array<{
-              __typename?: 'NftCreator';
-              address: string;
-              position?: number | null;
-              profile?: {
-                __typename?: 'TwitterProfile';
-                handle: string;
-                profileImageUrl: string;
-              } | null;
-            }>;
-          } | null;
-        } | null;
-      }
-  >;
-};
+
+export type FeedQuery = { __typename?: 'QueryRoot', feedEvents: Array<{ __typename: 'FollowEvent', feedEventId: string, createdAt: any, walletAddress: any, graphConnectionAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null } } | null } | { __typename: 'ListingEvent', feedEventId: string, createdAt: any, walletAddress: any, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, listing?: { __typename?: 'AhListing', id: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | null } | { __typename: 'MintEvent', feedEventId: string, createdAt: any, walletAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | { __typename: 'OfferEvent', feedEventId: string, createdAt: any, walletAddress: any, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, offer?: { __typename?: 'Offer', id: any, buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | null } | { __typename: 'PurchaseEvent', feedEventId: string, createdAt: any, walletAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null, purchase?: { __typename?: 'Purchase', id: any, buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string } | null }> } | null } | null }> };
 
 export type WhoToFollowQueryVariables = Exact<{
   wallet: Scalars['PublicKey'];
@@ -1048,276 +763,46 @@ export type WhoToFollowQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type WhoToFollowQuery = {
-  __typename?: 'QueryRoot';
-  followWallets: Array<{
-    __typename?: 'Wallet';
-    address: any;
-    profile?: {
-      __typename?: 'TwitterProfile';
-      handle: string;
-      profileImageUrlLowres: string;
-    } | null;
-  }>;
-};
+
+export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
 
 export type FeaturedBuyNowListingsQueryVariables = Exact<{
   marketplace: Scalars['String'];
   limit: Scalars['Int'];
 }>;
 
-export type FeaturedBuyNowListingsQuery = {
-  __typename?: 'QueryRoot';
-  featuredListings: Array<{
-    __typename?: 'ListingReceipt';
-    address: string;
-    metadata: any;
-    nft?: {
-      __typename?: 'Nft';
-      address: string;
-      name: string;
-      sellerFeeBasisPoints: number;
-      mintAddress: string;
-      description: string;
-      image: string;
-      primarySaleHappened: boolean;
-      creators: Array<{
-        __typename?: 'NftCreator';
-        address: string;
-        share: number;
-        verified: boolean;
-      }>;
-      owner?: {
-        __typename?: 'NftOwner';
-        address: string;
-        associatedTokenAccountAddress: string;
-      } | null;
-      purchases: Array<{
-        __typename?: 'PurchaseReceipt';
-        address: string;
-        buyer: any;
-        auctionHouse: any;
-        price: any;
-        createdAt: any;
-      }>;
-      listings: Array<{
-        __typename?: 'ListingReceipt';
-        address: string;
-        tradeState: string;
-        seller: any;
-        metadata: any;
-        auctionHouse: any;
-        price: any;
-        tradeStateBump: number;
-        createdAt: any;
-        canceledAt?: any | null;
-      }>;
-      offers: Array<{
-        __typename?: 'BidReceipt';
-        address: string;
-        tradeState: string;
-        buyer: any;
-        metadata: any;
-        auctionHouse: any;
-        price: any;
-        tradeStateBump: number;
-        tokenAccount?: string | null;
-        createdAt: any;
-        canceledAt?: any | null;
-      }>;
-    } | null;
-  }>;
-  marketplace?: {
-    __typename?: 'Marketplace';
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      treasuryMint: string;
-      auctionHouseTreasury: string;
-      treasuryWithdrawalDestination: string;
-      feeWithdrawalDestination: string;
-      authority: string;
-      creator: string;
-      auctionHouseFeeAccount: string;
-      bump: number;
-      treasuryBump: number;
-      feePayerBump: number;
-      sellerFeeBasisPoints: number;
-      requiresSignOff: boolean;
-      canChangeSalePrice: boolean;
-    } | null;
-  } | null;
-};
+
+export type FeaturedBuyNowListingsQuery = { __typename?: 'QueryRoot', featuredListings: Array<{ __typename?: 'ListingReceipt', address: string, metadata: any, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> } | null }>, marketplace?: { __typename?: 'Marketplace', auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> } | null };
 
 export type FeaturedProfilesQueryVariables = Exact<{
   userWallet?: InputMaybe<Scalars['PublicKey']>;
   limit: Scalars['Int'];
 }>;
 
-export type FeaturedProfilesQuery = {
-  __typename?: 'QueryRoot';
-  followWallets: Array<{
-    __typename?: 'Wallet';
-    address: any;
-    profile?: {
-      __typename?: 'TwitterProfile';
-      handle: string;
-      profileImageUrlHighres: string;
-      bannerImageUrl: string;
-    } | null;
-    nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
-  }>;
-};
+
+export type FeaturedProfilesQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
 
 export type MarketplacePreviewQueryVariables = Exact<{
   subdomain: Scalars['String'];
 }>;
 
-export type MarketplacePreviewQuery = {
-  __typename?: 'QueryRoot';
-  marketplace?: {
-    __typename?: 'Marketplace';
-    subdomain: string;
-    name: string;
-    bannerUrl: string;
-    creators: Array<{
-      __typename?: 'StoreCreator';
-      creatorAddress: string;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrlHighres: string;
-      } | null;
-    }>;
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      stats?: { __typename?: 'MintStats'; floor?: any | null } | null;
-    } | null;
-    stats?: { __typename?: 'MarketStats'; nfts?: any | null } | null;
-  } | null;
-};
+
+export type MarketplacePreviewQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, bannerUrl: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string } | null }>, auctionHouses: Array<{ __typename?: 'AuctionHouse', stats?: { __typename?: 'MintStats', floor?: any | null } | null }>, stats?: { __typename?: 'MarketStats', nfts?: any | null } | null } | null };
 
 export type ProfilePreviewQueryVariables = Exact<{
   address: Scalars['PublicKey'];
 }>;
 
-export type ProfilePreviewQuery = {
-  __typename?: 'QueryRoot';
-  wallet: {
-    __typename?: 'Wallet';
-    address: any;
-    profile?: {
-      __typename?: 'TwitterProfile';
-      handle: string;
-      profileImageUrlHighres: string;
-      bannerImageUrl: string;
-    } | null;
-    nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
-  };
-};
+
+export type ProfilePreviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type NftMarketplaceQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['String'];
 }>;
 
-export type NftMarketplaceQuery = {
-  __typename?: 'QueryRoot';
-  marketplace?: {
-    __typename?: 'Marketplace';
-    subdomain: string;
-    name: string;
-    description: string;
-    logoUrl: string;
-    bannerUrl: string;
-    ownerAddress: string;
-    creators: Array<{
-      __typename?: 'StoreCreator';
-      creatorAddress: string;
-      storeConfigAddress: string;
-    }>;
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      treasuryMint: string;
-      auctionHouseTreasury: string;
-      treasuryWithdrawalDestination: string;
-      feeWithdrawalDestination: string;
-      authority: string;
-      creator: string;
-      auctionHouseFeeAccount: string;
-      bump: number;
-      treasuryBump: number;
-      feePayerBump: number;
-      sellerFeeBasisPoints: number;
-      requiresSignOff: boolean;
-      canChangeSalePrice: boolean;
-      stats?: {
-        __typename?: 'MintStats';
-        floor?: any | null;
-        average?: any | null;
-        volume24hr?: any | null;
-      } | null;
-    } | null;
-  } | null;
-  nft?: {
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    category: string;
-    image: string;
-    primarySaleHappened: boolean;
-    files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value: string;
-      traitType: string;
-    }>;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  } | null;
-};
+
+export type NftMarketplaceQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null }> } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, category: string, image: string, primarySaleHappened: boolean, files: Array<{ __typename?: 'NftFile', uri: string, fileType: string }>, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> } | null };
 
 export type OffersPageQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -1326,338 +811,33 @@ export type OffersPageQueryVariables = Exact<{
   offset: Scalars['Int'];
 }>;
 
-export type OffersPageQuery = {
-  __typename?: 'QueryRoot';
-  marketplace?: {
-    __typename?: 'Marketplace';
-    subdomain: string;
-    name: string;
-    description: string;
-    logoUrl: string;
-    bannerUrl: string;
-    ownerAddress: string;
-    creators: Array<{
-      __typename?: 'StoreCreator';
-      creatorAddress: string;
-      storeConfigAddress: string;
-    }>;
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      treasuryMint: string;
-      auctionHouseTreasury: string;
-      treasuryWithdrawalDestination: string;
-      feeWithdrawalDestination: string;
-      authority: string;
-      creator: string;
-      auctionHouseFeeAccount: string;
-      bump: number;
-      treasuryBump: number;
-      feePayerBump: number;
-      sellerFeeBasisPoints: number;
-      requiresSignOff: boolean;
-      canChangeSalePrice: boolean;
-      stats?: {
-        __typename?: 'MintStats';
-        floor?: any | null;
-        average?: any | null;
-        volume24hr?: any | null;
-      } | null;
-    } | null;
-  } | null;
-  sentOffers: Array<{
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  }>;
-  receivedOffers: Array<{
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  }>;
-};
+
+export type OffersPageQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null }> } | null, sentOffers: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }>, receivedOffers: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }> };
 
 export type NftCardQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['String'];
 }>;
 
-export type NftCardQuery = {
-  __typename?: 'QueryRoot';
-  nft?: {
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  } | null;
-  marketplace?: {
-    __typename?: 'Marketplace';
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      treasuryMint: string;
-      auctionHouseTreasury: string;
-      treasuryWithdrawalDestination: string;
-      feeWithdrawalDestination: string;
-      authority: string;
-      creator: string;
-      auctionHouseFeeAccount: string;
-      bump: number;
-      treasuryBump: number;
-      feePayerBump: number;
-      sellerFeeBasisPoints: number;
-      requiresSignOff: boolean;
-      canChangeSalePrice: boolean;
-    } | null;
-  } | null;
-};
+
+export type NftCardQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> } | null, marketplace?: { __typename?: 'Marketplace', auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> } | null };
 
 export type NftPageQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
 
-export type NftPageQuery = {
-  __typename?: 'QueryRoot';
-  nft?: {
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value: string;
-      traitType: string;
-    }>;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: { __typename?: 'NftOwner'; address: string } | null;
-    purchases: Array<{
-      __typename?: 'PurchaseReceipt';
-      address: string;
-      buyer: any;
-      auctionHouse: any;
-      price: any;
-      createdAt: any;
-    }>;
-    listings: Array<{
-      __typename?: 'ListingReceipt';
-      address: string;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-    offers: Array<{
-      __typename?: 'BidReceipt';
-      address: string;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      auctionHouse: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-    }>;
-  } | null;
-};
+
+export type NftPageQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> } | null };
 
 export type ShareNftQueryVariables = Exact<{
   subdomain: Scalars['String'];
   address: Scalars['String'];
 }>;
 
-export type ShareNftQuery = {
-  __typename?: 'QueryRoot';
-  marketplace?: {
-    __typename?: 'Marketplace';
-    subdomain: string;
-    name: string;
-    description: string;
-    logoUrl: string;
-    bannerUrl: string;
-    auctionHouse?: {
-      __typename?: 'AuctionHouse';
-      address: string;
-      stats?: {
-        __typename?: 'MintStats';
-        floor?: any | null;
-        average?: any | null;
-        volume24hr?: any | null;
-      } | null;
-    } | null;
-  } | null;
-  nft?: {
-    __typename?: 'Nft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{ __typename?: 'PurchaseReceipt'; address: string; buyer: any; price: any }>;
-    listings: Array<{ __typename?: 'ListingReceipt'; address: string; price: any }>;
-    offers: Array<{ __typename?: 'BidReceipt'; address: string; buyer: any; price: any }>;
-  } | null;
-};
 
-export type ConnectionNodeFragment = {
-  __typename?: 'Wallet';
-  address: any;
-  profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrlLowres: string } | null;
-};
+export type ShareNftQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null }> } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any }>, listings: Array<{ __typename?: 'AhListing', id: any, price: any }>, offers: Array<{ __typename?: 'Offer', id: any, buyer: any, price: any }> } | null };
+
+export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null };
 
 export type AllConnectionsFromQueryVariables = Exact<{
   from: Scalars['PublicKey'];
@@ -1665,21 +845,8 @@ export type AllConnectionsFromQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type AllConnectionsFromQuery = {
-  __typename?: 'QueryRoot';
-  connections: Array<{
-    __typename?: 'GraphConnection';
-    to: {
-      __typename?: 'Wallet';
-      address: any;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrlLowres: string;
-      } | null;
-    };
-  }>;
-};
+
+export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }> };
 
 export type AllConnectionsToQueryVariables = Exact<{
   to: Scalars['PublicKey'];
@@ -1687,42 +854,15 @@ export type AllConnectionsToQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type AllConnectionsToQuery = {
-  __typename?: 'QueryRoot';
-  connections: Array<{
-    __typename?: 'GraphConnection';
-    from: {
-      __typename?: 'Wallet';
-      address: any;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrlLowres: string;
-      } | null;
-    };
-  }>;
-};
+
+export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }> };
 
 export type GetCollectedByQueryVariables = Exact<{
   creator: Scalars['PublicKey'];
 }>;
 
-export type GetCollectedByQuery = {
-  __typename?: 'QueryRoot';
-  nfts: Array<{
-    __typename?: 'Nft';
-    address: string;
-    owner?: {
-      __typename?: 'NftOwner';
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        profileImageUrlLowres: string;
-        handle: string;
-      } | null;
-    } | null;
-  }>;
-};
+
+export type GetCollectedByQuery = { __typename?: 'QueryRoot', nfts: Array<{ __typename?: 'Nft', address: string, owner?: { __typename?: 'NftOwner', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, profileImageUrlLowres: string, handle: string } | null } | null }> };
 
 export type GetConnectedWalletProfileDataQueryVariables = Exact<{
   address: Scalars['PublicKey'];
@@ -1730,243 +870,120 @@ export type GetConnectedWalletProfileDataQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type GetConnectedWalletProfileDataQuery = {
-  __typename?: 'QueryRoot';
-  wallet: {
-    __typename?: 'Wallet';
-    address: any;
-    nftCounts: {
-      __typename?: 'WalletNftCount';
-      owned: number;
-      created: number;
-      offered: number;
-      listed: number;
-    };
-    connectionCounts: { __typename?: 'ConnectionCounts'; fromCount: number; toCount: number };
-    profile?: {
-      __typename?: 'TwitterProfile';
-      handle: string;
-      profileImageUrlLowres: string;
-      profileImageUrlHighres: string;
-    } | null;
-  };
-  followers: Array<{
-    __typename?: 'GraphConnection';
-    from: {
-      __typename?: 'Wallet';
-      address: any;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrlLowres: string;
-      } | null;
-    };
-  }>;
-  following: Array<{
-    __typename?: 'GraphConnection';
-    to: {
-      __typename?: 'Wallet';
-      address: any;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrlLowres: string;
-      } | null;
-    };
-  }>;
-};
+
+export type GetConnectedWalletProfileDataQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number, offered: number, listed: number }, connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number }, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }, followers: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }>, following: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }> };
 
 export type GetProfileFollowerOverviewQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
 }>;
 
-export type GetProfileFollowerOverviewQuery = {
-  __typename?: 'QueryRoot';
-  wallet: {
-    __typename?: 'Wallet';
-    connectionCounts: { __typename?: 'ConnectionCounts'; fromCount: number; toCount: number };
-  };
-  connections: Array<{
-    __typename?: 'GraphConnection';
-    from: {
-      __typename?: 'Wallet';
-      address: any;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        handle: string;
-        profileImageUrl: string;
-        bannerImageUrl: string;
-      } | null;
-    };
-  }>;
-};
+
+export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrl: string, bannerImageUrl: string } | null } }> };
 
 export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
 }>;
 
-export type GetProfileInfoFromPubKeyQuery = {
-  __typename?: 'QueryRoot';
-  wallet: {
-    __typename?: 'Wallet';
-    profile?: {
-      __typename?: 'TwitterProfile';
-      handle: string;
-      profileImageUrlLowres: string;
-      bannerImageUrl: string;
-    } | null;
-  };
-};
+
+export type GetProfileInfoFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } };
 
 export type GetProfileInfoFromTwitterHandleQueryVariables = Exact<{
   handle: Scalars['String'];
 }>;
 
-export type GetProfileInfoFromTwitterHandleQuery = {
-  __typename?: 'QueryRoot';
-  profile?: {
-    __typename?: 'TwitterProfile';
-    walletAddress?: string | null;
-    handle: string;
-    profileImageUrl: string;
-    bannerImageUrl: string;
-  } | null;
-};
+
+export type GetProfileInfoFromTwitterHandleQuery = { __typename?: 'QueryRoot', profile?: { __typename?: 'TwitterProfile', walletAddress?: string | null, handle: string, profileImageUrl: string, bannerImageUrl: string } | null };
 
 export type IsXFollowingYQueryVariables = Exact<{
   xPubKey: Scalars['PublicKey'];
   yPubKey: Scalars['PublicKey'];
 }>;
 
-export type IsXFollowingYQuery = {
-  __typename?: 'QueryRoot';
-  connections: Array<{ __typename?: 'GraphConnection'; address: string }>;
-};
+
+export type IsXFollowingYQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', address: string }> };
 
 export type TwitterHandleFromPubKeyQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
 }>;
 
-export type TwitterHandleFromPubKeyQuery = {
-  __typename?: 'QueryRoot';
-  wallet: {
-    __typename?: 'Wallet';
-    profile?: { __typename?: 'TwitterProfile'; handle: string } | null;
-  };
-};
+
+export type TwitterHandleFromPubKeyQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', profile?: { __typename?: 'TwitterProfile', handle: string } | null } };
 
 export type MetadataSearchQueryVariables = Exact<{
   term: Scalars['String'];
 }>;
 
-export type MetadataSearchQuery = {
-  __typename?: 'QueryRoot';
-  metadataJsons: Array<{
-    __typename?: 'MetadataJson';
-    name: string;
-    address: string;
-    image?: string | null;
-    creatorAddress: string;
-    creatorTwitterHandle?: string | null;
-  }>;
-};
+
+export type MetadataSearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress?: string | null, creatorTwitterHandle?: string | null }> };
 
 export type ProfileSearchQueryVariables = Exact<{
   term: Scalars['String'];
 }>;
 
-export type ProfileSearchQuery = {
-  __typename?: 'QueryRoot';
-  profiles: Array<{
-    __typename?: 'Wallet';
-    address: any;
-    twitterHandle?: string | null;
-    profile?: { __typename?: 'TwitterProfile'; profileImageUrl: string } | null;
-  }>;
-};
+
+export type ProfileSearchQuery = { __typename?: 'QueryRoot', profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string } | null }> };
 
 export type SearchQueryVariables = Exact<{
   term: Scalars['String'];
   walletAddress: Scalars['PublicKey'];
 }>;
 
-export type SearchQuery = {
-  __typename?: 'QueryRoot';
-  metadataJsons: Array<{
-    __typename?: 'MetadataJson';
-    name: string;
-    address: string;
-    image?: string | null;
-    creatorAddress: string;
-    creatorTwitterHandle?: string | null;
-  }>;
-  profiles: Array<{
-    __typename?: 'Wallet';
-    address: any;
-    twitterHandle?: string | null;
-    profile?: { __typename?: 'TwitterProfile'; profileImageUrl: string; handle: string } | null;
-  }>;
-  wallet: {
-    __typename?: 'Wallet';
-    address: any;
-    twitterHandle?: string | null;
-    profile?: { __typename?: 'TwitterProfile'; profileImageUrl: string; handle: string } | null;
-  };
-};
+
+export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, image?: string | null, creatorAddress?: string | null, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrl: string, handle: string } | null } };
 
 export const ConnectionNodeFragmentDoc = gql`
-  fragment ConnectionNode on Wallet {
-    address
-    profile {
-      handle
-      profileImageUrlLowres
-    }
+    fragment ConnectionNode on Wallet {
+  address
+  profile {
+    handle
+    profileImageUrlLowres
   }
-`;
+}
+    `;
 export const ActivityPageDocument = gql`
-  query activityPage($address: PublicKey!) {
-    wallet(address: $address) {
+    query activityPage($address: PublicKey!) {
+  wallet(address: $address) {
+    __typename
+    address
+    bids {
       __typename
-      address
-      bids {
-        __typename
-        listingAddress
-        bidderAddress
-        lastBidTime
-        lastBidAmount
-        cancelled
-        listing {
+      listingAddress
+      bidderAddress
+      lastBidTime
+      lastBidAmount
+      cancelled
+      listing {
+        address
+        ended
+        storefront {
+          __typename
+          ownerAddress
+          subdomain
+          title
+          description
+          faviconUrl
+          logoUrl
+          bannerUrl
+        }
+        nfts {
+          __typename
           address
-          ended
-          storefront {
-            __typename
-            ownerAddress
-            subdomain
-            title
-            description
-            faviconUrl
-            logoUrl
-            bannerUrl
-          }
-          nfts {
-            __typename
-            address
-            name
-            description
-            image
-          }
-          bids {
-            bidderAddress
-            lastBidTime
-            lastBidAmount
-            cancelled
-            listingAddress
-          }
+          name
+          description
+          image
+        }
+        bids {
+          bidderAddress
+          lastBidTime
+          lastBidAmount
+          cancelled
+          listingAddress
         }
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useActivityPageQuery__
@@ -1984,44 +1001,68 @@ export const ActivityPageDocument = gql`
  *   },
  * });
  */
-export function useActivityPageQuery(
-  baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(
-    ActivityPageDocument,
-    options
-  );
-}
-export function useActivityPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(
-    ActivityPageDocument,
-    options
-  );
-}
+export function useActivityPageQuery(baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(ActivityPageDocument, options);
+      }
+export function useActivityPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(ActivityPageDocument, options);
+        }
 export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery>;
 export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
-export type ActivityPageQueryResult = Apollo.QueryResult<
-  ActivityPageQuery,
-  ActivityPageQueryVariables
->;
+export type ActivityPageQueryResult = Apollo.QueryResult<ActivityPageQuery, ActivityPageQueryVariables>;
 export const CreatedNfTsDocument = gql`
-  query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
-    marketplace(subdomain: $subdomain) {
-      subdomain
-      name
-      description
-      logoUrl
-      bannerUrl
-      ownerAddress
-      creators {
-        creatorAddress
-        storeConfigAddress
-      }
-      auctionHouses {
+    query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouses {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+  nfts(creators: [$creator], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
         address
         treasuryMint
         auctionHouseTreasury
@@ -2037,57 +1078,65 @@ export const CreatedNfTsDocument = gql`
         requiresSignOff
         canChangeSalePrice
       }
+      price
+      createdAt
     }
-    nfts(creators: [$creator], limit: $limit, offset: $offset) {
-      address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
         address
-        share
-        verified
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      owner {
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
         address
-        associatedTokenAccountAddress
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      purchases {
-        address
-        buyer
-        auctionHouse
-        price
-        createdAt
-      }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
-`;
+}
+    `;
 
 /**
  * __useCreatedNfTsQuery__
@@ -2108,41 +1157,77 @@ export const CreatedNfTsDocument = gql`
  *   },
  * });
  */
-export function useCreatedNfTsQuery(
-  baseOptions: Apollo.QueryHookOptions<CreatedNfTsQuery, CreatedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CreatedNfTsQuery, CreatedNfTsQueryVariables>(CreatedNfTsDocument, options);
-}
-export function useCreatedNfTsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CreatedNfTsQuery, CreatedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CreatedNfTsQuery, CreatedNfTsQueryVariables>(
-    CreatedNfTsDocument,
-    options
-  );
-}
+export function useCreatedNfTsQuery(baseOptions: Apollo.QueryHookOptions<CreatedNfTsQuery, CreatedNfTsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreatedNfTsQuery, CreatedNfTsQueryVariables>(CreatedNfTsDocument, options);
+      }
+export function useCreatedNfTsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreatedNfTsQuery, CreatedNfTsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreatedNfTsQuery, CreatedNfTsQueryVariables>(CreatedNfTsDocument, options);
+        }
 export type CreatedNfTsQueryHookResult = ReturnType<typeof useCreatedNfTsQuery>;
 export type CreatedNfTsLazyQueryHookResult = ReturnType<typeof useCreatedNfTsLazyQuery>;
-export type CreatedNfTsQueryResult = Apollo.QueryResult<
-  CreatedNfTsQuery,
-  CreatedNfTsQueryVariables
->;
+export type CreatedNfTsQueryResult = Apollo.QueryResult<CreatedNfTsQuery, CreatedNfTsQueryVariables>;
 export const OwnedNfTsDocument = gql`
-  query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
-    marketplace(subdomain: $subdomain) {
-      subdomain
-      name
-      description
-      logoUrl
-      bannerUrl
-      ownerAddress
-      creators {
-        creatorAddress
-        storeConfigAddress
+    query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouses {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
       }
-      auctionHouses {
+    }
+  }
+  nfts(owners: [$address], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+      verified
+      profile {
+        handle
+        profileImageUrlLowres
+      }
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
         address
         treasuryMint
         auctionHouseTreasury
@@ -2157,67 +1242,66 @@ export const OwnedNfTsDocument = gql`
         sellerFeeBasisPoints
         requiresSignOff
         canChangeSalePrice
-        stats {
-          floor
-          average
-          volume24hr
-        }
       }
+      price
+      createdAt
     }
-    nfts(owners: [$address], limit: $limit, offset: $offset) {
-      address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
         address
-        share
-        verified
-        profile {
-          handle
-          profileImageUrlLowres
-        }
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      owner {
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
         address
-        associatedTokenAccountAddress
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      purchases {
-        address
-        buyer
-        auctionHouse
-        price
-        createdAt
-      }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
-`;
+}
+    `;
 
 /**
  * __useOwnedNfTsQuery__
@@ -2238,31 +1322,27 @@ export const OwnedNfTsDocument = gql`
  *   },
  * });
  */
-export function useOwnedNfTsQuery(
-  baseOptions: Apollo.QueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
-}
-export function useOwnedNfTsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
-}
+export function useOwnedNfTsQuery(baseOptions: Apollo.QueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
+      }
+export function useOwnedNfTsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
+        }
 export type OwnedNfTsQueryHookResult = ReturnType<typeof useOwnedNfTsQuery>;
 export type OwnedNfTsLazyQueryHookResult = ReturnType<typeof useOwnedNfTsLazyQuery>;
 export type OwnedNfTsQueryResult = Apollo.QueryResult<OwnedNfTsQuery, OwnedNfTsQueryVariables>;
 export const WalletProfileDocument = gql`
-  query walletProfile($handle: String!) {
-    profile(handle: $handle) {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
-    }
+    query walletProfile($handle: String!) {
+  profile(handle: $handle) {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
   }
-`;
+}
+    `;
 
 /**
  * __useWalletProfileQuery__
@@ -2280,42 +1360,97 @@ export const WalletProfileDocument = gql`
  *   },
  * });
  */
-export function useWalletProfileQuery(
-  baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(
-    WalletProfileDocument,
-    options
-  );
-}
-export function useWalletProfileLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(
-    WalletProfileDocument,
-    options
-  );
-}
+export function useWalletProfileQuery(baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
+      }
+export function useWalletProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(WalletProfileDocument, options);
+        }
 export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
 export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
-export type WalletProfileQueryResult = Apollo.QueryResult<
-  WalletProfileQuery,
-  WalletProfileQueryVariables
->;
+export type WalletProfileQueryResult = Apollo.QueryResult<WalletProfileQuery, WalletProfileQueryVariables>;
 export const FeedDocument = gql`
-  query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
-    feedEvents(wallet: $address, limit: $limit, offset: $offset, excludeTypes: $excludeTypes) {
-      __typename
-      ... on MintEvent {
-        feedEventId
-        createdAt
-        walletAddress
-        profile {
-          handle
-          profileImageUrl
+    query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
+  feedEvents(
+    wallet: $address
+    limit: $limit
+    offset: $offset
+    excludeTypes: $excludeTypes
+  ) {
+    __typename
+    ... on MintEvent {
+      feedEventId
+      createdAt
+      walletAddress
+      profile {
+        handle
+        profileImageUrl
+      }
+      nft {
+        name
+        image(width: 600)
+        description
+        owner {
+          address
+          associatedTokenAccountAddress
+          twitterHandle
         }
+        sellerFeeBasisPoints
+        primarySaleHappened
+        creators {
+          address
+          position
+          profile {
+            handle
+            profileImageUrl
+          }
+        }
+        address
+        mintAddress
+      }
+    }
+    ... on FollowEvent {
+      feedEventId
+      createdAt
+      walletAddress
+      profile {
+        handle
+        profileImageUrl
+      }
+      graphConnectionAddress
+      connection {
+        address
+        from {
+          address
+          profile {
+            handle
+            profileImageUrl
+          }
+        }
+        to {
+          address
+          profile {
+            handle
+            profileImageUrl
+          }
+        }
+      }
+    }
+    ... on PurchaseEvent {
+      feedEventId
+      createdAt
+      walletAddress
+      profile {
+        handle
+        profileImageUrl
+      }
+      purchase {
+        id
+        buyer
+        seller
+        price
         nft {
           name
           image(width: 600)
@@ -2339,148 +1474,84 @@ export const FeedDocument = gql`
           mintAddress
         }
       }
-      ... on FollowEvent {
-        feedEventId
-        createdAt
-        walletAddress
-        profile {
-          handle
-          profileImageUrl
-        }
-        graphConnectionAddress
-        connection {
-          address
-          from {
+    }
+    ... on ListingEvent {
+      feedEventId
+      createdAt
+      walletAddress
+      profile {
+        handle
+        profileImageUrl
+      }
+      lifecycle
+      listing {
+        id
+        seller
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
             address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
             profile {
               handle
               profileImageUrl
             }
           }
-          to {
+          address
+          mintAddress
+        }
+      }
+    }
+    ... on OfferEvent {
+      feedEventId
+      createdAt
+      walletAddress
+      profile {
+        handle
+        profileImageUrl
+      }
+      lifecycle
+      offer {
+        id
+        buyer
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
             address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
             profile {
               handle
               profileImageUrl
             }
           }
-        }
-      }
-      ... on PurchaseEvent {
-        feedEventId
-        createdAt
-        walletAddress
-        profile {
-          handle
-          profileImageUrl
-        }
-        purchase {
           address
-          buyer
-          seller
-          price
-          nft {
-            name
-            image(width: 600)
-            description
-            owner {
-              address
-              associatedTokenAccountAddress
-              twitterHandle
-            }
-            sellerFeeBasisPoints
-            primarySaleHappened
-            creators {
-              address
-              position
-              profile {
-                handle
-                profileImageUrl
-              }
-            }
-            address
-            mintAddress
-          }
-        }
-      }
-      ... on ListingEvent {
-        feedEventId
-        createdAt
-        walletAddress
-        profile {
-          handle
-          profileImageUrl
-        }
-        lifecycle
-        listing {
-          address
-          bookkeeper
-          seller
-          price
-          nft {
-            name
-            image(width: 600)
-            description
-            owner {
-              address
-              associatedTokenAccountAddress
-              twitterHandle
-            }
-            sellerFeeBasisPoints
-            primarySaleHappened
-            creators {
-              address
-              position
-              profile {
-                handle
-                profileImageUrl
-              }
-            }
-            address
-            mintAddress
-          }
-        }
-      }
-      ... on OfferEvent {
-        feedEventId
-        createdAt
-        walletAddress
-        profile {
-          handle
-          profileImageUrl
-        }
-        lifecycle
-        offer {
-          address
-          buyer
-          price
-          nft {
-            name
-            image(width: 600)
-            description
-            owner {
-              address
-              associatedTokenAccountAddress
-              twitterHandle
-            }
-            sellerFeeBasisPoints
-            primarySaleHappened
-            creators {
-              address
-              position
-              profile {
-                handle
-                profileImageUrl
-              }
-            }
-            address
-            mintAddress
-          }
+          mintAddress
         }
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useFeedQuery__
@@ -2502,29 +1573,27 @@ export const FeedDocument = gql`
  * });
  */
 export function useFeedQuery(baseOptions: Apollo.QueryHookOptions<FeedQuery, FeedQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<FeedQuery, FeedQueryVariables>(FeedDocument, options);
-}
-export function useFeedLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<FeedQuery, FeedQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<FeedQuery, FeedQueryVariables>(FeedDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeedQuery, FeedQueryVariables>(FeedDocument, options);
+      }
+export function useFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeedQuery, FeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeedQuery, FeedQueryVariables>(FeedDocument, options);
+        }
 export type FeedQueryHookResult = ReturnType<typeof useFeedQuery>;
 export type FeedLazyQueryHookResult = ReturnType<typeof useFeedLazyQuery>;
 export type FeedQueryResult = Apollo.QueryResult<FeedQuery, FeedQueryVariables>;
 export const WhoToFollowDocument = gql`
-  query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
-    followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
-      address
-      profile {
-        handle
-        profileImageUrlLowres
-      }
+    query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
+  followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
+    address
+    profile {
+      handle
+      profileImageUrlLowres
     }
   }
-`;
+}
+    `;
 
 /**
  * __useWhoToFollowQuery__
@@ -2544,101 +1613,136 @@ export const WhoToFollowDocument = gql`
  *   },
  * });
  */
-export function useWhoToFollowQuery(
-  baseOptions: Apollo.QueryHookOptions<WhoToFollowQuery, WhoToFollowQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<WhoToFollowQuery, WhoToFollowQueryVariables>(WhoToFollowDocument, options);
-}
-export function useWhoToFollowLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<WhoToFollowQuery, WhoToFollowQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<WhoToFollowQuery, WhoToFollowQueryVariables>(
-    WhoToFollowDocument,
-    options
-  );
-}
+export function useWhoToFollowQuery(baseOptions: Apollo.QueryHookOptions<WhoToFollowQuery, WhoToFollowQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WhoToFollowQuery, WhoToFollowQueryVariables>(WhoToFollowDocument, options);
+      }
+export function useWhoToFollowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhoToFollowQuery, WhoToFollowQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WhoToFollowQuery, WhoToFollowQueryVariables>(WhoToFollowDocument, options);
+        }
 export type WhoToFollowQueryHookResult = ReturnType<typeof useWhoToFollowQuery>;
 export type WhoToFollowLazyQueryHookResult = ReturnType<typeof useWhoToFollowLazyQuery>;
-export type WhoToFollowQueryResult = Apollo.QueryResult<
-  WhoToFollowQuery,
-  WhoToFollowQueryVariables
->;
+export type WhoToFollowQueryResult = Apollo.QueryResult<WhoToFollowQuery, WhoToFollowQueryVariables>;
 export const FeaturedBuyNowListingsDocument = gql`
-  query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
-    featuredListings(limit: $limit, offset: 0) {
+    query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
+  featuredListings(limit: $limit, offset: 0) {
+    address
+    metadata
+    nft {
       address
-      metadata
-      nft {
+      name
+      sellerFeeBasisPoints
+      mintAddress
+      description
+      image
+      primarySaleHappened
+      creators {
         address
-        name
-        sellerFeeBasisPoints
-        mintAddress
-        description
-        image
-        primarySaleHappened
-        creators {
-          address
-          share
-          verified
-        }
-        owner {
-          address
-          associatedTokenAccountAddress
-        }
-        purchases {
-          address
-          buyer
-          auctionHouse
-          price
-          createdAt
-        }
-        listings {
-          address
-          tradeState
-          seller
-          metadata
-          auctionHouse
-          price
-          tradeStateBump
-          createdAt
-          canceledAt
-        }
-        offers {
-          address
-          tradeState
-          buyer
-          metadata
-          auctionHouse
-          price
-          tradeStateBump
-          tokenAccount
-          createdAt
-          canceledAt
-        }
+        share
+        verified
       }
-    }
-    marketplace(subdomain: $marketplace) {
-      auctionHouses {
+      owner {
         address
-        treasuryMint
-        auctionHouseTreasury
-        treasuryWithdrawalDestination
-        feeWithdrawalDestination
-        authority
-        creator
-        auctionHouseFeeAccount
-        bump
-        treasuryBump
-        feePayerBump
-        sellerFeeBasisPoints
-        requiresSignOff
-        canChangeSalePrice
+        associatedTokenAccountAddress
+      }
+      purchases {
+        id
+        buyer
+        auctionHouse {
+          address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
+        }
+        price
+        createdAt
+      }
+      listings {
+        id
+        tradeState
+        seller
+        metadata
+        auctionHouse {
+          address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
+        }
+        price
+        tradeStateBump
+        createdAt
+        canceledAt
+      }
+      offers {
+        id
+        tradeState
+        buyer
+        metadata
+        auctionHouse {
+          address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
+        }
+        price
+        tradeStateBump
+        tokenAccount
+        createdAt
+        canceledAt
       }
     }
   }
-`;
+  marketplace(subdomain: $marketplace) {
+    auctionHouses {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+}
+    `;
 
 /**
  * __useFeaturedBuyNowListingsQuery__
@@ -2657,56 +1761,33 @@ export const FeaturedBuyNowListingsDocument = gql`
  *   },
  * });
  */
-export function useFeaturedBuyNowListingsQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    FeaturedBuyNowListingsQuery,
-    FeaturedBuyNowListingsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>(
-    FeaturedBuyNowListingsDocument,
-    options
-  );
-}
-export function useFeaturedBuyNowListingsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    FeaturedBuyNowListingsQuery,
-    FeaturedBuyNowListingsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>(
-    FeaturedBuyNowListingsDocument,
-    options
-  );
-}
-export type FeaturedBuyNowListingsQueryHookResult = ReturnType<
-  typeof useFeaturedBuyNowListingsQuery
->;
-export type FeaturedBuyNowListingsLazyQueryHookResult = ReturnType<
-  typeof useFeaturedBuyNowListingsLazyQuery
->;
-export type FeaturedBuyNowListingsQueryResult = Apollo.QueryResult<
-  FeaturedBuyNowListingsQuery,
-  FeaturedBuyNowListingsQueryVariables
->;
+export function useFeaturedBuyNowListingsQuery(baseOptions: Apollo.QueryHookOptions<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>(FeaturedBuyNowListingsDocument, options);
+      }
+export function useFeaturedBuyNowListingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>(FeaturedBuyNowListingsDocument, options);
+        }
+export type FeaturedBuyNowListingsQueryHookResult = ReturnType<typeof useFeaturedBuyNowListingsQuery>;
+export type FeaturedBuyNowListingsLazyQueryHookResult = ReturnType<typeof useFeaturedBuyNowListingsLazyQuery>;
+export type FeaturedBuyNowListingsQueryResult = Apollo.QueryResult<FeaturedBuyNowListingsQuery, FeaturedBuyNowListingsQueryVariables>;
 export const FeaturedProfilesDocument = gql`
-  query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
-    followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
-      address
-      profile {
-        handle
-        profileImageUrlHighres
-        bannerImageUrl
-      }
-      nftCounts {
-        owned
-        created
-      }
+    query featuredProfiles($userWallet: PublicKey, $limit: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: 0) {
+    address
+    profile {
+      handle
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    nftCounts {
+      owned
+      created
     }
   }
-`;
+}
+    `;
 
 /**
  * __useFeaturedProfilesQuery__
@@ -2725,54 +1806,41 @@ export const FeaturedProfilesDocument = gql`
  *   },
  * });
  */
-export function useFeaturedProfilesQuery(
-  baseOptions: Apollo.QueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(
-    FeaturedProfilesDocument,
-    options
-  );
-}
-export function useFeaturedProfilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(
-    FeaturedProfilesDocument,
-    options
-  );
-}
+export function useFeaturedProfilesQuery(baseOptions: Apollo.QueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(FeaturedProfilesDocument, options);
+      }
+export function useFeaturedProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>(FeaturedProfilesDocument, options);
+        }
 export type FeaturedProfilesQueryHookResult = ReturnType<typeof useFeaturedProfilesQuery>;
 export type FeaturedProfilesLazyQueryHookResult = ReturnType<typeof useFeaturedProfilesLazyQuery>;
-export type FeaturedProfilesQueryResult = Apollo.QueryResult<
-  FeaturedProfilesQuery,
-  FeaturedProfilesQueryVariables
->;
+export type FeaturedProfilesQueryResult = Apollo.QueryResult<FeaturedProfilesQuery, FeaturedProfilesQueryVariables>;
 export const MarketplacePreviewDocument = gql`
-  query marketplacePreview($subdomain: String!) {
-    marketplace(subdomain: $subdomain) {
-      subdomain
-      name
-      bannerUrl
-      creators {
-        creatorAddress
-        profile {
-          handle
-          profileImageUrlHighres
-        }
-      }
-      auctionHouses {
-        stats {
-          floor
-        }
-      }
-      stats {
-        nfts
+    query marketplacePreview($subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    bannerUrl
+    creators {
+      creatorAddress
+      profile {
+        handle
+        profileImageUrlHighres
       }
     }
+    auctionHouses {
+      stats {
+        floor
+      }
+    }
+    stats {
+      nfts
+    }
   }
-`;
+}
+    `;
 
 /**
  * __useMarketplacePreviewQuery__
@@ -2790,51 +1858,33 @@ export const MarketplacePreviewDocument = gql`
  *   },
  * });
  */
-export function useMarketplacePreviewQuery(
-  baseOptions: Apollo.QueryHookOptions<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>(
-    MarketplacePreviewDocument,
-    options
-  );
-}
-export function useMarketplacePreviewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    MarketplacePreviewQuery,
-    MarketplacePreviewQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>(
-    MarketplacePreviewDocument,
-    options
-  );
-}
+export function useMarketplacePreviewQuery(baseOptions: Apollo.QueryHookOptions<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>(MarketplacePreviewDocument, options);
+      }
+export function useMarketplacePreviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>(MarketplacePreviewDocument, options);
+        }
 export type MarketplacePreviewQueryHookResult = ReturnType<typeof useMarketplacePreviewQuery>;
-export type MarketplacePreviewLazyQueryHookResult = ReturnType<
-  typeof useMarketplacePreviewLazyQuery
->;
-export type MarketplacePreviewQueryResult = Apollo.QueryResult<
-  MarketplacePreviewQuery,
-  MarketplacePreviewQueryVariables
->;
+export type MarketplacePreviewLazyQueryHookResult = ReturnType<typeof useMarketplacePreviewLazyQuery>;
+export type MarketplacePreviewQueryResult = Apollo.QueryResult<MarketplacePreviewQuery, MarketplacePreviewQueryVariables>;
 export const ProfilePreviewDocument = gql`
-  query profilePreview($address: PublicKey!) {
-    wallet(address: $address) {
-      profile {
-        handle
-        profileImageUrlHighres
-        bannerImageUrl
-      }
-      address
-      nftCounts {
-        owned
-        created
-      }
+    query profilePreview($address: PublicKey!) {
+  wallet(address: $address) {
+    profile {
+      handle
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    address
+    nftCounts {
+      owned
+      created
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProfilePreviewQuery__
@@ -2852,44 +1902,82 @@ export const ProfilePreviewDocument = gql`
  *   },
  * });
  */
-export function useProfilePreviewQuery(
-  baseOptions: Apollo.QueryHookOptions<ProfilePreviewQuery, ProfilePreviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProfilePreviewQuery, ProfilePreviewQueryVariables>(
-    ProfilePreviewDocument,
-    options
-  );
-}
-export function useProfilePreviewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProfilePreviewQuery, ProfilePreviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProfilePreviewQuery, ProfilePreviewQueryVariables>(
-    ProfilePreviewDocument,
-    options
-  );
-}
+export function useProfilePreviewQuery(baseOptions: Apollo.QueryHookOptions<ProfilePreviewQuery, ProfilePreviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfilePreviewQuery, ProfilePreviewQueryVariables>(ProfilePreviewDocument, options);
+      }
+export function useProfilePreviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilePreviewQuery, ProfilePreviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfilePreviewQuery, ProfilePreviewQueryVariables>(ProfilePreviewDocument, options);
+        }
 export type ProfilePreviewQueryHookResult = ReturnType<typeof useProfilePreviewQuery>;
 export type ProfilePreviewLazyQueryHookResult = ReturnType<typeof useProfilePreviewLazyQuery>;
-export type ProfilePreviewQueryResult = Apollo.QueryResult<
-  ProfilePreviewQuery,
-  ProfilePreviewQueryVariables
->;
+export type ProfilePreviewQueryResult = Apollo.QueryResult<ProfilePreviewQuery, ProfilePreviewQueryVariables>;
 export const NftMarketplaceDocument = gql`
-  query nftMarketplace($subdomain: String!, $address: String!) {
-    marketplace(subdomain: $subdomain) {
-      subdomain
-      name
-      description
-      logoUrl
-      bannerUrl
-      ownerAddress
-      creators {
-        creatorAddress
-        storeConfigAddress
+    query nftMarketplace($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouses {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
       }
-      auctionHouses {
+    }
+  }
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    category
+    image
+    primarySaleHappened
+    files {
+      uri
+      fileType
+    }
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
         address
         treasuryMint
         auctionHouseTreasury
@@ -2904,72 +1992,66 @@ export const NftMarketplaceDocument = gql`
         sellerFeeBasisPoints
         requiresSignOff
         canChangeSalePrice
-        stats {
-          floor
-          average
-          volume24hr
-        }
       }
+      price
+      createdAt
     }
-    nft(address: $address) {
-      address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      category
-      image
-      primarySaleHappened
-      files {
-        uri
-        fileType
-      }
-      attributes {
-        metadataAddress
-        value
-        traitType
-      }
-      creators {
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
         address
-        verified
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      owner {
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
         address
-        associatedTokenAccountAddress
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      purchases {
-        address
-        buyer
-        auctionHouse
-        price
-        createdAt
-      }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
-`;
+}
+    `;
 
 /**
  * __useNftMarketplaceQuery__
@@ -2988,44 +2070,72 @@ export const NftMarketplaceDocument = gql`
  *   },
  * });
  */
-export function useNftMarketplaceQuery(
-  baseOptions: Apollo.QueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(
-    NftMarketplaceDocument,
-    options
-  );
-}
-export function useNftMarketplaceLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(
-    NftMarketplaceDocument,
-    options
-  );
-}
+export function useNftMarketplaceQuery(baseOptions: Apollo.QueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(NftMarketplaceDocument, options);
+      }
+export function useNftMarketplaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(NftMarketplaceDocument, options);
+        }
 export type NftMarketplaceQueryHookResult = ReturnType<typeof useNftMarketplaceQuery>;
 export type NftMarketplaceLazyQueryHookResult = ReturnType<typeof useNftMarketplaceLazyQuery>;
-export type NftMarketplaceQueryResult = Apollo.QueryResult<
-  NftMarketplaceQuery,
-  NftMarketplaceQueryVariables
->;
+export type NftMarketplaceQueryResult = Apollo.QueryResult<NftMarketplaceQuery, NftMarketplaceQueryVariables>;
 export const OffersPageDocument = gql`
-  query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
-    marketplace(subdomain: $subdomain) {
-      subdomain
-      name
-      description
-      logoUrl
-      bannerUrl
-      ownerAddress
-      creators {
-        creatorAddress
-        storeConfigAddress
+    query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+    creators {
+      creatorAddress
+      storeConfigAddress
+    }
+    auctionHouses {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+      stats {
+        floor
+        average
+        volume24hr
       }
-      auctionHouses {
+    }
+  }
+  sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
         address
         treasuryMint
         auctionHouseTreasury
@@ -3040,109 +2150,158 @@ export const OffersPageDocument = gql`
         sellerFeeBasisPoints
         requiresSignOff
         canChangeSalePrice
-        stats {
-          floor
-          average
-          volume24hr
-        }
       }
+      price
+      createdAt
     }
-    sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
-      address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
         address
-        verified
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      owner {
-        address
-        associatedTokenAccountAddress
-      }
-      purchases {
-        address
-        buyer
-        auctionHouse
-        price
-        createdAt
-      }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
     }
-    receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
-      address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
         address
-        verified
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      owner {
-        address
-        associatedTokenAccountAddress
-      }
-      purchases {
-        address
-        buyer
-        auctionHouse
-        price
-        createdAt
-      }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
-`;
+  receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      createdAt
+    }
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+}
+    `;
 
 /**
  * __useOffersPageQuery__
@@ -3163,76 +2322,40 @@ export const OffersPageDocument = gql`
  *   },
  * });
  */
-export function useOffersPageQuery(
-  baseOptions: Apollo.QueryHookOptions<OffersPageQuery, OffersPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<OffersPageQuery, OffersPageQueryVariables>(OffersPageDocument, options);
-}
-export function useOffersPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OffersPageQuery, OffersPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<OffersPageQuery, OffersPageQueryVariables>(
-    OffersPageDocument,
-    options
-  );
-}
+export function useOffersPageQuery(baseOptions: Apollo.QueryHookOptions<OffersPageQuery, OffersPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OffersPageQuery, OffersPageQueryVariables>(OffersPageDocument, options);
+      }
+export function useOffersPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OffersPageQuery, OffersPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OffersPageQuery, OffersPageQueryVariables>(OffersPageDocument, options);
+        }
 export type OffersPageQueryHookResult = ReturnType<typeof useOffersPageQuery>;
 export type OffersPageLazyQueryHookResult = ReturnType<typeof useOffersPageLazyQuery>;
 export type OffersPageQueryResult = Apollo.QueryResult<OffersPageQuery, OffersPageQueryVariables>;
 export const NftCardDocument = gql`
-  query nftCard($subdomain: String!, $address: String!) {
-    nft(address: $address) {
+    query nftCard($subdomain: String!, $address: String!) {
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
       address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
-        address
-        share
-        verified
-      }
-      owner {
-        address
-        associatedTokenAccountAddress
-      }
-      purchases {
-        address
-        buyer
-        auctionHouse
-        price
-        createdAt
-      }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      share
+      verified
     }
-    marketplace(subdomain: $subdomain) {
-      auctionHouses {
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
         address
         treasuryMint
         auctionHouseTreasury
@@ -3248,9 +2371,83 @@ export const NftCardDocument = gql`
         requiresSignOff
         canChangeSalePrice
       }
+      price
+      createdAt
+    }
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
-`;
+  marketplace(subdomain: $subdomain) {
+    auctionHouses {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+  }
+}
+    `;
 
 /**
  * __useNftCardQuery__
@@ -3269,76 +2466,117 @@ export const NftCardDocument = gql`
  *   },
  * });
  */
-export function useNftCardQuery(
-  baseOptions: Apollo.QueryHookOptions<NftCardQuery, NftCardQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
-}
-export function useNftCardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftCardQuery, NftCardQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
-}
+export function useNftCardQuery(baseOptions: Apollo.QueryHookOptions<NftCardQuery, NftCardQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
+      }
+export function useNftCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftCardQuery, NftCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
+        }
 export type NftCardQueryHookResult = ReturnType<typeof useNftCardQuery>;
 export type NftCardLazyQueryHookResult = ReturnType<typeof useNftCardLazyQuery>;
 export type NftCardQueryResult = Apollo.QueryResult<NftCardQuery, NftCardQueryVariables>;
 export const NftPageDocument = gql`
-  query nftPage($address: String!) {
-    nft(address: $address) {
+    query nftPage($address: String!) {
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    attributes {
+      metadataAddress
+      value
+      traitType
+    }
+    creators {
       address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      attributes {
-        metadataAddress
-        value
-        traitType
-      }
-      creators {
+      verified
+    }
+    owner {
+      address
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
         address
-        verified
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      owner {
+      price
+      createdAt
+    }
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
         address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      purchases {
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
         address
-        buyer
-        auctionHouse
-        price
-        createdAt
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
       }
-      listings {
-        address
-        tradeState
-        seller
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        address
-        tradeState
-        buyer
-        metadata
-        auctionHouse
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
     }
   }
-`;
+}
+    `;
 
 /**
  * __useNftPageQuery__
@@ -3356,71 +2594,67 @@ export const NftPageDocument = gql`
  *   },
  * });
  */
-export function useNftPageQuery(
-  baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
-}
-export function useNftPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
-}
+export function useNftPageQuery(baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+      }
+export function useNftPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
+        }
 export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
 export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
 export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;
 export const ShareNftDocument = gql`
-  query shareNFT($subdomain: String!, $address: String!) {
-    marketplace(subdomain: $subdomain) {
-      subdomain
-      name
-      description
-      logoUrl
-      bannerUrl
-      auctionHouses {
-        address
-        stats {
-          floor
-          average
-          volume24hr
-        }
-      }
-    }
-    nft(address: $address) {
+    query shareNFT($subdomain: String!, $address: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    auctionHouses {
       address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
-        address
-        verified
-      }
-      owner {
-        address
-        associatedTokenAccountAddress
-      }
-      purchases {
-        address
-        buyer
-        price
-      }
-      listings {
-        address
-        price
-      }
-      offers {
-        address
-        buyer
-        price
+      stats {
+        floor
+        average
+        volume24hr
       }
     }
   }
-`;
+  nft(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      price
+    }
+    listings {
+      id
+      price
+    }
+    offers {
+      id
+      buyer
+      price
+    }
+  }
+}
+    `;
 
 /**
  * __useShareNftQuery__
@@ -3439,31 +2673,26 @@ export const ShareNftDocument = gql`
  *   },
  * });
  */
-export function useShareNftQuery(
-  baseOptions: Apollo.QueryHookOptions<ShareNftQuery, ShareNftQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
-}
-export function useShareNftLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ShareNftQuery, ShareNftQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
-}
+export function useShareNftQuery(baseOptions: Apollo.QueryHookOptions<ShareNftQuery, ShareNftQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
+      }
+export function useShareNftLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ShareNftQuery, ShareNftQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
+        }
 export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
 export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
 export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;
 export const AllConnectionsFromDocument = gql`
-  query allConnectionsFrom($from: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
-    connections(from: [$from], limit: $limit, offset: $offset) {
-      to {
-        ...ConnectionNode
-      }
+    query allConnectionsFrom($from: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+  connections(from: [$from], limit: $limit, offset: $offset) {
+    to {
+      ...ConnectionNode
     }
   }
-  ${ConnectionNodeFragmentDoc}
-`;
+}
+    ${ConnectionNodeFragmentDoc}`;
 
 /**
  * __useAllConnectionsFromQuery__
@@ -3483,45 +2712,26 @@ export const AllConnectionsFromDocument = gql`
  *   },
  * });
  */
-export function useAllConnectionsFromQuery(
-  baseOptions: Apollo.QueryHookOptions<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(
-    AllConnectionsFromDocument,
-    options
-  );
-}
-export function useAllConnectionsFromLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AllConnectionsFromQuery,
-    AllConnectionsFromQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(
-    AllConnectionsFromDocument,
-    options
-  );
-}
-export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnectionsFromQuery>;
-export type AllConnectionsFromLazyQueryHookResult = ReturnType<
-  typeof useAllConnectionsFromLazyQuery
->;
-export type AllConnectionsFromQueryResult = Apollo.QueryResult<
-  AllConnectionsFromQuery,
-  AllConnectionsFromQueryVariables
->;
-export const AllConnectionsToDocument = gql`
-  query allConnectionsTo($to: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
-    connections(to: [$to], limit: $limit, offset: $offset) {
-      from {
-        ...ConnectionNode
+export function useAllConnectionsFromQuery(baseOptions: Apollo.QueryHookOptions<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(AllConnectionsFromDocument, options);
       }
+export function useAllConnectionsFromLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(AllConnectionsFromDocument, options);
+        }
+export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnectionsFromQuery>;
+export type AllConnectionsFromLazyQueryHookResult = ReturnType<typeof useAllConnectionsFromLazyQuery>;
+export type AllConnectionsFromQueryResult = Apollo.QueryResult<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>;
+export const AllConnectionsToDocument = gql`
+    query allConnectionsTo($to: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+  connections(to: [$to], limit: $limit, offset: $offset) {
+    from {
+      ...ConnectionNode
     }
   }
-  ${ConnectionNodeFragmentDoc}
-`;
+}
+    ${ConnectionNodeFragmentDoc}`;
 
 /**
  * __useAllConnectionsToQuery__
@@ -3541,44 +2751,31 @@ export const AllConnectionsToDocument = gql`
  *   },
  * });
  */
-export function useAllConnectionsToQuery(
-  baseOptions: Apollo.QueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(
-    AllConnectionsToDocument,
-    options
-  );
-}
-export function useAllConnectionsToLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(
-    AllConnectionsToDocument,
-    options
-  );
-}
+export function useAllConnectionsToQuery(baseOptions: Apollo.QueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(AllConnectionsToDocument, options);
+      }
+export function useAllConnectionsToLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(AllConnectionsToDocument, options);
+        }
 export type AllConnectionsToQueryHookResult = ReturnType<typeof useAllConnectionsToQuery>;
 export type AllConnectionsToLazyQueryHookResult = ReturnType<typeof useAllConnectionsToLazyQuery>;
-export type AllConnectionsToQueryResult = Apollo.QueryResult<
-  AllConnectionsToQuery,
-  AllConnectionsToQueryVariables
->;
+export type AllConnectionsToQueryResult = Apollo.QueryResult<AllConnectionsToQuery, AllConnectionsToQueryVariables>;
 export const GetCollectedByDocument = gql`
-  query getCollectedBy($creator: PublicKey!) {
-    nfts(creators: [$creator], limit: 1000, offset: 0) {
-      address
-      owner {
-        profile {
-          walletAddress
-          profileImageUrlLowres
-          handle
-        }
+    query getCollectedBy($creator: PublicKey!) {
+  nfts(creators: [$creator], limit: 1000, offset: 0) {
+    address
+    owner {
+      profile {
+        walletAddress
+        profileImageUrlLowres
+        handle
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useGetCollectedByQuery__
@@ -3596,63 +2793,49 @@ export const GetCollectedByDocument = gql`
  *   },
  * });
  */
-export function useGetCollectedByQuery(
-  baseOptions: Apollo.QueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(
-    GetCollectedByDocument,
-    options
-  );
-}
-export function useGetCollectedByLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(
-    GetCollectedByDocument,
-    options
-  );
-}
+export function useGetCollectedByQuery(baseOptions: Apollo.QueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(GetCollectedByDocument, options);
+      }
+export function useGetCollectedByLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(GetCollectedByDocument, options);
+        }
 export type GetCollectedByQueryHookResult = ReturnType<typeof useGetCollectedByQuery>;
 export type GetCollectedByLazyQueryHookResult = ReturnType<typeof useGetCollectedByLazyQuery>;
-export type GetCollectedByQueryResult = Apollo.QueryResult<
-  GetCollectedByQuery,
-  GetCollectedByQueryVariables
->;
+export type GetCollectedByQueryResult = Apollo.QueryResult<GetCollectedByQuery, GetCollectedByQueryVariables>;
 export const GetConnectedWalletProfileDataDocument = gql`
-  query getConnectedWalletProfileData($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
-    wallet(address: $address) {
-      address
-      nftCounts {
-        owned
-        created
-        offered
-        listed
-      }
-      connectionCounts {
-        fromCount
-        toCount
-      }
-      profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
-      }
+    query getConnectedWalletProfileData($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
+  wallet(address: $address) {
+    address
+    nftCounts {
+      owned
+      created
+      offered
+      listed
     }
-    followers: connections(to: [$address], limit: $limit, offset: $offset) {
-      from {
-        ...ConnectionNode
-      }
+    connectionCounts {
+      fromCount
+      toCount
     }
-    following: connections(from: [$address], limit: $limit, offset: $offset) {
-      to {
-        ...ConnectionNode
-      }
+    profile {
+      handle
+      profileImageUrlLowres
+      profileImageUrlHighres
     }
   }
-  ${ConnectionNodeFragmentDoc}
-`;
+  followers: connections(to: [$address], limit: $limit, offset: $offset) {
+    from {
+      ...ConnectionNode
+    }
+  }
+  following: connections(from: [$address], limit: $limit, offset: $offset) {
+    to {
+      ...ConnectionNode
+    }
+  }
+}
+    ${ConnectionNodeFragmentDoc}`;
 
 /**
  * __useGetConnectedWalletProfileDataQuery__
@@ -3672,60 +2855,37 @@ export const GetConnectedWalletProfileDataDocument = gql`
  *   },
  * });
  */
-export function useGetConnectedWalletProfileDataQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >(GetConnectedWalletProfileDataDocument, options);
-}
-export function useGetConnectedWalletProfileDataLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >(GetConnectedWalletProfileDataDocument, options);
-}
-export type GetConnectedWalletProfileDataQueryHookResult = ReturnType<
-  typeof useGetConnectedWalletProfileDataQuery
->;
-export type GetConnectedWalletProfileDataLazyQueryHookResult = ReturnType<
-  typeof useGetConnectedWalletProfileDataLazyQuery
->;
-export type GetConnectedWalletProfileDataQueryResult = Apollo.QueryResult<
-  GetConnectedWalletProfileDataQuery,
-  GetConnectedWalletProfileDataQueryVariables
->;
-export const GetProfileFollowerOverviewDocument = gql`
-  query getProfileFollowerOverview($pubKey: PublicKey!) {
-    wallet(address: $pubKey) {
-      connectionCounts {
-        fromCount
-        toCount
+export function useGetConnectedWalletProfileDataQuery(baseOptions: Apollo.QueryHookOptions<GetConnectedWalletProfileDataQuery, GetConnectedWalletProfileDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConnectedWalletProfileDataQuery, GetConnectedWalletProfileDataQueryVariables>(GetConnectedWalletProfileDataDocument, options);
       }
-    }
-    connections(to: [$pubKey], limit: 4, offset: 0) {
-      from {
-        address
-        profile {
-          handle
-          profileImageUrl
-          bannerImageUrl
+export function useGetConnectedWalletProfileDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConnectedWalletProfileDataQuery, GetConnectedWalletProfileDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConnectedWalletProfileDataQuery, GetConnectedWalletProfileDataQueryVariables>(GetConnectedWalletProfileDataDocument, options);
         }
+export type GetConnectedWalletProfileDataQueryHookResult = ReturnType<typeof useGetConnectedWalletProfileDataQuery>;
+export type GetConnectedWalletProfileDataLazyQueryHookResult = ReturnType<typeof useGetConnectedWalletProfileDataLazyQuery>;
+export type GetConnectedWalletProfileDataQueryResult = Apollo.QueryResult<GetConnectedWalletProfileDataQuery, GetConnectedWalletProfileDataQueryVariables>;
+export const GetProfileFollowerOverviewDocument = gql`
+    query getProfileFollowerOverview($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    connectionCounts {
+      fromCount
+      toCount
+    }
+  }
+  connections(to: [$pubKey], limit: 4, offset: 0) {
+    from {
+      address
+      profile {
+        handle
+        profileImageUrl
+        bannerImageUrl
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useGetProfileFollowerOverviewQuery__
@@ -3743,51 +2903,28 @@ export const GetProfileFollowerOverviewDocument = gql`
  *   },
  * });
  */
-export function useGetProfileFollowerOverviewQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetProfileFollowerOverviewQuery,
-    GetProfileFollowerOverviewQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>(
-    GetProfileFollowerOverviewDocument,
-    options
-  );
-}
-export function useGetProfileFollowerOverviewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetProfileFollowerOverviewQuery,
-    GetProfileFollowerOverviewQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetProfileFollowerOverviewQuery,
-    GetProfileFollowerOverviewQueryVariables
-  >(GetProfileFollowerOverviewDocument, options);
-}
-export type GetProfileFollowerOverviewQueryHookResult = ReturnType<
-  typeof useGetProfileFollowerOverviewQuery
->;
-export type GetProfileFollowerOverviewLazyQueryHookResult = ReturnType<
-  typeof useGetProfileFollowerOverviewLazyQuery
->;
-export type GetProfileFollowerOverviewQueryResult = Apollo.QueryResult<
-  GetProfileFollowerOverviewQuery,
-  GetProfileFollowerOverviewQueryVariables
->;
-export const GetProfileInfoFromPubKeyDocument = gql`
-  query getProfileInfoFromPubKey($pubKey: PublicKey!) {
-    wallet(address: $pubKey) {
-      profile {
-        handle
-        profileImageUrlLowres
-        bannerImageUrl
+export function useGetProfileFollowerOverviewQuery(baseOptions: Apollo.QueryHookOptions<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>(GetProfileFollowerOverviewDocument, options);
       }
+export function useGetProfileFollowerOverviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>(GetProfileFollowerOverviewDocument, options);
+        }
+export type GetProfileFollowerOverviewQueryHookResult = ReturnType<typeof useGetProfileFollowerOverviewQuery>;
+export type GetProfileFollowerOverviewLazyQueryHookResult = ReturnType<typeof useGetProfileFollowerOverviewLazyQuery>;
+export type GetProfileFollowerOverviewQueryResult = Apollo.QueryResult<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>;
+export const GetProfileInfoFromPubKeyDocument = gql`
+    query getProfileInfoFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
+      profileImageUrlLowres
+      bannerImageUrl
     }
   }
-`;
+}
+    `;
 
 /**
  * __useGetProfileInfoFromPubKeyQuery__
@@ -3805,50 +2942,27 @@ export const GetProfileInfoFromPubKeyDocument = gql`
  *   },
  * });
  */
-export function useGetProfileInfoFromPubKeyQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetProfileInfoFromPubKeyQuery,
-    GetProfileInfoFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(
-    GetProfileInfoFromPubKeyDocument,
-    options
-  );
-}
-export function useGetProfileInfoFromPubKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetProfileInfoFromPubKeyQuery,
-    GetProfileInfoFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(
-    GetProfileInfoFromPubKeyDocument,
-    options
-  );
-}
-export type GetProfileInfoFromPubKeyQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromPubKeyQuery
->;
-export type GetProfileInfoFromPubKeyLazyQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromPubKeyLazyQuery
->;
-export type GetProfileInfoFromPubKeyQueryResult = Apollo.QueryResult<
-  GetProfileInfoFromPubKeyQuery,
-  GetProfileInfoFromPubKeyQueryVariables
->;
+export function useGetProfileInfoFromPubKeyQuery(baseOptions: Apollo.QueryHookOptions<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(GetProfileInfoFromPubKeyDocument, options);
+      }
+export function useGetProfileInfoFromPubKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(GetProfileInfoFromPubKeyDocument, options);
+        }
+export type GetProfileInfoFromPubKeyQueryHookResult = ReturnType<typeof useGetProfileInfoFromPubKeyQuery>;
+export type GetProfileInfoFromPubKeyLazyQueryHookResult = ReturnType<typeof useGetProfileInfoFromPubKeyLazyQuery>;
+export type GetProfileInfoFromPubKeyQueryResult = Apollo.QueryResult<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>;
 export const GetProfileInfoFromTwitterHandleDocument = gql`
-  query getProfileInfoFromTwitterHandle($handle: String!) {
-    profile(handle: $handle) {
-      walletAddress
-      handle
-      profileImageUrl: profileImageUrlHighres
-      bannerImageUrl: bannerImageUrl
-    }
+    query getProfileInfoFromTwitterHandle($handle: String!) {
+  profile(handle: $handle) {
+    walletAddress
+    handle
+    profileImageUrl: profileImageUrlHighres
+    bannerImageUrl: bannerImageUrl
   }
-`;
+}
+    `;
 
 /**
  * __useGetProfileInfoFromTwitterHandleQuery__
@@ -3866,47 +2980,24 @@ export const GetProfileInfoFromTwitterHandleDocument = gql`
  *   },
  * });
  */
-export function useGetProfileInfoFromTwitterHandleQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >(GetProfileInfoFromTwitterHandleDocument, options);
-}
-export function useGetProfileInfoFromTwitterHandleLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >(GetProfileInfoFromTwitterHandleDocument, options);
-}
-export type GetProfileInfoFromTwitterHandleQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromTwitterHandleQuery
->;
-export type GetProfileInfoFromTwitterHandleLazyQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromTwitterHandleLazyQuery
->;
-export type GetProfileInfoFromTwitterHandleQueryResult = Apollo.QueryResult<
-  GetProfileInfoFromTwitterHandleQuery,
-  GetProfileInfoFromTwitterHandleQueryVariables
->;
+export function useGetProfileInfoFromTwitterHandleQuery(baseOptions: Apollo.QueryHookOptions<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>(GetProfileInfoFromTwitterHandleDocument, options);
+      }
+export function useGetProfileInfoFromTwitterHandleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>(GetProfileInfoFromTwitterHandleDocument, options);
+        }
+export type GetProfileInfoFromTwitterHandleQueryHookResult = ReturnType<typeof useGetProfileInfoFromTwitterHandleQuery>;
+export type GetProfileInfoFromTwitterHandleLazyQueryHookResult = ReturnType<typeof useGetProfileInfoFromTwitterHandleLazyQuery>;
+export type GetProfileInfoFromTwitterHandleQueryResult = Apollo.QueryResult<GetProfileInfoFromTwitterHandleQuery, GetProfileInfoFromTwitterHandleQueryVariables>;
 export const IsXFollowingYDocument = gql`
-  query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
-    connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
-      address
-    }
+    query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
+  connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
+    address
   }
-`;
+}
+    `;
 
 /**
  * __useIsXFollowingYQuery__
@@ -3925,39 +3016,26 @@ export const IsXFollowingYDocument = gql`
  *   },
  * });
  */
-export function useIsXFollowingYQuery(
-  baseOptions: Apollo.QueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(
-    IsXFollowingYDocument,
-    options
-  );
-}
-export function useIsXFollowingYLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(
-    IsXFollowingYDocument,
-    options
-  );
-}
+export function useIsXFollowingYQuery(baseOptions: Apollo.QueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(IsXFollowingYDocument, options);
+      }
+export function useIsXFollowingYLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(IsXFollowingYDocument, options);
+        }
 export type IsXFollowingYQueryHookResult = ReturnType<typeof useIsXFollowingYQuery>;
 export type IsXFollowingYLazyQueryHookResult = ReturnType<typeof useIsXFollowingYLazyQuery>;
-export type IsXFollowingYQueryResult = Apollo.QueryResult<
-  IsXFollowingYQuery,
-  IsXFollowingYQueryVariables
->;
+export type IsXFollowingYQueryResult = Apollo.QueryResult<IsXFollowingYQuery, IsXFollowingYQueryVariables>;
 export const TwitterHandleFromPubKeyDocument = gql`
-  query twitterHandleFromPubKey($pubKey: PublicKey!) {
-    wallet(address: $pubKey) {
-      profile {
-        handle
-      }
+    query twitterHandleFromPubKey($pubKey: PublicKey!) {
+  wallet(address: $pubKey) {
+    profile {
+      handle
     }
   }
-`;
+}
+    `;
 
 /**
  * __useTwitterHandleFromPubKeyQuery__
@@ -3975,51 +3053,28 @@ export const TwitterHandleFromPubKeyDocument = gql`
  *   },
  * });
  */
-export function useTwitterHandleFromPubKeyQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    TwitterHandleFromPubKeyQuery,
-    TwitterHandleFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(
-    TwitterHandleFromPubKeyDocument,
-    options
-  );
-}
-export function useTwitterHandleFromPubKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    TwitterHandleFromPubKeyQuery,
-    TwitterHandleFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(
-    TwitterHandleFromPubKeyDocument,
-    options
-  );
-}
-export type TwitterHandleFromPubKeyQueryHookResult = ReturnType<
-  typeof useTwitterHandleFromPubKeyQuery
->;
-export type TwitterHandleFromPubKeyLazyQueryHookResult = ReturnType<
-  typeof useTwitterHandleFromPubKeyLazyQuery
->;
-export type TwitterHandleFromPubKeyQueryResult = Apollo.QueryResult<
-  TwitterHandleFromPubKeyQuery,
-  TwitterHandleFromPubKeyQueryVariables
->;
+export function useTwitterHandleFromPubKeyQuery(baseOptions: Apollo.QueryHookOptions<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(TwitterHandleFromPubKeyDocument, options);
+      }
+export function useTwitterHandleFromPubKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(TwitterHandleFromPubKeyDocument, options);
+        }
+export type TwitterHandleFromPubKeyQueryHookResult = ReturnType<typeof useTwitterHandleFromPubKeyQuery>;
+export type TwitterHandleFromPubKeyLazyQueryHookResult = ReturnType<typeof useTwitterHandleFromPubKeyLazyQuery>;
+export type TwitterHandleFromPubKeyQueryResult = Apollo.QueryResult<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>;
 export const MetadataSearchDocument = gql`
-  query metadataSearch($term: String!) {
-    metadataJsons(term: $term, limit: 25, offset: 0) {
-      name
-      address
-      image
-      creatorAddress
-      creatorTwitterHandle
-    }
+    query metadataSearch($term: String!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    creatorAddress
+    creatorTwitterHandle
   }
-`;
+}
+    `;
 
 /**
  * __useMetadataSearchQuery__
@@ -4037,41 +3092,28 @@ export const MetadataSearchDocument = gql`
  *   },
  * });
  */
-export function useMetadataSearchQuery(
-  baseOptions: Apollo.QueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(
-    MetadataSearchDocument,
-    options
-  );
-}
-export function useMetadataSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(
-    MetadataSearchDocument,
-    options
-  );
-}
+export function useMetadataSearchQuery(baseOptions: Apollo.QueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(MetadataSearchDocument, options);
+      }
+export function useMetadataSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(MetadataSearchDocument, options);
+        }
 export type MetadataSearchQueryHookResult = ReturnType<typeof useMetadataSearchQuery>;
 export type MetadataSearchLazyQueryHookResult = ReturnType<typeof useMetadataSearchLazyQuery>;
-export type MetadataSearchQueryResult = Apollo.QueryResult<
-  MetadataSearchQuery,
-  MetadataSearchQueryVariables
->;
+export type MetadataSearchQueryResult = Apollo.QueryResult<MetadataSearchQuery, MetadataSearchQueryVariables>;
 export const ProfileSearchDocument = gql`
-  query profileSearch($term: String!) {
-    profiles(term: $term, limit: 10, offset: 0) {
-      address
-      twitterHandle
-      profile {
-        profileImageUrl
-      }
+    query profileSearch($term: String!) {
+  profiles(term: $term, limit: 10, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProfileSearchQuery__
@@ -4089,57 +3131,44 @@ export const ProfileSearchDocument = gql`
  *   },
  * });
  */
-export function useProfileSearchQuery(
-  baseOptions: Apollo.QueryHookOptions<ProfileSearchQuery, ProfileSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProfileSearchQuery, ProfileSearchQueryVariables>(
-    ProfileSearchDocument,
-    options
-  );
-}
-export function useProfileSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProfileSearchQuery, ProfileSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProfileSearchQuery, ProfileSearchQueryVariables>(
-    ProfileSearchDocument,
-    options
-  );
-}
+export function useProfileSearchQuery(baseOptions: Apollo.QueryHookOptions<ProfileSearchQuery, ProfileSearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfileSearchQuery, ProfileSearchQueryVariables>(ProfileSearchDocument, options);
+      }
+export function useProfileSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfileSearchQuery, ProfileSearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfileSearchQuery, ProfileSearchQueryVariables>(ProfileSearchDocument, options);
+        }
 export type ProfileSearchQueryHookResult = ReturnType<typeof useProfileSearchQuery>;
 export type ProfileSearchLazyQueryHookResult = ReturnType<typeof useProfileSearchLazyQuery>;
-export type ProfileSearchQueryResult = Apollo.QueryResult<
-  ProfileSearchQuery,
-  ProfileSearchQueryVariables
->;
+export type ProfileSearchQueryResult = Apollo.QueryResult<ProfileSearchQuery, ProfileSearchQueryVariables>;
 export const SearchDocument = gql`
-  query search($term: String!, $walletAddress: PublicKey!) {
-    metadataJsons(term: $term, limit: 25, offset: 0) {
-      name
-      address
-      image
-      creatorAddress
-      creatorTwitterHandle
-    }
-    profiles(term: $term, limit: 5, offset: 0) {
-      address
-      twitterHandle
-      profile {
-        profileImageUrl
-        handle
-      }
-    }
-    wallet(address: $walletAddress) {
-      address
-      twitterHandle
-      profile {
-        profileImageUrl
-        handle
-      }
+    query search($term: String!, $walletAddress: PublicKey!) {
+  metadataJsons(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    image
+    creatorAddress
+    creatorTwitterHandle
+  }
+  profiles(term: $term, limit: 5, offset: 0) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
     }
   }
-`;
+  wallet(address: $walletAddress) {
+    address
+    twitterHandle
+    profile {
+      profileImageUrl
+      handle
+    }
+  }
+}
+    `;
 
 /**
  * __useSearchQuery__
@@ -4158,18 +3187,14 @@ export const SearchDocument = gql`
  *   },
  * });
  */
-export function useSearchQuery(
-  baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-}
-export function useSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-}
+export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+      }
+export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+        }
 export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
 export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
 export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;

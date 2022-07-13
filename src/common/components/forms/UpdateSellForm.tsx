@@ -15,7 +15,7 @@ import AcceptOfferForm from './AcceptOfferForm';
 import {
   initMarketplaceSDK,
   Nft,
-  Listing,
+  AhListing,
   Offer,
   AuctionHouse,
 } from '@holaplex/marketplace-js-sdk';
@@ -30,7 +30,7 @@ import DownloadNFTCard from './DownloadableNFTCard';
 interface UpdateSellFormProps {
   nft: Nft;
   marketplace: { auctionHouses: AuctionHouse[] };
-  listing: Listing;
+  listing: AhListing;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<None>>;

@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { GetServerSideProps } from 'next';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -24,7 +24,7 @@ import Button from '@/components/elements/Button';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
 import Modal from '@/components/elements/Modal';
 import SellForm from '@/components/forms/SellForm';
-import { AuctionHouse, Listing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AhListing, AuctionHouse, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '@/components/forms/OfferForm';
 import UpdateSellForm from '@/components/forms/UpdateSellForm';
@@ -106,7 +106,7 @@ export const NFTCard = ({
   const hasAddedOffer = Boolean(addedOffer);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
   const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;
@@ -212,7 +212,7 @@ export const NFTCard = ({
                 <BuyForm
                   nft={nft as Nft | any}
                   marketplace={marketplace}
-                  listing={defaultListing as Listing}
+                  listing={defaultListing as AhListing}
                   refetch={refetch}
                   className={`w-32 md:w-full xl:w-32`}
                 />
@@ -259,7 +259,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           marketplace={marketplace as Marketplace}
-          listing={defaultListing as Listing}
+          listing={defaultListing as AhListing}
           setOpen={setUpdateListingVisibility}
           offer={topOffer as Offer}
         />
@@ -269,7 +269,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           marketplace={marketplace as Marketplace}
-          listing={defaultListing as Listing}
+          listing={defaultListing as AhListing}
           setOpen={setUpdateOfferVisibility}
           loading={loading}
           hasListing={hasDefaultListing}
