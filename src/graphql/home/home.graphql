@@ -1,0 +1,227 @@
+# import "../feed/feed.graphql"
+
+fragment ProfilePreview on Wallet {
+  address
+  profile {
+    handle
+    profileImageUrlHighres
+    bannerImageUrl
+  }
+  nftCounts {
+    owned
+    created
+  }
+}
+
+fragment BuyNowListing on ListingReceipt {
+  address
+  metadata
+  nft {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
+      address
+      share
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      createdAt
+    }
+    listings {
+      id
+      tradeState
+      seller
+      metadata
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      tradeStateBump
+      createdAt
+      canceledAt
+    }
+    offers {
+      id
+      tradeState
+      buyer
+      metadata
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
+      price
+      tradeStateBump
+      tokenAccount
+      createdAt
+      canceledAt
+    }
+  }
+}
+
+fragment MarketplaceAuctionHouse on Marketplace {
+  auctionHouses {
+    address
+    treasuryMint
+    auctionHouseTreasury
+    treasuryWithdrawalDestination
+    feeWithdrawalDestination
+    authority
+    creator
+    auctionHouseFeeAccount
+    bump
+    treasuryBump
+    feePayerBump
+    sellerFeeBasisPoints
+    requiresSignOff
+    canChangeSalePrice
+  }
+}
+
+fragment MarketplacePreview on Marketplace {
+  subdomain
+  name
+  bannerUrl
+  creators {
+    creatorAddress
+    profile {
+      handle
+      profileImageUrlHighres
+    }
+  }
+  auctionHouses {
+    stats {
+      floor
+    }
+  }
+  stats {
+    nfts
+  }
+}
+
+query home(
+  $userWallet: PublicKey
+  $featuredProfileLimit: Int!
+  $featuredBuyNowLimit: Int!
+  $feedEventsLimit: Int!
+) {
+  feedEvents(
+    wallet: "ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz"
+    limit: $feedEventsLimit
+    offset: 0
+    excludeTypes: ["follow"]
+  ) {
+    __typename
+    ... on MintEvent {
+      ...MintEventPreview
+    }
+    ... on FollowEvent {
+      ...FollowEventPreview
+    }
+    ... on PurchaseEvent {
+      ...PurchaseEventPreview
+    }
+    ... on ListingEvent {
+      ...ListingEventPreview
+    }
+    ... on OfferEvent {
+      ...OfferEventPreview
+    }
+  }
+
+  followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
+    ...ProfilePreview
+  }
+
+  featuredListings(limit: $featuredBuyNowLimit, offset: 0) {
+    ...BuyNowListing
+  }
+
+  buyNowMarketplace: marketplace(subdomain: "haus") {
+    ...MarketplaceAuctionHouse
+  }
+
+  featuredMarketplace0: marketplace(subdomain: "junglecats") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace1: marketplace(subdomain: "womeninnfts") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace2: marketplace(subdomain: "nft4good") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace3: marketplace(subdomain: "monkedao") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace4: marketplace(subdomain: "pixelbands") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace5: marketplace(subdomain: "event") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace6: marketplace(subdomain: "skeletoncrew") {
+    ...MarketplacePreview
+  }
+
+  featuredMarketplace7: marketplace(subdomain: "thechimpions") {
+    ...MarketplacePreview
+  }
+}

@@ -1,174 +1,233 @@
+fragment MintEventPreview on MintEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+  }
+  nft {
+    name
+    image(width: 600)
+    description
+    owner {
+      address
+      associatedTokenAccountAddress
+      twitterHandle
+    }
+    sellerFeeBasisPoints
+    primarySaleHappened
+    creators {
+      address
+      position
+      profile {
+        handle
+        profileImageUrlLowres
+        profileImageUrlHighres
+      }
+    }
+    address
+    mintAddress
+  }
+}
+
+fragment FollowEventPreview on FollowEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+  }
+  graphConnectionAddress
+  connection {
+    address
+    from {
+      address
+      profile {
+        handle
+        profileImageUrlLowres
+        profileImageUrlHighres
+      }
+    }
+    to {
+      address
+      profile {
+        handle
+        profileImageUrlLowres
+        profileImageUrlHighres
+      }
+    }
+  }
+}
+
+fragment PurchaseEventPreview on PurchaseEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  purchase {
+    id
+    buyer
+    seller
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      sellerFeeBasisPoints
+      primarySaleHappened
+      creators {
+        address
+        position
+        profile {
+          handle
+          profileImageUrlLowres
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+}
+
+fragment ListingEventPreview on ListingEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  lifecycle
+  listing {
+    id
+    seller
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      listings {
+        id
+        seller
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              handle
+              profileImageUrlLowres
+            }
+          }
+          address
+          mintAddress
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+}
+
+fragment OfferEventPreview on OfferEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  lifecycle
+  offer {
+    id
+    buyer
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      offers {
+        id
+        buyer
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              handle
+              profileImageUrlLowres
+            }
+          }
+          address
+          mintAddress
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+}
+
 query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
   feedEvents(wallet: $address, limit: $limit, offset: $offset, excludeTypes: $excludeTypes) {
     __typename
     ... on MintEvent {
-      feedEventId
-      createdAt
-      walletAddress
-      profile {
-        handle
-        profileImageUrl
-      }
-      nft {
-        name
-        image(width: 600)
-        description
-        owner {
-          address
-          associatedTokenAccountAddress
-          twitterHandle
-        }
-        sellerFeeBasisPoints
-        primarySaleHappened
-        creators {
-          address
-          position
-          profile {
-            handle
-            profileImageUrl
-          }
-        }
-        address
-        mintAddress
-      }
+      ...MintEventPreview
     }
     ... on FollowEvent {
-      feedEventId
-      createdAt
-      walletAddress
-      profile {
-        handle
-        profileImageUrl
-      }
-      graphConnectionAddress
-      connection {
-        address
-        from {
-          address
-          profile {
-            handle
-            profileImageUrl
-          }
-        }
-        to {
-          address
-          profile {
-            handle
-            profileImageUrl
-          }
-        }
-      }
+      ...FollowEventPreview
     }
     ... on PurchaseEvent {
-      feedEventId
-      createdAt
-      walletAddress
-      profile {
-        handle
-        profileImageUrl
-      }
-      purchase {
-        id
-        buyer
-        seller
-        price
-        nft {
-          name
-          image(width: 600)
-          description
-          owner {
-            address
-            associatedTokenAccountAddress
-            twitterHandle
-          }
-          sellerFeeBasisPoints
-          primarySaleHappened
-          creators {
-            address
-            position
-            profile {
-              handle
-              profileImageUrl
-            }
-          }
-          address
-          mintAddress
-        }
-      }
+      ...PurchaseEventPreview
     }
     ... on ListingEvent {
-      feedEventId
-      createdAt
-      walletAddress
-      profile {
-        handle
-        profileImageUrl
-      }
-      lifecycle
-      listing {
-        id
-        seller
-        price
-        nft {
-          name
-          image(width: 600)
-          description
-          owner {
-            address
-            associatedTokenAccountAddress
-            twitterHandle
-          }
-          sellerFeeBasisPoints
-          primarySaleHappened
-          creators {
-            address
-            position
-            profile {
-              handle
-              profileImageUrl
-            }
-          }
-          address
-          mintAddress
-        }
-      }
+      ...ListingEventPreview
     }
     ... on OfferEvent {
-      feedEventId
-      createdAt
-      walletAddress
-      profile {
-        handle
-        profileImageUrl
-      }
-      lifecycle
-      offer {
-        id
-        buyer
-        price
-        nft {
-          name
-          image(width: 600)
-          description
-          owner {
-            address
-            associatedTokenAccountAddress
-            twitterHandle
-          }
-          sellerFeeBasisPoints
-          primarySaleHappened
-          creators {
-            address
-            position
-            profile {
-              handle
-              profileImageUrl
-            }
-          }
-          address
-          mintAddress
-        }
-      }
+      ...OfferEventPreview
     }
   }
 }

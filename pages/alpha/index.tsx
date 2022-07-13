@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { FeedQuery, useFeedQuery, useWhoToFollowQuery } from 'src/graphql/indexerTypes';
-import { FeedCard, LoadingFeedCard, LoadingFeedItem } from '@/common/components/feed/FeedCard';
+import { FeedCard, LoadingFeedCard, LoadingFeedItem } from 'src/views/alpha/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
   FeedCardAttributes,
@@ -13,16 +13,16 @@ import {
   shouldAggregateFollows,
   shouldAggregateSaleEvents,
   User,
-} from '@/common/components/feed/feed.utils';
+} from 'src/views/alpha/feed.utils';
 
-import Footer, { SmallFooter } from '@/common/components/home/Footer';
-import { EmptyStateCTA } from '@/common/components/feed/EmptyStateCTA';
-import WhoToFollowList from '@/common/components/feed/WhoToFollowList';
+import Footer, { SmallFooter } from 'src/views/home/Footer';
+import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
+import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import { Button5 } from '@/common/components/elements/Button2';
-import EmptyFeedCTA from '@/common/components/feed/EmptyFeedCTA';
-import { useConnectedWalletProfile } from '@/common/context/ConnectedWalletProfileProvider';
+import { Button5 } from 'src/components/Button2';
+import EmptyFeedCTA from 'src/views/alpha/EmptyFeedCTA';
+import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
 const AGGREGATE_EVENT_LIMIT = 6;
@@ -66,10 +66,7 @@ const AlphaPage = ({ address }: { address: string }) => {
     variables: { wallet: myPubkey, limit: 25 },
     skip: !myPubkey,
   });
-  const profilesToFollow: User[] = (whoToFollowData?.followWallets || []).map((u) => ({
-    address: u.address,
-    profile: { handle: u.profile?.handle, profileImageUrl: u.profile?.profileImageUrlLowres },
-  }));
+  const profilesToFollow: User[] = whoToFollowData?.followWallets || [];
 
   // API is returning duplicates for some reason
   const myFollowingList: string[] | undefined = [
@@ -311,7 +308,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               </>
             )}
             {/* In case you manage to jump over the midway loadpoint */}
-            <InView threshold={0.1} onChange={loadMore}></InView>
+            <InView as="div" threshold={0.1} onChange={loadMore}></InView>
           </div>
           {/*       {!hasMoreFeedEvents && (
               <EmptyStateCTA header="No more events to load">

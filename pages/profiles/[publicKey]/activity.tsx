@@ -1,11 +1,11 @@
-import { ActivityContent } from '@/common/components/elements/ActivityContent';
+import { ActivityContent } from 'src/components/ActivityContent';
 import { GetServerSideProps } from 'next';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '@/modules/server-side/getProfile';
-import { ProfileDataProvider } from '@/common/context/ProfileData';
-import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
+} from '@/views/profiles/getProfileServerSideProps';
+import { ProfileDataProvider } from 'src/views/profiles/ProfileDataProvider';
+import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);

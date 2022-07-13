@@ -5,7 +5,6 @@ query shareNFT($subdomain: String!, $address: String!) {
     description
     logoUrl
     bannerUrl
-
     auctionHouses {
       address
       stats {

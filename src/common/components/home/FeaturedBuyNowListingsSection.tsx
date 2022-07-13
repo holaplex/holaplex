@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { LoadingNFTCard, NFTCard } from 'pages/profiles/[publicKey]/nfts';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/common/constants/marketplace';
 import { Nft, useFeaturedBuyNowListingsQuery, useNftCardLazyQuery } from 'src/graphql/indexerTypes';
 import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
-import useWindowDimensions from '@/common/hooks/useWindowDimensions';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../views/_global/holaplexConstants';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;

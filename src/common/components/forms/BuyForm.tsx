@@ -1,18 +1,18 @@
 import React, { FC, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { None } from './OfferForm';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
-import Button from '../elements/Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { Action, MultiTransactionContext } from '../../context/MultiTransaction';
-import { useAnalytics } from '@/common/context/AnalyticsProvider';
 import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
+import { Action, MultiTransactionContext } from '../../../views/_global/MultiTransaction';
+import Button from '../../../components/Button';
+import { useAnalytics } from '../../../views/_global/AnalyticsProvider';
+import { None } from '../../../components/OfferForm';
 
 interface BuyFormProps {
   nft: Nft;

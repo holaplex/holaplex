@@ -61,6 +61,7 @@ query nftCard($subdomain: String!, $address: String!) {
       }
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
@@ -86,6 +87,7 @@ query nftCard($subdomain: String!, $address: String!) {
         canChangeSalePrice
       }
       price
+      purchaseId
       tradeStateBump
       tokenAccount
       createdAt

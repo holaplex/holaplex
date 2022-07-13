@@ -4,19 +4,19 @@ import { CreatedNfTsQuery, useCreatedNfTsQuery } from '../../../src/graphql/inde
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '../../../src/modules/server-side/getProfile';
+} from '../../../src/views/profiles/getProfileServerSideProps';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
-import { DoubleGrid } from '@/components/icons/DoubleGrid';
-import { TripleGrid } from '@/components/icons/TripleGrid';
-import { ProfileDataProvider } from '../../../src/common/context/ProfileData';
-import TextInput2 from '@/components/elements/TextInput2';
+import { DoubleGrid } from '@/assets/icons/DoubleGrid';
+import { TripleGrid } from '@/assets/icons/TripleGrid';
+import { ProfileDataProvider } from '../../../src/views/profiles/ProfileDataProvider';
+import TextInput2 from 'src/components/TextInput2';
 import { INFINITE_SCROLL_AMOUNT_INCREMENT, INITIAL_FETCH, NFTGrid } from './nfts';
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/views/_global/holaplexConstants';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import { isEmpty } from 'ramda';
-import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
+import { isEmpty, uniq } from 'ramda';
+import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
 import classNames from 'classnames';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
@@ -75,6 +75,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
 
   const unlistedCount = useMemo(() => unlistedNfts.length || 0, [unlistedNfts]);
 
+  // Note: unique check to cover indexer duplicates
   const filteredNfts =
     listedFilter === ListingFilters.ALL
       ? nftsToShow
@@ -191,7 +192,10 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
             variables: {
               ...variables,
               limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-              offset: nftsToShow.length + INFINITE_SCROLL_AMOUNT_INCREMENT,
+              offset:
+                nftsToShow.length > INFINITE_SCROLL_AMOUNT_INCREMENT
+                  ? nftsToShow.length
+                  : INFINITE_SCROLL_AMOUNT_INCREMENT,
             },
             updateQuery: (prev, { fetchMoreResult }) => {
               if (!fetchMoreResult) return prev;
@@ -208,7 +212,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
             },
           });
         }}
-        nfts={filteredNfts}
+        nfts={uniq(filteredNfts)}
         gridView={gridView}
         refetch={refetch}
         loading={createdNFTs.loading}

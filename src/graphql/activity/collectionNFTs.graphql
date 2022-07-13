@@ -1,0 +1,20 @@
+query collectionNFTs($creator: PublicKey!, $owner: PublicKey!, $limit: Int!, $offset: Int!) {
+  ownedCollection: nfts(owners: [$owner], limit: $limit, offset: $offset) {
+    address
+    collection {
+      address
+      name
+      image
+      description
+    }
+  }
+  createdCollection: nfts(creators: [$creator], limit: $limit, offset: $offset) {
+    address
+    collection {
+      address
+      name
+      image
+      description
+    }
+  }
+}

@@ -28,7 +28,6 @@ export type BuyNowListingPreviewData = {
   nft: OwnedNfTsQuery['nfts'][0];
   marketplace: OwnedNfTsQuery['marketplace'][0];
 };
-
 export interface ProfilePreviewData {
   address: string;
   profile: {

@@ -28,6 +28,11 @@ module.exports = withPlugins(plugins, {
         destination: '/profiles/:publicKey/nfts',
         permanent: true,
       },
+      {
+        source: '/collections/:publicKey',
+        destination: '/collections/:publicKey/nfts',
+        permanent: true,
+      },
     ];
   },
   images: {

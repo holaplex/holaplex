@@ -40,6 +40,11 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
       share
       verified
     }
+    collection {
+      address
+      name
+      image
+    }
     owner {
       address
       associatedTokenAccountAddress

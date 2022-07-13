@@ -64,6 +64,7 @@ query nftPage($address: String!) {
       }
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
@@ -91,6 +92,7 @@ query nftPage($address: String!) {
       price
       tradeStateBump
       tokenAccount
+      purchaseId
       createdAt
       canceledAt
     }

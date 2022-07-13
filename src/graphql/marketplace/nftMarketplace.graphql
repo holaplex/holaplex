@@ -54,6 +54,12 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       address
       verified
     }
+    collection {
+      address
+      name
+      image
+      mintAddress
+    }
     owner {
       address
       associatedTokenAccountAddress

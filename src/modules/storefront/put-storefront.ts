@@ -13,13 +13,13 @@ export const formatMessage: Formatter = (bytes) =>
   `Your storefront upload fingerprint is ${bytes.toString('base64')}`;
 
 export const putStorefront = async ({
-  solana,
+  wallet,
   storefront,
   onProgress,
   onComplete,
   onError,
 }: {
-  solana: WalletContextState | undefined;
+  wallet: WalletContextState | undefined;
   storefront: Storefront;
   onProgress?: (
     status: 'connecting-wallet' | 'signing' | 'uploading' | 'uploaded' | 'failed'
@@ -30,11 +30,11 @@ export const putStorefront = async ({
   try {
     if (!onProgress) onProgress = () => {};
 
-    if (!solana?.publicKey || !solana) throw new Error('solana wallet not connected');
+    if (!wallet?.publicKey || !wallet) throw new Error('solana wallet not connected');
 
     onProgress('signing');
 
-    const notarized: PutStorefrontParams = await notarize(storefront, signPhantom(solana), {
+    const notarized: PutStorefrontParams = await notarize(storefront, signPhantom(wallet), {
       format: formatMessage,
     });
 

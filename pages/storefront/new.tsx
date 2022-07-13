@@ -1,15 +1,15 @@
-import DomainFormItem from '@/common/components/elements/DomainFormItem';
-import FontSelect from '@/common/components/elements/FontSelect';
-import Upload from '@/common/components/elements/Upload';
-import Button from '@/components/elements/Button';
-import ColorPicker from '@/components/elements/ColorPicker';
-import FillSpace from '@/components/elements/FillSpace';
-import StepForm from '@/components/elements/StepForm';
+import DomainFormItem from 'src/components/DomainFormItem';
+import FontSelect from 'src/components/FontSelect';
+import Upload from 'src/components/Upload';
+import Button from '@/components/Button';
+import ColorPicker from 'src/components/ColorPicker';
+import FillSpace from 'src/components/FillSpace';
+import StepForm from 'src/components/StepForm';
 import { StorefrontContext } from '@/modules/storefront';
 import { initArweave } from '@/modules/arweave';
 import arweaveSDK from '@/modules/arweave/client';
-import { useAnalytics } from '@/common/context/AnalyticsProvider';
-import Loading from '@/common/components/elements/Loading';
+import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import Loading from 'src/components/Loading';
 import {
   FieldData,
   getTextColor,
@@ -27,7 +27,7 @@ import {
   UploadedBanner,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
-import { WalletContext } from '@/modules/wallet';
+
 import { Card, Col, Form, Input, Row, Space } from 'antd';
 import { useRouter } from 'next/router';
 import {
@@ -46,6 +46,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { v4 as uuidv4 } from 'uuid';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function New() {
   const [submitting, setSubmitting] = useState(false);
@@ -54,7 +55,10 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const { solana, wallet, looking } = useContext(WalletContext);
+  const wallet = useWallet();
+  const { publicKey } = wallet;
+  const userPubkey = publicKey?.toBase58();
+
   const { setVisible } = useWalletModal();
   const { storefront, searching } = useContext(StorefrontContext);
   const [fields, setFields] = useState<FieldData[]>([
@@ -76,15 +80,15 @@ export default function New() {
     if (storefront) {
       router.push('/storefront/edit');
     }
-  }, [storefront, wallet, router]);
+  }, [storefront, userPubkey, router]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (isNil(wallet) || isNil(userPubkey)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button loading={solana?.connecting} block onClick={() => setVisible(true)}>
+            <Button loading={wallet?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -101,10 +105,10 @@ export default function New() {
     trackingFunction: () =>
       track('Storefront Created', {
         event_category: 'Storefront',
-        event_label: wallet?.pubkey,
+        event_label: userPubkey,
       }),
     router,
-    solana,
+    wallet,
     values,
     setSubmitting,
     onSuccess: (domain) =>
@@ -185,7 +189,7 @@ export default function New() {
         </Form.Item>
       </Col>
       <PrevCol sm={24} md={11} lg={10}>
-        <PrevCard bgColor={values.theme.backgroundColor}>
+        <PrevCard $bgColor={values.theme.backgroundColor}>
           <Space direction="vertical">
             {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
               <UploadedBanner
@@ -261,7 +265,7 @@ export default function New() {
   );
 
   return (
-    <Loading loading={searching || looking}>
+    <Loading loading={searching}>
       <Row justify="center" align="middle">
         <Col xs={21} lg={18} xl={16} xxl={14}>
           <StepForm
