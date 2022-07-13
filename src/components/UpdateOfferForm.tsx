@@ -23,9 +23,9 @@ interface UpdateOfferFormSchema {
 interface UpdateOfferFormProps {
   nft: Nft;
   marketplace: { auctionHouses: AuctionHouse[] };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   loading: boolean;
   hasListing: boolean;
   listing: AhListing;
