@@ -61,9 +61,9 @@ export default function Edit() {
   const ar = arweaveSDK.using(arweave);
   const { storefront, searching } = useContext(StorefrontContext);
   const [form] = Form.useForm();
-  const solana = useWallet();
-  const { publicKey } = solana;
-  const pubkey = publicKey?.toBase58();
+  const wallet = useWallet();
+  const { publicKey } = wallet;
+  const userPubkey = publicKey?.toBase58();
 
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
@@ -119,13 +119,13 @@ export default function Edit() {
     ]);
   }, [storefront]);
 
-  if (isNil(solana) || isNil(pubkey)) {
+  if (isNil(wallet) || isNil(userPubkey)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button loading={solana?.connecting} block onClick={() => setVisible(true)}>
+            <Button loading={wallet?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -136,16 +136,16 @@ export default function Edit() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, userPubkey);
 
   const onSubmit = submitCallback({
     trackingFunction: () =>
       track('Storefront Updated', {
         event_category: 'Storefront',
-        event_label: pubkey,
+        event_label: userPubkey,
       }),
     router,
-    solana,
+    wallet,
     values,
     setSubmitting,
     onSuccess: (domain) =>

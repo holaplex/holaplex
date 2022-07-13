@@ -55,9 +55,9 @@ export default function New() {
   const arweave = initArweave();
   const ar = arweaveSDK.using(arweave);
   const [form] = Form.useForm();
-  const solana = useWallet();
-  const { publicKey } = solana;
-  const pubkey = publicKey?.toBase58();
+  const wallet = useWallet();
+  const { publicKey } = wallet;
+  const userPubkey = publicKey?.toBase58();
 
   const { setVisible } = useWalletModal();
   const { storefront, searching } = useContext(StorefrontContext);
@@ -80,15 +80,15 @@ export default function New() {
     if (storefront) {
       router.push('/storefront/edit');
     }
-  }, [storefront, pubkey, router]);
+  }, [storefront, userPubkey, router]);
 
-  if (isNil(solana) || isNil(pubkey)) {
+  if (isNil(wallet) || isNil(userPubkey)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create a store.</Paragraph>
-            <Button loading={solana?.connecting} block onClick={() => setVisible(true)}>
+            <Button loading={wallet?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -105,10 +105,10 @@ export default function New() {
     trackingFunction: () =>
       track('Storefront Created', {
         event_category: 'Storefront',
-        event_label: pubkey,
+        event_label: userPubkey,
       }),
     router,
-    solana,
+    wallet,
     values,
     setSubmitting,
     onSuccess: (domain) =>

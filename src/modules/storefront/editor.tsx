@@ -139,7 +139,7 @@ export const validateSubdomainUniqueness = (
 
 export const submitCallback = ({
   router,
-  solana,
+  wallet,
   values,
   setSubmitting,
   onSuccess,
@@ -147,7 +147,7 @@ export const submitCallback = ({
   trackingFunction,
 }: {
   router: NextRouter;
-  solana: WalletContextState | undefined;
+  wallet: WalletContextState | undefined;
   values: any;
   setSubmitting: (val: boolean) => void;
   onSuccess: (domain: string) => void;
@@ -176,7 +176,7 @@ export const submitCallback = ({
           favicon,
         },
         subdomain,
-        pubkey: solana?.publicKey?.toBase58() ?? '',
+        pubkey: wallet?.publicKey?.toBase58() ?? '',
         integrations,
       };
 
@@ -185,7 +185,7 @@ export const submitCallback = ({
       }
 
       await putStorefront({
-        solana,
+        wallet,
         storefront,
         onProgress: (s) => console.log(s),
         onError,

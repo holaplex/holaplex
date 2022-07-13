@@ -51,7 +51,7 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
   const router = useRouter();
   const [blockScroll, allowScroll] = useScrollBlock();
   const { storefront } = useContext(StorefrontContext);
-  const solana = useWallet();
+  const wallet = useWallet();
 
   useEffect(() => {
     if (show) {
@@ -77,8 +77,8 @@ const MintModal = ({ show, onClose }: MintModalProps) => {
       wrapProps={{ style: { overflowX: 'hidden' } }}
     >
       <BulkMinter
-        goToOwnedRoute={() => router.push(`/profiles/${solana?.publicKey?.toBase58()}/created`)}
-        wallet={solana}
+        goToOwnedRoute={() => router.push(`/profiles/${wallet?.publicKey?.toBase58()}/created`)}
+        wallet={wallet}
         track={track}
         storefront={storefront}
         holaSignMetadata={holaSignMetadata}

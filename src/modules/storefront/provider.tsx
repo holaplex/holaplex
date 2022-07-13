@@ -6,22 +6,22 @@ import { Storefront } from '@/modules/storefront/types';
 import { StorefrontContext } from './context';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-export const StorefrontProvider: FC = ({ children }) => {
+export function StorefrontProvider(props: { children: React.ReactNode }): JSX.Element {
   const [searching, setSearching] = useState(false);
   const [storefront, setStorefront] = useState<Storefront>();
   const arweave = initArweave();
   const arweaveClient = arweaveSDK.using(arweave);
   const { publicKey } = useWallet();
-  const pubkey = publicKey?.toBase58();
+  const userPubkey = publicKey?.toBase58();
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !pubkey) {
+    if (typeof window === 'undefined' || !userPubkey) {
       return;
     }
 
     setSearching(true);
 
-    arweaveClient.storefront.find('solana:pubkey', pubkey).then((storefront) => {
+    arweaveClient.storefront.find('solana:pubkey', userPubkey).then((storefront) => {
       if (isNil(storefront)) {
         setSearching(false);
 
@@ -31,11 +31,11 @@ export const StorefrontProvider: FC = ({ children }) => {
       setStorefront(storefront);
       setSearching(false);
     });
-  }, [pubkey]);
+  }, [userPubkey]);
 
   return (
     <StorefrontContext.Provider value={{ searching, storefront }}>
-      {children}
+      {props.children}
     </StorefrontContext.Provider>
   );
-};
+}
