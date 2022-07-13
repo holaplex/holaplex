@@ -1,20 +1,14 @@
 import { shortenAddress } from '@/modules/utils/string';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { DateTime } from 'luxon';
-import {
-  BidReceipt,
-  FeedQuery,
-  ListingReceipt,
-  MintEvent,
-  PurchaseReceipt,
-} from 'src/graphql/indexerTypes';
+import { BidReceipt, FeedQuery, ListingReceipt, MintEvent } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
 type QueryNFT =
   | MintEvent['nft']
   | ListingReceipt['nft']
-  | PurchaseReceipt['nft']
+  // | PurchaseReceipt['nft']
   | BidReceipt['nft'];
 
 export interface User {

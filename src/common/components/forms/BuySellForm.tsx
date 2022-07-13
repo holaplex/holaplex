@@ -25,7 +25,7 @@ const BuySellForm: FC<BuySellFormProps> = ({ nft, marketplace }) => {
 
   // listings
   const defaultListing = nft?.listings?.find(
-    (listing) => listing.auctionHouse.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing.auctionHouse!.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
 

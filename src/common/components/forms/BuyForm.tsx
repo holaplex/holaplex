@@ -58,7 +58,7 @@ const BuyForm: FC<BuyFormProps> = ({ nft, marketplace, listing, refetch, classNa
   const onBuy = async () => {
     if (listing && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
-      await sdk.transaction().add(sdk.listings(listing.auctionHouse).buy({ listing, nft })).send();
+      await sdk.transaction().add(sdk.listings(listing.auctionHouse!).buy({ listing, nft })).send();
     }
   };
 

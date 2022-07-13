@@ -112,7 +112,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       toast(`Canceling listing for ${nft.name}`);
       await sdk
         .transaction()
-        .add(sdk.listings(listing.auctionHouse).cancel({ nft, listing }))
+        .add(sdk.listings(listing.auctionHouse!).cancel({ nft, listing }))
         .send();
     }
   };
@@ -120,7 +120,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const onUpdateListing = async ({ amount }: { amount: number }) => {
     if (amount && nft) {
       toast(`Updating current listing to ${amount} SOL`);
-      await sdk.transaction().add(sdk.listings(listing.auctionHouse).post({ amount, nft })).send();
+      await sdk.transaction().add(sdk.listings(listing.auctionHouse!).post({ amount, nft })).send();
     }
   };
 

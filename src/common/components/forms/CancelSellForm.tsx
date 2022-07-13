@@ -51,7 +51,7 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
       toast(`Canceling listing for ${nft.name}`);
       await sdk
         .transaction()
-        .add(sdk.listings(listing.auctionHouse).cancel({ listing, nft }))
+        .add(sdk.listings(listing.auctionHouse!).cancel({ listing, nft }))
         .send();
     }
   };

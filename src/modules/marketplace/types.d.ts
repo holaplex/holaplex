@@ -11,12 +11,15 @@ export interface MarketplaceTheme<F = ArweaveFile> {
 }
 
 export interface MarketplaceAddress {
-  auctionHouse: string;
   owner: string;
   store: string;
 }
 
 export interface MarketplaceCreator {
+  address: string;
+}
+
+export interface AuctionHouse {
   address: string;
 }
 
@@ -26,4 +29,5 @@ export interface Marketplace<F = ArweaveFile> {
   meta: MarketplaceMetaData;
   theme: MarketplaceTheme;
   creators: MarketplaceCreator[];
+  auctionHouses: AuctionHouse[];
 }
