@@ -33,3 +33,12 @@ interface TextSkeletonProps {
 export const TextSkeleton: FC<TextSkeletonProps> = ({ height = 5, width = 24 }) => {
   return <div className={`h-${height} w-${width} animate-pulse rounded-md bg-gray-800`} />;
 };
+
+interface ButtonSkeletonProps {
+  height?: 9 | 12;
+  width?: 24 | 36;
+}
+
+export const ButtonSkeleton: FC<ButtonSkeletonProps> = ({ height = 9, width = 36 }) => {
+  return <div className={`animate-pulse rounded-full bg-white w-${width} h-${height} px-4`}></div>;
+};

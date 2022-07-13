@@ -50,7 +50,7 @@ const NFTPreview: FC<NFTPreviewProps> = ({ loading = false, nft }) => {
       </div>
       <div className={`ml-5`}>
         <p className={`mb-0 text-base font-medium`}>{nft?.name}</p>
-        <ul className={`mt-2`}>
+        <ul className={`mt-2 mb-0`}>
           {loading ? (
             <></>
           ) : nft?.creators.length === 1 ? (

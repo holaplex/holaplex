@@ -6,7 +6,6 @@ import '@/styles/globals.less';
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
-import { WalletProviderDeprecated } from '@/modules/wallet';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/components/AppHeader';
 import { Close } from '@/assets/icons/Close';
@@ -108,32 +107,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <ConnectionProvider endpoint={endpoint} config={{ commitment: 'processed' }}>
               <WalletProviderSolana wallets={wallets} autoConnect>
                 <WalletModalProvider>
-                  <WalletProviderDeprecated>
-                    {({ wallet }) => (
-                      <MultiTransactionProvider>
-                        <ConnectedWalletProfileProvider>
-                          <StorefrontProvider wallet={wallet}>
-                            {({}) => {
-                              return (
-                                <MarketplaceProvider wallet={wallet}>
-                                  {() => (
-                                    <AnalyticsProvider>
-                                      <AppHeader />
-                                      <MailboxProvider>
-                                        <PageLayout {...pageProps}>
-                                          <Component {...pageProps} />
-                                        </PageLayout>
-                                      </MailboxProvider>
-                                    </AnalyticsProvider>
-                                  )}
-                                </MarketplaceProvider>
-                              );
-                            }}
-                          </StorefrontProvider>
-                        </ConnectedWalletProfileProvider>
-                      </MultiTransactionProvider>
-                    )}
-                  </WalletProviderDeprecated>
+                  <MultiTransactionProvider>
+                    <ConnectedWalletProfileProvider>
+                      <StorefrontProvider>
+                        <MarketplaceProvider>
+                          <AnalyticsProvider>
+                            <AppHeader />
+                            <MailboxProvider>
+                              <PageLayout {...pageProps}>
+                                <Component {...pageProps} />
+                              </PageLayout>
+                            </MailboxProvider>
+                          </AnalyticsProvider>
+                        </MarketplaceProvider>
+                      </StorefrontProvider>
+                    </ConnectedWalletProfileProvider>
+                  </MultiTransactionProvider>
                 </WalletModalProvider>
               </WalletProviderSolana>
             </ConnectionProvider>

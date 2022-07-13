@@ -406,6 +406,7 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
           {marketplaceQuery.data && (
             <div className={`mt-8 flex w-full`}>
               <BuyForm
+                loading={false}
                 // @ts-ignore
                 listing={props.listingEvent.listing!}
                 nft={marketplaceQuery.data.nft as any}

@@ -1,26 +1,14 @@
-
-import React, { useState } from 'react';
-import { Wallet } from '@/modules/wallet/types';
+import React, { FC, useState } from 'react';
 import { Marketplace } from './types';
 import { MarketplaceContext } from './context';
 
-type StorefrontProviderChildrenProps = {
-  searching: boolean;
-  marketplace?: Marketplace;
-};
-
-type StorefrontProviderProps = {
-  wallet?: Wallet;
-  children: (props: StorefrontProviderChildrenProps) => React.ReactElement;
-};
-
-export const MarketplaceProvider = ({ wallet, children }: StorefrontProviderProps) => {
+export const MarketplaceProvider: FC = (props) => {
   const [searching, setSearching] = useState(false);
   const [marketplace, setMarketplace] = useState<Marketplace>();
 
   return (
     <MarketplaceContext.Provider value={{ searching, marketplace }}>
-      {children({ searching, marketplace })}
+      {props.children}
     </MarketplaceContext.Provider>
   );
 };
