@@ -20,7 +20,6 @@ ARG CROSSMINT_CLIENT_ID
 ENV NEXT_PUBLIC_CROSSMINT_API_KEY $CROSSMINT_API_KEY
 ENV NEXT_PUBLIC_CROSSMINT_CLIENT_ID $CROSSMINT_CLIENT_ID
 
-RUN npx prisma generate
 RUN yarn build
 
 # Production image, copy all the files and run next

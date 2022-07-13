@@ -18,7 +18,6 @@ import {
 } from '@/modules/storefront/editor';
 import ipfsSDK from '@/modules/ipfs/client';
 import { Transaction } from '@solana/web3.js';
-import { WalletContext } from '@/modules/wallet';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Card, Col, Form, Input, Row, Space, InputNumber, Typography } from 'antd';
 import {
@@ -35,7 +34,7 @@ import {
   pipe,
   not,
 } from 'ramda';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import React, { useContext, useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house';
 import { useRouter } from 'next/router';
@@ -74,7 +73,10 @@ export default function New() {
   const [form] = Form.useForm();
   const [pendingAddress, setPendingAddress] = useState<string>();
   const { setVisible } = useWalletModal();
-  const { solana, wallet, looking } = useContext(WalletContext);
+  const wallet = useWallet();
+  const { publicKey } = wallet;
+  const userPubkey = publicKey?.toBase58();
+
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: '' },
     { name: ['address', 'owner'], value: '' },
@@ -86,13 +88,13 @@ export default function New() {
     { name: ['creators'], value: [] },
   ]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (isNil(wallet) || isNil(userPubkey)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to create your marketplace.</Paragraph>
-            <Button loading={solana?.connecting || looking} block onClick={() => setVisible(true)}>
+            <Button loading={wallet?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -103,9 +105,9 @@ export default function New() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet.pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, userPubkey);
   const onSubmit = async (): Promise<void> => {
-    if (isNil(solana) || isNil(solana.signTransaction) || isNil(solana.publicKey)) {
+    if (isNil(wallet) || isNil(wallet.signTransaction) || isNil(wallet.publicKey)) {
       return;
     }
     const { theme, meta, subdomain, sellerFeeBasisPoints, creators } = values;
@@ -118,10 +120,10 @@ export default function New() {
 
     try {
       const [auctionHousPubkey] = await AuctionHouseProgram.findAuctionHouseAddress(
-        solana.publicKey,
+        wallet.publicKey,
         NATIVE_MINT
       );
-      const storePubkey = await Store.getPDA(solana.publicKey);
+      const storePubkey = await Store.getPDA(wallet.publicKey);
       const storeConfigPubkey = await StoreConfig.getPDA(storePubkey);
 
       const input = {
@@ -133,7 +135,7 @@ export default function New() {
         creators,
         subdomain,
         address: {
-          owner: wallet.pubkey,
+          owner: userPubkey,
           auctionHouse: auctionHousPubkey.toBase58(),
           store: storePubkey.toBase58(),
           storeConfig: storeConfigPubkey.toBase58(),
@@ -151,16 +153,16 @@ export default function New() {
         return;
       }
       const auctionHouseCreateInstruction = await createAuctionHouse({
-        wallet: solana as Wallet,
+        wallet: wallet as Wallet,
         sellerFeeBasisPoints,
       });
 
       const setStorefrontV2Instructions = new SetStoreV2(
         {
-          feePayer: solana.publicKey,
+          feePayer: wallet.publicKey,
         },
         {
-          admin: solana.publicKey,
+          admin: wallet.publicKey,
           store: storePubkey,
           config: storeConfigPubkey,
           isPublic: false,
@@ -172,10 +174,10 @@ export default function New() {
 
       transaction.add(auctionHouseCreateInstruction).add(setStorefrontV2Instructions);
 
-      transaction.feePayer = solana.publicKey;
+      transaction.feePayer = wallet.publicKey;
       transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
 
-      const signedTransaction = await solana.signTransaction(transaction);
+      const signedTransaction = await wallet.signTransaction(transaction);
 
       const txtId = await connection.sendRawTransaction(signedTransaction.serialize());
 

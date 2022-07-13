@@ -1,4 +1,4 @@
-import React, { SetStateAction, Dispatch } from 'react';
+import React, { SetStateAction, Dispatch, useContext } from 'react';
 import { Storefront } from './types';
 
 export type StorefrontContextProps = {
@@ -7,3 +7,11 @@ export type StorefrontContextProps = {
 };
 
 export const StorefrontContext = React.createContext<StorefrontContextProps>({ searching: false });
+
+export function useStorefront() {
+  const context = useContext(StorefrontContext);
+  if (context === null) {
+    throw new Error('useStorefront must be used within a StorefrontProvider');
+  }
+  return context;
+}
