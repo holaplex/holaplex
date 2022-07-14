@@ -50,6 +50,8 @@ export interface UseUrlQueryParamData<T> {
     const [initialized, setInitialized] = useState<boolean>(false);
     const [active, setActive] = useState<boolean>(startActive);
     const [value, setValue] = useState<T>(defaultValue);
+
+    //TODO still getting flip/flopping when I switch the filter between the 3 types :'(
   
     // hack to get Next to assign the router when on the client
     let routerRef = useRef<NextRouter | undefined>();
@@ -61,7 +63,6 @@ export interface UseUrlQueryParamData<T> {
 
     // get the value from the URL on first load, if needed
     useEffect(() => {
-      if (!initialized) {
         let queryValueString: string | undefined;
         if (router !== undefined && router.isReady) {
           // need to set initialization state after the router has loaded so server-side
@@ -80,8 +81,7 @@ export interface UseUrlQueryParamData<T> {
           setValue(queryValue);
           setActive(true);
         }
-      }
-    }, [router, key, converter, initialized, setInitialized, setActive]);
+    }, [router, key, converter, setActive]);
     
     // set the value in the URL
     useEffect(() => {
