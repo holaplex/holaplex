@@ -268,7 +268,6 @@ DiscoverNFTsTab.getLayout = function getLayout(
           title: 'Type',
           options: TYPE_OPTIONS,
           default: DEFAULT_TYPE,
-          onChange: () => {},
           queryId: UrlParamKey.TYPE
         },
       ]}

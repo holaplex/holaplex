@@ -1,5 +1,4 @@
 import { CardGridWithHeader } from '@/components/CardGrid';
-import { FilterOption } from '@/components/Filters';
 import ProfilePreviewCard, {
   ProfilePreviewProps,
   ProfilePreviewLoadingCard,
@@ -24,13 +23,6 @@ enum TypeOption {
 }
 
 const DEFAULT_TYPE: TypeOption = TypeOption.ALL;
-
-const options: FilterOption<TypeOption>[] = [
-  {
-    label: 'All',
-    value: TypeOption.ALL,
-  },
-];
 
 export default function DiscoverProfilesTab(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('');
