@@ -17,12 +17,12 @@
     "baseUrl": ".",
     "paths": {
       "@/common/*": ["src/common/*"],
-      "@/styles/*": ["src/common/styles/*"],
-      "@/assets/*": ["src/common/assets/*"],
-      "@/components/*": ["src/common/components/*"],
+      "@/styles/*": ["src/assets/styles/*"],
+      "@/assets/*": ["src/assets/*"],
+      "@/components/*": ["src/components/*"],
       "@/constants/*": ["src/common/constants/*"],
-      "@/hooks/*": ["src/common/hooks/*"],
-      "@/layouts/*": ["src/layouts/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/views/*": ["src/views/*"],
       "@/modules/*": ["src/modules/*"],
       "@/types/*": ["src/types/*"]
     },

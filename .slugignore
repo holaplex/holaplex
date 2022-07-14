@@ -1,0 +1,6 @@
+*.psd
+*.pdf
+*.md
+/.git
+/test
+/spec 

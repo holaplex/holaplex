@@ -54,7 +54,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       address
       verified
     }
-    collections {
+    collection {
       address
       name
       image
@@ -65,7 +65,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       auctionHouse {
         address
@@ -87,7 +87,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
@@ -113,7 +113,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata

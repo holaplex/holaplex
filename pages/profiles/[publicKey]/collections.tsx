@@ -6,23 +6,21 @@ import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 import CollectionProfileCard, {
   LoadingCollectionProfileCard,
-} from '../../../src/common/components/collections/CollectionProfileCard';
-import NoProfileItems, {
-  NoProfileVariant,
-} from '../../../src/common/components/elements/NoProfileItems';
-import { None } from '../../../src/common/components/forms/OfferForm';
-import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
-import { ProfileDataProvider } from '../../../src/common/context/ProfileData';
+} from '../../../src/views/collections/CollectionProfileCard';
+import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
+import { None } from '@/components/OfferForm';
+import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
+import { ProfileDataProvider } from '../../../src/views/profiles/ProfileDataProvider';
 import { CollectionNfTsQuery, useCollectionNfTsQuery } from '../../../src/graphql/indexerTypes';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '../../../src/modules/server-side/getProfile';
+} from '../../../src/views/profiles/getProfileServerSideProps';
 
 const COLLECTION_FETCH = 500;
 const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 500;
 
-type Collection = CollectionNfTsQuery['ownedCollection'][0]['collections'][0];
+type Collection = CollectionNfTsQuery['ownedCollection'][0]['collection'];
 
 interface CollectionGridProps {
   collections: Collection[];
@@ -102,18 +100,18 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
   ): Collection[] => {
     let uniqueCollections: Collection[] = [];
     collectionNFTs?.forEach((collectionNft) => {
-      collectionNft.collections.forEach((collection) => {
-        if (!uniqueCollections.find((u) => u.address === collection.address)) {
-          uniqueCollections.push(collection);
-        }
-      });
+      const collection = collectionNft.collection;
+
+      if (!uniqueCollections.find((u) => u?.address === collection?.address)) {
+        uniqueCollections.push(collection);
+      }
     });
     createdCollectionNFTs?.forEach((collectionNft) => {
-      collectionNft.collections.forEach((collection) => {
-        if (!uniqueCollections.find((u) => u.address === collection.address)) {
-          uniqueCollections.push(collection);
-        }
-      });
+      const collection = collectionNft.collection;
+
+      if (!uniqueCollections.find((u) => u?.address === collection?.address)) {
+        uniqueCollections.push(collection);
+      }
     });
     return uniqueCollections;
   };
