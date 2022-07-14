@@ -21,7 +21,7 @@ import {
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
 import CancelOfferForm from 'src/components/CancelOfferForm';
-import { AhListing, Offer, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
+import { AhListing, Offer, Marketplace, Nft, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { useRouter } from 'next/router';
 import UpdateOfferForm from '@/components/UpdateOfferForm';
 import SellForm from '@/components/SellForm';
@@ -39,6 +39,7 @@ import { SolscanIcon } from '../../src/assets/icons/Solscan';
 import { ExplorerIcon } from '../../src/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
 import { ButtonSkeleton } from '../../src/components/Skeletons';
+import { getAuctionHouseWithSolMint } from '../../src/lib/utils';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -141,6 +142,7 @@ export default function NftByAddress({
 
   const nft = data?.nft;
   const marketplace = data?.marketplace;
+  const auctionHouse = getAuctionHouseWithSolMint(marketplace?.auctionHouses as AuctionHouse[]);
 
   // has listed via default Holaplex marketplace (disregards others)
   const defaultListing = nft?.listings.find(
@@ -679,7 +681,7 @@ export default function NftByAddress({
                             Transaction fee
                           </p>
                           <p className={`m-0 text-base font-normal text-gray-300`}>
-                            {Number(marketplace?.auctionHouses[0]?.sellerFeeBasisPoints) / 100}%
+                            {Number(auctionHouse?.sellerFeeBasisPoints) / 100}%
                           </p>
                         </div>
                       </div>

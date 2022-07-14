@@ -26,6 +26,7 @@ import Modal from '@/components/Modal';
 import * as htmlToImage from 'html-to-image';
 
 import DownloadNFTCard from './DownloadableNFTCard';
+import { getAuctionHouseWithSolMint } from '../lib/utils';
 
 interface UpdateSellFormProps {
   nft: Nft;
@@ -76,7 +77,8 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = marketplace?.auctionHouses[0]?.sellerFeeBasisPoints || 200;
+  const auctionHouse = getAuctionHouseWithSolMint(marketplace.auctionHouses);
+  const auctionHouseSellerFee = auctionHouse?.sellerFeeBasisPoints || 200;
 
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;

@@ -10,6 +10,7 @@ import {
   MarketplacePreviewFragment,
   ProfilePreviewFragment,
 } from 'src/graphql/indexerTypes.ssr';
+import { getAuctionHouseWithSolMint } from '../../lib/utils';
 import { FeedItem } from '../alpha/feed.utils';
 import { FeaturedBuyNowListingsData, ListingPreviewData } from './FeaturedBuyNowListingsSection';
 import { FeaturedMarketplacesData, MarketplacePreviewData } from './FeaturedMarketplacesSection';
@@ -155,7 +156,7 @@ function transformFeaturedMarketplaces(
 }
 
 function transformMarketplacePreview(data: MarketplacePreviewFragment): MarketplacePreviewData {
-  notNullish(data.auctionHouses[0], 'data.auctionHouses[0]');
+  notNullish(data.auctionHouses, 'data.auctionHouses');
   notNullish(data.bannerUrl, 'data.bannerUrl');
   notNullish(data.creators, 'data.creators');
   notNullish(data.name, 'data.name');
@@ -202,10 +203,10 @@ function transformBuyNowListing(
 ): ListingPreviewData {
   notNullish(listing.nft, 'listing.nft');
   notNullish(marketplace, 'marketplace');
-  notNullish(marketplace?.auctionHouses[0], 'marketplace.auctionHouses[0]');
-
+  notNullish(marketplace?.auctionHouses, 'marketplace.auctionHouses');
+  const auctionHouse = getAuctionHouseWithSolMint(marketplace?.auctionHouses);
   return {
-    auctionHouse: marketplace!.auctionHouses[0]!,
+    auctionHouse: auctionHouse!,
     nft: listing.nft!,
   };
 }

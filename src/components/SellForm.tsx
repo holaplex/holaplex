@@ -17,6 +17,7 @@ import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { TOS_LINK } from '../modules/crossmint/constants';
 import { useMutation } from 'react-query';
 import { acceptTOS } from '../modules/crossmint';
+import { getAuctionHouseWithSolMint } from '../lib/utils';
 
 interface SellFormSchema {
   amount: string;
@@ -97,16 +98,14 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = marketplace?.auctionHouses[0]?.sellerFeeBasisPoints || 200;
+  const auctionHouse = getAuctionHouseWithSolMint(marketplace.auctionHouses);
+  const auctionHouseSellerFee = auctionHouse?.sellerFeeBasisPoints || 200;
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
   const onSell = async (amount: number) => {
-    if (amount && nft) {
-      await sdk
-        .transaction()
-        .add(sdk.listings(marketplace.auctionHouses[0]).post({ amount, nft }))
-        .send();
+    if (amount && auctionHouse && nft) {
+      await sdk.transaction().add(sdk.listings(auctionHouse).post({ amount, nft })).send();
     }
   };
 
@@ -153,25 +152,19 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     <div>
       {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
       <div className={`mt-8 flex items-start justify-between`}>
-        {Number(marketplace?.auctionHouses[0]?.stats?.floor) > 0 ? (
+        {Number(auctionHouse?.stats?.floor) > 0 ? (
           <div className={`flex flex-col justify-start`}>
             <p className={`text-base font-medium text-gray-300`}>Floor price</p>
-            <DisplaySOL
-              className={`font-medium`}
-              amount={Number(marketplace.auctionHouses[0].stats?.floor)}
-            />
+            <DisplaySOL className={`font-medium`} amount={Number(auctionHouse?.stats?.floor)} />
           </div>
         ) : (
           <div className={`flex w-full`} />
         )}
-        {Number(marketplace.auctionHouses[0].stats?.average) > 0 ? (
+        {Number(auctionHouse?.stats?.average) > 0 ? (
           <div className={`flex flex-col justify-end`}>
             <p className={`text-base font-medium text-gray-300`}>Average sale price</p>
             <div className={`ml-2`}>
-              <DisplaySOL
-                className={`font-medium`}
-                amount={Number(marketplace.auctionHouses[0].stats?.average)}
-              />
+              <DisplaySOL className={`font-medium`} amount={Number(auctionHouse?.stats?.average)} />
             </div>
           </div>
         ) : (

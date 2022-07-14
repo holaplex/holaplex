@@ -14,6 +14,7 @@ import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { getAuctionHouseWithSolMint } from '../lib/utils';
 
 const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
   AuctionHouseProgram.instructions;
@@ -67,11 +68,9 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
-    if (nft) {
-      await sdk
-        .transaction()
-        .add(sdk.offers(marketplace.auctionHouses[0]).make({ amount, nft }))
-        .send();
+    const auctionHouse = getAuctionHouseWithSolMint(marketplace.auctionHouses);
+    if (nft && auctionHouse) {
+      await sdk.transaction().add(sdk.offers(auctionHouse).make({ amount, nft })).send();
     }
   };
 

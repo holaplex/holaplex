@@ -1,3 +1,5 @@
+import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
+
 const captureCid = /https:\/\/(.*).ipfs.dweb.*$/;
 const captureCidArweave = /https:\/\/arweave.net\/(.*)/;
 const cleanExt = /\?ext=(.*)/;
@@ -70,4 +72,15 @@ export const RUST_ISO_UTC_DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 
 export function isTouchScreenOnly(): boolean {
   return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
+export function getAuctionHouseWithSolMint(
+  auctionHouses: AuctionHouse[] | undefined
+): AuctionHouse | undefined {
+  if (!auctionHouses) {
+    return undefined;
+  }
+  return auctionHouses.find(
+    (auctionHouse) => auctionHouse.treasuryMint === 'So11111111111111111111111111111111111111112'
+  );
 }
