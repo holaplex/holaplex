@@ -8,7 +8,13 @@ import Button from './Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import {
+  initMarketplaceSDK,
+  Nft,
+  AhListing,
+  AuctionHouse,
+  Marketplace,
+} from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
@@ -24,7 +30,7 @@ import { crossmintConfig } from '../lib/utils';
 
 interface BuyFormProps {
   nft: Nft;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: Marketplace;
   listing: AhListing;
   className?: string;
   refetch:

@@ -73,7 +73,7 @@ export const NFTCard = ({
   showCollection = true,
 }: {
   nft: OwnedNFT;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: Marketplace;
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
     | (() => void);
