@@ -24,7 +24,7 @@ import { crossmintConfig } from '../lib/utils';
 
 interface BuyFormProps {
   nft: Nft;
-  marketplace: { auctionHouse: AuctionHouse };
+  marketplace: { auctionHouses?: AuctionHouse[] };
   listing: AhListing;
   className?: string;
   refetch:
@@ -89,9 +89,9 @@ const BuyForm: FC<BuyFormProps> = ({
   const { trackNFTEvent } = useAnalytics();
 
   const onBuy = async () => {
-    if (listing && !isOwner && nft) {
+    if (listing && listing.auctionHouse && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
-      await sdk.listings(marketplace.auctionHouse).buy({ listing, nft });
+      await sdk.transaction().add(sdk.listings(listing.auctionHouse).buy({ listing, nft })).send();
     }
   };
 

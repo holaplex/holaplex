@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { GetServerSideProps } from 'next';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -21,7 +21,7 @@ import Button from '@/components/Button';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
 import SellForm from 'src/components/SellForm';
-import { AuctionHouse, AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from 'src/components/OfferForm';
 import UpdateSellForm from 'src/components/UpdateSellForm';
@@ -73,8 +73,10 @@ export const NFTCard = ({
   showCollection = true,
 }: {
   nft: OwnedNFT;
-  marketplace: { auctionHouse: AuctionHouse };
-  refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
+  marketplace: Marketplace;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   loading: boolean;
   showName?: boolean;
   newTab?: boolean;
@@ -103,7 +105,7 @@ export const NFTCard = ({
   const hasAddedOffer = Boolean(addedOffer);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
   const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;
@@ -231,7 +233,7 @@ export const NFTCard = ({
                 <BuyForm
                   loading={loading}
                   nft={nft as Nft | any}
-                  marketplace={marketplace}
+                  marketplace={marketplace as Marketplace}
                   listing={defaultListing as AhListing}
                   refetch={refetch}
                   className={`w-32 md:w-full xl:w-32`}
@@ -267,7 +269,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           loading={loading}
-          marketplace={marketplace}
+          marketplace={marketplace as Marketplace}
         />
       </Modal>
       <Modal
@@ -356,7 +358,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
                   nft={nft}
                   refetch={refetch}
                   loading={loading}
-                  marketplace={marketplace}
+                  marketplace={marketplace as Marketplace}
                 />
               ))
             )}

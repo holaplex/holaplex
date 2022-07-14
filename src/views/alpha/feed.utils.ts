@@ -12,11 +12,7 @@ import {
 
 type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
-type QueryNFT =
-  | MintEvent['nft']
-  | AhListing['nft']
-  | Purchase['nft']
-  | BidReceipt['nft'];
+type QueryNFT = MintEvent['nft'] | AhListing['nft'] | Purchase['nft'] | BidReceipt['nft'];
 
 export interface User {
   address: string;

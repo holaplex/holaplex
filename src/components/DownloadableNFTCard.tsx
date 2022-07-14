@@ -3,7 +3,6 @@ import Button from '@/components/Button';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import * as htmlToImage from 'html-to-image';
-
 import { DisplaySOL } from './CurrencyHelpers';
 import { AhListing, Nft } from '@holaplex/marketplace-js-sdk';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';

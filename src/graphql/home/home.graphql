@@ -36,7 +36,22 @@ fragment BuyNowListing on ListingReceipt {
     purchases {
       id
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       createdAt
     }
@@ -45,7 +60,22 @@ fragment BuyNowListing on ListingReceipt {
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       createdAt
@@ -56,7 +86,22 @@ fragment BuyNowListing on ListingReceipt {
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       tokenAccount
@@ -67,7 +112,7 @@ fragment BuyNowListing on ListingReceipt {
 }
 
 fragment MarketplaceAuctionHouse on Marketplace {
-  auctionHouse {
+  auctionHouses {
     address
     treasuryMint
     auctionHouseTreasury
@@ -96,7 +141,7 @@ fragment MarketplacePreview on Marketplace {
       profileImageUrlHighres
     }
   }
-  auctionHouse {
+  auctionHouses {
     stats {
       floor
     }

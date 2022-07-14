@@ -42,7 +42,8 @@ export function useHomeQueryWithTransforms(
     },
   });
 
-  const featuredAuctionContext: QueryContext<Listing[]> = usePrepareFeaturedAuctions(featuredAuctionsLimit);
+  const featuredAuctionContext: QueryContext<Listing[]> =
+    usePrepareFeaturedAuctions(featuredAuctionsLimit);
 
   const loading: boolean = queryContext.loading || featuredAuctionContext.loading;
 
@@ -154,7 +155,7 @@ function transformFeaturedMarketplaces(
 }
 
 function transformMarketplacePreview(data: MarketplacePreviewFragment): MarketplacePreviewData {
-  notNullish(data.auctionHouse, 'data.auctionHouse');
+  notNullish(data.auctionHouses[0], 'data.auctionHouses[0]');
   notNullish(data.bannerUrl, 'data.bannerUrl');
   notNullish(data.creators, 'data.creators');
   notNullish(data.name, 'data.name');
@@ -171,8 +172,8 @@ function transformMarketplacePreview(data: MarketplacePreviewFragment): Marketpl
       profileImageUrl: c.profile?.profileImageUrlHighres,
       handle: c.profile?.handle,
     })),
-    floorPriceLamports: parseFloatSilently(data.auctionHouse?.stats?.floor) ?? undefined,
-    nftCount: parseIntSilently(data.auctionHouse?.stats?.floor) ?? undefined,
+    floorPriceLamports: parseFloatSilently(data.auctionHouses[0]?.stats?.floor) ?? undefined,
+    nftCount: parseIntSilently(data.auctionHouses[0]?.stats?.floor) ?? undefined,
   };
 }
 
@@ -201,10 +202,10 @@ function transformBuyNowListing(
 ): ListingPreviewData {
   notNullish(listing.nft, 'listing.nft');
   notNullish(marketplace, 'marketplace');
-  notNullish(marketplace?.auctionHouse, 'marketplace.auctionHouse');
+  notNullish(marketplace?.auctionHouses[0], 'marketplace.auctionHouses[0]');
 
   return {
-    auctionHouse: marketplace!.auctionHouse!,
+    auctionHouse: marketplace!.auctionHouses[0]!,
     nft: listing.nft!,
   };
 }
@@ -278,8 +279,8 @@ function usePrepareFeaturedAuctions(nListings: number): QueryContext<Listing[]> 
   return {
     loading: loading,
     data: result,
-    refetch: () => {}
-  }
+    refetch: () => {},
+  };
 }
 
 function notNullish(value: any, name: string): void {

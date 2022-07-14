@@ -17,7 +17,7 @@ import {
   Nft,
   AhListing,
   Offer,
-  AuctionHouse,
+  Marketplace,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
@@ -29,9 +29,11 @@ import DownloadNFTCard from './DownloadableNFTCard';
 
 interface UpdateSellFormProps {
   nft: Nft;
-  marketplace: { auctionHouse: AuctionHouse };
+  marketplace: Marketplace;
   listing: AhListing;
-  refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>) | (() => void);
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
   offer: Offer;
 }
@@ -74,7 +76,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = marketplace?.auctionHouse?.sellerFeeBasisPoints || 200;
+  const auctionHouseSellerFee = (marketplace?.auctionHouses || [])[0]?.sellerFeeBasisPoints || 200;
 
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
@@ -106,16 +108,19 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const { runActions, hasActionPending, clearActions } = useContext(MultiTransactionContext);
 
   const onCancelListing = async () => {
-    if (listing && isOwner && nft) {
+    if (listing && listing.auctionHouse && isOwner && nft) {
       toast(`Canceling listing for ${nft.name}`);
-      await sdk.listings(marketplace.auctionHouse).cancel({ nft, listing });
+      await sdk
+        .transaction()
+        .add(sdk.listings(listing.auctionHouse).cancel({ nft, listing }))
+        .send();
     }
   };
 
   const onUpdateListing = async ({ amount }: { amount: number }) => {
-    if (amount && nft) {
+    if (amount && nft && listing.auctionHouse) {
       toast(`Updating current listing to ${amount} SOL`);
-      await sdk.listings(marketplace.auctionHouse).post({ amount: amount * LAMPORTS_PER_SOL, nft });
+      await sdk.transaction().add(sdk.listings(listing.auctionHouse).post({ amount, nft })).send();
     }
   };
 

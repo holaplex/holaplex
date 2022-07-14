@@ -123,14 +123,31 @@ fragment ListingEventPreview on ListingEvent {
         associatedTokenAccountAddress
         twitterHandle
       }
-      sellerFeeBasisPoints
-      primarySaleHappened
-      creators {
-        address
-        position
-        profile {
-          handle
-          profileImageUrlLowres
+      listings {
+        id
+        seller
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              handle
+              profileImageUrlLowres
+            }
+          }
+          address
+          mintAddress
         }
       }
       address
@@ -161,14 +178,31 @@ fragment OfferEventPreview on OfferEvent {
         associatedTokenAccountAddress
         twitterHandle
       }
-      sellerFeeBasisPoints
-      primarySaleHappened
-      creators {
-        address
-        position
-        profile {
-          handle
-          profileImageUrlLowres
+      offers {
+        id
+        buyer
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              handle
+              profileImageUrlLowres
+            }
+          }
+          address
+          mintAddress
         }
       }
       address
