@@ -1,4 +1,6 @@
 # import "../feed/feed.graphql"
+# import "../fragments/NftCard.graphql"
+# import "../fragments/MarketplaceAuctionHouse.graphql"
 
 fragment ProfilePreview on Wallet {
   address
@@ -36,7 +38,22 @@ fragment BuyNowListing on ListingReceipt {
     purchases {
       id
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       createdAt
     }
@@ -45,7 +62,22 @@ fragment BuyNowListing on ListingReceipt {
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       createdAt
@@ -56,32 +88,28 @@ fragment BuyNowListing on ListingReceipt {
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       tokenAccount
       createdAt
       canceledAt
     }
-  }
-}
-
-fragment MarketplaceAuctionHouse on Marketplace {
-  auctionHouse {
-    address
-    treasuryMint
-    auctionHouseTreasury
-    treasuryWithdrawalDestination
-    feeWithdrawalDestination
-    authority
-    creator
-    auctionHouseFeeAccount
-    bump
-    treasuryBump
-    feePayerBump
-    sellerFeeBasisPoints
-    requiresSignOff
-    canChangeSalePrice
   }
 }
 
@@ -96,7 +124,7 @@ fragment MarketplacePreview on Marketplace {
       profileImageUrlHighres
     }
   }
-  auctionHouse {
+  auctionHouses {
     stats {
       floor
     }

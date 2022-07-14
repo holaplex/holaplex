@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nfts';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
-import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import { AuctionHouse, Marketplace } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { QueryContext } from '@/hooks/useApolloQuery';
 
@@ -23,7 +23,6 @@ export interface FeaturedBuyNowListingsSectionProps {
   context: QueryContext<FeaturedBuyNowListingsData>;
 }
 
-
 export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSectionProps) {
   const bodyElements: JSX.Element[] = useMemo(() => {
     if (props.context.loading || !props.context.data) {
@@ -31,20 +30,19 @@ export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSecti
         <HomeSectionCarousel.Item key={i} className="p-4">
           <LoadingNFTCard />
         </HomeSectionCarousel.Item>
-      ))
-      
+      ));
     } else {
       return props.context.data.map((s) => (
         <HomeSectionCarousel.Item key={s.nft.address} className="p-4">
           <NFTCard
             newTab={false}
             nft={s.nft}
-            marketplace={{ auctionHouse: s.auctionHouse }}
+            marketplace={{ auctionHouses: [s.auctionHouse] } as Marketplace}
             refetch={props.context.refetch}
             loading={props.context.loading}
           />
         </HomeSectionCarousel.Item>
-      ))
+      ));
     }
   }, [props.context]);
 
@@ -76,4 +74,4 @@ export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSecti
       </HomeSection.Body>
     </HomeSection>
   );
-};
+}

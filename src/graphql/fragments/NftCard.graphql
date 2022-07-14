@@ -18,7 +18,22 @@ fragment NftCard on Nft {
   purchases {
     id
     buyer
-    auctionHouse
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
     price
     createdAt
   }
@@ -27,9 +42,25 @@ fragment NftCard on Nft {
     tradeState
     seller
     metadata
-    auctionHouse
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
     price
     tradeStateBump
+    purchaseId
     createdAt
     canceledAt
   }
@@ -38,8 +69,24 @@ fragment NftCard on Nft {
     tradeState
     buyer
     metadata
-    auctionHouse
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
     price
+    purchaseId
     tradeStateBump
     tokenAccount
     createdAt

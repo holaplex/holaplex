@@ -94,8 +94,8 @@ function transformNftCardData(
   cardData: NftCardFragment,
   marketplace?: MarketplaceAuctionHouseFragment | null
 ): DiscoverNFTCardData {
-  notNullish(marketplace?.auctionHouse, 'marketplace?.auctionHouse');
-  return { nft: cardData, marketplace: marketplace!.auctionHouse! };
+  notNullish(marketplace?.auctionHouses[0], 'marketplace?.auctionHouses[0]');
+  return { nft: cardData, marketplace: marketplace!.auctionHouses[0]! };
 }
 
 interface DiscoverProfilesQueryParams {

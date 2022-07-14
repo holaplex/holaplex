@@ -1,5 +1,5 @@
 fragment MarketplaceAuctionHouse on Marketplace {
-  auctionHouse {
+  auctionHouses {
     address
     treasuryMint
     auctionHouseTreasury

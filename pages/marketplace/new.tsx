@@ -31,17 +31,14 @@ import {
   propEq,
   update,
   view,
-  pipe,
-  not,
 } from 'ramda';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { AuctionHouseProgram } from '@holaplex/mpl-auction-house';
-import Image from 'next/image';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
@@ -136,10 +133,10 @@ export default function New() {
         subdomain,
         address: {
           owner: userPubkey,
-          auctionHouse: auctionHousPubkey.toBase58(),
           store: storePubkey.toBase58(),
           storeConfig: storeConfigPubkey.toBase58(),
         },
+        auctionHouses: [{ address: auctionHousPubkey.toBase58() }],
       } as Marketplace;
 
       const settings = new File([JSON.stringify(input)], 'storefront_settings');

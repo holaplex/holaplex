@@ -144,7 +144,7 @@ export default function NftByAddress({
 
   // has listed via default Holaplex marketplace (disregards others)
   const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+    (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
@@ -679,7 +679,7 @@ export default function NftByAddress({
                             Transaction fee
                           </p>
                           <p className={`m-0 text-base font-normal text-gray-300`}>
-                            {Number(marketplace?.auctionHouse?.sellerFeeBasisPoints) / 100}%
+                            {Number(marketplace?.auctionHouses[0]?.sellerFeeBasisPoints) / 100}%
                           </p>
                         </div>
                       </div>
