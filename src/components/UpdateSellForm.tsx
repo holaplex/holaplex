@@ -17,7 +17,7 @@ import {
   Nft,
   AhListing,
   Offer,
-  AuctionHouse,
+  Marketplace,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
@@ -29,7 +29,7 @@ import DownloadNFTCard from './DownloadableNFTCard';
 
 interface UpdateSellFormProps {
   nft: Nft;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: Marketplace;
   listing: AhListing;
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
@@ -76,7 +76,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = marketplace?.auctionHouses[0]?.sellerFeeBasisPoints || 200;
+  const auctionHouseSellerFee = (marketplace?.auctionHouses || [])[0]?.sellerFeeBasisPoints || 200;
 
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;

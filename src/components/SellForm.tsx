@@ -10,7 +10,7 @@ import * as zod from 'zod';
 import Button from './Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { toast } from 'react-toastify';
-import { AuctionHouse, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';
+import { Marketplace, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
@@ -24,7 +24,7 @@ interface SellFormSchema {
 
 interface SellFormProps {
   nft?: Nft;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: Marketplace;
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
     | (() => void);
@@ -96,8 +96,9 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
+  const auctionHouses = marketplace?.auctionHouses || []
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = marketplace?.auctionHouses[0]?.sellerFeeBasisPoints || 200;
+  const auctionHouseSellerFee = auctionHouses[0]?.sellerFeeBasisPoints || 200;
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
@@ -105,7 +106,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     if (amount && nft) {
       await sdk
         .transaction()
-        .add(sdk.listings(marketplace.auctionHouses[0]).post({ amount, nft }))
+        .add(sdk.listings(auctionHouses[0]).post({ amount, nft }))
         .send();
     }
   };
@@ -153,24 +154,24 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     <div>
       {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
       <div className={`mt-8 flex items-start justify-between`}>
-        {Number(marketplace?.auctionHouses[0]?.stats?.floor) > 0 ? (
+        {Number(auctionHouses[0]?.stats?.floor) > 0 ? (
           <div className={`flex flex-col justify-start`}>
             <p className={`text-base font-medium text-gray-300`}>Floor price</p>
             <DisplaySOL
               className={`font-medium`}
-              amount={Number(marketplace.auctionHouses[0].stats?.floor)}
+              amount={Number(auctionHouses[0].stats?.floor)}
             />
           </div>
         ) : (
           <div className={`flex w-full`} />
         )}
-        {Number(marketplace.auctionHouses[0].stats?.average) > 0 ? (
+        {Number(auctionHouses[0].stats?.average) > 0 ? (
           <div className={`flex flex-col justify-end`}>
             <p className={`text-base font-medium text-gray-300`}>Average sale price</p>
             <div className={`ml-2`}>
               <DisplaySOL
                 className={`font-medium`}
-                amount={Number(marketplace.auctionHouses[0].stats?.average)}
+                amount={Number(auctionHouses[0].stats?.average)}
               />
             </div>
           </div>

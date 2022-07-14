@@ -21,7 +21,7 @@ import Button from '@/components/Button';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
 import SellForm from 'src/components/SellForm';
-import { AuctionHouse, AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
+import { AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from 'src/components/OfferForm';
 import UpdateSellForm from 'src/components/UpdateSellForm';
@@ -73,7 +73,7 @@ export const NFTCard = ({
   showCollection = true,
 }: {
   nft: OwnedNFT;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: Marketplace;
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
     | (() => void);
@@ -233,7 +233,7 @@ export const NFTCard = ({
                 <BuyForm
                   loading={loading}
                   nft={nft as Nft | any}
-                  marketplace={marketplace}
+                  marketplace={marketplace as Marketplace}
                   listing={defaultListing as AhListing}
                   refetch={refetch}
                   className={`w-32 md:w-full xl:w-32`}
@@ -269,7 +269,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           loading={loading}
-          marketplace={marketplace}
+          marketplace={marketplace as Marketplace}
         />
       </Modal>
       <Modal
@@ -358,7 +358,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
                   nft={nft}
                   refetch={refetch}
                   loading={loading}
-                  marketplace={marketplace}
+                  marketplace={marketplace as Marketplace}
                 />
               ))
             )}

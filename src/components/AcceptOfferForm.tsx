@@ -12,7 +12,7 @@ import {
   Offer,
   AhListing,
   initMarketplaceSDK,
-  AuctionHouse,
+  Marketplace,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
@@ -22,7 +22,7 @@ interface AcceptOfferFormProps {
   nft: Nft;
   offer: Offer;
   listing?: AhListing;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: Marketplace;
   refetch:
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
     | (() => void);

@@ -70,7 +70,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
     if (nft) {
       await sdk
         .transaction()
-        .add(sdk.offers(marketplace.auctionHouses[0]).make({ amount, nft }))
+        .add(sdk.offers((marketplace.auctionHouses || [])[0]).make({ amount, nft }))
         .send();
     }
   };

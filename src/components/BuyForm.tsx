@@ -24,7 +24,7 @@ import { crossmintConfig } from '../lib/utils';
 
 interface BuyFormProps {
   nft: Nft;
-  marketplace: { auctionHouses: AuctionHouse[] };
+  marketplace: { auctionHouses?: AuctionHouse[] };
   listing: AhListing;
   className?: string;
   refetch:

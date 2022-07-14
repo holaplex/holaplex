@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nfts';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
-import { AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import { AuctionHouse, Marketplace } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { QueryContext } from './home.hooks';
 
@@ -37,7 +37,7 @@ export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSecti
           <NFTCard
             newTab={false}
             nft={s.nft}
-            marketplace={{ auctionHouses: [s.auctionHouse] }}
+            marketplace={{ auctionHouses: [s.auctionHouse] } as Marketplace}
             refetch={props.context.refetch}
             loading={props.context.loading}
           />
