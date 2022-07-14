@@ -89,9 +89,9 @@ const BuyForm: FC<BuyFormProps> = ({
   const { trackNFTEvent } = useAnalytics();
 
   const onBuy = async () => {
-    if (listing && !isOwner && nft) {
+    if (listing && listing.auctionHouse && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
-      await sdk.listings(marketplace.auctionHouses[0]).buy({ listing, nft });
+      await sdk.transaction().add(sdk.listings(listing.auctionHouse).buy({ listing, nft })).send();
     }
   };
 

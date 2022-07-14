@@ -60,19 +60,19 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
     useContext(MultiTransactionContext);
   const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
-    if (currOffer) {
+    if (currOffer && currOffer.auctionHouse) {
       toast(`Canceling current offer of ${Number(currOffer.price)}`);
       await sdk
         .transaction()
-        .add(sdk.offers(currOffer.auctionHouse!).cancel({ nft, offer: currOffer }))
+        .add(sdk.offers(currOffer.auctionHouse).cancel({ nft, offer: currOffer }))
         .send();
     }
   };
 
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
-    if (currOffer && amount) {
+    if (currOffer && currOffer.auctionHouse && amount) {
       toast(`Updating current offer to: ${amount} SOL`);
-      await sdk.transaction().add(sdk.offers(currOffer.auctionHouse!).make({ amount, nft })).send();
+      await sdk.transaction().add(sdk.offers(currOffer.auctionHouse).make({ amount, nft })).send();
     }
   };
 

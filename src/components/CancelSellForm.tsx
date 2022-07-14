@@ -45,11 +45,11 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onCancelListing = async () => {
-    if (listing && isOwner && nft) {
+    if (listing && listing.auctionHouse && isOwner && nft) {
       toast(`Canceling listing for ${nft.name}`);
       await sdk
         .transaction()
-        .add(sdk.listings(listing.auctionHouse!).cancel({ listing, nft }))
+        .add(sdk.listings(listing.auctionHouse).cancel({ listing, nft }))
         .send();
     }
   };

@@ -13,7 +13,6 @@ import {
   AhListing,
   initMarketplaceSDK,
   AuctionHouse,
-  AcceptOfferParams,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
@@ -69,14 +68,14 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   const { trackNFTEvent } = useAnalytics();
 
   const onAcceptOffer = async () => {
-    if (!offer || !nft) {
+    if (!offer || !offer.auctionHouse || !nft) {
       return;
     }
     toast('Sending the transaction to Solana.');
     await sdk
       .transaction()
       .add(
-        sdk.offers(offer.auctionHouse!).accept({
+        sdk.offers(offer.auctionHouse).accept({
           nft,
           offer,
         })
@@ -85,11 +84,11 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   };
 
   const onCancelListing = async () => {
-    if (!listing || !nft) {
+    if (!listing || !offer.auctionHouse || !nft) {
       return;
     }
 
-    await sdk.transaction().add(sdk.listings(offer.auctionHouse!).cancel({ listing, nft })).send();
+    await sdk.transaction().add(sdk.listings(offer.auctionHouse).cancel({ listing, nft })).send();
   };
 
   const acceptOfferTx = async ({ amount }: AcceptOfferFormSchema) => {
