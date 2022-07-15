@@ -69,6 +69,8 @@ export function useUrlQueryParam<T = string>(
   const router: NextRouter | undefined = routerRef.current;
 
   useEffect(() => {
+
+    let proposedNewValue: T | null = value;
     const queryValue: T | null = router ? getValueFromUrl(router, key, converter) : null;
     
     const logs: string[] = [];
@@ -81,6 +83,7 @@ export function useUrlQueryParam<T = string>(
         //  to update the value stored here to reflect that
         if (!valueIsFromUrl) {
           logs.push('from url');
+          proposedNewValue = queryValue;
           setValue(queryValue);
           setValueIsFromUrl(true);
           setActive(queryValue != null);
@@ -98,6 +101,7 @@ export function useUrlQueryParam<T = string>(
         logs.push('from url');
         // on the initial load we want to take the value from the URL if it's available, regardless of
         //  other settings
+        proposedNewValue = queryValue;
         setValue(queryValue);
         setValueIsFromUrl(true);
         setActive(true);
@@ -109,7 +113,7 @@ export function useUrlQueryParam<T = string>(
       } else logs.push('no change');
     } else logs.push('not ready');
 
-    logs.push(`${value}|${valueIsFromUrl ? 'T' : 'F'}${active ? 'T' : 'F'}${initialized ? 'T' : 'F'}`);
+    logs.push(`${value}->${proposedNewValue}|${valueIsFromUrl ? 'T' : 'F'}${active ? 'T' : 'F'}${initialized ? 'T' : 'F'}`);
     if (key === 'type') console.log(logs[0], ...logs.slice(1).map(log => ['>', log]).flat());
   }, [
     router,
