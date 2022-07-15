@@ -12,9 +12,9 @@ export type Action = {
 };
 
 interface ActionSettings {
-  onComplete?: () => void;
-  onActionSuccess?: (txName: string) => void;
-  onActionFailure?: (err: any) => void;
+  onComplete?: () => Promise<void>;
+  onActionSuccess?: (txName: string) => Promise<void>;
+  onActionFailure?: (err: any) => Promise<void>;
 }
 
 interface MultiTransactionState {
@@ -32,9 +32,9 @@ const defaultState: MultiTransactionState = {
   hasRemainingActions: false,
   hasActionPending: false,
   actions: [],
-  clearActions: () => {},
-  runActions: async ([]) => {},
-  retryActions: async () => {},
+  clearActions: () => { },
+  runActions: async ([]) => { },
+  retryActions: async () => { },
 };
 
 export const MultiTransactionContext = createContext<MultiTransactionState>(defaultState);
@@ -81,6 +81,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
+
+        if (settings?.onActionFailure) {
+          await settings.onActionFailure(err);
+        }
+
         if (
           errorMsg.includes(`User rejected the request`) ||
           errorMsg.includes(`was not confirmed`) ||
@@ -91,11 +96,13 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         } else {
           setHasError(true);
         }
-        settings?.onActionFailure?.(err);
+
         setHasActionPending(false);
       } finally {
+        if (settings?.onComplete) {
+          await settings.onComplete();
+        }
         setHasActionPending(false);
-        settings?.onComplete?.();
       }
     }
   };
@@ -136,6 +143,11 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         setHasRemainingActions(false);
       } catch (err: any) {
         const errorMsg: string = err.message;
+
+        if (settings?.onActionFailure) {
+          await settings.onActionFailure(errorCodeHelper(err.message));
+        }
+
         if (
           errorMsg.includes(`User rejected the request`) ||
           errorMsg.includes(`was not confirmed`) ||
@@ -146,11 +158,13 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         } else {
           setHasError(true);
         }
-        settings?.onActionFailure?.(errorCodeHelper(err.message));
+        
         setHasActionPending(false);
       } finally {
+        if (settings?.onComplete) {
+          await settings.onComplete();
+        }
         setHasActionPending(false);
-        settings?.onComplete?.();
       }
     }
   };

@@ -837,7 +837,7 @@ export default function NftByAddress({
             <Modal
               open={sellCancelModalVisibility}
               setOpen={setSellCancelModalVisibility}
-              title={`Cancel listing`}
+              title="Cancel listing"
             >
               <CancelSellForm
                 nft={nft as Nft | any}
