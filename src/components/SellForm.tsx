@@ -17,7 +17,7 @@ import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { TOS_LINK } from '../modules/crossmint/constants';
 import { useMutation } from 'react-query';
 import { acceptTOS } from '../modules/crossmint';
-import { solToLamports } from '../lib/utils/conversion';
+import { toLamports } from '../modules/sol';
 
 interface SellFormSchema {
   amount: string;
@@ -107,7 +107,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     if (amount && nft) {
       await sdk
         .transaction()
-        .add(sdk.listings(auctionHouses[0]).post({ amount: solToLamports(amount), nft }))
+        .add(sdk.listings(auctionHouses[0]).post({ amount: toLamports(amount), nft }))
         .send();
     }
   };

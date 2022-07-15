@@ -15,7 +15,7 @@ import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { solToLamports } from '../lib/utils/conversion';
+import { toLamports } from '../modules/sol';
 
 interface UpdateOfferFormSchema {
   amount: string;
@@ -75,7 +75,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
       toast(`Updating current offer to: ${amount} SOL`);
       await sdk
         .transaction()
-        .add(sdk.offers(currOffer.auctionHouse).make({ amount: solToLamports(amount), nft }))
+        .add(sdk.offers(currOffer.auctionHouse).make({ amount: toLamports(amount), nft }))
         .send();
     }
   };
