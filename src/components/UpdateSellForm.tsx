@@ -22,6 +22,7 @@ import {
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import Modal from '@/components/Modal';
+import { solToLamports } from './../lib/utils/conversion';
 //@ts-ignore
 import * as htmlToImage from 'html-to-image';
 
@@ -120,7 +121,10 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const onUpdateListing = async ({ amount }: { amount: number }) => {
     if (amount && nft && listing.auctionHouse) {
       toast(`Updating current listing to ${amount} SOL`);
-      await sdk.transaction().add(sdk.listings(listing.auctionHouse).post({ amount, nft })).send();
+      await sdk
+        .transaction()
+        .add(sdk.listings(listing.auctionHouse).post({ amount: solToLamports(amount), nft }))
+        .send();
     }
   };
 
