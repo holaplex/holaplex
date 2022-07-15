@@ -67,12 +67,18 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const onOffer = async (amount: number) => {
+    const offerAmount = toLamports(amount);
+    const auctionHouse = (marketplace.auctionHouses || [])[0];
+
     if (nft) {
       await sdk
         .transaction()
         .add(
-          sdk.offers((marketplace.auctionHouses || [])[0]).make({ amount: toLamports(amount), nft })
+          sdk.escrow(auctionHouse).desposit({
+            amount: offerAmount,
+          })
         )
+        .add(sdk.offers(auctionHouse).make({ amount: offerAmount, nft }))
         .send();
     }
   };
