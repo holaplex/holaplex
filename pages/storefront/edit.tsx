@@ -26,7 +26,6 @@ import {
   UploadedBanner,
   validateSubdomainUniqueness,
 } from '@/modules/storefront/editor';
-import { WalletContext } from '@/modules/wallet';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Card, Col, Form, Input, Row, Space, Tabs } from 'antd';
 import { useRouter } from 'next/router';
@@ -47,6 +46,7 @@ import {
 import React, { useContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const { TabPane } = Tabs;
 
@@ -61,7 +61,10 @@ export default function Edit() {
   const ar = arweaveSDK.using(arweave);
   const { storefront, searching } = useContext(StorefrontContext);
   const [form] = Form.useForm();
-  const { solana, wallet, looking } = useContext(WalletContext);
+  const wallet = useWallet();
+  const { publicKey } = wallet;
+  const userPubkey = publicKey?.toBase58();
+
   const [fields, setFields] = useState<FieldData[]>([
     { name: ['subdomain'], value: storefront?.subdomain },
     { name: ['theme', 'backgroundColor'], value: storefront?.theme.backgroundColor },
@@ -116,13 +119,13 @@ export default function Edit() {
     ]);
   }, [storefront]);
 
-  if (isNil(solana) || isNil(wallet)) {
+  if (isNil(wallet) || isNil(userPubkey)) {
     return (
       <Row justify="center">
         <Card>
           <Space direction="vertical">
             <Paragraph>Connect your Solana wallet to edit your store.</Paragraph>
-            <Button loading={solana?.connecting || looking} block onClick={() => setVisible(true)}>
+            <Button loading={wallet?.connecting} block onClick={() => setVisible(true)}>
               Connect
             </Button>
           </Space>
@@ -133,16 +136,16 @@ export default function Edit() {
 
   const values = reduceFieldData(fields);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, wallet?.pubkey);
+  const subdomainUniqueness = validateSubdomainUniqueness(ar, userPubkey);
 
   const onSubmit = submitCallback({
     trackingFunction: () =>
       track('Storefront Updated', {
         event_category: 'Storefront',
-        event_label: wallet?.pubkey,
+        event_label: userPubkey,
       }),
     router,
-    solana,
+    wallet,
     values,
     setSubmitting,
     onSuccess: (domain) =>
@@ -166,7 +169,7 @@ export default function Edit() {
   const buttontextColor = getTextColor(values.theme.primaryColor);
 
   return (
-    <Loading loading={searching || looking}>
+    <Loading loading={searching}>
       <Row justify="center" align="middle">
         <Col xs={21} lg={18} xl={16} xxl={14}>
           <Form
@@ -225,7 +228,7 @@ export default function Edit() {
                     </Form.Item>
                   </Col>
                   <PrevCol sm={24} md={11} lg={10}>
-                    <PrevCard bgColor={values.theme.backgroundColor}>
+                    <PrevCard $bgColor={values.theme.backgroundColor}>
                       <Space direction="vertical">
                         {values.theme.banner[0] && values.theme.banner[0].status === 'done' && (
                           <UploadedBanner

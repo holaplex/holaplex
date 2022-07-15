@@ -22,7 +22,22 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
       purchases {
         id
         buyer
-        auctionHouse
+        auctionHouse {
+          address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
+        }
         price
         createdAt
       }
@@ -31,7 +46,22 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         tradeState
         seller
         metadata
-        auctionHouse
+        auctionHouse {
+          address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
+        }
         price
         tradeStateBump
         createdAt
@@ -42,7 +72,22 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
         tradeState
         buyer
         metadata
-        auctionHouse
+        auctionHouse {
+          address
+          treasuryMint
+          auctionHouseTreasury
+          treasuryWithdrawalDestination
+          feeWithdrawalDestination
+          authority
+          creator
+          auctionHouseFeeAccount
+          bump
+          treasuryBump
+          feePayerBump
+          sellerFeeBasisPoints
+          requiresSignOff
+          canChangeSalePrice
+        }
         price
         tradeStateBump
         tokenAccount
@@ -52,7 +97,7 @@ query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
     }
   }
   marketplace(subdomain: $marketplace) {
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury

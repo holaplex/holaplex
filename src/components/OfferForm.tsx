@@ -4,7 +4,6 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +13,7 @@ import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { toLamports } from '../modules/sol';
 
 const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
   AuctionHouseProgram.instructions;
@@ -68,7 +68,14 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
 
   const onOffer = async (amount: number) => {
     if (nft) {
-      await sdk.offers(marketplace.auctionHouse).make({ amount: amount * LAMPORTS_PER_SOL, nft });
+      await sdk
+        .transaction()
+        .add(
+          sdk
+            .offers((marketplace.auctionHouses || [])[0])
+            .make({ amount: toLamports(amount), nft })
+        )
+        .send();
     }
   };
 

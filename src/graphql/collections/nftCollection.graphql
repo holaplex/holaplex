@@ -40,7 +40,22 @@ query nftCollection(
     purchases {
       id
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       createdAt
     }
@@ -49,7 +64,22 @@ query nftCollection(
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       createdAt
@@ -60,7 +90,22 @@ query nftCollection(
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       tokenAccount
@@ -80,7 +125,7 @@ query nftCollection(
       creatorAddress
       storeConfigAddress
     }
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury

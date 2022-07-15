@@ -10,10 +10,14 @@ import * as zod from 'zod';
 import Button from './Button';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { toast } from 'react-toastify';
-import { AuctionHouse, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';
+import { Marketplace, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { TOS_LINK } from '../modules/crossmint/constants';
+import { useMutation } from 'react-query';
+import { acceptTOS } from '../modules/crossmint';
+import { toLamports } from '../modules/sol';
 
 interface SellFormSchema {
   amount: string;
@@ -21,10 +25,10 @@ interface SellFormSchema {
 
 interface SellFormProps {
   nft?: Nft;
-  marketplace: { auctionHouse: AuctionHouse };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  marketplace: Marketplace;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   loading: boolean;
   setOpen: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
@@ -81,18 +85,30 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     resolver: zodResolver(schema),
   });
 
+  const { mutate: acceptCrossmintTOS } = useMutation(acceptTOS, {
+    onSuccess: (data) => {},
+    onError: (err) => {
+      console.log(err);
+      toast.error(`Error whilst accepting Crossmint Terms of Service`);
+    },
+  });
+
   const { runActions, hasActionPending } = useContext(MultiTransactionContext);
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
+  const auctionHouses = marketplace?.auctionHouses || [];
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = marketplace?.auctionHouse?.sellerFeeBasisPoints || 200;
+  const auctionHouseSellerFee = auctionHouses[0]?.sellerFeeBasisPoints || 200;
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
   const onSell = async (amount: number) => {
     if (amount && nft) {
-      await sdk.listings(marketplace.auctionHouse).post({ amount: amount * LAMPORTS_PER_SOL, nft });
+      await sdk
+        .transaction()
+        .add(sdk.listings(auctionHouses[0]).post({ amount: toLamports(amount), nft }))
+        .send();
     }
   };
 
@@ -100,6 +116,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     if (!publicKey || !signTransaction || !nft || !amount) {
       return;
     }
+    acceptCrossmintTOS(publicKey.toBase58());
     const sellAmount = Number(amount);
 
     const newActions: Action[] = [
@@ -138,24 +155,21 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     <div>
       {nft && <NFTPreview loading={loading} nft={nft as Nft | any} />}
       <div className={`mt-8 flex items-start justify-between`}>
-        {Number(marketplace?.auctionHouse?.stats?.floor) > 0 ? (
+        {Number(auctionHouses[0]?.stats?.floor) > 0 ? (
           <div className={`flex flex-col justify-start`}>
             <p className={`text-base font-medium text-gray-300`}>Floor price</p>
-            <DisplaySOL
-              className={`font-medium`}
-              amount={Number(marketplace.auctionHouse.stats?.floor)}
-            />
+            <DisplaySOL className={`font-medium`} amount={Number(auctionHouses[0].stats?.floor)} />
           </div>
         ) : (
           <div className={`flex w-full`} />
         )}
-        {Number(marketplace.auctionHouse.stats?.average) > 0 ? (
+        {Number(auctionHouses[0].stats?.average) > 0 ? (
           <div className={`flex flex-col justify-end`}>
             <p className={`text-base font-medium text-gray-300`}>Average sale price</p>
             <div className={`ml-2`}>
               <DisplaySOL
                 className={`font-medium`}
-                amount={Number(marketplace.auctionHouse.stats?.average)}
+                amount={Number(auctionHouses[0].stats?.average)}
               />
             </div>
           </div>
@@ -210,6 +224,14 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
             >
               List NFT
             </Button>
+          </div>
+          <div className={`mt-10 w-full`}>
+            <p className={`m-0 text-center text-xs text-gray-300`}>
+              By listing this NFT you are agreeing to Crossmint&apos;s{' '}
+              <a href={TOS_LINK} target={`_blank`} className={`underline`}>
+                Terms of Service
+              </a>
+            </p>
           </div>
         </form>
       </div>

@@ -43,9 +43,9 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
-    if (offer && nft) {
+    if (offer && offer.auctionHouse && nft) {
       toast(`Canceling current offer of ${Number(offer.price) / LAMPORTS_PER_SOL}`);
-      await sdk.offers(marketplace.auctionHouse).cancel({ nft, offer, amount: 1 });
+      await sdk.transaction().add(sdk.offers(offer.auctionHouse).cancel({ nft, offer })).send();
     }
   };
 

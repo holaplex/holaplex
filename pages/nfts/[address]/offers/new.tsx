@@ -45,7 +45,7 @@ const NewNFTOffer = ({ address }: { address: string }) => {
   };
 
   useEffect(() => {
-    if (isOwner) {
+    if (isOwner || !publicKey) {
       goBack();
     }
   }, [isOwner, router, goBack, publicKey]);

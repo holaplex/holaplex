@@ -40,7 +40,8 @@ jobs:
             graphql_endpoint="https://graph-test.holaplex.com/v1"
           fi
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
+          docker build -t $image_tag --target $app --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
+
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
@@ -49,7 +50,7 @@ jobs:
             graphql_endpoint=https://graph-test.holaplex.tools/v1
             git_branch=canary
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-            docker build -t $image_tag --target $app --target frontend --build-arg GRAPHQL_URI=${graphql_endpoint} .
+            docker build -t $image_tag --target $app  --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
             echo "Pushing image to ECR..."
             docker push $image_tag
             echo "::set-output name=image::$image_tag"
@@ -66,14 +67,14 @@ jobs:
           app=signer
           git_branch=${GITHUB_REF##*/}
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app .
+          docker build -t $image_tag --target $app --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
           if [ $git_branch == 'dev' ];then
             git_branch=canary
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-            docker build -t $image_tag --target $app .
+            docker build -t $image_tag --target $app --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
             echo "Pushing image to ECR..."
             docker push $image_tag
             echo "::set-output name=image::$image_tag"

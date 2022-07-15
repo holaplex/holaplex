@@ -1,6 +1,5 @@
 import { uploadFile } from '@/modules/arweave/upload';
 import ipfsSDK from '@/modules/ipfs/client';
-import { WalletContext } from '@/modules/wallet';
 import { Upload } from 'antd';
 import { isNil } from 'ramda';
 import React, { useContext } from 'react';
@@ -15,9 +14,7 @@ type UploadProps = {
   dragger?: boolean;
 };
 
-export default function FileUpload ({ children, value, onChange, dragger = false }: UploadProps) {
-  const { solana } = useContext(WalletContext);
-
+export default function FileUpload({ children, value, onChange, dragger = false }: UploadProps) {
   const handleInputChange = async (upload: any) => {
     const file = upload.file;
 
@@ -27,12 +24,12 @@ export default function FileUpload ({ children, value, onChange, dragger = false
 
     ipfsSDK
       .uploadFile(file)
-      .then(res => {
-        let resp = res
-        resp['url'] = resp['uri']
+      .then((res) => {
+        let resp = res;
+        resp['url'] = resp['uri'];
         upload.onSuccess(resp, file);
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
         upload.onError(e);
         toast.error(<>{e instanceof Error ? e.message : 'Upload to ipfs failed.'}</>);

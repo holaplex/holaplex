@@ -20,10 +20,11 @@ const NFTFile: FC<NFTFileProps> = ({ nft, loading }) => {
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
       />
       <div className="relative w-full  ">
-        {(loading || !imgLoaded) && (
-          <LoadingContainer className="absolute inset-0 rounded-lg bg-gray-800 shadow " />
-        )}
-        {nft?.category === `vr` ? (
+        {loading ? (
+          <div
+            className={`block aspect-square w-full animate-pulse rounded-lg bg-gray-800 shadow`}
+          />
+        ) : nft?.category === `vr` ? (
           <div className={`block w-full rounded-lg border-none object-cover shadow`}>
             {/* @ts-ignore */}
             <model-viewer

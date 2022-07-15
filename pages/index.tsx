@@ -1,29 +1,79 @@
-import FeaturedAuctionsSection from 'src/views/home/FeaturedAuctionsSection';
-import FeaturedBuyNowListingsSection from 'src/views/home/FeaturedBuyNowListingsSection';
-import FeaturedMarketplacesSection from 'src/views/home/FeaturedMarketplacesSection';
-import FeaturedProfilesSection from 'src/views/home/FeaturedProfilesSection';
-import Footer from 'src/views/home/Footer';
-import HeroSection from 'src/views/home/HeroSection';
+import { FeaturedAuctionsSectionData, FeaturedAuctionsSection } from '@/views/home/FeaturedAuctionsSection';
+import { FeaturedBuyNowListingsData, FeaturedBuyNowListingsSection } from '@/views/home/FeaturedBuyNowListingsSection';
+import { FeaturedMarketplacesData, FeaturedMarketplacesSection } from '@/views/home/FeaturedMarketplacesSection';
+import { FeaturedProfilesData, FeaturedProfilesSection } from '@/views/home/FeaturedProfilesSection';
+import Footer from '@/views/home/Footer';
+import { HeroSection, HeroSectionData } from '@/views/home/HeroSection';
+import { QueryContext, useHomeQueryWithTransforms } from '@/views/home/home.hooks';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
+import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { FC, ReactNode } from 'react';
 import Carousel from 'react-grid-carousel';
 
-const Home: FC = () => {
+export interface HomeData {
+  feedEvents: HeroSectionData;
+  featuredBuyNowListings: FeaturedBuyNowListingsData;
+  featuredProfiles: FeaturedProfilesData;
+  featuredMarketplaces: FeaturedMarketplacesData;
+  featuredAuctions: FeaturedAuctionsSectionData;
+}
+
+export default function Home(): JSX.Element {
+  const wallet = useWallet();
+
+  //TODO export n-items in consts from sections
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, 24, 24, 12, 18);
+
   return (
     <div>
-      <HeroSection />
+      <HeroSection
+        context={{
+          data: dataQueryContext.data?.feedEvents,
+          loading: dataQueryContext.loading,
+          error: dataQueryContext.error,
+          refetch: dataQueryContext.refetch
+        }}
+      />
       <div className="container mx-auto w-[88%] md:w-3/4">
-        <FeaturedBuyNowListingsSection />
-        <FeaturedProfilesSection />
-        <FeaturedAuctionsSection />
-        <FeaturedMarketplacesSection />
+        <FeaturedBuyNowListingsSection
+          context={{
+            data: dataQueryContext.data?.featuredBuyNowListings,
+            loading: dataQueryContext.loading,
+            error: dataQueryContext.error,
+            refetch: dataQueryContext.refetch
+          }}
+        />
+        <FeaturedProfilesSection
+          context={{
+            data: dataQueryContext.data?.featuredProfiles,
+            loading: dataQueryContext.loading,
+            error: dataQueryContext.error,
+            refetch: dataQueryContext.refetch
+          }}
+        />
+        <FeaturedAuctionsSection 
+          context={{
+            data: dataQueryContext.data?.featuredAuctions,
+            loading: dataQueryContext.loading,
+            error: dataQueryContext.error,
+            refetch: dataQueryContext.refetch
+          }}
+        />
+        <FeaturedMarketplacesSection
+          context={{
+            data: dataQueryContext.data?.featuredMarketplaces,
+            loading: dataQueryContext.loading,
+            error: dataQueryContext.error,
+            refetch: dataQueryContext.refetch
+          }}
+        />
       </div>
       <Footer />
     </div>
   );
-};
+}
 
 interface HomeLinkProps {
   href: string;
@@ -31,10 +81,7 @@ interface HomeLinkProps {
 
 const InternalLink: FC<HomeLinkProps> = ({ href, children }) => (
   <Link href={href} passHref>
-    <a
-      href={href}
-      className="flex flex-nowrap items-center stroke-gray-300 text-sm font-medium text-gray-300 hover:scale-105 hover:stroke-white hover:transition"
-    >
+    <a className="flex flex-nowrap items-center stroke-gray-300 text-sm font-medium text-gray-300 hover:scale-105 hover:stroke-white hover:transition">
       {children}
     </a>
   </Link>
@@ -83,7 +130,7 @@ type HomeSectionSubtypes = {
  *  <HomeSection>
  *      <HomeSection.Header>
  *          <HomeSection.Title>Holaplex Preview</HomeSection.Title>
- *          <HomeSection.HeaderAction newTab href="www.holaplex.com">Go home</HomeSection.HeaderAction>
+ *          <HomeSection.HeaderAction external href="www.holaplex.com">Go home</HomeSection.HeaderAction>
  *      </HomeSection.Header>
  *      <HomeSection.Body>
  *          <SomeAmazingCustomContent/>
@@ -170,5 +217,3 @@ const HomeSectionCarouselItem: Item = ({ children, className }) => (
 // https://github.com/x3388638/react-grid-carousel/blob/master/src/components/Carousel.js#L206-L212
 HomeSectionCarouselItem.displayName = 'CAROUSEL_ITEM';
 HomeSectionCarousel.Item = HomeSectionCarouselItem;
-
-export default Home;

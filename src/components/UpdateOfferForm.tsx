@@ -10,11 +10,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Button from '@/components/Button';
 import { toast } from 'react-toastify';
-import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
+import { initMarketplaceSDK, Nft, AhListing, Marketplace } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { toLamports } from '../modules/sol';
 
 interface UpdateOfferFormSchema {
   amount: string;
@@ -22,10 +23,10 @@ interface UpdateOfferFormSchema {
 
 interface UpdateOfferFormProps {
   nft: Nft;
-  marketplace: { auctionHouse: AuctionHouse };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  marketplace: Marketplace;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   loading: boolean;
   hasListing: boolean;
   listing: AhListing;
@@ -60,16 +61,22 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
     useContext(MultiTransactionContext);
   const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
-    if (currOffer) {
+    if (currOffer && currOffer.auctionHouse) {
       toast(`Canceling current offer of ${Number(currOffer.price)}`);
-      await sdk.offers(marketplace.auctionHouse).cancel({ nft, offer: currOffer, amount: 1 });
+      await sdk
+        .transaction()
+        .add(sdk.offers(currOffer.auctionHouse).cancel({ nft, offer: currOffer }))
+        .send();
     }
   };
 
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
-    if (amount) {
+    if (currOffer && currOffer.auctionHouse && amount) {
       toast(`Updating current offer to: ${amount} SOL`);
-      await sdk.offers(marketplace.auctionHouse).make({ amount: amount * LAMPORTS_PER_SOL, nft });
+      await sdk
+        .transaction()
+        .add(sdk.offers(currOffer.auctionHouse).make({ amount: toLamports(amount), nft }))
+        .send();
     }
   };
 

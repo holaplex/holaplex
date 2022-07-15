@@ -10,7 +10,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       creatorAddress
       storeConfigAddress
     }
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury
@@ -67,7 +67,22 @@ query nftMarketplace($subdomain: String!, $address: String!) {
     purchases {
       id
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       createdAt
     }
@@ -76,7 +91,22 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       createdAt
@@ -87,7 +117,22 @@ query nftMarketplace($subdomain: String!, $address: String!) {
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
       tokenAccount

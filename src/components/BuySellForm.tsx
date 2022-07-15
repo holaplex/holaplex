@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Nft, Marketplace } from '@/types/types';
+import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 import { HOLAPLEX_MARKETPLACE_ADDRESS } from '@/views/_global/holaplexConstants';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
@@ -24,13 +24,13 @@ const BuySellForm: FC<BuySellFormProps> = ({ nft, marketplace }) => {
   }
 
   // listings
-  const defaultListing = nft?.listings.find(
-    (listing) => listing.auctionHouse.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
+  const defaultListing = nft?.listings?.find(
+    (listing) => listing.auctionHouse!.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
   const hasDefaultListing = Boolean(defaultListing);
 
   // offers
-  const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
+  const offer = nft?.offers?.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
   const offers = nft?.offers;
   const topOffer = offers?.slice()?.sort((a, b) => Number(a.price) - Number(b.price))[0];

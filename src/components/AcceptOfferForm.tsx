@@ -12,8 +12,7 @@ import {
   Offer,
   AhListing,
   initMarketplaceSDK,
-  AuctionHouse,
-  AcceptOfferParams,
+  Marketplace,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
@@ -23,10 +22,10 @@ interface AcceptOfferFormProps {
   nft: Nft;
   offer: Offer;
   listing?: AhListing;
-  marketplace: { auctionHouse: AuctionHouse };
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
+  marketplace: Marketplace;
+  refetch:
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   className?: string;
   closeOuter?: () => void;
 }
@@ -67,19 +66,29 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { trackNFTEvent } = useAnalytics();
+
   const onAcceptOffer = async () => {
-    let acceptParams = {
-      offer,
-      nft,
-    } as AcceptOfferParams
+    if (!offer || !offer.auctionHouse || !nft) {
+      return;
+    }
+    toast('Sending the transaction to Solana.');
+    await sdk
+      .transaction()
+      .add(
+        sdk.offers(offer.auctionHouse).accept({
+          nft,
+          offer,
+        })
+      )
+      .send();
+  };
 
-    if (listing) {
-      acceptParams.cancel = [listing];
+  const onCancelListing = async () => {
+    if (!listing || !offer.auctionHouse || !nft) {
+      return;
     }
 
-    if (offer) {
-      await sdk.offers(marketplace.auctionHouse).accept(acceptParams);
-    }
+    await sdk.transaction().add(sdk.listings(offer.auctionHouse).cancel({ listing, nft })).send();
   };
 
   const acceptOfferTx = async ({ amount }: AcceptOfferFormSchema) => {
@@ -87,7 +96,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
       return;
     }
 
-    const newActions: Action[] = [
+    let newActions: Action[] = [
       {
         name: `Accepting offer...`,
         id: `acceptOffer`,
@@ -95,6 +104,17 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         param: undefined,
       },
     ];
+    if (listing) {
+      newActions = [
+        ...newActions,
+        {
+          name: 'Cancel previous listing...',
+          id: 'cancelListing',
+          action: onCancelListing,
+          param: undefined,
+        },
+      ];
+    }
     trackNFTEvent('NFT Offer Accepted Init', Number(amount), nft);
 
     await runActions(newActions, {
@@ -114,7 +134,6 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
     });
   };
 
-  
   return (
     <form className={`flex w-full ${className}`} onSubmit={handleSubmit(acceptOfferTx)}>
       <Button

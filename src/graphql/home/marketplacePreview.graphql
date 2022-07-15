@@ -10,7 +10,7 @@ query marketplacePreview($subdomain: String!) {
         profileImageUrlHighres
       }
     }
-    auctionHouse {
+    auctionHouses {
       stats {
         floor
       }

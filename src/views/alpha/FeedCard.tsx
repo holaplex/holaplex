@@ -39,9 +39,9 @@ import { LoadingContainer } from '@/components/LoadingPlaceholders';
 import { imgOpt } from 'src/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
-import ProfilePreview from '../../components/ProfilePreview';
 import { getProfilePreivewDataFromUser } from '../../lib/utils/typeUtils';
 import Popover from '../../components/Popover';
+import ProfilePreview from '../../components/ProfilePreviewCard';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -265,18 +265,18 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   }, []);
 
   return (
-    <Popover
-      isShowOnHover={true}
-      content={<ProfilePreview address={user.address} data={getProfilePreivewDataFromUser(user)} />}
-    >
-      <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-        <a>
-          {user.profile?.handle
-            ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
-            : `@${shortenAddress(user.address)}`}
-        </a>
-      </Link>
-    </Popover>
+    // <Popover
+    //   isShowOnHover={true}
+    //   content={<ProfilePreview address={user.address} data={getProfilePreivewDataFromUser(user)} />}
+    // >
+    <Link href={'/profiles/' + user.address + '/nfts'} passHref>
+      <a>
+        {user.profile?.handle
+          ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
+          : `@${shortenAddress(user.address)}`}
+      </a>
+    </Link>
+    //</Popover>
   );
 };
 
@@ -414,6 +414,7 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
           {marketplaceQuery.data && (
             <div className={`mt-8 flex w-full`}>
               <BuyForm
+                loading={false}
                 // @ts-ignore
                 listing={props.listingEvent.listing!}
                 nft={marketplaceQuery.data.nft as any}
