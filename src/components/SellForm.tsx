@@ -98,8 +98,12 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
   const auctionHouses = marketplace?.auctionHouses || [];
-  const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = auctionHouses[0]?.sellerFeeBasisPoints || 200;
+  const sellerFee = nft?.sellerFeeBasisPoints;
+  const auctionHouseSellerFee = auctionHouses[0]?.sellerFeeBasisPoints;
+  if (!auctionHouseSellerFee || !sellerFee) {
+    return null;
+  }
+
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
