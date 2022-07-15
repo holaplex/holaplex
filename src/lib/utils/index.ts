@@ -14,12 +14,14 @@ export const maybeCDN = (uri: string) => {
 
 export const getEnvironmentVariable = (environmentVariable: string): string => {
   const unvalidatedEnvironmentVariable = process.env[environmentVariable];
-  if (!unvalidatedEnvironmentVariable) {
-    console.error(`Couldn't find env var: ${environmentVariable}`);
-    return '';
-  } else {
+  
+  if (unvalidatedEnvironmentVariable) {
     return unvalidatedEnvironmentVariable;
   }
+
+  console.warn(`Couldn't find env var: ${environmentVariable}`);
+
+  return '';
 };
 
 export const crossmintConfig = {
