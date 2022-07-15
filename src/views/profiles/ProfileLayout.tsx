@@ -47,7 +47,7 @@ const ProfilePageHead = (props: {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image:@" content={props.twitterProfile?.banner} />
+      <meta name="twitter:image:src" content={props.twitterProfile?.banner} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}
       <meta name="og-title" content={title} />

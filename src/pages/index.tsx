@@ -232,6 +232,6 @@ const HomeSectionCarouselItem: Item = ({ children, className }) => (
   <div className={classNames('snap-center overflow-visible', className)}>{children}</div>
 );
 // this is a hack to get the carousel to display custom-styled items
-// https://github.com/x3388638/react-grid-carousel/blob/master/@/components/Carousel.js#L206-L212
+// https://github.com/x3388638/react-grid-carousel/blob/master/src/components/Carousel.js#L206-L212
 HomeSectionCarouselItem.displayName = 'CAROUSEL_ITEM';
 HomeSectionCarousel.Item = HomeSectionCarouselItem;

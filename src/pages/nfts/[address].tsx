@@ -228,7 +228,7 @@ export default function NftByAddress({
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={`${name} NFT | Holaplex`} />
           <meta name="twitter:description" content={description} />
-          <meta name="twitter:image:@" content={image} />
+          <meta name="twitter:image:src" content={image} />
           <meta name="twitter:image" content={image} />
           <meta name="twitter:site" content="@holaplex" />
           {/* Open Graph */}

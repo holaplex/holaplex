@@ -46,7 +46,7 @@ function CollectionLayoutHead(props: {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={`${props.name} Collection | Holaplex`} />
       <meta name="twitter:description" content={props.description} />
-      <meta name="twitter:image:@" content={props.image} />
+      <meta name="twitter:image:src" content={props.image} />
       <meta name="twitter:image" content={props.image} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}
