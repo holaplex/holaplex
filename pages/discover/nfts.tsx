@@ -356,6 +356,8 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
     URL_PARAM_DEFAULTS[UrlParamKey.BY] === SortOption.HIGHEST_SALES
   );
 
+  //TODO undo
+  // @ts-ignore
   const values: UseUrlParamsValues = useMemo(
     () => ({
       [UrlParamKey.SEARCH]: search.value,
