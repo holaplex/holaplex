@@ -30,8 +30,6 @@ export default function DiscoverProfilesTab(): JSX.Element {
   const [profileData, setProfileData] = useState<ProfilePreviewProps[]>([]);
 
   const userProfile = useConnectedWalletProfile();
-  //TODO undo
-  // @ts-ignore
   const queryContext = useQuery(typeFilter, userProfile.connectedProfile?.pubkey ?? undefined);
 
   // TODO send search to backend

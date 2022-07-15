@@ -356,8 +356,6 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
     URL_PARAM_DEFAULTS[UrlParamKey.BY] === SortOption.HIGHEST_SALES
   );
 
-  //TODO undo
-  // @ts-ignore
   const values: UseUrlParamsValues = useMemo(
     () => ({
       [UrlParamKey.SEARCH]: search.value,
@@ -376,13 +374,13 @@ function useUrlParams(): [UseUrlParamsValues, UseUrlParamsSetters] {
       // set the sub-option value in the URL back to its last selected value
       switch (value) {
         case SortOption.HIGHEST_SALES:
-          salesSort.setActive(true);
           priceSort.setActive(false);
+          salesSort.setActive(true);
           break;
 
         case SortOption.PRICE:
-          priceSort.setActive(true);
           salesSort.setActive(false);
+          priceSort.setActive(true);
           break;
 
         case SortOption.RECENTLY_LISTED:

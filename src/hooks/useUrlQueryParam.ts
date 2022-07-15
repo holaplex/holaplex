@@ -1,12 +1,12 @@
 import { NextRouter, useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export interface UseUrlQueryParamData<T> {
   /**
    * current value of the parameter
    */
-  value: T | null;
+  value: T;
 
   /**
    * whether the parameter is currently active. Inactive parameters keep their value and can
@@ -49,16 +49,9 @@ export function useUrlQueryParam<T = string>(
 ): UseUrlQueryParamData<T> {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [active, setActive] = useState<boolean>(startActive);
-  const [value, setValue] = useState<T | null>(defaultValue);
-  const [valueIsFromUrl, setValueIsFromUrl] = useState<boolean>(true);
+  const [value, setValue] = useState<T>(defaultValue);
+  const [valueIsFromUrl, setValueIsFromUrl] = useState<boolean>(false);
   const id = useMemo(() => Math.round(Math.random() * 10000), []);
-
-  //TODO still getting flip/flopping when I switch the filter between the 3 types :'(
-  // Problems:
-  //  1. What to do when the value gets set from another spot that is also using the router? i.e. resolving
-  //    conflict between the value being set from outside this instance of this hook.
-  //  2. How to handle the value coming from the URL initially versus the default value initially.
-  //  3. How to handle the value being set with the setter, and then updating the URL.
 
   // hack to get Next to assign the router when on the client
   let routerRef = useRef<NextRouter | undefined>();
@@ -68,32 +61,49 @@ export function useUrlQueryParam<T = string>(
   }, [nextRouter]);
   const router: NextRouter | undefined = routerRef.current;
 
-  useEffect(() => {
+  const setValueAndSource: (newValue: T, fromUrl: boolean) => void = useCallback((newValue, fromUrl) => {
+    setValue(newValue);
+    setValueIsFromUrl(fromUrl);
+  }, [setValue, setValueIsFromUrl]);
 
+  const setValueCallback: (newValue: T) => void = useCallback(
+    (newValue) => {
+      // I dont know why I need to set this to true instead of false, but there you go
+      setValueAndSource(newValue, true);
+      if (router && router.isReady) setValueInUrl(router, key, newValue, active);
+    },
+    [router, key, active, setValueAndSource]
+  );
+
+  const setActiveCallback: (newActive: boolean) => void = useCallback(newActive => {
+    setActive(newActive);
+    if (router && router.isReady) setValueInUrl(router, key, value, newActive);
+  }, [router, key, value, setActive]);
+
+  useEffect(() => {
     let proposedNewValue: T | null = value;
     const queryValue: T | null = router ? getValueFromUrl(router, key, converter) : null;
-    
+
     const logs: string[] = [];
     logs.push(`${id}`);
 
+    if (initialized && active && queryValue == null && value != null && router) {
+      setValueInUrl(router, key, value, active);
+    }
+
+    //TODO remove logs
+    // TODO for some reason, setting a param as inactive doesnt always remove it from the URL...
     if (initialized) {
       logs.push('update');
+      // if the value was changed in the URL (e.g. by another hook using the router) then we need
+      //  to update the value stored here to reflect that
       if (queryValue !== value) {
-        // if the value was changed in the URL (e.g. by another hook using the router) then we need
-        //  to update the value stored here to reflect that
-        if (!valueIsFromUrl) {
-          logs.push('from url');
+        if (!valueIsFromUrl && active && queryValue != null) {
+          logs.push(`from url`);
           proposedNewValue = queryValue;
-          setValue(queryValue);
-          setValueIsFromUrl(true);
-          setActive(queryValue != null);
-        } else if (router && router.isReady) {
-          logs.push('from setter');
-          // otherwise, the value was set using the setter and we should update the value in the URL
-          setValueIsFromUrl(false);
-          setValueInUrl(router, key, value, active);
-        } else logs.push('not ready');
-      } else logs.push('no change');
+          setValueAndSource(queryValue, true);
+        } else logs.push('no change 1');
+      } else logs.push('no change 2');
     } else if (router && router.isReady) {
       logs.push('initializing');
       setInitialized(true);
@@ -102,19 +112,29 @@ export function useUrlQueryParam<T = string>(
         // on the initial load we want to take the value from the URL if it's available, regardless of
         //  other settings
         proposedNewValue = queryValue;
-        setValue(queryValue);
-        setValueIsFromUrl(true);
+        setValueAndSource(queryValue, true);
         setActive(true);
-      } else if (value != null && active && router) {
+      } else {
         logs.push('from value');
         // otherwise, we should set the URL value to the default value
         setValueIsFromUrl(false);
         setValueInUrl(router, key, value, active);
-      } else logs.push('no change');
+      }
     } else logs.push('not ready');
 
-    logs.push(`${value}->${proposedNewValue}|${valueIsFromUrl ? 'T' : 'F'}${active ? 'T' : 'F'}${initialized ? 'T' : 'F'}`);
-    if (key === 'type') console.log(logs[0], ...logs.slice(1).map(log => ['>', log]).flat());
+    logs.push(
+      `${value}->${proposedNewValue}|${valueIsFromUrl ? 'T' : 'F'}${active ? 'T' : 'F'}${
+        initialized ? 'T' : 'F'
+      }`
+    );
+    if (['sale-window', 'price-dir'].includes(key))
+      console.log(
+        logs[0],
+        ...logs
+          .slice(1)
+          .map((log) => ['>', log])
+          .flat()
+      );
   }, [
     router,
     key,
@@ -132,27 +152,13 @@ export function useUrlQueryParam<T = string>(
   return {
     value: value,
     active: active,
-    set: setValue,
+    set: setValueCallback,
     setAndActivate: (value: T) => {
-      setValue(value);
       setActive(true);
+      setValueCallback(value);
     },
-    setActive: setActive,
+    setActive: setActiveCallback,
   };
-}
-
-function logstuff(
-  msg: string,
-  id: number,
-  key: string,
-  value: any,
-  fromUrl: boolean,
-  active: boolean,
-  initialized: boolean
-): string {
-  return `${id} ${msg}: ${value}|${fromUrl ? 'T' : 'F'}|${active ? 'T' : 'F'}|${
-    initialized ? 'T' : 'F'
-  }`;
 }
 
 function getValueFromUrl<T>(
