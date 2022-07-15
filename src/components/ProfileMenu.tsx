@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import cx from 'classnames';
 import React from 'react';
 import { Tab } from '@headlessui/react';
-import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+import { useProfileData } from '@/views/profiles/ProfileDataProvider';
 import { PhotographIcon, TrendingUpIcon } from '@heroicons/react/outline';
 
 enum TabRoute {

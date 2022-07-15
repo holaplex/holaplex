@@ -2,8 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 import styled, { keyframes } from 'styled-components';
 import Head from 'next/head';
-import Footer from 'src/views/home/Footer';
-import investorData from 'src/assets/investors/investors-stub';
+import Footer from '@/views/home/Footer';
+import investorData from '@/assets/investors/investors-stub';
 
 const Heading = styled.h2`
   font-size: 32px;

@@ -2,15 +2,15 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Col } from 'antd';
 
-import { Bid, useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { Bid, useActivityPageQuery } from '@/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/assets/styles/MediaQuery';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { IFeedItem } from 'src/views/alpha/feed.interfaces';
+import { IFeedItem } from '@/views/alpha/feed.interfaces';
 import { ActivityCard } from './ActivityCard';
-import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+import { useProfileData } from '@/views/profiles/ProfileDataProvider';
 import { LoadingBox, LoadingLine } from './LoadingPlaceholders';
 
 export function getActivityItemsFromBids(bids: Bid[]) {

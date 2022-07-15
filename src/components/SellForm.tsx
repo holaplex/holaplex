@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { Marketplace, initMarketplaceSDK, Nft } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { TOS_LINK } from '../modules/crossmint/constants';
 import { useMutation } from 'react-query';
 import { acceptTOS } from '../modules/crossmint';

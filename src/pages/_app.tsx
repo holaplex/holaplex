@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
-import '@/styles/globals.less';
+import '@/assets/styles/globals.less';
 // TODO (fix) ts/next fails to find this css module using import
 require('@dialectlabs/react-ui/index.css');
 import { ToastContainer } from 'react-toastify';
@@ -9,7 +9,7 @@ import Head from 'next/head';
 import { StorefrontProvider } from '@/modules/storefront';
 import { AppHeader } from '@/components/AppHeader';
 import { Close } from '@/assets/icons/Close';
-import { AnalyticsProvider } from 'src/views/_global/AnalyticsProvider';
+import { AnalyticsProvider } from '@/views/_global/AnalyticsProvider';
 import {
   LedgerWalletAdapter,
   PhantomWalletAdapter,
@@ -33,11 +33,11 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { MarketplaceProvider } from '@/modules/marketplace';
 import '@fontsource/material-icons';
-import { MultiTransactionProvider } from 'src/views/_global/MultiTransaction';
-import { apolloClient } from 'src/graphql/apollo';
+import { MultiTransactionProvider } from '@/views/_global/MultiTransaction';
+import { apolloClient } from '@/graphql/apollo';
 import { NextPage } from 'next';
-import { ConnectedWalletProfileProvider } from 'src/views/_global/ConnectedWalletProfileProvider';
-import { MailboxProvider } from 'src/views/messages/MailboxProvider';
+import { ConnectedWalletProfileProvider } from '@/views/_global/ConnectedWalletProfileProvider';
+import { MailboxProvider } from '@/views/messages/MailboxProvider';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';

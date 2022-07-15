@@ -7,10 +7,10 @@ import { DateTime } from 'luxon';
 import { NFTMetadata, Listing } from '@/modules/indexer';
 
 import { useInView } from 'react-intersection-observer';
-import { addListingToTrackCall, useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { addListingToTrackCall, useAnalytics } from '@/views/_global/AnalyticsProvider';
 
-import Price from 'src/components/Price';
-import { maybeCDN, imgOpt } from 'src/lib/utils';
+import Price from '@/components/Price';
+import { maybeCDN, imgOpt } from '@/lib/utils';
 import AuctionCountdown from './Countdown';
 import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
 import { FilterOptions, SortOptions } from '@/views/home/home.interfaces';

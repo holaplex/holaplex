@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Avatar, Card, Image, Row, Col } from 'antd';
 import { Storefront } from '@/modules/storefront/types';
-import { imgOpt } from 'src/lib/utils';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { imgOpt } from '@/lib/utils';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 
 const PreviewCard = styled(Card)`
   .ant-card-meta-detail {

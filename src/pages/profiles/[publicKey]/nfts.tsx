@@ -3,37 +3,37 @@ import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
-import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
+import { OwnedNfTsQuery, useOwnedNfTsQuery } from '@/graphql/indexerTypes';
 import Link from 'next/link';
-import TextInput2 from 'src/components/TextInput2';
+import TextInput2 from '@/components/TextInput2';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/views/profiles/getProfileServerSideProps';
-import { ProfileDataProvider } from 'src/views/profiles/ProfileDataProvider';
-import { imgOpt } from 'src/lib/utils';
+import { ProfileDataProvider } from '@/views/profiles/ProfileDataProvider';
+import { imgOpt } from '@/lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-} from 'src/views/_global/holaplexConstants';
+} from '@/views/_global/holaplexConstants';
 import Button from '@/components/Button';
-import { DisplaySOL } from 'src/components/CurrencyHelpers';
-import Modal from 'src/components/Modal';
-import SellForm from 'src/components/SellForm';
+import { DisplaySOL } from '@/components/CurrencyHelpers';
+import Modal from '@/components/Modal';
+import SellForm from '@/components/SellForm';
 import { AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { None } from 'src/components/OfferForm';
-import UpdateSellForm from 'src/components/UpdateSellForm';
-import BuyForm from 'src/components/BuyForm';
-import UpdateOfferForm from 'src/components/UpdateOfferForm';
-import { Avatar } from 'src/components/Avatar';
+import { None } from '@/components/OfferForm';
+import UpdateSellForm from '@/components/UpdateSellForm';
+import BuyForm from '@/components/BuyForm';
+import UpdateOfferForm from '@/components/UpdateOfferForm';
+import { Avatar } from '@/components/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty, uniq } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import classNames from 'classnames';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
-import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
+import ProfileLayout from '@/views/profiles/ProfileLayout';
 import GridSelector from '@/components/GridSelector';
 
 export type OwnedNFT = OwnedNfTsQuery['nfts'][0];

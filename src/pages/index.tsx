@@ -1,7 +1,19 @@
-import { FeaturedAuctionsSectionData, FeaturedAuctionsSection } from '@/views/home/FeaturedAuctionsSection';
-import { FeaturedBuyNowListingsData, FeaturedBuyNowListingsSection } from '@/views/home/FeaturedBuyNowListingsSection';
-import { FeaturedMarketplacesData, FeaturedMarketplacesSection } from '@/views/home/FeaturedMarketplacesSection';
-import { FeaturedProfilesData, FeaturedProfilesSection } from '@/views/home/FeaturedProfilesSection';
+import {
+  FeaturedAuctionsSectionData,
+  FeaturedAuctionsSection,
+} from '@/views/home/FeaturedAuctionsSection';
+import {
+  FeaturedBuyNowListingsData,
+  FeaturedBuyNowListingsSection,
+} from '@/views/home/FeaturedBuyNowListingsSection';
+import {
+  FeaturedMarketplacesData,
+  FeaturedMarketplacesSection,
+} from '@/views/home/FeaturedMarketplacesSection';
+import {
+  FeaturedProfilesData,
+  FeaturedProfilesSection,
+} from '@/views/home/FeaturedProfilesSection';
 import Footer from '@/views/home/Footer';
 import { HeroSection, HeroSectionData } from '@/views/home/HeroSection';
 import { QueryContext, useHomeQueryWithTransforms } from '@/views/home/home.hooks';
@@ -24,7 +36,13 @@ export default function Home(): JSX.Element {
   const wallet = useWallet();
 
   //TODO export n-items in consts from sections
-  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, 24, 24, 12, 18);
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(
+    wallet.publicKey,
+    24,
+    24,
+    12,
+    18
+  );
 
   return (
     <div>
@@ -33,7 +51,7 @@ export default function Home(): JSX.Element {
           data: dataQueryContext.data?.feedEvents,
           loading: dataQueryContext.loading,
           error: dataQueryContext.error,
-          refetch: dataQueryContext.refetch
+          refetch: dataQueryContext.refetch,
         }}
       />
       <div className="container mx-auto w-[88%] md:w-3/4">
@@ -42,7 +60,7 @@ export default function Home(): JSX.Element {
             data: dataQueryContext.data?.featuredBuyNowListings,
             loading: dataQueryContext.loading,
             error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedProfilesSection
@@ -50,15 +68,15 @@ export default function Home(): JSX.Element {
             data: dataQueryContext.data?.featuredProfiles,
             loading: dataQueryContext.loading,
             error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
-        <FeaturedAuctionsSection 
+        <FeaturedAuctionsSection
           context={{
             data: dataQueryContext.data?.featuredAuctions,
             loading: dataQueryContext.loading,
             error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedMarketplacesSection
@@ -66,7 +84,7 @@ export default function Home(): JSX.Element {
             data: dataQueryContext.data?.featuredMarketplaces,
             loading: dataQueryContext.loading,
             error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
       </div>
@@ -214,6 +232,6 @@ const HomeSectionCarouselItem: Item = ({ children, className }) => (
   <div className={classNames('snap-center overflow-visible', className)}>{children}</div>
 );
 // this is a hack to get the carousel to display custom-styled items
-// https://github.com/x3388638/react-grid-carousel/blob/master/src/components/Carousel.js#L206-L212
+// https://github.com/x3388638/react-grid-carousel/blob/master/@/components/Carousel.js#L206-L212
 HomeSectionCarouselItem.displayName = 'CAROUSEL_ITEM';
 HomeSectionCarousel.Item = HomeSectionCarouselItem;

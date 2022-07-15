@@ -1,15 +1,15 @@
 import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
 import { IndexerSDK, Listing } from '@/modules/indexer';
 import { PublicKey } from '@solana/web3.js';
-import { HomeData } from 'pages';
+import { HomeData } from '@/pages/index';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHomeQuery } from 'src/graphql/indexerTypes';
+import { useHomeQuery } from '@/graphql/indexerTypes';
 import {
   BuyNowListingFragment,
   HomeQuery,
   MarketplacePreviewFragment,
   ProfilePreviewFragment,
-} from 'src/graphql/indexerTypes.ssr';
+} from '@/graphql/indexerTypes.ssr';
 import { FeedItem } from '../alpha/feed.utils';
 import { FeaturedBuyNowListingsData, ListingPreviewData } from './FeaturedBuyNowListingsSection';
 import { FeaturedMarketplacesData, MarketplacePreviewData } from './FeaturedMarketplacesSection';

@@ -1,10 +1,10 @@
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { shortenAddress } from '@/modules/utils/string';
 import { Combobox } from '@headlessui/react';
 import classNames from 'classnames';
 import { Fragment, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
-import { useProfileSearchLazyQuery } from 'src/graphql/indexerTypes';
+import { useProfileSearchLazyQuery } from '@/graphql/indexerTypes';
 import { Avatar } from '../../components/Avatar';
 import { User } from '../alpha/feed.utils';
 

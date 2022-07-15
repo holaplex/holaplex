@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { SearchQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
+import { SearchQuery, MetadataJson, Wallet } from '@/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
 import { profile } from 'console';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { Combobox } from '@headlessui/react';
 
 interface SearchResultsProps {

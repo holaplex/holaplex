@@ -8,7 +8,7 @@ import {
   useTwitterHandleFromPubKeyLazyQuery,
   useTwitterHandleFromPubKeyQuery,
   useWalletProfileLazyQuery,
-} from 'src/graphql/indexerTypes';
+} from '@/graphql/indexerTypes';
 import cx from 'classnames';
 import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
@@ -159,13 +159,15 @@ export const Avatar = ({
 
       if (!data) getProfileInfoAndSetState();
     },
-    
+
     // dont include results of the query to avoid re-triggering
     [data, address, getProfileInfoQuery]
   );
 
-  const twitterHandle = data?.twitterHandle || getProfileInfoQueryContext.data?.wallet.profile?.handle;
-  const pfpUrl = data?.pfpUrl || getProfileInfoQueryContext.data?.wallet.profile?.profileImageUrlLowres;
+  const twitterHandle =
+    data?.twitterHandle || getProfileInfoQueryContext.data?.wallet.profile?.handle;
+  const pfpUrl =
+    data?.pfpUrl || getProfileInfoQueryContext.data?.wallet.profile?.profileImageUrlLowres;
 
   const isYou = publicKey?.toBase58() === address;
   const displayName = isYou

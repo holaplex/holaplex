@@ -3,8 +3,8 @@ import {
   CollectionPageProps,
   getCollectionPageServerSideProps,
 } from '@/views/collections/collections.utils';
-import { FollowItem } from 'src/components/FollowModal';
-import CollectionLayout from 'src/views/collections/CollectionLayout';
+import { FollowItem } from '@/components/FollowModal';
+import CollectionLayout from '@/views/collections/CollectionLayout';
 import { GetServerSideProps } from 'next';
 import React, { ReactNode } from 'react';
 

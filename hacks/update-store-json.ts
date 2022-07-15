@@ -1,7 +1,7 @@
-import ArweaveSDK from '../src/modules/arweave/client';
-import singletons from '../src/modules/singletons';
-import type { Storefront } from '../src/modules/storefront/types';
-import { stylesheet } from '../src/modules/theme';
+import ArweaveSDK from 'src/modules/arweave/client';
+import singletons from 'src/modules/singletons';
+import type { Storefront } from 'src/modules/storefront/types';
+import { stylesheet } from 'src/modules/theme';
 import fs from 'fs';
 
 const postArweaveStorefront = async (storefront: Storefront) => {

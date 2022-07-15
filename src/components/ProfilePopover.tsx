@@ -2,14 +2,11 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { forwardRef, useEffect, FC } from 'react';
-import {
-  useTwitterHandleFromPubKeyQuery,
-  useWalletProfileLazyQuery,
-} from 'src/graphql/indexerTypes';
+import { useTwitterHandleFromPubKeyQuery, useWalletProfileLazyQuery } from '@/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-import { WalletLabel } from 'src/components/WalletIndicator';
-import { SolBalance } from 'src/components/SolBalance';
+import { WalletLabel } from '@/components/WalletIndicator';
+import { SolBalance } from '@/components/SolBalance';
 import { DisconnectWalletButton } from '@/components/Button';
 
 import { getPFPFromPublicKey } from '@/modules/utils/image';

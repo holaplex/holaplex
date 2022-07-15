@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useEffect, useCallback, Fragment } from 'react';
 import { Search } from '@/assets/icons/Search';
 import LoadingSearchItem from './SearchItemLoading';
-import { useSearchLazyQuery, MetadataJson, Wallet, SearchQuery } from 'src/graphql/indexerTypes';
+import { useSearchLazyQuery, MetadataJson, Wallet, SearchQuery } from '@/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -12,7 +12,7 @@ import { XIcon } from '@heroicons/react/outline';
 import { IShortcutProviderRenderProps, withShortcut } from 'react-keybind';
 import KeyboardShortcut from '../../components/KeyboardShortcut';
 import { DebounceInput } from 'react-debounce-input';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Combobox, Transition } from '@headlessui/react';
 import { toast } from 'react-toastify';

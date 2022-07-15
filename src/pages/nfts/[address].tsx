@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useNftMarketplaceLazyQuery } from '../../src/graphql/indexerTypes';
+import { useNftMarketplaceLazyQuery } from '@/graphql/indexerTypes';
 import cx from 'classnames';
-import { shortenAddress } from '../../src/modules/utils/string';
+import { shortenAddress } from '@/modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
 import Accordion from '@/components/Accordion';
@@ -17,10 +17,10 @@ import Button from '@/components/Button';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-} from 'src/views/_global/holaplexConstants';
-import { DisplaySOL } from 'src/components/CurrencyHelpers';
-import Modal from 'src/components/Modal';
-import CancelOfferForm from 'src/components/CancelOfferForm';
+} from '@/views/_global/holaplexConstants';
+import { DisplaySOL } from '@/components/CurrencyHelpers';
+import Modal from '@/components/Modal';
+import CancelOfferForm from '@/components/CancelOfferForm';
 import { AhListing, Offer, Marketplace, Nft } from '@holaplex/marketplace-js-sdk';
 import { useRouter } from 'next/router';
 import UpdateOfferForm from '@/components/UpdateOfferForm';
@@ -30,15 +30,15 @@ import BuyForm from '@/components/BuyForm';
 import UpdateSellForm from '@/components/UpdateSellForm';
 import AcceptOfferForm from '@/components/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
-import { apolloClient } from '../../src/graphql/apollo';
-import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
+import { apolloClient } from '@/graphql/apollo';
+import { ShareNftDocument, ShareNftQuery } from '@/graphql/indexerTypes.ssr';
 import Head from 'next/head';
-import { Avatar, AvatarIcons } from 'src/components/Avatar';
-import { seededRandomBetween } from '../../src/modules/utils/random';
-import { SolscanIcon } from '../../src/assets/icons/Solscan';
-import { ExplorerIcon } from '../../src/assets/icons/Explorer';
+import { Avatar, AvatarIcons } from '@/components/Avatar';
+import { seededRandomBetween } from '@/modules/utils/random';
+import { SolscanIcon } from '@/assets/icons/Solscan';
+import { ExplorerIcon } from '@/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
-import { ButtonSkeleton } from '../../src/components/Skeletons';
+import { ButtonSkeleton } from '@/components/Skeletons';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -228,7 +228,7 @@ export default function NftByAddress({
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={`${name} NFT | Holaplex`} />
           <meta name="twitter:description" content={description} />
-          <meta name="twitter:image:src" content={image} />
+          <meta name="twitter:image:@" content={image} />
           <meta name="twitter:image" content={image} />
           <meta name="twitter:site" content="@holaplex" />
           {/* Open Graph */}

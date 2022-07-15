@@ -7,7 +7,7 @@ import { DisplaySOL } from './CurrencyHelpers';
 import { AhListing, Nft } from '@holaplex/marketplace-js-sdk';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import Link from 'next/link';
-import { Avatar } from 'src/components/Avatar';
+import { Avatar } from '@/components/Avatar';
 import { shortenAddress } from '@/modules/utils/string';
 
 interface DownloadNFTCardProps {

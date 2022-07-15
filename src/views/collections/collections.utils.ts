@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { graphqlRequestClient } from 'src/graphql/graphql-request';
-import { GetCollectionQuery } from 'src/graphql/indexerTypes';
-import { getSdk } from 'src/graphql/indexerTypes.ssr';
+import { graphqlRequestClient } from '@/graphql/graphql-request';
+import { GetCollectionQuery } from '@/graphql/indexerTypes';
+import { getSdk } from '@/graphql/indexerTypes.ssr';
 
 // Moving some items here to improve dev experinece / reduce duplication
 export enum CollectionTabRoute {

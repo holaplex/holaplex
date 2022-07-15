@@ -1,4 +1,4 @@
-import { ProfileMenu } from 'src/components/ProfileMenu';
+import { ProfileMenu } from '@/components/ProfileMenu';
 import { mq } from '@/assets/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
@@ -10,13 +10,13 @@ import styled from 'styled-components';
 
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
-import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+import { useProfileData } from '@/views/profiles/ProfileDataProvider';
 import { FollowerCount } from '../../components/FollowerCount';
 import { FollowModal, FollowModalVisibility } from '../../components/FollowModal';
 import { WalletDependantPageProps } from './getProfileServerSideProps';
 import Head from 'next/head';
 import Link from 'next/link';
-import MessagesIcon from 'src/assets/icons/MessagesIcon';
+import MessagesIcon from '@/assets/icons/MessagesIcon';
 import { FollowUnfollowButtonDataWrapper } from '@/components/ProfilePreviewCard';
 
 const ProfilePageHead = (props: {
@@ -47,7 +47,7 @@ const ProfilePageHead = (props: {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image:src" content={props.twitterProfile?.banner} />
+      <meta name="twitter:image:@" content={props.twitterProfile?.banner} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}
       <meta name="og-title" content={title} />

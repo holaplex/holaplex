@@ -3,8 +3,8 @@ import {
   getCollectionPageServerSideProps,
 } from '@/views/collections/collections.utils';
 
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from 'src/views/_global/holaplexConstants';
-import CollectionLayout from 'src/views/collections/CollectionLayout';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/views/_global/holaplexConstants';
+import CollectionLayout from '@/views/collections/CollectionLayout';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { GetServerSideProps } from 'next';
@@ -12,13 +12,13 @@ import {
   INFINITE_SCROLL_AMOUNT_INCREMENT,
   INITIAL_FETCH,
   NFTGrid,
-} from 'pages/profiles/[publicKey]/nfts';
+} from '@/pages/profiles/[publicKey]/nfts';
 import { uniq } from 'ramda';
 import React, { ReactNode, useState } from 'react';
-import { useNftsInCollectionQuery } from 'src/graphql/indexerTypes';
-import GridSelector from 'src/components/GridSelector';
-import TextInput2 from 'src/components/TextInput2';
-import TopLevelFilterButton from 'src/components/TopLevelFilterButton';
+import { useNftsInCollectionQuery } from '@/graphql/indexerTypes';
+import GridSelector from '@/components/GridSelector';
+import TextInput2 from '@/components/TextInput2';
+import TopLevelFilterButton from '@/components/TopLevelFilterButton';
 
 export const getServerSideProps: GetServerSideProps<CollectionPageProps> =
   getCollectionPageServerSideProps;

@@ -1,14 +1,14 @@
-import { IFeedItem } from 'src/views/alpha/feed.interfaces';
+import { IFeedItem } from '@/views/alpha/feed.interfaces';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from './Price';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
-import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from 'src/lib/utils';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from '@/lib/utils';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { Button5 } from './Button2';
-import { useTwitterHandleFromPubKeyQuery } from 'src/graphql/indexerTypes';
+import { useTwitterHandleFromPubKeyQuery } from '@/graphql/indexerTypes';
 
 function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
   const from = (activity.sourceUser || activity?.nft?.creators?.[0])!;

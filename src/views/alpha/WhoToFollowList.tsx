@@ -1,4 +1,4 @@
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';

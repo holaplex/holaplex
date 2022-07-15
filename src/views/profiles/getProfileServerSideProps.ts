@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { PublicKey } from '@solana/web3.js';
-import { getSdk } from 'src/graphql/indexerTypes.ssr';
-import { graphqlRequestClient } from 'src/graphql/graphql-request';
+import { getSdk } from '@/graphql/indexerTypes.ssr';
+import { graphqlRequestClient } from '@/graphql/graphql-request';
 import { getBannerFromPublicKey, getPFPFromPublicKey } from '../../modules/utils/image';
 
 export const getPublicKey = (input: string) => {

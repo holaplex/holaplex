@@ -1,7 +1,7 @@
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { useActivityPageQuery } from '@/graphql/indexerTypes';
 import { ActivityCard } from '../../components/ActivityCard';
 import { getActivityItemsFromBids } from '../../components/ActivityContent';
 

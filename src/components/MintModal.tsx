@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Modal } from 'antd';
 import styled from 'styled-components';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import dynamic from 'next/dynamic';
 import { holaSignMetadata } from '@/modules/storefront/approve-nft';
 import { useScrollBlock } from '@/hooks/useScrollBlock';

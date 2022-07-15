@@ -9,7 +9,7 @@ import { initMarketplaceSDK, Nft, Marketplace, Offer } from '@holaplex/marketpla
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 
 interface CancelOfferFormProps {
   offer: Offer;

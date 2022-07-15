@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, AhListing, Marketplace } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toLamports } from '../modules/sol';
 

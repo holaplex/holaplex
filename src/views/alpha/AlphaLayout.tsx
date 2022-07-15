@@ -1,11 +1,11 @@
-import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
-import Footer, { SmallFooter } from 'src/views/home/Footer';
+import WhoToFollowList from '@/views/alpha/WhoToFollowList';
+import Footer, { SmallFooter } from '@/views/home/Footer';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
-import { useAllConnectionsFromLazyQuery, useWhoToFollowQuery } from 'src/graphql/indexerTypes';
-import { User } from 'src/views/alpha/feed.utils';
+import { EmptyStateCTA } from '@/views/alpha/EmptyStateCTA';
+import { useAllConnectionsFromLazyQuery, useWhoToFollowQuery } from '@/graphql/indexerTypes';
+import { User } from '@/views/alpha/feed.utils';
 
 export default function AlphaLayout({ children }: { children: any }) {
   // Please don't remove the commented out code about the tab structure yet, it might be used soon // Kris

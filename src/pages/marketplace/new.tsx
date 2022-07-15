@@ -1,9 +1,9 @@
 import { programs, Wallet } from '@metaplex/js';
-import DomainFormItem from 'src/components/DomainFormItem';
+import DomainFormItem from '@/components/DomainFormItem';
 import Button from '@/components/Button';
-import Upload from 'src/components/Upload';
-import FillSpace from 'src/components/FillSpace';
-import StepForm from 'src/components/StepForm';
+import Upload from '@/components/Upload';
+import FillSpace from '@/components/FillSpace';
+import StepForm from '@/components/StepForm';
 import { initArweave } from '@/modules/arweave';
 import { Marketplace } from '@/modules/marketplace';
 import arweaveSDK from '@/modules/arweave/client';

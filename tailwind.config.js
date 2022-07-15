@@ -2,7 +2,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 const plugin = require('tailwindcss/plugin');
 
 module.exports = {
-  content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
   safelist: ['z-0', 'z-10', 'z-20', 'z-30', 'z-40', 'z-50'],
   theme: {
     extend: {

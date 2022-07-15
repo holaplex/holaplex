@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { shortenAddress } from '@/modules/utils/string';
 import Link from 'next/link';
 import classNames from 'classnames';
-import { Avatar } from 'src/components/Avatar';
+import { Avatar } from '@/components/Avatar';
 
 interface ProfileSearchItemProps {
   address: string;

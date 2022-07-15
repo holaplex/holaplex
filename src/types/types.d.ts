@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import { OwnedNfTsQuery } from 'src/graphql/indexerTypes';
+import { OwnedNfTsQuery } from '@/graphql/indexerTypes';
 
 export type Volume = number;
 

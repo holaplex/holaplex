@@ -5,7 +5,7 @@ import BugsnagPluginReact from '@bugsnag/plugin-react';
 
 import { Listing } from '@/modules/indexer';
 import { useRouter } from 'next/router';
-import { getFormatedListingPrice, lamportToSolIsh } from 'src/components/ListingPreview';
+import { getFormatedListingPrice, lamportToSolIsh } from '@/components/ListingPreview';
 import mixpanel from 'mixpanel-browser';
 import Script from 'next/script';
 import { useWallet } from '@solana/wallet-adapter-react';

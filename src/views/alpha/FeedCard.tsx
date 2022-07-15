@@ -1,6 +1,6 @@
 import ReactDom from 'react-dom';
 
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from 'src/views/_global/holaplexConstants';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/views/_global/holaplexConstants';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, shortenHandle } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
@@ -14,7 +14,7 @@ import {
   useNftMarketplaceLazyQuery,
   useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
-} from 'src/graphql/indexerTypes';
+} from '@/graphql/indexerTypes';
 import { Button5 } from '@/components/Button2';
 import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';
 import Modal from '@/components/Modal';
@@ -34,11 +34,11 @@ import {
 } from './feed.utils';
 import BuyForm from '@/components/BuyForm';
 import { TailSpin } from 'react-loader-spinner';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { LoadingContainer } from '@/components/LoadingPlaceholders';
-import { imgOpt } from 'src/lib/utils';
+import { imgOpt } from '@/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 
 interface FeedCardOptions {
   hideAction?: boolean;

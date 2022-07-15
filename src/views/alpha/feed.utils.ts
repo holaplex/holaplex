@@ -8,7 +8,7 @@ import {
   MintEvent,
   Purchase,
   GetCollectionQuery,
-} from 'src/graphql/indexerTypes';
+} from '@/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];

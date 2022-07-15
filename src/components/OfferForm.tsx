@@ -12,7 +12,7 @@ import Button from '@/components/Button';
 import { initMarketplaceSDK } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { toLamports } from '../modules/sol';
 
 const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
@@ -71,9 +71,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
       await sdk
         .transaction()
         .add(
-          sdk
-            .offers((marketplace.auctionHouses || [])[0])
-            .make({ amount: toLamports(amount), nft })
+          sdk.offers((marketplace.auctionHouses || [])[0]).make({ amount: toLamports(amount), nft })
         )
         .send();
     }

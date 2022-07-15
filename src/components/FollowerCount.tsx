@@ -8,14 +8,14 @@ import {
   useGetCollectedByQuery,
   useGetProfileFollowerOverviewQuery,
   useIsXFollowingYQuery,
-} from 'src/graphql/indexerTypes';
+} from '@/graphql/indexerTypes';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 import { FollowerBubble, FollowerBubbleImage } from './FollowerBubble';
-import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+import { useProfileData } from '@/views/profiles/ProfileDataProvider';
 import Modal from './Modal';
 import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 
 type FollowerCountProps = {
   wallet?: AnchorWallet;

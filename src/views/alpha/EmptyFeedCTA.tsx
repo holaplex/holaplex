@@ -5,7 +5,7 @@ import { useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 
 import { Program } from '@holaplex/graph-program';
 import * as anchor from '@project-serum/anchor';
-import { Action, MultiTransactionContext } from 'src/views/_global/MultiTransaction';
+import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { shortenAddress } from '@/modules/utils/string';
 import { EmptyStateCTA } from './EmptyStateCTA';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';

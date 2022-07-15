@@ -1,6 +1,6 @@
 import { useMakeConnection } from '@/hooks/useMakeConnection';
 import { useRevokeConnection } from '@/hooks/useRevokeConnection';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { AnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 import classNames from 'classnames';
 import { useApolloClient } from '@apollo/client';
 import {
@@ -20,7 +20,7 @@ import {
   GetProfileFollowerOverviewDocument,
   GetCollectedByDocument,
   GetConnectedWalletProfileDataDocument,
-} from 'src/graphql/indexerTypes';
+} from '@/graphql/indexerTypes';
 
 export type FollowUnfollowSource =
   | 'modalFollowing'

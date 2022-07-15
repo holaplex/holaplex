@@ -1,15 +1,15 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import Modal from 'src/components/Modal';
+import Modal from '@/components/Modal';
 import OfferForm from '@/components/OfferForm';
 import BlurPage from '@/views/nfts/BlurPage';
-import { useNftMarketplaceQuery } from '../../../../src/graphql/indexerTypes';
+import { useNftMarketplaceQuery } from '@/graphql/indexerTypes';
 import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 
 import Custom404 from '../../../404';
 import NftByAddress from '../../[address]';
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from 'src/views/_global/holaplexConstants';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/views/_global/holaplexConstants';
 import NFTPreview from '@/components/NFTPreview';
 import { useWallet } from '@solana/wallet-adapter-react';
 

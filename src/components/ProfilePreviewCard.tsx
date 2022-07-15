@@ -6,7 +6,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useCallback, FC, VFC } from 'react';
-import { useIsXFollowingYLazyQuery } from 'src/graphql/indexerTypes';
+import { useIsXFollowingYLazyQuery } from '@/graphql/indexerTypes';
 import { AvatarImage } from './Avatar';
 import { FollowUnfollowButton } from './FollowUnfollowButton';
 
@@ -114,7 +114,7 @@ export function ProfilePreviewLoadingCard(): JSX.Element {
       <div className="h-full w-full animate-pulse bg-gray-800" />
     </PreviewContainer>
   );
-};
+}
 
 const PreviewContainer: FC<any> = (props) => {
   return (

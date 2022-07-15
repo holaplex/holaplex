@@ -1,9 +1,9 @@
 import { CollectionRaisedCard } from '@/views/collections/CollectionRaisedCard';
 import { CollectionPageProps } from '@/views/collections/collections.utils';
-import { AvatarIcons } from 'src/components/Avatar';
-import { FollowUnfollowButton } from 'src/components/FollowUnfollowButton';
-import { User } from 'src/views/alpha/feed.utils';
-import { ProfileHandle, ProfilePFP } from 'src/views/alpha/FeedCard';
+import { AvatarIcons } from '@/components/Avatar';
+import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';
+import { User } from '@/views/alpha/feed.utils';
+import { ProfileHandle, ProfilePFP } from '@/views/alpha/FeedCard';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
@@ -12,7 +12,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useMemo } from 'react';
-import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
+import { useAllConnectionsToQuery } from '@/graphql/indexerTypes';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import { SolscanIcon } from '@/assets/icons/Solscan';
 
@@ -46,7 +46,7 @@ function CollectionLayoutHead(props: {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={`${props.name} Collection | Holaplex`} />
       <meta name="twitter:description" content={props.description} />
-      <meta name="twitter:image:src" content={props.image} />
+      <meta name="twitter:image:@" content={props.image} />
       <meta name="twitter:image" content={props.image} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}

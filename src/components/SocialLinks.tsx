@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 
 type SocialNetworkProvider = 'Twitter' | 'Medium' | 'Github' | 'Discord' | 'YouTube';
 

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { FeedQuery, useFeedQuery, useWhoToFollowQuery } from 'src/graphql/indexerTypes';
-import { FeedCard, LoadingFeedCard, LoadingFeedItem } from 'src/views/alpha/FeedCard';
+import { FeedQuery, useFeedQuery, useWhoToFollowQuery } from '@/graphql/indexerTypes';
+import { FeedCard, LoadingFeedCard, LoadingFeedItem } from '@/views/alpha/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
   FeedCardAttributes,
@@ -13,16 +13,16 @@ import {
   shouldAggregateFollows,
   shouldAggregateSaleEvents,
   User,
-} from 'src/views/alpha/feed.utils';
+} from '@/views/alpha/feed.utils';
 
-import Footer, { SmallFooter } from 'src/views/home/Footer';
-import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
-import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
+import Footer, { SmallFooter } from '@/views/home/Footer';
+import { EmptyStateCTA } from '@/views/alpha/EmptyStateCTA';
+import WhoToFollowList from '@/views/alpha/WhoToFollowList';
 import classNames from 'classnames';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import { Button5 } from 'src/components/Button2';
-import EmptyFeedCTA from 'src/views/alpha/EmptyFeedCTA';
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { Button5 } from '@/components/Button2';
+import EmptyFeedCTA from '@/views/alpha/EmptyFeedCTA';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
 const AGGREGATE_EVENT_LIMIT = 6;

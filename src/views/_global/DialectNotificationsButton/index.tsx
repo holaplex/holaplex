@@ -8,8 +8,8 @@ import { PublicKey } from '@solana/web3.js';
 import Bell from './BellIcon';
 import Settings from './SettingsIcon';
 import Close from './CloseIcon';
-import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
-import { HOLAPLEX_MONITORING_PUBLIC_KEY } from 'src/views/_global/holaplexConstants';
+import { useAnalytics } from '@/views/_global/AnalyticsProvider';
+import { HOLAPLEX_MONITORING_PUBLIC_KEY } from '@/views/_global/holaplexConstants';
 
 export const themeVariables: IncomingThemeVariables = {
   dark: {

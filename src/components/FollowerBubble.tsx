@@ -4,7 +4,7 @@ import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import cx from 'classnames';
 import { FC } from 'react';
-import { TopFollower } from 'src/views/profiles/ProfileDataProvider';
+import { TopFollower } from '@/views/profiles/ProfileDataProvider';
 
 type FollowerBubbleProps = {
   isFirst?: boolean;

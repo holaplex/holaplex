@@ -1,8 +1,8 @@
-import { IProfile } from 'src/views/alpha/feed.interfaces';
+import { IProfile } from '@/views/alpha/feed.interfaces';
 import { WalletDependantPageProps } from '@/views/profiles/getProfileServerSideProps';
 import { Unpacked } from '@/types/Unpacked';
 import React, { FC, useContext, useMemo } from 'react';
-import { GetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes.ssr';
+import { GetProfileFollowerOverviewQuery } from '@/graphql/indexerTypes.ssr';
 
 export type TopFollower = Unpacked<GetProfileFollowerOverviewQuery['connections']>;
 

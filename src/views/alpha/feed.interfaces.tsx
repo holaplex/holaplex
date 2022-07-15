@@ -1,6 +1,6 @@
-import { TopFollower } from 'src/views/profiles/ProfileDataProvider';
-import { Storefront } from 'src/graphql/indexerTypes';
-import { Listing } from 'src/graphql/indexerTypes.ssr';
+import { TopFollower } from '@/views/profiles/ProfileDataProvider';
+import { Storefront } from '@/graphql/indexerTypes';
+import { Listing } from '@/graphql/indexerTypes.ssr';
 
 export const BID_ACTIVITY = [
   'BID_MADE',

@@ -1,4 +1,4 @@
-import { ProfileMenu } from 'src/components/ProfileMenu';
+import { ProfileMenu } from '@/components/ProfileMenu';
 import { mq } from '@/assets/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
@@ -11,7 +11,7 @@ import { FollowerCount } from './FollowerCount';
 import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
-import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+import { useProfileData } from '@/views/profiles/ProfileDataProvider';
 import { Button5 } from './Button2';
 import Link from 'next/link';
 import { FollowUnfollowButtonDataWrapper } from './ProfilePreviewCard';

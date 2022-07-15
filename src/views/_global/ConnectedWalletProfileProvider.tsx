@@ -5,7 +5,7 @@ import {
   GetConnectedWalletProfileDataQuery,
   useGetConnectedWalletProfileDataLazyQuery,
   useGetConnectedWalletProfileDataQuery,
-} from 'src/graphql/indexerTypes';
+} from '@/graphql/indexerTypes';
 
 type WalletProfile = GetConnectedWalletProfileDataQuery['followers'][0]['from'];
 

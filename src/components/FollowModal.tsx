@@ -10,10 +10,10 @@ import {
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
   useAllConnectionsToQuery,
-} from 'src/graphql/indexerTypes';
-import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
+} from '@/graphql/indexerTypes';
+import { useProfileData } from '@/views/profiles/ProfileDataProvider';
 import { cleanUpFollowers, cleanUpFollowing } from './FollowerCount';
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 import { Close } from '@/assets/icons/Close';
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
 

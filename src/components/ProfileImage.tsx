@@ -4,7 +4,7 @@ import { ProfilePopover } from './ProfilePopover';
 import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
-import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 
 export const ProfileImage = () => {
   const { connectedProfile } = useConnectedWalletProfile();
