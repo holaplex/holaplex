@@ -2,7 +2,7 @@ name: Kubernetes deployment
 
 on:
   push:
-    branches: [ dev, main ]
+    branches: [dev, main]
 
 jobs:
   build:
@@ -79,7 +79,6 @@ jobs:
             docker push $image_tag
             echo "::set-output name=image::$image_tag"
           fi
-
 
       - name: Triggering deployment manifest update in kubes repository (Dev)
         if: github.ref == 'refs/heads/dev'

@@ -9,7 +9,10 @@ export interface SolanaServerRuntimeConfig {
 }
 
 export const buildSolana = (SecretId: string | undefined, endpoint?: string) => {
-  return async (ctx: { secrets: SecretsManagerClient, endpoint?: string }): Promise<SolanaServerRuntimeConfig> => {
+  return async (ctx: {
+    secrets: SecretsManagerClient;
+    endpoint?: string;
+  }): Promise<SolanaServerRuntimeConfig> => {
     const endpoint = ctx.endpoint || process.env.SOLANA_ENDPOINT;
     if (endpoint === undefined) throw new Error('Missing SOLANA_ENDPOINT');
 

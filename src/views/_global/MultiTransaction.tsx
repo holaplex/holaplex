@@ -32,9 +32,9 @@ const defaultState: MultiTransactionState = {
   hasRemainingActions: false,
   hasActionPending: false,
   actions: [],
-  clearActions: () => { },
-  runActions: async ([]) => { },
-  retryActions: async () => { },
+  clearActions: () => {},
+  runActions: async ([]) => {},
+  retryActions: async () => {},
 };
 
 export const MultiTransactionContext = createContext<MultiTransactionState>(defaultState);
@@ -158,7 +158,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         } else {
           setHasError(true);
         }
-        
+
         setHasActionPending(false);
       } finally {
         if (settings?.onComplete) {

@@ -159,6 +159,7 @@ export type FollowEvent = {
   feedEventId: Scalars['String'];
   graphConnectionAddress: Scalars['PublicKey'];
   profile?: Maybe<TwitterProfile>;
+  wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
 };
 
@@ -191,6 +192,7 @@ export type ListingEvent = {
   listing?: Maybe<AhListing>;
   listingId: Scalars['Uuid'];
   profile?: Maybe<TwitterProfile>;
+  wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
 };
 
@@ -249,6 +251,7 @@ export type MintEvent = {
   metadataAddress: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   profile?: Maybe<TwitterProfile>;
+  wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
 };
 
@@ -266,12 +269,14 @@ export type Nft = {
   __typename?: 'Nft';
   activities: Array<NftActivity>;
   address: Scalars['String'];
+  animationUrl?: Maybe<Scalars['String']>;
   attributes: Array<NftAttribute>;
   category: Scalars['String'];
   collection?: Maybe<Nft>;
   createdAt?: Maybe<Scalars['DateTimeUtc']>;
   creators: Array<NftCreator>;
   description: Scalars['String'];
+  externalUrl?: Maybe<Scalars['String']>;
   files: Array<NftFile>;
   image: Scalars['String'];
   listings: Array<AhListing>;
@@ -391,6 +396,7 @@ export type OfferEvent = {
   offer?: Maybe<Offer>;
   offerId: Scalars['Uuid'];
   profile?: Maybe<TwitterProfile>;
+  wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
 };
 
@@ -433,6 +439,7 @@ export type PurchaseEvent = {
   profile?: Maybe<TwitterProfile>;
   purchase?: Maybe<Purchase>;
   purchaseId: Scalars['Uuid'];
+  wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
 };
 
@@ -590,6 +597,7 @@ export type QueryRootNftsArgs = {
   attributes?: InputMaybe<Array<AttributeFilter>>;
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   collection?: InputMaybe<Scalars['PublicKey']>;
+  collections?: InputMaybe<Array<Scalars['PublicKey']>>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   limit: Scalars['Int'];
   listed?: InputMaybe<Scalars['Boolean']>;
