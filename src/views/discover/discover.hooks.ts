@@ -8,7 +8,11 @@ import {
 import { DiscoverNFTCardData } from 'pages/discover/nfts';
 import { useCallback } from 'react';
 import {
+  DiscoverCollectionsByMarketCapQuery,
+  DiscoverCollectionsByVolumeQuery,
   ProfilePreviewFragment,
+  useDiscoverCollectionsByMarketCapLazyQuery,
+  useDiscoverCollectionsByVolumeLazyQuery,
   useDiscoverNftsActiveOffersLazyQuery,
   useDiscoverNftsAllLazyQuery,
   useDiscoverNftsBuyNowLazyQuery,
@@ -91,6 +95,137 @@ function useDiscoverNftsQuery(
 }
 
 function transformNftCardData(
+  cardData: NftCardFragment,
+  marketplace?: MarketplaceAuctionHouseFragment | null
+): DiscoverNFTCardData {
+  notNullish(marketplace?.auctionHouses[0], 'marketplace?.auctionHouses[0]');
+  return { nft: cardData, marketplace: marketplace!.auctionHouses[0]! };
+}
+
+interface DiscoverCollectionsQueryParams {
+  searchTerm?: string | null | undefined;
+  start: Date;
+  end: Date;
+  limit: number;
+  offset: number;
+}
+
+//TODO update DiscoverNFTCardData for collections to its own type once you've figured out what that is
+export interface DiscoverCollectionsQueryContext
+  extends InfiniteScrollQueryContext<DiscoverNFTCardData, DiscoverCollectionsQueryParams, void> {}
+
+export function useDiscoverCollectionsByMarketcapQueryWithTransforms(
+  searchTerm: string | null,
+  startDate: Date,
+  endDate: Date,
+  limit: number,
+  fetchMoreLimit: number
+): DiscoverCollectionsQueryContext {
+  const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByMarketCapQuery> =
+    useCallback((previous, more) => {
+      if (!more) return previous;
+      more.collectionsFeaturedByMarketCap = [
+        ...previous.collectionsFeaturedByMarketCap,
+        ...more.collectionsFeaturedByMarketCap,
+      ];
+      return { ...more };
+    }, []);
+
+  return useHolaplexInfiniteScrollQuery<
+    DiscoverNFTCardData,
+    DiscoverCollectionsQueryParams,
+    DiscoverCollectionsByMarketCapQuery['collectionsFeaturedByMarketCap'][0],
+    DiscoverCollectionsByMarketCapQuery
+  >(
+    useDiscoverCollectionsByMarketCapLazyQuery,
+    { searchTerm, start: startDate, end: endDate, limit, offset: 0 },
+    limit,
+    fetchMoreLimit,
+    (e, o) => transformCollectionCardData(e, o.marketplace),
+    (r) => r.collectionsFeaturedByMarketCap,
+    mergeResultsFunction
+  );
+}
+
+export function useDiscoverCollectionsByVolumeLazyQueryWithTransforms(
+  searchTerm: string | null,
+  startDate: Date,
+  endDate: Date,
+  limit: number,
+  fetchMoreLimit: number
+): DiscoverCollectionsQueryContext {
+  const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByVolumeQuery> =
+    useCallback((previous, more) => {
+      if (!more) return previous;
+      more.collectionsFeaturedByVolume = [
+        ...previous.collectionsFeaturedByVolume,
+        ...more.collectionsFeaturedByVolume,
+      ];
+      return { ...more };
+    }, []);
+
+  return useHolaplexInfiniteScrollQuery<
+    DiscoverNFTCardData,
+    DiscoverCollectionsQueryParams,
+    DiscoverCollectionsByVolumeQuery['collectionsFeaturedByVolume'][0],
+    DiscoverCollectionsByVolumeQuery
+  >(
+    useDiscoverCollectionsByVolumeLazyQuery,
+    { searchTerm, start: startDate, end: endDate, limit, offset: 0 },
+    limit,
+    fetchMoreLimit,
+    (e, o) => transformCollectionCardData(e, o.marketplace),
+    (r) => r.collectionsFeaturedByVolume,
+    mergeResultsFunction
+  );
+}
+
+export function useDiscoverCollectionsNewLazyQueryWithTransforms(
+  searchTerm: string | null,
+  startDate: Date,
+  endDate: Date,
+  limit: number,
+  fetchMoreLimit: number
+): DiscoverCollectionsQueryContext {
+  //TODO update with new and notable query (when that's done)
+  return useDiscoverCollectionsByVolumeLazyQueryWithTransforms(searchTerm, startDate, endDate, limit, fetchMoreLimit);
+}
+
+function useDiscoverCollectionsQuery(
+  hook: InfiniteScrollHook<DiscoverCollectionsByMarketCapQuery, DiscoverCollectionsQueryParams>,
+  searchTerm: string | null,
+  startDate: Date,
+  endDate: Date,
+  limit: number,
+  fetchMoreLimit: number
+): DiscoverCollectionsQueryContext {
+  const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByMarketCapQuery> =
+    useCallback((previous, more) => {
+      if (!more) return previous;
+      more.collectionsFeaturedByMarketCap = [
+        ...previous.collectionsFeaturedByMarketCap,
+        ...more.collectionsFeaturedByMarketCap,
+      ];
+      return { ...more };
+    }, []);
+
+  return useHolaplexInfiniteScrollQuery<
+    DiscoverNFTCardData,
+    DiscoverCollectionsQueryParams,
+    DiscoverCollectionsByMarketCapQuery['collectionsFeaturedByMarketCap'][0],
+    DiscoverCollectionsByMarketCapQuery
+  >(
+    hook,
+    { searchTerm, start: startDate, end: endDate, limit, offset: 0 },
+    limit,
+    fetchMoreLimit,
+    (e, o) => transformCollectionCardData(e, o.marketplace),
+    (r) => r.collectionsFeaturedByMarketCap,
+    mergeResultsFunction
+  );
+}
+
+function transformCollectionCardData(
   cardData: NftCardFragment,
   marketplace?: MarketplaceAuctionHouseFragment | null
 ): DiscoverNFTCardData {

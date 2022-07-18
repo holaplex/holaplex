@@ -400,6 +400,12 @@ export type OfferEvent = {
   walletAddress: Scalars['PublicKey'];
 };
 
+/** Sorts results ascending or descending */
+export enum OrderDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
 export type PriceChart = {
   __typename?: 'PriceChart';
   listingFloor: Array<PricePoint>;
@@ -447,6 +453,10 @@ export type QueryRoot = {
   __typename?: 'QueryRoot';
   activities: Array<NftActivity>;
   charts: PriceChart;
+  /** Returns featured collection NFTs ordered by market cap (floor price * number of NFTs in collection) */
+  collectionsFeaturedByMarketCap: Array<Nft>;
+  /** Returns featured collection NFTs ordered by volume (sum of purchase prices) */
+  collectionsFeaturedByVolume: Array<Nft>;
   connections: Array<GraphConnection>;
   creator: Creator;
   denylist: Denylist;
@@ -502,6 +512,26 @@ export type QueryRootChartsArgs = {
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
   endDate: Scalars['DateTimeUtc'];
   startDate: Scalars['DateTimeUtc'];
+};
+
+
+export type QueryRootCollectionsFeaturedByMarketCapArgs = {
+  endDate: Scalars['DateTimeUtc'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  orderDirection: OrderDirection;
+  startDate: Scalars['DateTimeUtc'];
+  term?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryRootCollectionsFeaturedByVolumeArgs = {
+  endDate: Scalars['DateTimeUtc'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  orderDirection: OrderDirection;
+  startDate: Scalars['DateTimeUtc'];
+  term?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -792,6 +822,28 @@ export type NftsInCollectionQueryVariables = Exact<{
 
 
 export type NftsInCollectionQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, ownerAddress: string, creators: Array<{ __typename?: 'StoreCreator', creatorAddress: string, storeConfigAddress: string }>, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null }> } | null, nfts: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, attributes: Array<{ __typename?: 'NftAttribute', metadataAddress: string, value?: string | null, traitType?: string | null }>, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, collection?: { __typename?: 'Nft', address: string, name: string, image: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }> };
+
+export type DiscoverCollectionsByMarketCapQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']>;
+  start: Scalars['DateTimeUtc'];
+  end: Scalars['DateTimeUtc'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverCollectionsByMarketCapQuery = { __typename?: 'QueryRoot', collectionsFeaturedByMarketCap: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, purchaseId?: any | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, purchaseId?: any | null, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> } | null };
+
+export type DiscoverCollectionsByVolumeQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']>;
+  start: Scalars['DateTimeUtc'];
+  end: Scalars['DateTimeUtc'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type DiscoverCollectionsByVolumeQuery = { __typename?: 'QueryRoot', collectionsFeaturedByVolume: Array<{ __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, purchaseId?: any | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, purchaseId?: any | null, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> }>, marketplace?: { __typename?: 'Marketplace', auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> } | null };
 
 export type DiscoverNftsActiveOffersQueryVariables = Exact<{
   searchTerm?: InputMaybe<Scalars['String']>;
@@ -2404,6 +2456,106 @@ export function useNftsInCollectionLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NftsInCollectionQueryHookResult = ReturnType<typeof useNftsInCollectionQuery>;
 export type NftsInCollectionLazyQueryHookResult = ReturnType<typeof useNftsInCollectionLazyQuery>;
 export type NftsInCollectionQueryResult = Apollo.QueryResult<NftsInCollectionQuery, NftsInCollectionQueryVariables>;
+export const DiscoverCollectionsByMarketCapDocument = gql`
+    query discoverCollectionsByMarketCap($searchTerm: String, $start: DateTimeUtc!, $end: DateTimeUtc!, $limit: Int!, $offset: Int!) {
+  collectionsFeaturedByMarketCap(
+    term: $searchTerm
+    startDate: $start
+    endDate: $end
+    limit: $limit
+    offset: $offset
+    orderDirection: DESC
+  ) {
+    ...NftCard
+  }
+  marketplace(subdomain: "haus") {
+    ...MarketplaceAuctionHouse
+  }
+}
+    ${NftCardFragmentDoc}
+${MarketplaceAuctionHouseFragmentDoc}`;
+
+/**
+ * __useDiscoverCollectionsByMarketCapQuery__
+ *
+ * To run a query within a React component, call `useDiscoverCollectionsByMarketCapQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverCollectionsByMarketCapQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverCollectionsByMarketCapQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useDiscoverCollectionsByMarketCapQuery(baseOptions: Apollo.QueryHookOptions<DiscoverCollectionsByMarketCapQuery, DiscoverCollectionsByMarketCapQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscoverCollectionsByMarketCapQuery, DiscoverCollectionsByMarketCapQueryVariables>(DiscoverCollectionsByMarketCapDocument, options);
+      }
+export function useDiscoverCollectionsByMarketCapLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscoverCollectionsByMarketCapQuery, DiscoverCollectionsByMarketCapQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscoverCollectionsByMarketCapQuery, DiscoverCollectionsByMarketCapQueryVariables>(DiscoverCollectionsByMarketCapDocument, options);
+        }
+export type DiscoverCollectionsByMarketCapQueryHookResult = ReturnType<typeof useDiscoverCollectionsByMarketCapQuery>;
+export type DiscoverCollectionsByMarketCapLazyQueryHookResult = ReturnType<typeof useDiscoverCollectionsByMarketCapLazyQuery>;
+export type DiscoverCollectionsByMarketCapQueryResult = Apollo.QueryResult<DiscoverCollectionsByMarketCapQuery, DiscoverCollectionsByMarketCapQueryVariables>;
+export const DiscoverCollectionsByVolumeDocument = gql`
+    query discoverCollectionsByVolume($searchTerm: String, $start: DateTimeUtc!, $end: DateTimeUtc!, $limit: Int!, $offset: Int!) {
+  collectionsFeaturedByVolume(
+    term: $searchTerm
+    startDate: $start
+    endDate: $end
+    limit: $limit
+    offset: $offset
+    orderDirection: DESC
+  ) {
+    ...NftCard
+  }
+  marketplace(subdomain: "haus") {
+    ...MarketplaceAuctionHouse
+  }
+}
+    ${NftCardFragmentDoc}
+${MarketplaceAuctionHouseFragmentDoc}`;
+
+/**
+ * __useDiscoverCollectionsByVolumeQuery__
+ *
+ * To run a query within a React component, call `useDiscoverCollectionsByVolumeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverCollectionsByVolumeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverCollectionsByVolumeQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useDiscoverCollectionsByVolumeQuery(baseOptions: Apollo.QueryHookOptions<DiscoverCollectionsByVolumeQuery, DiscoverCollectionsByVolumeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscoverCollectionsByVolumeQuery, DiscoverCollectionsByVolumeQueryVariables>(DiscoverCollectionsByVolumeDocument, options);
+      }
+export function useDiscoverCollectionsByVolumeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscoverCollectionsByVolumeQuery, DiscoverCollectionsByVolumeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscoverCollectionsByVolumeQuery, DiscoverCollectionsByVolumeQueryVariables>(DiscoverCollectionsByVolumeDocument, options);
+        }
+export type DiscoverCollectionsByVolumeQueryHookResult = ReturnType<typeof useDiscoverCollectionsByVolumeQuery>;
+export type DiscoverCollectionsByVolumeLazyQueryHookResult = ReturnType<typeof useDiscoverCollectionsByVolumeLazyQuery>;
+export type DiscoverCollectionsByVolumeQueryResult = Apollo.QueryResult<DiscoverCollectionsByVolumeQuery, DiscoverCollectionsByVolumeQueryVariables>;
 export const DiscoverNftsActiveOffersDocument = gql`
     query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
   nfts(
