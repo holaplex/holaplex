@@ -6,10 +6,12 @@ import { isPublicKey } from './SearchBar';
 import { profile } from 'console';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { Combobox } from '@headlessui/react';
+import { useRouter } from 'next/router';
 
 interface SearchResultsProps {
   term?: string;
   results?: MetadataJson[];
+  collectionResults?: MetadataJson[];
   profileResults?: Wallet[];
   walletResult?: Wallet;
   mintAddressResult?: Nft;
@@ -23,8 +25,11 @@ const SearchResults: FC<SearchResultsProps> = ({
   profileResults,
   walletResult,
   mintAddressResult,
+  collectionResults,
 }) => {
   const { track } = useAnalytics();
+
+  const router = useRouter();
 
   if (results?.length === 0 && profileResults?.length === 0 && !walletResult) {
     return (
@@ -76,6 +81,39 @@ const SearchResults: FC<SearchResultsProps> = ({
                           profileHandle: profile.twitterHandle,
                         })
                       }
+                      active={active}
+                    />
+                  )}
+                </Combobox.Option>
+              )}
+            </>
+          ))}
+        </>
+      )}
+      {collectionResults && collectionResults?.length > 0 && (
+        <>
+          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Collections</h6>
+          {collectionResults?.map((collection) => (
+            <>
+              {collection?.address && (
+                <Combobox.Option key={'collection-' + collection.address} value={collection}>
+                  {({ active }) => (
+                    <NFTSearchItem
+                      creatorHandle={collection.creatorTwitterHandle}
+                      creatorAddress={collection.creatorAddress}
+                      key={`collection-search-item-${collection.address}`}
+                      address={collection.mintAddress || collection.address}
+                      image={collection.image!}
+                      name={collection.name}
+                      onClick={() => {
+                        trackSearchResultSelected({
+                          resultType: 'Collection',
+                          nftName: collection.name,
+                          nftImage: collection.image as string | undefined,
+                          nftAddress: collection.address,
+                        });
+                        router.push(`/collections/${collection.address}`);
+                      }}
                       active={active}
                     />
                   )}

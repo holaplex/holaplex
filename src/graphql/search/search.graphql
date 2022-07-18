@@ -36,4 +36,10 @@ query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String
     }
     mintAddress
   }
+  searchCollections(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    mintAddress
+    image
+  }
 }
