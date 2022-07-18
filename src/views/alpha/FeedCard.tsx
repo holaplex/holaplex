@@ -265,18 +265,23 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
   }, []);
 
   return (
-    // <Popover
-    //   isShowOnHover={true}
-    //   content={<ProfilePreview address={user.address} data={getProfilePreivewDataFromUser(user)} />}
-    // >
-    <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-      <a>
-        {user.profile?.handle
-          ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
-          : `@${shortenAddress(user.address)}`}
-      </a>
-    </Link>
-    //</Popover>
+    <Popover
+      isShowOnHover={true}
+      content={
+        <ProfilePreview
+          address={user.address}
+          context={{ data: getProfilePreivewDataFromUser(user), loading: false, refetch: () => {} }}
+        />
+      }
+    >
+      <Link href={'/profiles/' + user.address + '/nfts'} passHref>
+        <a>
+          {user.profile?.handle
+            ? `@${shorten ? shortenHandle(user.profile?.handle) : user.profile?.handle}`
+            : `@${shortenAddress(user.address)}`}
+        </a>
+      </Link>
+    </Popover>
   );
 };
 

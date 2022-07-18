@@ -6,6 +6,7 @@ import { getHandle, User } from './feed.utils';
 import { ProfilePFP } from './FeedCard';
 import Popover from '../../components/Popover';
 import { getProfilePreivewDataFromUser } from '../../lib/utils/typeUtils';
+import ProfilePreview from '../../components/ProfilePreviewCard';
 
 function FollowListItem({
   user,
@@ -116,15 +117,22 @@ export default function WhoToFollowList(props: {
 
         {connectedProfile?.walletConnectionPair &&
           topProfilesToFollow.map((u) => (
-            // <Popover
-            //   key={u.address}
-            //   isShowOnHover={true}
-            //   content={
-            //     <ProfilePreview address={u.address} data={getProfilePreivewDataFromUser(u)} />
-            //   }
-            // >
-            <FollowListItem key={u.address} user={u} myFollowingList={myFollowingList} />
-            //</Popover>
+            <Popover
+              key={u.address}
+              isShowOnHover={true}
+              content={
+                <ProfilePreview
+                  address={u.address}
+                  context={{
+                    data: getProfilePreivewDataFromUser(u),
+                    loading: false,
+                    refetch: () => {},
+                  }}
+                />
+              }
+            >
+              <FollowListItem key={u.address} user={u} myFollowingList={myFollowingList} />
+            </Popover>
           ))}
         {!connectedProfile && myFollowingList && <div>Connect wallet to see suggestions</div>}
       </div>

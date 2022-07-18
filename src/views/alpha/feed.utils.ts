@@ -8,6 +8,7 @@ import {
   MintEvent,
   Purchase,
   GetCollectionQuery,
+  Wallet,
 } from 'src/graphql/indexerTypes';
 
 type FeedEventTypes = FeedItem['__typename'];
@@ -35,6 +36,7 @@ export interface AggregateEvent {
   eventsAggregated: FeedQueryEvent[];
   walletAddress: string;
   profile?: FeedQueryEvent['profile'];
+  wallet: Wallet;
 }
 
 export interface AggregateSaleEvent extends Omit<AggregateEvent, '__typename'> {
@@ -152,6 +154,10 @@ export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => 
       {
         address: aggregateEvent.walletAddress,
         profile: aggregateEvent.profile,
+        nftCounts: {
+          owned: aggregateEvent.wallet?.nftCounts?.owned,
+          created: aggregateEvent.wallet?.nftCounts?.created,
+        },
       },
     ];
   }
@@ -161,6 +167,10 @@ export const getAggregateProfiles = (aggregateEvent: AggregateEvent): User[] => 
       users.push({
         address: user.walletAddress,
         profile: user.profile,
+        nftCounts: {
+          owned: aggregateEvent.wallet?.nftCounts?.owned,
+          created: aggregateEvent.wallet?.nftCounts?.created,
+        },
       });
     } else {
       // do nothing

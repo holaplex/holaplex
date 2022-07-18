@@ -200,6 +200,19 @@ const AlphaPage = ({ address }: { address: string }) => {
           walletAddress: event.walletAddress,
           profile: event.profile,
           eventsAggregated,
+          wallet: {
+            address: event.walletAddress,
+            twitterHandle: null,
+            bids: [],
+            profile: null,
+            connectionCounts: {} as any,
+            nftCounts: {
+              owned: event.wallet.nftCounts.owned,
+              created: event.wallet.nftCounts.created,
+              offered: 0,
+              listed: 0,
+            },
+          },
         });
       }
 
@@ -227,6 +240,19 @@ const AlphaPage = ({ address }: { address: string }) => {
           walletAddress: event.walletAddress,
           profile: event.profile,
           eventsAggregated: salesAggregated,
+          wallet: {
+            address: event.walletAddress,
+            twitterHandle: null,
+            bids: [],
+            profile: null,
+            connectionCounts: {} as any,
+            nftCounts: {
+              owned: event.wallet.nftCounts.owned,
+              created: event.wallet.nftCounts.created,
+              offered: 0,
+              listed: 0,
+            },
+          },
         });
       }
 
