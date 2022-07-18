@@ -22,24 +22,8 @@ export const apolloClient = new ApolloClient({
           },
         },
       },
-      BidReceipt: {
-        keyFields: ['address'],
-        fields: {
-          price: {
-            read: asBN,
-          },
-        },
-      },
-      ListingReceipt: {
-        keyFields: ['address'],
-        fields: {
-          price: {
-            read: asBN,
-          },
-        },
-      },
       NftActivity: {
-        keyFields: ['address'],
+        keyFields: ['id'],
         fields: {
           price: {
             read: asBN,

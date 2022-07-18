@@ -13,8 +13,8 @@ fragment ProfilePreview on Wallet {
   }
 }
 
-fragment BuyNowListing on ListingReceipt {
-  address
+fragment BuyNowListing on AhListing {
+  id
   metadata
   nft {
     address
