@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { SearchQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
+import { SearchQuery, MetadataJson, Wallet, Nft } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
@@ -12,11 +12,18 @@ interface SearchResultsProps {
   results?: MetadataJson[];
   profileResults?: Wallet[];
   walletResult?: Wallet;
+  mintAddressResult?: Nft;
 }
 
 const SearchResultTrackAction = 'Search Result Selected';
 
-const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, walletResult }) => {
+const SearchResults: FC<SearchResultsProps> = ({
+  term,
+  results,
+  profileResults,
+  walletResult,
+  mintAddressResult,
+}) => {
   const { track } = useAnalytics();
 
   if (results?.length === 0 && profileResults?.length === 0 && !walletResult) {
@@ -43,6 +50,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
       profileResultsCount: profileResults?.length || 0,
       walletResultsCount: walletResult ? 1 : 0,
       nftResultsCount: results?.length || 0,
+      usedMintAddressSearch: Boolean(mintAddressResult),
       ...args,
     });
   }
@@ -108,7 +116,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
                       creatorHandle={nft.creatorTwitterHandle}
                       creatorAddress={nft.creatorAddress}
                       key={nft.address}
-                      address={nft.address}
+                      address={nft.mintAddress || nft.address}
                       image={nft.image!}
                       name={nft.name}
                       onClick={() =>

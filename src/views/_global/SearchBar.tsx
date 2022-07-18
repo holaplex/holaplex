@@ -1,7 +1,13 @@
 import React, { FC, useState, useRef, useEffect, useCallback, Fragment } from 'react';
 import { Search } from '@/assets/icons/Search';
 import LoadingSearchItem from './SearchItemLoading';
-import { useSearchLazyQuery, MetadataJson, Wallet, SearchQuery } from 'src/graphql/indexerTypes';
+import {
+  useSearchLazyQuery,
+  MetadataJson,
+  Wallet,
+  SearchQuery,
+  Nft,
+} from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -60,7 +66,8 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   type SearchResultItem =
     | SearchQuery['metadataJsons'][0]
     | SearchQuery['profiles'][0]
-    | SearchQuery['wallet'];
+    | SearchQuery['wallet']
+    | SearchQuery['nftByMintAddress'];
   const [selected, setSelected] = useState<SearchResultItem | null>(null);
   const wallet = useWallet();
 
@@ -93,6 +100,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
     }
     searchQuery({
       variables: {
+        nftMintAddress: e.target.value,
         term: e.target.value,
         walletAddress: e.target.value,
       },
@@ -239,6 +247,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   results={data?.metadataJsons as MetadataJson[]}
                   profileResults={data?.profiles as Wallet[]}
                   walletResult={data.wallet as Wallet}
+                  mintAddressResult={data.nftByMintAddress as Nft}
                 />
               )}
             </Combobox.Options>
