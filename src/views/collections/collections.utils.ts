@@ -28,7 +28,7 @@ export async function getCollectionPageServerSideProps(context: GetServerSidePro
   return {
     props: {
       collectionAddress,
-      collection: collection.nft,
+      collection: collection.nft || collection.nftByMintAddress,
     },
   };
 }
