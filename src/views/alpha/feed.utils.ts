@@ -77,6 +77,10 @@ export function generateFeedCardAttributes(
     sourceUser: {
       address: event.walletAddress,
       profile: event.profile,
+      nftCounts: {
+        owned: event.wallet.nftCounts.owned,
+        created: event.wallet.nftCounts.created,
+      },
     },
   };
   let solAmount: number | undefined;
