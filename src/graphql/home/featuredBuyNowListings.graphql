@@ -1,6 +1,6 @@
 query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
   featuredListings(limit: $limit, offset: 0) {
-    address
+    id
     metadata
     nft {
       address
