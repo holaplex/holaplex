@@ -104,6 +104,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         param: undefined,
       },
     ];
+    
     if (listing) {
       newActions = [
         ...newActions,
