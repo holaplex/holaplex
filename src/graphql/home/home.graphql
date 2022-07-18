@@ -16,8 +16,6 @@ fragment ProfilePreview on Wallet {
 }
 
 fragment BuyNowListing on ListingReceipt {
-  address
-  metadata
   nft {
     address
     name

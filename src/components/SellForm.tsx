@@ -17,6 +17,7 @@ import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { TOS_LINK } from '../modules/crossmint/constants';
 import { useMutation } from 'react-query';
 import { acceptTOS } from '../modules/crossmint';
+import { toLamports } from '../modules/sol';
 
 interface SellFormSchema {
   amount: string;
@@ -96,7 +97,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
 
-  const auctionHouses = marketplace?.auctionHouses || []
+  const auctionHouses = marketplace?.auctionHouses || [];
   const sellerFee = nft?.sellerFeeBasisPoints || 1000;
   const auctionHouseSellerFee = auctionHouses[0]?.sellerFeeBasisPoints || 200;
   const royalties = (listPrice * sellerFee) / 10000;
@@ -106,7 +107,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
     if (amount && nft) {
       await sdk
         .transaction()
-        .add(sdk.listings(auctionHouses[0]).post({ amount, nft }))
+        .add(sdk.listings(auctionHouses[0]).post({ amount: toLamports(amount), nft }))
         .send();
     }
   };
@@ -157,10 +158,7 @@ const SellForm: FC<SellFormProps> = ({ nft, marketplace, refetch, loading, setOp
         {Number(auctionHouses[0]?.stats?.floor) > 0 ? (
           <div className={`flex flex-col justify-start`}>
             <p className={`text-base font-medium text-gray-300`}>Floor price</p>
-            <DisplaySOL
-              className={`font-medium`}
-              amount={Number(auctionHouses[0].stats?.floor)}
-            />
+            <DisplaySOL className={`font-medium`} amount={Number(auctionHouses[0].stats?.floor)} />
           </div>
         ) : (
           <div className={`flex w-full`} />

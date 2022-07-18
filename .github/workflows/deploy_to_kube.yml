@@ -36,21 +36,24 @@ jobs:
           git_branch=${GITHUB_REF##*/}
           if [ $git_branch == 'main' ];then
             graphql_endpoint="https://graph.holaplex.com/v1"
+            solana_endpoint="https://holaplex.rpcpool.com"
           else
             graphql_endpoint="https://graph-test.holaplex.com/v1"
+            solana_endpoint="https://holaplex-main-9e4a.mainnet.rpcpool.com/a29b8b6c-bc0c-4c42-a440-705369384e1d"
           fi
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
+          docker build -t $image_tag --target $app --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} --build-arg SOLANA_ENDPOINT=${solana_endpoint} .
 
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
 
           if [ $git_branch == 'dev' ];then
-            graphql_endpoint=https://graph-test.holaplex.tools/v1
             git_branch=canary
+            graphql_endpoint=https://graph-test.holaplex.tools/v1
+            solana_endpoint="https://holaplex-main-9e4a.mainnet.rpcpool.com/a29b8b6c-bc0c-4c42-a440-705369384e1d"
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-            docker build -t $image_tag --target $app  --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
+            docker build -t $image_tag --target $app --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} --build-arg SOLANA_ENDPOINT=${solana_endpoint} .
             echo "Pushing image to ECR..."
             docker push $image_tag
             echo "::set-output name=image::$image_tag"
@@ -67,14 +70,14 @@ jobs:
           app=signer
           git_branch=${GITHUB_REF##*/}
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
+          docker build -t $image_tag --target $app --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} --build-arg SOLANA_ENDPOINT=${solana_endpoint} .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
           if [ $git_branch == 'dev' ];then
             git_branch=canary
             image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-            docker build -t $image_tag --target $app --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} .
+            docker build -t $image_tag --target $app --build-arg GRAPHQL_URI=${graphql_endpoint} --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} --build-arg SOLANA_ENDPOINT=${solana_endpoint} .
             echo "Pushing image to ECR..."
             docker push $image_tag
             echo "::set-output name=image::$image_tag"

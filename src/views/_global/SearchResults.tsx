@@ -1,23 +1,35 @@
 import React, { FC } from 'react';
-import { SearchQuery, MetadataJson, Wallet } from 'src/graphql/indexerTypes';
+import { SearchQuery, MetadataJson, Wallet, Nft } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
 import { profile } from 'console';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { Combobox } from '@headlessui/react';
+import { useRouter } from 'next/router';
 
 interface SearchResultsProps {
   term?: string;
   results?: MetadataJson[];
+  collectionResults?: MetadataJson[];
   profileResults?: Wallet[];
   walletResult?: Wallet;
+  mintAddressResult?: Nft;
 }
 
 const SearchResultTrackAction = 'Search Result Selected';
 
-const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, walletResult }) => {
+const SearchResults: FC<SearchResultsProps> = ({
+  term,
+  results,
+  profileResults,
+  walletResult,
+  mintAddressResult,
+  collectionResults,
+}) => {
   const { track } = useAnalytics();
+
+  const router = useRouter();
 
   if (results?.length === 0 && profileResults?.length === 0 && !walletResult) {
     return (
@@ -43,12 +55,47 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
       profileResultsCount: profileResults?.length || 0,
       walletResultsCount: walletResult ? 1 : 0,
       nftResultsCount: results?.length || 0,
+      usedMintAddressSearch: Boolean(mintAddressResult),
       ...args,
     });
   }
 
   return (
     <>
+      {collectionResults && collectionResults?.length > 0 && (
+        <>
+          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Collections</h6>
+          {collectionResults?.map((collection) => (
+            <>
+              {collection?.address && (
+                <Combobox.Option key={'collection-' + collection.address} value={collection}>
+                  {({ active }) => (
+                    <NFTSearchItem
+                      creatorHandle={collection.creatorTwitterHandle}
+                      creatorAddress={collection.creatorAddress}
+                      key={`collection-search-item-${collection.address}`}
+                      address={collection.mintAddress || collection.address}
+                      image={collection.image!}
+                      name={collection.name}
+                      onClick={() => {
+                        trackSearchResultSelected({
+                          resultType: 'Collection',
+                          nftName: collection.name,
+                          nftImage: collection.image as string | undefined,
+                          nftAddress: collection.address,
+                        });
+                        router.push(`/collections/${collection.address}`);
+                      }}
+                      active={active}
+                    />
+                  )}
+                </Combobox.Option>
+              )}
+            </>
+          ))}
+        </>
+      )}
+
       {profileResults && profileResults?.length > 0 && (
         <>
           <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Profiles</h6>
@@ -77,6 +124,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
           ))}
         </>
       )}
+
       {walletResult && isPublicKey(walletResult.address) && (
         <Combobox.Option value={walletResult}>
           {({ active }) => (
@@ -108,7 +156,7 @@ const SearchResults: FC<SearchResultsProps> = ({ term, results, profileResults, 
                       creatorHandle={nft.creatorTwitterHandle}
                       creatorAddress={nft.creatorAddress}
                       key={nft.address}
-                      address={nft.address}
+                      address={nft.mintAddress || nft.address}
                       image={nft.image!}
                       name={nft.name}
                       onClick={() =>

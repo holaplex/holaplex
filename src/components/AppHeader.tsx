@@ -42,6 +42,7 @@ export function AppHeader() {
   const connectedAndInstalledWallet = hasWalletTypeSelected && connected;
 
   const { setVisible } = useWalletModal();
+  const [displayMenu, setDisplayMenu] = useState(false);
 
   const handleViewProfile = useCallback(() => {
     router.push(`/profiles/${publicKey!.toBase58()}/nfts`);
@@ -70,19 +71,19 @@ export function AppHeader() {
   return (
     <>
       <nav
-        className={`hidden flex-row items-center justify-between gap-6 bg-transparent px-6 py-4 md:flex`}
+        className="flex flex-row items-center justify-between bg-transparent px-2 py-2 md:px-6 md:py-4"
       >
-        <div className={`flex w-full flex-row items-center gap-10 py-1 text-2xl font-bold`}>
+        <div className="flex w-full flex-row items-center py-1 text-2xl font-bold">
           <Link href="/" passHref>
-            <a className={`font-bold`}>
-              👋&nbsp;&nbsp;<span>Holaplex</span>
+            <a className="font-bold flex justify-between">
+              👋&nbsp;&nbsp;<span className="hidden md:inline-block">Holaplex</span>
             </a>
           </Link>
           {/* TODO: temp disabled for deploy */}
           <SearchBar />
         </div>
         {!WHICHDAO && (
-          <div className={`flex min-w-fit flex-row items-center justify-end gap-6`}>
+          <div className={`hidden md:flex min-w-fit flex-row items-center justify-end gap-6`}>
             <DiscoverMenu />
             {connected && (
               <Link href="/alpha" passHref>
@@ -134,57 +135,17 @@ export function AppHeader() {
             )}
           </div>
         )}
-      </nav>
-      <MobileHeader />
-    </>
-  );
-}
-
-const MobileHeader = () => {
-  const [displayMenu, setDisplayMenu] = useState(false);
-  return (
-    <>
-      <MobileHeaderContainer>
-        <div className={`mr-4 flex w-full flex-row items-center gap-4 text-2xl`}>
-          <Link href="/" passHref>
-            <EmojiLogoAnchor>👋</EmojiLogoAnchor>
-          </Link>
-          {/* TODO: temp disabled for deploy */}
-          <SearchBar />
-        </div>
         <button
-          className="flex items-center justify-center rounded-full shadow-lg shadow-black hover:bg-gray-800"
+          className="md:hidden flex-none rounded-full shadow-lg shadow-black hover:bg-gray-800"
           onClick={() => setDisplayMenu(true)}
         >
           <MenuIcon color="#fff" />
         </button>
-      </MobileHeaderContainer>
+      </nav>
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
     </>
   );
 };
-
-const EmojiLogoAnchor = styled.a`
-  width: 40px;
-  height: 40px;
-  font-size: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const MobileHeaderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 24px;
-  padding-right: 24px;
-  min-height: 72px;
-  ${mq('md')} {
-    display: none;
-  }
-`;
 
 function DiscoverMenu(): JSX.Element {
   return (

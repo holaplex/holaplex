@@ -15,4 +15,20 @@ query getCollection($address: String!) {
       }
     }
   }
+  nftByMintAddress(address: $address) {
+    address
+    name
+    description
+    mintAddress
+    image
+    creators {
+      position
+      address
+      profile {
+        handle
+        profileImageUrlLowres
+        profileImageUrlHighres
+      }
+    }
+  }
 }

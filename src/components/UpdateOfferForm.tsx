@@ -14,7 +14,7 @@ import { initMarketplaceSDK, Nft, AhListing, Marketplace } from '@holaplex/marke
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { toLamports, toSOL } from '../modules/sol';
 
 interface UpdateOfferFormSchema {
   amount: string;
@@ -24,8 +24,8 @@ interface UpdateOfferFormProps {
   nft: Nft;
   marketplace: Marketplace;
   refetch:
-    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
-    | (() => void);
+  | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+  | (() => void);
   loading: boolean;
   hasListing: boolean;
   listing: AhListing;
@@ -52,28 +52,55 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const wallet = useWallet();
   const { connection } = useConnection();
 
-  const currOffer = nft?.offers?.find((offer) => offer.buyer === publicKey?.toBase58());
-  const hasCurrOffer = Boolean(currOffer);
+  const offer = nft?.offers?.find((offer) => offer.buyer === publicKey?.toBase58());
 
   const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
   const { runActions, actions, hasActionPending, hasRemainingActions, retryActions } =
     useContext(MultiTransactionContext);
   const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
-    if (currOffer && currOffer.auctionHouse) {
-      toast(`Canceling current offer of ${Number(currOffer.price)}`);
-      await sdk
-        .transaction()
-        .add(sdk.offers(currOffer.auctionHouse).cancel({ nft, offer: currOffer }))
-        .send();
+    if (!offer) {
+      return
     }
+
+    const { auctionHouse, price } = offer
+
+    if (!auctionHouse || !price) {
+      return
+    }
+
+    const amount = price.toNumber()
+    const sol = toSOL(amount)
+
+    toast(`Canceling current offer of ${sol} SOL`);
+
+    await sdk
+      .transaction()
+      .add(sdk.escrow(auctionHouse).withdraw({ amount }))
+      .add(sdk.offers(auctionHouse).cancel({ nft, offer }))
+      .send();
   };
 
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
-    if (currOffer && currOffer.auctionHouse && amount) {
-      toast(`Updating current offer to: ${amount} SOL`);
-      await sdk.transaction().add(sdk.offers(currOffer.auctionHouse).make({ amount, nft })).send();
+    if (!offer) {
+      return
     }
+
+    const { auctionHouse, price } = offer
+
+    if (!auctionHouse || !price) {
+      return
+    }
+
+    toast(`Updating current offer to: ${amount} SOL`);
+
+    const lamports = toLamports(amount);
+
+    await sdk
+      .transaction()
+      .add(sdk.escrow(auctionHouse).desposit({ amount }))
+      .add(sdk.offers(auctionHouse).make({ amount: lamports, nft }))
+      .send();
   };
 
   const {
@@ -85,7 +112,7 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   });
 
   const updateOfferTx = async ({ amount }: UpdateOfferFormSchema) => {
-    if (!publicKey || !signTransaction || !currOffer || !nft) {
+    if (!publicKey || !signTransaction || !offer || !nft) {
       return;
     }
 
@@ -113,9 +140,6 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
         await refetch();
         toast.success(`Confirmed offer update success`);
         trackNFTEvent('NFT Offer Updated Success', offerAmount, nft);
-      },
-      onActionFailure: async () => {
-        await refetch();
       },
       onComplete: async () => {
         await refetch();
@@ -145,8 +169,8 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
         <div className={`flex flex-col justify-end`}>
           <p className={`mb-2 text-right text-base font-medium text-gray-300`}>Your last offer</p>
           <DisplaySOL
-            className={`justify-end text-right font-medium`}
-            amount={Number(currOffer?.price)}
+            className="justify-end text-right font-medium"
+            amount={offer?.price.toNumber()}
           />
         </div>
       </div>

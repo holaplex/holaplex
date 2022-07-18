@@ -45,7 +45,11 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
   const onCancelOffer = async () => {
     if (offer && offer.auctionHouse && nft) {
       toast(`Canceling current offer of ${Number(offer.price) / LAMPORTS_PER_SOL}`);
-      await sdk.transaction().add(sdk.offers(offer.auctionHouse).cancel({ nft, offer })).send();
+      await sdk
+        .transaction()
+        .add(sdk.escrow(offer.auctionHouse).withdraw({ amount: offer.price.toNumber() }))
+        .add(sdk.offers(offer.auctionHouse).cancel({ nft, offer }))
+        .send();
     }
   };
 
