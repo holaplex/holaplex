@@ -62,34 +62,6 @@ const SearchResults: FC<SearchResultsProps> = ({
 
   return (
     <>
-      {profileResults && profileResults?.length > 0 && (
-        <>
-          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Profiles</h6>
-          {profileResults?.map((profile) => (
-            <>
-              {profile?.address && (
-                <Combobox.Option key={'profile-' + profile.address} value={profile}>
-                  {({ active }) => (
-                    <ProfileSearchItem
-                      address={profile?.address}
-                      handle={profile?.twitterHandle}
-                      profileImage={profile?.profile?.profileImageUrlLowres}
-                      onClick={() =>
-                        trackSearchResultSelected({
-                          resultType: 'Profile',
-                          profileAddress: profile.address,
-                          profileHandle: profile.twitterHandle,
-                        })
-                      }
-                      active={active}
-                    />
-                  )}
-                </Combobox.Option>
-              )}
-            </>
-          ))}
-        </>
-      )}
       {collectionResults && collectionResults?.length > 0 && (
         <>
           <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Collections</h6>
@@ -123,6 +95,36 @@ const SearchResults: FC<SearchResultsProps> = ({
           ))}
         </>
       )}
+
+      {profileResults && profileResults?.length > 0 && (
+        <>
+          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Profiles</h6>
+          {profileResults?.map((profile) => (
+            <>
+              {profile?.address && (
+                <Combobox.Option key={'profile-' + profile.address} value={profile}>
+                  {({ active }) => (
+                    <ProfileSearchItem
+                      address={profile?.address}
+                      handle={profile?.twitterHandle}
+                      profileImage={profile?.profile?.profileImageUrlLowres}
+                      onClick={() =>
+                        trackSearchResultSelected({
+                          resultType: 'Profile',
+                          profileAddress: profile.address,
+                          profileHandle: profile.twitterHandle,
+                        })
+                      }
+                      active={active}
+                    />
+                  )}
+                </Combobox.Option>
+              )}
+            </>
+          ))}
+        </>
+      )}
+
       {walletResult && isPublicKey(walletResult.address) && (
         <Combobox.Option value={walletResult}>
           {({ active }) => (

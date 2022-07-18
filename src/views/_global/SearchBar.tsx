@@ -248,7 +248,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
           >
             <Combobox.Options
               // className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-900  py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-              className={`h-content scrollbar-thumb-rounded-full absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900  transition ease-in-out scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
+              className={`h-content scrollbar-thumb-rounded-full absolute top-12 z-50 max-h-screen-95 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900  shadow-lg shadow-black transition ease-in-out scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
             >
               {loading && (
                 <>
