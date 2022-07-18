@@ -1,7 +1,13 @@
 import React, { FC, useState, useRef, useEffect, useCallback, Fragment } from 'react';
 import { Search } from '@/assets/icons/Search';
 import LoadingSearchItem from './SearchItemLoading';
-import { useSearchLazyQuery, MetadataJson, Wallet, SearchQuery } from 'src/graphql/indexerTypes';
+import {
+  useSearchLazyQuery,
+  MetadataJson,
+  Wallet,
+  SearchQuery,
+  Nft,
+} from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -60,7 +66,9 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
   type SearchResultItem =
     | SearchQuery['metadataJsons'][0]
     | SearchQuery['profiles'][0]
-    | SearchQuery['wallet'];
+    | SearchQuery['wallet']
+    | SearchQuery['nftByMintAddress']
+    | SearchQuery['searchCollections'][0];
   const [selected, setSelected] = useState<SearchResultItem | null>(null);
   const wallet = useWallet();
 
@@ -83,6 +91,14 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
     // handle enter
   };
 
+  // mutate collection data to differentiate it from other search data
+  const collectionData = data?.searchCollections.map((collection) => {
+    return {
+      __typename: 'CollectionMetadataJson',
+      ...collection,
+    };
+  });
+
   // handle ctrl/cmd + k
 
   function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -93,6 +109,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
     }
     searchQuery({
       variables: {
+        nftMintAddress: e.target.value,
         term: e.target.value,
         walletAddress: e.target.value,
       },
@@ -147,8 +164,16 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
           value={selected}
           onChange={(v) => {
             setSelected(v);
+
             switch (v?.__typename) {
               case 'MetadataJson':
+                // TODO: dirty hack until __typename from collection search has a different type name to differentiate it from NFT search
+                // relies on searchCollections not having creatorAddress returned from graphql
+                // @ts-ignore
+                if (!v?.creatorAddress) {
+                  router.push(`/collections/${v.address}`);
+                  break;
+                }
                 router.push(`/nfts/${v.address}`);
                 break;
               case 'Wallet':
@@ -223,7 +248,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
           >
             <Combobox.Options
               // className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-900  py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-              className={`h-content scrollbar-thumb-rounded-full absolute top-12 z-50 max-h-96 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900  transition ease-in-out scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
+              className={`h-content scrollbar-thumb-rounded-full absolute top-12 z-50 max-h-screen-95 w-full gap-6 overflow-y-auto rounded-lg bg-gray-900  shadow-lg shadow-black transition ease-in-out scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900`}
             >
               {loading && (
                 <>
@@ -239,6 +264,8 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   results={data?.metadataJsons as MetadataJson[]}
                   profileResults={data?.profiles as Wallet[]}
                   walletResult={data.wallet as Wallet}
+                  mintAddressResult={data.nftByMintAddress as Nft}
+                  collectionResults={collectionData as MetadataJson[]}
                 />
               )}
             </Combobox.Options>

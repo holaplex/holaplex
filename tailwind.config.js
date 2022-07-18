@@ -6,6 +6,9 @@ module.exports = {
   safelist: ['z-0', 'z-10', 'z-20', 'z-30', 'z-40', 'z-50'],
   theme: {
     extend: {
+      maxHeight: {
+        'screen-95': '90vh',
+      },
       // look here to add more colors later https://www.figma.com/file/8WjVJW9fa2rwGctm7ZVaCT/Design-System?node-id=1023%3A36350
       colors: {
         transparent: 'transparent',

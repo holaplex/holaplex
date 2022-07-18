@@ -1,7 +1,8 @@
-query search($term: String!, $walletAddress: PublicKey!) {
+query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String!) {
   metadataJsons(term: $term, limit: 25, offset: 0) {
     name
     address
+    mintAddress
     image
     creatorAddress
     creatorTwitterHandle
@@ -21,5 +22,24 @@ query search($term: String!, $walletAddress: PublicKey!) {
       profileImageUrlLowres
       handle
     }
+  }
+  nftByMintAddress(address: $nftMintAddress) {
+    address
+    name
+    image
+    creators {
+      twitterHandle
+      address
+      profile {
+        profileImageUrlLowres
+      }
+    }
+    mintAddress
+  }
+  searchCollections(term: $term, limit: 25, offset: 0) {
+    name
+    address
+    mintAddress
+    image
   }
 }
