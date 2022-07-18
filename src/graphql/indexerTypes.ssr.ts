@@ -834,14 +834,6 @@ export type WhoToFollowQueryVariables = Exact<{
 
 export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> };
 
-export type FeaturedBuyNowListingsQueryVariables = Exact<{
-  marketplace: Scalars['String'];
-  limit: Scalars['Int'];
-}>;
-
-
-export type FeaturedBuyNowListingsQuery = { __typename?: 'QueryRoot', featuredListings: Array<{ __typename?: 'AhListing', id: any, metadata: any, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> } | null }>, marketplace?: { __typename?: 'Marketplace', auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> } | null };
-
 export type ProfilePreviewFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } };
 
 export type BuyNowListingFragment = { __typename?: 'AhListing', id: any, metadata: any, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> } | null };
@@ -2098,125 +2090,6 @@ export const WhoToFollowDocument = gql`
   }
 }
     `;
-export const FeaturedBuyNowListingsDocument = gql`
-    query featuredBuyNowListings($marketplace: String!, $limit: Int!) {
-  featuredListings(limit: $limit, offset: 0) {
-    id
-    metadata
-    nft {
-      address
-      name
-      sellerFeeBasisPoints
-      mintAddress
-      description
-      image
-      primarySaleHappened
-      creators {
-        address
-        share
-        verified
-      }
-      owner {
-        address
-        associatedTokenAccountAddress
-      }
-      purchases {
-        id
-        buyer
-        auctionHouse {
-          address
-          treasuryMint
-          auctionHouseTreasury
-          treasuryWithdrawalDestination
-          feeWithdrawalDestination
-          authority
-          creator
-          auctionHouseFeeAccount
-          bump
-          treasuryBump
-          feePayerBump
-          sellerFeeBasisPoints
-          requiresSignOff
-          canChangeSalePrice
-        }
-        price
-        createdAt
-      }
-      listings {
-        id
-        tradeState
-        seller
-        metadata
-        auctionHouse {
-          address
-          treasuryMint
-          auctionHouseTreasury
-          treasuryWithdrawalDestination
-          feeWithdrawalDestination
-          authority
-          creator
-          auctionHouseFeeAccount
-          bump
-          treasuryBump
-          feePayerBump
-          sellerFeeBasisPoints
-          requiresSignOff
-          canChangeSalePrice
-        }
-        price
-        tradeStateBump
-        createdAt
-        canceledAt
-      }
-      offers {
-        id
-        tradeState
-        buyer
-        metadata
-        auctionHouse {
-          address
-          treasuryMint
-          auctionHouseTreasury
-          treasuryWithdrawalDestination
-          feeWithdrawalDestination
-          authority
-          creator
-          auctionHouseFeeAccount
-          bump
-          treasuryBump
-          feePayerBump
-          sellerFeeBasisPoints
-          requiresSignOff
-          canChangeSalePrice
-        }
-        price
-        tradeStateBump
-        tokenAccount
-        createdAt
-        canceledAt
-      }
-    }
-  }
-  marketplace(subdomain: $marketplace) {
-    auctionHouses {
-      address
-      treasuryMint
-      auctionHouseTreasury
-      treasuryWithdrawalDestination
-      feeWithdrawalDestination
-      authority
-      creator
-      auctionHouseFeeAccount
-      bump
-      treasuryBump
-      feePayerBump
-      sellerFeeBasisPoints
-      requiresSignOff
-      canChangeSalePrice
-    }
-  }
-}
-    `;
 export const HomeDocument = gql`
     query home($userWallet: PublicKey, $featuredProfileLimit: Int!, $featuredBuyNowLimit: Int!, $feedEventsLimit: Int!) {
   feedEvents(
@@ -3163,9 +3036,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     whoToFollow(variables: WhoToFollowQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<WhoToFollowQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<WhoToFollowQuery>(WhoToFollowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'whoToFollow', 'query');
-    },
-    featuredBuyNowListings(variables: FeaturedBuyNowListingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FeaturedBuyNowListingsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<FeaturedBuyNowListingsQuery>(FeaturedBuyNowListingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'featuredBuyNowListings', 'query');
     },
     home(variables: HomeQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<HomeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<HomeQuery>(HomeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'home', 'query');
