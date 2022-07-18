@@ -14,10 +14,6 @@ COPY . .
 ARG GRAPHQL_URI
 ENV NEXT_PUBLIC_INDEXER_GRAPHQL_URL $GRAPHQL_URI
 
-#RPC
-ARG SOLANA_ENDPOINT
-ENV NEXT_PUBLIC_SOLANA_ENDPOINT $SOLANA_ENDPOINT
-
 #Crossmint
 ARG CROSSMINT_API_KEY
 ARG CROSSMINT_CLIENT_ID
@@ -30,7 +26,7 @@ RUN yarn build
 FROM node:16.14-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV development
+ENV NODE_ENV production
 
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
@@ -56,6 +52,12 @@ ENV NEXT_SHARP_PATH /app/node_modules/sharp
 CMD ["npx", "next", "start"]
 
 FROM runner AS signer
+#Crossmint
+ARG CROSSMINT_API_KEY
+ARG CROSSMINT_CLIENT_ID
+ENV NEXT_PUBLIC_CROSSMINT_API_KEY $CROSSMINT_API_KEY
+ENV NEXT_PUBLIC_CROSSMINT_CLIENT_ID $CROSSMINT_CLIENT_ID
+
 COPY --from=builder /app/tasks ./tasks
 COPY --from=builder /app/src/modules ./src/modules
 CMD ["yarn", "run", "consumers:sign-metadata"]
