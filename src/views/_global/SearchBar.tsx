@@ -160,13 +160,12 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
             }
           }}
         >
-          <div className="relative z-0 flex flex-1 items-center  px-2 sm:absolute sm:inset-0">
+          <div className="relative z-0 flex flex-1 items-center  px-6 sm:absolute sm:inset-0">
             <div className="w-full ">
               <label htmlFor="search" className="sr-only">
                 Search
               </label>
-
-              <div className="relative block transition-all ">
+              <div className="relative block transition-all">
                 <span
                   onClick={() => searchInputRef?.current?.focus()}
                   className="absolute inset-y-0 left-[45%] flex cursor-pointer items-center rounded-full p-3 shadow-lg shadow-black transition-all hover:scale-125  group-focus-within:left-0 group-focus-within:scale-100 group-focus-within:bg-transparent group-focus-within:shadow-none md:left-0"
