@@ -141,6 +141,15 @@ fragment ListingEventPreview on ListingEvent {
         associatedTokenAccountAddress
         twitterHandle
       }
+      creators {
+        address
+        position
+        profile {
+          handle
+          profileImageUrlLowres
+          profileImageUrlHighres
+        }
+      }
       listings {
         id
         seller
