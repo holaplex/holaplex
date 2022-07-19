@@ -191,6 +191,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
         keys={SORT_OPTION_ORDER[UrlParamKey.BY]}
         onSelect={(k) => urlParamSetters[UrlParamKey.BY](k)}
         defaultKey={SORT_OPTIONS.defaultSubOptionValue}
+        selectedKey={urlParams[UrlParamKey.BY]}
       >
         {primarySortLabels}
       </DropdownSelect>

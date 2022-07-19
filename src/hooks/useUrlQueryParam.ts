@@ -84,57 +84,34 @@ export function useUrlQueryParam<T = string>(
     let proposedNewValue: T | null = value;
     const queryValue: T | null = router ? getValueFromUrl(router, key, converter) : null;
 
-    const logs: string[] = [];
-    logs.push(`${id}`);
-
     if (initialized && active && queryValue == null && value != null && router) {
       setValueInUrl(router, key, value, active);
     }
 
-    //TODO remove logs
     // TODO for some reason, setting a param as inactive doesnt always remove it from the URL...
     if (initialized) {
-      logs.push('update');
       // if the value was changed in the URL (e.g. by another hook using the router) then we need
       //  to update the value stored here to reflect that
       if (queryValue !== value) {
         if (!valueIsFromUrl && active && queryValue != null) {
-          logs.push(`from url`);
           proposedNewValue = queryValue;
           setValueAndSource(queryValue, true);
-        } else logs.push('no change 1');
-      } else logs.push('no change 2');
+        }
+      }
     } else if (router && router.isReady) {
-      logs.push('initializing');
       setInitialized(true);
       if (queryValue != null) {
-        logs.push('from url');
         // on the initial load we want to take the value from the URL if it's available, regardless of
         //  other settings
         proposedNewValue = queryValue;
         setValueAndSource(queryValue, true);
         setActive(true);
       } else {
-        logs.push('from value');
         // otherwise, we should set the URL value to the default value
         setValueIsFromUrl(false);
         setValueInUrl(router, key, value, active);
       }
-    } else logs.push('not ready');
-
-    logs.push(
-      `${value}->${proposedNewValue}|${valueIsFromUrl ? 'T' : 'F'}${active ? 'T' : 'F'}${
-        initialized ? 'T' : 'F'
-      }`
-    );
-    if (['sale-window', 'price-dir'].includes(key))
-      console.log(
-        logs[0],
-        ...logs
-          .slice(1)
-          .map((log) => ['>', log])
-          .flat()
-      );
+    }
   }, [
     router,
     key,
