@@ -17,7 +17,7 @@ function FollowListItem({
   myFollowingList: string[];
 }) {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-4">
       <div className="flex items-center">
         <div className="mr-4">
           <ProfilePFP user={user} />

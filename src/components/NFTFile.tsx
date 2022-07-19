@@ -47,7 +47,7 @@ const NFTFile: FC<NFTFileProps> = ({ nft, loading }) => {
             controlsList={`nodownload`}
             loop={true}
             poster={imgOpt(nft?.image, 800)!}
-            src={nft.files[0].uri}
+            src={nft.files.find((file) => file.fileType === 'video/mp4')?.uri || nft.files[0].uri}
           />
         ) : (
           nft?.image && (
