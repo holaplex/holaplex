@@ -53,7 +53,7 @@ jobs:
           --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} \
           --build-arg SOLANA_ENDPOINT=${solana_endpoint} \
           --build-arg INDEXER_RPC_URL=${indexer_endpoint} \
-          --build-arg NEXT_ENVIRONMENT=$node_env
+          --build-arg NEXT_ENVIRONMENT=$node_env \
           .
 
           echo "Pushing image to ECR..."
