@@ -5,14 +5,14 @@ import { IndexerSDK, Listing } from '@/modules/indexer';
 import { PublicKey } from '@solana/web3.js';
 import { HomeData } from 'pages';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHomeQuery } from 'src/graphql/indexerTypes';
 import {
-  BuyNowListingFragment,
   CollectionPreviewFragment,
+  useHomeQuery,
+  BuyNowListingFragment,
   HomeQuery,
   MarketplacePreviewFragment,
   ProfilePreviewFragment,
-} from 'src/graphql/indexerTypes.ssr';
+} from 'src/graphql/indexerTypes';
 import { FeedItem } from '../alpha/feed.utils';
 import { FeaturedBuyNowListingsData, ListingPreviewData } from './FeaturedBuyNowListingsSection';
 import { FeaturedCollectionsByMarketCapData } from './FeaturedCollectionsByMarketCapSection';
@@ -33,6 +33,7 @@ export function useHomeQueryWithTransforms(
   featuredAuctionsLimit: number
 ): QueryContext<HomeData> {
   const queryContext = useHomeQuery({
+    //TODO add time window to featuredCollectionsByVolume and featuredCollectionsByMarketCap queries
     variables: {
       userWallet: userWallet,
       featuredCollectionsLimit: featuredCollectionsLimit,
@@ -52,10 +53,16 @@ export function useHomeQueryWithTransforms(
     if (!loading && queryContext.called && !queryContext.error) {
       result = {
         feedEvents: transformHeroSectionData(queryContext.data?.feedEvents),
-        featuredCollectionsByVolume: transformFeaturedCollectionsByVolume(queryContext.data?.collectionsFeaturedByVolume),
-        featuredCollectionsByMarketCap: transformFeaturedCollectionsByMarketCap(queryContext.data?.collectionsFeaturedByMarketCap),
+        featuredCollectionsByVolume: transformFeaturedCollectionsByVolume(
+          queryContext.data?.collectionsFeaturedByVolume
+        ),
+        featuredCollectionsByMarketCap: transformFeaturedCollectionsByMarketCap(
+          queryContext.data?.collectionsFeaturedByMarketCap
+        ),
         featuredProfiles: transformFeaturedProfiles(queryContext.data?.followWallets),
-        featuredMarketplaces: transformFeaturedMarketplaces(queryContext.data?.featuredMarketplaces),
+        featuredMarketplaces: transformFeaturedMarketplaces(
+          queryContext.data?.featuredMarketplaces
+        ),
         featuredBuyNowListings: transformFeaturedBuyNowListings(
           queryContext.data?.featuredListings,
           queryContext.data?.buyNowMarketplace
@@ -71,7 +78,7 @@ export function useHomeQueryWithTransforms(
     loading: loading,
     error: queryContext.error,
     refetch: queryContext.refetch,
-    fetchMore: () => {}
+    fetchMore: () => {},
   };
 }
 
@@ -96,32 +103,36 @@ function transformFeedEvent(data: HomeQuery['feedEvents'][0]): FeedItem {
   return { ...data };
 }
 
-function transformFeaturedCollectionsByVolume(data?: HomeQuery['collectionsFeaturedByVolume']): FeaturedCollectionsByVolumeData {
+function transformFeaturedCollectionsByVolume(
+  data?: HomeQuery['collectionsFeaturedByVolume']
+): FeaturedCollectionsByVolumeData {
   const result: FeaturedCollectionsByVolumeData = [];
   if (data) {
     for (const profile of data) {
-        try {
-          result.push(transformCollectionPreview(profile));
-        } catch (e) {
-          //TODO would be better to let this bubble up to the query and affect the query state
-          // (e.g. by re-fetching with some excluded wallets) but while gracefully degrading to show happy profiles
-          console.error(e);
+      try {
+        result.push(transformCollectionPreview(profile));
+      } catch (e) {
+        //TODO would be better to let this bubble up to the query and affect the query state
+        // (e.g. by re-fetching with some excluded wallets) but while gracefully degrading to show happy profiles
+        console.error(e);
       }
     }
   }
   return result;
 }
 
-function transformFeaturedCollectionsByMarketCap(data?: HomeQuery['collectionsFeaturedByMarketCap']): FeaturedCollectionsByMarketCapData {
+function transformFeaturedCollectionsByMarketCap(
+  data?: HomeQuery['collectionsFeaturedByMarketCap']
+): FeaturedCollectionsByMarketCapData {
   const result: FeaturedCollectionsByVolumeData = [];
   if (data) {
     for (const profile of data) {
-        try {
-          result.push(transformCollectionPreview(profile));
-        } catch (e) {
-          //TODO would be better to let this bubble up to the query and affect the query state
-          // (e.g. by re-fetching with some excluded wallets) but while gracefully degrading to show happy profiles
-          console.error(e);
+      try {
+        result.push(transformCollectionPreview(profile));
+      } catch (e) {
+        //TODO would be better to let this bubble up to the query and affect the query state
+        // (e.g. by re-fetching with some excluded wallets) but while gracefully degrading to show happy profiles
+        console.error(e);
       }
     }
   }
@@ -135,7 +146,7 @@ function transformCollectionPreview(data: CollectionPreviewFragment): Collection
     name: data.name,
     //TODO fix when available in query
     nftCount: 0,
-    floorPriceSol: 0
+    floorPriceSol: 0,
   };
 }
 
@@ -318,7 +329,7 @@ function usePrepareFeaturedAuctions(nListings: number): QueryContext<Listing[]> 
     data: result,
     refetch: () => {},
     fetchMore: () => {},
-  }
+  };
 }
 
 function notNullish(value: any, name: string): void {
