@@ -1,0 +1,43 @@
+fragment PurchaseEventPreview on PurchaseEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  purchase {
+    id
+    buyer
+    seller
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      sellerFeeBasisPoints
+      primarySaleHappened
+      creators {
+        address
+        position
+        profile {
+          handle
+          profileImageUrlLowres
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

@@ -881,16 +881,6 @@ export type DiscoverProfilesAllQueryVariables = Exact<{
 
 export type DiscoverProfilesAllQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
 
-export type MintEventPreviewFragment = { __typename?: 'MintEvent', feedEventId: string, createdAt: any, walletAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }> } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
-
-export type FollowEventPreviewFragment = { __typename?: 'FollowEvent', feedEventId: string, createdAt: any, walletAddress: any, graphConnectionAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null } } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
-
-export type PurchaseEventPreviewFragment = { __typename?: 'PurchaseEvent', feedEventId: string, createdAt: any, walletAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null, purchase?: { __typename?: 'Purchase', id: any, buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> } | null } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
-
-export type ListingEventPreviewFragment = { __typename?: 'ListingEvent', feedEventId: string, createdAt: any, walletAddress: any, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null, listing?: { __typename?: 'AhListing', id: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, listings: Array<{ __typename?: 'AhListing', id: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> } | null }> } | null } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
-
-export type OfferEventPreviewFragment = { __typename?: 'OfferEvent', feedEventId: string, createdAt: any, walletAddress: any, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null, offer?: { __typename?: 'Offer', id: any, buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, offers: Array<{ __typename?: 'Offer', id: any, buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> } | null }> } | null } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
-
 export type FeedQueryVariables = Exact<{
   address: Scalars['PublicKey'];
   limit?: InputMaybe<Scalars['Int']>;
@@ -910,9 +900,19 @@ export type WhoToFollowQueryVariables = Exact<{
 
 export type WhoToFollowQuery = { __typename?: 'QueryRoot', followWallets: Array<{ __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } }> };
 
+export type FollowEventPreviewFragment = { __typename?: 'FollowEvent', feedEventId: string, createdAt: any, walletAddress: any, graphConnectionAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null, connection?: { __typename?: 'GraphConnection', address: string, from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }, to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null } } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
+
+export type ListingEventPreviewFragment = { __typename?: 'ListingEvent', feedEventId: string, createdAt: any, walletAddress: any, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null, listing?: { __typename?: 'AhListing', id: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, listings: Array<{ __typename?: 'AhListing', id: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> } | null }> } | null } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
+
 export type MarketplaceAuctionHouseFragment = { __typename?: 'Marketplace', auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean }> };
 
+export type MintEventPreviewFragment = { __typename?: 'MintEvent', feedEventId: string, createdAt: any, walletAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }> } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
+
 export type NftCardFragment = { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, share: number, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any, createdAt: any, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, listings: Array<{ __typename?: 'AhListing', id: any, tradeState: string, seller: any, metadata: any, price: any, tradeStateBump: number, purchaseId?: any | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }>, offers: Array<{ __typename?: 'Offer', id: any, tradeState: string, buyer: any, metadata: any, price: any, purchaseId?: any | null, tradeStateBump: number, tokenAccount?: string | null, createdAt: any, canceledAt?: any | null, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string, auctionHouseTreasury: string, treasuryWithdrawalDestination: string, feeWithdrawalDestination: string, authority: string, creator: string, auctionHouseFeeAccount: string, bump: number, treasuryBump: number, feePayerBump: number, sellerFeeBasisPoints: number, requiresSignOff: boolean, canChangeSalePrice: boolean } | null }> };
+
+export type OfferEventPreviewFragment = { __typename?: 'OfferEvent', feedEventId: string, createdAt: any, walletAddress: any, lifecycle: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null, offer?: { __typename?: 'Offer', id: any, buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, offers: Array<{ __typename?: 'Offer', id: any, buyer: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> } | null }> } | null } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
+
+export type PurchaseEventPreviewFragment = { __typename?: 'PurchaseEvent', feedEventId: string, createdAt: any, walletAddress: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null, purchase?: { __typename?: 'Purchase', id: any, buyer: any, seller: any, price: any, nft?: { __typename?: 'Nft', name: string, image: string, description: string, sellerFeeBasisPoints: number, primarySaleHappened: boolean, address: string, mintAddress: string, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string, twitterHandle?: string | null } | null, creators: Array<{ __typename?: 'NftCreator', address: string, position?: number | null, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null }> } | null } | null, wallet: { __typename?: 'Wallet', nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } } };
 
 export type ProfilePreviewFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlHighres: string, bannerImageUrl: string } | null, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number } };
 
@@ -1073,47 +1073,6 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'QueryRoot', metadataJsons: Array<{ __typename?: 'MetadataJson', name: string, address: string, mintAddress: string, image?: string | null, creatorAddress?: string | null, creatorTwitterHandle?: string | null }>, profiles: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null }>, wallet: { __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string } | null }, nftByMintAddress?: { __typename?: 'Nft', address: string, name: string, image: string, mintAddress: string, creators: Array<{ __typename?: 'NftCreator', twitterHandle?: string | null, address: string, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string } | null }> } | null, searchCollections: Array<{ __typename?: 'MetadataJson', name: string, address: string, mintAddress: string, image?: string | null }> };
 
-export const MintEventPreviewFragmentDoc = gql`
-    fragment MintEventPreview on MintEvent {
-  feedEventId
-  createdAt
-  walletAddress
-  profile {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-  }
-  nft {
-    name
-    image(width: 600)
-    description
-    owner {
-      address
-      associatedTokenAccountAddress
-      twitterHandle
-    }
-    sellerFeeBasisPoints
-    primarySaleHappened
-    creators {
-      address
-      position
-      profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
-      }
-    }
-    address
-    mintAddress
-  }
-  wallet {
-    nftCounts {
-      owned
-      created
-    }
-  }
-}
-    `;
 export const FollowEventPreviewFragmentDoc = gql`
     fragment FollowEventPreview on FollowEvent {
   feedEventId
@@ -1142,51 +1101,6 @@ export const FollowEventPreviewFragmentDoc = gql`
         profileImageUrlLowres
         profileImageUrlHighres
       }
-    }
-  }
-  wallet {
-    nftCounts {
-      owned
-      created
-    }
-  }
-}
-    `;
-export const PurchaseEventPreviewFragmentDoc = gql`
-    fragment PurchaseEventPreview on PurchaseEvent {
-  feedEventId
-  createdAt
-  walletAddress
-  profile {
-    handle
-    profileImageUrlLowres
-  }
-  purchase {
-    id
-    buyer
-    seller
-    price
-    nft {
-      name
-      image(width: 600)
-      description
-      owner {
-        address
-        associatedTokenAccountAddress
-        twitterHandle
-      }
-      sellerFeeBasisPoints
-      primarySaleHappened
-      creators {
-        address
-        position
-        profile {
-          handle
-          profileImageUrlLowres
-        }
-      }
-      address
-      mintAddress
     }
   }
   wallet {
@@ -1259,68 +1173,6 @@ export const ListingEventPreviewFragmentDoc = gql`
   }
 }
     `;
-export const OfferEventPreviewFragmentDoc = gql`
-    fragment OfferEventPreview on OfferEvent {
-  feedEventId
-  createdAt
-  walletAddress
-  profile {
-    handle
-    profileImageUrlLowres
-  }
-  lifecycle
-  offer {
-    id
-    buyer
-    price
-    nft {
-      name
-      image(width: 600)
-      description
-      owner {
-        address
-        associatedTokenAccountAddress
-        twitterHandle
-      }
-      offers {
-        id
-        buyer
-        price
-        nft {
-          name
-          image(width: 600)
-          description
-          owner {
-            address
-            associatedTokenAccountAddress
-            twitterHandle
-          }
-          sellerFeeBasisPoints
-          primarySaleHappened
-          creators {
-            address
-            position
-            profile {
-              handle
-              profileImageUrlLowres
-            }
-          }
-          address
-          mintAddress
-        }
-      }
-      address
-      mintAddress
-    }
-  }
-  wallet {
-    nftCounts {
-      owned
-      created
-    }
-  }
-}
-    `;
 export const MarketplaceAuctionHouseFragmentDoc = gql`
     fragment MarketplaceAuctionHouse on Marketplace {
   auctionHouses {
@@ -1338,6 +1190,47 @@ export const MarketplaceAuctionHouseFragmentDoc = gql`
     sellerFeeBasisPoints
     requiresSignOff
     canChangeSalePrice
+  }
+}
+    `;
+export const MintEventPreviewFragmentDoc = gql`
+    fragment MintEventPreview on MintEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+  }
+  nft {
+    name
+    image(width: 600)
+    description
+    owner {
+      address
+      associatedTokenAccountAddress
+      twitterHandle
+    }
+    sellerFeeBasisPoints
+    primarySaleHappened
+    creators {
+      address
+      position
+      profile {
+        handle
+        profileImageUrlLowres
+        profileImageUrlHighres
+      }
+    }
+    address
+    mintAddress
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
   }
 }
     `;
@@ -1435,6 +1328,113 @@ export const NftCardFragmentDoc = gql`
     tokenAccount
     createdAt
     canceledAt
+  }
+}
+    `;
+export const OfferEventPreviewFragmentDoc = gql`
+    fragment OfferEventPreview on OfferEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  lifecycle
+  offer {
+    id
+    buyer
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      offers {
+        id
+        buyer
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              handle
+              profileImageUrlLowres
+            }
+          }
+          address
+          mintAddress
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}
+    `;
+export const PurchaseEventPreviewFragmentDoc = gql`
+    fragment PurchaseEventPreview on PurchaseEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  purchase {
+    id
+    buyer
+    seller
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      sellerFeeBasisPoints
+      primarySaleHappened
+      creators {
+        address
+        position
+        profile {
+          handle
+          profileImageUrlLowres
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
   }
 }
     `;
