@@ -2,12 +2,12 @@ name: Kubernetes deployment
 
 on:
   push:
-    branches: [ dev, main ]
+    branches: [ dev, main, workflowdebug ]
 
 jobs:
   build:
     name: Building and Pushing Image
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout
@@ -70,7 +70,14 @@ jobs:
           app=signer
           git_branch=${GITHUB_REF##*/}
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app .
+          docker build -t $image_tag --target $app \
+          --build-arg GRAPHQL_URI=${graphql_endpoint} \
+          --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} \
+          --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} \
+          --build-arg SOLANA_ENDPOINT=${solana_endpoint} \
+          --build-arg INDEXER_RPC_URL=${indexer_endpoint} \
+          --build-arg NEXT_ENVIRONMENT=$node_env \
+          .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
