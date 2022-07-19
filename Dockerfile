@@ -57,7 +57,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 FROM runner AS frontend
-
 EXPOSE 3000
 ENV PORT 3000
 ENV NEXT_SHARP_PATH /app/node_modules/sharp
@@ -65,12 +64,6 @@ ENV NEXT_SHARP_PATH /app/node_modules/sharp
 CMD ["npx", "next", "start"]
 
 FROM runner AS signer
-#Crossmint
-ARG CROSSMINT_API_KEY
-ARG CROSSMINT_CLIENT_ID
-ENV NEXT_PUBLIC_CROSSMINT_API_KEY $CROSSMINT_API_KEY
-ENV NEXT_PUBLIC_CROSSMINT_CLIENT_ID $CROSSMINT_CLIENT_ID
-
 COPY --from=builder /app/tasks ./tasks
 COPY --from=builder /app/src/modules ./src/modules
 CMD ["yarn", "run", "consumers:sign-metadata"]

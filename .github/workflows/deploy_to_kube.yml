@@ -70,7 +70,26 @@ jobs:
           app=signer
           git_branch=${GITHUB_REF##*/}
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
-          docker build -t $image_tag --target $app .
+
+          solana_endpoint="https://holaplex-main-9e4a.mainnet.rpcpool.com"
+          if [ $git_branch == 'main' ];then
+            graphql_endpoint="https://graph.holaplex.com/v1"
+            indexer_endpoint="https://api.holaplex.com/"
+            node_env=production
+          else
+            graphql_endpoint="https://graph-test.holaplex.com/v1"
+            indexer_endpoint="https://metaplex-indexer-staging.herokuapp.com/"
+            node_env=development
+          fi
+
+          docker build -t $image_tag --target $app \
+          --build-arg GRAPHQL_URI=${graphql_endpoint} \
+          --build-arg CROSSMINT_API_KEY=${{ secrets.CROSSMINT_API_KEY }} \
+          --build-arg CROSSMINT_CLIENT_ID=${{ secrets.CROSSMINT_CLIENT_ID }} \
+          --build-arg SOLANA_ENDPOINT=${solana_endpoint} \
+          --build-arg INDEXER_RPC_URL=${indexer_endpoint} \
+          --build-arg NEXT_ENVIRONMENT=$node_env \
+          .
           echo "Pushing image to ECR..."
           docker push $image_tag
           echo "::set-output name=image::$image_tag"
