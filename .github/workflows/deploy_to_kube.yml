@@ -2,12 +2,12 @@ name: Kubernetes deployment
 
 on:
   push:
-    branches: [ dev, main, workflowdebug ]
+    branches: [ dev, main ]
 
 jobs:
   build:
     name: Building and Pushing Image
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
 
     steps:
       - name: Checkout
@@ -71,6 +71,8 @@ jobs:
           app=signer
           git_branch=${GITHUB_REF##*/}
           image_tag="$ECR_REGISTRY/$ECR_REPOSITORY:$app-$git_branch-$git_hash"
+
+          solana_endpoint="https://holaplex-main-9e4a.mainnet.rpcpool.com"
           if [ $git_branch == 'main' ];then
             graphql_endpoint="https://graph.holaplex.com/v1"
             indexer_endpoint="https://api.holaplex.com/"
