@@ -51,11 +51,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         address: context?.params?.address,
       },
     });
-    const offers = data.nft?.offers || [];
+
+    const nftToShare = data.nft || data.nftByMintAddress || null;
+
+    const offers = nftToShare?.offers || [];
     const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
     const topOffer = topOffers?.[0];
 
-    const listings = data.nft?.listings || [];
+    const listings = nftToShare?.listings || [];
     const topListings =
       listings?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
     const topListing = topListings?.[0];
@@ -63,10 +66,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         address: nftAddress,
-        name: data.nft?.name || nftAddress,
-        description: data.nft?.description || '',
+        name: nftToShare?.name || nftAddress,
+        description: nftToShare?.description || '',
         image:
-          data.nft?.image ||
+          nftToShare?.image ||
           `/images/gradients/gradient-${seededRandomBetween(
             new PublicKey(nftAddress).toBytes().reduce((a, b) => a + b, 0) + 1,
             1,
@@ -139,7 +142,7 @@ export default function NftByAddress({
   const [sellCancelModalVisibility, setSellCancelModalVisibility] = useState(false);
   const [sellUpdateModalVisibility, setSellUpdateModalVisibility] = useState(false);
 
-  const nft = data?.nft;
+  const nft = data?.nft || data?.nftByMintAddress;
   const marketplace = data?.marketplace;
 
   // has listed via default Holaplex marketplace (disregards others)
@@ -207,7 +210,7 @@ export default function NftByAddress({
     </div>
   );
 
-  if (called && !data?.nft && !loading) {
+  if (called && !nft && !loading) {
     return <Custom404 />;
   }
 
@@ -837,7 +840,7 @@ export default function NftByAddress({
             <Modal
               open={sellCancelModalVisibility}
               setOpen={setSellCancelModalVisibility}
-              title={`Cancel listing`}
+              title="Cancel listing"
             >
               <CancelSellForm
                 nft={nft as Nft | any}

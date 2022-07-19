@@ -3,7 +3,7 @@ import { FC, HTMLAttributes } from 'react';
 import { SolIcon } from '@/components/Price';
 
 interface DisplaySOLProps extends HTMLAttributes<HTMLParagraphElement> {
-  amount: number;
+  amount: number | undefined;
   iconVariant?: `small` | `large` | `smallB` | `largeB`;
 }
 

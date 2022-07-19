@@ -104,6 +104,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         param: undefined,
       },
     ];
+    
     if (listing) {
       newActions = [
         ...newActions,
@@ -128,7 +129,6 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         closeOuter();
       },
       onActionFailure: async (err) => {
-        await refetch();
         toast.error(err.message);
       },
     });

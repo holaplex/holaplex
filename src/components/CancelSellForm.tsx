@@ -77,8 +77,8 @@ const CancelSellForm: FC<CancelSellFormProps> = ({
         await refetch();
         setOpen(false);
       },
-      onActionFailure: async (err) => {
-        await refetch();
+      onActionFailure: async (err: any) => {
+        toast.success(err.message);
       },
     });
   };
