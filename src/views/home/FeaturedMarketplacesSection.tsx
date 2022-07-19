@@ -101,7 +101,7 @@ function MarketplacePreview(props: MarketplacePreviewProps): JSX.Element {
 
   const marketplaceUrl: string = `https://${props.subdomain}.holaplex.market`;
   const nftVolumeStr: string = (props.context.data.nftCount ?? 0).toLocaleString();
-  const floorPriceSol: number = props.context.data.floorPriceLamports ?? 0 / LAMPORTS_PER_SOL;
+  const floorPriceSol: number = (props.context.data.floorPriceLamports ?? 0) / LAMPORTS_PER_SOL;
 
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
