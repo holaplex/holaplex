@@ -63,8 +63,8 @@ export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSecti
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>What&apos;s hot</HomeSection.Title>
-        <HomeSection.HeaderAction href="/discover/nfts">
-          Discover All
+        <HomeSection.HeaderAction href="/discover/nfts?type=buy-now">
+          See all
         </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
