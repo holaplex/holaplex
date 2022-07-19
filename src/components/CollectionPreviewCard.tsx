@@ -70,7 +70,7 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
 export function CollectionPreviewLoadingCard(): JSX.Element {
   return (
     <CollectionPreviewSkeleton
-        className='animate-pulse'
+      className="animate-pulse"
       background={<div className="h-full w-full bg-gray-900 bg-opacity-50" />}
       preview={<div className="h-full w-full rounded bg-gray-800" />}
       name={<div className="h-16 w-full rounded bg-gray-800" />}
