@@ -17,30 +17,77 @@ query nftCard($subdomain: String!, $address: String!) {
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       createdAt
     }
     listings {
-      address
+      id
       tradeState
       seller
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
       tradeStateBump
+      purchaseId
       createdAt
       canceledAt
     }
     offers {
-      address
+      id
       tradeState
       buyer
       metadata
-      auctionHouse
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       price
+      purchaseId
       tradeStateBump
       tokenAccount
       createdAt
@@ -48,7 +95,7 @@ query nftCard($subdomain: String!, $address: String!) {
     }
   }
   marketplace(subdomain: $subdomain) {
-    auctionHouse {
+    auctionHouses {
       address
       treasuryMint
       auctionHouseTreasury

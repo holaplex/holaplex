@@ -6,16 +6,16 @@ export const apolloClient = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_INDEXER_GRAPHQL_URL,
   cache: new InMemoryCache({
     typePolicies: {
-      BidReceipt: {
-        keyFields: ['address'],
+      Offer: {
+        keyFields: ['id'],
         fields: {
           price: {
             read: asBN,
           },
         },
       },
-      ListingReceipt: {
-        keyFields: ['address'],
+      AhListing: {
+        keyFields: ['id'],
         fields: {
           price: {
             read: asBN,
@@ -23,7 +23,7 @@ export const apolloClient = new ApolloClient({
         },
       },
       NftActivity: {
-        keyFields: ['address'],
+        keyFields: ['id'],
         fields: {
           price: {
             read: asBN,

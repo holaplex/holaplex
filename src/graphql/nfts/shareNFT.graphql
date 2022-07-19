@@ -5,8 +5,7 @@ query shareNFT($subdomain: String!, $address: String!) {
     description
     logoUrl
     bannerUrl
-
-    auctionHouse {
+    auctionHouses {
       address
       stats {
         floor
@@ -32,16 +31,47 @@ query shareNFT($subdomain: String!, $address: String!) {
       associatedTokenAccountAddress
     }
     purchases {
-      address
+      id
       buyer
       price
     }
     listings {
-      address
+      id
       price
     }
     offers {
+      id
+      buyer
+      price
+    }
+  }
+  nftByMintAddress(address: $address) {
+    address
+    name
+    sellerFeeBasisPoints
+    mintAddress
+    description
+    image
+    primarySaleHappened
+    creators {
       address
+      verified
+    }
+    owner {
+      address
+      associatedTokenAccountAddress
+    }
+    purchases {
+      id
+      buyer
+      price
+    }
+    listings {
+      id
+      price
+    }
+    offers {
+      id
       buyer
       price
     }

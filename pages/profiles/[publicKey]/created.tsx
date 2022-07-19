@@ -4,19 +4,19 @@ import { CreatedNfTsQuery, useCreatedNfTsQuery } from '../../../src/graphql/inde
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '../../../src/modules/server-side/getProfile';
+} from '../../../src/views/profiles/getProfileServerSideProps';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
-import { DoubleGrid } from '@/components/icons/DoubleGrid';
-import { TripleGrid } from '@/components/icons/TripleGrid';
-import { ProfileDataProvider } from '../../../src/common/context/ProfileData';
-import TextInput2 from '@/components/elements/TextInput2';
+import { DoubleGrid } from '@/assets/icons/DoubleGrid';
+import { TripleGrid } from '@/assets/icons/TripleGrid';
+import { ProfileDataProvider } from '../../../src/views/profiles/ProfileDataProvider';
+import TextInput2 from 'src/components/TextInput2';
 import { INFINITE_SCROLL_AMOUNT_INCREMENT, INITIAL_FETCH, NFTGrid } from './nfts';
-import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/common/constants/marketplace';
+import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '../../../src/views/_global/holaplexConstants';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty, uniq } from 'ramda';
-import ProfileLayout from '../../../src/common/components/layouts/ProfileLayout';
+import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
 import classNames from 'classnames';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
