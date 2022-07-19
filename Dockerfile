@@ -11,8 +11,21 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+#Env
+ARG NEXT_ENVIRONMENT
+ENV NEXT_PUBLIC_ENVIRONMENT $NEXT_ENVIRONMENT
+ENV NODE_ENV $NEXT_ENVIRONMENT
+#Solana
+ARG SOLANA_ENDPOINT
+ENV SOLANA_ENDPOINT $SOLANA_ENDPOINT
+ENV NEXT_PUBLIC_SOLANA_ENDPOINT $SOLANA_ENDPOINT
+
+#Indexer
 ARG GRAPHQL_URI
 ENV NEXT_PUBLIC_INDEXER_GRAPHQL_URL $GRAPHQL_URI
+#Metaplex
+ARG INDEXER_RPC_URL
+ENV NEXT_PUBLIC_INDEXER_RPC_URL $INDEXER_RPC_URL
 
 #Crossmint
 ARG CROSSMINT_API_KEY
@@ -44,7 +57,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 FROM runner AS frontend
-
 EXPOSE 3000
 ENV PORT 3000
 ENV NEXT_SHARP_PATH /app/node_modules/sharp
@@ -52,12 +64,6 @@ ENV NEXT_SHARP_PATH /app/node_modules/sharp
 CMD ["npx", "next", "start"]
 
 FROM runner AS signer
-#Crossmint
-ARG CROSSMINT_API_KEY
-ARG CROSSMINT_CLIENT_ID
-ENV NEXT_PUBLIC_CROSSMINT_API_KEY $CROSSMINT_API_KEY
-ENV NEXT_PUBLIC_CROSSMINT_CLIENT_ID $CROSSMINT_CLIENT_ID
-
 COPY --from=builder /app/tasks ./tasks
 COPY --from=builder /app/src/modules ./src/modules
 CMD ["yarn", "run", "consumers:sign-metadata"]
