@@ -173,7 +173,7 @@ function transformMarketplacePreview(data: MarketplacePreviewFragment): Marketpl
       handle: c.profile?.handle,
     })),
     floorPriceLamports: parseFloatSilently(data.auctionHouses[0]?.stats?.floor) ?? undefined,
-    nftCount: parseIntSilently(data.auctionHouses[0]?.stats?.floor) ?? undefined,
+    nftCount: parseIntSilently(data.stats?.nfts) ?? undefined,
   };
 }
 
