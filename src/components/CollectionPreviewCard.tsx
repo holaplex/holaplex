@@ -21,6 +21,7 @@ interface CollectionPreviewSkeletonProps {
   name: JSX.Element;
   size: JSX.Element | boolean;
   floor: JSX.Element | boolean;
+  className?: string;
 }
 
 function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.Element {
@@ -28,7 +29,8 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
     <div
       className={classNames(
         ['relative', 'flex overflow-clip', 'h-full w-full', 'rounded-lg shadow-md shadow-black'],
-        ['duration-300 hover:scale-[1.02]']
+        ['duration-300 hover:scale-[1.02]'],
+        props.className
       )}
     >
       <div className="relative flex aspect-[306/440] w-full">{props.background}</div>
@@ -68,11 +70,12 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
 export function CollectionPreviewLoadingCard(): JSX.Element {
   return (
     <CollectionPreviewSkeleton
-      background={<div className="w-full h-full bg-black bg-opacity-50" />}
-      preview={<div className="w-full h-full animate-pulse bg-gray-900 rounded" />}
-      name={<div className="w-full h-16 animate-pulse bg-gray-900 rounded" />}
-      size={<div className="w-[35%] h-8 animate-pulse bg-gray-900 rounded" />}
-      floor={<div className="w-[35%] h-8 animate-pulse bg-gray-900 rounded" />}
+        className='animate-pulse'
+      background={<div className="h-full w-full bg-gray-900 bg-opacity-50" />}
+      preview={<div className="h-full w-full rounded bg-gray-800" />}
+      name={<div className="h-16 w-full rounded bg-gray-800" />}
+      size={<div className="h-8 w-[35%] rounded bg-gray-800" />}
+      floor={<div className="h-8 w-[35%] rounded bg-gray-800" />}
     />
   );
 }

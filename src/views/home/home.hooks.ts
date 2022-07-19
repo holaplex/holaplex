@@ -1,3 +1,4 @@
+import { CollectionPreviewCardData } from '@/components/CollectionPreviewCard';
 import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
 import { QueryContext } from '@/hooks/useApolloQuery';
 import { IndexerSDK, Listing } from '@/modules/indexer';
@@ -7,12 +8,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHomeQuery } from 'src/graphql/indexerTypes';
 import {
   BuyNowListingFragment,
+  CollectionPreviewFragment,
   HomeQuery,
   MarketplacePreviewFragment,
   ProfilePreviewFragment,
 } from 'src/graphql/indexerTypes.ssr';
 import { FeedItem } from '../alpha/feed.utils';
 import { FeaturedBuyNowListingsData, ListingPreviewData } from './FeaturedBuyNowListingsSection';
+import { FeaturedCollectionsByMarketCapData } from './FeaturedCollectionsByMarketCapSection';
+import { FeaturedCollectionsByVolumeData } from './FeaturedCollectionsByVolumeSection';
 import { FeaturedMarketplacesData, MarketplacePreviewData } from './FeaturedMarketplacesSection';
 import { FeaturedProfilesData } from './FeaturedProfilesSection';
 import { HeroSectionData } from './HeroSection';
@@ -22,6 +26,7 @@ const DISALLOWED_PROFILES: string[] = ['ho1aVYd4TDWCi1pMqFvboPPc3J13e4LgWkWzGJpP
 
 export function useHomeQueryWithTransforms(
   userWallet: PublicKey | null,
+  featuredCollectionsLimit: number,
   featuredProfileLimit: number,
   featuredBowNowLimit: number,
   feedEventsLimit: number,
@@ -30,6 +35,7 @@ export function useHomeQueryWithTransforms(
   const queryContext = useHomeQuery({
     variables: {
       userWallet: userWallet,
+      featuredCollectionsLimit: featuredCollectionsLimit,
       featuredProfileLimit: featuredProfileLimit,
       featuredBuyNowLimit: featuredBowNowLimit,
       feedEventsLimit: feedEventsLimit,
@@ -46,6 +52,8 @@ export function useHomeQueryWithTransforms(
     if (!loading && queryContext.called && !queryContext.error) {
       result = {
         feedEvents: transformHeroSectionData(queryContext.data?.feedEvents),
+        featuredCollectionsByVolume: transformFeaturedCollectionsByVolume(queryContext.data?.collectionsFeaturedByVolume),
+        featuredCollectionsByMarketCap: transformFeaturedCollectionsByMarketCap(queryContext.data?.collectionsFeaturedByMarketCap),
         featuredProfiles: transformFeaturedProfiles(queryContext.data?.followWallets),
         featuredMarketplaces: transformFeaturedMarketplaces(queryContext.data?.featuredMarketplaces),
         featuredBuyNowListings: transformFeaturedBuyNowListings(
@@ -86,6 +94,49 @@ function transformHeroSectionData(data?: HomeQuery['feedEvents']): HeroSectionDa
 function transformFeedEvent(data: HomeQuery['feedEvents'][0]): FeedItem {
   // TODO FeedItem should really be changed to a custom object
   return { ...data };
+}
+
+function transformFeaturedCollectionsByVolume(data?: HomeQuery['collectionsFeaturedByVolume']): FeaturedCollectionsByVolumeData {
+  const result: FeaturedCollectionsByVolumeData = [];
+  if (data) {
+    for (const profile of data) {
+        try {
+          result.push(transformCollectionPreview(profile));
+        } catch (e) {
+          //TODO would be better to let this bubble up to the query and affect the query state
+          // (e.g. by re-fetching with some excluded wallets) but while gracefully degrading to show happy profiles
+          console.error(e);
+      }
+    }
+  }
+  return result;
+}
+
+function transformFeaturedCollectionsByMarketCap(data?: HomeQuery['collectionsFeaturedByMarketCap']): FeaturedCollectionsByMarketCapData {
+  const result: FeaturedCollectionsByVolumeData = [];
+  if (data) {
+    for (const profile of data) {
+        try {
+          result.push(transformCollectionPreview(profile));
+        } catch (e) {
+          //TODO would be better to let this bubble up to the query and affect the query state
+          // (e.g. by re-fetching with some excluded wallets) but while gracefully degrading to show happy profiles
+          console.error(e);
+      }
+    }
+  }
+  return result;
+}
+
+function transformCollectionPreview(data: CollectionPreviewFragment): CollectionPreviewCardData {
+  return {
+    address: data.mintAddress,
+    imageUrl: data.image,
+    name: data.name,
+    //TODO fix when available in query
+    nftCount: 0,
+    floorPriceSol: 0
+  };
 }
 
 function transformFeaturedProfiles(data?: HomeQuery['followWallets']): FeaturedProfilesData {
