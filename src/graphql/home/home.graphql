@@ -19,7 +19,7 @@ fragment ProfilePreview on Wallet {
   }
 }
 
-fragment BuyNowListing on ListingReceipt {
+fragment BuyNowListing on AhListing {
   nft {
     address
     name

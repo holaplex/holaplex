@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 # import "../fragments/MintEventPreview.graphql"
 # import "../fragments/FollowEventPreview.graphql"
 # import "../fragments/PurchaseEventPreview.graphql"
