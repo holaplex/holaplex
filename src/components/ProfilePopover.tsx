@@ -50,7 +50,7 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
     : null;
 
   return (
-    <>
+    <div className="w-64 rounded-lg bg-gray-900 p-5">
       <FirstRow>
         <div className="flex w-full items-center justify-between">
           <ProfilePicture
@@ -75,7 +75,7 @@ export const PopoverBoxContents: FC<PopoverBoxContentsProps> = ({ onViewProfile 
       <div className="w-full">
         <DisconnectWalletButton />
       </div>
-    </>
+    </div>
   );
 };
 

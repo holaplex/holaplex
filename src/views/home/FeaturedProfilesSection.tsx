@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
-import ProfilePreview, { ProfilePreviewData, ProfilePreviewLoadingCard } from '@/components/ProfilePreviewCard';
+import ProfilePreview, {
+  ProfilePreviewData,
+  ProfilePreviewLoadingCard,
+} from '@/components/ProfilePreviewCard';
 import { QueryContext } from './home.hooks';
 
 const CAROUSEL_ROWS: number = 2;
@@ -23,10 +26,7 @@ export function FeaturedProfilesSection(props: FeaturedProfilesSectionProps): JS
     } else {
       return props.context.data.map((p) => (
         <HomeSectionCarousel.Item key={p.address} className="p-4">
-          <ProfilePreview
-            address={p.address}
-            context={{...props.context, data: p }}
-          />
+          <ProfilePreview address={p.address} context={{ ...props.context, data: p }} />
         </HomeSectionCarousel.Item>
       ));
     }

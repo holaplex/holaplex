@@ -30,6 +30,12 @@ fragment MintEventPreview on MintEvent {
     address
     mintAddress
   }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
 }
 
 fragment FollowEventPreview on FollowEvent {
@@ -59,6 +65,12 @@ fragment FollowEventPreview on FollowEvent {
         profileImageUrlLowres
         profileImageUrlHighres
       }
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
     }
   }
 }
@@ -97,6 +109,12 @@ fragment PurchaseEventPreview on PurchaseEvent {
       }
       address
       mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
     }
   }
 }
@@ -154,6 +172,12 @@ fragment ListingEventPreview on ListingEvent {
       mintAddress
     }
   }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
 }
 
 fragment OfferEventPreview on OfferEvent {
@@ -207,6 +231,12 @@ fragment OfferEventPreview on OfferEvent {
       }
       address
       mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
     }
   }
 }
