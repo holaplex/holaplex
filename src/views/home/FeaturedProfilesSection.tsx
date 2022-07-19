@@ -23,10 +23,7 @@ export function FeaturedProfilesSection(props: FeaturedProfilesSectionProps): JS
     } else {
       return props.context.data.map((p) => (
         <HomeSectionCarousel.Item key={p.address} className="p-4">
-          <ProfilePreview
-            address={p.address}
-            context={{...props.context, data: p }}
-          />
+          <ProfilePreview address={p.address} context={{ ...props.context, data: p }} />
         </HomeSectionCarousel.Item>
       ));
     }

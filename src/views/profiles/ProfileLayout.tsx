@@ -50,12 +50,12 @@ const ProfilePageHead = (props: {
       <meta name="twitter:image:src" content={props.twitterProfile?.banner} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}
-      <meta name="og-title" content={title} />
-      <meta name="og-description" content={description} />
-      <meta name="og-image" content={props.twitterProfile?.banner} />
-      <meta name="og-url" content={`https://holaplex.com/profiles/${props.publicKey}/nfts`} />
-      <meta name="og-site_name" content="Holaplex" />
-      <meta name="og-type" content="product" />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={props.twitterProfile?.banner} />
+      <meta property="og:url" content={`https://holaplex.com/profiles/${props.publicKey}/nfts`} />
+      <meta property="og:site_name" content="Holaplex" />
+      <meta property="og:type" content="website" />
     </Head>
   );
 };

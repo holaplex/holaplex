@@ -114,12 +114,12 @@ export function ProfilePreviewLoadingCard(): JSX.Element {
       <div className="h-full w-full animate-pulse bg-gray-800" />
     </PreviewContainer>
   );
-};
+}
 
 const PreviewContainer: FC<any> = (props) => {
   return (
     <div
-      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg shadow-md shadow-black duration-300 hover:scale-[1.02]"
+      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg bg-gray-900 shadow-md shadow-black duration-300 hover:scale-[1.02]"
       {...props}
     />
   );

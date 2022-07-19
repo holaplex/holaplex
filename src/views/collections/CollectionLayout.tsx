@@ -50,12 +50,12 @@ function CollectionLayoutHead(props: {
       <meta name="twitter:image" content={props.image} />
       <meta name="twitter:site" content="@holaplex" />
       {/* Open Graph */}
-      <meta name="og-title" content={`${props.name} Collection | Holaplex`} />
-      <meta name="og-description" content={props.description} />
-      <meta name="og-image" content={props.image} />
-      <meta name="og-url" content={`https://holaplex.com/collections/${props.address}`} />
-      <meta name="og-site_name" content="Holaplex" />
-      <meta name="og-type" content="product" />
+      <meta property="og:title" content={`${props.name} Collection | Holaplex`} />
+      <meta property="og:description" content={props.description} />
+      <meta property="og:image" content={props.image} />
+      <meta property="og:url" content={`https://holaplex.com/collections/${props.address}`} />
+      <meta property="og:site_name" content="Holaplex" />
+      <meta property="og:type" content="website" />
     </Head>
   );
 }

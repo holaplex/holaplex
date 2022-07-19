@@ -4,6 +4,12 @@ query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
+    }
+    nftCounts {
+      owned
+      created
     }
   }
 }
