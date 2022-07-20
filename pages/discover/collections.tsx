@@ -73,10 +73,11 @@ const SORT_OPTIONS: NestedSelectOption = {
       defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.TIME_PERIOD],
       subOptions: TIME_WINDOW_SUBOPTIONS,
     },
-    [SortOption.NEW]: {
-      label: 'New & notable',
-      value: SortOption.NEW,
-    },
+    //TODO re-add when indexer change is ready
+    // [SortOption.NEW]: {
+    //   label: 'New & notable',
+    //   value: SortOption.NEW,
+    // },
   },
 };
 
