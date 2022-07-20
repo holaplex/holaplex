@@ -1,0 +1,18 @@
+query nftActivity($address: String!) {
+  nftByMintAddress(address: $address) {
+    activities {
+      id
+      metadata
+      price
+      createdAt
+      wallets {
+        address
+      }
+      activityType
+      auctionHouse {
+        address
+        treasuryMint
+      }
+    }
+  }
+}
