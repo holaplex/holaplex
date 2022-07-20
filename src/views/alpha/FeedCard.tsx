@@ -410,9 +410,13 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
       </Button5>
 
       {ReactDom.createPortal(
-        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
+        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen} priority={true}>
           {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
-
+          {marketplaceQuery.loading && (
+            <div className="flex justify-center">
+              <TailSpin color={`grey`} />
+            </div>
+          )}
           {marketplaceQuery.data && (
             <div className={`mt-8 flex w-full`}>
               <BuyForm
