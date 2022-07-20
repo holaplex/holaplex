@@ -231,7 +231,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   <div
                     className={`absolute inset-y-0 ${
                       hasSearch ? `right-8` : `right-0`
-                    } flex items-center pr-3`}
+                    } hidden items-center pr-3 sm:flex`}
                   >
                     <KeyboardShortcut keys={[`ctrl`, `k`]} />
                   </div>
