@@ -28,8 +28,8 @@ interface BuyFormProps {
   listing: AhListing;
   className?: string;
   refetch:
-    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
-    | (() => void);
+  | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+  | (() => void);
   loading: boolean;
   crossmintEnabled?: boolean;
 }
@@ -76,8 +76,8 @@ const BuyForm: FC<BuyFormProps> = ({
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(PAYMENT_OPTION.SOLANA);
 
   const { data, isLoading } = useQuery({
-    onSuccess: (data) => {},
-    onError: (err) => {},
+    onSuccess: (data) => { },
+    onError: (err) => { },
     queryFn: () => verifyTOS(listing.seller),
   });
 
@@ -91,7 +91,22 @@ const BuyForm: FC<BuyFormProps> = ({
   const onBuy = async () => {
     if (listing && listing.auctionHouse && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
-      await sdk.transaction().add(sdk.listings(listing.auctionHouse).buy({ listing, nft })).send();
+
+      await sdk.
+        transaction()
+        .add(
+          sdk
+            .escrow(listing.auctionHouse)
+            .desposit({ amount: listing.price.toNumber() })
+        )
+        .add(
+          sdk.offers(listing.auctionHouse).make({
+            amount: listing.price.toNumber(),
+            nft,
+          })
+        )
+        .add(sdk.listings(listing.auctionHouse).buy({ listing, nft }))
+        .send();
     }
   };
 
@@ -136,7 +151,7 @@ const BuyForm: FC<BuyFormProps> = ({
 
   if (crossmintEnabled) {
     return (
-      <form className={`flex w-full ${className}`} onSubmit={handleSubmit(buyTx)}>
+      <div className={`flex w-full ${className}`}>
         <Button
           onClick={() => setShowForm(true)}
           htmlType={`button`}
@@ -154,142 +169,139 @@ const BuyForm: FC<BuyFormProps> = ({
             title={`Select a payment method`}
             priority={true}
           >
-            <div className={`flex w-full flex-col justify-start gap-10`}>
-              {nft && <NFTPreview loading={loading || isLoading} nft={nft as Nft | any} />}
+            <form onSubmit={handleSubmit(buyTx)}>
+              <div className={`flex w-full flex-col justify-start gap-10`}>
+                {nft && <NFTPreview loading={loading || isLoading} nft={nft as Nft | any} />}
 
-              <div className={`flex flex-col gap-2`}>
-                <p className={`m-0 text-base font-medium text-gray-300`}>Price</p>
-                <DisplaySOL className={`font-medium`} amount={listing.price.toNumber()} />
-              </div>
+                <div className={`flex flex-col gap-2`}>
+                  <p className={`m-0 text-base font-medium text-gray-300`}>Price</p>
+                  <DisplaySOL className={`font-medium`} amount={listing.price.toNumber()} />
+                </div>
 
-              <div className={`grid grid-cols-1 gap-4 lg:grid-cols-3`}>
-                <button
-                  onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.SOLANA)}
-                  className={`flex h-20 items-center justify-center rounded-lg bg-white ${
-                    selectedPaymentOption === PAYMENT_OPTION.SOLANA
+                <div className={`grid grid-cols-1 gap-4 lg:grid-cols-3`}>
+                  <button
+                    onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.SOLANA)}
+                    className={`flex h-20 items-center justify-center rounded-lg bg-white ${selectedPaymentOption === PAYMENT_OPTION.SOLANA
                       ? `opacity-100`
                       : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
-                  }`}
-                  type={`button`}
-                >
-                  <img
-                    src={`/images/payment-options/solana-payment.png`}
-                    alt={`solana-payment`}
-                    className={`h-full w-full object-contain p-6 backdrop-opacity-70`}
-                  />
-                </button>
-                <button
-                  disabled={!data?.data.accepted}
-                  onClick={() => {
-                    setSelectedPaymentOption(PAYMENT_OPTION.ETHEREUM);
-                  }}
-                  className={`h-20 rounded-lg bg-white ${
-                    selectedPaymentOption === PAYMENT_OPTION.ETHEREUM
+                      }`}
+                    type={`button`}
+                  >
+                    <img
+                      src={`/images/payment-options/solana-payment.png`}
+                      alt={`solana-payment`}
+                      className={`h-full w-full object-contain p-6 backdrop-opacity-70`}
+                    />
+                  </button>
+                  <button
+                    disabled={!data?.data.accepted}
+                    onClick={() => {
+                      setSelectedPaymentOption(PAYMENT_OPTION.ETHEREUM);
+                    }}
+                    className={`h-20 rounded-lg bg-white ${selectedPaymentOption === PAYMENT_OPTION.ETHEREUM
                       ? `opacity-100`
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${
-                          !data?.data.accepted && `cursor-not-allowed`
-                        }`
-                  }`}
-                  type={`button`}
-                >
-                  <img
-                    src={`/images/payment-options/ethereum-payment.png`}
-                    alt={`eth-payment`}
-                    className={`h-full w-full object-contain p-2 backdrop-opacity-70`}
-                  />
-                </button>
-                <button
-                  disabled={!data?.data.accepted}
-                  onClick={() => {
-                    setSelectedPaymentOption(PAYMENT_OPTION.CREDIT_CARD);
-                  }}
-                  className={`h-20 rounded-lg bg-white ${
-                    selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${!data?.data.accepted && `cursor-not-allowed`
+                      }`
+                      }`}
+                    type={`button`}
+                  >
+                    <img
+                      src={`/images/payment-options/ethereum-payment.png`}
+                      alt={`eth-payment`}
+                      className={`h-full w-full object-contain p-2 backdrop-opacity-70`}
+                    />
+                  </button>
+                  <button
+                    disabled={!data?.data.accepted}
+                    onClick={() => {
+                      setSelectedPaymentOption(PAYMENT_OPTION.CREDIT_CARD);
+                    }}
+                    className={`h-20 rounded-lg bg-white ${selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD
                       ? `opacity-100 `
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${
-                          !data?.data.accepted && `cursor-not-allowed`
-                        }`
-                  }`}
-                  type={`button`}
-                >
-                  <img
-                    src={`/images/payment-options/creditcard-payment.png`}
-                    alt={`creditcard-payment`}
-                    className={`h-full w-full rounded-lg object-cover backdrop-opacity-70`}
-                  />
-                </button>
-              </div>
-              {selectedPaymentOption === PAYMENT_OPTION.SOLANA ? (
-                <Button
-                  htmlType={`submit`}
-                  disabled={isSubmitting || hasActionPending}
-                  loading={isSubmitting || hasActionPending}
-                  className={`w-full`}
-                >
-                  Buy with SOL
-                </Button>
-              ) : (
-                <>
-                  {selectedPaymentOption === PAYMENT_OPTION.ETHEREUM && (
-                    <CrossmintPayButton
-                      paymentMethod={`ETH`}
-                      collectionTitle={nft.name}
-                      collectionDescription={nft.description}
-                      clientId={
-                        crossmintConfig.clientId ||
-                        process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID ||
-                        ''
-                      }
-                      collectionPhoto={nft.image}
-                      // @ts-ignore
-                      mintConfig={{
-                        mintHash: nft.mintAddress,
-                        buyPrice: String(listing.price.toNumber() / LAMPORTS_PER_SOL),
-                        sellerWallet: listing.seller,
-                      }}
-                      style={{ borderRadius: 999, paddingTop: 8, paddingBottom: 8 }}
+                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${!data?.data.accepted && `cursor-not-allowed`
+                      }`
+                      }`}
+                    type={`button`}
+                  >
+                    <img
+                      src={`/images/payment-options/creditcard-payment.png`}
+                      alt={`creditcard-payment`}
+                      className={`h-full w-full rounded-lg object-cover backdrop-opacity-70`}
                     />
-                  )}
-                  {selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD && (
-                    <CrossmintPayButton
-                      paymentMethod={`fiat`}
-                      collectionTitle={nft.name}
-                      collectionDescription={nft.description}
-                      clientId={
-                        crossmintConfig.clientId ||
-                        process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID ||
-                        ''
-                      }
-                      collectionPhoto={nft.image}
-                      // @ts-ignore
-                      mintConfig={{
-                        mintHash: nft.mintAddress,
-                        buyPrice: String(listing.price.toNumber() / LAMPORTS_PER_SOL),
-                        sellerWallet: listing.seller,
-                      }}
-                      style={{ borderRadius: 999, paddingTop: 8, paddingBottom: 8 }}
-                    />
-                  )}
-                </>
-              )}
-              <div className={`flex flex-col gap-2`}>
-                <p className={`m-0 flex justify-center gap-1 text-center text-xs text-gray-300`}>
-                  ETH and fiat options provided by{' '}
-                  <a href={`https://crossmint.io`} target={`_blank`}>
-                    <img src={`/images/payment-options/crossmint.png`} alt={`crossmint`} />
-                  </a>
-                </p>
-                {!data?.data.accepted && (
-                  <p
-                    className={`m-0 text-center text-xs text-red-500`}
-                  >{`Seller hasn't enabled ETH & Credit Card payments`}</p>
+                  </button>
+                </div>
+                {selectedPaymentOption === PAYMENT_OPTION.SOLANA ? (
+                  <Button
+                    htmlType={`submit`}
+                    disabled={isSubmitting || hasActionPending}
+                    loading={isSubmitting || hasActionPending}
+                    className={`w-full`}
+                  >
+                    Buy with SOL
+                  </Button>
+                ) : (
+                  <>
+                    {selectedPaymentOption === PAYMENT_OPTION.ETHEREUM && (
+                      <CrossmintPayButton
+                        paymentMethod={`ETH`}
+                        collectionTitle={nft.name}
+                        collectionDescription={nft.description}
+                        clientId={
+                          crossmintConfig.clientId ||
+                          process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID ||
+                          ''
+                        }
+                        collectionPhoto={nft.image}
+                        // @ts-ignore
+                        mintConfig={{
+                          mintHash: nft.mintAddress,
+                          buyPrice: String(listing.price.toNumber() / LAMPORTS_PER_SOL),
+                          sellerWallet: listing.seller,
+                        }}
+                        style={{ borderRadius: 999, paddingTop: 8, paddingBottom: 8 }}
+                      />
+                    )}
+                    {selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD && (
+                      <CrossmintPayButton
+                        paymentMethod={`fiat`}
+                        collectionTitle={nft.name}
+                        collectionDescription={nft.description}
+                        clientId={
+                          crossmintConfig.clientId ||
+                          process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_ID ||
+                          ''
+                        }
+                        collectionPhoto={nft.image}
+                        // @ts-ignore
+                        mintConfig={{
+                          mintHash: nft.mintAddress,
+                          buyPrice: String(listing.price.toNumber() / LAMPORTS_PER_SOL),
+                          sellerWallet: listing.seller,
+                        }}
+                        style={{ borderRadius: 999, paddingTop: 8, paddingBottom: 8 }}
+                      />
+                    )}
+                  </>
                 )}
+                <div className={`flex flex-col gap-2`}>
+                  <p className={`m-0 flex justify-center gap-1 text-center text-xs text-gray-300`}>
+                    ETH and fiat options provided by{' '}
+                    <a href={`https://crossmint.io`} target={`_blank`}>
+                      <img src={`/images/payment-options/crossmint.png`} alt={`crossmint`} />
+                    </a>
+                  </p>
+                  {!data?.data.accepted && (
+                    <p
+                      className={`m-0 text-center text-xs text-red-500`}
+                    >{`Seller hasn't enabled ETH & Credit Card payments`}</p>
+                  )}
+                </div>
               </div>
-            </div>
+            </form>
           </Modal>,
           document.getElementsByTagName('body')[0]!
         )}
-      </form>
+      </div>
     );
   }
 
