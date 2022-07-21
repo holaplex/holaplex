@@ -7,6 +7,12 @@ query nftActivity($address: String!) {
       createdAt
       wallets {
         address
+        twitterHandle
+        profile {
+          profileImageUrlLowres
+          handle
+          walletAddress
+        }
       }
       activityType
       auctionHouse {

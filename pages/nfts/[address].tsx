@@ -46,7 +46,7 @@ import {
   gt,
   partialRight,
 } from 'ramda'
-import { DollarSign, Tag as FeatherTag } from 'react-feather';
+import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -118,21 +118,20 @@ export default function NftByAddress({
   const [queryNftActivity, activityContext] = useNftActivityLazyQuery();
   const moreThanOne = pipe(length, partialRight(gt, [1]));
 
-  console.log(activityContext.data, "THIS IS THE DATA");
 
   useEffect(() => {
-    if (!address) return;
+    if (!data?.nft?.mintAddress) return;
 
     try {
       queryNftActivity({
         variables: {
-          address,
+          address: data?.nft?.mintAddress,
         },
       });
     } catch (error: any) {
       console.error(error);
     }
-  }, [address, queryNftActivity]);
+  }, [data?.nft?.mintAddress, queryNftActivity]);
 
   useEffect(() => {
     if (!address) return;
@@ -177,7 +176,10 @@ export default function NftByAddress({
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
-  const offers = nft?.offers || [];
+  const offers = (nft?.offers || []);
+  const sortedOffers = Array.from(offers).sort((offerA ,offerB) => { 
+    return offerA.createdAt < offerB.createdAt ? 1 : -1
+  });
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
@@ -743,7 +745,7 @@ export default function NftByAddress({
                     </div>
                   )}
                   {hasOffers &&
-                    offers?.map((o) => (
+                    sortedOffers?.map((o) => (
                       <article
                         key={o.id}
                         className={`mb-4 grid rounded border border-gray-800 p-4 ${isOwner || hasAddedOffer ? `grid-cols-4` : `grid-cols-3`
@@ -810,21 +812,33 @@ export default function NftByAddress({
                         className="grid grid-cols-4 p-4 mb-4 border border-gray-700 rounded"
                       >
                         <div className="flex self-center">
-                          {a.activityType === 'purchase' ? (
-                            <DollarSign
-                              className="mr-2 self-center text-gray-300"
-                              size="18"
-                            />
-                          ) : (
+                          {a.activityType === 'purchase' &&
                             <FeatherTag
                               className="mr-2 self-center text-gray-300"
                               size="18"
                             />
-                          )}
+                          }
                           <div>
-                            {a.activityType === 'purchase'
-                              ? 'Sold'
-                              : 'Listed'}
+                            {a.activityType === 'purchase' && 'Sold'}
+                          </div>
+
+                          {a.activityType === 'offer' &&
+                            <Zap
+                              className="mr-2 self-center text-gray-300"
+                              size="18"
+                            />
+                          }
+                          <div>
+                            {a.activityType === 'offer' && 'Offer Made'}
+                          </div>
+                          {a.activityType === 'listing' &&
+                            <FeatherTag
+                              className="mr-2 self-center text-gray-300"
+                              size="18"
+                            />
+                          }
+                          <div>
+                            {a.activityType === 'listing' && 'Listed'}
                           </div>
                         </div>
                         <div
@@ -841,11 +855,16 @@ export default function NftByAddress({
                           )}
                           <div className="flex flex-col">
                             <a
-                              href={`https://holaplex.com/profiles/${a.wallets[0]}`}
+                              href={`https://holaplex.com/profiles/${a.wallets[0].address}`}
                               rel="nofollower"
                               className="text-sm"
                             >
-                              {shortenAddress(a.wallets[0].address)}
+                              <Avatar border address={a.wallets[0].address}
+                                data={{
+                                  twitterHandle: a.wallets[0].profile?.handle,
+                                  pfpUrl: a.wallets[0]?.profile?.profileImageUrlLowres,
+                                }}
+                              />
                             </a>
                             {multipleWallets && (
                               <a
@@ -853,7 +872,13 @@ export default function NftByAddress({
                                 rel="nofollower"
                                 className="text-sm"
                               >
-                                {shortenAddress(a.wallets[1].address)}
+                                <Avatar 
+                                  border
+                                  data={{
+                                    twitterHandle: a.wallets[1].profile?.handle,
+                                    pfpUrl: a.wallets[1]?.profile?.profileImageUrlLowres,
+                                  }}
+                                  address={a.wallets[1].address} />
                               </a>
                             )}
                           </div>

@@ -882,7 +882,7 @@ export type NftActivityQueryVariables = Exact<{
 }>;
 
 
-export type NftActivityQuery = { __typename?: 'QueryRoot', nftByMintAddress?: { __typename?: 'Nft', activities: Array<{ __typename?: 'NftActivity', id: any, metadata: any, price: any, createdAt: any, activityType: string, wallets: Array<{ __typename?: 'Wallet', address: any }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string } | null }> } | null };
+export type NftActivityQuery = { __typename?: 'QueryRoot', nftByMintAddress?: { __typename?: 'Nft', activities: Array<{ __typename?: 'NftActivity', id: any, metadata: any, price: any, createdAt: any, activityType: string, wallets: Array<{ __typename?: 'Wallet', address: any, twitterHandle?: string | null, profile?: { __typename?: 'TwitterProfile', profileImageUrlLowres: string, handle: string, walletAddress?: string | null } | null }>, auctionHouse?: { __typename?: 'AuctionHouse', address: string, treasuryMint: string } | null }> } | null };
 
 export type NftCardQueryVariables = Exact<{
   subdomain: Scalars['String'];
@@ -3146,6 +3146,12 @@ export const NftActivityDocument = gql`
       createdAt
       wallets {
         address
+        twitterHandle
+        profile {
+          profileImageUrlLowres
+          handle
+          walletAddress
+        }
       }
       activityType
       auctionHouse {
