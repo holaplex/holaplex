@@ -410,7 +410,7 @@ export default function NftByAddress({
                           <span className={`flex items-center gap-1 font-bold text-white`}>
                             <img
                               src={`/images/listings/opensea.svg`}
-                              alt={`magic-eden`}
+                              alt={`open-sea`}
                               className={`h-4 w-4 rounded-sm`}
                             />
                             OpenSea
@@ -735,6 +735,47 @@ export default function NftByAddress({
                               </a>
                             </Link>
                             <Link href={`https://magiceden.io/item-details/${nft?.mintAddress}`}>
+                              <a target={`_blank`}>
+                                <Button>View listing</Button>
+                              </a>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {Boolean(openSeaListing) && (
+                      <div className={`mt-6 border-t border-gray-700 pt-6`}>
+                        <p
+                          className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
+                        >
+                          Listed on{' '}
+                          <span className={`flex items-center gap-1 font-bold text-white`}>
+                            <img
+                              src={`/images/listings/opensea.svg`}
+                              alt={`open-sea`}
+                              className={`h-4 w-4 rounded-sm`}
+                            />
+                            OpenSea
+                          </span>
+                        </p>
+                        <div
+                          className={
+                            'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
+                          }
+                        >
+                          <div>
+                            <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                            <DisplaySOL amount={openSeaListing?.price} />
+                          </div>
+                          <div className={`flex w-full items-center gap-2 sm:w-auto`}>
+                            <Link href={`/nfts/${nft?.address}/offers/new`}>
+                              <a className={`w-full`}>
+                                <Button className={`w-full`} secondary>
+                                  Make offer
+                                </Button>
+                              </a>
+                            </Link>
+                            <Link href={`https://opensea.io/assets/solana/${nft?.mintAddress}`}>
                               <a target={`_blank`}>
                                 <Button>View listing</Button>
                               </a>
