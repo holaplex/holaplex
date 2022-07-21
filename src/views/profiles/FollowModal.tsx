@@ -5,14 +5,13 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { FollowUnfollowButton, FollowUnfollowSource } from './FollowUnfollowButton';
+import { FollowUnfollowButton, FollowUnfollowSource } from '@/components/FollowUnfollowButton';
 import {
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
   useAllConnectionsToQuery,
 } from 'src/graphql/indexerTypes';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
-import { cleanUpFollowers, cleanUpFollowing } from './FollowerCount';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 import { Close } from '@/assets/icons/Close';
 export type FollowModalVisibility = 'hidden' | 'followers' | 'following';
@@ -26,10 +25,7 @@ type FollowModalProps = {
 };
 
 export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisibility }) => {
-  const { publicKey } = useProfileData();
-
-  const profileFollowersList = useAllConnectionsToQuery({ variables: { to: publicKey } });
-  const profileFollowingList = useAllConnectionsFromQuery({ variables: { from: publicKey } });
+  const { publicKey, followers, following } = useProfileData();
 
   const modalRef = useRef<HTMLDivElement>(null!);
   useOutsideAlerter(modalRef, () => setVisibility('hidden'));
@@ -85,22 +81,20 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         </div>
         <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
           {visibility === 'followers'
-            ? cleanUpFollowers(profileFollowersList.data?.connections)
-                .filter((v, i, a) => i === a.indexOf(v))
-                .map((item: any) => (
-                  <FollowItem
-                    key={item.from.address as string}
-                    source={'modalFollowers'}
-                    user={item.from}
-                  />
-                ))
+            ? followers?.map((profile) => (
+                <FollowItem
+                  key={profile.address as string}
+                  source={'modalFollowers'}
+                  user={profile}
+                />
+              ))
             : null}
           {visibility === 'following'
-            ? cleanUpFollowing(profileFollowingList.data?.connections).map((item: any) => (
+            ? following?.map((profile) => (
                 <FollowItem
-                  key={item.to.address as string}
+                  key={profile.address as string}
                   source={'modalFollowing'}
-                  user={item.to}
+                  user={profile}
                 />
               ))
             : null}

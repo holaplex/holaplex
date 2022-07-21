@@ -12,6 +12,7 @@ query getCollection($address: String!) {
         handle
         profileImageUrlLowres
         profileImageUrlHighres
+        bannerImageUrl
       }
     }
   }
@@ -28,6 +29,7 @@ query getCollection($address: String!) {
         handle
         profileImageUrlLowres
         profileImageUrlHighres
+        bannerImageUrl
       }
     }
   }
