@@ -1000,7 +1000,7 @@ export type GetProfileFollowerOverviewQueryVariables = Exact<{
 }>;
 
 
-export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }>, followers: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }>, following: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
+export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, followers: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }>, following: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
 
 export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
@@ -3208,16 +3208,6 @@ export const GetProfileFollowerOverviewDocument = gql`
     connectionCounts {
       fromCount
       toCount
-    }
-  }
-  connections(to: [$pubKey], limit: 1000, offset: 0) {
-    from {
-      address
-      profile {
-        handle
-        profileImageUrlLowres
-        bannerImageUrl
-      }
     }
   }
   followers: connections(to: [$pubKey], limit: $limit, offset: $offset) {

@@ -1,6 +1,5 @@
 import { WalletDependantPageProps } from '@/views/profiles/getProfileServerSideProps';
-import { Unpacked } from '@/types/Unpacked';
-import React, { FC, useContext, useMemo } from 'react';
+import React, { FC, ReactNode, useContext, useMemo } from 'react';
 import { useGetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletProfile } from './follow.utils';
@@ -34,17 +33,19 @@ function compareConnectionsForSorting(a: WalletProfile, b: WalletProfile): numbe
   else return a.address.localeCompare(b.address);
 }
 
-export const ProfileDataProvider: FC<{
+export function ProfileDataProvider(props: {
+  children: ReactNode;
   profileData: WalletDependantPageProps;
-}> = ({ children, profileData }) => {
+}) {
   const wallet = useWallet();
   const myPubkey = wallet?.publicKey?.toBase58() ?? '';
 
   const profileFollowerOverview = useGetProfileFollowerOverviewQuery({
-    variables: { pubKey: profileData.publicKey },
+    variables: { pubKey: props.profileData.publicKey },
   });
 
   const { followers, following } = useMemo(() => {
+    console.log('running follower memo');
     const followers =
       cleanConnectionList(
         profileFollowerOverview.data?.followers.map((f) => f.from),
@@ -64,33 +65,33 @@ export const ProfileDataProvider: FC<{
   }, [profileFollowerOverview.data]);
 
   const amIFollowingThisAccount = followers.some((p) => p.address === myPubkey);
-  const isMe = profileData.publicKey === myPubkey;
-  const profileSocialAnfFollowerData: ProfileData = useMemo(
-    () => ({
-      ...profileData,
+  const isMe = props.profileData.publicKey === myPubkey;
+  const profileSocialAnfFollowerData: ProfileData = useMemo(() => {
+    console.log('running wrapper memo');
+    return {
+      ...props.profileData,
       followers,
       following,
       loading: profileFollowerOverview.loading,
       amIFollowingThisAccount: myPubkey ? amIFollowingThisAccount : null,
       isMe,
-    }),
-    [
-      myPubkey,
-      profileData,
-      profileFollowerOverview.loading,
-      followers,
-      following,
-      isMe,
-      amIFollowingThisAccount,
-    ]
-  );
+    };
+  }, [
+    myPubkey,
+    profileFollowerOverview.loading,
+    followers,
+    following,
+    isMe,
+    amIFollowingThisAccount,
+    props.profileData,
+  ]);
 
   return (
     <ProfileDataContext.Provider value={profileSocialAnfFollowerData}>
-      {children}
+      {props.children}
     </ProfileDataContext.Provider>
   );
-};
+}
 
 export const useProfileData = () => {
   const profileData = useContext(ProfileDataContext);

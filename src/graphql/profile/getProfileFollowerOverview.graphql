@@ -7,16 +7,6 @@ query getProfileFollowerOverview($pubKey: PublicKey!, $limit: Int = 1000, $offse
       toCount
     }
   }
-  connections(to: [$pubKey], limit: 1000, offset: 0) {
-    from {
-      address
-      profile {
-        handle
-        profileImageUrlLowres
-        bannerImageUrl
-      }
-    }
-  }
 
   followers: connections(to: [$pubKey], limit: $limit, offset: $offset) {
     from {

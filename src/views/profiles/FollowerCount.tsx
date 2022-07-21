@@ -36,27 +36,11 @@ export const FollowerCount: FC<FollowerCountProps> = ({
   const { loading, publicKey, isMe, amIFollowingThisAccount, followers, following } =
     useProfileData();
 
-  // const profileFollowerOverview = useGetProfileFollowerOverviewQuery({
-  //   variables: { pubKey: publicKey },
-  // });
-  // const isXFollowingY = useIsXFollowingYQuery({
-  //   variables: {
-  //     xPubKey: wallet?.publicKey.toBase58() ?? '',
-  //     yPubKey: publicKey,
-  //   },
-  //   skip: !wallet,
-  // });
-
-  // if (profileFollowerOverview.loading || isXFollowingY.loading) return <FollowerCountSkeleton />;
   if (loading) return <FollowerCountSkeleton />;
-  // const isSameWallet = wallet?.publicKey.equals(new PublicKey(publicKey)) ?? false;
-  //TODO these numbers will be wrong until the indexer is able to remove duplicates
-  // const followers = profileFollowerOverview.data?.followers || [];
 
-  const followerCount = followers?.length; // profileFollowerOverview.data?.wallet.connectionCounts.toCount ?? 0;
-  const followingCount = following?.length; // profileFollowerOverview.data?.wallet.connectionCounts.fromCount ?? 0;
-
-  // const amIFollowingThisAccount = !!isXFollowingY.data?.connections?.length ?? 0 > 0;
+  // note: could be refactored into connection counts, but this method avoids the current duplicate issue.
+  const followerCount = followers?.length;
+  const followingCount = following?.length;
 
   return (
     <>
@@ -71,10 +55,7 @@ export const FollowerCount: FC<FollowerCountProps> = ({
               <div className=" font-semibold">{followerCount}</div>
             </button>
             {followers?.length ? (
-              <FollowedBy
-                // followers={profileFollowerOverview.data?.connections || []}
-                onOtherFollowersClick={() => setShowFollowsModal('followers')}
-              />
+              <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
             ) : null}
           </div>
 
@@ -117,18 +98,15 @@ export const FollowerCount: FC<FollowerCountProps> = ({
 
 type FollowedByProps = {
   onOtherFollowersClick?: VoidFunction;
-  // followers: GetProfileFollowerOverviewQuery['connections'];
 };
 
 export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
-  const { publicKey, followers } = useProfileData();
+  const { followers } = useProfileData();
   if (!followers?.length) return null;
 
-  const uniqueFollowers = followers;
-  if (uniqueFollowers.length === 0) return null;
+  if (followers.length === 0) return null;
 
-  // this number will be wrong until the backend removes duplicates
-  const followerCount = uniqueFollowers.length ?? 0;
+  const followerCount = followers.length ?? 0;
 
   return (
     <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
@@ -140,7 +118,7 @@ export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
       </div>
       <div className={`flex items-center gap-2`}>
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
-          {uniqueFollowers.slice(0, 4).map((follower, i) => (
+          {followers.slice(0, 4).map((follower, i) => (
             <FollowerBubble
               isFirst={i === 0}
               key={follower.address as string}
