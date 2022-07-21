@@ -1,0 +1,60 @@
+fragment ListingEventPreview on ListingEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+  }
+  lifecycle
+  listing {
+    id
+    seller
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      listings {
+        id
+        seller
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              handle
+              profileImageUrlLowres
+            }
+          }
+          address
+          mintAddress
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

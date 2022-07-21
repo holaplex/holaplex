@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import type { AppProps } from 'next/app';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.less';
@@ -26,7 +26,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 

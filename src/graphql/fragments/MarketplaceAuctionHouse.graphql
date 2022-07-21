@@ -1,0 +1,18 @@
+fragment MarketplaceAuctionHouse on Marketplace {
+  auctionHouses {
+    address
+    treasuryMint
+    auctionHouseTreasury
+    treasuryWithdrawalDestination
+    feeWithdrawalDestination
+    authority
+    creator
+    auctionHouseFeeAccount
+    bump
+    treasuryBump
+    feePayerBump
+    sellerFeeBasisPoints
+    requiresSignOff
+    canChangeSalePrice
+  }
+}

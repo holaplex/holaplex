@@ -73,24 +73,14 @@ const MenuItems: FC<OnCloseProps> = ({ onCloseClick }) => {
           Create
         </a>
       </Link>
-      {/* <Link passHref href="/about">
-        <MenuItemRow onClick={onCloseClick}>About</MenuItemRow>
+      <Link passHref href="/discover">
+        <a
+          onClick={onCloseClick}
+          className={`flex h-16 items-center pl-4 text-xl font-medium text-gray-300 hover:text-white`}
+        >
+          Discover
+        </a>
       </Link>
-      <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
-        <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
-          FAQ
-        </MenuItemRow>
-      </Link>
-      <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
-        <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
-          Terms of service
-        </MenuItemRow>
-      </Link>
-      <Link passHref href="https://holaplex-support.zendesk.com/hc/en-us">
-        <MenuItemRow onClick={onCloseClick} target="_blank" rel="noreferrer">
-          Privacy policy
-        </MenuItemRow>
-      </Link> */}
     </ItemsContainer>
   );
 };

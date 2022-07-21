@@ -1,0 +1,17 @@
+# import "../fragments/NftCard.graphql"
+# import "../fragments/MarketplaceAuctionHouse.graphql"
+
+query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
+  nfts(
+    auctionHouses: ["9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t"]
+    withOffers: true
+    limit: $limit
+    offset: $offset
+    term: $searchTerm
+  ) {
+    ...NftCard
+  }
+  marketplace(subdomain: "haus") {
+    ...MarketplaceAuctionHouse
+  }
+}

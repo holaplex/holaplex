@@ -270,7 +270,7 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
       content={
         <ProfilePreview
           address={user.address}
-          context={{ data: getProfilePreivewDataFromUser(user), loading: false, refetch: () => {} }}
+          context={{ data: getProfilePreivewDataFromUser(user), loading: false, refetch: () => {}, fetchMore: () => {} }}
         />
       }
     >

@@ -1,0 +1,7 @@
+# import "../fragments/CollectionPreview.graphql"
+
+query discoverCollectionsByVolume($searchTerm: String, $start: DateTimeUtc!, $end: DateTimeUtc!, $limit: Int!, $offset: Int!) {
+  collectionsFeaturedByVolume(term:$searchTerm, startDate:$start endDate:$end, limit: $limit, offset:$offset, orderDirection:DESC) {
+    ...CollectionPreview
+  }
+}

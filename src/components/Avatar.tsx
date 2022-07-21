@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import {
   useGetProfileInfoFromPubKeyLazyQuery,
   useTwitterHandleFromPubKeyLazyQuery,
-  useTwitterHandleFromPubKeyQuery,
   useWalletProfileLazyQuery,
 } from 'src/graphql/indexerTypes';
 import cx from 'classnames';
@@ -160,7 +159,6 @@ export const Avatar = ({
       if (!data) getProfileInfoAndSetState();
     },
     
-    // dont include results of the query to avoid re-triggering
     [data, address, getProfileInfoQuery]
   );
 

@@ -1,0 +1,5 @@
+fragment CollectionPreview on Nft {
+    mintAddress
+    name
+    image
+}

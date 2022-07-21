@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
-import ProfilePreview, {
-  ProfilePreviewData,
-  ProfilePreviewLoadingCard,
-} from '@/components/ProfilePreviewCard';
-import { QueryContext } from './home.hooks';
+import ProfilePreview, { ProfilePreviewData, ProfilePreviewLoadingCard } from '@/components/ProfilePreviewCard';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS: number = 3;
@@ -40,7 +37,7 @@ export function FeaturedProfilesSection(props: FeaturedProfilesSectionProps): JS
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>Profiles to follow</HomeSection.Title>
-        {/* <HomeSection.HeaderAction href="/discover/profiles">Discover All</HomeSection.HeaderAction> */}
+        <HomeSection.HeaderAction href="/discover/profiles">See All</HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={CAROUSEL_COLS}>

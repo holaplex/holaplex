@@ -20,7 +20,7 @@ import {
 const COLLECTION_FETCH = 500;
 const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 500;
 
-type Collection = CollectionNfTsQuery['ownedCollection'][0]['collection'];
+type Collection = NonNullable<CollectionNfTsQuery['ownedCollection'][0]['collection']>;
 
 interface CollectionGridProps {
   collections: Collection[];
@@ -100,17 +100,13 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
   ): Collection[] => {
     let uniqueCollections: Collection[] = [];
     collectionNFTs?.forEach((collectionNft) => {
-      const collection = collectionNft.collection;
-
-      if (!uniqueCollections.find((u) => u?.address === collection?.address)) {
-        uniqueCollections.push(collection);
+      if (collectionNft.collection && !uniqueCollections.find((u) => u.address === collectionNft.address)) {
+        uniqueCollections.push(collectionNft.collection);
       }
     });
     createdCollectionNFTs?.forEach((collectionNft) => {
-      const collection = collectionNft.collection;
-
-      if (!uniqueCollections.find((u) => u?.address === collection?.address)) {
-        uniqueCollections.push(collection);
+      if (collectionNft.collection && !uniqueCollections.find((u) => u.address === collectionNft.address)) {
+        uniqueCollections.push(collectionNft.collection);
       }
     });
     return uniqueCollections;

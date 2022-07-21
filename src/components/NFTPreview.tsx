@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { LoadingContainer } from './LoadingPlaceholders';
-import { imgOpt } from './../lib/utils';
+import { imgOpt } from '../lib/utils';
 import Link from 'next/link';
 import { Nft } from '../graphql/indexerTypes';
 import { OverlappingAvatarSkeleton, TextSkeleton } from './Skeletons';

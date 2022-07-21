@@ -7,16 +7,21 @@ import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
 import { mq } from '@/assets/styles/MediaQuery';
 import { MobileMenu } from './MobileMenu';
-import { ButtonReset } from '@/assets/styles/ButtonReset';
-import { Menu as MenuIcon } from '@/assets/icons/Menu';
-import { ChevronRight } from '@/assets/icons/ChevronRight';
 import { toast } from 'react-toastify';
-import { Check } from '@/assets/icons/Check';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import DialectNotificationsButton from '@/views/_global/DialectNotificationsButton';
 import classNames from 'classnames';
 import { Button5 } from './Button2';
-import SearchBar from 'src/views/_global/SearchBar';
+import {
+  CollectionIcon,
+  LightBulbIcon,
+  MenuIcon,
+  PhotographIcon,
+  UsersIcon,
+} from '@heroicons/react/outline';
+import DropdownMenu from './DropdownMenu';
+import { Check } from '@/assets/icons/Check';
+import SearchBar from '@/views/_global/SearchBar';
 
 const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 
@@ -79,6 +84,7 @@ export function AppHeader() {
         </div>
         {!WHICHDAO && (
           <div className={`hidden md:flex min-w-fit flex-row items-center justify-end gap-6`}>
+            <DiscoverMenu />
             {connected && (
               <Link href="/alpha" passHref>
                 <a
@@ -139,4 +145,36 @@ export function AppHeader() {
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
     </>
   );
+};
+
+function DiscoverMenu(): JSX.Element {
+  return (
+    <DropdownMenu title="Discover">
+      <MenuItem title="Alpha" href="/alpha" icon={LightBulbIcon} />
+      <MenuItem title="NFTs" href="/discover/nfts" icon={PhotographIcon} />
+      <MenuItem title="Collections" href="/discover/collections" icon={CollectionIcon} />
+      <MenuItem title="Profiles" href="/discover/profiles" icon={UsersIcon} />
+    </DropdownMenu>
+  );
+
+  // using (props: any) => JSX.Element for icon lets react/ts know this is a functional
+  //  component we can pass className to
+  function MenuItem(props: {title: string, href: string, icon: (props: any) => JSX.Element}): JSX.Element {
+    return (
+      <DropdownMenu.Item>
+        <Link href={props.href}>
+          <a
+            className={classNames(
+              'flex flex-row flex-nowrap justify-start',
+              'space-x-4 p-4',
+              'text-lg'
+            )}
+          >
+            <props.icon className="h-5 w-5"/>
+            <span>{props.title}</span>
+          </a>
+        </Link>
+      </DropdownMenu.Item>
+    );
+  }
 }

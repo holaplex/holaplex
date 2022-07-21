@@ -51,4 +51,13 @@ module.exports = withPlugins(plugins, {
     // ssr and displayName are configured by default
     styledComponents: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/discover',
+        destination: '/discover/nfts',
+        permanent: true,
+      },
+    ];
+  },
 });

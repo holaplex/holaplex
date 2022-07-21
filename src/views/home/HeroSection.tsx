@@ -6,7 +6,7 @@ import { FeedItem } from '../alpha/feed.utils';
 import { FeedCard, LoadingFeedCard } from '../alpha/FeedCard';
 import Marquee from 'react-fast-marquee';
 import classNames from 'classnames';
-import { QueryContext } from './home.hooks';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const N_ITEMS = 12;
 
