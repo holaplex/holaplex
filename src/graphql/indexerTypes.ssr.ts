@@ -279,6 +279,7 @@ export type Nft = {
   primarySaleHappened: Scalars['Boolean'];
   purchases: Array<Purchase>;
   sellerFeeBasisPoints: Scalars['Int'];
+  tokenAccountAddress: Scalars['String'];
   updateAuthorityAddress: Scalars['String'];
 };
 

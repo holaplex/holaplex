@@ -33,6 +33,11 @@ module.exports = withPlugins(plugins, {
         destination: '/collections/:publicKey/nfts',
         permanent: true,
       },
+      {
+        source: '/discover',
+        destination: '/discover/nfts',
+        permanent: true,
+      },
     ];
   },
   images: {
@@ -50,14 +55,5 @@ module.exports = withPlugins(plugins, {
   compiler: {
     // ssr and displayName are configured by default
     styledComponents: true,
-  },
-  async redirects() {
-    return [
-      {
-        source: '/discover',
-        destination: '/discover/nfts',
-        permanent: true,
-      },
-    ];
   },
 });
