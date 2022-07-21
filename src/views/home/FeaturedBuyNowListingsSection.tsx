@@ -3,7 +3,7 @@ import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nf
 import { HomeSection, HomeSectionCarousel } from 'pages/index';
 import { AuctionHouse, Marketplace } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { QueryContext } from './home.hooks';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
@@ -63,10 +63,9 @@ export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSecti
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>What&apos;s hot</HomeSection.Title>
-        {/* //TODO revert once discovery is ready */}
-        {/* <HomeSection.HeaderAction external href="https://holaplex.com">
-          Discover All
-        </HomeSection.HeaderAction> */}
+        <HomeSection.HeaderAction href="/discover/nfts?type=buy-now">
+          See all
+        </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={carouselCols}>

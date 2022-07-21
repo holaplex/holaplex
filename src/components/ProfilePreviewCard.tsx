@@ -1,6 +1,6 @@
+import { QueryContext } from '@/hooks/useApolloQuery';
 import { getFallbackImage } from '@/modules/utils/image';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { QueryContext } from '@/views/home/home.hooks';
 import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';

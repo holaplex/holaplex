@@ -1,4 +1,11 @@
-# import "../feed/feed.graphql"
+# import "../fragments/NftCard.graphql"
+# import "../fragments/MarketplaceAuctionHouse.graphql"
+# import "../fragments/MintEventPreview.graphql"
+# import "../fragments/FollowEventPreview.graphql"
+# import "../fragments/PurchaseEventPreview.graphql"
+# import "../fragments/ListingEventPreview.graphql"
+# import "../fragments/OfferEventPreview.graphql"
+# import "../fragments/CollectionPreview.graphql"
 
 fragment ProfilePreview on Wallet {
   address
@@ -15,7 +22,6 @@ fragment ProfilePreview on Wallet {
 
 fragment BuyNowListing on AhListing {
   id
-  metadata
   nft {
     address
     name
@@ -111,25 +117,6 @@ fragment BuyNowListing on AhListing {
   }
 }
 
-fragment MarketplaceAuctionHouse on Marketplace {
-  auctionHouses {
-    address
-    treasuryMint
-    auctionHouseTreasury
-    treasuryWithdrawalDestination
-    feeWithdrawalDestination
-    authority
-    creator
-    auctionHouseFeeAccount
-    bump
-    treasuryBump
-    feePayerBump
-    sellerFeeBasisPoints
-    requiresSignOff
-    canChangeSalePrice
-  }
-}
-
 fragment MarketplacePreview on Marketplace {
   subdomain
   name
@@ -153,6 +140,7 @@ fragment MarketplacePreview on Marketplace {
 
 query home(
   $userWallet: PublicKey
+  $featuredCollectionsLimit: Int!
   $featuredProfileLimit: Int!
   $featuredBuyNowLimit: Int!
   $feedEventsLimit: Int!
@@ -181,6 +169,14 @@ query home(
     }
   }
 
+  collectionsFeaturedByVolume(startDate: "2020-01-01T00:00:00Z", endDate: "3000-01-01T00:00:00Z", limit: $featuredCollectionsLimit, offset: 0, orderDirection: DESC) {
+    ...CollectionPreview
+  }
+
+  collectionsFeaturedByMarketCap(startDate: "2020-01-01T00:00:00Z", endDate: "3000-01-01T00:00:00Z", limit: $featuredCollectionsLimit, offset: 0, orderDirection: DESC) {
+    ...CollectionPreview
+  }
+
   followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
     ...ProfilePreview
   }
@@ -193,35 +189,18 @@ query home(
     ...MarketplaceAuctionHouse
   }
 
-  featuredMarketplace0: marketplace(subdomain: "junglecats") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace1: marketplace(subdomain: "womeninnfts") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace2: marketplace(subdomain: "nft4good") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace3: marketplace(subdomain: "monkedao") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace4: marketplace(subdomain: "pixelbands") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace5: marketplace(subdomain: "event") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace6: marketplace(subdomain: "skeletoncrew") {
-    ...MarketplacePreview
-  }
-
-  featuredMarketplace7: marketplace(subdomain: "thechimpions") {
+  featuredMarketplaces: marketplaces(
+    subdomains: [
+      "junglecats"
+      "womeninnfts"
+      "nft4good"
+      "monkedao"
+      "pixelbands"
+      "event"
+      "skeletoncrew"
+      "thechimpions"
+    ]
+  ) {
     ...MarketplacePreview
   }
 }

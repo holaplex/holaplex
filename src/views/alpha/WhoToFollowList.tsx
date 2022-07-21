@@ -127,6 +127,7 @@ export default function WhoToFollowList(props: {
                     data: getProfilePreivewDataFromUser(u),
                     loading: false,
                     refetch: () => {},
+                    fetchMore: () => {}
                   }}
                 />
               }

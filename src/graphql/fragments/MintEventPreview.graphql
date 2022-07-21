@@ -1,0 +1,39 @@
+fragment MintEventPreview on MintEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+  }
+  nft {
+    name
+    image(width: 600)
+    description
+    owner {
+      address
+      associatedTokenAccountAddress
+      twitterHandle
+    }
+    sellerFeeBasisPoints
+    primarySaleHappened
+    creators {
+      address
+      position
+      profile {
+        handle
+        profileImageUrlLowres
+        profileImageUrlHighres
+      }
+    }
+    address
+    mintAddress
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

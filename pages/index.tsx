@@ -1,10 +1,31 @@
-import { FeaturedAuctionsSectionData, FeaturedAuctionsSection } from '@/views/home/FeaturedAuctionsSection';
-import { FeaturedBuyNowListingsData, FeaturedBuyNowListingsSection } from '@/views/home/FeaturedBuyNowListingsSection';
-import { FeaturedMarketplacesData, FeaturedMarketplacesSection } from '@/views/home/FeaturedMarketplacesSection';
-import { FeaturedProfilesData, FeaturedProfilesSection } from '@/views/home/FeaturedProfilesSection';
+import { QueryContext } from '@/hooks/useApolloQuery';
+import {
+  FeaturedAuctionsSectionData,
+  FeaturedAuctionsSection,
+} from '@/views/home/FeaturedAuctionsSection';
+import {
+  FeaturedBuyNowListingsData,
+  FeaturedBuyNowListingsSection,
+} from '@/views/home/FeaturedBuyNowListingsSection';
+import {
+  FeaturedCollectionsByMarketCapData,
+  FeaturedCollectionsByMarketCapSection,
+} from '@/views/home/FeaturedCollectionsByMarketCapSection';
+import {
+  FeaturedCollectionsByVolumeData,
+  FeaturedCollectionsByVolumeSection,
+} from '@/views/home/FeaturedCollectionsByVolumeSection';
+import {
+  FeaturedMarketplacesData,
+  FeaturedMarketplacesSection,
+} from '@/views/home/FeaturedMarketplacesSection';
+import {
+  FeaturedProfilesData,
+  FeaturedProfilesSection,
+} from '@/views/home/FeaturedProfilesSection';
 import Footer from '@/views/home/Footer';
 import { HeroSection, HeroSectionData } from '@/views/home/HeroSection';
-import { QueryContext, useHomeQueryWithTransforms } from '@/views/home/home.hooks';
+import { useHomeQueryWithTransforms } from '@/views/home/home.hooks';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
@@ -14,6 +35,8 @@ import Carousel from 'react-grid-carousel';
 
 export interface HomeData {
   feedEvents: HeroSectionData;
+  featuredCollectionsByVolume: FeaturedCollectionsByVolumeData;
+  featuredCollectionsByMarketCap: FeaturedCollectionsByMarketCapData;
   featuredBuyNowListings: FeaturedBuyNowListingsData;
   featuredProfiles: FeaturedProfilesData;
   featuredMarketplaces: FeaturedMarketplacesData;
@@ -24,49 +47,65 @@ export default function Home(): JSX.Element {
   const wallet = useWallet();
 
   //TODO export n-items in consts from sections
-  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, 24, 24, 12, 18);
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(
+    wallet.publicKey,
+    12,
+    24,
+    24,
+    12,
+    18
+  );
 
   return (
     <div>
       <HeroSection
         context={{
+          ...dataQueryContext,
           data: dataQueryContext.data?.feedEvents,
-          loading: dataQueryContext.loading,
-          error: dataQueryContext.error,
-          refetch: dataQueryContext.refetch
+          refetch: dataQueryContext.refetch,
         }}
       />
       <div className="container mx-auto w-[88%] md:w-3/4">
+        <FeaturedCollectionsByVolumeSection
+          context={{
+            ...dataQueryContext,
+            data: dataQueryContext.data?.featuredCollectionsByVolume,
+            refetch: dataQueryContext.refetch,
+          }}
+        />
+        <FeaturedCollectionsByMarketCapSection
+          context={{
+            ...dataQueryContext,
+            data: dataQueryContext.data?.featuredCollectionsByMarketCap,
+            refetch: dataQueryContext.refetch,
+          }}
+        />
         <FeaturedBuyNowListingsSection
           context={{
+            ...dataQueryContext,
             data: dataQueryContext.data?.featuredBuyNowListings,
-            loading: dataQueryContext.loading,
-            error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedProfilesSection
           context={{
+            ...dataQueryContext,
             data: dataQueryContext.data?.featuredProfiles,
-            loading: dataQueryContext.loading,
-            error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
-        <FeaturedAuctionsSection 
+        <FeaturedAuctionsSection
           context={{
+            ...dataQueryContext,
             data: dataQueryContext.data?.featuredAuctions,
-            loading: dataQueryContext.loading,
-            error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedMarketplacesSection
           context={{
+            ...dataQueryContext,
             data: dataQueryContext.data?.featuredMarketplaces,
-            loading: dataQueryContext.loading,
-            error: dataQueryContext.error,
-            refetch: dataQueryContext.refetch
+            refetch: dataQueryContext.refetch,
           }}
         />
       </div>
