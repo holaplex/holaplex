@@ -4,11 +4,11 @@ import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import cx from 'classnames';
 import { FC } from 'react';
-import { TopFollower } from 'src/views/profiles/ProfileDataProvider';
+import { WalletProfile } from '@/views/profiles/follow.utils';
 
 type FollowerBubbleProps = {
   isFirst?: boolean;
-  follower: TopFollower;
+  follower: WalletProfile;
 };
 
 type FollowBubbleImageProps = {
@@ -39,7 +39,7 @@ export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image
 
 export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
   return (
-    <Link href={`/profiles/${follower.from.address as string}/nfts`} passHref>
+    <Link href={`/profiles/${follower.address as string}/nfts`} passHref>
       <a
         className={cx({
           block: !isFirst,
@@ -47,10 +47,7 @@ export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) =
       >
         <FollowedByImage
           className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
-          src={
-            follower.from?.profile?.profileImageUrlLowres ??
-            getPFPFromPublicKey(follower.from.address!)
-          }
+          src={follower?.profile?.profileImageUrlLowres ?? getPFPFromPublicKey(follower.address!)}
           width={32}
           height={32}
           alt="PFP"

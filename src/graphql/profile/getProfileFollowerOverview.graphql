@@ -1,6 +1,6 @@
 #import "./profileInfo.graphql"
 
-query getProfileFollowerOverview($pubKey: PublicKey!) {
+query getProfileFollowerOverview($pubKey: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   wallet(address: $pubKey) {
     connectionCounts {
       fromCount
@@ -15,6 +15,18 @@ query getProfileFollowerOverview($pubKey: PublicKey!) {
         profileImageUrlLowres
         bannerImageUrl
       }
+    }
+  }
+
+  followers: connections(to: [$pubKey], limit: $limit, offset: $offset) {
+    from {
+      ...ConnectionNode
+    }
+  }
+
+  following: connections(from: [$pubKey], limit: $limit, offset: $offset) {
+    to {
+      ...ConnectionNode
     }
   }
 }

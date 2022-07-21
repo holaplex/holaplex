@@ -1,6 +1,8 @@
-import { TopFollower } from 'src/views/profiles/ProfileDataProvider';
 import { Storefront } from 'src/graphql/indexerTypes';
-import { Listing } from 'src/graphql/indexerTypes.ssr';
+import { GetProfileFollowerOverviewQuery, Listing } from 'src/graphql/indexerTypes.ssr';
+import { Unpacked } from '@/types/Unpacked';
+
+type TopFollower = Unpacked<GetProfileFollowerOverviewQuery['connections']>;
 
 export const BID_ACTIVITY = [
   'BID_MADE',

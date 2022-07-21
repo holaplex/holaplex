@@ -279,6 +279,7 @@ export type Nft = {
   primarySaleHappened: Scalars['Boolean'];
   purchases: Array<Purchase>;
   sellerFeeBasisPoints: Scalars['Int'];
+  tokenAccountAddress: Scalars['String'];
   updateAuthorityAddress: Scalars['String'];
 };
 
@@ -782,7 +783,7 @@ export type GetCollectionQueryVariables = Exact<{
 }>;
 
 
-export type GetCollectionQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, description: string, mintAddress: string, image: string, creators: Array<{ __typename?: 'NftCreator', position?: number | null, address: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }> } | null, nftByMintAddress?: { __typename?: 'Nft', address: string, name: string, description: string, mintAddress: string, image: string, creators: Array<{ __typename?: 'NftCreator', position?: number | null, address: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }> } | null };
+export type GetCollectionQuery = { __typename?: 'QueryRoot', nft?: { __typename?: 'Nft', address: string, name: string, description: string, mintAddress: string, image: string, creators: Array<{ __typename?: 'NftCreator', position?: number | null, address: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null }> } | null, nftByMintAddress?: { __typename?: 'Nft', address: string, name: string, description: string, mintAddress: string, image: string, creators: Array<{ __typename?: 'NftCreator', position?: number | null, address: string, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string, bannerImageUrl: string } | null }> } | null };
 
 export type NftCollectionQueryVariables = Exact<{
   address: Scalars['String'];
@@ -900,7 +901,7 @@ export type ShareNftQueryVariables = Exact<{
 
 export type ShareNftQuery = { __typename?: 'QueryRoot', marketplace?: { __typename?: 'Marketplace', subdomain: string, name: string, description: string, logoUrl: string, bannerUrl: string, auctionHouses: Array<{ __typename?: 'AuctionHouse', address: string, stats?: { __typename?: 'MintStats', floor?: any | null, average?: any | null, volume24hr?: any | null } | null }> } | null, nft?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any }>, listings: Array<{ __typename?: 'AhListing', id: any, price: any }>, offers: Array<{ __typename?: 'Offer', id: any, buyer: any, price: any }> } | null, nftByMintAddress?: { __typename?: 'Nft', address: string, name: string, sellerFeeBasisPoints: number, mintAddress: string, description: string, image: string, primarySaleHappened: boolean, creators: Array<{ __typename?: 'NftCreator', address: string, verified: boolean }>, owner?: { __typename?: 'NftOwner', address: string, associatedTokenAccountAddress: string } | null, purchases: Array<{ __typename?: 'Purchase', id: any, buyer: any, price: any }>, listings: Array<{ __typename?: 'AhListing', id: any, price: any }>, offers: Array<{ __typename?: 'Offer', id: any, buyer: any, price: any }> } | null };
 
-export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null };
+export type ConnectionNodeFragment = { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null };
 
 export type AllConnectionsFromQueryVariables = Exact<{
   from: Scalars['PublicKey'];
@@ -909,7 +910,7 @@ export type AllConnectionsFromQueryVariables = Exact<{
 }>;
 
 
-export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }> };
+export type AllConnectionsFromQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
 
 export type AllConnectionsToQueryVariables = Exact<{
   to: Scalars['PublicKey'];
@@ -918,7 +919,7 @@ export type AllConnectionsToQueryVariables = Exact<{
 }>;
 
 
-export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }> };
+export type AllConnectionsToQuery = { __typename?: 'QueryRoot', connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
 
 export type GetCollectedByQueryVariables = Exact<{
   creator: Scalars['PublicKey'];
@@ -934,14 +935,16 @@ export type GetConnectedWalletProfileDataQueryVariables = Exact<{
 }>;
 
 
-export type GetConnectedWalletProfileDataQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number, offered: number, listed: number }, connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number }, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }, followers: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }>, following: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string } | null } }> };
+export type GetConnectedWalletProfileDataQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', address: any, nftCounts: { __typename?: 'WalletNftCount', owned: number, created: number, offered: number, listed: number }, connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number }, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, profileImageUrlHighres: string } | null }, followers: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }>, following: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
 
 export type GetProfileFollowerOverviewQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
+export type GetProfileFollowerOverviewQuery = { __typename?: 'QueryRoot', wallet: { __typename?: 'Wallet', connectionCounts: { __typename?: 'ConnectionCounts', fromCount: number, toCount: number } }, connections: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }>, followers: Array<{ __typename?: 'GraphConnection', from: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }>, following: Array<{ __typename?: 'GraphConnection', to: { __typename?: 'Wallet', address: any, profile?: { __typename?: 'TwitterProfile', handle: string, profileImageUrlLowres: string, bannerImageUrl: string } | null } }> };
 
 export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
   pubKey: Scalars['PublicKey'];
@@ -1411,6 +1414,7 @@ export const ConnectionNodeFragmentDoc = gql`
   profile {
     handle
     profileImageUrlLowres
+    bannerImageUrl
   }
 }
     `;
@@ -1923,6 +1927,7 @@ export const GetCollectionDocument = gql`
         handle
         profileImageUrlLowres
         profileImageUrlHighres
+        bannerImageUrl
       }
     }
   }
@@ -1939,6 +1944,7 @@ export const GetCollectionDocument = gql`
         handle
         profileImageUrlLowres
         profileImageUrlHighres
+        bannerImageUrl
       }
     }
   }
@@ -3698,7 +3704,7 @@ export type GetConnectedWalletProfileDataQueryHookResult = ReturnType<typeof use
 export type GetConnectedWalletProfileDataLazyQueryHookResult = ReturnType<typeof useGetConnectedWalletProfileDataLazyQuery>;
 export type GetConnectedWalletProfileDataQueryResult = Apollo.QueryResult<GetConnectedWalletProfileDataQuery, GetConnectedWalletProfileDataQueryVariables>;
 export const GetProfileFollowerOverviewDocument = gql`
-    query getProfileFollowerOverview($pubKey: PublicKey!) {
+    query getProfileFollowerOverview($pubKey: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   wallet(address: $pubKey) {
     connectionCounts {
       fromCount
@@ -3715,8 +3721,18 @@ export const GetProfileFollowerOverviewDocument = gql`
       }
     }
   }
+  followers: connections(to: [$pubKey], limit: $limit, offset: $offset) {
+    from {
+      ...ConnectionNode
+    }
+  }
+  following: connections(from: [$pubKey], limit: $limit, offset: $offset) {
+    to {
+      ...ConnectionNode
+    }
+  }
 }
-    `;
+    ${ConnectionNodeFragmentDoc}`;
 
 /**
  * __useGetProfileFollowerOverviewQuery__
@@ -3731,6 +3747,8 @@ export const GetProfileFollowerOverviewDocument = gql`
  * const { data, loading, error } = useGetProfileFollowerOverviewQuery({
  *   variables: {
  *      pubKey: // value for 'pubKey'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
