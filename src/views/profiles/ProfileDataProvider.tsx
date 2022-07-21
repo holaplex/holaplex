@@ -44,8 +44,7 @@ export function ProfileDataProvider(props: {
     variables: { pubKey: props.profileData.publicKey },
   });
 
-  const { followers, following } = useMemo(() => {
-    console.log('running follower memo');
+  const { followers, following, loading } = useMemo(() => {
     const followers =
       cleanConnectionList(
         profileFollowerOverview.data?.followers.map((f) => f.from),
@@ -61,30 +60,22 @@ export function ProfileDataProvider(props: {
     return {
       followers,
       following,
+      loading: profileFollowerOverview.loading,
     };
-  }, [profileFollowerOverview.data]);
+  }, [profileFollowerOverview]);
 
   const amIFollowingThisAccount = followers.some((p) => p.address === myPubkey);
   const isMe = props.profileData.publicKey === myPubkey;
   const profileSocialAnfFollowerData: ProfileData = useMemo(() => {
-    console.log('running wrapper memo');
     return {
       ...props.profileData,
       followers,
       following,
-      loading: profileFollowerOverview.loading,
+      loading,
       amIFollowingThisAccount: myPubkey ? amIFollowingThisAccount : null,
       isMe,
     };
-  }, [
-    myPubkey,
-    profileFollowerOverview.loading,
-    followers,
-    following,
-    isMe,
-    amIFollowingThisAccount,
-    props.profileData,
-  ]);
+  }, [myPubkey, followers, following, isMe, amIFollowingThisAccount, loading, props.profileData]);
 
   return (
     <ProfileDataContext.Provider value={profileSocialAnfFollowerData}>

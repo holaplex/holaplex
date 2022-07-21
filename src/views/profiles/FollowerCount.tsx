@@ -9,10 +9,10 @@ import {
   useGetProfileFollowerOverviewQuery,
   useIsXFollowingYQuery,
 } from 'src/graphql/indexerTypes';
-import { FollowUnfollowButton } from '../../components/FollowUnfollowButton';
-import { FollowerBubble, FollowerBubbleImage } from '../../components/FollowerBubble';
+import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';
+import { FollowerBubble, FollowerBubbleImage } from '@/components/FollowerBubble';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
-import Modal from '../../components/Modal';
+import Modal from '@/components/Modal';
 import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';

@@ -5,7 +5,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import Link from 'next/link';
 import { showFirstAndLastFour } from '@/modules/utils/string';
-import { FollowUnfollowButton, FollowUnfollowSource } from '../../components/FollowUnfollowButton';
+import { FollowUnfollowButton, FollowUnfollowSource } from '@/components/FollowUnfollowButton';
 import {
   ConnectionNodeFragment,
   useAllConnectionsFromQuery,
