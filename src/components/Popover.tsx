@@ -30,7 +30,7 @@ const Popover = ({ children, content, isShowOnHover = false }: PopoverProps) => 
   };
 
   return (
-    <HeadlessPopover className="relative">
+    <HeadlessPopover as="span" className="relative">
       {({ open }) => (
         <div
           onMouseEnter={() => onHover(open, 'onMouseEnter')}
