@@ -12,7 +12,10 @@ export const ProfileImage = () => {
   const profilePictureUrl: string =
     connectedProfile?.profile?.profileImageUrlHighres ?? getPFPFromPublicKey(publicKey);
 
-  return (
+
+
+
+    return (
     <>
       <Popover content={<ProfilePopover />}>
         <button className="flex items-center justify-center overflow-hidden rounded-full shadow-lg shadow-black ring-4 ring-gray-900 transition-transform  hover:scale-125">
