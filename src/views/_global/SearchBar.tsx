@@ -210,7 +210,10 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                     setShowResults(true);
                     setShowKeybind(true);
                   }}
-                  onBlur={() => setShowKeybind(false)}
+                  onBlur={() => {
+                    setShowKeybind(false);
+                    setHasSearch(false);
+                  }}
                   placeholder={`Search Holaplex...`}
                   onChange={handleOnChange}
                   inputRef={searchInputRef}
