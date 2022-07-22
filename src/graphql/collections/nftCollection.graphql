@@ -1,3 +1,5 @@
+#import "./ProfileInfo.graphql"
+
 query nftCollection(
   $address: String!
   $marketplaceSubdomain: String!
@@ -12,8 +14,7 @@ query nftCollection(
       position
       address
       profile {
-        handle
-        profileImageUrlLowres
+        ...ProfileInfo
       }
     }
   }

@@ -1,10 +1,11 @@
+#import "./ProfileInfo.graphql"
+
 fragment ListingEventPreview on ListingEvent {
   feedEventId
   createdAt
   walletAddress
   profile {
-    handle
-    profileImageUrlLowres
+    ...ProfileInfo
   }
   lifecycle
   listing {
@@ -39,8 +40,7 @@ fragment ListingEventPreview on ListingEvent {
             address
             position
             profile {
-              handle
-              profileImageUrlLowres
+              ...ProfileInfo
             }
           }
           address

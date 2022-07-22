@@ -3,9 +3,7 @@ fragment FollowEventPreview on FollowEvent {
   createdAt
   walletAddress
   profile {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
+    ...ProfileInfo
   }
   graphConnectionAddress
   connection {
@@ -13,17 +11,13 @@ fragment FollowEventPreview on FollowEvent {
     from {
       address
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
     to {
       address
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
   }

@@ -6,12 +6,22 @@ interface PopoverProps {
   children: React.ReactElement;
   content: React.ReactElement;
   isShowOnHover?: boolean;
+  placement?: 'top' | 'bottom' | 'left' | 'right'; //  many others
+  disabled?: boolean;
 }
 
-const Popover = ({ children, content, isShowOnHover = false }: PopoverProps) => {
+const Popover = ({
+  children,
+  disabled,
+  content,
+  placement,
+  isShowOnHover = false,
+}: PopoverProps) => {
   let [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>();
   let [popperElement, setPopperElement] = useState<HTMLDivElement | null>();
-  let { styles, attributes } = usePopper(buttonRef, popperElement);
+  let { styles, attributes } = usePopper(buttonRef, popperElement, {
+    placement,
+  });
 
   const [openState, setOpenState] = useState(false);
 
@@ -37,7 +47,7 @@ const Popover = ({ children, content, isShowOnHover = false }: PopoverProps) => 
           onMouseLeave={() => onHover(open, 'onMouseLeave')}
         >
           <HeadlessPopover.Button ref={setButtonRef}>{children}</HeadlessPopover.Button>
-          <Transition show={open}>
+          <Transition show={open && !disabled}>
             <HeadlessPopover.Panel
               static={isShowOnHover}
               className="absolute z-20"

@@ -1,3 +1,5 @@
+#import "./ProfileInfo.graphql"
+
 query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
   marketplace(subdomain: $subdomain) {
     subdomain
@@ -45,8 +47,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
       share
       verified
       profile {
-        handle
-        profileImageUrlLowres
+        ...ProfileInfo
       }
     }
     collection {
