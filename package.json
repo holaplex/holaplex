@@ -8,6 +8,7 @@
     "start": "cross-env NODE_ENV=production next start",
     "consumers:sign-metadata": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./tasks/consumers/sign-metadata.ts",
     "lint": "next lint",
+    "ts:lint": "npx tsc --noEmit",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -r tsconfig-paths/register",
     "dev:theme": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" -T ./hacks/demo-theme.ts",

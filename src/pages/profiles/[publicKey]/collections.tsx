@@ -6,16 +6,16 @@ import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 import CollectionProfileCard, {
   LoadingCollectionProfileCard,
-} from '../../../views/collections/CollectionProfileCard';
+} from '@/views/collections/CollectionProfileCard';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import { None } from '@/components/OfferForm';
-import ProfileLayout from '../../../views/profiles/ProfileLayout';
-import { ProfileDataProvider } from '../../../views/profiles/ProfileDataProvider';
-import { CollectionNfTsQuery, useCollectionNfTsQuery } from '../../../graphql/indexerTypes';
+import ProfileLayout from '@/views/profiles/ProfileLayout';
+import { ProfileDataProvider } from '@/views/profiles/ProfileDataProvider';
+import { CollectionNfTsQuery, useCollectionNfTsQuery } from '@/graphql/indexerTypes';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '../../../views/profiles/getProfileServerSideProps';
+} from '@/views/profiles/getProfileServerSideProps';
 
 const COLLECTION_FETCH = 500;
 const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 500;

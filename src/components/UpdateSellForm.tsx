@@ -22,7 +22,7 @@ import {
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import Modal from '@/components/Modal';
-import { toLamports } from './../modules/sol';
+import { toLamports } from '@/modules/sol';
 //@ts-ignore
 import * as htmlToImage from 'html-to-image';
 

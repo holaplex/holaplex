@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TextSkeleton } from '../../components/Skeletons';
+import { TextSkeleton } from '@/components/Skeletons';
 
 interface LoadingSearchItemProps {
   variant?: `square` | `circle`;

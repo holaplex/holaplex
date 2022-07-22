@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { FollowUnfollowButton } from '@/components/FollowUnfollowButton';
 import { getHandle, User } from './feed.utils';
 import { ProfilePFP } from './FeedCard';
-import Popover from '../../components/Popover';
-import { getProfilePreivewDataFromUser } from '../../lib/utils/typeUtils';
-import ProfilePreview from '../../components/ProfilePreviewCard';
+import Popover from '@/components/Popover';
+import { getProfilePreivewDataFromUser } from '@/lib/utils/typeUtils';
+import ProfilePreview from '@/components/ProfilePreviewCard';
 
 function FollowListItem({
   user,
@@ -127,7 +127,7 @@ export default function WhoToFollowList(props: {
                     data: getProfilePreivewDataFromUser(u),
                     loading: false,
                     refetch: () => {},
-                    fetchMore: () => {}
+                    fetchMore: () => {},
                   }}
                 />
               }

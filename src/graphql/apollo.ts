@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
-import { asBN } from '../modules/utils';
+import { asBN } from '@/modules/utils';
 
 export const apolloClient = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_INDEXER_GRAPHQL_URL,

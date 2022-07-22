@@ -1,7 +1,7 @@
 import React, { FC, createContext, useState, useContext } from 'react';
-import { errorCodeHelper } from '../../modules/utils/marketplace';
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
+import { errorCodeHelper } from '@/modules/utils/marketplace';
+import Button from '@/components/Button';
+import Modal from '@/components/Modal';
 
 type AsyncFunction = (arg?: any) => Promise<void>;
 export type Action = {
@@ -32,9 +32,9 @@ const defaultState: MultiTransactionState = {
   hasRemainingActions: false,
   hasActionPending: false,
   actions: [],
-  clearActions: () => { },
-  runActions: async ([]) => { },
-  retryActions: async () => { },
+  clearActions: () => {},
+  runActions: async ([]) => {},
+  retryActions: async () => {},
 };
 
 export const MultiTransactionContext = createContext<MultiTransactionState>(defaultState);
@@ -158,7 +158,7 @@ export const MultiTransactionProvider: FC = ({ children }) => {
         } else {
           setHasError(true);
         }
-        
+
         setHasActionPending(false);
       } finally {
         if (settings?.onComplete) {
