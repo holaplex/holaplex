@@ -1,4 +1,4 @@
-import StyleVariables from '@/styles/styleConstants';
+import StyleVariables from '@/assets/styles/styleConstants';
 import { Card, Col, Typography } from 'antd';
 import Color from 'color';
 import { NextRouter } from 'next/router';

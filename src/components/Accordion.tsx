@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from '@headlessui/react';
-import { ChevronRight } from '../assets/icons/ChevronRight';
+import { ChevronRight } from '@/assets/icons/ChevronRight';
 import cx from 'classnames';
 
 interface Props {

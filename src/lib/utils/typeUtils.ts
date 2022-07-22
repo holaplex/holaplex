@@ -1,5 +1,5 @@
-import { ProfilePreviewData } from '../../components/ProfilePreviewCard';
-import { User } from '../../views/alpha/feed.utils';
+import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
+import { User } from '@/views/alpha/feed.utils';
 
 export function getProfilePreivewDataFromUser(user: User): ProfilePreviewData {
   return {

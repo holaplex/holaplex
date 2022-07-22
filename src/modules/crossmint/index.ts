@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { crossmintConfig } from '../../lib/utils';
+import { crossmintConfig } from '@/lib/utils';
 
 const baseUrl = `https://www.crossmint.io/api/v1-alpha1`;
 
@@ -33,6 +33,5 @@ export const acceptTOS = async (wallet: string) => {
     );
 
     return res;
-
   }
 };

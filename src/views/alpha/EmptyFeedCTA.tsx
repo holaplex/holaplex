@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Button from '../../components/Button';
+import Button from '@/components/Button';
 import { User, shuffleArray } from './feed.utils';
 import { useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -9,7 +9,7 @@ import { Action, MultiTransactionContext } from 'src/views/_global/MultiTransact
 import { shortenAddress } from '@/modules/utils/string';
 import { EmptyStateCTA } from './EmptyStateCTA';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { None } from '../../components/OfferForm';
+import { None } from '@/components/OfferForm';
 
 const EmptyFeedCTA = (props: {
   myFollowingList?: string[];

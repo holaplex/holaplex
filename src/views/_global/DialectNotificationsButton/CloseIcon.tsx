@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { SVGProps } from 'react'
+import * as React from 'react';
+import { SVGProps } from 'react';
 
 const SvgX = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -10,13 +10,8 @@ const SvgX = (props: SVGProps<SVGSVGElement>) => (
     stroke="currentColor"
     {...props}
   >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M6 18 18 6M6 6l12 12"
-    />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18 18 6M6 6l12 12" />
   </svg>
-)
+);
 
-export default SvgX
+export default SvgX;

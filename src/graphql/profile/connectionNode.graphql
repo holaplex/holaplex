@@ -3,5 +3,6 @@ fragment ConnectionNode on Wallet {
   profile {
     handle
     profileImageUrlLowres
+    bannerImageUrl
   }
 }

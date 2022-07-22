@@ -103,31 +103,6 @@ a {
   overflow-y: auto;
 }
 
-/* ANT RADIO / CHECKBOX OVER-RIDES */
-.ant-radio,
-.ant-checkbox {
-  top: 0.165em !important;
-  margin-right: 4px !important;
-}
-
-input[type='radio'],
-input[type='checkbox'] {
-  box-sizing: inherit;
-}
-
-.sol-input {
-  @apply relative;
-}
-
-.sol-input .input {
-  @apply pl-10;
-}
-
-.sol-input:before {
-  content: '◎';
-  @apply h-full absolute px-4 flex items-center text-gray-500;
-}
-
 .select-inline-dropdown .ant-select-item {
   font-size: 12px;
 
@@ -153,7 +128,7 @@ input[type='checkbox'] {
   width: 100%;
 }
 
-.ant-image-mask  {
+.ant-image-mask {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   background: none;
@@ -196,13 +171,12 @@ input[type='checkbox'] {
   font-weight: bold;
 }
 
-
 .dt-bg-\[\#25BC3B\] {
   background-color: white !important;
 }
 
 .dt-relative.dt-flex.dt-items-center.dt-justify-center.dt-rounded-full {
- @apply !rounded-full !p-6 !shadow-lg !shadow-black !transition;
+  @apply !rounded-full !p-6 !shadow-lg !shadow-black !transition;
 }
 
 .dt-relative.dt-flex.dt-items-center.dt-justify-center.dt-rounded-full:hover {

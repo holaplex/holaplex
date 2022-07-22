@@ -7,8 +7,8 @@ import { PublicKey } from '@solana/web3.js';
 
 import { FC, useState } from 'react';
 import styled from 'styled-components';
-import { FollowerCount } from './FollowerCount';
-import { FollowModal, FollowModalVisibility } from './FollowModal';
+import { FollowerCount } from '@/views/profiles/FollowerCount';
+import { FollowModal, FollowModalVisibility } from '@/views/profiles/FollowModal';
 import { shortenAddress } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';

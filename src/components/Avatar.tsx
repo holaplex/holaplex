@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import {
   useGetProfileInfoFromPubKeyLazyQuery,
   useTwitterHandleFromPubKeyLazyQuery,
-  useTwitterHandleFromPubKeyQuery,
   useWalletProfileLazyQuery,
 } from 'src/graphql/indexerTypes';
 import cx from 'classnames';
@@ -151,21 +150,18 @@ export const Avatar = ({
   const [getProfileInfoQuery, getProfileInfoQueryContext] = useGetProfileInfoFromPubKeyLazyQuery();
   const { publicKey } = useWallet();
 
-  useEffect(
-    () => {
-      async function getProfileInfoAndSetState(): Promise<void> {
-        await getProfileInfoQuery({ variables: { pubKey: address } });
-      }
+  useEffect(() => {
+    async function getProfileInfoAndSetState(): Promise<void> {
+      await getProfileInfoQuery({ variables: { pubKey: address } });
+    }
 
-      if (!data) getProfileInfoAndSetState();
-    },
-    
-    // dont include results of the query to avoid re-triggering
-    [data, address, getProfileInfoQuery]
-  );
+    if (!data) getProfileInfoAndSetState();
+  }, [data, address, getProfileInfoQuery]);
 
-  const twitterHandle = data?.twitterHandle || getProfileInfoQueryContext.data?.wallet.profile?.handle;
-  const pfpUrl = data?.pfpUrl || getProfileInfoQueryContext.data?.wallet.profile?.profileImageUrlLowres;
+  const twitterHandle =
+    data?.twitterHandle || getProfileInfoQueryContext.data?.wallet.profile?.handle;
+  const pfpUrl =
+    data?.pfpUrl || getProfileInfoQueryContext.data?.wallet.profile?.profileImageUrlLowres;
 
   const isYou = publicKey?.toBase58() === address;
   const displayName = isYou
