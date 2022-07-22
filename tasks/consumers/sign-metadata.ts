@@ -1,10 +1,10 @@
 import amqplib from 'amqplib';
-import singletons from 'src/modules/singletons';
-import { SCHEMAS } from 'src/modules/singletons/json-schemas';
+import singletons from '../../src/modules/singletons';
+import { SCHEMAS } from '../../src/modules/singletons/json-schemas';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { Buffer } from 'buffer';
-import { signingQueue } from 'src/modules/metadata-signing';
-import { buildSolana } from 'src/modules/solana/buildSolana';
+import { signingQueue } from '../../src/modules/metadata-signing';
+import { buildSolana } from '../../src/modules/solana/buildSolana';
 
 /** Adapted from metaplex/js/packages/common/src/actions/metadata.ts */
 function signMetadata(
