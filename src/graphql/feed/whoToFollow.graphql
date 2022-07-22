@@ -1,11 +1,10 @@
+#import "./ProfileInfo.graphql"
+
 query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
   followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
     address
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     nftCounts {
       owned

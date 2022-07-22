@@ -1,12 +1,11 @@
+#import "./ProfileInfo.graphql"
+
 fragment PurchaseEventPreview on PurchaseEvent {
   feedEventId
   createdAt
   walletAddress
   profile {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-    bannerImageUrl
+    ...ProfileInfo
   }
   purchase {
     id
@@ -28,10 +27,7 @@ fragment PurchaseEventPreview on PurchaseEvent {
         address
         position
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
-          bannerImageUrl
+          ...ProfileInfo
         }
       }
       address

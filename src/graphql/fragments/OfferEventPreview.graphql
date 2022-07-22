@@ -1,14 +1,11 @@
-#import "./Profile.graphql"
+#import "./ProfileInfo.graphql"
 
 fragment OfferEventPreview on OfferEvent {
   feedEventId
   createdAt
   walletAddress
   profile {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-    bannerImageUrl
+    ...ProfileInfo
   }
   lifecycle
   offer {
@@ -43,10 +40,7 @@ fragment OfferEventPreview on OfferEvent {
             address
             position
             profile {
-              handle
-              profileImageUrlLowres
-              profileImageUrlHighres
-              bannerImageUrl
+              ...ProfileInfo
             }
           }
           address

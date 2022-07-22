@@ -257,39 +257,22 @@ export const ProfileHandle = ({
   popoverPlacement?: 'top' | 'bottom';
   popoverDisabled?: boolean;
 }) => {
-  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
-  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-
-  useEffect(() => {
-    async function getTwitterHandleAndSetState(): Promise<void> {
-      await twitterHandleQuery({ variables: { pubKey: user.address } });
-      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
-        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
-      }
-    }
-    if (!twitterHandle && false) {
-      // pausing requesting additional twitter handles as it leads to too many requests
-      getTwitterHandleAndSetState();
-    }
-  }, []);
-
   return (
     <Popover
       isShowOnHover={true}
       disabled={props.popoverDisabled}
       placement={props.popoverPlacement}
       content={
-        <div className="w-80">
-          <ProfilePreview
-            address={user.address}
-            context={{
-              data: getProfilePreivewDataFromUser(user),
-              loading: false,
-              refetch: () => {},
-              fetchMore: () => {},
-            }}
-          />
-        </div>
+        <ProfilePreview
+          address={user.address}
+          className="w-80"
+          context={{
+            data: getProfilePreivewDataFromUser(user),
+            loading: false,
+            refetch: () => {},
+            fetchMore: () => {},
+          }}
+        />
       }
     >
       <Link href={'/profiles/' + user.address + '/nfts'} passHref>
@@ -542,43 +525,6 @@ export const ProfilePFPStack = ({ users }: { users: User[] }) => {
 };
 
 export function ProfilePFP({ user }: { user: User }) {
-  // Note, we only invoke extra queries if the prop user does not have necceary info
-  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
-  const [pfpUrl, setPfpUrl] = useState(
-    user.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)
-  );
-  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-
-  useEffect(() => {
-    async function getTwitterHandleAndSetState(): Promise<void> {
-      await twitterHandleQuery({ variables: { pubKey: user.address } });
-      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
-        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
-      }
-    }
-    if (!twitterHandle && false) {
-      // pausing requesting additional twitter handles as it leads to too many requests
-
-      getTwitterHandleAndSetState();
-    }
-  }, [user, twitterHandle, twitterHandleQuery]);
-
-  const [walletProfileQuery, walletProfile] = useWalletProfileLazyQuery({
-    variables: {
-      handle: twitterHandle ?? '',
-    },
-  });
-
-  useEffect(() => {
-    if (twitterHandle && !user.profile?.profileImageUrlLowres) {
-      walletProfileQuery().then((q) => {
-        if (q.data?.profile?.profileImageUrlLowres) {
-          setPfpUrl(q.data?.profile?.profileImageUrlLowres);
-        }
-      });
-    }
-  }, [twitterHandle, user, walletProfileQuery]);
-
   /*  const { track } = useAnalytics(); // track navigation to profile from pfp */
 
   return (

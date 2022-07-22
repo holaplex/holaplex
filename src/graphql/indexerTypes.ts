@@ -992,8 +992,11 @@ export type OwnedNfTsQuery = {
       verified: boolean;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     }>;
     collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
@@ -1094,6 +1097,7 @@ export type WalletProfileQuery = {
   __typename?: 'QueryRoot';
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -1120,6 +1124,7 @@ export type GetCollectionQuery = {
       address: string;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -1140,6 +1145,7 @@ export type GetCollectionQuery = {
       address: string;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -1169,8 +1175,11 @@ export type NftCollectionQuery = {
       address: string;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     }>;
   } | null;
@@ -1381,9 +1390,11 @@ export type NftsInCollectionQuery = {
       verified: boolean;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     }>;
     owner?: {
@@ -1927,7 +1938,9 @@ export type DiscoverProfilesAllQuery = {
     address: any;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
+      profileImageUrlLowres: string;
       profileImageUrlHighres: string;
       bannerImageUrl: string;
     } | null;
@@ -1953,6 +1966,7 @@ export type FeedQuery = {
         graphConnectionAddress: any;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -1966,6 +1980,7 @@ export type FeedQuery = {
             address: any;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -1977,6 +1992,7 @@ export type FeedQuery = {
             address: any;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -1997,6 +2013,7 @@ export type FeedQuery = {
         lifecycle: string;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2046,6 +2063,7 @@ export type FeedQuery = {
                   position?: number | null;
                   profile?: {
                     __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
                     handle: string;
                     profileImageUrlLowres: string;
                     profileImageUrlHighres: string;
@@ -2068,6 +2086,7 @@ export type FeedQuery = {
         walletAddress: any;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2094,6 +2113,7 @@ export type FeedQuery = {
             position?: number | null;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -2114,6 +2134,7 @@ export type FeedQuery = {
         lifecycle: string;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2163,6 +2184,7 @@ export type FeedQuery = {
                   position?: number | null;
                   profile?: {
                     __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
                     handle: string;
                     profileImageUrlLowres: string;
                     profileImageUrlHighres: string;
@@ -2185,6 +2207,7 @@ export type FeedQuery = {
         walletAddress: any;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2217,6 +2240,7 @@ export type FeedQuery = {
               position?: number | null;
               profile?: {
                 __typename?: 'TwitterProfile';
+                walletAddress?: string | null;
                 handle: string;
                 profileImageUrlLowres: string;
                 profileImageUrlHighres: string;
@@ -2246,6 +2270,7 @@ export type WhoToFollowQuery = {
     address: any;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
       profileImageUrlLowres: string;
       profileImageUrlHighres: string;
@@ -2270,6 +2295,7 @@ export type FollowEventPreviewFragment = {
   graphConnectionAddress: any;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -2283,6 +2309,7 @@ export type FollowEventPreviewFragment = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -2294,6 +2321,7 @@ export type FollowEventPreviewFragment = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -2315,6 +2343,7 @@ export type ListingEventPreviewFragment = {
   lifecycle: string;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -2364,6 +2393,7 @@ export type ListingEventPreviewFragment = {
             position?: number | null;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -2408,6 +2438,7 @@ export type MintEventPreviewFragment = {
   walletAddress: any;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -2434,6 +2465,7 @@ export type MintEventPreviewFragment = {
       position?: number | null;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -2555,6 +2587,7 @@ export type OfferEventPreviewFragment = {
   lifecycle: string;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -2604,6 +2637,7 @@ export type OfferEventPreviewFragment = {
             position?: number | null;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -2620,6 +2654,15 @@ export type OfferEventPreviewFragment = {
   };
 };
 
+export type ProfileInfoFragment = {
+  __typename?: 'TwitterProfile';
+  walletAddress?: string | null;
+  handle: string;
+  profileImageUrlLowres: string;
+  profileImageUrlHighres: string;
+  bannerImageUrl: string;
+};
+
 export type PurchaseEventPreviewFragment = {
   __typename?: 'PurchaseEvent';
   feedEventId: string;
@@ -2627,6 +2670,7 @@ export type PurchaseEventPreviewFragment = {
   walletAddress: any;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -2659,6 +2703,7 @@ export type PurchaseEventPreviewFragment = {
         position?: number | null;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2678,7 +2723,9 @@ export type ProfilePreviewFragment = {
   address: any;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
+    profileImageUrlLowres: string;
     profileImageUrlHighres: string;
     bannerImageUrl: string;
   } | null;
@@ -2802,8 +2849,11 @@ export type MarketplacePreviewFragment = {
     creatorAddress: string;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
+      profileImageUrlLowres: string;
       profileImageUrlHighres: string;
+      bannerImageUrl: string;
     } | null;
   }>;
   auctionHouses: Array<{
@@ -2832,6 +2882,7 @@ export type HomeQuery = {
         graphConnectionAddress: any;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2845,6 +2896,7 @@ export type HomeQuery = {
             address: any;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -2856,6 +2908,7 @@ export type HomeQuery = {
             address: any;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -2876,6 +2929,7 @@ export type HomeQuery = {
         lifecycle: string;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2925,6 +2979,7 @@ export type HomeQuery = {
                   position?: number | null;
                   profile?: {
                     __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
                     handle: string;
                     profileImageUrlLowres: string;
                     profileImageUrlHighres: string;
@@ -2947,6 +3002,7 @@ export type HomeQuery = {
         walletAddress: any;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -2973,6 +3029,7 @@ export type HomeQuery = {
             position?: number | null;
             profile?: {
               __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
@@ -2993,6 +3050,7 @@ export type HomeQuery = {
         lifecycle: string;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -3042,6 +3100,7 @@ export type HomeQuery = {
                   position?: number | null;
                   profile?: {
                     __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
                     handle: string;
                     profileImageUrlLowres: string;
                     profileImageUrlHighres: string;
@@ -3064,6 +3123,7 @@ export type HomeQuery = {
         walletAddress: any;
         profile?: {
           __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
@@ -3096,6 +3156,7 @@ export type HomeQuery = {
               position?: number | null;
               profile?: {
                 __typename?: 'TwitterProfile';
+                walletAddress?: string | null;
                 handle: string;
                 profileImageUrlLowres: string;
                 profileImageUrlHighres: string;
@@ -3127,7 +3188,9 @@ export type HomeQuery = {
     address: any;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
+      profileImageUrlLowres: string;
       profileImageUrlHighres: string;
       bannerImageUrl: string;
     } | null;
@@ -3269,8 +3332,11 @@ export type HomeQuery = {
       creatorAddress: string;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
+        profileImageUrlLowres: string;
         profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     }>;
     auctionHouses: Array<{
@@ -3814,9 +3880,11 @@ export type NftActivityQuery = {
         twitterHandle?: string | null;
         profile?: {
           __typename?: 'TwitterProfile';
-          profileImageUrlLowres: string;
-          handle: string;
           walletAddress?: string | null;
+          handle: string;
+          profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
       }>;
       auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
@@ -4136,6 +4204,7 @@ export type ConnectionNodeFragment = {
   address: any;
   profile?: {
     __typename?: 'TwitterProfile';
+    walletAddress?: string | null;
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
@@ -4158,6 +4227,7 @@ export type AllConnectionsFromQuery = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -4182,6 +4252,7 @@ export type AllConnectionsToQuery = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -4205,8 +4276,10 @@ export type GetCollectedByQuery = {
       profile?: {
         __typename?: 'TwitterProfile';
         walletAddress?: string | null;
-        profileImageUrlLowres: string;
         handle: string;
+        profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     } | null;
   }>;
@@ -4233,9 +4306,11 @@ export type GetConnectedWalletProfileDataQuery = {
     connectionCounts: { __typename?: 'ConnectionCounts'; fromCount: number; toCount: number };
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
       profileImageUrlLowres: string;
       profileImageUrlHighres: string;
+      bannerImageUrl: string;
     } | null;
   };
   followers: Array<{
@@ -4245,6 +4320,7 @@ export type GetConnectedWalletProfileDataQuery = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -4259,6 +4335,7 @@ export type GetConnectedWalletProfileDataQuery = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -4287,6 +4364,7 @@ export type GetProfileFollowerOverviewQuery = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -4301,6 +4379,7 @@ export type GetProfileFollowerOverviewQuery = {
       address: any;
       profile?: {
         __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
@@ -4320,6 +4399,7 @@ export type GetProfileInfoFromPubKeyQuery = {
     __typename?: 'Wallet';
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
       profileImageUrlLowres: string;
       profileImageUrlHighres: string;
@@ -4338,6 +4418,7 @@ export type GetProfileInfoFromTwitterHandleQuery = {
     __typename?: 'TwitterProfile';
     walletAddress?: string | null;
     handle: string;
+    profileImageUrlLowres: string;
     profileImageUrlHighres: string;
     bannerImageUrl: string;
   } | null;
@@ -4354,8 +4435,11 @@ export type GetProfilesQuery = {
     address: any;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
       profileImageUrlLowres: string;
+      profileImageUrlHighres: string;
+      bannerImageUrl: string;
     } | null;
   }>;
 };
@@ -4381,6 +4465,7 @@ export type TwitterHandleFromPubKeyQuery = {
     address: any;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
       profileImageUrlLowres: string;
       profileImageUrlHighres: string;
@@ -4416,8 +4501,11 @@ export type ProfileSearchQuery = {
     address: any;
     profile?: {
       __typename?: 'TwitterProfile';
+      walletAddress?: string | null;
       handle: string;
       profileImageUrlLowres: string;
+      profileImageUrlHighres: string;
+      bannerImageUrl: string;
     } | null;
   }>;
 };
@@ -4445,8 +4533,11 @@ export type SearchQuery = {
     twitterHandle?: string | null;
     profile?: {
       __typename?: 'TwitterProfile';
-      profileImageUrlLowres: string;
+      walletAddress?: string | null;
       handle: string;
+      profileImageUrlLowres: string;
+      profileImageUrlHighres: string;
+      bannerImageUrl: string;
     } | null;
   }>;
   wallet: {
@@ -4455,8 +4546,11 @@ export type SearchQuery = {
     twitterHandle?: string | null;
     profile?: {
       __typename?: 'TwitterProfile';
-      profileImageUrlLowres: string;
+      walletAddress?: string | null;
       handle: string;
+      profileImageUrlLowres: string;
+      profileImageUrlHighres: string;
+      bannerImageUrl: string;
     } | null;
   };
   nftByMintAddress?: {
@@ -4469,7 +4563,14 @@ export type SearchQuery = {
       __typename?: 'NftCreator';
       twitterHandle?: string | null;
       address: string;
-      profile?: { __typename?: 'TwitterProfile'; profileImageUrlLowres: string } | null;
+      profile?: {
+        __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
+        handle: string;
+        profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
+        bannerImageUrl: string;
+      } | null;
     }>;
   } | null;
   searchCollections: Array<{
@@ -4488,16 +4589,22 @@ export const CollectionPreviewFragmentDoc = gql`
     image
   }
 `;
+export const ProfileInfoFragmentDoc = gql`
+  fragment ProfileInfo on TwitterProfile {
+    walletAddress
+    handle
+    profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
+  }
+`;
 export const FollowEventPreviewFragmentDoc = gql`
   fragment FollowEventPreview on FollowEvent {
     feedEventId
     createdAt
     walletAddress
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     graphConnectionAddress
     connection {
@@ -4505,19 +4612,13 @@ export const FollowEventPreviewFragmentDoc = gql`
       from {
         address
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
-          bannerImageUrl
+          ...ProfileInfo
         }
       }
       to {
         address
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
-          bannerImageUrl
+          ...ProfileInfo
         }
       }
     }
@@ -4528,6 +4629,7 @@ export const FollowEventPreviewFragmentDoc = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const ListingEventPreviewFragmentDoc = gql`
   fragment ListingEventPreview on ListingEvent {
@@ -4535,10 +4637,7 @@ export const ListingEventPreviewFragmentDoc = gql`
     createdAt
     walletAddress
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     lifecycle
     listing {
@@ -4573,10 +4672,7 @@ export const ListingEventPreviewFragmentDoc = gql`
               address
               position
               profile {
-                handle
-                profileImageUrlLowres
-                profileImageUrlHighres
-                bannerImageUrl
+                ...ProfileInfo
               }
             }
             address
@@ -4594,6 +4690,7 @@ export const ListingEventPreviewFragmentDoc = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const MarketplaceAuctionHouseFragmentDoc = gql`
   fragment MarketplaceAuctionHouse on Marketplace {
@@ -4621,10 +4718,7 @@ export const MintEventPreviewFragmentDoc = gql`
     createdAt
     walletAddress
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     nft {
       name
@@ -4641,10 +4735,7 @@ export const MintEventPreviewFragmentDoc = gql`
         address
         position
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
-          bannerImageUrl
+          ...ProfileInfo
         }
       }
       address
@@ -4657,6 +4748,7 @@ export const MintEventPreviewFragmentDoc = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const NftCardFragmentDoc = gql`
   fragment NftCard on Nft {
@@ -4761,10 +4853,7 @@ export const OfferEventPreviewFragmentDoc = gql`
     createdAt
     walletAddress
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     lifecycle
     offer {
@@ -4799,10 +4888,7 @@ export const OfferEventPreviewFragmentDoc = gql`
               address
               position
               profile {
-                handle
-                profileImageUrlLowres
-                profileImageUrlHighres
-                bannerImageUrl
+                ...ProfileInfo
               }
             }
             address
@@ -4820,6 +4906,7 @@ export const OfferEventPreviewFragmentDoc = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const PurchaseEventPreviewFragmentDoc = gql`
   fragment PurchaseEventPreview on PurchaseEvent {
@@ -4827,10 +4914,7 @@ export const PurchaseEventPreviewFragmentDoc = gql`
     createdAt
     walletAddress
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     purchase {
       id
@@ -4852,10 +4936,7 @@ export const PurchaseEventPreviewFragmentDoc = gql`
           address
           position
           profile {
-            handle
-            profileImageUrlLowres
-            profileImageUrlHighres
-            bannerImageUrl
+            ...ProfileInfo
           }
         }
         address
@@ -4869,20 +4950,20 @@ export const PurchaseEventPreviewFragmentDoc = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const ProfilePreviewFragmentDoc = gql`
   fragment ProfilePreview on Wallet {
     address
     profile {
-      handle
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
     nftCounts {
       owned
       created
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const BuyNowListingFragmentDoc = gql`
   fragment BuyNowListing on AhListing {
@@ -4990,8 +5071,7 @@ export const MarketplacePreviewFragmentDoc = gql`
     creators {
       creatorAddress
       profile {
-        handle
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
     auctionHouses {
@@ -5003,17 +5083,16 @@ export const MarketplacePreviewFragmentDoc = gql`
       nfts
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const ConnectionNodeFragmentDoc = gql`
   fragment ConnectionNode on Wallet {
     address
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 export const ActivityPageDocument = gql`
   query activityPage($address: PublicKey!) {
@@ -5385,8 +5464,7 @@ export const OwnedNfTsDocument = gql`
         share
         verified
         profile {
-          handle
-          profileImageUrlLowres
+          ...ProfileInfo
         }
       }
       collection {
@@ -5475,6 +5553,7 @@ export const OwnedNfTsDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -5514,12 +5593,10 @@ export type OwnedNfTsQueryResult = Apollo.QueryResult<OwnedNfTsQuery, OwnedNfTsQ
 export const WalletProfileDocument = gql`
   query walletProfile($handle: String!) {
     profile(handle: $handle) {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -5574,10 +5651,7 @@ export const GetCollectionDocument = gql`
         position
         address
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
-          bannerImageUrl
+          ...ProfileInfo
         }
       }
     }
@@ -5591,14 +5665,12 @@ export const GetCollectionDocument = gql`
         position
         address
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
-          bannerImageUrl
+          ...ProfileInfo
         }
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -5656,8 +5728,7 @@ export const NftCollectionDocument = gql`
         position
         address
         profile {
-          handle
-          profileImageUrlLowres
+          ...ProfileInfo
         }
       }
     }
@@ -5795,6 +5866,7 @@ export const NftCollectionDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -5899,9 +5971,7 @@ export const NftsInCollectionDocument = gql`
         share
         verified
         profile {
-          handle
-          profileImageUrlLowres
-          profileImageUrlHighres
+          ...ProfileInfo
         }
       }
       owner {
@@ -5990,6 +6060,7 @@ export const NftsInCollectionDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -6390,9 +6461,7 @@ export const DiscoverProfilesAllDocument = gql`
     followWallets(wallet: $userWallet, limit: $limit, offset: $offset) {
       address
       profile {
-        handle
-        profileImageUrlHighres
-        bannerImageUrl
+        ...ProfileInfo
       }
       nftCounts {
         owned
@@ -6400,6 +6469,7 @@ export const DiscoverProfilesAllDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -6514,10 +6584,7 @@ export const WhoToFollowDocument = gql`
     followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
       address
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
-        bannerImageUrl
+        ...ProfileInfo
       }
       nftCounts {
         owned
@@ -6525,6 +6592,7 @@ export const WhoToFollowDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -7250,9 +7318,7 @@ export const NftActivityDocument = gql`
           address
           twitterHandle
           profile {
-            profileImageUrlLowres
-            handle
-            walletAddress
+            ...ProfileInfo
           }
         }
         activityType
@@ -7263,6 +7329,7 @@ export const NftActivityDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -7712,13 +7779,12 @@ export const GetCollectedByDocument = gql`
       address
       owner {
         profile {
-          walletAddress
-          profileImageUrlLowres
-          handle
+          ...ProfileInfo
         }
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -7776,9 +7842,7 @@ export const GetConnectedWalletProfileDataDocument = gql`
         toCount
       }
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
     followers: connections(to: [$address], limit: $limit, offset: $offset) {
@@ -7792,6 +7856,7 @@ export const GetConnectedWalletProfileDataDocument = gql`
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
   ${ConnectionNodeFragmentDoc}
 `;
 
@@ -7925,13 +7990,11 @@ export const GetProfileInfoFromPubKeyDocument = gql`
   query getProfileInfoFromPubKey($pubKey: PublicKey!) {
     wallet(address: $pubKey) {
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
-        bannerImageUrl
+        ...ProfileInfo
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -7987,12 +8050,10 @@ export type GetProfileInfoFromPubKeyQueryResult = Apollo.QueryResult<
 export const GetProfileInfoFromTwitterHandleDocument = gql`
   query getProfileInfoFromTwitterHandle($handle: String!) {
     profile(handle: $handle) {
-      walletAddress
-      handle
-      profileImageUrlHighres
-      bannerImageUrl
+      ...ProfileInfo
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -8050,11 +8111,11 @@ export const GetProfilesDocument = gql`
     wallets(addresses: $addresses) {
       address
       profile {
-        handle
-        profileImageUrlLowres
+        ...ProfileInfo
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -8259,11 +8320,11 @@ export const ProfileSearchDocument = gql`
     profiles(term: $term, limit: 5, offset: 0) {
       address
       profile {
-        handle
-        profileImageUrlLowres
+        ...ProfileInfo
       }
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**
@@ -8320,16 +8381,14 @@ export const SearchDocument = gql`
       address
       twitterHandle
       profile {
-        profileImageUrlLowres
-        handle
+        ...ProfileInfo
       }
     }
     wallet(address: $walletAddress) {
       address
       twitterHandle
       profile {
-        profileImageUrlLowres
-        handle
+        ...ProfileInfo
       }
     }
     nftByMintAddress(address: $nftMintAddress) {
@@ -8340,7 +8399,7 @@ export const SearchDocument = gql`
         twitterHandle
         address
         profile {
-          profileImageUrlLowres
+          ...ProfileInfo
         }
       }
       mintAddress
@@ -8352,6 +8411,7 @@ export const SearchDocument = gql`
       image
     }
   }
+  ${ProfileInfoFragmentDoc}
 `;
 
 /**

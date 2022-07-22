@@ -1,9 +1,8 @@
+#import "./ProfileInfo.graphql"
+
 fragment ConnectionNode on Wallet {
   address
   profile {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-    bannerImageUrl
+    ...ProfileInfo
   }
 }
