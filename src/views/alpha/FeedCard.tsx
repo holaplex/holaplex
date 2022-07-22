@@ -222,19 +222,19 @@ function FollowCard(props: {
 
 export const ProfileHandleStack = ({ users }: { users: User[] }) => {
   return (
-    <div>
+    <>
       {users.length > 2 ? (
-        <p className={`m-0 text-base font-bold`}>
-          <ProfileHandle user={users[0]} />
+        <p className={`m-0 flex text-base font-bold`}>
+          <ProfileHandle user={users[0]} popoverPlacement="top" />
 
           <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
           <span className={`m-0`}>{users.length - 1} others</span>
         </p>
       ) : (
-        <p className={`m-0`}>
+        <p className={`m-0 flex`}>
           {users.slice(0, 2).map((user, i) => (
-            <span key={user.address} className={`m-0 text-base font-bold`}>
-              <ProfileHandle user={user} />
+            <span key={user.address} className={`m-0 flex text-base font-bold`}>
+              <ProfileHandle user={user} popoverPlacement="top" />
 
               {i === 0 && users.length > 1 && (
                 <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
@@ -243,7 +243,7 @@ export const ProfileHandleStack = ({ users }: { users: User[] }) => {
           ))}
         </p>
       )}
-    </div>
+    </>
   );
 };
 
@@ -255,6 +255,7 @@ export const ProfileHandle = ({
   user: User;
   shorten?: boolean;
   popoverPlacement?: 'top' | 'bottom';
+  popoverDisabled?: boolean;
 }) => {
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
@@ -272,11 +273,10 @@ export const ProfileHandle = ({
     }
   }, []);
 
-  console.log('user', user);
-
   return (
     <Popover
       isShowOnHover={true}
+      disabled={props.popoverDisabled}
       placement={props.popoverPlacement}
       content={
         <div className="w-80">
@@ -585,7 +585,7 @@ export function ProfilePFP({ user }: { user: User }) {
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a target="_blank">
         <img
-          className={classNames('rounded-full', 'h-10 w-10')}
+          className={classNames('rounded-full', 'h-10 w-10 flex-shrink-0')}
           src={user?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
@@ -616,7 +616,13 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
     <div className={`flex w-64 max-w-xs flex-col items-center gap-2 p-4`}>
       <ProfilePFP user={user} />
       <p className={`m-0 text-base font-semibold`}>
-        <ProfileHandle user={user} shorten={true} />
+        <ProfileHandle
+          // need to disable this until we can look more into z-index issues
+          popoverDisabled={true}
+          popoverPlacement="top"
+          user={user}
+          shorten={true}
+        />
       </p>
       {user.address === connectedProfile?.pubkey ? (
         <Button5
