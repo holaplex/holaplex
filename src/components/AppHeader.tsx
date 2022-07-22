@@ -70,12 +70,10 @@ export function AppHeader() {
 
   return (
     <>
-      <nav
-        className="flex flex-row items-center justify-between bg-transparent px-2 py-2 md:px-6 md:py-4"
-      >
+      <nav className="flex flex-row items-center justify-between bg-transparent px-2 py-2 md:px-6 md:py-4">
         <div className="flex w-full flex-row items-center py-1 text-2xl font-bold">
           <Link href="/" passHref>
-            <a className="font-bold flex justify-between">
+            <a className="flex justify-between font-bold">
               👋&nbsp;&nbsp;<span className="hidden md:inline-block">Holaplex</span>
             </a>
           </Link>
@@ -83,7 +81,7 @@ export function AppHeader() {
           <SearchBar />
         </div>
         {!WHICHDAO && (
-          <div className={`hidden md:flex min-w-fit flex-row items-center justify-end gap-6`}>
+          <div className={`hidden min-w-fit flex-row items-center justify-end gap-6 md:flex`}>
             <DiscoverMenu />
             {connected && (
               <Link href="/alpha" passHref>
@@ -136,7 +134,7 @@ export function AppHeader() {
           </div>
         )}
         <button
-          className="md:hidden flex-none rounded-full shadow-lg shadow-black hover:bg-gray-800"
+          className="flex-none rounded-full shadow-lg shadow-black hover:bg-gray-800 md:hidden"
           onClick={() => setDisplayMenu(true)}
         >
           <MenuIcon color="#fff" />
@@ -145,7 +143,7 @@ export function AppHeader() {
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}
     </>
   );
-};
+}
 
 function DiscoverMenu(): JSX.Element {
   return (
@@ -159,7 +157,11 @@ function DiscoverMenu(): JSX.Element {
 
   // using (props: any) => JSX.Element for icon lets react/ts know this is a functional
   //  component we can pass className to
-  function MenuItem(props: {title: string, href: string, icon: (props: any) => JSX.Element}): JSX.Element {
+  function MenuItem(props: {
+    title: string;
+    href: string;
+    icon: (props: any) => JSX.Element;
+  }): JSX.Element {
     return (
       <DropdownMenu.Item>
         <Link href={props.href}>
@@ -170,7 +172,7 @@ function DiscoverMenu(): JSX.Element {
               'text-lg'
             )}
           >
-            <props.icon className="h-5 w-5"/>
+            <props.icon className="h-5 w-5" />
             <span>{props.title}</span>
           </a>
         </Link>

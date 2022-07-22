@@ -10,9 +10,7 @@ enum TabRoute {
   PROFILES = '/discover/profiles',
 }
 
-export interface DiscoverPageProps {
-  
-}
+export interface DiscoverPageProps {}
 
 export interface DiscoverLayoutProps<T> {
   filters?: FilterProps<T>[];
@@ -36,7 +34,11 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
       <div className="w-full">
         <div className="flex space-x-1 p-1">
           <Tab title="NFTs" selected={router.pathname === TabRoute.NFTS} url={TabRoute.NFTS} />
-          <Tab title="Collections" selected={router.pathname === TabRoute.COLLECTIONS} url={TabRoute.COLLECTIONS} />
+          <Tab
+            title="Collections"
+            selected={router.pathname === TabRoute.COLLECTIONS}
+            url={TabRoute.COLLECTIONS}
+          />
           <Tab
             title="Profiles"
             selected={router.pathname === TabRoute.PROFILES}

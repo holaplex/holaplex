@@ -169,11 +169,23 @@ query home(
     }
   }
 
-  collectionsFeaturedByVolume(startDate: "2020-01-01T00:00:00Z", endDate: "3000-01-01T00:00:00Z", limit: $featuredCollectionsLimit, offset: 0, orderDirection: DESC) {
+  collectionsFeaturedByVolume(
+    startDate: "2020-01-01T00:00:00Z"
+    endDate: "3000-01-01T00:00:00Z"
+    limit: $featuredCollectionsLimit
+    offset: 0
+    orderDirection: DESC
+  ) {
     ...CollectionPreview
   }
 
-  collectionsFeaturedByMarketCap(startDate: "2020-01-01T00:00:00Z", endDate: "3000-01-01T00:00:00Z", limit: $featuredCollectionsLimit, offset: 0, orderDirection: DESC) {
+  collectionsFeaturedByMarketCap(
+    startDate: "2020-01-01T00:00:00Z"
+    endDate: "3000-01-01T00:00:00Z"
+    limit: $featuredCollectionsLimit
+    offset: 0
+    orderDirection: DESC
+  ) {
     ...CollectionPreview
   }
 

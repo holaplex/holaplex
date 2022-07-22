@@ -66,7 +66,7 @@ jobs:
       - name: IPFS Deploy
         working-directory: js
         env:
-          IPFS_DEPLOY_CLOUDFLARE__RECORD: "_dnslink.${{ needs.storefront.outputs.subdomain }}.holaespi.com"
+          IPFS_DEPLOY_CLOUDFLARE__RECORD: '_dnslink.${{ needs.storefront.outputs.subdomain }}.holaespi.com'
           IPFS_DEPLOY_CLOUDFLARE__ZONE: ${{ secrets.IPFS_DEPLOY_CLOUDFLARE__ZONE }}
           IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.IPFS_DEPLOY_PINATA__API_KEY }}
           IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.IPFS_DEPLOY_PINATA__SECRET_API_KEY }}

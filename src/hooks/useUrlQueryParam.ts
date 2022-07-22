@@ -61,10 +61,13 @@ export function useUrlQueryParam<T = string>(
   }, [nextRouter]);
   const router: NextRouter | undefined = routerRef.current;
 
-  const setValueAndSource: (newValue: T, fromUrl: boolean) => void = useCallback((newValue, fromUrl) => {
-    setValue(newValue);
-    setValueIsFromUrl(fromUrl);
-  }, [setValue, setValueIsFromUrl]);
+  const setValueAndSource: (newValue: T, fromUrl: boolean) => void = useCallback(
+    (newValue, fromUrl) => {
+      setValue(newValue);
+      setValueIsFromUrl(fromUrl);
+    },
+    [setValue, setValueIsFromUrl]
+  );
 
   const setValueCallback: (newValue: T) => void = useCallback(
     (newValue) => {
@@ -75,10 +78,13 @@ export function useUrlQueryParam<T = string>(
     [router, key, active, setValueAndSource]
   );
 
-  const setActiveCallback: (newActive: boolean) => void = useCallback(newActive => {
-    setActive(newActive);
-    if (router && router.isReady) setValueInUrl(router, key, value, newActive);
-  }, [router, key, value, setActive]);
+  const setActiveCallback: (newActive: boolean) => void = useCallback(
+    (newActive) => {
+      setActive(newActive);
+      if (router && router.isReady) setValueInUrl(router, key, value, newActive);
+    },
+    [router, key, value, setActive]
+  );
 
   useEffect(() => {
     let proposedNewValue: T | null = value;
