@@ -1,6 +1,6 @@
 import amqplib from 'amqplib';
-import singletons from '@/modules/singletons';
-import { SCHEMAS } from '@/modules/singletons/json-schemas';
+import singletons from 'src/modules/singletons';
+import { SCHEMAS } from 'src/modules/singletons/json-schemas';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 import { signingQueue } from '@/modules/metadata-signing';
