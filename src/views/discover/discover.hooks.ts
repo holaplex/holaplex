@@ -6,7 +6,7 @@ import {
   UpdateResultsFunction,
   useHolaplexInfiniteScrollQuery,
 } from '@/hooks/useApolloQuery';
-import { DiscoverNFTCardData } from 'pages/discover/nfts';
+import { DiscoverNFTCardData } from 'src/pages/discover/nfts';
 import { useCallback } from 'react';
 import {
   DiscoverCollectionsByMarketCapQuery,

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { FC, VFC } from 'react';
-import SocialLinks from '../../components/SocialLinks';
+import SocialLinks from '@/components/SocialLinks';
 
 export const SmallFooter = () => {
   return (

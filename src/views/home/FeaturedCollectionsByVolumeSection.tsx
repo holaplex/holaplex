@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { QueryContext } from '@/hooks/useApolloQuery';
 import {

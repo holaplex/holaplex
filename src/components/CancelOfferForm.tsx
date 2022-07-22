@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Marketplace, Offer } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
+import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 

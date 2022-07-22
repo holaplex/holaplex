@@ -10,7 +10,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
+import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 import Modal from './Modal';
@@ -19,8 +19,8 @@ import { DisplaySOL } from './CurrencyHelpers';
 import ReactDom from 'react-dom';
 import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
 import { useQuery } from 'react-query';
-import { verifyTOS } from '../modules/crossmint';
-import { crossmintConfig } from '../lib/utils';
+import { verifyTOS } from '@/modules/crossmint';
+import { crossmintConfig } from '@/lib/utils';
 
 interface BuyFormProps {
   nft: Nft;
@@ -28,8 +28,8 @@ interface BuyFormProps {
   listing: AhListing;
   className?: string;
   refetch:
-  | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
-  | (() => void);
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   loading: boolean;
   crossmintEnabled?: boolean;
 }
@@ -76,8 +76,8 @@ const BuyForm: FC<BuyFormProps> = ({
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(PAYMENT_OPTION.SOLANA);
 
   const { data, isLoading } = useQuery({
-    onSuccess: (data) => { },
-    onError: (err) => { },
+    onSuccess: (data) => {},
+    onError: (err) => {},
     queryFn: () => verifyTOS(listing.seller),
   });
 
@@ -92,13 +92,9 @@ const BuyForm: FC<BuyFormProps> = ({
     if (listing && listing.auctionHouse && !isOwner && nft) {
       toast(`Buying ${nft.name} for ${Number(listing.price) / LAMPORTS_PER_SOL}`);
 
-      await sdk.
-        transaction()
-        .add(
-          sdk
-            .escrow(listing.auctionHouse)
-            .desposit({ amount: listing.price.toNumber() })
-        )
+      await sdk
+        .transaction()
+        .add(sdk.escrow(listing.auctionHouse).desposit({ amount: listing.price.toNumber() }))
         .add(
           sdk.offers(listing.auctionHouse).make({
             amount: listing.price.toNumber(),
@@ -181,10 +177,11 @@ const BuyForm: FC<BuyFormProps> = ({
                 <div className={`grid grid-cols-1 gap-4 lg:grid-cols-3`}>
                   <button
                     onClick={() => setSelectedPaymentOption(PAYMENT_OPTION.SOLANA)}
-                    className={`flex h-20 items-center justify-center rounded-lg bg-white ${selectedPaymentOption === PAYMENT_OPTION.SOLANA
-                      ? `opacity-100`
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
-                      }`}
+                    className={`flex h-20 items-center justify-center rounded-lg bg-white ${
+                      selectedPaymentOption === PAYMENT_OPTION.SOLANA
+                        ? `opacity-100`
+                        : `opacity-30 transition duration-200 ease-in-out hover:opacity-60`
+                    }`}
                     type={`button`}
                   >
                     <img
@@ -198,11 +195,13 @@ const BuyForm: FC<BuyFormProps> = ({
                     onClick={() => {
                       setSelectedPaymentOption(PAYMENT_OPTION.ETHEREUM);
                     }}
-                    className={`h-20 rounded-lg bg-white ${selectedPaymentOption === PAYMENT_OPTION.ETHEREUM
-                      ? `opacity-100`
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${!data?.data.accepted && `cursor-not-allowed`
-                      }`
-                      }`}
+                    className={`h-20 rounded-lg bg-white ${
+                      selectedPaymentOption === PAYMENT_OPTION.ETHEREUM
+                        ? `opacity-100`
+                        : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${
+                            !data?.data.accepted && `cursor-not-allowed`
+                          }`
+                    }`}
                     type={`button`}
                   >
                     <img
@@ -216,11 +215,13 @@ const BuyForm: FC<BuyFormProps> = ({
                     onClick={() => {
                       setSelectedPaymentOption(PAYMENT_OPTION.CREDIT_CARD);
                     }}
-                    className={`h-20 rounded-lg bg-white ${selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD
-                      ? `opacity-100 `
-                      : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${!data?.data.accepted && `cursor-not-allowed`
-                      }`
-                      }`}
+                    className={`h-20 rounded-lg bg-white ${
+                      selectedPaymentOption === PAYMENT_OPTION.CREDIT_CARD
+                        ? `opacity-100 `
+                        : `opacity-30 transition duration-200 ease-in-out hover:opacity-60 ${
+                            !data?.data.accepted && `cursor-not-allowed`
+                          }`
+                    }`}
                     type={`button`}
                   >
                     <img

@@ -15,7 +15,7 @@ import {
   Marketplace,
 } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
+import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 
 interface AcceptOfferFormProps {

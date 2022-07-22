@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import sv from '@/styles/styleConstants';
+import sv from '@/assets/styles/styleConstants';
 import styled from 'styled-components';
 import { Label } from '@/components/StyledComponents';
 
