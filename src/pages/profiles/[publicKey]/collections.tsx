@@ -6,16 +6,16 @@ import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 import CollectionProfileCard, {
   LoadingCollectionProfileCard,
-} from '../../../src/views/collections/CollectionProfileCard';
+} from '../../../views/collections/CollectionProfileCard';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import { None } from '@/components/OfferForm';
-import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
-import { ProfileDataProvider } from '../../../src/views/profiles/ProfileDataProvider';
-import { CollectionNfTsQuery, useCollectionNfTsQuery } from '../../../src/graphql/indexerTypes';
+import ProfileLayout from '../../../views/profiles/ProfileLayout';
+import { ProfileDataProvider } from '../../../views/profiles/ProfileDataProvider';
+import { CollectionNfTsQuery, useCollectionNfTsQuery } from '../../../graphql/indexerTypes';
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
-} from '../../../src/views/profiles/getProfileServerSideProps';
+} from '../../../views/profiles/getProfileServerSideProps';
 
 const COLLECTION_FETCH = 500;
 const COLLECTION_INFINITE_SCROLL_AMOUNT_INCREMENT = 500;
@@ -100,12 +100,18 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
   ): Collection[] => {
     let uniqueCollections: Collection[] = [];
     collectionNFTs?.forEach((collectionNft) => {
-      if (collectionNft.collection && !uniqueCollections.find((u) => u.address === collectionNft.address)) {
+      if (
+        collectionNft.collection &&
+        !uniqueCollections.find((u) => u.address === collectionNft.address)
+      ) {
         uniqueCollections.push(collectionNft.collection);
       }
     });
     createdCollectionNFTs?.forEach((collectionNft) => {
-      if (collectionNft.collection && !uniqueCollections.find((u) => u.address === collectionNft.address)) {
+      if (
+        collectionNft.collection &&
+        !uniqueCollections.find((u) => u.address === collectionNft.address)
+      ) {
         uniqueCollections.push(collectionNft.collection);
       }
     });

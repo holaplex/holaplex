@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
-import ProfilePreview, { ProfilePreviewData, ProfilePreviewLoadingCard } from '@/components/ProfilePreviewCard';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
+import ProfilePreview, {
+  ProfilePreviewData,
+  ProfilePreviewLoadingCard,
+} from '@/components/ProfilePreviewCard';
 import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;

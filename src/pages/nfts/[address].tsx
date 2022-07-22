@@ -1,11 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps } from 'next';
-import {
-  useNftActivityLazyQuery,
-  useNftMarketplaceLazyQuery,
-} from '../../src/graphql/indexerTypes';
+import { useNftActivityLazyQuery, useNftMarketplaceLazyQuery } from '../../graphql/indexerTypes';
 import cx from 'classnames';
-import { shortenAddress } from '../../src/modules/utils/string';
+import { shortenAddress } from '../../modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
 import Accordion from '@/components/Accordion';
@@ -33,15 +30,15 @@ import BuyForm from '@/components/BuyForm';
 import UpdateSellForm from '@/components/UpdateSellForm';
 import AcceptOfferForm from '@/components/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
-import { apolloClient } from '../../src/graphql/apollo';
-import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
+import { apolloClient } from '../../graphql/apollo';
+import { ShareNftDocument, ShareNftQuery } from '../../graphql/indexerTypes.ssr';
 import Head from 'next/head';
 import { Avatar, AvatarIcons } from 'src/components/Avatar';
-import { seededRandomBetween } from '../../src/modules/utils/random';
-import { SolscanIcon } from '../../src/assets/icons/Solscan';
-import { ExplorerIcon } from '../../src/assets/icons/Explorer';
+import { seededRandomBetween } from '../../modules/utils/random';
+import { SolscanIcon } from '../../assets/icons/Solscan';
+import { ExplorerIcon } from '../../assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
-import { ButtonSkeleton } from '../../src/components/Skeletons';
+import { ButtonSkeleton } from '../../components/Skeletons';
 import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

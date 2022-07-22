@@ -6,12 +6,12 @@ import {
 } from '@/views/profiles/getProfileServerSideProps';
 import { ProfileDataProvider } from 'src/views/profiles/ProfileDataProvider';
 import { useMemo, useState } from 'react';
-import { useOffersPageQuery } from '../../../src/graphql/indexerTypes';
+import { useOffersPageQuery } from '../../../graphql/indexerTypes';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-} from '../../../src/views/_global/holaplexConstants';
-import { imgOpt } from '../../../src/lib/utils';
+} from '../../../views/_global/holaplexConstants';
+import { imgOpt } from '../../../lib/utils';
 import Link from 'next/link';
 import { AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 import { DisplaySOL } from '@/components/CurrencyHelpers';
@@ -21,7 +21,7 @@ import AcceptOfferForm from '@/components/AcceptOfferForm';
 import UpdateOfferForm from '@/components/UpdateOfferForm';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Modal from '@/components/Modal';
-import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
+import ProfileLayout from '../../../views/profiles/ProfileLayout';
 
 enum OfferFilters {
   ALL,

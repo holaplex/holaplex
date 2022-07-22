@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import { Listing } from '@/modules/indexer';
 import { ListingPreview, SkeletonListing } from '../../components/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';

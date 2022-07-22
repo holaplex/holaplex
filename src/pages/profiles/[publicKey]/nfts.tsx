@@ -3,7 +3,7 @@ import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import cx from 'classnames';
-import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../src/graphql/indexerTypes';
+import { OwnedNfTsQuery, useOwnedNfTsQuery } from '../../../graphql/indexerTypes';
 import Link from 'next/link';
 import TextInput2 from 'src/components/TextInput2';
 import {
@@ -33,7 +33,7 @@ import { isEmpty, uniq } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
 import classNames from 'classnames';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
-import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
+import ProfileLayout from '../../../views/profiles/ProfileLayout';
 import GridSelector from '@/components/GridSelector';
 
 export type OwnedNFT = OwnedNfTsQuery['nfts'][0];

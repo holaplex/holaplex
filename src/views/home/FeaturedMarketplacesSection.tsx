@@ -1,4 +1,4 @@
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import React, { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import { imgOpt, isTouchScreenOnly } from '../../lib/utils';
 import { SolIcon } from '../../components/Price';
