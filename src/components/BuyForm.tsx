@@ -141,7 +141,7 @@ const BuyForm: FC<BuyFormProps> = ({
     });
   };
 
-  if (isOwner) {
+  if (isOwner || !nft || !listing || !listing.auctionHouse) {
     return null;
   }
 
