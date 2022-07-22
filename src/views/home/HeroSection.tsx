@@ -22,7 +22,7 @@ export function HeroSection(props: HeroSectionProps): JSX.Element {
   return (
     <div>
       <div className="relative h-[450px]">
-        <Marquee speed={feedEvents.length ? 40 : 0} gradient={false} pauseOnHover={true}>
+        <Marquee speed={feedEvents.length ? 0 : 0} gradient={false} pauseOnHover={true}>
           <div
             className={classNames(
               'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'
