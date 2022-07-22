@@ -1,1 +1,1 @@
-export * from './sol'
+export * from './sol';

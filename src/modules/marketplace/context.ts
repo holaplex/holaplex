@@ -6,4 +6,6 @@ export type MarketplaceContextProps = {
   searching: boolean;
 };
 
-export const MarketplaceContext = React.createContext<MarketplaceContextProps>({ searching: false });
+export const MarketplaceContext = React.createContext<MarketplaceContextProps>({
+  searching: false,
+});

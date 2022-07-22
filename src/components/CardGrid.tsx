@@ -152,12 +152,10 @@ export interface SearchBarProps {
    */
   debounceTimeout: number;
 
-
   /**
    * Minimum number of characters required for a search to register. Defaults to 3.
    */
   minCharacters?: number;
-
 
   /**
    * Placeholder string for the search bar to prompt for search.
@@ -175,8 +173,8 @@ function SearchBar(props: SearchBarProps): JSX.Element {
       autoCorrect="off"
       className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0"
       type="search"
-      placeholder={props.placeholder ?? "Search"}
-      onChange={e => props.onChange(e.target.value)}
+      placeholder={props.placeholder ?? 'Search'}
+      onChange={(e) => props.onChange(e.target.value)}
     />
   );
 }
@@ -187,7 +185,7 @@ export interface CardGridHeaderElementProps {
 
 function CardGridHeaderElement(props: CardGridHeaderElementProps): JSX.Element {
   return (
-    <div className='w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0'>
+    <div className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0">
       {props.children}
     </div>
   );
@@ -330,7 +328,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
           className={classNames('my-6 flex w-full items-center justify-center font-bold', {
             hidden:
               !props.dataContext.hasMore ||
-              (props.dataContext.data && props.dataContext.data.length === 0)
+              (props.dataContext.data && props.dataContext.data.length === 0),
           })}
         >
           <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />

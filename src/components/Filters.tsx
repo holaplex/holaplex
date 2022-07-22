@@ -27,7 +27,7 @@ export default function FiltersSection(props: FiltersSectionProps): JSX.Element 
         <div className={classNames('flex flex-col space-y-4')}>
           <span
             className={classNames(
-              'flex w-full flex-row flex-nowrap items-center justify-between p-4 space-x-4',
+              'flex w-full flex-row flex-nowrap items-center justify-between space-x-4 p-4',
               'border-b border-b-gray-800'
             )}
           >
@@ -82,18 +82,22 @@ export interface FilterProps<T> {
 
 /**
  * A filter with optional auto-setting/getting from URL params
- * 
+ *
  * @param props
- * @returns 
+ * @returns
  */
 function Filter<T>(props: FilterProps<T>): JSX.Element {
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const urlParam = useUrlQueryParam<T | null>(props.queryId ?? '', props.default ?? null, props.queryId != null);
+  const urlParam = useUrlQueryParam<T | null>(
+    props.queryId ?? '',
+    props.default ?? null,
+    props.queryId != null
+  );
 
   const onChange: (selected: FilterOption<T>) => void = useCallback(
     (selected) => {
       if (props.queryId) {
-        urlParam.set(selected.value)
+        urlParam.set(selected.value);
       }
       if (props.onChange != null) props.onChange(selected);
     },
@@ -122,7 +126,10 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
       {/* to "collapse", wrap the filter options in a div that with overflow hidden and then move the options up */}
       <div className="overflow-hidden">
         <div
-          className={classNames({'-translate-y-full': collapsed}, 'transition-all duration-300 ease-in')}
+          className={classNames(
+            { '-translate-y-full': collapsed },
+            'transition-all duration-300 ease-in'
+          )}
         >
           {props.options.map((o) =>
             makeOption(o, props.title, onChange, o.value === urlParam.value)

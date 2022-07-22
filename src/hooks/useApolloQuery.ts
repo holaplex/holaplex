@@ -28,14 +28,20 @@ interface InfiniteScrollMinArgs {
   offset: number;
 }
 
-export interface InfiniteScrollQueryContext<TDatum, TArgs extends InfiniteScrollMinArgs, TGraphQLDataObject = void>
-  extends LazyQueryContext<TDatum[], TArgs, TGraphQLDataObject> {
-    fetchMore: () => void;
+export interface InfiniteScrollQueryContext<
+  TDatum,
+  TArgs extends InfiniteScrollMinArgs,
+  TGraphQLDataObject = void
+> extends LazyQueryContext<TDatum[], TArgs, TGraphQLDataObject> {
+  fetchMore: () => void;
   hasMore: boolean;
 }
 
 export interface InfiniteScrollHook<TGraphQLDataObject, TArgs> {
-  (baseOptions: LazyQueryHookOptions<TGraphQLDataObject, TArgs>): LazyQueryResultTuple<TGraphQLDataObject, TArgs>
+  (baseOptions: LazyQueryHookOptions<TGraphQLDataObject, TArgs>): LazyQueryResultTuple<
+    TGraphQLDataObject,
+    TArgs
+  >;
 }
 
 export function useHolaplexInfiniteScrollQuery<
@@ -64,7 +70,7 @@ export function useHolaplexInfiniteScrollQuery<
     (raw) => {
       const rawDataArray: TGraphQLElement[] | undefined = listExtractor(raw);
       setHasMore(rawDataArray != null && rawDataArray.length > 0);
-      if (rawDataArray !== undefined) setData(rawDataArray.map(e => transformer(e, raw)));
+      if (rawDataArray !== undefined) setData(rawDataArray.map((e) => transformer(e, raw)));
     },
     [listExtractor, transformer, setData]
   );
@@ -83,26 +89,23 @@ export function useHolaplexInfiniteScrollQuery<
     [variables, apolloQuery, onCompleted, initialLimit]
   );
 
-  const fetchMore: () => void = useCallback(
-    () => {
-      async function runFetch() {
-        context.fetchMore({
-          variables: {
-            ...variables,
-            limit: fetchMoreLimit,
-            offset: fetchMoreOffset,
-          },
-          updateQuery: (p, { fetchMoreResult }) => {
-            return mergeResultsFunction(p, fetchMoreResult);
-          },
-        });
-      }
+  const fetchMore: () => void = useCallback(() => {
+    async function runFetch() {
+      context.fetchMore({
+        variables: {
+          ...variables,
+          limit: fetchMoreLimit,
+          offset: fetchMoreOffset,
+        },
+        updateQuery: (p, { fetchMoreResult }) => {
+          return mergeResultsFunction(p, fetchMoreResult);
+        },
+      });
+    }
 
-      runFetch();
-      incrementFetchMoreCallCount();
-    },
-    [context, variables, fetchMoreLimit, fetchMoreOffset, mergeResultsFunction]
-  );
+    runFetch();
+    incrementFetchMoreCallCount();
+  }, [context, variables, fetchMoreLimit, fetchMoreOffset, mergeResultsFunction]);
 
   return {
     data: data,

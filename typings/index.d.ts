@@ -9,5 +9,4 @@ interface Window {
   fbq: (...args: any[]) => void;
 }
 
-
 declare module 'react-grid-carousel';
