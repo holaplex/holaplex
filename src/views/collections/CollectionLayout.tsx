@@ -12,7 +12,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useMemo } from 'react';
-import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
+import { useAllConnectionsToQuery, useIsXFollowingYQuery } from 'src/graphql/indexerTypes';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import { SolscanIcon } from '@/assets/icons/Solscan';
 
@@ -62,7 +62,7 @@ function CollectionLayoutHead(props: {
 
 export default function CollectionLayout({
   children,
-  collectionAddress,
+  collectionUrlAddress,
   collection,
 }: CollectionPageProps & { children: ReactNode }) {
   const wallet = useAnchorWallet();
@@ -73,7 +73,7 @@ export default function CollectionLayout({
 
   const { data: collectionFollowersData } = useAllConnectionsToQuery({
     variables: {
-      to: collectionAddress,
+      to: collection?.address,
     },
   });
 
@@ -102,7 +102,7 @@ export default function CollectionLayout({
             <div className="mx-4 mb-10 flex flex-col lg:mx-0 lg:flex-row">
               <img
                 src={collection?.image}
-                className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 shadow-2xl ring-8 ring-gray-900"
+                className="mr-10 aspect-square h-40 w-40 rounded-2xl bg-gray-900 object-cover shadow-2xl ring-8 ring-gray-900"
                 alt="Collection logo"
               />
               <div>
@@ -247,12 +247,12 @@ export default function CollectionLayout({
             <Tab
               title={`NFTs`}
               selected={router.pathname.includes('nfts')}
-              url={`/collections/${collectionAddress}/nfts`}
+              url={`/collections/${collectionUrlAddress}/nfts`}
             />
             <Tab
               title={'About'}
               selected={router.pathname.includes('about')}
-              url={`/collections/${collectionAddress}/about`}
+              url={`/collections/${collectionUrlAddress}/about`}
             />
           </div>
           <div>{children}</div>
