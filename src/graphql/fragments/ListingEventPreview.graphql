@@ -5,6 +5,8 @@ fragment ListingEventPreview on ListingEvent {
   profile {
     handle
     profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
   }
   lifecycle
   listing {
@@ -41,6 +43,8 @@ fragment ListingEventPreview on ListingEvent {
             profile {
               handle
               profileImageUrlLowres
+              profileImageUrlHighres
+              bannerImageUrl
             }
           }
           address

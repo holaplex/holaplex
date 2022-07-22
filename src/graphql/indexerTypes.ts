@@ -1956,6 +1956,7 @@ export type FeedQuery = {
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         connection?: {
           __typename?: 'GraphConnection';
@@ -1968,6 +1969,7 @@ export type FeedQuery = {
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           };
           to: {
@@ -1978,6 +1980,7 @@ export type FeedQuery = {
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           };
         } | null;
@@ -1996,6 +1999,8 @@ export type FeedQuery = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         listing?: {
           __typename?: 'AhListing';
@@ -2043,6 +2048,8 @@ export type FeedQuery = {
                     __typename?: 'TwitterProfile';
                     handle: string;
                     profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
                   } | null;
                 }>;
               } | null;
@@ -2064,6 +2071,7 @@ export type FeedQuery = {
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         nft?: {
           __typename?: 'Nft';
@@ -2089,6 +2097,7 @@ export type FeedQuery = {
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           }>;
         } | null;
@@ -2107,6 +2116,8 @@ export type FeedQuery = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         offer?: {
           __typename?: 'Offer';
@@ -2154,6 +2165,8 @@ export type FeedQuery = {
                     __typename?: 'TwitterProfile';
                     handle: string;
                     profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
                   } | null;
                 }>;
               } | null;
@@ -2174,6 +2187,8 @@ export type FeedQuery = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         purchase?: {
           __typename?: 'Purchase';
@@ -2204,6 +2219,8 @@ export type FeedQuery = {
                 __typename?: 'TwitterProfile';
                 handle: string;
                 profileImageUrlLowres: string;
+                profileImageUrlHighres: string;
+                bannerImageUrl: string;
               } | null;
             }>;
           } | null;
@@ -2256,6 +2273,7 @@ export type FollowEventPreviewFragment = {
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
+    bannerImageUrl: string;
   } | null;
   connection?: {
     __typename?: 'GraphConnection';
@@ -2268,6 +2286,7 @@ export type FollowEventPreviewFragment = {
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     };
     to: {
@@ -2278,6 +2297,7 @@ export type FollowEventPreviewFragment = {
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     };
   } | null;
@@ -2293,7 +2313,13 @@ export type ListingEventPreviewFragment = {
   createdAt: any;
   walletAddress: any;
   lifecycle: string;
-  profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrlLowres: string } | null;
+  profile?: {
+    __typename?: 'TwitterProfile';
+    handle: string;
+    profileImageUrlLowres: string;
+    profileImageUrlHighres: string;
+    bannerImageUrl: string;
+  } | null;
   listing?: {
     __typename?: 'AhListing';
     id: any;
@@ -2340,6 +2366,8 @@ export type ListingEventPreviewFragment = {
               __typename?: 'TwitterProfile';
               handle: string;
               profileImageUrlLowres: string;
+              profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           }>;
         } | null;
@@ -2383,6 +2411,7 @@ export type MintEventPreviewFragment = {
     handle: string;
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
+    bannerImageUrl: string;
   } | null;
   nft?: {
     __typename?: 'Nft';
@@ -2408,6 +2437,7 @@ export type MintEventPreviewFragment = {
         handle: string;
         profileImageUrlLowres: string;
         profileImageUrlHighres: string;
+        bannerImageUrl: string;
       } | null;
     }>;
   } | null;
@@ -2523,7 +2553,13 @@ export type OfferEventPreviewFragment = {
   createdAt: any;
   walletAddress: any;
   lifecycle: string;
-  profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrlLowres: string } | null;
+  profile?: {
+    __typename?: 'TwitterProfile';
+    handle: string;
+    profileImageUrlLowres: string;
+    profileImageUrlHighres: string;
+    bannerImageUrl: string;
+  } | null;
   offer?: {
     __typename?: 'Offer';
     id: any;
@@ -2570,6 +2606,8 @@ export type OfferEventPreviewFragment = {
               __typename?: 'TwitterProfile';
               handle: string;
               profileImageUrlLowres: string;
+              profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           }>;
         } | null;
@@ -2587,7 +2625,13 @@ export type PurchaseEventPreviewFragment = {
   feedEventId: string;
   createdAt: any;
   walletAddress: any;
-  profile?: { __typename?: 'TwitterProfile'; handle: string; profileImageUrlLowres: string } | null;
+  profile?: {
+    __typename?: 'TwitterProfile';
+    handle: string;
+    profileImageUrlLowres: string;
+    profileImageUrlHighres: string;
+    bannerImageUrl: string;
+  } | null;
   purchase?: {
     __typename?: 'Purchase';
     id: any;
@@ -2617,6 +2661,8 @@ export type PurchaseEventPreviewFragment = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
       }>;
     } | null;
@@ -2789,6 +2835,7 @@ export type HomeQuery = {
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         connection?: {
           __typename?: 'GraphConnection';
@@ -2801,6 +2848,7 @@ export type HomeQuery = {
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           };
           to: {
@@ -2811,6 +2859,7 @@ export type HomeQuery = {
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           };
         } | null;
@@ -2829,6 +2878,8 @@ export type HomeQuery = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         listing?: {
           __typename?: 'AhListing';
@@ -2876,6 +2927,8 @@ export type HomeQuery = {
                     __typename?: 'TwitterProfile';
                     handle: string;
                     profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
                   } | null;
                 }>;
               } | null;
@@ -2897,6 +2950,7 @@ export type HomeQuery = {
           handle: string;
           profileImageUrlLowres: string;
           profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         nft?: {
           __typename?: 'Nft';
@@ -2922,6 +2976,7 @@ export type HomeQuery = {
               handle: string;
               profileImageUrlLowres: string;
               profileImageUrlHighres: string;
+              bannerImageUrl: string;
             } | null;
           }>;
         } | null;
@@ -2940,6 +2995,8 @@ export type HomeQuery = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         offer?: {
           __typename?: 'Offer';
@@ -2987,6 +3044,8 @@ export type HomeQuery = {
                     __typename?: 'TwitterProfile';
                     handle: string;
                     profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
                   } | null;
                 }>;
               } | null;
@@ -3007,6 +3066,8 @@ export type HomeQuery = {
           __typename?: 'TwitterProfile';
           handle: string;
           profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
         } | null;
         purchase?: {
           __typename?: 'Purchase';
@@ -3037,6 +3098,8 @@ export type HomeQuery = {
                 __typename?: 'TwitterProfile';
                 handle: string;
                 profileImageUrlLowres: string;
+                profileImageUrlHighres: string;
+                bannerImageUrl: string;
               } | null;
             }>;
           } | null;
@@ -4075,6 +4138,7 @@ export type ConnectionNodeFragment = {
     __typename?: 'TwitterProfile';
     handle: string;
     profileImageUrlLowres: string;
+    profileImageUrlHighres: string;
     bannerImageUrl: string;
   } | null;
 };
@@ -4096,6 +4160,7 @@ export type AllConnectionsFromQuery = {
         __typename?: 'TwitterProfile';
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
         bannerImageUrl: string;
       } | null;
     };
@@ -4119,6 +4184,7 @@ export type AllConnectionsToQuery = {
         __typename?: 'TwitterProfile';
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
         bannerImageUrl: string;
       } | null;
     };
@@ -4181,6 +4247,7 @@ export type GetConnectedWalletProfileDataQuery = {
         __typename?: 'TwitterProfile';
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
         bannerImageUrl: string;
       } | null;
     };
@@ -4194,6 +4261,7 @@ export type GetConnectedWalletProfileDataQuery = {
         __typename?: 'TwitterProfile';
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
         bannerImageUrl: string;
       } | null;
     };
@@ -4221,6 +4289,7 @@ export type GetProfileFollowerOverviewQuery = {
         __typename?: 'TwitterProfile';
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
         bannerImageUrl: string;
       } | null;
     };
@@ -4234,6 +4303,7 @@ export type GetProfileFollowerOverviewQuery = {
         __typename?: 'TwitterProfile';
         handle: string;
         profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
         bannerImageUrl: string;
       } | null;
     };
@@ -4308,7 +4378,14 @@ export type TwitterHandleFromPubKeyQuery = {
   __typename?: 'QueryRoot';
   wallet: {
     __typename?: 'Wallet';
-    profile?: { __typename?: 'TwitterProfile'; handle: string } | null;
+    address: any;
+    profile?: {
+      __typename?: 'TwitterProfile';
+      handle: string;
+      profileImageUrlLowres: string;
+      profileImageUrlHighres: string;
+      bannerImageUrl: string;
+    } | null;
   };
 };
 
@@ -4420,6 +4497,7 @@ export const FollowEventPreviewFragmentDoc = gql`
       handle
       profileImageUrlLowres
       profileImageUrlHighres
+      bannerImageUrl
     }
     graphConnectionAddress
     connection {
@@ -4430,6 +4508,7 @@ export const FollowEventPreviewFragmentDoc = gql`
           handle
           profileImageUrlLowres
           profileImageUrlHighres
+          bannerImageUrl
         }
       }
       to {
@@ -4438,6 +4517,7 @@ export const FollowEventPreviewFragmentDoc = gql`
           handle
           profileImageUrlLowres
           profileImageUrlHighres
+          bannerImageUrl
         }
       }
     }
@@ -4457,6 +4537,8 @@ export const ListingEventPreviewFragmentDoc = gql`
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
     }
     lifecycle
     listing {
@@ -4493,6 +4575,8 @@ export const ListingEventPreviewFragmentDoc = gql`
               profile {
                 handle
                 profileImageUrlLowres
+                profileImageUrlHighres
+                bannerImageUrl
               }
             }
             address
@@ -4540,6 +4624,7 @@ export const MintEventPreviewFragmentDoc = gql`
       handle
       profileImageUrlLowres
       profileImageUrlHighres
+      bannerImageUrl
     }
     nft {
       name
@@ -4559,6 +4644,7 @@ export const MintEventPreviewFragmentDoc = gql`
           handle
           profileImageUrlLowres
           profileImageUrlHighres
+          bannerImageUrl
         }
       }
       address
@@ -4677,6 +4763,8 @@ export const OfferEventPreviewFragmentDoc = gql`
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
     }
     lifecycle
     offer {
@@ -4713,6 +4801,8 @@ export const OfferEventPreviewFragmentDoc = gql`
               profile {
                 handle
                 profileImageUrlLowres
+                profileImageUrlHighres
+                bannerImageUrl
               }
             }
             address
@@ -4739,6 +4829,8 @@ export const PurchaseEventPreviewFragmentDoc = gql`
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
+      bannerImageUrl
     }
     purchase {
       id
@@ -4762,6 +4854,8 @@ export const PurchaseEventPreviewFragmentDoc = gql`
           profile {
             handle
             profileImageUrlLowres
+            profileImageUrlHighres
+            bannerImageUrl
           }
         }
         address
@@ -4916,6 +5010,7 @@ export const ConnectionNodeFragmentDoc = gql`
     profile {
       handle
       profileImageUrlLowres
+      profileImageUrlHighres
       bannerImageUrl
     }
   }
@@ -8051,11 +8146,10 @@ export type IsXFollowingYQueryResult = Apollo.QueryResult<
 export const TwitterHandleFromPubKeyDocument = gql`
   query twitterHandleFromPubKey($pubKey: PublicKey!) {
     wallet(address: $pubKey) {
-      profile {
-        handle
-      }
+      ...ConnectionNode
     }
   }
+  ${ConnectionNodeFragmentDoc}
 `;
 
 /**

@@ -247,7 +247,15 @@ export const ProfileHandleStack = ({ users }: { users: User[] }) => {
   );
 };
 
-export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?: boolean }) => {
+export const ProfileHandle = ({
+  user,
+  shorten = false,
+  ...props
+}: {
+  user: User;
+  shorten?: boolean;
+  popoverPlacement?: 'top' | 'bottom';
+}) => {
   const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
   const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
 
@@ -264,19 +272,24 @@ export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?:
     }
   }, []);
 
+  console.log('user', user);
+
   return (
     <Popover
       isShowOnHover={true}
+      placement={props.popoverPlacement}
       content={
-        <ProfilePreview
-          address={user.address}
-          context={{
-            data: getProfilePreivewDataFromUser(user),
-            loading: false,
-            refetch: () => {},
-            fetchMore: () => {},
-          }}
-        />
+        <div className="w-80">
+          <ProfilePreview
+            address={user.address}
+            context={{
+              data: getProfilePreivewDataFromUser(user),
+              loading: false,
+              refetch: () => {},
+              fetchMore: () => {},
+            }}
+          />
+        </div>
       }
     >
       <Link href={'/profiles/' + user.address + '/nfts'} passHref>
@@ -353,8 +366,8 @@ function FeedActionBanner(props: {
         )}
 
         <div className="ml-2 flex max-w-xs flex-col gap-2">
-          <div className={`flex text-base font-semibold`}>
-            <ProfileHandle user={attrs.sourceUser} />
+          <div className={`inline-flex text-base font-semibold`}>
+            <ProfileHandle user={attrs.sourceUser} popoverPlacement="top" />
             &nbsp;
             <div className="text-base font-normal">{attrs.content}</div>
             &nbsp;

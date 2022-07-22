@@ -5,6 +5,8 @@ fragment PurchaseEventPreview on PurchaseEvent {
   profile {
     handle
     profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
   }
   purchase {
     id
@@ -28,6 +30,8 @@ fragment PurchaseEventPreview on PurchaseEvent {
         profile {
           handle
           profileImageUrlLowres
+          profileImageUrlHighres
+          bannerImageUrl
         }
       }
       address

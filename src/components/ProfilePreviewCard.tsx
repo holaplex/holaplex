@@ -25,6 +25,7 @@ export interface ProfilePreviewProps {
 }
 
 export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element {
+  console.log('profile popover', props.context.data);
   const { track } = useAnalytics();
 
   const onClickProfileLink = useCallback(() => {

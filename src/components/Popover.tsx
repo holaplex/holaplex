@@ -6,12 +6,15 @@ interface PopoverProps {
   children: React.ReactElement;
   content: React.ReactElement;
   isShowOnHover?: boolean;
+  placement?: 'top' | 'bottom'; //  many others
 }
 
-const Popover = ({ children, content, isShowOnHover = false }: PopoverProps) => {
+const Popover = ({ children, content, placement, isShowOnHover = false }: PopoverProps) => {
   let [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>();
   let [popperElement, setPopperElement] = useState<HTMLDivElement | null>();
-  let { styles, attributes } = usePopper(buttonRef, popperElement);
+  let { styles, attributes } = usePopper(buttonRef, popperElement, {
+    placement,
+  });
 
   const [openState, setOpenState] = useState(false);
 

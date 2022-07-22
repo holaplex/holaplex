@@ -91,7 +91,7 @@ export function generateFeedCardAttributes(
         ...base,
         solAmount: solAmount,
         nft: event.listing?.nft as QueryNFT,
-        content: `Listed for ${solAmount} SOL`,
+        content: `listed for ${solAmount} SOL`,
       };
 
     case 'FollowEvent':

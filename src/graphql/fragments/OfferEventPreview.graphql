@@ -1,3 +1,5 @@
+#import "./Profile.graphql"
+
 fragment OfferEventPreview on OfferEvent {
   feedEventId
   createdAt
@@ -5,6 +7,8 @@ fragment OfferEventPreview on OfferEvent {
   profile {
     handle
     profileImageUrlLowres
+    profileImageUrlHighres
+    bannerImageUrl
   }
   lifecycle
   offer {
@@ -41,6 +45,8 @@ fragment OfferEventPreview on OfferEvent {
             profile {
               handle
               profileImageUrlLowres
+              profileImageUrlHighres
+              bannerImageUrl
             }
           }
           address

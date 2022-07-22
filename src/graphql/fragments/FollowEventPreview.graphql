@@ -6,6 +6,7 @@ fragment FollowEventPreview on FollowEvent {
     handle
     profileImageUrlLowres
     profileImageUrlHighres
+    bannerImageUrl
   }
   graphConnectionAddress
   connection {
@@ -16,6 +17,7 @@ fragment FollowEventPreview on FollowEvent {
         handle
         profileImageUrlLowres
         profileImageUrlHighres
+        bannerImageUrl
       }
     }
     to {
@@ -24,6 +26,7 @@ fragment FollowEventPreview on FollowEvent {
         handle
         profileImageUrlLowres
         profileImageUrlHighres
+        bannerImageUrl
       }
     }
   }
