@@ -27,7 +27,7 @@ fragment BuyNowListing on AhListing {
     sellerFeeBasisPoints
     mintAddress
     description
-    image
+    image(width: 400)
     primarySaleHappened
     creators {
       address

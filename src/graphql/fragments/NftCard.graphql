@@ -1,10 +1,10 @@
-fragment NftCard on Nft {
+fragment NftCard on NftExt {
   address
   name
   sellerFeeBasisPoints
   mintAddress
   description
-  image
+  image(width: 400)
   primarySaleHappened
   creators {
     address

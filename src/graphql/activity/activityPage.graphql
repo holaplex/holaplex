@@ -28,7 +28,7 @@ query activityPage($address: PublicKey!) {
           address
           name
           description
-          image
+          image(width: 400)
         }
         bids {
           bidderAddress

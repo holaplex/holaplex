@@ -34,7 +34,7 @@ export type AhListing = {
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
   metadata: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   price: Scalars['U64'];
   purchaseId?: Maybe<Scalars['Uuid']>;
   seller: Scalars['PublicKey'];
@@ -100,13 +100,75 @@ export type BidReceipt = {
   canceledAt?: Maybe<Scalars['DateTimeUtc']>;
   createdAt: Scalars['DateTimeUtc'];
   metadata: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   price: Scalars['U64'];
   purchaseReceipt?: Maybe<Scalars['PublicKey']>;
   tokenAccount?: Maybe<Scalars['String']>;
   tokenSize: Scalars['Int'];
   tradeState: Scalars['String'];
   tradeStateBump: Scalars['Int'];
+};
+
+export type CollectionNft = NftExt & {
+  __typename?: 'CollectionNft';
+  /** @deprecated use `...on NftExt` */
+  activities: Array<NftActivity>;
+  /** @deprecated use `...on NftExt` */
+  address: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  animationUrl?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  attributes: Array<NftAttribute>;
+  /** @deprecated use `...on NftExt` */
+  category: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  collection?: Maybe<CollectionNft>;
+  /** @deprecated use `...on NftExt` */
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
+  /** @deprecated use `...on NftExt` */
+  creators: Array<NftCreator>;
+  /** @deprecated use `...on NftExt` */
+  description: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  externalUrl?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  files: Array<NftFile>;
+  floorPrice?: Maybe<Scalars['Int']>;
+  /** @deprecated use `...on NftExt` */
+  image: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  listings: Array<AhListing>;
+  /** @deprecated use `...on NftExt` */
+  mintAddress: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  model?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  name: Scalars['String'];
+  nftCount: Scalars['Int'];
+  /** @deprecated use `...on NftExt` */
+  offers: Array<Offer>;
+  /** @deprecated use `...on NftExt` */
+  owner?: Maybe<NftOwner>;
+  /** @deprecated use `...on NftExt` */
+  parser?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  primarySaleHappened: Scalars['Boolean'];
+  /** @deprecated use `...on NftExt` */
+  purchases: Array<Purchase>;
+  /** @deprecated use `...on NftExt` */
+  sellerFeeBasisPoints: Scalars['Int'];
+  /** @deprecated use `...on NftExt` */
+  slot?: Maybe<Scalars['Int']>;
+  /** @deprecated use `...on NftExt` */
+  tokenAccountAddress: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  updateAuthorityAddress: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  uri: Scalars['String'];
+};
+
+export type CollectionNftImageArgs = {
+  width?: InputMaybe<Scalars['Int']>;
 };
 
 export type ConnectionCounts = {
@@ -162,52 +224,6 @@ export type FollowEvent = {
   walletAddress: Scalars['PublicKey'];
 };
 
-export type GenoHabitat = {
-  __typename?: 'GenoHabitat';
-  active: Scalars['Boolean'];
-  address: Scalars['PublicKey'];
-  crystalsRefined: Scalars['Int'];
-  durability: Scalars['Int'];
-  element: Scalars['Int'];
-  expiryTimestamp: Scalars['DateTimeUtc'];
-  genesis: Scalars['Boolean'];
-  guild?: Maybe<Scalars['Int']>;
-  habitatMint: Scalars['PublicKey'];
-  habitatsTerraformed: Scalars['Int'];
-  harvester: Scalars['String'];
-  harvesterOpenMarket: Scalars['Boolean'];
-  harvesterRoyaltyBips: Scalars['Int'];
-  harvesterSettingsCooldownTimestamp: Scalars['DateTimeUtc'];
-  isSubHabitat: Scalars['Boolean'];
-  kiHarvested: Scalars['I64'];
-  level: Scalars['Int'];
-  nextDayTimestamp: Scalars['DateTimeUtc'];
-  parentHabitat?: Maybe<Scalars['PublicKey']>;
-  renewalTimestamp: Scalars['DateTimeUtc'];
-  rentalAgreement?: Maybe<GenoRentalAgreement>;
-  seedsSpawned: Scalars['Boolean'];
-  sequence: Scalars['I64'];
-  subHabitatCooldownTimestamp: Scalars['DateTimeUtc'];
-  subHabitats: Array<Scalars['PublicKey']>;
-  terraformingHabitat?: Maybe<Scalars['PublicKey']>;
-  totalCrystalsRefined: Scalars['I64'];
-  totalKiHarvested: Scalars['I64'];
-};
-
-export type GenoRentalAgreement = {
-  __typename?: 'GenoRentalAgreement';
-  alchemist?: Maybe<Scalars['PublicKey']>;
-  gracePeriod: Scalars['I64'];
-  habitatAddress: Scalars['PublicKey'];
-  lastRentPayment: Scalars['DateTimeUtc'];
-  nextPaymentDue: Scalars['DateTimeUtc'];
-  openMarket: Scalars['Boolean'];
-  rent: Scalars['I64'];
-  rentToken: Scalars['PublicKey'];
-  rentTokenDecimals: Scalars['Int'];
-  rentalPeriod: Scalars['I64'];
-};
-
 export type GraphConnection = {
   __typename?: 'GraphConnection';
   address: Scalars['String'];
@@ -224,7 +240,7 @@ export type Listing = {
   ended: Scalars['Boolean'];
   endsAt?: Maybe<Scalars['DateTimeUtc']>;
   extAddress: Scalars['String'];
-  nfts: Array<Nft>;
+  nfts: Array<NftExt>;
   storeAddress: Scalars['String'];
   storefront?: Maybe<Storefront>;
 };
@@ -276,7 +292,7 @@ export type MintEvent = {
   createdAt: Scalars['DateTimeUtc'];
   feedEventId: Scalars['String'];
   metadataAddress: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   profile?: Maybe<TwitterProfile>;
   wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
@@ -292,46 +308,6 @@ export type MintStats = {
   volumeTotal?: Maybe<Scalars['U64']>;
 };
 
-export type Nft = {
-  __typename?: 'Nft';
-  activities: Array<NftActivity>;
-  address: Scalars['String'];
-  animationUrl?: Maybe<Scalars['String']>;
-  attributes: Array<NftAttribute>;
-  category: Scalars['String'];
-  collection?: Maybe<Nft>;
-  createdAt?: Maybe<Scalars['DateTimeUtc']>;
-  creators: Array<NftCreator>;
-  description: Scalars['String'];
-  externalUrl?: Maybe<Scalars['String']>;
-  files: Array<NftFile>;
-  image: Scalars['String'];
-  listings: Array<AhListing>;
-  mintAddress: Scalars['String'];
-  name: Scalars['String'];
-  offers: Array<Offer>;
-  owner?: Maybe<NftOwner>;
-  /**
-   * The JSON parser with which the NFT was processed by the indexer
-   *
-   * - `"full"` indicates the full Metaplex standard-compliant parser was
-   *   used.
-   * - `"minimal"` (provided with an optional description of an error)
-   *   indicates the full model failed to parse and a more lenient fallback
-   *   parser with fewer fields was used instead.
-   */
-  parser?: Maybe<Scalars['String']>;
-  primarySaleHappened: Scalars['Boolean'];
-  purchases: Array<Purchase>;
-  sellerFeeBasisPoints: Scalars['Int'];
-  tokenAccountAddress: Scalars['String'];
-  updateAuthorityAddress: Scalars['String'];
-};
-
-export type NftImageArgs = {
-  width?: InputMaybe<Scalars['Int']>;
-};
-
 export type NftActivity = {
   __typename?: 'NftActivity';
   activityType: Scalars['String'];
@@ -339,7 +315,7 @@ export type NftActivity = {
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
   metadata: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   price: Scalars['U64'];
   wallets: Array<Wallet>;
 };
@@ -370,6 +346,39 @@ export type NftCreator = {
   share: Scalars['Int'];
   twitterHandle?: Maybe<Scalars['String']>;
   verified: Scalars['Boolean'];
+};
+
+export type NftExt = {
+  activities: Array<NftActivity>;
+  address: Scalars['String'];
+  animationUrl?: Maybe<Scalars['String']>;
+  attributes: Array<NftAttribute>;
+  category: Scalars['String'];
+  collection?: Maybe<CollectionNft>;
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
+  creators: Array<NftCreator>;
+  description: Scalars['String'];
+  externalUrl?: Maybe<Scalars['String']>;
+  files: Array<NftFile>;
+  image: Scalars['String'];
+  listings: Array<AhListing>;
+  mintAddress: Scalars['String'];
+  model?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  offers: Array<Offer>;
+  owner?: Maybe<NftOwner>;
+  parser?: Maybe<Scalars['String']>;
+  primarySaleHappened: Scalars['Boolean'];
+  purchases: Array<Purchase>;
+  sellerFeeBasisPoints: Scalars['Int'];
+  slot?: Maybe<Scalars['Int']>;
+  tokenAccountAddress: Scalars['String'];
+  updateAuthorityAddress: Scalars['String'];
+  uri: Scalars['String'];
+};
+
+export type NftExtImageArgs = {
+  width?: InputMaybe<Scalars['Int']>;
 };
 
 export type NftFile = {
@@ -405,7 +414,7 @@ export type Offer = {
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
   metadata: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   price: Scalars['U64'];
   purchaseId?: Maybe<Scalars['Uuid']>;
   tokenAccount?: Maybe<Scalars['String']>;
@@ -458,7 +467,7 @@ export type Purchase = {
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
   metadata: Scalars['PublicKey'];
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   price: Scalars['U64'];
   seller: Scalars['PublicKey'];
   tokenSize: Scalars['Int'];
@@ -478,12 +487,11 @@ export type PurchaseEvent = {
 export type QueryRoot = {
   __typename?: 'QueryRoot';
   activities: Array<NftActivity>;
-  auctionHouse?: Maybe<AuctionHouse>;
   charts: PriceChart;
   /** Returns featured collection NFTs ordered by market cap (floor price * number of NFTs in collection) */
-  collectionsFeaturedByMarketCap: Array<Nft>;
+  collectionsFeaturedByMarketCap: Array<CollectionNft>;
   /** Returns featured collection NFTs ordered by volume (sum of purchase prices) */
-  collectionsFeaturedByVolume: Array<Nft>;
+  collectionsFeaturedByVolume: Array<CollectionNft>;
   connections: Array<GraphConnection>;
   creator: Creator;
   denylist: Denylist;
@@ -493,7 +501,6 @@ export type QueryRoot = {
   feedEvents: Array<FeedEvent>;
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
-  genoHabitat?: Maybe<GenoHabitat>;
   /** Returns the latest on chain events using the graph_program. */
   latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
@@ -504,13 +511,13 @@ export type QueryRoot = {
   /** returns metadata_jsons matching the term */
   metadataJsons: Array<MetadataJson>;
   /** Get an NFT by metadata address. */
-  nft?: Maybe<Nft>;
+  nft?: Maybe<NftExt>;
   /** Get an NFT by mint address. */
-  nftByMintAddress?: Maybe<Nft>;
+  nftByMintAddress?: Maybe<NftExt>;
   nftCounts: NftCount;
-  nfts: Array<Nft>;
+  nfts: Array<NftExt>;
   /** Get a list of NFTs by mint address. */
-  nftsByMintAddress: Array<Nft>;
+  nftsByMintAddress: Array<NftExt>;
   /** Stats aggregated across all indexed NFTs */
   nftsStats: NftsStats;
   offer?: Maybe<BidReceipt>;
@@ -531,10 +538,6 @@ export type QueryRoot = {
 export type QueryRootActivitiesArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
-};
-
-export type QueryRootAuctionHouseArgs = {
-  address: Scalars['String'];
 };
 
 export type QueryRootChartsArgs = {
@@ -600,10 +603,6 @@ export type QueryRootFollowWalletsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   wallet?: InputMaybe<Scalars['PublicKey']>;
-};
-
-export type QueryRootGenoHabitatArgs = {
-  address: Scalars['PublicKey'];
 };
 
 export type QueryRootLatestFeedEventsArgs = {
@@ -697,7 +696,7 @@ export type StoreCreator = {
   __typename?: 'StoreCreator';
   creatorAddress: Scalars['String'];
   nftCount?: Maybe<Scalars['Int']>;
-  preview: Array<Nft>;
+  preview: Array<NftExt>;
   profile?: Maybe<TwitterProfile>;
   storeConfigAddress: Scalars['String'];
   twitterHandle?: Maybe<Scalars['String']>;
@@ -789,7 +788,7 @@ export type ActivityPageQuery = {
           bannerUrl: string;
         } | null;
         nfts: Array<{
-          __typename: 'Nft';
+          __typename: 'CollectionNft';
           address: string;
           name: string;
           description: string;
@@ -818,10 +817,10 @@ export type CollectionNfTsQueryVariables = Exact<{
 export type CollectionNfTsQuery = {
   __typename?: 'QueryRoot';
   ownedCollection: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       address: string;
       name: string;
       image: string;
@@ -829,10 +828,10 @@ export type CollectionNfTsQuery = {
     } | null;
   }>;
   createdCollection: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       address: string;
       name: string;
       image: string;
@@ -882,7 +881,7 @@ export type CreatedNfTsQuery = {
     }>;
   } | null;
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -896,7 +895,12 @@ export type CreatedNfTsQuery = {
       share: number;
       verified: boolean;
     }>;
-    collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
+    collection?: {
+      __typename?: 'CollectionNft';
+      address: string;
+      name: string;
+      image: string;
+    } | null;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -1033,7 +1037,7 @@ export type OwnedNfTsQuery = {
     }>;
   } | null;
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -1055,7 +1059,12 @@ export type OwnedNfTsQuery = {
         bannerImageUrl: string;
       } | null;
     }>;
-    collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
+    collection?: {
+      __typename?: 'CollectionNft';
+      address: string;
+      name: string;
+      image: string;
+    } | null;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -1168,7 +1177,7 @@ export type GetCollectionQueryVariables = Exact<{
 export type GetCollectionQuery = {
   __typename?: 'QueryRoot';
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     description: string;
@@ -1189,7 +1198,7 @@ export type GetCollectionQuery = {
     }>;
   } | null;
   nftByMintAddress?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     description: string;
@@ -1221,7 +1230,7 @@ export type NftCollectionQueryVariables = Exact<{
 export type NftCollectionQuery = {
   __typename?: 'QueryRoot';
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     mintAddress: string;
@@ -1240,7 +1249,7 @@ export type NftCollectionQuery = {
     }>;
   } | null;
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -1425,7 +1434,7 @@ export type NftsInCollectionQuery = {
     }>;
   } | null;
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -1458,7 +1467,12 @@ export type NftsInCollectionQuery = {
       address: string;
       associatedTokenAccountAddress: string;
     } | null;
-    collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
+    collection?: {
+      __typename?: 'CollectionNft';
+      address: string;
+      name: string;
+      image: string;
+    } | null;
     purchases: Array<{
       __typename?: 'Purchase';
       id: any;
@@ -1554,7 +1568,7 @@ export type DiscoverCollectionsByMarketCapQueryVariables = Exact<{
 export type DiscoverCollectionsByMarketCapQuery = {
   __typename?: 'QueryRoot';
   collectionsFeaturedByMarketCap: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     mintAddress: string;
     name: string;
     image: string;
@@ -1572,7 +1586,7 @@ export type DiscoverCollectionsByVolumeQueryVariables = Exact<{
 export type DiscoverCollectionsByVolumeQuery = {
   __typename?: 'QueryRoot';
   collectionsFeaturedByVolume: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     mintAddress: string;
     name: string;
     image: string;
@@ -1588,7 +1602,7 @@ export type DiscoverNftsActiveOffersQueryVariables = Exact<{
 export type DiscoverNftsActiveOffersQuery = {
   __typename?: 'QueryRoot';
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -1722,7 +1736,7 @@ export type DiscoverNftsAllQueryVariables = Exact<{
 export type DiscoverNftsAllQuery = {
   __typename?: 'QueryRoot';
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -1856,7 +1870,7 @@ export type DiscoverNftsBuyNowQueryVariables = Exact<{
 export type DiscoverNftsBuyNowQuery = {
   __typename?: 'QueryRoot';
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -2081,7 +2095,7 @@ export type FeedQuery = {
           seller: any;
           price: any;
           nft?: {
-            __typename?: 'Nft';
+            __typename?: 'CollectionNft';
             name: string;
             image: string;
             description: string;
@@ -2099,7 +2113,7 @@ export type FeedQuery = {
               seller: any;
               price: any;
               nft?: {
-                __typename?: 'Nft';
+                __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
@@ -2149,7 +2163,7 @@ export type FeedQuery = {
           bannerImageUrl: string;
         } | null;
         nft?: {
-          __typename?: 'Nft';
+          __typename?: 'CollectionNft';
           name: string;
           image: string;
           description: string;
@@ -2202,7 +2216,7 @@ export type FeedQuery = {
           buyer: any;
           price: any;
           nft?: {
-            __typename?: 'Nft';
+            __typename?: 'CollectionNft';
             name: string;
             image: string;
             description: string;
@@ -2220,7 +2234,7 @@ export type FeedQuery = {
               buyer: any;
               price: any;
               nft?: {
-                __typename?: 'Nft';
+                __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
@@ -2276,7 +2290,7 @@ export type FeedQuery = {
           seller: any;
           price: any;
           nft?: {
-            __typename?: 'Nft';
+            __typename?: 'CollectionNft';
             name: string;
             image: string;
             description: string;
@@ -2337,7 +2351,7 @@ export type WhoToFollowQuery = {
 };
 
 export type CollectionPreviewFragment = {
-  __typename?: 'Nft';
+  __typename?: 'CollectionNft';
   mintAddress: string;
   name: string;
   image: string;
@@ -2411,7 +2425,7 @@ export type ListingEventPreviewFragment = {
     seller: any;
     price: any;
     nft?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       name: string;
       image: string;
       description: string;
@@ -2429,7 +2443,7 @@ export type ListingEventPreviewFragment = {
         seller: any;
         price: any;
         nft?: {
-          __typename?: 'Nft';
+          __typename?: 'CollectionNft';
           name: string;
           image: string;
           description: string;
@@ -2501,7 +2515,7 @@ export type MintEventPreviewFragment = {
     bannerImageUrl: string;
   } | null;
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     name: string;
     image: string;
     description: string;
@@ -2536,7 +2550,7 @@ export type MintEventPreviewFragment = {
 };
 
 export type NftCardFragment = {
-  __typename?: 'Nft';
+  __typename?: 'CollectionNft';
   address: string;
   name: string;
   sellerFeeBasisPoints: number;
@@ -2655,7 +2669,7 @@ export type OfferEventPreviewFragment = {
     buyer: any;
     price: any;
     nft?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       name: string;
       image: string;
       description: string;
@@ -2673,7 +2687,7 @@ export type OfferEventPreviewFragment = {
         buyer: any;
         price: any;
         nft?: {
-          __typename?: 'Nft';
+          __typename?: 'CollectionNft';
           name: string;
           image: string;
           description: string;
@@ -2739,7 +2753,7 @@ export type PurchaseEventPreviewFragment = {
     seller: any;
     price: any;
     nft?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       name: string;
       image: string;
       description: string;
@@ -2792,7 +2806,7 @@ export type BuyNowListingFragment = {
   __typename?: 'AhListing';
   id: any;
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -2997,7 +3011,7 @@ export type HomeQuery = {
           seller: any;
           price: any;
           nft?: {
-            __typename?: 'Nft';
+            __typename?: 'CollectionNft';
             name: string;
             image: string;
             description: string;
@@ -3015,7 +3029,7 @@ export type HomeQuery = {
               seller: any;
               price: any;
               nft?: {
-                __typename?: 'Nft';
+                __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
@@ -3065,7 +3079,7 @@ export type HomeQuery = {
           bannerImageUrl: string;
         } | null;
         nft?: {
-          __typename?: 'Nft';
+          __typename?: 'CollectionNft';
           name: string;
           image: string;
           description: string;
@@ -3118,7 +3132,7 @@ export type HomeQuery = {
           buyer: any;
           price: any;
           nft?: {
-            __typename?: 'Nft';
+            __typename?: 'CollectionNft';
             name: string;
             image: string;
             description: string;
@@ -3136,7 +3150,7 @@ export type HomeQuery = {
               buyer: any;
               price: any;
               nft?: {
-                __typename?: 'Nft';
+                __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
@@ -3192,7 +3206,7 @@ export type HomeQuery = {
           seller: any;
           price: any;
           nft?: {
-            __typename?: 'Nft';
+            __typename?: 'CollectionNft';
             name: string;
             image: string;
             description: string;
@@ -3228,13 +3242,13 @@ export type HomeQuery = {
       }
   >;
   collectionsFeaturedByVolume: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     mintAddress: string;
     name: string;
     image: string;
   }>;
   collectionsFeaturedByMarketCap: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     mintAddress: string;
     name: string;
     image: string;
@@ -3256,7 +3270,7 @@ export type HomeQuery = {
     __typename?: 'AhListing';
     id: any;
     nft?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       address: string;
       name: string;
       sellerFeeBasisPoints: number;
@@ -3448,7 +3462,7 @@ export type NftMarketplaceQuery = {
     }>;
   } | null;
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -3466,7 +3480,7 @@ export type NftMarketplaceQuery = {
     }>;
     creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       address: string;
       name: string;
       image: string;
@@ -3560,7 +3574,7 @@ export type NftMarketplaceQuery = {
     }>;
   } | null;
   nftByMintAddress?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -3578,7 +3592,7 @@ export type NftMarketplaceQuery = {
     }>;
     creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'CollectionNft';
       address: string;
       name: string;
       image: string;
@@ -3720,7 +3734,7 @@ export type OffersPageQuery = {
     }>;
   } | null;
   sentOffers: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -3817,7 +3831,7 @@ export type OffersPageQuery = {
     }>;
   }>;
   receivedOffers: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -3922,7 +3936,7 @@ export type NftActivityQueryVariables = Exact<{
 export type NftActivityQuery = {
   __typename?: 'QueryRoot';
   nftByMintAddress?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     activities: Array<{
       __typename?: 'NftActivity';
       id: any;
@@ -3956,7 +3970,7 @@ export type NftCardQueryVariables = Exact<{
 export type NftCardQuery = {
   __typename?: 'QueryRoot';
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -4088,7 +4102,7 @@ export type NftPageQueryVariables = Exact<{
 export type NftPageQuery = {
   __typename?: 'QueryRoot';
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -4216,7 +4230,7 @@ export type ShareNftQuery = {
     }>;
   } | null;
   nft?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -4235,7 +4249,7 @@ export type ShareNftQuery = {
     offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
   } | null;
   nftByMintAddress?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     sellerFeeBasisPoints: number;
@@ -4325,7 +4339,7 @@ export type GetCollectedByQueryVariables = Exact<{
 export type GetCollectedByQuery = {
   __typename?: 'QueryRoot';
   nfts: Array<{
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     owner?: {
       __typename?: 'NftOwner';
@@ -4610,7 +4624,7 @@ export type SearchQuery = {
     } | null;
   };
   nftByMintAddress?: {
-    __typename?: 'Nft';
+    __typename?: 'CollectionNft';
     address: string;
     name: string;
     image: string;
@@ -4639,10 +4653,10 @@ export type SearchQuery = {
 };
 
 export const CollectionPreviewFragmentDoc = gql`
-  fragment CollectionPreview on Nft {
+  fragment CollectionPreview on NftExt {
     mintAddress
     name
-    image
+    image(width: 400)
   }
 `;
 export const ProfileInfoFragmentDoc = gql`
@@ -4807,13 +4821,13 @@ export const MintEventPreviewFragmentDoc = gql`
   ${ProfileInfoFragmentDoc}
 `;
 export const NftCardFragmentDoc = gql`
-  fragment NftCard on Nft {
+  fragment NftCard on NftExt {
     address
     name
     sellerFeeBasisPoints
     mintAddress
     description
-    image
+    image(width: 400)
     primarySaleHappened
     creators {
       address
@@ -5030,7 +5044,7 @@ export const BuyNowListingFragmentDoc = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -5180,7 +5194,7 @@ export const ActivityPageDocument = gql`
             address
             name
             description
-            image
+            image(width: 400)
           }
           bids {
             bidderAddress
@@ -5201,7 +5215,7 @@ export const CollectionNfTsDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
         description
       }
     }
@@ -5210,7 +5224,7 @@ export const CollectionNfTsDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
         description
       }
     }
@@ -5252,7 +5266,7 @@ export const CreatedNfTsDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -5262,7 +5276,7 @@ export const CreatedNfTsDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
       }
       owner {
         address
@@ -5387,7 +5401,7 @@ export const OwnedNfTsDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -5400,7 +5414,7 @@ export const OwnedNfTsDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
       }
       owner {
         address
@@ -5555,7 +5569,7 @@ export const NftCollectionDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       attributes {
         metadataAddress
@@ -5728,7 +5742,7 @@ export const NftsInCollectionDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       attributes {
         metadataAddress
@@ -5750,7 +5764,7 @@ export const NftsInCollectionDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
       }
       purchases {
         id
@@ -6109,7 +6123,7 @@ export const NftMarketplaceDocument = gql`
       mintAddress
       description
       category
-      image
+      image(width: 400)
       primarySaleHappened
       files {
         uri
@@ -6127,7 +6141,7 @@ export const NftMarketplaceDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
         mintAddress
       }
       owner {
@@ -6217,7 +6231,7 @@ export const NftMarketplaceDocument = gql`
       mintAddress
       description
       category
-      image
+      image(width: 400)
       primarySaleHappened
       files {
         uri
@@ -6235,7 +6249,7 @@ export const NftMarketplaceDocument = gql`
       collection {
         address
         name
-        image
+        image(width: 400)
         mintAddress
       }
       owner {
@@ -6361,7 +6375,7 @@ export const OffersPageDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -6453,7 +6467,7 @@ export const OffersPageDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -6586,7 +6600,7 @@ export const NftPageDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       attributes {
         metadataAddress
@@ -6703,7 +6717,7 @@ export const ShareNftDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -6734,7 +6748,7 @@ export const ShareNftDocument = gql`
       sellerFeeBasisPoints
       mintAddress
       description
-      image
+      image(width: 400)
       primarySaleHappened
       creators {
         address
@@ -6940,7 +6954,7 @@ export const SearchDocument = gql`
     nftByMintAddress(address: $nftMintAddress) {
       address
       name
-      image
+      image(width: 400)
       creators {
         twitterHandle
         address

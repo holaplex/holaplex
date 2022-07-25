@@ -1,5 +1,5 @@
-fragment CollectionPreview on Nft {
+fragment CollectionPreview on NftExt {
   mintAddress
   name
-  image
+  image(width: 400)
 }

@@ -4,7 +4,7 @@ query collectionNFTs($creator: PublicKey!, $owner: PublicKey!, $limit: Int!, $of
     collection {
       address
       name
-      image
+      image(width: 400)
       description
     }
   }
@@ -13,7 +13,7 @@ query collectionNFTs($creator: PublicKey!, $owner: PublicKey!, $limit: Int!, $of
     collection {
       address
       name
-      image
+      image(width: 400)
       description
     }
   }

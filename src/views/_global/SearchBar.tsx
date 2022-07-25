@@ -6,7 +6,7 @@ import {
   MetadataJson,
   Wallet,
   SearchQuery,
-  Nft,
+  NftExt,
 } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -267,7 +267,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   results={data?.metadataJsons as MetadataJson[]}
                   profileResults={data?.profiles as Wallet[]}
                   walletResult={data.wallet as Wallet}
-                  mintAddressResult={data.nftByMintAddress as Nft}
+                  mintAddressResult={data.nftByMintAddress as NftExt}
                   collectionResults={collectionData as MetadataJson[]}
                 />
               )}

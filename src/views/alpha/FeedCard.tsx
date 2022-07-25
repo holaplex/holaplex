@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
   ListingEvent,
-  Nft,
+  NftExt,
   useNftMarketplaceLazyQuery,
   useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
@@ -415,7 +415,7 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
       </Link>
       {ReactDom.createPortal(
         <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
-          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+          {props.nft! && <NFTPreview loading={false} nft={props.nft as NftExt | any} />}
 
           {marketplaceQuery.data && (
             <div className={`mt-8 flex w-full`}>
@@ -474,7 +474,7 @@ const OfferAction = (props: { nft: any }) => {
       </Button5>
       {ReactDom.createPortal(
         <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
-          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+          {props.nft! && <NFTPreview loading={false} nft={props.nft as NftExt | any} />}
           {marketplaceQuery.loading && (
             <div className="flex justify-center">
               <TailSpin color={`grey`} />
@@ -658,13 +658,13 @@ export const NFTCarousel = ({
   interval = 5000,
   attrs,
 }: {
-  nfts: Nft[];
+  nfts: NftExt[];
   feedEvent: FeedItem;
   interval?: number;
   attrs?: FeedCardAttributes[];
 }) => {
   const STARTING_INDEX = 0;
-  const [currAttr, setCurrAttr] = useState<Nft>(nfts[STARTING_INDEX]);
+  const [currAttr, setCurrAttr] = useState<NftExt>(nfts[STARTING_INDEX]);
   const [isHovered, setIsHovered] = useState(false);
 
   const getNextEvent = (list: any[], currIndex: number) => {
@@ -694,7 +694,7 @@ export const NFTCarousel = ({
     return () => clearInterval(intervalId);
   }, [currAttr, interval, nfts, isHovered]);
 
-  const setNextEvent = (nft: Nft) => {
+  const setNextEvent = (nft: NftExt) => {
     setCurrAttr(nft);
   };
 
@@ -806,7 +806,7 @@ const SaleAggregateCard = (props: { event: AggregateSaleEvent; myFollowingList?:
       id={props.event.feedEventId}
       className={`group relative transition-all hover:scale-[1.02]`}
     >
-      <NFTCarousel nfts={nfts as Partial<Nft> as any} feedEvent={props.event} attrs={attrs} />
+      <NFTCarousel nfts={nfts as Partial<NftExt> as any} feedEvent={props.event} attrs={attrs} />
     </div>
   );
 };

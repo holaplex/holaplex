@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react';
-import { Nft } from '@/graphql/indexerTypes';
+import { NftExt } from '@/graphql/indexerTypes';
 import { imgOpt } from '@/lib/utils';
 import NFTImage from './NFTImage';
 
 interface NFTFileProps {
-  nft: Nft;
+  nft: NftExt;
   loading: Boolean;
 }
 

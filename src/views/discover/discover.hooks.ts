@@ -112,7 +112,6 @@ interface DiscoverCollectionsQueryParams {
   offset: number;
 }
 
-//TODO update DiscoverNFTCardData for collections to its own type once you've figured out what that is
 export interface DiscoverCollectionsQueryContext
   extends InfiniteScrollQueryContext<
     CollectionPreviewCardData,
