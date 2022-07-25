@@ -36,7 +36,7 @@
     "@holaplex/js": "^4.3.2",
     "@holaplex/marketplace-js-sdk": "^0.2.1",
     "@holaplex/mpl-auction-house": "^0.0.3",
-    "@holaplex/ui": "^0.0.38",
+    "@holaplex/ui": "0.0.48",
     "@hookform/resolvers": "^2.8.8",
     "@metaplex-foundation/mpl-auction-house": "^1.1.1",
     "@metaplex-foundation/mpl-token-metadata": "^1.2.5",
