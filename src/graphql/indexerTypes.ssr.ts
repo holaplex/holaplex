@@ -162,6 +162,52 @@ export type FollowEvent = {
   walletAddress: Scalars['PublicKey'];
 };
 
+export type GenoHabitat = {
+  __typename?: 'GenoHabitat';
+  active: Scalars['Boolean'];
+  address: Scalars['PublicKey'];
+  crystalsRefined: Scalars['Int'];
+  durability: Scalars['Int'];
+  element: Scalars['Int'];
+  expiryTimestamp: Scalars['DateTimeUtc'];
+  genesis: Scalars['Boolean'];
+  guild?: Maybe<Scalars['Int']>;
+  habitatMint: Scalars['PublicKey'];
+  habitatsTerraformed: Scalars['Int'];
+  harvester: Scalars['String'];
+  harvesterOpenMarket: Scalars['Boolean'];
+  harvesterRoyaltyBips: Scalars['Int'];
+  harvesterSettingsCooldownTimestamp: Scalars['DateTimeUtc'];
+  isSubHabitat: Scalars['Boolean'];
+  kiHarvested: Scalars['I64'];
+  level: Scalars['Int'];
+  nextDayTimestamp: Scalars['DateTimeUtc'];
+  parentHabitat?: Maybe<Scalars['PublicKey']>;
+  renewalTimestamp: Scalars['DateTimeUtc'];
+  rentalAgreement?: Maybe<GenoRentalAgreement>;
+  seedsSpawned: Scalars['Boolean'];
+  sequence: Scalars['I64'];
+  subHabitatCooldownTimestamp: Scalars['DateTimeUtc'];
+  subHabitats: Array<Scalars['PublicKey']>;
+  terraformingHabitat?: Maybe<Scalars['PublicKey']>;
+  totalCrystalsRefined: Scalars['I64'];
+  totalKiHarvested: Scalars['I64'];
+};
+
+export type GenoRentalAgreement = {
+  __typename?: 'GenoRentalAgreement';
+  alchemist?: Maybe<Scalars['PublicKey']>;
+  gracePeriod: Scalars['I64'];
+  habitatAddress: Scalars['PublicKey'];
+  lastRentPayment: Scalars['DateTimeUtc'];
+  nextPaymentDue: Scalars['DateTimeUtc'];
+  openMarket: Scalars['Boolean'];
+  rent: Scalars['I64'];
+  rentToken: Scalars['PublicKey'];
+  rentTokenDecimals: Scalars['Int'];
+  rentalPeriod: Scalars['I64'];
+};
+
 export type GraphConnection = {
   __typename?: 'GraphConnection';
   address: Scalars['String'];
@@ -432,6 +478,7 @@ export type PurchaseEvent = {
 export type QueryRoot = {
   __typename?: 'QueryRoot';
   activities: Array<NftActivity>;
+  auctionHouse?: Maybe<AuctionHouse>;
   charts: PriceChart;
   /** Returns featured collection NFTs ordered by market cap (floor price * number of NFTs in collection) */
   collectionsFeaturedByMarketCap: Array<Nft>;
@@ -446,6 +493,7 @@ export type QueryRoot = {
   feedEvents: Array<FeedEvent>;
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
+  genoHabitat?: Maybe<GenoHabitat>;
   /** Returns the latest on chain events using the graph_program. */
   latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
@@ -483,6 +531,10 @@ export type QueryRoot = {
 export type QueryRootActivitiesArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type QueryRootAuctionHouseArgs = {
+  address: Scalars['String'];
 };
 
 export type QueryRootChartsArgs = {
@@ -548,6 +600,10 @@ export type QueryRootFollowWalletsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   wallet?: InputMaybe<Scalars['PublicKey']>;
+};
+
+export type QueryRootGenoHabitatArgs = {
+  address: Scalars['PublicKey'];
 };
 
 export type QueryRootLatestFeedEventsArgs = {
