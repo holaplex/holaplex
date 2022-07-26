@@ -18,6 +18,7 @@ import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
   OPENSEA_MARKETPLACE_ADDRESS,
+  AUCTION_HOUSE_ADDRESSES,
 } from 'src/views/_global/holaplexConstants';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
@@ -40,6 +41,7 @@ import { SolscanIcon } from '../../src/assets/icons/Solscan';
 import { ExplorerIcon } from '../../src/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
 import { ButtonSkeleton } from '../../src/components/Skeletons';
+import { ExclamationCircleIcon } from '@heroicons/react/outline';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -149,9 +151,16 @@ export default function NftByAddress({
   const defaultListing = nft?.listings.find(
     (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
+
+  const otherListings = nft?.listings.filter(
+    (listing) => listing.auctionHouse?.address.toString() !== HOLAPLEX_MARKETPLACE_ADDRESS
+  );
+
+  console.log(otherListings);
+
   const magicEdenListing = nft?.listings.find((listing) => listing.auctionHouse === null);
   const openSeaListing = nft?.listings.find(
-    (listing) => listing?.auctionHouse?.address.toString() === OPENSEA_MARKETPLACE_ADDRESS
+    (listing) => listing?.auctionHouse?.address.toString() === AUCTION_HOUSE_ADDRESSES[1].address
   );
 
   const hasDefaultListing = Boolean(defaultListing);
@@ -365,8 +374,7 @@ export default function NftByAddress({
                           {loading ? (
                             <ButtonSkeleton />
                           ) : (
-                            !Boolean(magicEdenListing) &&
-                            !Boolean(openSeaListing) && (
+                            !Boolean(otherListings) && (
                               <Link href={`/nfts/${nft?.address}/offers/new`}>
                                 <a>
                                   <Button>Make offer</Button>
@@ -401,90 +409,79 @@ export default function NftByAddress({
                         </div>
                       </div>
                     )}
-                    {Boolean(openSeaListing) && (
-                      <div className={`mt-6 border-t border-gray-700 pt-6`}>
-                        <p
-                          className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
-                        >
-                          Listed on{' '}
-                          <span className={`flex items-center gap-1 font-bold text-white`}>
-                            <img
-                              src={`/images/listings/opensea.svg`}
-                              alt={`open-sea`}
-                              className={`h-4 w-4 rounded-sm`}
-                            />
-                            OpenSea
-                          </span>
-                        </p>
-                        <div
-                          className={
-                            'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
-                          }
-                        >
-                          <div>
-                            <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
-                            <DisplaySOL amount={openSeaListing?.price} />
+                    {Boolean(otherListings) &&
+                      otherListings?.map((otherListing, i) => {
+                        const auctionHouseInfo = AUCTION_HOUSE_ADDRESSES.find(
+                          (ah) => ah.address === otherListing.auctionHouse?.address.toString()
+                        ) || {
+                          name: 'Unknown Marketplace',
+                          address: null,
+                          logo: '/images/listings/magiceden.png',
+                          link: 'https://magiceden.io/item-details/',
+                        };
+                        return (
+                          <div
+                            key={`listing-${otherListing.auctionHouse?.address}-${i}`}
+                            className={`mt-6 border-t border-gray-700 pt-6`}
+                          >
+                            {auctionHouseInfo.name === 'Unknown Marketplace' ? (
+                              <div>
+                                <p
+                                  className={`flex items-center justify-center gap-2 text-center text-base font-medium text-gray-300`}
+                                >
+                                  <span>
+                                    <ExclamationCircleIcon className={`h-6 w-6`} />
+                                  </span>
+                                  This NFT is listed on an unknown AuctionHouse
+                                </p>
+                              </div>
+                            ) : (
+                              <>
+                                <p
+                                  className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
+                                >
+                                  Listed on{' '}
+                                  <span className={`flex items-center gap-1 font-bold text-white`}>
+                                    <img
+                                      src={auctionHouseInfo?.logo}
+                                      alt={auctionHouseInfo.name}
+                                      className={`h-4 w-4 rounded-sm`}
+                                    />
+                                    {auctionHouseInfo?.name}
+                                  </span>
+                                </p>
+                                <div
+                                  className={
+                                    'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
+                                  }
+                                >
+                                  <div>
+                                    <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                                    <DisplaySOL amount={otherListing?.price} />
+                                  </div>
+                                  <div className={`flex w-full items-center gap-2 sm:w-auto`}>
+                                    <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                      <a className={`w-full`}>
+                                        <Button className={`w-full`} secondary>
+                                          Make offer
+                                        </Button>
+                                      </a>
+                                    </Link>
+                                    <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
+                                      <a target={`_blank`}>
+                                        <Button>View listing</Button>
+                                      </a>
+                                    </Link>
+                                  </div>
+                                </div>
+                              </>
+                            )}
                           </div>
-                          <div className={`flex w-full items-center gap-2 sm:w-auto`}>
-                            <Link href={`/nfts/${nft?.address}/offers/new`}>
-                              <a className={`w-full`}>
-                                <Button className={`w-full`} secondary>
-                                  Make offer
-                                </Button>
-                              </a>
-                            </Link>
-                            <Link href={`https://opensea.io/assets/solana/${nft?.mintAddress}`}>
-                              <a target={`_blank`}>
-                                <Button>View listing</Button>
-                              </a>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {Boolean(magicEdenListing) && (
-                      <div className={`mt-6 border-t border-gray-700 pt-6`}>
-                        <p
-                          className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
-                        >
-                          Listed on{' '}
-                          <span className={`flex items-center gap-1 font-bold text-white`}>
-                            <img
-                              src={`/images/listings/magiceden.png`}
-                              alt={`magic-eden`}
-                              className={`h-4 w-4 rounded-sm`}
-                            />
-                            Magic Eden
-                          </span>
-                        </p>
-                        <div
-                          className={
-                            'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
-                          }
-                        >
-                          <div>
-                            <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
-                            <DisplaySOL amount={magicEdenListing?.price} />
-                          </div>
-                          <div className={`flex w-full items-center gap-2 sm:w-auto`}>
-                            <Link href={`/nfts/${nft?.address}/offers/new`}>
-                              <a className={`w-full`}>
-                                <Button className={`w-full`} secondary>
-                                  Make offer
-                                </Button>
-                              </a>
-                            </Link>
-                            <Link href={`https://magiceden.io/item-details/${nft?.mintAddress}`}>
-                              <a target={`_blank`}>
-                                <Button>View listing</Button>
-                              </a>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                        );
+                      })}
                   </div>
                 )}
+
                 {hasDefaultListing && (
                   <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
                     {isOwner && hasOffers && (
@@ -703,87 +700,61 @@ export default function NftByAddress({
                         </div>
                       </div>
                     )}
-                    {Boolean(magicEdenListing) && (
-                      <div className={`mt-6 border-t border-gray-700 pt-6`}>
-                        <p
-                          className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
-                        >
-                          Listed on{' '}
-                          <span>
-                            <img
-                              src={`/images/listings/magiceden.png`}
-                              alt={`magic-eden`}
-                              className={`h-4 w-4 rounded-sm`}
-                            />
-                          </span>
-                        </p>
-                        <div
-                          className={
-                            'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
-                          }
-                        >
-                          <div>
-                            <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
-                            <DisplaySOL amount={magicEdenListing?.price} />
+                    {Boolean(otherListings) &&
+                      otherListings?.map((otherListing, i) => {
+                        const auctionHouseInfo = AUCTION_HOUSE_ADDRESSES.find(
+                          (ah) => ah.address === otherListing.auctionHouse?.address.toString()
+                        ) || {
+                          name: 'Unknown Marketplace',
+                          address: null,
+                          logo: '/images/listings/magiceden.png',
+                          link: 'https://magiceden.io/item-details/',
+                        };
+                        return (
+                          <div
+                            key={`listing-${otherListing.auctionHouse?.address}-${i}`}
+                            className={`mt-6 border-t border-gray-700 pt-6`}
+                          >
+                            <p
+                              className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
+                            >
+                              Listed on{' '}
+                              <span className={`flex items-center gap-1 font-bold text-white`}>
+                                <img
+                                  src={auctionHouseInfo?.logo}
+                                  alt={auctionHouseInfo.name}
+                                  className={`h-4 w-4 rounded-sm`}
+                                />
+                                {auctionHouseInfo?.name}
+                              </span>
+                            </p>
+                            <div
+                              className={
+                                'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
+                              }
+                            >
+                              <div>
+                                <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                                <DisplaySOL amount={otherListing?.price} />
+                              </div>
+                              <div className={`flex w-full items-center gap-2 sm:w-auto`}>
+                                <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                  <a className={`w-full`}>
+                                    <Button className={`w-full`} secondary>
+                                      Make offer
+                                    </Button>
+                                  </a>
+                                </Link>
+                                <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
+                                  <a target={`_blank`}>
+                                    <Button>View listing</Button>
+                                  </a>
+                                </Link>
+                              </div>
+                            </div>
                           </div>
-                          <div className={`flex w-full items-center gap-2 sm:w-auto`}>
-                            <Link href={`/nfts/${nft?.address}/offers/new`}>
-                              <a className={`w-full`}>
-                                <Button className={`w-full`} secondary>
-                                  Make offer
-                                </Button>
-                              </a>
-                            </Link>
-                            <Link href={`https://magiceden.io/item-details/${nft?.mintAddress}`}>
-                              <a target={`_blank`}>
-                                <Button>View listing</Button>
-                              </a>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {Boolean(openSeaListing) && (
-                      <div className={`mt-6 border-t border-gray-700 pt-6`}>
-                        <p
-                          className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
-                        >
-                          Listed on{' '}
-                          <span className={`flex items-center gap-1 font-bold text-white`}>
-                            <img
-                              src={`/images/listings/opensea.svg`}
-                              alt={`open-sea`}
-                              className={`h-4 w-4 rounded-sm`}
-                            />
-                            OpenSea
-                          </span>
-                        </p>
-                        <div
-                          className={
-                            'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
-                          }
-                        >
-                          <div>
-                            <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
-                            <DisplaySOL amount={openSeaListing?.price} />
-                          </div>
-                          <div className={`flex w-full items-center gap-2 sm:w-auto`}>
-                            <Link href={`/nfts/${nft?.address}/offers/new`}>
-                              <a className={`w-full`}>
-                                <Button className={`w-full`} secondary>
-                                  Make offer
-                                </Button>
-                              </a>
-                            </Link>
-                            <Link href={`https://opensea.io/assets/solana/${nft?.mintAddress}`}>
-                              <a target={`_blank`}>
-                                <Button>View listing</Button>
-                              </a>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                        );
+                      })}
                   </div>
                 )}
 
