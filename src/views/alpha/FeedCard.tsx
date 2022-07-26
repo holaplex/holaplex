@@ -348,14 +348,13 @@ function FeedActionBanner(props: {
           />
         )}
 
-        <div className="ml-2 flex max-w-xs flex-col gap-2">
-          <div className={`inline-flex text-base font-semibold`}>
+        <div className="ml-2 max-w-xs ">
+          <div className={`inline-flex text-sm font-semibold`}>
             <ProfileHandle user={attrs.sourceUser} popoverPlacement="top" />
             &nbsp;
-            <div className="text-base font-normal">{attrs.content}</div>
-            &nbsp;
+            <div className="text-sm font-normal">{attrs.content}</div>
             {attrs.type === `MintEvent` && (
-              <div className={`truncate text-clip text-base`}>
+              <div className={`truncate text-clip text-sm`}>
                 {attrs?.nft?.name.slice(0, 8)}
                 {(attrs.nft?.name?.length || 0) > 8 && `...`}
               </div>

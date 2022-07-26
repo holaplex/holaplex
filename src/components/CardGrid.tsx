@@ -68,14 +68,17 @@ enum GridView {
    * 2x2 (4 cards visible at a time)
    */
   TWO_BY_TWO = '2x2',
-
   /**
-   * 3x3 (9 cards visible at a time)
+   * 4x4 (16 cards visible at a time)
    */
-  THREE_BY_THREE = '3x3',
+  FOUR_BY_FOUR = '4x4',
+  /**
+   * 6x6 (36 cards visible at a time)
+   */
+  SIX_BY_SIX = '6x6',
 }
 
-const DEFAULT_GRID_VIEW: GridView = GridView.THREE_BY_THREE;
+const DEFAULT_GRID_VIEW: GridView = GridView.SIX_BY_SIX;
 
 interface GridSelectorProps {
   onChange: (view: GridView) => void;
@@ -127,14 +130,14 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
         className={classNames(
           'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
           {
-            'bg-gray-800': selected === GridView.THREE_BY_THREE,
+            'bg-gray-800': selected === GridView.SIX_BY_SIX,
           }
         )}
-        onClick={() => onSelect(GridView.THREE_BY_THREE)}
+        onClick={() => onSelect(GridView.SIX_BY_SIX)}
       >
         <TripleGrid
-          className={selected !== GridView.THREE_BY_THREE ? 'transition hover:scale-110' : ''}
-          color={selected === GridView.THREE_BY_THREE ? 'white' : '#707070'}
+          className={selected !== GridView.SIX_BY_SIX ? 'transition hover:scale-110' : ''}
+          color={selected === GridView.SIX_BY_SIX ? 'white' : '#707070'}
         />
       </button>
     </div>
@@ -208,6 +211,7 @@ export interface CardGridProps<T> {
    * Attributes for creating/displaying cards.
    */
   cardContext: {
+    cardType?: 'PROFILES' | 'NFTS' | 'COLLECTIONS';
     /**
      * Element to use when there are no data. Defaults to an empty `<div/>`.
      */
@@ -282,9 +286,16 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
       gridCols = 2;
       break;
     }
-    case GridView.THREE_BY_THREE: {
-      gridViewClasses = 'md:grid-cols-3';
-      gridCols = 3;
+
+    case GridView.FOUR_BY_FOUR: {
+      gridViewClasses = 'md:grid-cols-4';
+      gridCols = 4;
+      break;
+    }
+    case GridView.SIX_BY_SIX: {
+      gridViewClasses =
+        props.cardContext.cardType === 'PROFILES' ? 'md:grid-cols-4' : 'md:grid-cols-6';
+      gridCols = 6;
       break;
     }
   }

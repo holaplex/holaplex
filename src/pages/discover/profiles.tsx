@@ -62,6 +62,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
   return (
     <CardGridWithHeader<ProfilePreviewProps>
       cardContext={{
+        cardType: 'PROFILES', // Make ENUM
         noDataFallback: <div className="flex justify-center p-4">No matching profiles</div>,
         cardCreator: (data) => <ProfilePreviewCard {...data} />,
         loadingCardCreator: () => <ProfilePreviewLoadingCard />,
