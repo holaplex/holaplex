@@ -642,6 +642,7 @@ export type QueryRootNftCountsArgs = {
 };
 
 export type QueryRootNftsArgs = {
+  allowUnverified?: InputMaybe<Scalars['Boolean']>;
   attributes?: InputMaybe<Array<AttributeFilter>>;
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   collection?: InputMaybe<Scalars['PublicKey']>;
@@ -730,6 +731,7 @@ export type TwitterProfile = {
 
 export type Wallet = {
   __typename?: 'Wallet';
+  activities: Array<WalletActivity>;
   address: Scalars['PublicKey'];
   bids: Array<Bid>;
   connectionCounts: ConnectionCounts;
@@ -740,6 +742,18 @@ export type Wallet = {
 
 export type WalletNftCountsArgs = {
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type WalletActivity = {
+  __typename?: 'WalletActivity';
+  activityType: Scalars['String'];
+  auctionHouse?: Maybe<AuctionHouse>;
+  createdAt: Scalars['DateTimeUtc'];
+  id: Scalars['Uuid'];
+  metadata: Scalars['PublicKey'];
+  nft?: Maybe<Nft>;
+  price: Scalars['U64'];
+  wallets: Array<Wallet>;
 };
 
 export type WalletNftCount = {
@@ -767,43 +781,26 @@ export type ActivityPageQuery = {
   wallet: {
     __typename: 'Wallet';
     address: any;
-    bids: Array<{
-      __typename: 'Bid';
-      listingAddress: string;
-      bidderAddress: string;
-      lastBidTime: string;
-      lastBidAmount: any;
-      cancelled: boolean;
-      listing?: {
-        __typename?: 'Listing';
+    activities: Array<{
+      __typename?: 'WalletActivity';
+      id: any;
+      price: any;
+      createdAt: any;
+      activityType: string;
+      wallets: Array<{ __typename?: 'Wallet'; address: any; twitterHandle?: string | null }>;
+      nft?: {
+        __typename: 'Nft';
         address: string;
-        ended: boolean;
-        storefront?: {
-          __typename: 'Storefront';
-          ownerAddress: string;
-          subdomain: string;
-          title: string;
-          description: string;
-          faviconUrl: string;
-          logoUrl: string;
-          bannerUrl: string;
-        } | null;
-        nfts: Array<{
-          __typename: 'Nft';
+        name: string;
+        description: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
           address: string;
-          name: string;
-          description: string;
-          image: string;
-        }>;
-        bids: Array<{
-          __typename?: 'Bid';
-          bidderAddress: string;
-          lastBidTime: string;
-          lastBidAmount: any;
-          cancelled: boolean;
-          listingAddress: string;
+          twitterHandle?: string | null;
         }>;
       } | null;
+      auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
     }>;
   };
 };
@@ -5155,40 +5152,29 @@ export const ActivityPageDocument = gql`
     wallet(address: $address) {
       __typename
       address
-      bids {
-        __typename
-        listingAddress
-        bidderAddress
-        lastBidTime
-        lastBidAmount
-        cancelled
-        listing {
+      activities {
+        id
+        price
+        createdAt
+        wallets {
           address
-          ended
-          storefront {
-            __typename
-            ownerAddress
-            subdomain
-            title
-            description
-            faviconUrl
-            logoUrl
-            bannerUrl
-          }
-          nfts {
-            __typename
+          twitterHandle
+        }
+        activityType
+        nft {
+          __typename
+          address
+          name
+          description
+          image
+          creators {
             address
-            name
-            description
-            image
+            twitterHandle
           }
-          bids {
-            bidderAddress
-            lastBidTime
-            lastBidAmount
-            cancelled
-            listingAddress
-          }
+        }
+        auctionHouse {
+          address
+          treasuryMint
         }
       }
     }

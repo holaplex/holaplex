@@ -2,96 +2,58 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Col } from 'antd';
 
-import { Bid, useActivityPageQuery } from 'src/graphql/indexerTypes';
+import { useActivityPageQuery, WalletActivity } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { mq } from '@/assets/styles/MediaQuery';
 import TextInput2 from './TextInput2';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import { IFeedItem } from 'src/views/alpha/feed.interfaces';
+import { IActivityItem } from '@/views/alpha/activity.interfaces';
 import { ActivityCard } from './ActivityCard';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
 import { LoadingBox, LoadingLine } from './LoadingPlaceholders';
 
-export function getActivityItemsFromBids(bids: Bid[]) {
+export function getActivityItems(activities: WalletActivity[]) {
   return (
-    bids.reduce((items, bid) => {
-      const listing = bid.listing;
-      const storefront = bid.listing?.storefront;
-      if (!listing || !storefront) return items;
-
-      const nft = bid.listing?.nfts[0];
-
-      const listingEnded = listing.ended;
-      const hasHighestBid = listing.bids[0].bidderAddress === bid.bidderAddress;
-
-      const itemBase: Partial<IFeedItem> = {
-        id: bid.bidderAddress + bid.listingAddress,
-        sourceUser: {
-          address: bid.bidderAddress,
-          // handle // fetch async?
-        },
-        nft: nft && {
-          address: nft.address,
-          imageURL: nft.image,
-          storeSubdomain: storefront.subdomain,
-          name: nft.name,
-          listingAddress: listing.address,
-          creators: nft.creators,
-          // creator
-        },
-        misc: {
-          bidCancelled: bid.cancelled,
-          wonListing: listingEnded && hasHighestBid,
-        },
-        listing: listing,
-        storefront: storefront,
-      };
-
-      if (listingEnded) {
-        const activityType = hasHighestBid ? 'LISTING_WON' : 'LISTING_LOST';
-        items.push({
-          ...itemBase,
-          id: itemBase.id + activityType,
-          type: activityType,
-          timestamp: listing.bids[0].lastBidTime, // more or less
-          toUser:
-            activityType === 'LISTING_LOST'
-              ? {
-                  address: listing.bids[0].bidderAddress,
-                }
-              : undefined,
-          solAmount: listing.bids[0].lastBidAmount,
-        });
-      }
-
-      if (listing.bids.length > 1) {
-        const fromBidIdx = listing.bids.findIndex((b) => b.bidderAddress === bid.bidderAddress);
-        const activityType =
-          listing.bids[0].bidderAddress === bid.bidderAddress ? 'OUTBID' : 'WAS_OUTBID';
-        const toIdx = activityType === 'OUTBID' ? fromBidIdx + 1 : fromBidIdx - 1;
-        items.push({
-          ...itemBase,
-          id: itemBase.id + activityType,
-          type: activityType,
-          timestamp: listing.bids[0].lastBidTime, // more or less
-          toUser: {
-            address: listing.bids[toIdx].bidderAddress,
-          },
-          solAmount: listing.bids[activityType === 'OUTBID' ? fromBidIdx : toIdx].lastBidAmount,
-        });
-      }
-
+    activities.reduce((items, activity) => {
+      const nft = activity.nft;
+      const creators = nft?.creators.map((creator) => {
+        return {
+          address: creator.address as string,
+          twitterHandle: creator.twitterHandle as string,
+        };
+      });
+      const wallets = activity.wallets.map((wallet) => {
+        return {
+          address: wallet.address as string,
+          twitterHandle: wallet.twitterHandle as string,
+        };
+      });
       items.push({
-        ...itemBase,
-        id: itemBase.id + 'BID_MADE',
-        solAmount: bid.lastBidAmount,
-        type: 'BID_MADE',
-        timestamp: bid.lastBidTime,
+        id: activity.id,
+        price: activity.price,
+        createdAt: activity.createdAt,
+        activityType: activity.activityType,
+        wallets: wallets,
+        nft: nft
+          ? {
+              address: nft?.address,
+              name: nft.name,
+              description: nft.description,
+              image: nft.image,
+              creators: creators,
+            }
+          : undefined,
+        auctionHouse: activity.auctionHouse
+          ? {
+              address: activity.auctionHouse?.address,
+              treasuryMint: activity.auctionHouse?.treasuryMint,
+            }
+          : undefined,
       });
 
       return items;
-    }, [] as IFeedItem[]) || []
+    }, [] as IActivityItem[]) || []
   );
 }
 
@@ -107,23 +69,28 @@ export const ActivityContent = () => {
   });
 
   const isLoading = activityPage.loading;
-
   const activityItems = useMemo(
     () =>
-      activityPage.data?.wallet?.bids
+      activityPage.data?.wallet?.activities
         ? // @ts-ignore
-          getActivityItemsFromBids(activityPage.data.wallet.bids)
+          getActivityItems(activityPage.data.wallet.activities)
         : [],
 
-    [activityPage.data?.wallet?.bids]
+    [activityPage.data?.wallet?.activities]
   );
-
+  //const activityItems = activityPage.data?.wallet?.activities ?? [];
   const filteredActivityItems = activityItems.filter((i) => {
     return (
       !activityFilter ||
-      [i.nft?.name, i.storefront?.title, i.storefront?.subdomain].some((w) =>
-        w?.toLocaleLowerCase()?.includes(activityFilter.toLocaleLowerCase())
-      )
+      [
+        i.nft?.name,
+        i.nft?.address,
+        i.nft?.description,
+        i.wallets[0]?.address,
+        i.wallets[1]?.address,
+        i.wallets[0]?.twitterHandle,
+        i.wallets[1]?.twitterHandle,
+      ].some((w) => w?.toLocaleLowerCase()?.includes(activityFilter.toLocaleLowerCase()))
     );
   });
 

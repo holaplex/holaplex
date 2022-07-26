@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { ActivityCard } from '@/components/ActivityCard';
-import { getActivityItemsFromBids } from '@/components/ActivityContent';
+import { getActivityItems } from '@/components/ActivityContent';
 
 export function MyActivityList() {
   const anchorWallet = useAnchorWallet();
@@ -48,12 +48,12 @@ export function MyActivityList() {
 
   const activityItems = useMemo(
     () =>
-      activityPage.data?.wallet?.bids
+      activityPage.data?.wallet?.activities
         ? // @ts-ignore
-          getActivityItemsFromBids(activityPage.data.wallet.bids!)
+          getActivityItems(activityPage.data.wallet.activities)
         : [],
 
-    [activityPage.data?.wallet?.bids]
+    [activityPage.data?.wallet?.activities]
   );
 
   // console.log('My activity', {
