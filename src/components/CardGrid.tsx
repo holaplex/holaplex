@@ -293,8 +293,12 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
       break;
     }
     case GridView.SIX_BY_SIX: {
-      gridViewClasses =
-        props.cardContext.cardType === 'PROFILES' ? 'md:grid-cols-4' : 'md:grid-cols-6';
+      gridViewClasses = classNames(
+        '',
+        props.cardContext.cardType === 'PROFILES'
+          ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+          : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
+      );
       gridCols = 6;
       break;
     }
