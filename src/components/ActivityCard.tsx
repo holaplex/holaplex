@@ -111,9 +111,8 @@ export function ActivityCard(props: { activity: IActivityItem }) {
   const activityThumbnailImageURL = props.activity.nft?.image;
   const thumbnailType = 'DEFAULT'; // 'PFP'
   const actionURL = 'https://holaplex.com/nfts/' + props.activity.nft?.address;
-
-  const timeOfActivity = DateTime.fromFormat(props.activity.createdAt, RUST_ISO_UTC_DATE_FORMAT);
-
+  const timeInMillis = DateTime.fromISO(props.activity.createdAt).toMillis();
+  const timeOfActivity = DateTime.fromMillis(timeInMillis);
   const { track } = useAnalytics();
 
   // Activity Selected
@@ -150,6 +149,7 @@ export function ActivityCard(props: { activity: IActivityItem }) {
         </div>
         <div>
           <ActivityCardContent activity={props.activity} isYou={isYou} />
+          <div className="mt-2 text-sm text-gray-500">{timeOfActivity.toRelative()}</div>
         </div>
       </div>
       <a
