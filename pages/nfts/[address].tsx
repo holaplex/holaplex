@@ -467,11 +467,22 @@ export default function NftByAddress({
                                         </Button>
                                       </a>
                                     </Link>
-                                    <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
-                                      <a target={`_blank`}>
-                                        <Button>View listing</Button>
-                                      </a>
-                                    </Link>
+                                    {auctionHouseInfo.link && otherListing.auctionHouse === null ? (
+                                      <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
+                                        <a target={`_blank`}>
+                                          <Button>View listing</Button>
+                                        </a>
+                                      </Link>
+                                    ) : (
+                                      <BuyForm
+                                        loading={loading}
+                                        nft={nft as Nft | any}
+                                        marketplace={marketplace as Marketplace}
+                                        listing={otherListing as AhListing}
+                                        refetch={refetch}
+                                        className={`w-full`}
+                                      />
+                                    )}
                                   </div>
                                 </div>
                               </>
@@ -745,11 +756,22 @@ export default function NftByAddress({
                                     </Button>
                                   </a>
                                 </Link>
-                                <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
-                                  <a target={`_blank`}>
-                                    <Button>View listing</Button>
-                                  </a>
-                                </Link>
+                                {auctionHouseInfo.link && otherListing.auctionHouse === null ? (
+                                  <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
+                                    <a target={`_blank`}>
+                                      <Button>View listing</Button>
+                                    </a>
+                                  </Link>
+                                ) : (
+                                  <BuyForm
+                                    loading={loading}
+                                    nft={nft as Nft | any}
+                                    marketplace={marketplace as Marketplace}
+                                    listing={otherListing as AhListing}
+                                    refetch={refetch}
+                                    className={`w-full`}
+                                  />
+                                )}
                               </div>
                             </div>
                           </div>
