@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nfts';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { LoadingNFTCard, NFTCard, OwnedNFT } from 'src/pages/profiles/[publicKey]/nfts';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import { AuctionHouse, Marketplace } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { QueryContext } from '@/hooks/useApolloQuery';

@@ -14,7 +14,7 @@ const ipfsSDK = {
   uploadFile: async (file) => {
     const body = new FormData();
     body.append(file.name, file, file.name);
-  
+
     try {
       const resp = await fetch('/api/ipfs/upload', {
         method: 'POST',

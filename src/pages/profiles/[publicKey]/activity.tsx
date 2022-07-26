@@ -5,7 +5,7 @@ import {
   WalletDependantPageProps,
 } from '@/views/profiles/getProfileServerSideProps';
 import { ProfileDataProvider } from 'src/views/profiles/ProfileDataProvider';
-import ProfileLayout from '../../../src/views/profiles/ProfileLayout';
+import ProfileLayout from '@/views/profiles/ProfileLayout';
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);

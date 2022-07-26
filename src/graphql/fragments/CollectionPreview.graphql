@@ -1,5 +1,5 @@
 fragment CollectionPreview on Nft {
-    mintAddress
-    name
-    image
+  mintAddress
+  name
+  image
 }

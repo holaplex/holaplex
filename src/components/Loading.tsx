@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import sv from '@/styles/styleConstants';
+import sv from '@/assets/styles/styleConstants';
 import HandWaving from './HandWaving';
 
 const Content = styled.div`

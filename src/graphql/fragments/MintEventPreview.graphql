@@ -1,11 +1,11 @@
+#import "./ProfileInfo.graphql"
+
 fragment MintEventPreview on MintEvent {
   feedEventId
   createdAt
   walletAddress
   profile {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
+    ...ProfileInfo
   }
   nft {
     name
@@ -22,9 +22,7 @@ fragment MintEventPreview on MintEvent {
       address
       position
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
     address

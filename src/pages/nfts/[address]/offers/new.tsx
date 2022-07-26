@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Modal from 'src/components/Modal';
 import OfferForm from '@/components/OfferForm';
 import BlurPage from '@/views/nfts/BlurPage';
-import { useNftMarketplaceQuery } from '../../../../src/graphql/indexerTypes';
+import { useNftMarketplaceQuery } from '@/graphql/indexerTypes';
 import { Nft, Marketplace } from '@holaplex/marketplace-js-sdk';
 
 import Custom404 from '../../../404';

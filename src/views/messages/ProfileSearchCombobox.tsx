@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { Fragment, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { useProfileSearchLazyQuery } from 'src/graphql/indexerTypes';
-import { Avatar } from '../../components/Avatar';
+import { Avatar } from '@/components/Avatar';
 import { User } from '../alpha/feed.utils';
 
 export default function ProfileSearchCombobox(props: { setRecipient: any }) {

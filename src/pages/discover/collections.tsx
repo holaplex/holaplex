@@ -10,7 +10,11 @@ import {
   useDiscoverCollectionsByVolumeLazyQueryWithTransforms,
   useDiscoverCollectionsNewLazyQueryWithTransforms,
 } from '@/views/discover/discover.hooks';
-import { CollectionPreviewCard, CollectionPreviewCardData, CollectionPreviewLoadingCard } from '@/components/CollectionPreviewCard';
+import {
+  CollectionPreviewCard,
+  CollectionPreviewCardData,
+  CollectionPreviewLoadingCard,
+} from '@/components/CollectionPreviewCard';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
 const INITIAL_FETCH: number = 24;
@@ -86,21 +90,19 @@ const SORT_OPTION_ORDER = {
   [UrlParamKey.TIME_PERIOD]: Object.values(TIME_WINDOW_SUBOPTIONS).map((o) => o.value),
 };
 
-
 export default function DiscoverCollectionsTab(): JSX.Element {
   const [urlParams, urlParamSetters] = useUrlParams();
-  const queryContext = useQuery(urlParams[UrlParamKey.BY], urlParams[UrlParamKey.TIME_PERIOD], urlParams[UrlParamKey.SEARCH]);
+  const queryContext = useQuery(
+    urlParams[UrlParamKey.BY],
+    urlParams[UrlParamKey.TIME_PERIOD],
+    urlParams[UrlParamKey.SEARCH]
+  );
 
   const onLoadMore = useCallback(
     async (inView: boolean) => {
-      if (
-        inView &&
-        !queryContext.loading &&
-        (queryContext.data && queryContext.data.length > 0)
-      ) {
+      if (inView && !queryContext.loading && queryContext.data && queryContext.data.length > 0) {
         queryContext.fetchMore();
       }
-      
     },
     [queryContext]
   );
@@ -172,7 +174,9 @@ export default function DiscoverCollectionsTab(): JSX.Element {
       cardContext={{
         noDataFallback: <div>No matching Collections</div>,
         cardCreator: (data, refetch, loading) => (
-          <CollectionPreviewCard context={{data: data, refetch: refetch, loading: loading, fetchMore: () => {}}} />
+          <CollectionPreviewCard
+            context={{ data: data, refetch: refetch, loading: loading, fetchMore: () => {} }}
+          />
         ),
         loadingCardCreator: () => <CollectionPreviewLoadingCard />,
       }}
@@ -186,7 +190,7 @@ export default function DiscoverCollectionsTab(): JSX.Element {
       search={{
         onChange: (v) => urlParamSetters[UrlParamKey.SEARCH](v.trim()),
         debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS,
-        placeholder: "Search collections"
+        placeholder: 'Search collections',
       }}
       menus={menus}
     />

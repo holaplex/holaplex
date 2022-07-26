@@ -10,7 +10,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, AhListing, AuctionHouse } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
+import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { PhantomWalletName } from '@solana/wallet-adapter-wallets';
 import Modal from './Modal';
@@ -19,8 +19,8 @@ import { DisplaySOL } from './CurrencyHelpers';
 import ReactDom from 'react-dom';
 import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
 import { useQuery } from 'react-query';
-import { verifyTOS } from '../modules/crossmint';
-import { crossmintConfig } from '../lib/utils';
+import { verifyTOS } from '@/modules/crossmint';
+import { crossmintConfig } from '@/lib/utils';
 
 interface BuyFormProps {
   nft: Nft;

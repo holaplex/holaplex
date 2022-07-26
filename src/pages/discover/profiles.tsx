@@ -73,7 +73,11 @@ export default function DiscoverProfilesTab(): JSX.Element {
         hasMore: queryContext.hasMore,
         loading: queryContext.loading,
       }}
-      search={{ onChange: (v) => setSearchTerm(v), debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS, placeholder: "Search profiles" }}
+      search={{
+        onChange: (v) => setSearchTerm(v),
+        debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS,
+        placeholder: 'Search profiles',
+      }}
     />
   );
 }
@@ -81,11 +85,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
 DiscoverProfilesTab.getLayout = function getLayout(
   discoverPage: DiscoverPageProps & { children: JSX.Element }
 ): JSX.Element {
-  return (
-    <DiscoverLayout
-      content={discoverPage.children}
-    />
-  );
+  return <DiscoverLayout content={discoverPage.children} />;
 };
 
 function useQuery(type: TypeOption, userWallet: string | undefined): DiscoverProfilesQueryContext {

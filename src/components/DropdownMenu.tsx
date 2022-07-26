@@ -54,7 +54,12 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
     itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-focus:block';
   }
 
-  const titleElement: JSX.Element = typeof props.title === 'string' ? <span className="whitespace-nowrap align-middle">{props.title}</span> : props.title;
+  const titleElement: JSX.Element =
+    typeof props.title === 'string' ? (
+      <span className="whitespace-nowrap align-middle">{props.title}</span>
+    ) : (
+      props.title
+    );
 
   return (
     <div

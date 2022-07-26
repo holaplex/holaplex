@@ -1,9 +1,10 @@
+#import "./ProfileInfo.graphql"
+
 query getProfiles($addresses: [PublicKey!]!) {
   wallets(addresses: $addresses) {
     address
     profile {
-      handle
-      profileImageUrlLowres
+      ...ProfileInfo
     }
   }
 }

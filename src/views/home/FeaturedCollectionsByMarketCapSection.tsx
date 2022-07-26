@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { QueryContext } from '@/hooks/useApolloQuery';
 import {
@@ -21,7 +21,9 @@ export interface FeaturedCollectionsByMarketCapSectionProps {
   context: QueryContext<FeaturedCollectionsByMarketCapData>;
 }
 
-export function FeaturedCollectionsByMarketCapSection(props: FeaturedCollectionsByMarketCapSectionProps) {
+export function FeaturedCollectionsByMarketCapSection(
+  props: FeaturedCollectionsByMarketCapSectionProps
+) {
   const bodyElements: JSX.Element[] = useMemo(() => {
     if (props.context.loading || !props.context.data) {
       return [...Array(N_LISTINGS)].map((_, i) => (

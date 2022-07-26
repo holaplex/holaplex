@@ -1,0 +1,7 @@
+fragment ProfileInfo on TwitterProfile {
+  walletAddress
+  handle
+  profileImageUrlLowres
+  profileImageUrlHighres
+  bannerImageUrl
+}

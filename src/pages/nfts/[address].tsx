@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useNftMarketplaceLazyQuery } from '../../src/graphql/indexerTypes';
+import { useNftActivityLazyQuery, useNftMarketplaceLazyQuery } from '@/graphql/indexerTypes';
 import cx from 'classnames';
-import { shortenAddress } from '../../src/modules/utils/string';
+import { shortenAddress } from '@/modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
 import Accordion from '@/components/Accordion';
@@ -32,16 +32,17 @@ import BuyForm from '@/components/BuyForm';
 import UpdateSellForm from '@/components/UpdateSellForm';
 import AcceptOfferForm from '@/components/AcceptOfferForm';
 import { format as formatTime } from 'timeago.js';
-import { apolloClient } from '../../src/graphql/apollo';
-import { ShareNftDocument, ShareNftQuery } from '../../src/graphql/indexerTypes.ssr';
+import { apolloClient } from '@/graphql/apollo';
+import { ShareNftDocument, ShareNftQuery } from '@/graphql/indexerTypes.ssr';
 import Head from 'next/head';
 import { Avatar, AvatarIcons } from 'src/components/Avatar';
-import { seededRandomBetween } from '../../src/modules/utils/random';
-import { SolscanIcon } from '../../src/assets/icons/Solscan';
-import { ExplorerIcon } from '../../src/assets/icons/Explorer';
+import { seededRandomBetween } from '@/modules/utils/random';
+import { SolscanIcon } from '@/assets/icons/Solscan';
+import { ExplorerIcon } from '@/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
-import { ButtonSkeleton } from '../../src/components/Skeletons';
 import { ExclamationCircleIcon } from '@heroicons/react/outline';
+import { ButtonSkeleton } from '@/components/Skeletons';
+import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -110,6 +111,21 @@ export default function NftByAddress({
   const router = useRouter();
 
   const [queryNft, { data, loading, called, refetch, error }] = useNftMarketplaceLazyQuery();
+  const [queryNftActivity, activityContext] = useNftActivityLazyQuery();
+
+  useEffect(() => {
+    if (!data?.nft?.mintAddress) return;
+
+    try {
+      queryNftActivity({
+        variables: {
+          address: data?.nft?.mintAddress,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+    }
+  }, [data?.nft?.mintAddress, queryNftActivity]);
 
   useEffect(() => {
     if (!address) return;
@@ -166,11 +182,22 @@ export default function NftByAddress({
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
-  const offers = nft?.offers || [];
+
+  const { offers, sortedOffers, topOffers } = useMemo(() => {
+    const offers = nft?.offers || [];
+    const sortedOffers = Array.from(offers).sort((offerA, offerB) => {
+      return offerA.createdAt < offerB.createdAt ? 1 : -1;
+    });
+    const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
+    return {
+      offers,
+      sortedOffers,
+      topOffers,
+    };
+  }, [nft?.offers]);
 
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
 
-  const topOffers = offers?.slice()?.sort((a, b) => Number(b?.price) - Number(a?.price)) || [];
   const topOffer = topOffers?.[0];
   const hasOffers = Boolean(topOffer);
 
@@ -884,7 +911,7 @@ export default function NftByAddress({
                     </div>
                   )}
                   {hasOffers &&
-                    offers?.map((o) => (
+                    sortedOffers?.map((o) => (
                       <article
                         key={o.id}
                         className={`mb-4 grid rounded border border-gray-800 p-4 ${
@@ -929,34 +956,106 @@ export default function NftByAddress({
               </Accordion>
             )}
           </div>
-          {/* {loading ? (
-          <div className="mb-4 grid grid-cols-4 gap-6 ">
-            <LoadingLine $height="56px" />
-            <LoadingLine $height="56px" />
-            <LoadingLine $height="56px" />
-            <LoadingLine $height="56px" />
+          <div className={`my-10 flex flex-col justify-between text-sm sm:text-base md:text-lg`}>
+            {activityContext.loading ? (
+              <div className="h-32 w-full rounded-lg bg-gray-800" />
+            ) : (
+              <Accordion
+                title={`Activity`}
+                amount={activityContext.data?.nftByMintAddress?.activities.length}
+              >
+                <header className={`mb-2 grid grid-cols-4 items-center px-4`}>
+                  <span className={`text-xs text-gray-300`}>EVENT</span>
+                  <span className={`text-xs text-gray-300`}>WALLET</span>
+                  <span className={`text-xs text-gray-300`}>PRICE</span>
+                  <span className={`text-xs text-gray-300`}>TIME</span>
+                </header>
+
+                {!!activityContext.data?.nftByMintAddress?.activities.length &&
+                  activityContext.data?.nftByMintAddress?.activities?.map((a) => {
+                    const multipleWallets = a.wallets.length > 1;
+                    return (
+                      <article
+                        key={a.id}
+                        className="mb-4 grid grid-cols-4 rounded border border-gray-700 p-4"
+                      >
+                        <div className="flex self-center">
+                          {a.activityType === 'purchase' && (
+                            <FeatherTag className="mr-2 self-center text-gray-300" size="18" />
+                          )}
+                          <div>{a.activityType === 'purchase' && 'Sold'}</div>
+
+                          {a.activityType === 'offer' && (
+                            <Zap className="mr-2 self-center text-gray-300" size="18" />
+                          )}
+                          <div>{a.activityType === 'offer' && 'Offer Made'}</div>
+                          {a.activityType === 'listing' && (
+                            <FeatherTag className="mr-2 self-center text-gray-300" size="18" />
+                          )}
+                          <div>{a.activityType === 'listing' && 'Listed'}</div>
+                        </div>
+                        <div
+                          className={cx('flex items-center self-center ', {
+                            '-ml-6': multipleWallets,
+                          })}
+                        >
+                          {multipleWallets && (
+                            <img
+                              src="/images/svgs/uturn.svg"
+                              className="mr-2 w-4 text-gray-300"
+                              alt="wallets"
+                            />
+                          )}
+                          <div className="flex flex-col">
+                            <a
+                              href={`https://holaplex.com/profiles/${a.wallets[0].address}`}
+                              rel="nofollower"
+                              className="text-sm"
+                            >
+                              <Avatar
+                                border
+                                address={a.wallets[0].address}
+                                data={{
+                                  twitterHandle: a.wallets[0].profile?.handle,
+                                  pfpUrl: a.wallets[0]?.profile?.profileImageUrlLowres,
+                                }}
+                              />
+                            </a>
+                            {multipleWallets && (
+                              <a
+                                href={`https://holaplex.com/profiles/${a.wallets[1].address}`}
+                                rel="nofollower"
+                                className="text-sm"
+                              >
+                                <Avatar
+                                  border
+                                  data={{
+                                    twitterHandle: a.wallets[1].profile?.handle,
+                                    pfpUrl: a.wallets[1]?.profile?.profileImageUrlLowres,
+                                  }}
+                                  address={a.wallets[1].address}
+                                />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                        <div className="self-center">
+                          <span className="sol-amount">
+                            {/* TODO: how to support multiple tokens */}
+                            <DisplaySOL amount={a.price.toNumber()} />
+                          </span>
+                        </div>
+                        <div className="self-center text-sm">
+                          {formatTime(a.createdAt, `en_US`)}
+                        </div>
+                      </article>
+                    );
+                  })}
+              </Accordion>
+            )}
           </div>
-        ) : (
-          nft?.listings && (
-            <div className="overflow-x-auto ">
-              {!nft?.listings.length ? (
-                <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
-                  <span className="text-center text-2xl font-semibold">No activity</span>
-                  <span className="mt-2 text-gray-300 ">
-                    Activity associated with this NFT will show up here
-                  </span>
-                </div>
-              ) : (
-                <Accordion title="Activity" allowHorizOverflow>
-                  <div className="mt-8 flex min-w-[700px] flex-col">
-                    <Activities listings={nft?.listings} />
-                  </div>
-                </Accordion>
-              )}
-            </div>
-          )
-        )} */}
         </div>
+
         {nft && (
           <>
             <Modal
@@ -1032,7 +1131,6 @@ export default function NftByAddress({
           </>
         )}
       </div>
-      {/* <Footer /> */}
     </>
   );
 }

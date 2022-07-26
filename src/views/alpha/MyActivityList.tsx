@@ -2,8 +2,8 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useActivityPageQuery } from 'src/graphql/indexerTypes';
-import { ActivityCard } from '../../components/ActivityCard';
-import { getActivityItemsFromBids } from '../../components/ActivityContent';
+import { ActivityCard } from '@/components/ActivityCard';
+import { getActivityItemsFromBids } from '@/components/ActivityContent';
 
 export function MyActivityList() {
   const anchorWallet = useAnchorWallet();

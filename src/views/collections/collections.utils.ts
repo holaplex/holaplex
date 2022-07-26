@@ -13,21 +13,22 @@ export enum CollectionTabRoute {
 export type NFTCollection = GetCollectionQuery['nft'];
 
 export interface CollectionPageProps {
-  collectionAddress: string;
+  collectionUrlAddress: string;
   collection: NFTCollection;
 }
 
 const { getCollection } = getSdk(graphqlRequestClient);
 export async function getCollectionPageServerSideProps(context: GetServerSidePropsContext) {
-  const collectionAddress = (context.query.collectionAddress || '') as string;
+  // address or mintAddress
+  const collectionUrlAddress = (context.query.collectionAddress || '') as string;
 
   const collection = await getCollection({
-    address: collectionAddress,
+    address: collectionUrlAddress,
   });
 
   return {
     props: {
-      collectionAddress,
+      collectionUrlAddress,
       collection: collection.nft || collection.nftByMintAddress,
     },
   };

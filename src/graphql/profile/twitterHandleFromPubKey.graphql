@@ -1,7 +1,7 @@
+#import "./connectionNode.graphql"
+
 query twitterHandleFromPubKey($pubKey: PublicKey!) {
   wallet(address: $pubKey) {
-    profile {
-      handle
-    }
+    ...ConnectionNode
   }
 }

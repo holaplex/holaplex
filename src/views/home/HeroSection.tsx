@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import React from 'react';
-import { Button5 } from '../../components/Button2';
+import { Button5 } from '@/components/Button2';
 import { FeedItem } from '../alpha/feed.utils';
 import { FeedCard, LoadingFeedCard } from '../alpha/FeedCard';
 import Marquee from 'react-fast-marquee';
@@ -13,7 +13,7 @@ const N_ITEMS = 12;
 export type HeroSectionData = FeedItem[];
 
 export interface HeroSectionProps {
-  context: QueryContext<HeroSectionData>
+  context: QueryContext<HeroSectionData>;
 }
 
 export function HeroSection(props: HeroSectionProps): JSX.Element {
@@ -22,7 +22,7 @@ export function HeroSection(props: HeroSectionProps): JSX.Element {
   return (
     <div>
       <div className="relative h-[450px]">
-        <Marquee speed={feedEvents.length ? 40: 0} gradient={false} pauseOnHover={true}>
+        <Marquee speed={feedEvents.length ? 40 : 0} gradient={false} pauseOnHover={true}>
           <div
             className={classNames(
               'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'

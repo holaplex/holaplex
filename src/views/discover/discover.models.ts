@@ -4,7 +4,7 @@ export interface SelectOption {
 }
 
 export interface NestedSelectOption {
-  subOptions?: {[key: string | number]: NestedSelectOption & SelectOption};
+  subOptions?: { [key: string | number]: NestedSelectOption & SelectOption };
   defaultSubOptionValue?: any;
 }
 

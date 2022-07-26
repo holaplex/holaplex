@@ -12,7 +12,7 @@ import {
   INFINITE_SCROLL_AMOUNT_INCREMENT,
   INITIAL_FETCH,
   NFTGrid,
-} from 'pages/profiles/[publicKey]/nfts';
+} from 'src/pages/profiles/[publicKey]/nfts';
 import { uniq } from 'ramda';
 import React, { ReactNode, useState } from 'react';
 import { useNftsInCollectionQuery } from 'src/graphql/indexerTypes';

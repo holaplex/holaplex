@@ -19,16 +19,16 @@ export default function DropdownSelect<T extends JSX.Element | string, V = numbe
     if (props.keys !== undefined && props.keys.length !== props.children.length) {
       throw new Error('Number of keys must match number of children.');
     }
-  
+
     if (props.defaultIndex != null && props.defaultKey != null) {
-      throw new Error('Define a default index or key, but not both.')
+      throw new Error('Define a default index or key, but not both.');
     }
-  
+
     if (props.selectedIndex != null && props.selectedKey != null) {
-      throw new Error('Define a selected index or key, but not both.')
+      throw new Error('Define a selected index or key, but not both.');
     }
   }, [props]);
-  
+
   const [selected, setSelected] = useState<number | null>(null);
   const keys = useMemo<any[]>(
     () => (props.keys !== undefined ? props.keys : Array(props.children.length).map((_, i) => i)),

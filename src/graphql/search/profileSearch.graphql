@@ -1,9 +1,10 @@
+#import "./ProfileInfo.graphql"
+
 query profileSearch($term: String!) {
   profiles(term: $term, limit: 5, offset: 0) {
     address
     profile {
-      handle
-      profileImageUrlLowres
+      ...ProfileInfo
     }
   }
 }

@@ -1,14 +1,8 @@
 import { CardGridWithHeader } from '@/components/CardGrid';
 import DropdownSelect from '@/components/DropdownSelect';
-import {
-  LoadingNFTCard,
-  NFTCard,
-  OwnedNFT,
-} from 'pages/profiles/[publicKey]/nfts';
+import { LoadingNFTCard, NFTCard, OwnedNFT } from 'src/pages/profiles/[publicKey]/nfts';
 import { useCallback, useEffect, useMemo } from 'react';
-import {
-  AuctionHouse,
-} from 'src/graphql/indexerTypes';
+import { AuctionHouse } from 'src/graphql/indexerTypes';
 import { DiscoverLayout, DiscoverPageProps } from '@/views/discover/DiscoverLayout';
 import { NestedSelectOption } from '@/views/discover/discover.models';
 import { FilterOption } from '@/components/Filters';
@@ -251,7 +245,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
       search={{
         onChange: (v) => urlParamSetters[UrlParamKey.SEARCH](v.trim()),
         debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS,
-        placeholder: "Search NFTs"
+        placeholder: 'Search NFTs',
       }}
       menus={menus}
     />
@@ -261,7 +255,6 @@ export default function DiscoverNFTsTab(): JSX.Element {
 DiscoverNFTsTab.getLayout = function getLayout(
   discoverPage: DiscoverPageProps & { children: JSX.Element }
 ): JSX.Element {
-
   return (
     <DiscoverLayout
       filters={[
@@ -269,7 +262,7 @@ DiscoverNFTsTab.getLayout = function getLayout(
           title: 'Type',
           options: TYPE_OPTIONS,
           default: DEFAULT_TYPE,
-          queryId: UrlParamKey.TYPE
+          queryId: UrlParamKey.TYPE,
         },
       ]}
       content={discoverPage.children}
