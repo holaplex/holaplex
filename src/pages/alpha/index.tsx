@@ -212,6 +212,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               offered: 0,
               listed: 0,
             },
+            activities: [],
           },
         });
       }
@@ -252,6 +253,7 @@ const AlphaPage = ({ address }: { address: string }) => {
               offered: 0,
               listed: 0,
             },
+            activities: [],
           },
         });
       }

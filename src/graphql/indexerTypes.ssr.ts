@@ -133,7 +133,7 @@ export type CollectionNft = NftExt & {
   externalUrl?: Maybe<Scalars['String']>;
   /** @deprecated use `...on NftExt` */
   files: Array<NftFile>;
-  floorPrice?: Maybe<Scalars['Int']>;
+  floorPrice?: Maybe<Scalars['I64']>;
   /** @deprecated use `...on NftExt` */
   image: Scalars['String'];
   /** @deprecated use `...on NftExt` */
@@ -144,7 +144,7 @@ export type CollectionNft = NftExt & {
   model?: Maybe<Scalars['String']>;
   /** @deprecated use `...on NftExt` */
   name: Scalars['String'];
-  nftCount: Scalars['Int'];
+  nftCount?: Maybe<Scalars['I64']>;
   /** @deprecated use `...on NftExt` */
   offers: Array<Offer>;
   /** @deprecated use `...on NftExt` */
@@ -222,6 +222,52 @@ export type FollowEvent = {
   profile?: Maybe<TwitterProfile>;
   wallet: Wallet;
   walletAddress: Scalars['PublicKey'];
+};
+
+export type GenoHabitat = {
+  __typename?: 'GenoHabitat';
+  active: Scalars['Boolean'];
+  address: Scalars['PublicKey'];
+  crystalsRefined: Scalars['Int'];
+  durability: Scalars['Int'];
+  element: Scalars['Int'];
+  expiryTimestamp: Scalars['DateTimeUtc'];
+  genesis: Scalars['Boolean'];
+  guild?: Maybe<Scalars['Int']>;
+  habitatMint: Scalars['PublicKey'];
+  habitatsTerraformed: Scalars['Int'];
+  harvester: Scalars['String'];
+  harvesterOpenMarket: Scalars['Boolean'];
+  harvesterRoyaltyBips: Scalars['Int'];
+  harvesterSettingsCooldownTimestamp: Scalars['DateTimeUtc'];
+  isSubHabitat: Scalars['Boolean'];
+  kiHarvested: Scalars['I64'];
+  level: Scalars['Int'];
+  nextDayTimestamp: Scalars['DateTimeUtc'];
+  parentHabitat?: Maybe<Scalars['PublicKey']>;
+  renewalTimestamp: Scalars['DateTimeUtc'];
+  rentalAgreement?: Maybe<GenoRentalAgreement>;
+  seedsSpawned: Scalars['Boolean'];
+  sequence: Scalars['I64'];
+  subHabitatCooldownTimestamp: Scalars['DateTimeUtc'];
+  subHabitats: Array<Scalars['PublicKey']>;
+  terraformingHabitat?: Maybe<Scalars['PublicKey']>;
+  totalCrystalsRefined: Scalars['I64'];
+  totalKiHarvested: Scalars['I64'];
+};
+
+export type GenoRentalAgreement = {
+  __typename?: 'GenoRentalAgreement';
+  alchemist?: Maybe<Scalars['PublicKey']>;
+  gracePeriod: Scalars['I64'];
+  habitatAddress: Scalars['PublicKey'];
+  lastRentPayment: Scalars['DateTimeUtc'];
+  nextPaymentDue: Scalars['DateTimeUtc'];
+  openMarket: Scalars['Boolean'];
+  rent: Scalars['I64'];
+  rentToken: Scalars['PublicKey'];
+  rentTokenDecimals: Scalars['Int'];
+  rentalPeriod: Scalars['I64'];
 };
 
 export type GraphConnection = {
@@ -306,6 +352,66 @@ export type MintStats = {
   mint: Scalars['String'];
   volume24hr?: Maybe<Scalars['U64']>;
   volumeTotal?: Maybe<Scalars['U64']>;
+};
+
+export type Nft = NftExt & {
+  __typename?: 'Nft';
+  /** @deprecated use `...on NftExt` */
+  activities: Array<NftActivity>;
+  /** @deprecated use `...on NftExt` */
+  address: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  animationUrl?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  attributes: Array<NftAttribute>;
+  /** @deprecated use `...on NftExt` */
+  category: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  collection?: Maybe<CollectionNft>;
+  /** @deprecated use `...on NftExt` */
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
+  /** @deprecated use `...on NftExt` */
+  creators: Array<NftCreator>;
+  /** @deprecated use `...on NftExt` */
+  description: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  externalUrl?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  files: Array<NftFile>;
+  /** @deprecated use `...on NftExt` */
+  image: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  listings: Array<AhListing>;
+  /** @deprecated use `...on NftExt` */
+  mintAddress: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  model?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  name: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  offers: Array<Offer>;
+  /** @deprecated use `...on NftExt` */
+  owner?: Maybe<NftOwner>;
+  /** @deprecated use `...on NftExt` */
+  parser?: Maybe<Scalars['String']>;
+  /** @deprecated use `...on NftExt` */
+  primarySaleHappened: Scalars['Boolean'];
+  /** @deprecated use `...on NftExt` */
+  purchases: Array<Purchase>;
+  /** @deprecated use `...on NftExt` */
+  sellerFeeBasisPoints: Scalars['Int'];
+  /** @deprecated use `...on NftExt` */
+  slot?: Maybe<Scalars['Int']>;
+  /** @deprecated use `...on NftExt` */
+  tokenAccountAddress: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  updateAuthorityAddress: Scalars['String'];
+  /** @deprecated use `...on NftExt` */
+  uri: Scalars['String'];
+};
+
+export type NftImageArgs = {
+  width?: InputMaybe<Scalars['Int']>;
 };
 
 export type NftActivity = {
@@ -487,6 +593,7 @@ export type PurchaseEvent = {
 export type QueryRoot = {
   __typename?: 'QueryRoot';
   activities: Array<NftActivity>;
+  auctionHouse?: Maybe<AuctionHouse>;
   charts: PriceChart;
   /** Returns featured collection NFTs ordered by market cap (floor price * number of NFTs in collection) */
   collectionsFeaturedByMarketCap: Array<CollectionNft>;
@@ -501,6 +608,7 @@ export type QueryRoot = {
   feedEvents: Array<FeedEvent>;
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
+  genoHabitat?: Maybe<GenoHabitat>;
   /** Returns the latest on chain events using the graph_program. */
   latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
@@ -538,6 +646,10 @@ export type QueryRoot = {
 export type QueryRootActivitiesArgs = {
   auctionHouses: Array<Scalars['PublicKey']>;
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type QueryRootAuctionHouseArgs = {
+  address: Scalars['String'];
 };
 
 export type QueryRootChartsArgs = {
@@ -605,6 +717,10 @@ export type QueryRootFollowWalletsArgs = {
   wallet?: InputMaybe<Scalars['PublicKey']>;
 };
 
+export type QueryRootGenoHabitatArgs = {
+  address: Scalars['PublicKey'];
+};
+
 export type QueryRootLatestFeedEventsArgs = {
   cursor: Scalars['String'];
   includeTypes?: InputMaybe<Array<Scalars['String']>>;
@@ -641,6 +757,7 @@ export type QueryRootNftCountsArgs = {
 };
 
 export type QueryRootNftsArgs = {
+  allowUnverified?: InputMaybe<Scalars['Boolean']>;
   attributes?: InputMaybe<Array<AttributeFilter>>;
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   collection?: InputMaybe<Scalars['PublicKey']>;
@@ -729,6 +846,7 @@ export type TwitterProfile = {
 
 export type Wallet = {
   __typename?: 'Wallet';
+  activities: Array<WalletActivity>;
   address: Scalars['PublicKey'];
   bids: Array<Bid>;
   connectionCounts: ConnectionCounts;
@@ -739,6 +857,18 @@ export type Wallet = {
 
 export type WalletNftCountsArgs = {
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type WalletActivity = {
+  __typename?: 'WalletActivity';
+  activityType: Scalars['String'];
+  auctionHouse?: Maybe<AuctionHouse>;
+  createdAt: Scalars['DateTimeUtc'];
+  id: Scalars['Uuid'];
+  metadata: Scalars['PublicKey'];
+  nft?: Maybe<Nft>;
+  price: Scalars['U64'];
+  wallets: Array<Wallet>;
 };
 
 export type WalletNftCount = {
@@ -787,13 +917,16 @@ export type ActivityPageQuery = {
           logoUrl: string;
           bannerUrl: string;
         } | null;
-        nfts: Array<{
-          __typename: 'CollectionNft';
-          address: string;
-          name: string;
-          description: string;
-          image: string;
-        }>;
+        nfts: Array<
+          | {
+              __typename: 'CollectionNft';
+              address: string;
+              name: string;
+              description: string;
+              image: string;
+            }
+          | { __typename: 'Nft'; address: string; name: string; description: string; image: string }
+        >;
         bids: Array<{
           __typename?: 'Bid';
           bidderAddress: string;
@@ -816,28 +949,54 @@ export type CollectionNfTsQueryVariables = Exact<{
 
 export type CollectionNfTsQuery = {
   __typename?: 'QueryRoot';
-  ownedCollection: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-      description: string;
-    } | null;
-  }>;
-  createdCollection: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-      description: string;
-    } | null;
-  }>;
+  ownedCollection: Array<
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          description: string;
+        } | null;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          description: string;
+        } | null;
+      }
+  >;
+  createdCollection: Array<
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          description: string;
+        } | null;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          description: string;
+        } | null;
+      }
+  >;
 };
 
 export type CreatedNfTsQueryVariables = Exact<{
@@ -880,114 +1039,224 @@ export type CreatedNfTsQuery = {
       canChangeSalePrice: boolean;
     }>;
   } | null;
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-    } | null;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
 };
 
 export type OwnedNfTsQueryVariables = Exact<{
@@ -1036,122 +1305,240 @@ export type OwnedNfTsQuery = {
       } | null;
     }>;
   } | null;
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-    } | null;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
 };
 
 export type WalletProfileQueryVariables = Exact<{
@@ -1176,48 +1563,94 @@ export type GetCollectionQueryVariables = Exact<{
 
 export type GetCollectionQuery = {
   __typename?: 'QueryRoot';
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    description: string;
-    mintAddress: string;
-    image: string;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      position?: number | null;
-      address: string;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-  } | null;
-  nftByMintAddress?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    description: string;
-    mintAddress: string;
-    image: string;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      position?: number | null;
-      address: string;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-  } | null;
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        name: string;
+        description: string;
+        mintAddress: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          position?: number | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        description: string;
+        mintAddress: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          position?: number | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | null;
+  nftByMintAddress?:
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        name: string;
+        description: string;
+        mintAddress: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          position?: number | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        description: string;
+        mintAddress: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          position?: number | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | null;
 };
 
 export type NftCollectionQueryVariables = Exact<{
@@ -1229,124 +1662,246 @@ export type NftCollectionQueryVariables = Exact<{
 
 export type NftCollectionQuery = {
   __typename?: 'QueryRoot';
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    mintAddress: string;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      position?: number | null;
-      address: string;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-  } | null;
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value?: string | null;
-      traitType?: string | null;
-    }>;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: { __typename?: 'NftOwner'; address: string } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        name: string;
+        mintAddress: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          position?: number | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        name: string;
+        mintAddress: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          position?: number | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | null;
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: { __typename?: 'NftOwner'; address: string } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        sellerFeeBasisPoints: number;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: { __typename?: 'NftOwner'; address: string } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
   marketplace?: {
     __typename?: 'Marketplace';
     subdomain: string;
@@ -1433,128 +1988,252 @@ export type NftsInCollectionQuery = {
       } | null;
     }>;
   } | null;
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value?: string | null;
-      traitType?: string | null;
-    }>;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
 };
 
 export type DiscoverCollectionsByMarketCapQueryVariables = Exact<{
@@ -1601,110 +2280,216 @@ export type DiscoverNftsActiveOffersQueryVariables = Exact<{
 
 export type DiscoverNftsActiveOffersQuery = {
   __typename?: 'QueryRoot';
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      purchaseId?: any | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      purchaseId?: any | null;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
   marketplace?: {
     __typename?: 'Marketplace';
     auctionHouses: Array<{
@@ -1735,110 +2520,216 @@ export type DiscoverNftsAllQueryVariables = Exact<{
 
 export type DiscoverNftsAllQuery = {
   __typename?: 'QueryRoot';
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      purchaseId?: any | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      purchaseId?: any | null;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
   marketplace?: {
     __typename?: 'Marketplace';
     auctionHouses: Array<{
@@ -1869,110 +2760,216 @@ export type DiscoverNftsBuyNowQueryVariables = Exact<{
 
 export type DiscoverNftsBuyNowQuery = {
   __typename?: 'QueryRoot';
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      purchaseId?: any | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      purchaseId?: any | null;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
   marketplace?: {
     __typename?: 'Marketplace';
     auctionHouses: Array<{
@@ -2094,31 +3091,12 @@ export type FeedQuery = {
           id: any;
           seller: any;
           price: any;
-          nft?: {
-            __typename?: 'CollectionNft';
-            name: string;
-            image: string;
-            description: string;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            listings: Array<{
-              __typename?: 'AhListing';
-              id: any;
-              seller: any;
-              price: any;
-              nft?: {
+          nft?:
+            | {
                 __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
-                sellerFeeBasisPoints: number;
-                primarySaleHappened: boolean;
                 address: string;
                 mintAddress: string;
                 owner?: {
@@ -2127,22 +3105,154 @@ export type FeedQuery = {
                   associatedTokenAccountAddress: string;
                   twitterHandle?: string | null;
                 } | null;
-                creators: Array<{
-                  __typename?: 'NftCreator';
-                  address: string;
-                  position?: number | null;
-                  profile?: {
-                    __typename?: 'TwitterProfile';
-                    walletAddress?: string | null;
-                    handle: string;
-                    profileImageUrlLowres: string;
-                    profileImageUrlHighres: string;
-                    bannerImageUrl: string;
-                  } | null;
+                listings: Array<{
+                  __typename?: 'AhListing';
+                  id: any;
+                  seller: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
                 }>;
-              } | null;
-            }>;
-          } | null;
+              }
+            | {
+                __typename?: 'Nft';
+                name: string;
+                image: string;
+                description: string;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                listings: Array<{
+                  __typename?: 'AhListing';
+                  id: any;
+                  seller: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
+                }>;
+              }
+            | null;
         } | null;
         wallet: {
           __typename?: 'Wallet';
@@ -2162,35 +3272,66 @@ export type FeedQuery = {
           profileImageUrlHighres: string;
           bannerImageUrl: string;
         } | null;
-        nft?: {
-          __typename?: 'CollectionNft';
-          name: string;
-          image: string;
-          description: string;
-          sellerFeeBasisPoints: number;
-          primarySaleHappened: boolean;
-          address: string;
-          mintAddress: string;
-          owner?: {
-            __typename?: 'NftOwner';
-            address: string;
-            associatedTokenAccountAddress: string;
-            twitterHandle?: string | null;
-          } | null;
-          creators: Array<{
-            __typename?: 'NftCreator';
-            address: string;
-            position?: number | null;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              walletAddress?: string | null;
-              handle: string;
-              profileImageUrlLowres: string;
-              profileImageUrlHighres: string;
-              bannerImageUrl: string;
-            } | null;
-          }>;
-        } | null;
+        nft?:
+          | {
+              __typename?: 'CollectionNft';
+              name: string;
+              image: string;
+              description: string;
+              sellerFeeBasisPoints: number;
+              primarySaleHappened: boolean;
+              address: string;
+              mintAddress: string;
+              owner?: {
+                __typename?: 'NftOwner';
+                address: string;
+                associatedTokenAccountAddress: string;
+                twitterHandle?: string | null;
+              } | null;
+              creators: Array<{
+                __typename?: 'NftCreator';
+                address: string;
+                position?: number | null;
+                profile?: {
+                  __typename?: 'TwitterProfile';
+                  walletAddress?: string | null;
+                  handle: string;
+                  profileImageUrlLowres: string;
+                  profileImageUrlHighres: string;
+                  bannerImageUrl: string;
+                } | null;
+              }>;
+            }
+          | {
+              __typename?: 'Nft';
+              name: string;
+              image: string;
+              description: string;
+              sellerFeeBasisPoints: number;
+              primarySaleHappened: boolean;
+              address: string;
+              mintAddress: string;
+              owner?: {
+                __typename?: 'NftOwner';
+                address: string;
+                associatedTokenAccountAddress: string;
+                twitterHandle?: string | null;
+              } | null;
+              creators: Array<{
+                __typename?: 'NftCreator';
+                address: string;
+                position?: number | null;
+                profile?: {
+                  __typename?: 'TwitterProfile';
+                  walletAddress?: string | null;
+                  handle: string;
+                  profileImageUrlLowres: string;
+                  profileImageUrlHighres: string;
+                  bannerImageUrl: string;
+                } | null;
+              }>;
+            }
+          | null;
         wallet: {
           __typename?: 'Wallet';
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
@@ -2215,31 +3356,12 @@ export type FeedQuery = {
           id: any;
           buyer: any;
           price: any;
-          nft?: {
-            __typename?: 'CollectionNft';
-            name: string;
-            image: string;
-            description: string;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            offers: Array<{
-              __typename?: 'Offer';
-              id: any;
-              buyer: any;
-              price: any;
-              nft?: {
+          nft?:
+            | {
                 __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
-                sellerFeeBasisPoints: number;
-                primarySaleHappened: boolean;
                 address: string;
                 mintAddress: string;
                 owner?: {
@@ -2248,22 +3370,154 @@ export type FeedQuery = {
                   associatedTokenAccountAddress: string;
                   twitterHandle?: string | null;
                 } | null;
-                creators: Array<{
-                  __typename?: 'NftCreator';
-                  address: string;
-                  position?: number | null;
-                  profile?: {
-                    __typename?: 'TwitterProfile';
-                    walletAddress?: string | null;
-                    handle: string;
-                    profileImageUrlLowres: string;
-                    profileImageUrlHighres: string;
-                    bannerImageUrl: string;
-                  } | null;
+                offers: Array<{
+                  __typename?: 'Offer';
+                  id: any;
+                  buyer: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
                 }>;
-              } | null;
-            }>;
-          } | null;
+              }
+            | {
+                __typename?: 'Nft';
+                name: string;
+                image: string;
+                description: string;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                offers: Array<{
+                  __typename?: 'Offer';
+                  id: any;
+                  buyer: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
+                }>;
+              }
+            | null;
         } | null;
         wallet: {
           __typename?: 'Wallet';
@@ -2289,35 +3543,66 @@ export type FeedQuery = {
           buyer: any;
           seller: any;
           price: any;
-          nft?: {
-            __typename?: 'CollectionNft';
-            name: string;
-            image: string;
-            description: string;
-            sellerFeeBasisPoints: number;
-            primarySaleHappened: boolean;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            creators: Array<{
-              __typename?: 'NftCreator';
-              address: string;
-              position?: number | null;
-              profile?: {
-                __typename?: 'TwitterProfile';
-                walletAddress?: string | null;
-                handle: string;
-                profileImageUrlLowres: string;
-                profileImageUrlHighres: string;
-                bannerImageUrl: string;
-              } | null;
-            }>;
-          } | null;
+          nft?:
+            | {
+                __typename?: 'CollectionNft';
+                name: string;
+                image: string;
+                description: string;
+                sellerFeeBasisPoints: number;
+                primarySaleHappened: boolean;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                creators: Array<{
+                  __typename?: 'NftCreator';
+                  address: string;
+                  position?: number | null;
+                  profile?: {
+                    __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
+                    handle: string;
+                    profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
+                  } | null;
+                }>;
+              }
+            | {
+                __typename?: 'Nft';
+                name: string;
+                image: string;
+                description: string;
+                sellerFeeBasisPoints: number;
+                primarySaleHappened: boolean;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                creators: Array<{
+                  __typename?: 'NftCreator';
+                  address: string;
+                  position?: number | null;
+                  profile?: {
+                    __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
+                    handle: string;
+                    profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
+                  } | null;
+                }>;
+              }
+            | null;
         } | null;
         wallet: {
           __typename?: 'Wallet';
@@ -2350,12 +3635,23 @@ export type WhoToFollowQuery = {
   }>;
 };
 
-export type CollectionPreviewFragment = {
+type CollectionPreview_CollectionNft_Fragment = {
   __typename?: 'CollectionNft';
   mintAddress: string;
   name: string;
   image: string;
 };
+
+type CollectionPreview_Nft_Fragment = {
+  __typename?: 'Nft';
+  mintAddress: string;
+  name: string;
+  image: string;
+};
+
+export type CollectionPreviewFragment =
+  | CollectionPreview_CollectionNft_Fragment
+  | CollectionPreview_Nft_Fragment;
 
 export type FollowEventPreviewFragment = {
   __typename?: 'FollowEvent';
@@ -2424,31 +3720,12 @@ export type ListingEventPreviewFragment = {
     id: any;
     seller: any;
     price: any;
-    nft?: {
-      __typename?: 'CollectionNft';
-      name: string;
-      image: string;
-      description: string;
-      address: string;
-      mintAddress: string;
-      owner?: {
-        __typename?: 'NftOwner';
-        address: string;
-        associatedTokenAccountAddress: string;
-        twitterHandle?: string | null;
-      } | null;
-      listings: Array<{
-        __typename?: 'AhListing';
-        id: any;
-        seller: any;
-        price: any;
-        nft?: {
+    nft?:
+      | {
           __typename?: 'CollectionNft';
           name: string;
           image: string;
           description: string;
-          sellerFeeBasisPoints: number;
-          primarySaleHappened: boolean;
           address: string;
           mintAddress: string;
           owner?: {
@@ -2457,22 +3734,154 @@ export type ListingEventPreviewFragment = {
             associatedTokenAccountAddress: string;
             twitterHandle?: string | null;
           } | null;
-          creators: Array<{
-            __typename?: 'NftCreator';
-            address: string;
-            position?: number | null;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              walletAddress?: string | null;
-              handle: string;
-              profileImageUrlLowres: string;
-              profileImageUrlHighres: string;
-              bannerImageUrl: string;
-            } | null;
+          listings: Array<{
+            __typename?: 'AhListing';
+            id: any;
+            seller: any;
+            price: any;
+            nft?:
+              | {
+                  __typename?: 'CollectionNft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | {
+                  __typename?: 'Nft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | null;
           }>;
-        } | null;
-      }>;
-    } | null;
+        }
+      | {
+          __typename?: 'Nft';
+          name: string;
+          image: string;
+          description: string;
+          address: string;
+          mintAddress: string;
+          owner?: {
+            __typename?: 'NftOwner';
+            address: string;
+            associatedTokenAccountAddress: string;
+            twitterHandle?: string | null;
+          } | null;
+          listings: Array<{
+            __typename?: 'AhListing';
+            id: any;
+            seller: any;
+            price: any;
+            nft?:
+              | {
+                  __typename?: 'CollectionNft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | {
+                  __typename?: 'Nft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | null;
+          }>;
+        }
+      | null;
   } | null;
   wallet: {
     __typename?: 'Wallet';
@@ -2514,42 +3923,73 @@ export type MintEventPreviewFragment = {
     profileImageUrlHighres: string;
     bannerImageUrl: string;
   } | null;
-  nft?: {
-    __typename?: 'CollectionNft';
-    name: string;
-    image: string;
-    description: string;
-    sellerFeeBasisPoints: number;
-    primarySaleHappened: boolean;
-    address: string;
-    mintAddress: string;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-      twitterHandle?: string | null;
-    } | null;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      position?: number | null;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-  } | null;
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
+        name: string;
+        image: string;
+        description: string;
+        sellerFeeBasisPoints: number;
+        primarySaleHappened: boolean;
+        address: string;
+        mintAddress: string;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+          twitterHandle?: string | null;
+        } | null;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          position?: number | null;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
+        name: string;
+        image: string;
+        description: string;
+        sellerFeeBasisPoints: number;
+        primarySaleHappened: boolean;
+        address: string;
+        mintAddress: string;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+          twitterHandle?: string | null;
+        } | null;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          position?: number | null;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | null;
   wallet: {
     __typename?: 'Wallet';
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   };
 };
 
-export type NftCardFragment = {
+type NftCard_CollectionNft_Fragment = {
   __typename?: 'CollectionNft';
   address: string;
   name: string;
@@ -2649,6 +4089,108 @@ export type NftCardFragment = {
   }>;
 };
 
+type NftCard_Nft_Fragment = {
+  __typename?: 'Nft';
+  address: string;
+  name: string;
+  sellerFeeBasisPoints: number;
+  mintAddress: string;
+  description: string;
+  image: string;
+  primarySaleHappened: boolean;
+  creators: Array<{ __typename?: 'NftCreator'; address: string; share: number; verified: boolean }>;
+  owner?: {
+    __typename?: 'NftOwner';
+    address: string;
+    associatedTokenAccountAddress: string;
+  } | null;
+  purchases: Array<{
+    __typename?: 'Purchase';
+    id: any;
+    buyer: any;
+    price: any;
+    createdAt: any;
+    auctionHouse?: {
+      __typename?: 'AuctionHouse';
+      address: string;
+      treasuryMint: string;
+      auctionHouseTreasury: string;
+      treasuryWithdrawalDestination: string;
+      feeWithdrawalDestination: string;
+      authority: string;
+      creator: string;
+      auctionHouseFeeAccount: string;
+      bump: number;
+      treasuryBump: number;
+      feePayerBump: number;
+      sellerFeeBasisPoints: number;
+      requiresSignOff: boolean;
+      canChangeSalePrice: boolean;
+    } | null;
+  }>;
+  listings: Array<{
+    __typename?: 'AhListing';
+    id: any;
+    tradeState: string;
+    seller: any;
+    metadata: any;
+    price: any;
+    tradeStateBump: number;
+    purchaseId?: any | null;
+    createdAt: any;
+    canceledAt?: any | null;
+    auctionHouse?: {
+      __typename?: 'AuctionHouse';
+      address: string;
+      treasuryMint: string;
+      auctionHouseTreasury: string;
+      treasuryWithdrawalDestination: string;
+      feeWithdrawalDestination: string;
+      authority: string;
+      creator: string;
+      auctionHouseFeeAccount: string;
+      bump: number;
+      treasuryBump: number;
+      feePayerBump: number;
+      sellerFeeBasisPoints: number;
+      requiresSignOff: boolean;
+      canChangeSalePrice: boolean;
+    } | null;
+  }>;
+  offers: Array<{
+    __typename?: 'Offer';
+    id: any;
+    tradeState: string;
+    buyer: any;
+    metadata: any;
+    price: any;
+    purchaseId?: any | null;
+    tradeStateBump: number;
+    tokenAccount?: string | null;
+    createdAt: any;
+    canceledAt?: any | null;
+    auctionHouse?: {
+      __typename?: 'AuctionHouse';
+      address: string;
+      treasuryMint: string;
+      auctionHouseTreasury: string;
+      treasuryWithdrawalDestination: string;
+      feeWithdrawalDestination: string;
+      authority: string;
+      creator: string;
+      auctionHouseFeeAccount: string;
+      bump: number;
+      treasuryBump: number;
+      feePayerBump: number;
+      sellerFeeBasisPoints: number;
+      requiresSignOff: boolean;
+      canChangeSalePrice: boolean;
+    } | null;
+  }>;
+};
+
+export type NftCardFragment = NftCard_CollectionNft_Fragment | NftCard_Nft_Fragment;
+
 export type OfferEventPreviewFragment = {
   __typename?: 'OfferEvent';
   feedEventId: string;
@@ -2668,31 +4210,12 @@ export type OfferEventPreviewFragment = {
     id: any;
     buyer: any;
     price: any;
-    nft?: {
-      __typename?: 'CollectionNft';
-      name: string;
-      image: string;
-      description: string;
-      address: string;
-      mintAddress: string;
-      owner?: {
-        __typename?: 'NftOwner';
-        address: string;
-        associatedTokenAccountAddress: string;
-        twitterHandle?: string | null;
-      } | null;
-      offers: Array<{
-        __typename?: 'Offer';
-        id: any;
-        buyer: any;
-        price: any;
-        nft?: {
+    nft?:
+      | {
           __typename?: 'CollectionNft';
           name: string;
           image: string;
           description: string;
-          sellerFeeBasisPoints: number;
-          primarySaleHappened: boolean;
           address: string;
           mintAddress: string;
           owner?: {
@@ -2701,22 +4224,154 @@ export type OfferEventPreviewFragment = {
             associatedTokenAccountAddress: string;
             twitterHandle?: string | null;
           } | null;
-          creators: Array<{
-            __typename?: 'NftCreator';
-            address: string;
-            position?: number | null;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              walletAddress?: string | null;
-              handle: string;
-              profileImageUrlLowres: string;
-              profileImageUrlHighres: string;
-              bannerImageUrl: string;
-            } | null;
+          offers: Array<{
+            __typename?: 'Offer';
+            id: any;
+            buyer: any;
+            price: any;
+            nft?:
+              | {
+                  __typename?: 'CollectionNft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | {
+                  __typename?: 'Nft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | null;
           }>;
-        } | null;
-      }>;
-    } | null;
+        }
+      | {
+          __typename?: 'Nft';
+          name: string;
+          image: string;
+          description: string;
+          address: string;
+          mintAddress: string;
+          owner?: {
+            __typename?: 'NftOwner';
+            address: string;
+            associatedTokenAccountAddress: string;
+            twitterHandle?: string | null;
+          } | null;
+          offers: Array<{
+            __typename?: 'Offer';
+            id: any;
+            buyer: any;
+            price: any;
+            nft?:
+              | {
+                  __typename?: 'CollectionNft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | {
+                  __typename?: 'Nft';
+                  name: string;
+                  image: string;
+                  description: string;
+                  sellerFeeBasisPoints: number;
+                  primarySaleHappened: boolean;
+                  address: string;
+                  mintAddress: string;
+                  owner?: {
+                    __typename?: 'NftOwner';
+                    address: string;
+                    associatedTokenAccountAddress: string;
+                    twitterHandle?: string | null;
+                  } | null;
+                  creators: Array<{
+                    __typename?: 'NftCreator';
+                    address: string;
+                    position?: number | null;
+                    profile?: {
+                      __typename?: 'TwitterProfile';
+                      walletAddress?: string | null;
+                      handle: string;
+                      profileImageUrlLowres: string;
+                      profileImageUrlHighres: string;
+                      bannerImageUrl: string;
+                    } | null;
+                  }>;
+                }
+              | null;
+          }>;
+        }
+      | null;
   } | null;
   wallet: {
     __typename?: 'Wallet';
@@ -2752,35 +4407,66 @@ export type PurchaseEventPreviewFragment = {
     buyer: any;
     seller: any;
     price: any;
-    nft?: {
-      __typename?: 'CollectionNft';
-      name: string;
-      image: string;
-      description: string;
-      sellerFeeBasisPoints: number;
-      primarySaleHappened: boolean;
-      address: string;
-      mintAddress: string;
-      owner?: {
-        __typename?: 'NftOwner';
-        address: string;
-        associatedTokenAccountAddress: string;
-        twitterHandle?: string | null;
-      } | null;
-      creators: Array<{
-        __typename?: 'NftCreator';
-        address: string;
-        position?: number | null;
-        profile?: {
-          __typename?: 'TwitterProfile';
-          walletAddress?: string | null;
-          handle: string;
-          profileImageUrlLowres: string;
-          profileImageUrlHighres: string;
-          bannerImageUrl: string;
-        } | null;
-      }>;
-    } | null;
+    nft?:
+      | {
+          __typename?: 'CollectionNft';
+          name: string;
+          image: string;
+          description: string;
+          sellerFeeBasisPoints: number;
+          primarySaleHappened: boolean;
+          address: string;
+          mintAddress: string;
+          owner?: {
+            __typename?: 'NftOwner';
+            address: string;
+            associatedTokenAccountAddress: string;
+            twitterHandle?: string | null;
+          } | null;
+          creators: Array<{
+            __typename?: 'NftCreator';
+            address: string;
+            position?: number | null;
+            profile?: {
+              __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
+              handle: string;
+              profileImageUrlLowres: string;
+              profileImageUrlHighres: string;
+              bannerImageUrl: string;
+            } | null;
+          }>;
+        }
+      | {
+          __typename?: 'Nft';
+          name: string;
+          image: string;
+          description: string;
+          sellerFeeBasisPoints: number;
+          primarySaleHappened: boolean;
+          address: string;
+          mintAddress: string;
+          owner?: {
+            __typename?: 'NftOwner';
+            address: string;
+            associatedTokenAccountAddress: string;
+            twitterHandle?: string | null;
+          } | null;
+          creators: Array<{
+            __typename?: 'NftCreator';
+            address: string;
+            position?: number | null;
+            profile?: {
+              __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
+              handle: string;
+              profileImageUrlLowres: string;
+              profileImageUrlHighres: string;
+              bannerImageUrl: string;
+            } | null;
+          }>;
+        }
+      | null;
   } | null;
   wallet: {
     __typename?: 'Wallet';
@@ -2805,108 +4491,212 @@ export type ProfilePreviewFragment = {
 export type BuyNowListingFragment = {
   __typename?: 'AhListing';
   id: any;
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  } | null;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | null;
 };
 
 export type MarketplacePreviewFragment = {
@@ -3010,31 +4800,12 @@ export type HomeQuery = {
           id: any;
           seller: any;
           price: any;
-          nft?: {
-            __typename?: 'CollectionNft';
-            name: string;
-            image: string;
-            description: string;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            listings: Array<{
-              __typename?: 'AhListing';
-              id: any;
-              seller: any;
-              price: any;
-              nft?: {
+          nft?:
+            | {
                 __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
-                sellerFeeBasisPoints: number;
-                primarySaleHappened: boolean;
                 address: string;
                 mintAddress: string;
                 owner?: {
@@ -3043,22 +4814,154 @@ export type HomeQuery = {
                   associatedTokenAccountAddress: string;
                   twitterHandle?: string | null;
                 } | null;
-                creators: Array<{
-                  __typename?: 'NftCreator';
-                  address: string;
-                  position?: number | null;
-                  profile?: {
-                    __typename?: 'TwitterProfile';
-                    walletAddress?: string | null;
-                    handle: string;
-                    profileImageUrlLowres: string;
-                    profileImageUrlHighres: string;
-                    bannerImageUrl: string;
-                  } | null;
+                listings: Array<{
+                  __typename?: 'AhListing';
+                  id: any;
+                  seller: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
                 }>;
-              } | null;
-            }>;
-          } | null;
+              }
+            | {
+                __typename?: 'Nft';
+                name: string;
+                image: string;
+                description: string;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                listings: Array<{
+                  __typename?: 'AhListing';
+                  id: any;
+                  seller: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
+                }>;
+              }
+            | null;
         } | null;
         wallet: {
           __typename?: 'Wallet';
@@ -3078,35 +4981,66 @@ export type HomeQuery = {
           profileImageUrlHighres: string;
           bannerImageUrl: string;
         } | null;
-        nft?: {
-          __typename?: 'CollectionNft';
-          name: string;
-          image: string;
-          description: string;
-          sellerFeeBasisPoints: number;
-          primarySaleHappened: boolean;
-          address: string;
-          mintAddress: string;
-          owner?: {
-            __typename?: 'NftOwner';
-            address: string;
-            associatedTokenAccountAddress: string;
-            twitterHandle?: string | null;
-          } | null;
-          creators: Array<{
-            __typename?: 'NftCreator';
-            address: string;
-            position?: number | null;
-            profile?: {
-              __typename?: 'TwitterProfile';
-              walletAddress?: string | null;
-              handle: string;
-              profileImageUrlLowres: string;
-              profileImageUrlHighres: string;
-              bannerImageUrl: string;
-            } | null;
-          }>;
-        } | null;
+        nft?:
+          | {
+              __typename?: 'CollectionNft';
+              name: string;
+              image: string;
+              description: string;
+              sellerFeeBasisPoints: number;
+              primarySaleHappened: boolean;
+              address: string;
+              mintAddress: string;
+              owner?: {
+                __typename?: 'NftOwner';
+                address: string;
+                associatedTokenAccountAddress: string;
+                twitterHandle?: string | null;
+              } | null;
+              creators: Array<{
+                __typename?: 'NftCreator';
+                address: string;
+                position?: number | null;
+                profile?: {
+                  __typename?: 'TwitterProfile';
+                  walletAddress?: string | null;
+                  handle: string;
+                  profileImageUrlLowres: string;
+                  profileImageUrlHighres: string;
+                  bannerImageUrl: string;
+                } | null;
+              }>;
+            }
+          | {
+              __typename?: 'Nft';
+              name: string;
+              image: string;
+              description: string;
+              sellerFeeBasisPoints: number;
+              primarySaleHappened: boolean;
+              address: string;
+              mintAddress: string;
+              owner?: {
+                __typename?: 'NftOwner';
+                address: string;
+                associatedTokenAccountAddress: string;
+                twitterHandle?: string | null;
+              } | null;
+              creators: Array<{
+                __typename?: 'NftCreator';
+                address: string;
+                position?: number | null;
+                profile?: {
+                  __typename?: 'TwitterProfile';
+                  walletAddress?: string | null;
+                  handle: string;
+                  profileImageUrlLowres: string;
+                  profileImageUrlHighres: string;
+                  bannerImageUrl: string;
+                } | null;
+              }>;
+            }
+          | null;
         wallet: {
           __typename?: 'Wallet';
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
@@ -3131,31 +5065,12 @@ export type HomeQuery = {
           id: any;
           buyer: any;
           price: any;
-          nft?: {
-            __typename?: 'CollectionNft';
-            name: string;
-            image: string;
-            description: string;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            offers: Array<{
-              __typename?: 'Offer';
-              id: any;
-              buyer: any;
-              price: any;
-              nft?: {
+          nft?:
+            | {
                 __typename?: 'CollectionNft';
                 name: string;
                 image: string;
                 description: string;
-                sellerFeeBasisPoints: number;
-                primarySaleHappened: boolean;
                 address: string;
                 mintAddress: string;
                 owner?: {
@@ -3164,22 +5079,154 @@ export type HomeQuery = {
                   associatedTokenAccountAddress: string;
                   twitterHandle?: string | null;
                 } | null;
-                creators: Array<{
-                  __typename?: 'NftCreator';
-                  address: string;
-                  position?: number | null;
-                  profile?: {
-                    __typename?: 'TwitterProfile';
-                    walletAddress?: string | null;
-                    handle: string;
-                    profileImageUrlLowres: string;
-                    profileImageUrlHighres: string;
-                    bannerImageUrl: string;
-                  } | null;
+                offers: Array<{
+                  __typename?: 'Offer';
+                  id: any;
+                  buyer: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
                 }>;
-              } | null;
-            }>;
-          } | null;
+              }
+            | {
+                __typename?: 'Nft';
+                name: string;
+                image: string;
+                description: string;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                offers: Array<{
+                  __typename?: 'Offer';
+                  id: any;
+                  buyer: any;
+                  price: any;
+                  nft?:
+                    | {
+                        __typename?: 'CollectionNft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | {
+                        __typename?: 'Nft';
+                        name: string;
+                        image: string;
+                        description: string;
+                        sellerFeeBasisPoints: number;
+                        primarySaleHappened: boolean;
+                        address: string;
+                        mintAddress: string;
+                        owner?: {
+                          __typename?: 'NftOwner';
+                          address: string;
+                          associatedTokenAccountAddress: string;
+                          twitterHandle?: string | null;
+                        } | null;
+                        creators: Array<{
+                          __typename?: 'NftCreator';
+                          address: string;
+                          position?: number | null;
+                          profile?: {
+                            __typename?: 'TwitterProfile';
+                            walletAddress?: string | null;
+                            handle: string;
+                            profileImageUrlLowres: string;
+                            profileImageUrlHighres: string;
+                            bannerImageUrl: string;
+                          } | null;
+                        }>;
+                      }
+                    | null;
+                }>;
+              }
+            | null;
         } | null;
         wallet: {
           __typename?: 'Wallet';
@@ -3205,35 +5252,66 @@ export type HomeQuery = {
           buyer: any;
           seller: any;
           price: any;
-          nft?: {
-            __typename?: 'CollectionNft';
-            name: string;
-            image: string;
-            description: string;
-            sellerFeeBasisPoints: number;
-            primarySaleHappened: boolean;
-            address: string;
-            mintAddress: string;
-            owner?: {
-              __typename?: 'NftOwner';
-              address: string;
-              associatedTokenAccountAddress: string;
-              twitterHandle?: string | null;
-            } | null;
-            creators: Array<{
-              __typename?: 'NftCreator';
-              address: string;
-              position?: number | null;
-              profile?: {
-                __typename?: 'TwitterProfile';
-                walletAddress?: string | null;
-                handle: string;
-                profileImageUrlLowres: string;
-                profileImageUrlHighres: string;
-                bannerImageUrl: string;
-              } | null;
-            }>;
-          } | null;
+          nft?:
+            | {
+                __typename?: 'CollectionNft';
+                name: string;
+                image: string;
+                description: string;
+                sellerFeeBasisPoints: number;
+                primarySaleHappened: boolean;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                creators: Array<{
+                  __typename?: 'NftCreator';
+                  address: string;
+                  position?: number | null;
+                  profile?: {
+                    __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
+                    handle: string;
+                    profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
+                  } | null;
+                }>;
+              }
+            | {
+                __typename?: 'Nft';
+                name: string;
+                image: string;
+                description: string;
+                sellerFeeBasisPoints: number;
+                primarySaleHappened: boolean;
+                address: string;
+                mintAddress: string;
+                owner?: {
+                  __typename?: 'NftOwner';
+                  address: string;
+                  associatedTokenAccountAddress: string;
+                  twitterHandle?: string | null;
+                } | null;
+                creators: Array<{
+                  __typename?: 'NftCreator';
+                  address: string;
+                  position?: number | null;
+                  profile?: {
+                    __typename?: 'TwitterProfile';
+                    walletAddress?: string | null;
+                    handle: string;
+                    profileImageUrlLowres: string;
+                    profileImageUrlHighres: string;
+                    bannerImageUrl: string;
+                  } | null;
+                }>;
+              }
+            | null;
         } | null;
         wallet: {
           __typename?: 'Wallet';
@@ -3269,108 +5347,212 @@ export type HomeQuery = {
   featuredListings: Array<{
     __typename?: 'AhListing';
     id: any;
-    nft?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      sellerFeeBasisPoints: number;
-      mintAddress: string;
-      description: string;
-      image: string;
-      primarySaleHappened: boolean;
-      creators: Array<{
-        __typename?: 'NftCreator';
-        address: string;
-        share: number;
-        verified: boolean;
-      }>;
-      owner?: {
-        __typename?: 'NftOwner';
-        address: string;
-        associatedTokenAccountAddress: string;
-      } | null;
-      purchases: Array<{
-        __typename?: 'Purchase';
-        id: any;
-        buyer: any;
-        price: any;
-        createdAt: any;
-        auctionHouse?: {
-          __typename?: 'AuctionHouse';
+    nft?:
+      | {
+          __typename?: 'CollectionNft';
           address: string;
-          treasuryMint: string;
-          auctionHouseTreasury: string;
-          treasuryWithdrawalDestination: string;
-          feeWithdrawalDestination: string;
-          authority: string;
-          creator: string;
-          auctionHouseFeeAccount: string;
-          bump: number;
-          treasuryBump: number;
-          feePayerBump: number;
+          name: string;
           sellerFeeBasisPoints: number;
-          requiresSignOff: boolean;
-          canChangeSalePrice: boolean;
-        } | null;
-      }>;
-      listings: Array<{
-        __typename?: 'AhListing';
-        id: any;
-        tradeState: string;
-        seller: any;
-        metadata: any;
-        price: any;
-        tradeStateBump: number;
-        createdAt: any;
-        canceledAt?: any | null;
-        auctionHouse?: {
-          __typename?: 'AuctionHouse';
+          mintAddress: string;
+          description: string;
+          image: string;
+          primarySaleHappened: boolean;
+          creators: Array<{
+            __typename?: 'NftCreator';
+            address: string;
+            share: number;
+            verified: boolean;
+          }>;
+          owner?: {
+            __typename?: 'NftOwner';
+            address: string;
+            associatedTokenAccountAddress: string;
+          } | null;
+          purchases: Array<{
+            __typename?: 'Purchase';
+            id: any;
+            buyer: any;
+            price: any;
+            createdAt: any;
+            auctionHouse?: {
+              __typename?: 'AuctionHouse';
+              address: string;
+              treasuryMint: string;
+              auctionHouseTreasury: string;
+              treasuryWithdrawalDestination: string;
+              feeWithdrawalDestination: string;
+              authority: string;
+              creator: string;
+              auctionHouseFeeAccount: string;
+              bump: number;
+              treasuryBump: number;
+              feePayerBump: number;
+              sellerFeeBasisPoints: number;
+              requiresSignOff: boolean;
+              canChangeSalePrice: boolean;
+            } | null;
+          }>;
+          listings: Array<{
+            __typename?: 'AhListing';
+            id: any;
+            tradeState: string;
+            seller: any;
+            metadata: any;
+            price: any;
+            tradeStateBump: number;
+            createdAt: any;
+            canceledAt?: any | null;
+            auctionHouse?: {
+              __typename?: 'AuctionHouse';
+              address: string;
+              treasuryMint: string;
+              auctionHouseTreasury: string;
+              treasuryWithdrawalDestination: string;
+              feeWithdrawalDestination: string;
+              authority: string;
+              creator: string;
+              auctionHouseFeeAccount: string;
+              bump: number;
+              treasuryBump: number;
+              feePayerBump: number;
+              sellerFeeBasisPoints: number;
+              requiresSignOff: boolean;
+              canChangeSalePrice: boolean;
+            } | null;
+          }>;
+          offers: Array<{
+            __typename?: 'Offer';
+            id: any;
+            tradeState: string;
+            buyer: any;
+            metadata: any;
+            price: any;
+            tradeStateBump: number;
+            tokenAccount?: string | null;
+            createdAt: any;
+            canceledAt?: any | null;
+            auctionHouse?: {
+              __typename?: 'AuctionHouse';
+              address: string;
+              treasuryMint: string;
+              auctionHouseTreasury: string;
+              treasuryWithdrawalDestination: string;
+              feeWithdrawalDestination: string;
+              authority: string;
+              creator: string;
+              auctionHouseFeeAccount: string;
+              bump: number;
+              treasuryBump: number;
+              feePayerBump: number;
+              sellerFeeBasisPoints: number;
+              requiresSignOff: boolean;
+              canChangeSalePrice: boolean;
+            } | null;
+          }>;
+        }
+      | {
+          __typename?: 'Nft';
           address: string;
-          treasuryMint: string;
-          auctionHouseTreasury: string;
-          treasuryWithdrawalDestination: string;
-          feeWithdrawalDestination: string;
-          authority: string;
-          creator: string;
-          auctionHouseFeeAccount: string;
-          bump: number;
-          treasuryBump: number;
-          feePayerBump: number;
+          name: string;
           sellerFeeBasisPoints: number;
-          requiresSignOff: boolean;
-          canChangeSalePrice: boolean;
-        } | null;
-      }>;
-      offers: Array<{
-        __typename?: 'Offer';
-        id: any;
-        tradeState: string;
-        buyer: any;
-        metadata: any;
-        price: any;
-        tradeStateBump: number;
-        tokenAccount?: string | null;
-        createdAt: any;
-        canceledAt?: any | null;
-        auctionHouse?: {
-          __typename?: 'AuctionHouse';
-          address: string;
-          treasuryMint: string;
-          auctionHouseTreasury: string;
-          treasuryWithdrawalDestination: string;
-          feeWithdrawalDestination: string;
-          authority: string;
-          creator: string;
-          auctionHouseFeeAccount: string;
-          bump: number;
-          treasuryBump: number;
-          feePayerBump: number;
-          sellerFeeBasisPoints: number;
-          requiresSignOff: boolean;
-          canChangeSalePrice: boolean;
-        } | null;
-      }>;
-    } | null;
+          mintAddress: string;
+          description: string;
+          image: string;
+          primarySaleHappened: boolean;
+          creators: Array<{
+            __typename?: 'NftCreator';
+            address: string;
+            share: number;
+            verified: boolean;
+          }>;
+          owner?: {
+            __typename?: 'NftOwner';
+            address: string;
+            associatedTokenAccountAddress: string;
+          } | null;
+          purchases: Array<{
+            __typename?: 'Purchase';
+            id: any;
+            buyer: any;
+            price: any;
+            createdAt: any;
+            auctionHouse?: {
+              __typename?: 'AuctionHouse';
+              address: string;
+              treasuryMint: string;
+              auctionHouseTreasury: string;
+              treasuryWithdrawalDestination: string;
+              feeWithdrawalDestination: string;
+              authority: string;
+              creator: string;
+              auctionHouseFeeAccount: string;
+              bump: number;
+              treasuryBump: number;
+              feePayerBump: number;
+              sellerFeeBasisPoints: number;
+              requiresSignOff: boolean;
+              canChangeSalePrice: boolean;
+            } | null;
+          }>;
+          listings: Array<{
+            __typename?: 'AhListing';
+            id: any;
+            tradeState: string;
+            seller: any;
+            metadata: any;
+            price: any;
+            tradeStateBump: number;
+            createdAt: any;
+            canceledAt?: any | null;
+            auctionHouse?: {
+              __typename?: 'AuctionHouse';
+              address: string;
+              treasuryMint: string;
+              auctionHouseTreasury: string;
+              treasuryWithdrawalDestination: string;
+              feeWithdrawalDestination: string;
+              authority: string;
+              creator: string;
+              auctionHouseFeeAccount: string;
+              bump: number;
+              treasuryBump: number;
+              feePayerBump: number;
+              sellerFeeBasisPoints: number;
+              requiresSignOff: boolean;
+              canChangeSalePrice: boolean;
+            } | null;
+          }>;
+          offers: Array<{
+            __typename?: 'Offer';
+            id: any;
+            tradeState: string;
+            buyer: any;
+            metadata: any;
+            price: any;
+            tradeStateBump: number;
+            tokenAccount?: string | null;
+            createdAt: any;
+            canceledAt?: any | null;
+            auctionHouse?: {
+              __typename?: 'AuctionHouse';
+              address: string;
+              treasuryMint: string;
+              auctionHouseTreasury: string;
+              treasuryWithdrawalDestination: string;
+              feeWithdrawalDestination: string;
+              authority: string;
+              creator: string;
+              auctionHouseFeeAccount: string;
+              bump: number;
+              treasuryBump: number;
+              feePayerBump: number;
+              sellerFeeBasisPoints: number;
+              requiresSignOff: boolean;
+              canChangeSalePrice: boolean;
+            } | null;
+          }>;
+        }
+      | null;
   }>;
   buyNowMarketplace?: {
     __typename?: 'Marketplace';
@@ -3461,230 +5643,458 @@ export type NftMarketplaceQuery = {
       } | null;
     }>;
   } | null;
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    category: string;
-    image: string;
-    primarySaleHappened: boolean;
-    files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value?: string | null;
-      traitType?: string | null;
-    }>;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-      mintAddress: string;
-    } | null;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        category: string;
+        image: string;
+        primarySaleHappened: boolean;
+        files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          mintAddress: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        category: string;
+        image: string;
+        primarySaleHappened: boolean;
+        files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          mintAddress: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | null;
+  nftByMintAddress?:
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  } | null;
-  nftByMintAddress?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    category: string;
-    image: string;
-    primarySaleHappened: boolean;
-    files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value?: string | null;
-      traitType?: string | null;
-    }>;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    collection?: {
-      __typename?: 'CollectionNft';
-      address: string;
-      name: string;
-      image: string;
-      mintAddress: string;
-    } | null;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        category: string;
+        image: string;
+        primarySaleHappened: boolean;
+        files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          mintAddress: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  } | null;
+        mintAddress: string;
+        description: string;
+        category: string;
+        image: string;
+        primarySaleHappened: boolean;
+        files: Array<{ __typename?: 'NftFile'; uri: string; fileType: string }>;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        collection?: {
+          __typename?: 'CollectionNft';
+          address: string;
+          name: string;
+          image: string;
+          mintAddress: string;
+        } | null;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | null;
 };
 
 export type OffersPageQueryVariables = Exact<{
@@ -3733,200 +6143,398 @@ export type OffersPageQuery = {
       } | null;
     }>;
   } | null;
-  sentOffers: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  sentOffers: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
+  receivedOffers: Array<
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
-  receivedOffers: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  }>;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+  >;
 };
 
 export type NftActivityQueryVariables = Exact<{
@@ -3935,31 +6543,66 @@ export type NftActivityQueryVariables = Exact<{
 
 export type NftActivityQuery = {
   __typename?: 'QueryRoot';
-  nftByMintAddress?: {
-    __typename?: 'CollectionNft';
-    activities: Array<{
-      __typename?: 'NftActivity';
-      id: any;
-      metadata: any;
-      price: any;
-      createdAt: any;
-      activityType: string;
-      wallets: Array<{
-        __typename?: 'Wallet';
-        address: any;
-        twitterHandle?: string | null;
-        profile?: {
-          __typename?: 'TwitterProfile';
-          walletAddress?: string | null;
-          handle: string;
-          profileImageUrlLowres: string;
-          profileImageUrlHighres: string;
-          bannerImageUrl: string;
-        } | null;
-      }>;
-      auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
-    }>;
-  } | null;
+  nftByMintAddress?:
+    | {
+        __typename?: 'CollectionNft';
+        activities: Array<{
+          __typename?: 'NftActivity';
+          id: any;
+          metadata: any;
+          price: any;
+          createdAt: any;
+          activityType: string;
+          wallets: Array<{
+            __typename?: 'Wallet';
+            address: any;
+            twitterHandle?: string | null;
+            profile?: {
+              __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
+              handle: string;
+              profileImageUrlLowres: string;
+              profileImageUrlHighres: string;
+              bannerImageUrl: string;
+            } | null;
+          }>;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
+        activities: Array<{
+          __typename?: 'NftActivity';
+          id: any;
+          metadata: any;
+          price: any;
+          createdAt: any;
+          activityType: string;
+          wallets: Array<{
+            __typename?: 'Wallet';
+            address: any;
+            twitterHandle?: string | null;
+            profile?: {
+              __typename?: 'TwitterProfile';
+              walletAddress?: string | null;
+              handle: string;
+              profileImageUrlLowres: string;
+              profileImageUrlHighres: string;
+              bannerImageUrl: string;
+            } | null;
+          }>;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+          } | null;
+        }>;
+      }
+    | null;
 };
 
 export type NftCardQueryVariables = Exact<{
@@ -3969,110 +6612,216 @@ export type NftCardQueryVariables = Exact<{
 
 export type NftCardQuery = {
   __typename?: 'QueryRoot';
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      address: string;
-      share: number;
-      verified: boolean;
-    }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      purchaseId?: any | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      purchaseId?: any | null;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  } | null;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          address: string;
+          share: number;
+          verified: boolean;
+        }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          purchaseId?: any | null;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | null;
   marketplace?: {
     __typename?: 'Marketplace';
     auctionHouses: Array<{
@@ -4101,107 +6850,210 @@ export type NftPageQueryVariables = Exact<{
 
 export type NftPageQuery = {
   __typename?: 'QueryRoot';
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    attributes: Array<{
-      __typename?: 'NftAttribute';
-      metadataAddress: string;
-      value?: string | null;
-      traitType?: string | null;
-    }>;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: { __typename?: 'NftOwner'; address: string } | null;
-    purchases: Array<{
-      __typename?: 'Purchase';
-      id: any;
-      buyer: any;
-      price: any;
-      createdAt: any;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    listings: Array<{
-      __typename?: 'AhListing';
-      id: any;
-      tradeState: string;
-      seller: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      purchaseId?: any | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: { __typename?: 'NftOwner'; address: string } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
         address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
+        name: string;
         sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-    offers: Array<{
-      __typename?: 'Offer';
-      id: any;
-      tradeState: string;
-      buyer: any;
-      metadata: any;
-      price: any;
-      tradeStateBump: number;
-      tokenAccount?: string | null;
-      purchaseId?: any | null;
-      createdAt: any;
-      canceledAt?: any | null;
-      auctionHouse?: {
-        __typename?: 'AuctionHouse';
-        address: string;
-        treasuryMint: string;
-        auctionHouseTreasury: string;
-        treasuryWithdrawalDestination: string;
-        feeWithdrawalDestination: string;
-        authority: string;
-        creator: string;
-        auctionHouseFeeAccount: string;
-        bump: number;
-        treasuryBump: number;
-        feePayerBump: number;
-        sellerFeeBasisPoints: number;
-        requiresSignOff: boolean;
-        canChangeSalePrice: boolean;
-      } | null;
-    }>;
-  } | null;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        attributes: Array<{
+          __typename?: 'NftAttribute';
+          metadataAddress: string;
+          value?: string | null;
+          traitType?: string | null;
+        }>;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: { __typename?: 'NftOwner'; address: string } | null;
+        purchases: Array<{
+          __typename?: 'Purchase';
+          id: any;
+          buyer: any;
+          price: any;
+          createdAt: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        listings: Array<{
+          __typename?: 'AhListing';
+          id: any;
+          tradeState: string;
+          seller: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+        offers: Array<{
+          __typename?: 'Offer';
+          id: any;
+          tradeState: string;
+          buyer: any;
+          metadata: any;
+          price: any;
+          tradeStateBump: number;
+          tokenAccount?: string | null;
+          purchaseId?: any | null;
+          createdAt: any;
+          canceledAt?: any | null;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
+        }>;
+      }
+    | null;
 };
 
 export type ShareNftQueryVariables = Exact<{
@@ -4229,44 +7081,86 @@ export type ShareNftQuery = {
       } | null;
     }>;
   } | null;
-  nft?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{ __typename?: 'Purchase'; id: any; buyer: any; price: any }>;
-    listings: Array<{ __typename?: 'AhListing'; id: any; price: any }>;
-    offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
-  } | null;
-  nftByMintAddress?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    sellerFeeBasisPoints: number;
-    mintAddress: string;
-    description: string;
-    image: string;
-    primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
-    owner?: {
-      __typename?: 'NftOwner';
-      address: string;
-      associatedTokenAccountAddress: string;
-    } | null;
-    purchases: Array<{ __typename?: 'Purchase'; id: any; buyer: any; price: any }>;
-    listings: Array<{ __typename?: 'AhListing'; id: any; price: any }>;
-    offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
-  } | null;
+  nft?:
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        name: string;
+        sellerFeeBasisPoints: number;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{ __typename?: 'Purchase'; id: any; buyer: any; price: any }>;
+        listings: Array<{ __typename?: 'AhListing'; id: any; price: any }>;
+        offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        sellerFeeBasisPoints: number;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{ __typename?: 'Purchase'; id: any; buyer: any; price: any }>;
+        listings: Array<{ __typename?: 'AhListing'; id: any; price: any }>;
+        offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
+      }
+    | null;
+  nftByMintAddress?:
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        name: string;
+        sellerFeeBasisPoints: number;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{ __typename?: 'Purchase'; id: any; buyer: any; price: any }>;
+        listings: Array<{ __typename?: 'AhListing'; id: any; price: any }>;
+        offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        sellerFeeBasisPoints: number;
+        mintAddress: string;
+        description: string;
+        image: string;
+        primarySaleHappened: boolean;
+        creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+        owner?: {
+          __typename?: 'NftOwner';
+          address: string;
+          associatedTokenAccountAddress: string;
+        } | null;
+        purchases: Array<{ __typename?: 'Purchase'; id: any; buyer: any; price: any }>;
+        listings: Array<{ __typename?: 'AhListing'; id: any; price: any }>;
+        offers: Array<{ __typename?: 'Offer'; id: any; buyer: any; price: any }>;
+      }
+    | null;
 };
 
 export type ConnectionNodeFragment = {
@@ -4338,21 +7232,38 @@ export type GetCollectedByQueryVariables = Exact<{
 
 export type GetCollectedByQuery = {
   __typename?: 'QueryRoot';
-  nfts: Array<{
-    __typename?: 'CollectionNft';
-    address: string;
-    owner?: {
-      __typename?: 'NftOwner';
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    } | null;
-  }>;
+  nfts: Array<
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        owner?: {
+          __typename?: 'NftOwner';
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        } | null;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        owner?: {
+          __typename?: 'NftOwner';
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        } | null;
+      }
+  >;
 };
 
 export type GetConnectedWalletProfileDataQueryVariables = Exact<{
@@ -4623,26 +7534,48 @@ export type SearchQuery = {
       bannerImageUrl: string;
     } | null;
   };
-  nftByMintAddress?: {
-    __typename?: 'CollectionNft';
-    address: string;
-    name: string;
-    image: string;
-    mintAddress: string;
-    creators: Array<{
-      __typename?: 'NftCreator';
-      twitterHandle?: string | null;
-      address: string;
-      profile?: {
-        __typename?: 'TwitterProfile';
-        walletAddress?: string | null;
-        handle: string;
-        profileImageUrlLowres: string;
-        profileImageUrlHighres: string;
-        bannerImageUrl: string;
-      } | null;
-    }>;
-  } | null;
+  nftByMintAddress?:
+    | {
+        __typename?: 'CollectionNft';
+        address: string;
+        name: string;
+        image: string;
+        mintAddress: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          twitterHandle?: string | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        image: string;
+        mintAddress: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
+          twitterHandle?: string | null;
+          address: string;
+          profile?: {
+            __typename?: 'TwitterProfile';
+            walletAddress?: string | null;
+            handle: string;
+            profileImageUrlLowres: string;
+            profileImageUrlHighres: string;
+            bannerImageUrl: string;
+          } | null;
+        }>;
+      }
+    | null;
   searchCollections: Array<{
     __typename?: 'MetadataJson';
     name: string;
