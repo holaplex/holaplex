@@ -394,28 +394,29 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
 
   return (
     <>
-      <Link href={'/nfts/' + props.nft.address} passHref>
-        <a target="_blank">
-          {/* Buy in feed context onClick={() => setModalOpen(true)} */}
-          <Button5
-            v="primary"
-            onClick={() => {
-              track('Feed Purchase Initiated', {
-                event_category: 'Alpha',
-                event_label: props.nft?.name,
-                nftAddress: props.nft?.address,
-              });
-            }}
-            className="w-full sm:w-auto"
-          >
-            Buy now
-          </Button5>
-        </a>
-      </Link>
-      {ReactDom.createPortal(
-        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
-          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+      <Button5
+        v="primary"
+        onClick={() => {
+          track('Feed Purchase Initiated', {
+            event_category: 'Alpha',
+            event_label: props.nft?.name,
+            nftAddress: props.nft?.address,
+          });
+          setModalOpen(true);
+        }}
+        className="w-full sm:w-auto"
+      >
+        Buy now
+      </Button5>
 
+      {ReactDom.createPortal(
+        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen} priority={true}>
+          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+          {marketplaceQuery.loading && (
+            <div className="flex justify-center">
+              <TailSpin color={`grey`} />
+            </div>
+          )}
           {marketplaceQuery.data && (
             <div className={`mt-8 flex w-full`}>
               <BuyForm
