@@ -17,7 +17,7 @@ import {
   UploadedBanner,
 } from '@/modules/storefront/editor';
 import ipfsSDK from '@/modules/ipfs/client';
-import { Transaction } from '@solana/web3.js';
+import { SystemProgram, Transaction } from '@solana/web3.js';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Card, Col, Form, Input, Row, Space, InputNumber, Typography } from 'antd';
 import {
@@ -155,6 +155,45 @@ export default function New() {
         sellerFeeBasisPoints,
       });
 
+      const transaction = new Transaction();
+
+      transaction.add(auctionHouseCreateInstruction);
+
+      const [auctionHouse, _bump] = await AuctionHouseProgram.findAuctionHouseAddress(
+        wallet.publicKey,
+        NATIVE_MINT
+      );
+      const [feeAccount, _feePayerBump] = await AuctionHouseProgram.findAuctionHouseFeeAddress(
+        auctionHouse
+      );
+      const [treasuryAccount, _treasuryBump] =
+        await AuctionHouseProgram.findAuctionHouseTreasuryAddress(auctionHouse);
+
+      const rentExempt = await connection.getMinimumBalanceForRentExemption(0);
+      console.log('rentExempt', rentExempt);
+      const trBalance = await connection.getBalance(treasuryAccount);
+      console.log('treasuryAccount balance', trBalance);
+      const faBalance = await connection.getBalance(feeAccount);
+      console.log('feeAccount balance', faBalance);
+
+      if (trBalance < rentExempt) {
+        const ix = SystemProgram.transfer({
+          fromPubkey: wallet.publicKey,
+          toPubkey: treasuryAccount,
+          lamports: rentExempt,
+        });
+        transaction.add(ix);
+      }
+
+      if (faBalance < rentExempt) {
+        const ix = SystemProgram.transfer({
+          fromPubkey: wallet.publicKey,
+          toPubkey: feeAccount,
+          lamports: rentExempt,
+        });
+        transaction.add(ix);
+      }
+
       const setStorefrontV2Instructions = new SetStoreV2(
         {
           feePayer: wallet.publicKey,
@@ -168,9 +207,7 @@ export default function New() {
         }
       );
 
-      const transaction = new Transaction();
-
-      transaction.add(auctionHouseCreateInstruction).add(setStorefrontV2Instructions);
+      transaction.add(setStorefrontV2Instructions);
 
       transaction.feePayer = wallet.publicKey;
       transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
