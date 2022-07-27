@@ -150,6 +150,7 @@ export default function New() {
         return;
       }
       const auctionHouseCreateInstruction = await createAuctionHouse({
+        connection,
         wallet: wallet as Wallet,
         sellerFeeBasisPoints,
       });
@@ -189,6 +190,7 @@ export default function New() {
         { autoClose: 60000 }
       );
     } catch (e: any) {
+      console.log(e);
       toast(e.message, { autoClose: 60000, type: 'error' });
     } finally {
       setSubmitting(false);
