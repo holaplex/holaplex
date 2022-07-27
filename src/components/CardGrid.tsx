@@ -211,7 +211,7 @@ export interface CardGridProps<T> {
    * Attributes for creating/displaying cards.
    */
   cardContext: {
-    cardType?: 'PROFILES' | 'NFTS' | 'COLLECTIONS';
+    bigGridClassNameOverride?: string;
     /**
      * Element to use when there are no data. Defaults to an empty `<div/>`.
      */
@@ -288,15 +288,14 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
     }
 
     case GridView.FOUR_BY_FOUR: {
-      gridViewClasses = 'md:grid-cols-4';
+      gridViewClasses = 'sm:grid-cols-2 md:grid-cols-4';
       gridCols = 4;
       break;
     }
     case GridView.SIX_BY_SIX: {
       gridViewClasses = classNames(
-        '',
-        props.cardContext.cardType === 'PROFILES'
-          ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+        props.cardContext.bigGridClassNameOverride
+          ? props.cardContext.bigGridClassNameOverride
           : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
       );
       gridCols = 6;

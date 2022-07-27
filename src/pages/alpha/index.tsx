@@ -83,6 +83,7 @@ const AlphaPage = ({ address }: { address: string }) => {
 
   // will be moved outside of the component eventually
 
+  // TODO consider moving this to useHolaplexInfiniteScrollQuery from useApolloQuery.ts
   const [feedItems, feedAttrs] = useMemo(() => {
     const feedAttrs: FeedCardAttributes[] = [];
 
