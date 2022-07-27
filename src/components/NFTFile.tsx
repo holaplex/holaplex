@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Nft } from '../graphql/indexerTypes';
-import { imgOpt } from '../lib/utils';
-import { LoadingContainer } from './LoadingPlaceholders';
+import { Nft } from '@/graphql/indexerTypes';
+import { imgOpt } from '@/lib/utils';
 import NFTImage from './NFTImage';
 
 interface NFTFileProps {

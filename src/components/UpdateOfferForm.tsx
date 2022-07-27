@@ -14,7 +14,7 @@ import { initMarketplaceSDK, Nft, AhListing, Marketplace } from '@holaplex/marke
 import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
-import { toLamports, toSOL } from '../modules/sol';
+import { toLamports, toSOL } from '@/modules/sol';
 
 interface UpdateOfferFormSchema {
   amount: string;
@@ -24,8 +24,8 @@ interface UpdateOfferFormProps {
   nft: Nft;
   marketplace: Marketplace;
   refetch:
-  | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
-  | (() => void);
+    | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
+    | (() => void);
   loading: boolean;
   hasListing: boolean;
   listing: AhListing;
@@ -60,17 +60,17 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
   const { trackNFTEvent } = useAnalytics();
   const onCancelOffer = async () => {
     if (!offer) {
-      return
+      return;
     }
 
-    const { auctionHouse, price } = offer
+    const { auctionHouse, price } = offer;
 
     if (!auctionHouse || !price) {
-      return
+      return;
     }
 
-    const amount = price.toNumber()
-    const sol = toSOL(amount)
+    const amount = price.toNumber();
+    const sol = toSOL(amount);
 
     toast(`Canceling current offer of ${sol} SOL`);
 
@@ -83,13 +83,13 @@ const UpdateOfferForm: FC<UpdateOfferFormProps> = ({
 
   const onUpdateOffer = async ({ amount }: { amount: number }) => {
     if (!offer) {
-      return
+      return;
     }
 
-    const { auctionHouse, price } = offer
+    const { auctionHouse, price } = offer;
 
     if (!auctionHouse || !price) {
-      return
+      return;
     }
 
     toast(`Updating current offer to: ${amount} SOL`);

@@ -30,10 +30,9 @@ export const verifyNacl =
  */
 export const verifyNaclSelfContained =
   <T>(pubkey: (val: T) => Uint8Array): Verifier<T> =>
-  async (utf8, sig, payload) =>
-    {
-      return nacl.sign.detached.verify(utf8, sig, pubkey(payload));
-    };
+  async (utf8, sig, payload) => {
+    return nacl.sign.detached.verify(utf8, sig, pubkey(payload));
+  };
 
 /**
  * Unpack and verify the inner value of a `Notarized<T>`.

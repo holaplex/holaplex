@@ -1,0 +1,85 @@
+#import "./ProfileInfo.graphql"
+
+fragment ListingEventPreview on ListingEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    ...ProfileInfo
+  }
+  lifecycle
+  listing {
+    id
+    seller
+    price
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      creators {
+        address
+        position
+        profile {
+          handle
+          profileImageUrlLowres
+          profileImageUrlHighres
+        }
+      }
+      listings {
+        id
+        seller
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              ...ProfileInfo
+            }
+          }
+          address
+          mintAddress
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

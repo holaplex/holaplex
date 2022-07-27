@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import { Listing } from '@/modules/indexer';
-import { ListingPreview, SkeletonListing } from '../../components/ListingPreview';
+import { ListingPreview, SkeletonListing } from '@/components/ListingPreview';
 import { FilterOptions, SortOptions } from './home.interfaces';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { QueryContext } from './home.hooks';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 1;
 const CAROUSEL_COLS_LARGE_SCREEN: number = 3;

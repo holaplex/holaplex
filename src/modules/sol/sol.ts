@@ -6,7 +6,7 @@ export function toLamports(priceInSol: number): number {
 }
 
 export const toSOL = (lamports: number, precision: number = 5) => {
-  var multiplier = Math.pow(10, precision)
+  var multiplier = Math.pow(10, precision);
 
-  return Math.round((lamports / LAMPORTS_PER_SOL) * multiplier) / multiplier
-}
+  return Math.round((lamports / LAMPORTS_PER_SOL) * multiplier) / multiplier;
+};

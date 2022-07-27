@@ -11,8 +11,8 @@ import styled from 'styled-components';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
 import { DuplicateIcon, CheckIcon } from '@heroicons/react/outline';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
-import { FollowerCount } from '../../components/FollowerCount';
-import { FollowModal, FollowModalVisibility } from '../../components/FollowModal';
+import { FollowerCount } from './FollowerCount';
+import { FollowModal, FollowModalVisibility } from './FollowModal';
 import { WalletDependantPageProps } from './getProfileServerSideProps';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -88,10 +88,10 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
           <header>
             <Banner className="h-40 md:h-64 " style={{ backgroundImage: `url(${banner})` }} />
           </header>
-          <div className="container  mx-auto px-6 pb-20 md:px-12 lg:flex">
-            <div className="relative lg:sticky lg:top-24 lg:mr-28 lg:h-96 lg:w-full lg:max-w-xs ">
+          <div className="container  mx-auto px-6 pb-20 lg:flex">
+            <div className="mlg:mx-0 relative mx-auto w-full max-w-xs lg:sticky lg:top-24 lg:h-96 ">
               <div className="-mt-12 flex  justify-center text-center lg:justify-start lg:gap-12">
-                <div className=" max-w-fit rounded-full border-4 border-gray-900 ">
+                <div className=" flex flex-shrink-0 rounded-full border-4 border-gray-900 ">
                   <img
                     src={profilePicture}
                     // imgOpt(, 400)
@@ -107,13 +107,19 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                       wallet={anchorWallet}
                       cluster={'mainnet-beta'}
                       variant={'secondary'}
-                      style={{ background: 'rgb(33,33,33)', height: '37px', borderRadius: '18px' }}
+                      style={{
+                        background: 'rgb(33,33,33)',
+                        height: '37px',
+                        width: '130px',
+                        borderRadius: '18px',
+                        padding: 16,
+                      }}
                     />
                   )}
                   {anchorWallet?.publicKey.toString() !== publicKey.toString() && (
                     <FollowUnfollowButtonDataWrapper
                       targetPubkey={publicKey.toString()}
-                      className={`pointer-events-auto absolute right-0 flex`}
+                      className={`pointer-events-auto `}
                     />
                   )}
                 </div>
@@ -127,12 +133,14 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                 setShowFollowsModal={setShowFollowsModal}
                 showButton={false}
               />
-              <Link href={'/messages?address=' + publicKey} passHref>
-                <a className="mt-10 flex max-w-fit items-center space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300">
-                  <span>Message</span>
-                  <MessagesIcon className="h-5 w-5" />
-                </a>
-              </Link>
+              <div className="mt-10 flex justify-center lg:justify-start">
+                <Link href={'/messages?address=' + publicKey} passHref>
+                  <a className=" flex max-w-fit items-center  space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300 ">
+                    <span>Message</span>
+                    <MessagesIcon className="h-5 w-5" />
+                  </a>
+                </Link>
+              </div>
             </div>
 
             <div className="mt-10 w-full">

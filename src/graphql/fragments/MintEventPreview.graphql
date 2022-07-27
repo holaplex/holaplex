@@ -1,0 +1,37 @@
+#import "./ProfileInfo.graphql"
+
+fragment MintEventPreview on MintEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    ...ProfileInfo
+  }
+  nft {
+    name
+    image(width: 600)
+    description
+    owner {
+      address
+      associatedTokenAccountAddress
+      twitterHandle
+    }
+    sellerFeeBasisPoints
+    primarySaleHappened
+    creators {
+      address
+      position
+      profile {
+        ...ProfileInfo
+      }
+    }
+    address
+    mintAddress
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

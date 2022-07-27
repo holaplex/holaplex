@@ -1,0 +1,95 @@
+fragment NftCard on Nft {
+  address
+  name
+  sellerFeeBasisPoints
+  mintAddress
+  description
+  image
+  primarySaleHappened
+  creators {
+    address
+    share
+    verified
+  }
+  owner {
+    address
+    associatedTokenAccountAddress
+  }
+  purchases {
+    id
+    buyer
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+    price
+    createdAt
+  }
+  listings {
+    id
+    tradeState
+    seller
+    metadata
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+    price
+    tradeStateBump
+    purchaseId
+    createdAt
+    canceledAt
+  }
+  offers {
+    id
+    tradeState
+    buyer
+    metadata
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
+    price
+    purchaseId
+    tradeStateBump
+    tokenAccount
+    createdAt
+    canceledAt
+  }
+}

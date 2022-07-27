@@ -1,0 +1,10 @@
+query discoverStats {
+  nftsStats {
+    totalNfts
+    buyNowListings
+    nftsWithActiveOffers
+  }
+  profilesStats {
+    totalProfiles
+  }
+}

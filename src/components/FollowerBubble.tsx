@@ -4,11 +4,11 @@ import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import cx from 'classnames';
 import { FC } from 'react';
-import { TopFollower } from 'src/views/profiles/ProfileDataProvider';
+import { WalletProfile } from '@/views/profiles/follow.utils';
 
 type FollowerBubbleProps = {
   isFirst?: boolean;
-  follower: TopFollower;
+  follower: WalletProfile;
 };
 
 type FollowBubbleImageProps = {
@@ -26,10 +26,10 @@ export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image
         })}
       >
         <FollowedByImage
-          className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
+          className="h-6 w-6 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
           src={image ?? getPFPFromPublicKey(address!)}
-          width={32}
-          height={32}
+          width={24}
+          height={24}
           alt="PFP"
         />
       </a>
@@ -39,20 +39,17 @@ export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image
 
 export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) => {
   return (
-    <Link href={`/profiles/${follower.from.address as string}/nfts`} passHref>
+    <Link href={`/profiles/${follower.address as string}/nfts`} passHref>
       <a
         className={cx({
           block: !isFirst,
         })}
       >
         <FollowedByImage
-          className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
-          src={
-            follower.from?.profile?.profileImageUrlLowres ??
-            getPFPFromPublicKey(follower.from.address!)
-          }
-          width={32}
-          height={32}
+          className="h-6 w-6  rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
+          src={follower?.profile?.profileImageUrlLowres ?? getPFPFromPublicKey(follower.address!)}
+          width={24}
+          height={24}
           alt="PFP"
         />
       </a>

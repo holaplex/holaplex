@@ -1,3 +1,5 @@
+#import "./ProfileInfo.graphql"
+
 query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String!) {
   metadataJsons(term: $term, limit: 25, offset: 0) {
     name
@@ -11,16 +13,14 @@ query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String
     address
     twitterHandle
     profile {
-      profileImageUrlLowres
-      handle
+      ...ProfileInfo
     }
   }
   wallet(address: $walletAddress) {
     address
     twitterHandle
     profile {
-      profileImageUrlLowres
-      handle
+      ...ProfileInfo
     }
   }
   nftByMintAddress(address: $nftMintAddress) {
@@ -31,7 +31,7 @@ query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String
       twitterHandle
       address
       profile {
-        profileImageUrlLowres
+        ...ProfileInfo
       }
     }
     mintAddress

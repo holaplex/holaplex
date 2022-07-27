@@ -39,9 +39,9 @@ import { LoadingContainer } from '@/components/LoadingPlaceholders';
 import { imgOpt } from 'src/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
-import { getProfilePreivewDataFromUser } from '../../lib/utils/typeUtils';
-import Popover from '../../components/Popover';
-import ProfilePreview from '../../components/ProfilePreviewCard';
+import { getProfilePreivewDataFromUser } from '@/lib/utils/typeUtils';
+import Popover from '@/components/Popover';
+import ProfilePreview from '@/components/ProfilePreviewCard';
 
 interface FeedCardOptions {
   hideAction?: boolean;
@@ -222,19 +222,19 @@ function FollowCard(props: {
 
 export const ProfileHandleStack = ({ users }: { users: User[] }) => {
   return (
-    <div>
+    <>
       {users.length > 2 ? (
-        <p className={`m-0 text-base font-bold`}>
-          <ProfileHandle user={users[0]} />
+        <p className={`m-0 flex text-base font-bold`}>
+          <ProfileHandle user={users[0]} popoverPlacement="top" />
 
           <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
           <span className={`m-0`}>{users.length - 1} others</span>
         </p>
       ) : (
-        <p className={`m-0`}>
+        <p className={`m-0 flex`}>
           {users.slice(0, 2).map((user, i) => (
-            <span key={user.address} className={`m-0 text-base font-bold`}>
-              <ProfileHandle user={user} />
+            <span key={user.address} className={`m-0 flex text-base font-bold`}>
+              <ProfileHandle user={user} popoverPlacement="top" />
 
               {i === 0 && users.length > 1 && (
                 <span className={`text-base font-normal`}>&nbsp;and&nbsp;</span>
@@ -243,34 +243,35 @@ export const ProfileHandleStack = ({ users }: { users: User[] }) => {
           ))}
         </p>
       )}
-    </div>
+    </>
   );
 };
 
-export const ProfileHandle = ({ user, shorten = false }: { user: User; shorten?: boolean }) => {
-  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
-  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-
-  useEffect(() => {
-    async function getTwitterHandleAndSetState(): Promise<void> {
-      await twitterHandleQuery({ variables: { pubKey: user.address } });
-      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
-        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
-      }
-    }
-    if (!twitterHandle && false) {
-      // pausing requesting additional twitter handles as it leads to too many requests
-      getTwitterHandleAndSetState();
-    }
-  }, []);
-
+export const ProfileHandle = ({
+  user,
+  shorten = false,
+  ...props
+}: {
+  user: User;
+  shorten?: boolean;
+  popoverPlacement?: 'top' | 'bottom';
+  popoverDisabled?: boolean;
+}) => {
   return (
     <Popover
       isShowOnHover={true}
+      disabled={props.popoverDisabled}
+      placement={props.popoverPlacement}
       content={
         <ProfilePreview
           address={user.address}
-          context={{ data: getProfilePreivewDataFromUser(user), loading: false, refetch: () => {} }}
+          className="w-80"
+          context={{
+            data: getProfilePreivewDataFromUser(user),
+            loading: false,
+            refetch: () => {},
+            fetchMore: () => {},
+          }}
         />
       }
     >
@@ -347,14 +348,13 @@ function FeedActionBanner(props: {
           />
         )}
 
-        <div className="ml-2 flex max-w-xs flex-col gap-2">
-          <div className={`flex text-base font-semibold`}>
-            <ProfileHandle user={attrs.sourceUser} />
+        <div className="ml-2 max-w-xs ">
+          <div className={`inline-flex text-sm font-semibold`}>
+            <ProfileHandle user={attrs.sourceUser} popoverPlacement="top" />
             &nbsp;
-            <div className="text-base font-normal">{attrs.content}</div>
-            &nbsp;
+            <div className="text-sm font-normal">{attrs.content}</div>
             {attrs.type === `MintEvent` && (
-              <div className={`truncate text-clip text-base`}>
+              <div className={`truncate text-clip text-sm`}>
                 {attrs?.nft?.name.slice(0, 8)}
                 {(attrs.nft?.name?.length || 0) > 8 && `...`}
               </div>
@@ -394,28 +394,29 @@ const PurchaseAction = (props: { listingEvent: ListingEvent; nft: any }) => {
 
   return (
     <>
-      <Link href={'/nfts/' + props.nft.address} passHref>
-        <a target="_blank">
-          {/* Buy in feed context onClick={() => setModalOpen(true)} */}
-          <Button5
-            v="primary"
-            onClick={() => {
-              track('Feed Purchase Initiated', {
-                event_category: 'Alpha',
-                event_label: props.nft?.name,
-                nftAddress: props.nft?.address,
-              });
-            }}
-            className="w-full sm:w-auto"
-          >
-            Buy now
-          </Button5>
-        </a>
-      </Link>
-      {ReactDom.createPortal(
-        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen}>
-          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+      <Button5
+        v="primary"
+        onClick={() => {
+          track('Feed Purchase Initiated', {
+            event_category: 'Alpha',
+            event_label: props.nft?.name,
+            nftAddress: props.nft?.address,
+          });
+          setModalOpen(true);
+        }}
+        className="w-full sm:w-auto"
+      >
+        Buy now
+      </Button5>
 
+      {ReactDom.createPortal(
+        <Modal title={`Make an offer`} open={modalOpen} setOpen={setModalOpen} priority={true}>
+          {props.nft! && <NFTPreview loading={false} nft={props.nft as Nft | any} />}
+          {marketplaceQuery.loading && (
+            <div className="flex justify-center">
+              <TailSpin color={`grey`} />
+            </div>
+          )}
           {marketplaceQuery.data && (
             <div className={`mt-8 flex w-full`}>
               <BuyForm
@@ -524,50 +525,13 @@ export const ProfilePFPStack = ({ users }: { users: User[] }) => {
 };
 
 export function ProfilePFP({ user }: { user: User }) {
-  // Note, we only invoke extra queries if the prop user does not have necceary info
-  const [twitterHandle, setTwitterHandle] = useState(user.profile?.handle);
-  const [pfpUrl, setPfpUrl] = useState(
-    user.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)
-  );
-  const [twitterHandleQuery, twitterHandleQueryContext] = useTwitterHandleFromPubKeyLazyQuery();
-
-  useEffect(() => {
-    async function getTwitterHandleAndSetState(): Promise<void> {
-      await twitterHandleQuery({ variables: { pubKey: user.address } });
-      if (twitterHandleQueryContext.data?.wallet.profile?.handle) {
-        setTwitterHandle(twitterHandleQueryContext.data?.wallet.profile?.handle);
-      }
-    }
-    if (!twitterHandle && false) {
-      // pausing requesting additional twitter handles as it leads to too many requests
-
-      getTwitterHandleAndSetState();
-    }
-  }, [user, twitterHandle, twitterHandleQuery]);
-
-  const [walletProfileQuery, walletProfile] = useWalletProfileLazyQuery({
-    variables: {
-      handle: twitterHandle ?? '',
-    },
-  });
-
-  useEffect(() => {
-    if (twitterHandle && !user.profile?.profileImageUrlLowres) {
-      walletProfileQuery().then((q) => {
-        if (q.data?.profile?.profileImageUrlLowres) {
-          setPfpUrl(q.data?.profile?.profileImageUrlLowres);
-        }
-      });
-    }
-  }, [twitterHandle, user, walletProfileQuery]);
-
   /*  const { track } = useAnalytics(); // track navigation to profile from pfp */
 
   return (
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a target="_blank">
         <img
-          className={classNames('rounded-full', 'h-10 w-10')}
+          className={classNames('rounded-full', 'h-10 w-10 flex-shrink-0')}
           src={user?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
@@ -598,7 +562,13 @@ const ProfileMiniCard = ({ user, myFollowingList }: { user: User; myFollowingLis
     <div className={`flex w-64 max-w-xs flex-col items-center gap-2 p-4`}>
       <ProfilePFP user={user} />
       <p className={`m-0 text-base font-semibold`}>
-        <ProfileHandle user={user} shorten={true} />
+        <ProfileHandle
+          // need to disable this until we can look more into z-index issues
+          popoverDisabled={true}
+          popoverPlacement="top"
+          user={user}
+          shorten={true}
+        />
       </p>
       {user.address === connectedProfile?.pubkey ? (
         <Button5

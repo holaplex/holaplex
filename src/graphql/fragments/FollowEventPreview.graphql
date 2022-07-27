@@ -1,0 +1,32 @@
+#import "./ProfileInfo.graphql"
+
+fragment FollowEventPreview on FollowEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    ...ProfileInfo
+  }
+  graphConnectionAddress
+  connection {
+    address
+    from {
+      address
+      profile {
+        ...ProfileInfo
+      }
+    }
+    to {
+      address
+      profile {
+        ...ProfileInfo
+      }
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

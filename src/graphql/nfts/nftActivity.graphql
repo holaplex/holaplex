@@ -1,0 +1,24 @@
+#import "./ProfileInfo.graphql"
+
+query nftActivity($address: String!) {
+  nftByMintAddress(address: $address) {
+    activities {
+      id
+      metadata
+      price
+      createdAt
+      wallets {
+        address
+        twitterHandle
+        profile {
+          ...ProfileInfo
+        }
+      }
+      activityType
+      auctionHouse {
+        address
+        treasuryMint
+      }
+    }
+  }
+}

@@ -1,3 +1,5 @@
+#import "./ProfileInfo.graphql"
+
 query nftsInCollection(
   $collectionMintAddress: PublicKey!
   $listed: Boolean
@@ -56,9 +58,7 @@ query nftsInCollection(
       share
       verified
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
     owner {

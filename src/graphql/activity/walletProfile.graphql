@@ -1,8 +1,7 @@
+#import "./ProfileInfo.graphql"
+
 query walletProfile($handle: String!) {
   profile(handle: $handle) {
-    handle
-    profileImageUrlLowres
-    profileImageUrlHighres
-    bannerImageUrl
+    ...ProfileInfo
   }
 }

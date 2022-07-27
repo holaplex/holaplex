@@ -125,25 +125,28 @@ const SearchResults: FC<SearchResultsProps> = ({
         </>
       )}
 
-      {walletResult && isPublicKey(walletResult.address) && (
-        <Combobox.Option value={walletResult}>
-          {({ active }) => (
-            <ProfileSearchItem
-              address={walletResult?.address}
-              handle={walletResult?.twitterHandle}
-              profileImage={walletResult?.profile?.profileImageUrlLowres}
-              onClick={() =>
-                trackSearchResultSelected({
-                  resultType: 'Wallet',
-                  profileAddress: walletResult.address,
-                  profileHandle: walletResult.twitterHandle,
-                })
-              }
-              active={active}
-            />
-          )}
-        </Combobox.Option>
-      )}
+      {walletResult &&
+        isPublicKey(walletResult.address) &&
+        profileResults &&
+        profileResults?.length < 0 && (
+          <Combobox.Option value={walletResult}>
+            {({ active }) => (
+              <ProfileSearchItem
+                address={walletResult?.address}
+                handle={walletResult?.twitterHandle}
+                profileImage={walletResult?.profile?.profileImageUrlLowres}
+                onClick={() =>
+                  trackSearchResultSelected({
+                    resultType: 'Wallet',
+                    profileAddress: walletResult.address,
+                    profileHandle: walletResult.twitterHandle,
+                  })
+                }
+                active={active}
+              />
+            )}
+          </Combobox.Option>
+        )}
       {results && results.length > 0 && (
         <>
           <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>NFTs</h6>

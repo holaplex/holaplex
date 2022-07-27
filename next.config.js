@@ -33,6 +33,11 @@ module.exports = withPlugins(plugins, {
         destination: '/collections/:publicKey/nfts',
         permanent: true,
       },
+      {
+        source: '/discover',
+        destination: '/discover/nfts',
+        permanent: true,
+      },
     ];
   },
   images: {

@@ -1,0 +1,20 @@
+# import "../fragments/CollectionPreview.graphql"
+
+query discoverCollectionsByMarketCap(
+  $searchTerm: String
+  $start: DateTimeUtc!
+  $end: DateTimeUtc!
+  $limit: Int!
+  $offset: Int!
+) {
+  collectionsFeaturedByMarketCap(
+    term: $searchTerm
+    startDate: $start
+    endDate: $end
+    limit: $limit
+    offset: $offset
+    orderDirection: DESC
+  ) {
+    ...CollectionPreview
+  }
+}

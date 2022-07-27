@@ -1,12 +1,12 @@
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import React, { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
-import { imgOpt, isTouchScreenOnly } from '../../lib/utils';
-import { SolIcon } from '../../components/Price';
+import { imgOpt, isTouchScreenOnly } from '@/lib/utils';
+import { SolIcon } from '@/components/Price';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
-import { AvatarIcons, AvatarIconsProps } from '../../components/Avatar';
+import { AvatarIcons, AvatarIconsProps } from '@/components/Avatar';
 import { getFallbackImage } from '@/modules/utils/image';
-import { QueryContext } from './home.hooks';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_COLS: number = 3;
 const CAROUSEL_ROWS: number = 2;
@@ -101,7 +101,7 @@ function MarketplacePreview(props: MarketplacePreviewProps): JSX.Element {
 
   const marketplaceUrl: string = `https://${props.subdomain}.holaplex.market`;
   const nftVolumeStr: string = (props.context.data.nftCount ?? 0).toLocaleString();
-  const floorPriceSol: number = props.context.data.floorPriceLamports ?? 0 / LAMPORTS_PER_SOL;
+  const floorPriceSol: number = (props.context.data.floorPriceLamports ?? 0) / LAMPORTS_PER_SOL;
 
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>

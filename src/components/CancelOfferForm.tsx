@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { initMarketplaceSDK, Nft, Marketplace, Offer } from '@holaplex/marketplace-js-sdk';
 import { Wallet } from '@metaplex/js';
-import { Action, MultiTransactionContext } from '../views/_global/MultiTransaction';
+import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 
@@ -45,7 +45,6 @@ const CancelOfferForm: FC<CancelOfferFormProps> = ({
   const onCancelOffer = async () => {
     if (offer && offer.auctionHouse && nft) {
       toast(`Canceling current offer of ${Number(offer.price) / LAMPORTS_PER_SOL}`);
-      
       await sdk
         .transaction()
         .add(sdk.escrow(offer.auctionHouse).withdraw({ amount: offer.price.toNumber() }))

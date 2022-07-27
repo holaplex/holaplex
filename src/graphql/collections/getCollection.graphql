@@ -1,3 +1,5 @@
+#import "./ProfileInfo.graphql"
+
 query getCollection($address: String!) {
   nft(address: $address) {
     address
@@ -9,9 +11,7 @@ query getCollection($address: String!) {
       position
       address
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
   }
@@ -25,9 +25,7 @@ query getCollection($address: String!) {
       position
       address
       profile {
-        handle
-        profileImageUrlLowres
-        profileImageUrlHighres
+        ...ProfileInfo
       }
     }
   }

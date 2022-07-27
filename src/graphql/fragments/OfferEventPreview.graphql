@@ -1,0 +1,60 @@
+#import "./ProfileInfo.graphql"
+
+fragment OfferEventPreview on OfferEvent {
+  feedEventId
+  createdAt
+  walletAddress
+  profile {
+    ...ProfileInfo
+  }
+  lifecycle
+  offer {
+    id
+    buyer
+    price
+    nft {
+      name
+      image(width: 600)
+      description
+      owner {
+        address
+        associatedTokenAccountAddress
+        twitterHandle
+      }
+      offers {
+        id
+        buyer
+        price
+        nft {
+          name
+          image(width: 600)
+          description
+          owner {
+            address
+            associatedTokenAccountAddress
+            twitterHandle
+          }
+          sellerFeeBasisPoints
+          primarySaleHappened
+          creators {
+            address
+            position
+            profile {
+              ...ProfileInfo
+            }
+          }
+          address
+          mintAddress
+        }
+      }
+      address
+      mintAddress
+    }
+  }
+  wallet {
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

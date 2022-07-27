@@ -1,0 +1,14 @@
+#import "./ProfileInfo.graphql"
+
+query discoverProfilesAll($userWallet: PublicKey, $limit: Int!, $offset: Int!) {
+  followWallets(wallet: $userWallet, limit: $limit, offset: $offset) {
+    address
+    profile {
+      ...ProfileInfo
+    }
+    nftCounts {
+      owned
+      created
+    }
+  }
+}

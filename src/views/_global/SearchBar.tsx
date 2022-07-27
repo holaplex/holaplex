@@ -16,7 +16,7 @@ import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
 import { useRouter } from 'next/router';
 import { XIcon } from '@heroicons/react/outline';
 import { IShortcutProviderRenderProps, withShortcut } from 'react-keybind';
-import KeyboardShortcut from '../../components/KeyboardShortcut';
+import KeyboardShortcut from '@/components/KeyboardShortcut';
 import { DebounceInput } from 'react-debounce-input';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -210,7 +210,10 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                     setShowResults(true);
                     setShowKeybind(true);
                   }}
-                  onBlur={() => setShowKeybind(false)}
+                  onBlur={() => {
+                    setShowKeybind(false);
+                    setHasSearch(false);
+                  }}
                   placeholder={`Search Holaplex...`}
                   onChange={handleOnChange}
                   inputRef={searchInputRef}
@@ -231,7 +234,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   <div
                     className={`absolute inset-y-0 ${
                       hasSearch ? `right-8` : `right-0`
-                    } flex items-center pr-3`}
+                    } hidden items-center pr-3 sm:flex`}
                   >
                     <KeyboardShortcut keys={[`ctrl`, `k`]} />
                   </div>

@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { LoadingNFTCard, NFTCard, OwnedNFT } from 'pages/profiles/[publicKey]/nfts';
-import { HomeSection, HomeSectionCarousel } from 'pages/index';
+import { LoadingNFTCard, NFTCard, OwnedNFT } from 'src/pages/profiles/[publicKey]/nfts';
+import { HomeSection, HomeSectionCarousel } from 'src/pages/index';
 import { AuctionHouse, Marketplace } from '@holaplex/marketplace-js-sdk';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { QueryContext } from './home.hooks';
+import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;
-const CAROUSEL_COLS_LARGE_SCREEN: number = 3;
-const CAROUSEL_COLS_SMALL_SCREEN: number = 2;
+const CAROUSEL_COLS_LARGE_SCREEN: number = 4;
+const CAROUSEL_COLS_SMALL_SCREEN: number = 3;
 const CAROUSEL_PAGES: number = 3;
 const LARGE_SCREEN_THRESHOLD: number = 1350;
 const N_LISTINGS: number = CAROUSEL_ROWS * CAROUSEL_COLS_LARGE_SCREEN * CAROUSEL_PAGES;
@@ -63,10 +63,9 @@ export function FeaturedBuyNowListingsSection(props: FeaturedBuyNowListingsSecti
     <HomeSection>
       <HomeSection.Header>
         <HomeSection.Title>What&apos;s hot</HomeSection.Title>
-        {/* //TODO revert once discovery is ready */}
-        {/* <HomeSection.HeaderAction external href="https://holaplex.com">
-          Discover All
-        </HomeSection.HeaderAction> */}
+        <HomeSection.HeaderAction href="/discover/nfts?type=buy-now">
+          See all
+        </HomeSection.HeaderAction>
       </HomeSection.Header>
       <HomeSection.Body>
         <HomeSectionCarousel rows={CAROUSEL_ROWS} cols={carouselCols}>
