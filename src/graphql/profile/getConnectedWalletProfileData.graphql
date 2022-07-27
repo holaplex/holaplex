@@ -1,4 +1,5 @@
 #import "./connectionNode.graphql"
+#import "./ProfileInfo.graphql"
 
 query getConnectedWalletProfileData($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
   wallet(address: $address) {
@@ -14,9 +15,7 @@ query getConnectedWalletProfileData($address: PublicKey!, $limit: Int = 1000, $o
       toCount
     }
     profile {
-      handle
-      profileImageUrlLowres
-      profileImageUrlHighres
+      ...ProfileInfo
     }
   }
 

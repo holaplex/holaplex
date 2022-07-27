@@ -1,3 +1,5 @@
+#import "./ProfileInfo.graphql"
+
 query nftActivity($address: String!) {
   nftByMintAddress(address: $address) {
     activities {
@@ -9,9 +11,7 @@ query nftActivity($address: String!) {
         address
         twitterHandle
         profile {
-          profileImageUrlLowres
-          handle
-          walletAddress
+          ...ProfileInfo
         }
       }
       activityType

@@ -83,7 +83,7 @@ export function CollectionPreviewLoadingCard(): JSX.Element {
 export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.Element {
   if (props.context.loading) return <CollectionPreviewLoadingCard />;
 
-  const linkUrl: string = `/collections/${props.context.data?.address}/about`;
+  const linkUrl: string = `/collections/${props.context.data?.address}/nfts`;
   const nftCountStr: string = (props.context.data?.nftCount ?? 0).toLocaleString();
   const imageUrl: string | undefined = imgOpt(props.context.data?.imageUrl, 600);
 
@@ -130,11 +130,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
           }}
         />
       }
-      name={
-        <span className="text-2xl font-semibold text-white lg:text-3xl">
-          {props.context.data?.name}
-        </span>
-      }
+      name={<span className="text-2xl font-semibold text-white ">{props.context.data?.name}</span>}
       size={
         (props.context.data?.nftCount ?? 0) > 0 && (
           <span

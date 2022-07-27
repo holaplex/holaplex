@@ -1,11 +1,11 @@
+#import "./ProfileInfo.graphql"
+
 query getCollectedBy($creator: PublicKey!) {
   nfts(creators: [$creator], limit: 1000, offset: 0) {
     address
     owner {
       profile {
-        walletAddress
-        profileImageUrlLowres
-        handle
+        ...ProfileInfo
       }
     }
   }

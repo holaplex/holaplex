@@ -19,12 +19,30 @@ function FollowListItem({
   return (
     <div className="flex justify-between gap-4">
       <div className="flex items-center">
-        <div className="mr-4">
+        <div className="mr-4 flex flex-shrink-0">
           <ProfilePFP user={user} />
         </div>
-        <Link href={'/profiles/' + user.address + '/nfts'} passHref>
-          <a>{getHandle(user)}</a>
-        </Link>
+        <Popover
+          key={user.address}
+          isShowOnHover={true}
+          placement="right"
+          content={
+            <ProfilePreview
+              className="w-80"
+              address={user.address}
+              context={{
+                data: getProfilePreivewDataFromUser(user),
+                loading: false,
+                refetch: () => {},
+                fetchMore: () => {},
+              }}
+            />
+          }
+        >
+          <Link href={'/profiles/' + user.address + '/nfts'} passHref>
+            <a className="truncate">{getHandle(user)}</a>
+          </Link>
+        </Popover>
       </div>
 
       <FollowUnfollowButton
@@ -117,23 +135,7 @@ export default function WhoToFollowList(props: {
 
         {connectedProfile?.walletConnectionPair &&
           topProfilesToFollow.map((u) => (
-            <Popover
-              key={u.address}
-              isShowOnHover={true}
-              content={
-                <ProfilePreview
-                  address={u.address}
-                  context={{
-                    data: getProfilePreivewDataFromUser(u),
-                    loading: false,
-                    refetch: () => {},
-                    fetchMore: () => {},
-                  }}
-                />
-              }
-            >
-              <FollowListItem key={u.address} user={u} myFollowingList={myFollowingList} />
-            </Popover>
+            <FollowListItem key={u.address} user={u} myFollowingList={myFollowingList} />
           ))}
         {!connectedProfile && myFollowingList && <div>Connect wallet to see suggestions</div>}
       </div>

@@ -12,7 +12,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useMemo } from 'react';
-import { useAllConnectionsToQuery } from 'src/graphql/indexerTypes';
+import { useAllConnectionsToQuery, useIsXFollowingYQuery } from 'src/graphql/indexerTypes';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import { SolscanIcon } from '@/assets/icons/Solscan';
 
@@ -62,7 +62,7 @@ function CollectionLayoutHead(props: {
 
 export default function CollectionLayout({
   children,
-  collectionAddress,
+  collectionUrlAddress,
   collection,
 }: CollectionPageProps & { children: ReactNode }) {
   const wallet = useAnchorWallet();
@@ -73,7 +73,7 @@ export default function CollectionLayout({
 
   const { data: collectionFollowersData } = useAllConnectionsToQuery({
     variables: {
-      to: collectionAddress,
+      to: collection?.address,
     },
   });
 
@@ -96,163 +96,116 @@ export default function CollectionLayout({
         name={collection?.name || ``}
         description={collection?.description || ``}
       />
-      <div className="container lg:mx-auto ">
-        <div className="relative flex w-full flex-col items-start lg:flex-row lg:justify-between">
-          <div>
-            <div className="mx-4 mb-10 flex flex-col lg:mx-0 lg:flex-row">
-              <img
-                src={collection?.image}
-                className="mr-10 h-40 w-40 rounded-2xl bg-gray-900 shadow-2xl ring-8 ring-gray-900"
-                alt="Collection logo"
-              />
-              <div>
-                {/* <span className="text-base text-gray-300">Collection of X</span> */}
-                <h1 className="mt-4 text-5xl"> {collection?.name} </h1>
-                <div className={`flex items-center justify-start gap-6`}>
-                  {creators[0]?.profile?.handle && (
-                    <Link href={`https://twitter.com/${creators[0]?.profile?.handle}`}>
-                      <a target={`_blank`}>
-                        <FeatherIcon
-                          fill={'white'}
-                          icon="twitter"
-                          aria-hidden="true"
-                          className={`h-4 w-4 text-white hover:text-gray-300`}
-                        />
-                      </a>
-                    </Link>
-                  )}
+      <div className="container mx-auto mt-10 px-6 xl:mt-20">
+        <div className="relative  mb-10 flex w-full flex-col items-start lg:flex-row lg:justify-between">
+          <div className="  flex w-full flex-col items-center lg:mx-0 lg:flex-row">
+            <img
+              src={collection?.image}
+              className="mb-10 aspect-square h-28 w-28 rounded-2xl bg-gray-900 object-cover shadow-2xl ring-8 ring-gray-900 lg:mb-0 lg:mr-10"
+              alt="Collection logo"
+            />
+            <div>
+              {/* <span className="text-base text-gray-300">Collection of X</span> */}
+              <h1 className="mb-6 text-5xl"> {collection?.name} </h1>
+              <div className={`flex items-center justify-center gap-6 lg:justify-start`}>
+                {creators[0]?.profile?.handle && (
+                  <Link href={`https://twitter.com/${creators[0]?.profile?.handle}`}>
+                    <a target={`_blank`}>
+                      <FeatherIcon
+                        fill={'white'}
+                        icon="twitter"
+                        aria-hidden="true"
+                        className={`h-4 w-4 text-white hover:text-gray-300`}
+                      />
+                    </a>
+                  </Link>
+                )}
 
-                  <Link href={`https://explorer.solana.com/address/${collection?.mintAddress}`}>
-                    <a target={`_blank`}>
-                      <ExplorerIcon
-                        width={16}
-                        height={16}
-                        className={`ease-in-out hover:text-gray-300`}
-                      />
-                    </a>
-                  </Link>
-                  <Link href={`https://solscan.io/account/${collection?.mintAddress}`}>
-                    <a target={`_blank`}>
-                      <SolscanIcon
-                        width={16}
-                        height={16}
-                        className={`ease-in-out hover:text-gray-300`}
-                      />
-                    </a>
-                  </Link>
-                  {!walletConnectionPair ? null : (
-                    <FollowUnfollowButton
-                      toProfile={{
-                        address: collection?.address!,
-                      }}
-                      type={amIFollowingThisCollection ? 'Unfollow' : 'Follow'}
-                      walletConnectionPair={walletConnectionPair}
-                      source="collectionPage"
+                <Link href={`https://explorer.solana.com/address/${collection?.mintAddress}`}>
+                  <a target={`_blank`}>
+                    <ExplorerIcon
+                      width={16}
+                      height={16}
+                      className={`ease-in-out hover:text-gray-300`}
                     />
-                  )}
+                  </a>
+                </Link>
+                <Link href={`https://solscan.io/account/${collection?.mintAddress}`}>
+                  <a target={`_blank`}>
+                    <SolscanIcon
+                      width={16}
+                      height={16}
+                      className={`ease-in-out hover:text-gray-300`}
+                    />
+                  </a>
+                </Link>
+                {!walletConnectionPair ? null : (
+                  <FollowUnfollowButton
+                    toProfile={{
+                      address: collection?.address!,
+                    }}
+                    type={amIFollowingThisCollection ? 'Unfollow' : 'Follow'}
+                    walletConnectionPair={walletConnectionPair}
+                    source="collectionPage"
+                  />
+                )}
+              </div>
+            </div>
+            <div className={`lg:ml-auto`}>
+              <div className="rounded-2xl p-4 shadow-2xl">
+                <div>
+                  <div className="mb-4 cursor-pointer text-sm font-medium text-gray-200">
+                    Followed by
+                  </div>
+                  <div className="flex items-center">
+                    <span className={`mr-2 text-left text-2xl font-semibold`}>
+                      {collectionFollowers.length}
+                    </span>
+
+                    <AvatarIcons
+                      profiles={collectionFollowers.map((f) => ({
+                        address: f.from.address,
+                        data: {
+                          twitterHandle: f.from.profile?.handle,
+                          pfpUrl: f.from.profile?.profileImageUrlLowres,
+                        },
+                      }))}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            {creators.length === 1 ? (
-              <CreatorChip user={creators[0]} />
-            ) : (
-              <AvatarIcons
-                profiles={
-                  creators.map((cc) => ({
-                    address: cc.address,
-                    data: {
-                      twitterHandle: cc.profile?.handle,
-                      pfpUrl: cc.profile?.profileImageUrlLowres,
-                    },
-                  })) || []
-                }
-              />
-            )}
-          </div>
-          <div className={`absolute top-0 right-0 overflow-hidden lg:hidden`}>
-            <CollectionRaisedCard>
-              <div className="grid grid-cols-2 grid-rows-2 gap-x-5 gap-y-4">
-                <div>
-                  <div className="cursor-pointer text-sm font-medium text-gray-200">
-                    Followed by
-                  </div>
-                  <div className="flex items-center">
-                    <span className={`mr-2 text-left text-2xl font-semibold`}>
-                      {collectionFollowers.length}
-                    </span>
-
-                    <AvatarIcons
-                      profiles={collectionFollowers.map((f) => ({
-                        address: f.from.address,
-                        data: {
-                          twitterHandle: f.from.profile?.handle,
-                          pfpUrl: f.from.profile?.profileImageUrlLowres,
-                        },
-                      }))}
-                    />
-                  </div>
-                </div>
-
-                {/* 
-                <div>
-                  // ! Need to think about this some more, might need a new query
-                  <div>Collected by</div>
-                  <CollectedBy creatorPubkey={creators[0].address} />
-                </div>
-                  */}
-                {/* <div>Floor price</div>
-                <div>Total volume</div> */}
-              </div>
-            </CollectionRaisedCard>
-          </div>
-          <div className={`hidden lg:flex`}>
-            <CollectionRaisedCard>
-              <div className="grid grid-cols-2 grid-rows-2 gap-x-5 gap-y-4">
-                <div>
-                  <div className="cursor-pointer text-sm font-medium text-gray-200">
-                    Followed by
-                  </div>
-                  <div className="flex items-center">
-                    <span className={`mr-2 text-left text-2xl font-semibold`}>
-                      {collectionFollowers.length}
-                    </span>
-                    <AvatarIcons
-                      profiles={collectionFollowers.map((f) => ({
-                        address: f.from.address,
-                        data: {
-                          twitterHandle: f.from.profile?.handle,
-                          pfpUrl: f.from.profile?.profileImageUrlLowres,
-                        },
-                      }))}
-                    />
-                  </div>
-                </div>
-
-                {/* 
-                <div>
-                  // ! Need to think about this some more, might need a new query
-                  <div>Collected by</div>
-                  <CollectedBy creatorPubkey={creators[0].address} />
-                </div>
-                  */}
-                {/* <div>Floor price</div>
-                <div>Total volume</div> */}
-              </div>
-            </CollectionRaisedCard>
           </div>
         </div>
+        <div className="flex justify-center sm:justify-start">
+          {creators.length === 1 ? (
+            <CreatorChip user={creators[0]} />
+          ) : (
+            <AvatarIcons
+              profiles={
+                creators.map((cc) => ({
+                  address: cc.address,
+                  data: {
+                    twitterHandle: cc.profile?.handle,
+                    pfpUrl: cc.profile?.profileImageUrlLowres,
+                  },
+                })) || []
+              }
+            />
+          )}
+        </div>
 
-        <div className="w-full">
-          <div className="flex space-x-1 p-1">
+        <div className="mt-10 w-full pb-20">
+          <div className="mb-6 flex space-x-1 p-1">
             <Tab
               title={`NFTs`}
               selected={router.pathname.includes('nfts')}
-              url={`/collections/${collectionAddress}/nfts`}
+              url={`/collections/${collectionUrlAddress}/nfts`}
             />
             <Tab
               title={'About'}
               selected={router.pathname.includes('about')}
-              url={`/collections/${collectionAddress}/about`}
+              url={`/collections/${collectionUrlAddress}/about`}
             />
           </div>
           <div>{children}</div>

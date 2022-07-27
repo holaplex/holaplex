@@ -22,6 +22,7 @@ export interface ProfilePreviewData {
 export interface ProfilePreviewProps {
   address: string;
   context: QueryContext<ProfilePreviewData>;
+  className?: string;
 }
 
 export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element {
@@ -46,10 +47,10 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
   const createdNftsString: string = props.context.data.nftsCreated.toLocaleString();
 
   return (
-    <PreviewContainer>
+    <PreviewContainer className={classNames(props.className)}>
       {/* put the profile link under everything so that it doesnt interfere with other interactions,
           and force every element to have no pointer events unless it needs them */}
-      <div className="pointer-events-none flex flex-col justify-between">
+      <div className="pointer-events-none flex flex-col">
         <Link href={profileUrl} passHref>
           <a
             href={profileUrl}
@@ -59,7 +60,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
           />
         </Link>
         {/* preview image */}
-        <div className="relative h-[47%] flex-shrink-0 overflow-clip">
+        <div className="relative h-32  flex-shrink-0 overflow-clip">
           <img
             src={props.context.data.bannerImageUrl ?? getFallbackImage()}
             alt={`${props.context.data.address} banner`}
@@ -73,14 +74,14 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
           />
         </div>
 
-        <div className="flex h-full w-full flex-col justify-between p-4 md:p-2 lg:p-4">
+        <div className="flex h-full w-full flex-col  p-4">
           {/* pfp, follow */}
-          <div className="relative flex h-8 items-end justify-end lg:h-10">
-            <div className="absolute left-0 bottom-0 aspect-square h-16 w-16 md:h-12 md:w-12 lg:h-20 lg:w-20">
+          <div className="relative -mt-12 flex items-end justify-between">
+            <div className="h-16 w-16 md:h-12 md:w-12 lg:h-24 lg:w-24">
               <AvatarImage
                 src={props.context.data.profileImageUrl ?? getFallbackImage()}
                 border
-                borderClass="border-4 border-gray-900"
+                borderClass="outline outline-gray-900 "
               />
             </div>
             <FollowUnfollowButtonDataWrapper
@@ -89,9 +90,9 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
             />
           </div>
           {/* handle, stats */}
-          <div className="flex flex-col">
-            <span className="flex text-base lg:text-lg 2xl:text-2xl">{handleString}</span>
-            <div className="mt-4 flex flex-row justify-start text-sm 2xl:text-lg">
+          <div className="mt-6 flex flex-col ">
+            <span className="flex text-base lg:text-2xl ">{handleString}</span>
+            <div className="mt-4 flex flex-row justify-start text-sm lg:text-base">
               <span>
                 <span className="font-semibold text-white">{ownNftsString}</span>
                 <span className="ml-2 font-medium text-gray-300">Collected</span>
@@ -116,10 +117,13 @@ export function ProfilePreviewLoadingCard(): JSX.Element {
   );
 }
 
-const PreviewContainer: FC<any> = (props) => {
+const PreviewContainer: FC<any> = ({ className, ...props }) => {
   return (
     <div
-      className="relative flex aspect-[364/300] w-full overflow-clip rounded-lg bg-gray-900 shadow-md shadow-black duration-300 hover:scale-[1.02]"
+      className={classNames(
+        'relative flex w-full overflow-clip rounded-lg bg-gray-900 shadow-md shadow-black duration-300 hover:scale-[1.02]',
+        className
+      )}
       {...props}
     />
   );
