@@ -242,12 +242,11 @@ function transformCollectionCardData(
   cardData: CollectionPreviewFragment
 ): CollectionPreviewCardData {
   return {
-    address: cardData.mintAddress,
-    name: cardData.name,
-    imageUrl: cardData.image,
-    //TODO update queries to get these
-    floorPriceSol: 0,
-    nftCount: 0,
+    address: cardData.nft.mintAddress,
+    name: cardData.nft.name,
+    imageUrl: cardData.nft.image,
+    floorPriceSol: cardData.floorPrice ?? 0,
+    nftCount: cardData.nftCount ?? 0,
   };
 }
 

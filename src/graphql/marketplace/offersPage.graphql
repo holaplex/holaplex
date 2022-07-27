@@ -38,7 +38,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     creators {
       address
@@ -130,7 +130,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     creators {
       address

@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { LoadingContainer } from './LoadingPlaceholders';
 import { imgOpt } from '@/lib/utils';
 import Link from 'next/link';
-import { NftExt } from '@/graphql/indexerTypes';
+import { Nft } from '@/graphql/indexerTypes';
 import { OverlappingAvatarSkeleton, TextSkeleton } from './Skeletons';
 import { Avatar, AvatarIcons } from './Avatar';
 
@@ -26,7 +26,7 @@ const LoadingPreview = () => {
 
 interface NFTPreviewProps {
   loading?: boolean;
-  nft?: NftExt;
+  nft?: Nft;
 }
 
 const NFTPreview: FC<NFTPreviewProps> = ({ loading = false, nft }) => {

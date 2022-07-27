@@ -33,7 +33,7 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     creators {
       address
@@ -43,7 +43,7 @@ query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain:
     collection {
       address
       name
-      image(width: 400)
+      image
     }
     owner {
       address

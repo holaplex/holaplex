@@ -40,7 +40,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     creators {
       address
@@ -53,7 +53,7 @@ query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: S
     collection {
       address
       name
-      image(width: 400)
+      image
     }
     owner {
       address

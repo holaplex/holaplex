@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { SearchQuery, MetadataJson, Wallet, NftExt } from 'src/graphql/indexerTypes';
+import { SearchQuery, MetadataJson, Wallet, Nft } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
 import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
@@ -14,7 +14,7 @@ interface SearchResultsProps {
   collectionResults?: MetadataJson[];
   profileResults?: Wallet[];
   walletResult?: Wallet;
-  mintAddressResult?: NftExt;
+  mintAddressResult?: Nft;
 }
 
 const SearchResultTrackAction = 'Search Result Selected';

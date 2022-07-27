@@ -20,7 +20,7 @@ query shareNFT($subdomain: String!, $address: String!) {
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     creators {
       address
@@ -51,7 +51,7 @@ query shareNFT($subdomain: String!, $address: String!) {
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     creators {
       address

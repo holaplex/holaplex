@@ -5,7 +5,7 @@ query nftPage($address: String!) {
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     attributes {
       metadataAddress

@@ -46,7 +46,7 @@ query nftsInCollection(
     sellerFeeBasisPoints
     mintAddress
     description
-    image(width: 400)
+    image
     primarySaleHappened
     attributes {
       metadataAddress
@@ -68,7 +68,7 @@ query nftsInCollection(
     collection {
       address
       name
-      image(width: 400)
+      image
     }
     purchases {
       id
