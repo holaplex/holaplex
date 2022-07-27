@@ -40,9 +40,10 @@ import { seededRandomBetween } from '@/modules/utils/random';
 import { SolscanIcon } from '@/assets/icons/Solscan';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
-import { ExclamationCircleIcon } from '@heroicons/react/outline';
+import { ClipboardCheckIcon, ExclamationCircleIcon } from '@heroicons/react/outline';
 import { ButtonSkeleton } from '@/components/Skeletons';
 import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
+import Popover from '../../components/Popover';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -219,37 +220,67 @@ export default function NftByAddress({
     address?: string;
     title: string;
     viewOnSite?: boolean;
-  }) => (
-    <div className={`flex items-center justify-between`}>
-      <p className={`m-0 text-base font-normal text-gray-300`}>{title}</p>
-      <div className={`flex flex-row items-center justify-end gap-2`}>
-        {viewOnSite && (
-          <Link href={`/collections/${address}`}>
-            <a target={`_self`}>
-              <FeatherIcon
-                icon="folder"
-                aria-hidden="true"
-                className={`h-4 w-4 text-white hover:text-gray-300`}
-              />
+  }) => {
+    const [linkCopied, setLinkCopied] = useState(false);
+
+    useEffect(() => {
+      if (linkCopied) {
+        const timer = setTimeout(() => {
+          setLinkCopied(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    }, [linkCopied]);
+
+    const handleCopyClick = async () => {
+      await navigator.clipboard.writeText(address || `Error`);
+      setLinkCopied(true);
+    };
+    return (
+      <div className={`flex items-center justify-between`}>
+        <p className={`m-0 text-base font-normal text-gray-300`}>{title}</p>
+        <div className={`flex flex-row items-center justify-end gap-2`}>
+          {viewOnSite && (
+            <Link href={`/collections/${address}`}>
+              <a target={`_self`}>
+                <FeatherIcon
+                  icon="folder"
+                  aria-hidden="true"
+                  className={`h-4 w-4 text-white hover:text-gray-300`}
+                />
+              </a>
+            </Link>
+          )}
+          <Link href={`https://explorer.solana.com/address/${address}`}>
+            <a target={`_blank`}>
+              <ExplorerIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
             </a>
           </Link>
-        )}
-        <Link href={`https://explorer.solana.com/address/${address}`}>
-          <a target={`_blank`}>
-            <ExplorerIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
-          </a>
-        </Link>
-        <Link href={`https://solscan.io/account/${address}`}>
-          <a target={`_blank`}>
-            <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
-          </a>
-        </Link>
-        <p className={`m-0 w-24 text-left text-base font-normal text-gray-300`}>
-          {shortenAddress(address)}
-        </p>
+          <Link href={`https://solscan.io/account/${address}`}>
+            <a target={`_blank`}>
+              <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
+            </a>
+          </Link>
+          <button
+            onClick={handleCopyClick}
+            className={`relative m-0 w-24 text-left text-base font-normal text-gray-200 hover:text-gray-300`}
+          >
+            <Popover
+              isShowOnHover={true}
+              placement={`top`}
+              content={
+                <p className={`whitespace-nowrap p-2 text-sm`}>
+                  {linkCopied ? `Address copied` : `Copy address`}
+                </p>
+              }
+            >
+              <p className={`m-0`}>{shortenAddress(address)}</p>
+            </Popover>
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (called && !nft && !loading) {
     return <Custom404 />;
