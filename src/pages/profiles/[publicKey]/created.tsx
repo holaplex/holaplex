@@ -18,6 +18,7 @@ import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty, uniq } from 'ramda';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import classNames from 'classnames';
+import { GridSize } from '@/components/GridSelector';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
 
@@ -34,7 +35,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
   const { publicKey } = props;
   const [listedFilter, setListedFilter] = useState<ListingFilters>(ListingFilters.ALL);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [gridView, setGridView] = useState<'2x2' | '3x3'>('3x3');
+  const [gridView, setGridView] = useState<GridSize>('4x4');
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
     creator: publicKey,
@@ -125,13 +126,13 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
 
         <button
           className={cx('flex w-10 items-center justify-center', {
-            'bg-gray-800': gridView === '3x3',
+            'bg-gray-800': gridView === '4x4',
           })}
-          onClick={() => setGridView('3x3')}
+          onClick={() => setGridView('4x4')}
         >
           <TripleGrid
-            className={gridView !== '3x3' ? 'transition hover:scale-110' : ''}
-            color={gridView === '3x3' ? 'white' : '#707070'}
+            className={gridView !== '4x4' ? 'transition hover:scale-110' : ''}
+            color={gridView === '4x4' ? 'white' : '#707070'}
           />
         </button>
       </div>

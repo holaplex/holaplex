@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -6,6 +6,7 @@ import { FeedQuery, useFeedQuery, useWhoToFollowQuery } from 'src/graphql/indexe
 import { FeedCard, LoadingFeedCard, LoadingFeedItem } from 'src/views/alpha/FeedCard';
 import { InView } from 'react-intersection-observer';
 import {
+  AGGREGATE_EVENT_LIMIT,
   FeedCardAttributes,
   FeedItem,
   FeedQueryEvent,
@@ -25,7 +26,6 @@ import EmptyFeedCTA from 'src/views/alpha/EmptyFeedCTA';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 
 const INFINITE_SCROLL_AMOUNT_INCREMENT = 50;
-const AGGREGATE_EVENT_LIMIT = 6;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -75,6 +75,133 @@ const AlphaPage = ({ address }: { address: string }) => {
 
   const [hasMoreFeedEvents, setHasMoreFeedEvents] = useState(true);
 
+  // notes
+  // observations
+  // we will need to do some form of transformation/aggregation of the feedevents from the grapqhl endpoint in order to batch similar evetns on the frontend
+
+  // we could make a transformation and pass the rawEvent together for use in following/ offers
+
+  // will be moved outside of the component eventually
+
+  // TODO consider moving this to useHolaplexInfiniteScrollQuery from useApolloQuery.ts
+  const feedItems = useMemo(() => {
+    function getFeedItems(feedEvents: FeedQuery['feedEvents']): FeedItem[] {
+      let skipIndex = 0;
+      return feedEvents.reduce((feedItems, event, i) => {
+        if (
+          // remove malformed follow events until we fix it serverside
+          (event.__typename === 'FollowEvent' && !event.connection) ||
+          // make sure the event is unique // will also be fixed serverside at some point
+          feedEvents.slice(i + 1).findIndex((e) => event.feedEventId === e.feedEventId) === i
+        ) {
+          return feedItems;
+        }
+
+        const noAggregation = false;
+        if (noAggregation) {
+          feedItems.push(event);
+          return feedItems;
+        }
+        // for now we do no aggregation, simply make sure events are valid
+        const attrs = generateFeedCardAttributes(event);
+
+        if (skipIndex > i) return feedItems;
+        // const cur = feedEvents[i];
+        const nextEvent = feedEvents[i + 1];
+        const nextNextEvent = feedEvents[i + 2];
+        feedItems.push(event);
+
+        // Single person aggregate
+        if (shouldAggregateFollows(event, nextEvent, nextNextEvent)) {
+          // remove the item that would start the aggregation
+          feedItems.pop();
+          // const eventsAggregated: FeedQueryEvent[] = feedEvents
+          //   .slice(i)
+          //   .filter((fe, i, arr) => shouldAggregate(fe, arr[i + 1]));
+          const eventsAggregated: FeedQueryEvent[] = [feedEvents[i]];
+          let j = i + 1;
+          while (shouldAggregateFollows(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
+            eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
+            j++;
+          }
+          eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
+          eventsAggregated.push(feedEvents[j + 1] as FeedQueryEvent);
+          skipIndex = j + 2;
+
+          feedItems.push({
+            feedEventId: `agg_${event.feedEventId}`,
+            __typename: 'AggregateEvent',
+            createdAt: event.createdAt,
+            walletAddress: event.walletAddress,
+            profile: event.profile,
+            eventsAggregated,
+            wallet: {
+              address: event.walletAddress,
+              twitterHandle: null,
+              bids: [],
+              profile: null,
+              connectionCounts: {} as any,
+              nftCounts: {
+                owned: event.wallet.nftCounts.owned,
+                created: event.wallet.nftCounts.created,
+                offered: 0,
+                listed: 0,
+              },
+              activities: [],
+            },
+          });
+        }
+
+        if (shouldAggregateSaleEvents(event, nextEvent, nextNextEvent)) {
+          feedItems.pop();
+
+          const salesAggregated: FeedQueryEvent[] = [feedEvents[i]];
+          let k = i + 1;
+          let y = k;
+          while (shouldAggregateSaleEvents(feedEvents[k], feedEvents[k + 1], feedEvents[k + 2])) {
+            salesAggregated.push(feedEvents[k] as FeedQueryEvent);
+            k++;
+            if (k - y > AGGREGATE_EVENT_LIMIT) {
+              break;
+            }
+          }
+          salesAggregated.push(feedEvents[k] as FeedQueryEvent);
+          salesAggregated.push(feedEvents[k + 1] as FeedQueryEvent);
+          skipIndex = k + 2;
+
+          feedItems.push({
+            feedEventId: `agg_${event.feedEventId}`,
+            __typename: 'AggregateSaleEvent',
+            createdAt: event.createdAt,
+            walletAddress: event.walletAddress,
+            profile: event.profile,
+            eventsAggregated: salesAggregated,
+            wallet: {
+              address: event.walletAddress,
+              twitterHandle: null,
+              bids: [],
+              profile: null,
+              connectionCounts: {} as any,
+              nftCounts: {
+                owned: event.wallet.nftCounts.owned,
+                created: event.wallet.nftCounts.created,
+                offered: 0,
+                listed: 0,
+              },
+              activities: [],
+            },
+          });
+        }
+
+        return feedItems;
+      }, [] as FeedItem[]);
+    }
+
+    const feedItems = getFeedItems(feedEvents);
+
+    return feedItems;
+  }, [feedEvents]);
+
   // Effect to check connection 2 seconds after loading
   useEffect(() => {
     let timerId: any;
@@ -95,7 +222,7 @@ const AlphaPage = ({ address }: { address: string }) => {
   if (showConnectCTA) {
     return (
       <div className=" -mt-32 h-full max-h-screen">
-        <div className="container mx-auto -mt-12 -mb-80 flex h-full flex-col items-center justify-center px-6 xl:px-44">
+        <div className="container mx-auto -mt-12 flex h-full flex-col items-center justify-center px-6 xl:px-44">
           <EmptyStateCTA
             header="Connect your wallet to view your feed"
             body="Follow your favorite collectors and creators, and get your own personalized feed of activities across the Holaplex ecosystem."
@@ -140,129 +267,6 @@ const AlphaPage = ({ address }: { address: string }) => {
       },
     });
   }
-
-  // notes
-  // observations
-  // we will need to do some form of transformation/aggregation of the feedevents from the grapqhl endpoint in order to batch similar evetns on the frontend
-
-  // we could make a transformation and pass the rawEvent together for use in following/ offers
-
-  const feedAttrs: FeedCardAttributes[] = [];
-  // will be moved outside of the component eventually
-  function getFeedItems(feedEvents: FeedQuery['feedEvents']): FeedItem[] {
-    let skipIndex = 0;
-    return feedEvents.reduce((feedItems, event, i) => {
-      if (
-        // remove malformed follow events until we fix it serverside
-        (event.__typename === 'FollowEvent' && !event.connection) ||
-        // make sure the event is unique // will also be fixed serverside at some point
-        feedEvents.slice(i + 1).findIndex((e) => event.feedEventId === e.feedEventId) === i
-      ) {
-        return feedItems;
-      }
-
-      const noAggregation = false;
-      if (noAggregation) {
-        feedItems.push(event);
-        return feedItems;
-      }
-      // for now we do no aggregation, simply make sure events are valid
-      const attrs = generateFeedCardAttributes(event);
-      feedAttrs.push(attrs);
-
-      if (skipIndex > i) return feedItems;
-      // const cur = feedEvents[i];
-      const nextEvent = feedEvents[i + 1];
-      const nextNextEvent = feedEvents[i + 2];
-      feedItems.push(event);
-
-      // Single person aggregate
-      if (shouldAggregateFollows(event, nextEvent, nextNextEvent)) {
-        // remove the item that would start the aggregation
-        feedItems.pop();
-        // const eventsAggregated: FeedQueryEvent[] = feedEvents
-        //   .slice(i)
-        //   .filter((fe, i, arr) => shouldAggregate(fe, arr[i + 1]));
-        const eventsAggregated: FeedQueryEvent[] = [feedEvents[i]];
-        let j = i + 1;
-        while (shouldAggregateFollows(feedEvents[j], feedEvents[j + 1], feedEvents[j + 2])) {
-          eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
-          j++;
-        }
-        eventsAggregated.push(feedEvents[j] as FeedQueryEvent);
-        eventsAggregated.push(feedEvents[j + 1] as FeedQueryEvent);
-        skipIndex = j + 2;
-
-        feedItems.push({
-          feedEventId: `agg_${event.feedEventId}`,
-          __typename: 'AggregateEvent',
-          createdAt: event.createdAt,
-          walletAddress: event.walletAddress,
-          profile: event.profile,
-          eventsAggregated,
-          wallet: {
-            address: event.walletAddress,
-            twitterHandle: null,
-            bids: [],
-            profile: null,
-            connectionCounts: {} as any,
-            nftCounts: {
-              owned: event.wallet.nftCounts.owned,
-              created: event.wallet.nftCounts.created,
-              offered: 0,
-              listed: 0,
-            },
-            activities: [],
-          },
-        });
-      }
-
-      if (shouldAggregateSaleEvents(event, nextEvent, nextNextEvent)) {
-        feedItems.pop();
-
-        const salesAggregated: FeedQueryEvent[] = [feedEvents[i]];
-        let k = i + 1;
-        let y = k;
-        while (shouldAggregateSaleEvents(feedEvents[k], feedEvents[k + 1], feedEvents[k + 2])) {
-          salesAggregated.push(feedEvents[k] as FeedQueryEvent);
-          k++;
-          if (k - y > AGGREGATE_EVENT_LIMIT) {
-            break;
-          }
-        }
-        salesAggregated.push(feedEvents[k] as FeedQueryEvent);
-        salesAggregated.push(feedEvents[k + 1] as FeedQueryEvent);
-        skipIndex = k + 2;
-
-        feedItems.push({
-          feedEventId: `agg_${event.feedEventId}`,
-          __typename: 'AggregateSaleEvent',
-          createdAt: event.createdAt,
-          walletAddress: event.walletAddress,
-          profile: event.profile,
-          eventsAggregated: salesAggregated,
-          wallet: {
-            address: event.walletAddress,
-            twitterHandle: null,
-            bids: [],
-            profile: null,
-            connectionCounts: {} as any,
-            nftCounts: {
-              owned: event.wallet.nftCounts.owned,
-              created: event.wallet.nftCounts.created,
-              offered: 0,
-              listed: 0,
-            },
-            activities: [],
-          },
-        });
-      }
-
-      return feedItems;
-    }, [] as FeedItem[]);
-  }
-
-  const feedItems = getFeedItems(feedEvents);
 
   const fetchMoreIndex = feedItems.length - Math.floor(INFINITE_SCROLL_AMOUNT_INCREMENT / 2);
 

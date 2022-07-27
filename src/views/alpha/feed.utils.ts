@@ -15,6 +15,8 @@ type FeedEventTypes = FeedItem['__typename'];
 export type FeedQueryEvent = FeedQuery['feedEvents'][0];
 type QueryNFT = MintEvent['nft'] | AhListing['nft'] | Purchase['nft'] | BidReceipt['nft'];
 
+export const AGGREGATE_EVENT_LIMIT = 6;
+
 export interface User {
   address: string;
   profile?: {

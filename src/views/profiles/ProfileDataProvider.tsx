@@ -1,6 +1,6 @@
 import { WalletDependantPageProps } from '@/views/profiles/getProfileServerSideProps';
 import React, { FC, ReactNode, useContext, useMemo } from 'react';
-import { useGetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes';
+import { TwitterProfile, useGetProfileFollowerOverviewQuery } from 'src/graphql/indexerTypes';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletProfile } from './follow.utils';
 
@@ -10,6 +10,7 @@ interface ProfileData extends WalletDependantPageProps {
   amIFollowingThisAccount: boolean | null;
   loading: boolean;
   isMe: boolean;
+  collectedBy: TwitterProfile[] | null;
 }
 
 const ProfileDataContext = React.createContext<ProfileData>(null!);
@@ -44,7 +45,7 @@ export function ProfileDataProvider(props: {
     variables: { pubKey: props.profileData.publicKey },
   });
 
-  const { followers, following, loading } = useMemo(() => {
+  const { followers, following, collectedBy, loading } = useMemo(() => {
     const followers =
       cleanConnectionList(
         profileFollowerOverview.data?.followers.map((f) => f.from),
@@ -57,10 +58,29 @@ export function ProfileDataProvider(props: {
         { sort: true }
       ) ?? [];
 
+    // get created nfts
+    const collectedBy =
+      profileFollowerOverview.data?.nftsCreated.reduce((collectedByOwners, nft, idx) => {
+        // map into owners
+        const ownerPubkey = nft.owner?.profile?.walletAddress;
+        if (
+          ownerPubkey &&
+          // exclude self
+          ownerPubkey !== props.profileData.publicKey &&
+          // make unique
+          !collectedByOwners.find((o) => o.walletAddress === ownerPubkey)
+        ) {
+          collectedByOwners?.push(nft.owner?.profile as TwitterProfile);
+        }
+
+        return collectedByOwners;
+      }, [] as TwitterProfile[]) || [];
+
     return {
       followers,
       following,
       loading: profileFollowerOverview.loading,
+      collectedBy,
     };
   }, [profileFollowerOverview]);
 
@@ -74,8 +94,18 @@ export function ProfileDataProvider(props: {
       loading,
       amIFollowingThisAccount: myPubkey ? amIFollowingThisAccount : null,
       isMe,
+      collectedBy,
     };
-  }, [myPubkey, followers, following, isMe, amIFollowingThisAccount, loading, props.profileData]);
+  }, [
+    myPubkey,
+    followers,
+    following,
+    collectedBy,
+    isMe,
+    amIFollowingThisAccount,
+    loading,
+    props.profileData,
+  ]);
 
   return (
     <ProfileDataContext.Provider value={profileSocialAnfFollowerData}>

@@ -130,11 +130,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
           }}
         />
       }
-      name={
-        <span className="text-2xl font-semibold text-white lg:text-3xl">
-          {props.context.data?.name}
-        </span>
-      }
+      name={<span className="text-2xl font-semibold text-white ">{props.context.data?.name}</span>}
       size={
         (props.context.data?.nftCount ?? 0) > 0 && (
           <span
