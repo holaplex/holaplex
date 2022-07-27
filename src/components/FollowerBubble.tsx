@@ -26,10 +26,10 @@ export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image
         })}
       >
         <FollowedByImage
-          className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
+          className="h-6 w-6 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
           src={image ?? getPFPFromPublicKey(address!)}
-          width={32}
-          height={32}
+          width={24}
+          height={24}
           alt="PFP"
         />
       </a>
@@ -46,10 +46,10 @@ export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) =
         })}
       >
         <FollowedByImage
-          className="h-8 w-8 rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
+          className="h-6 w-6  rounded-full transition duration-150 ease-in-out hover:z-50 hover:scale-110"
           src={follower?.profile?.profileImageUrlLowres ?? getPFPFromPublicKey(follower.address!)}
-          width={32}
-          height={32}
+          width={24}
+          height={24}
           alt="PFP"
         />
       </a>

@@ -34,7 +34,7 @@ import { TailSpin } from 'react-loader-spinner';
 import classNames from 'classnames';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
-import GridSelector from '@/components/GridSelector';
+import GridSelector, { GridSize } from '@/components/GridSelector';
 
 export type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -184,9 +184,14 @@ export const NFTCard = ({
           <div
             className={`flex h-full w-full items-end justify-between md:flex-col md:items-center md:justify-between xl:flex-row xl:items-end xl:justify-between`}
           >
+            {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
+              <ul className={`mb-0 flex w-full`}>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Not listed</li>
+              </ul>
+            )}
             {hasDefaultListing && (
-              <ul className={`mb-0 flex flex-col`}>
-                <li className={`mb-2 text-sm font-bold text-gray-300 md:text-base`}>Price</li>
+              <ul className={`mb-0 flex w-full items-center justify-between`}>
+                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Price</li>
                 <DisplaySOL
                   amount={Number(defaultListing?.price)}
                   className="text-sm md:text-base"
@@ -194,71 +199,56 @@ export const NFTCard = ({
               </ul>
             )}
             {!hasDefaultListing && !hasAddedOffer && Boolean(lastSale) && (
-              <ul className={`mb-0 flex flex-col`}>
+              <ul className={`mb-0 flex w-full items-center justify-between`}>
                 <li className={`text-sm font-bold text-gray-300 md:text-base`}>Last sale</li>
                 <DisplaySOL amount={Number(lastSale)} />
               </ul>
             )}
-            {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
-              <ul className={`mb-0 flex flex-col`}>
-                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Not listed</li>
-              </ul>
-            )}
+
             {!hasDefaultListing && hasAddedOffer && (
-              <ul className={`mb-0 flex flex-col`}>
+              <ul className={`mb-0 flex w-full items-center justify-between`}>
                 <li className={`text-sm font-bold text-gray-300 md:text-base`}>Your offer</li>
                 <DisplaySOL amount={Number(addedOffer?.price) || 0} />
               </ul>
             )}
-
+          </div>
+          <div className={`mt-4`}>
             {isOwner && !hasDefaultListing && (
-              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
-                <Button className={`md:w-full xl:w-32`} onClick={() => setListNFTVisibility(true)}>
-                  List NFT
-                </Button>
-              </div>
+              <Button className={`w-full`} onClick={() => setListNFTVisibility(true)}>
+                List NFT
+              </Button>
             )}
             {isOwner && hasDefaultListing && (
-              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
-                <Button
-                  className={`md:w-full xl:w-32`}
-                  onClick={() => setUpdateListingVisibility(true)}
-                >
-                  Update
-                </Button>
-              </div>
+              <Button className={`w-full`} onClick={() => setUpdateListingVisibility(true)}>
+                Update
+              </Button>
+            )}
+
+            {!isOwner && hasAddedOffer && (
+              <Button
+                secondary
+                className={`w-full bg-gray-800`}
+                onClick={() => setUpdateOfferVisibility(true)}
+              >
+                Update
+              </Button>
             )}
             {!isOwner && !hasAddedOffer && hasDefaultListing && (
-              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-auto`}>
-                <BuyForm
-                  loading={loading}
-                  nft={nft as Nft | any}
-                  marketplace={marketplace as Marketplace}
-                  listing={defaultListing as AhListing}
-                  refetch={refetch}
-                  className={`w-32 md:w-full xl:w-32`}
-                />
-              </div>
-            )}
-            {!isOwner && hasAddedOffer && (
-              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
-                <Button
-                  secondary
-                  className={`bg-gray-800 md:w-full xl:w-32`}
-                  onClick={() => setUpdateOfferVisibility(true)}
-                >
-                  Update
-                </Button>
-              </div>
+              <BuyForm
+                loading={loading}
+                nft={nft as Nft | any}
+                marketplace={marketplace as Marketplace}
+                listing={defaultListing as AhListing}
+                refetch={refetch}
+                className={`w-full`}
+              />
             )}
             {!isOwner && !hasAddedOffer && !hasDefaultListing && (
-              <div className={`md:mt-4 md:w-full xl:mt-0 xl:w-32`}>
-                <Link href={`/nfts/${nft?.address}/offers/new`}>
-                  <a>
-                    <Button className={`md:w-full xl:w-32`}>Make offer</Button>
-                  </a>
-                </Link>
-              </div>
+              <Link href={`/nfts/${nft?.address}/offers/new`}>
+                <a>
+                  <Button className={`w-full`}>Make offer</Button>
+                </a>
+              </Link>
             )}
           </div>
         </div>
@@ -304,7 +294,7 @@ export const NFTCard = ({
 interface NFTGridProps {
   nfts: OwnedNFT[];
   marketplace: Marketplace;
-  gridView: '1x1' | '2x2' | '3x3';
+  gridView: GridSize;
   ctaVariant?: NoProfileVariant;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
@@ -332,14 +322,19 @@ export const NFTGrid: FC<NFTGridProps> = ({
         className={cx(
           'grid grid-cols-1 gap-6',
           gridView === '1x1'
-            ? 'grid-cols-1 md:grid-cols-2'
+            ? 'md:grid-cols-2'
             : gridView === '2x2'
-            ? 'sm:grid-cols-2'
-            : 'md:grid-cols-3'
+            ? 'sm:grid-cols-2 lg:grid-cols-3 '
+            : gridView === '4x4'
+            ? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+            : gridView === '6x6'
+            ? 'md:grid-cols-6'
+            : ''
         )}
       >
         {loading ? (
           <>
+            <LoadingNFTCard />
             <LoadingNFTCard />
             <LoadingNFTCard />
             <LoadingNFTCard />
@@ -391,7 +386,7 @@ function ProfileNFTs(props: WalletDependantPageProps) {
   const { publicKey: pk } = props;
   const [listedFilter, setListedFilter] = useState<ListingFilters>(ListingFilters.ALL);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [gridView, setGridView] = useState<'1x1' | '2x2' | '3x3'>('3x3');
+  const [gridView, setGridView] = useState<GridSize>('4x4');
   const [hasMore, setHasMore] = useState(true);
   const variables = {
     subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
