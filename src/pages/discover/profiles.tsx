@@ -62,6 +62,7 @@ export default function DiscoverProfilesTab(): JSX.Element {
   return (
     <CardGridWithHeader<ProfilePreviewProps>
       cardContext={{
+        bigGridClassNameOverride: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
         noDataFallback: <div className="flex justify-center p-4">No matching profiles</div>,
         cardCreator: (data) => <ProfilePreviewCard {...data} />,
         loadingCardCreator: () => <ProfilePreviewLoadingCard />,

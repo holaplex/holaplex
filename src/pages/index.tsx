@@ -47,14 +47,13 @@ export default function Home(): JSX.Element {
   const wallet = useWallet();
 
   //TODO export n-items in consts from sections
-  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(
-    wallet.publicKey,
-    12,
-    24,
-    24,
-    12,
-    18
-  );
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, {
+    featuredCollectionsLimit: 22, // we need 18, but some get filtered out so increasing max
+    featuredProfileLimit: 24,
+    featuredBowNowLimit: 24,
+    feedEventsLimit: 12,
+    featuredAuctionsLimit: 18,
+  });
 
   return (
     <div>
@@ -64,7 +63,7 @@ export default function Home(): JSX.Element {
           data: dataQueryContext.data?.feedEvents,
         }}
       />
-      <div className="container mx-auto w-[88%] md:w-3/4">
+      <div className="container mx-auto px-6">
         <FeaturedCollectionsByVolumeSection
           context={{
             ...dataQueryContext,
@@ -87,12 +86,6 @@ export default function Home(): JSX.Element {
           context={{
             ...dataQueryContext,
             data: dataQueryContext.data?.featuredProfiles,
-          }}
-        />
-        <FeaturedAuctionsSection
-          context={{
-            ...dataQueryContext,
-            data: dataQueryContext.data?.featuredAuctions,
           }}
         />
         <FeaturedMarketplacesSection
@@ -171,7 +164,7 @@ type HomeSectionSubtypes = {
  * ```
  */
 export const HomeSection: FC & HomeSectionSubtypes = ({ children }) => (
-  <div className="my-24 sm:my-40">{children}</div>
+  <div className="my-20 lg:my-40">{children}</div>
 );
 
 const HomeSectionHeader: Header = ({ children }) => (

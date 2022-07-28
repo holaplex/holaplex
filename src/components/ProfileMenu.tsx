@@ -35,31 +35,31 @@ export const ProfileMenu: FC = () => {
     {
       id: TabRoute.COLLECTED,
       title: 'Collected',
-      icon: <PhotographIcon className="mr-4 h-5 w-5" />,
+      icon: <PhotographIcon className="mr-2 h-5 w-5" />,
       path: `/profiles/${publicKey}/nfts`,
     },
     {
       id: TabRoute.CREATED,
       title: 'Created',
-      icon: <FeatherIcon height={16} width={16} icon="plus-square" className="mr-4" />,
+      icon: <FeatherIcon height={16} width={16} icon="plus-square" className="mr-2" />,
       path: `/profiles/${publicKey}/created`,
     },
     {
       id: TabRoute.COLLECTIONS,
       title: 'Collections',
-      icon: <FeatherIcon height={16} width={16} icon="folder" className="mr-4" />,
+      icon: <FeatherIcon height={16} width={16} icon="folder" className="mr-2" />,
       path: `/profiles/${publicKey}/collections`,
     },
     {
       id: TabRoute.OFFERS,
       title: 'Offers',
-      icon: <FeatherIcon height={16} width={16} icon="dollar-sign" className="mr-4" />,
+      icon: <FeatherIcon height={16} width={16} icon="dollar-sign" className="mr-2" />,
       path: `/profiles/${publicKey}/offers`,
     },
     {
       id: TabRoute.ACTIVITY,
       title: 'Activity',
-      icon: <TrendingUpIcon className="mr-4 h-5 w-5" />,
+      icon: <TrendingUpIcon className="mr-2 h-5 w-5" />,
       path: `/profiles/${publicKey}/activity`,
     },
   ];
@@ -74,7 +74,7 @@ export const ProfileMenu: FC = () => {
                 <button
                   onClick={() => router.push(tab.path)}
                   className={cx(
-                    'flex h-full w-40 flex-shrink-0 items-center justify-center md:w-1/4',
+                    'flex h-full w-40 flex-shrink-0 items-center justify-center md:w-1/5',
                     selected ? 'border-b-2 border-white' : 'text-gray-300'
                   )}
                 >

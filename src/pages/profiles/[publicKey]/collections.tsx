@@ -36,9 +36,10 @@ interface CollectionGridProps {
 const CollectionGrid: FC<CollectionGridProps> = ({ collections, ...props }) => {
   return (
     <>
-      <div className={`mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3`}>
+      <div className={`mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4`}>
         {props.loading ? (
           <>
+            <LoadingCollectionProfileCard />
             <LoadingCollectionProfileCard />
             <LoadingCollectionProfileCard />
             <LoadingCollectionProfileCard />
@@ -102,16 +103,18 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
     collectionNFTs?.forEach((collectionNft) => {
       if (
         collectionNft.collection &&
-        !uniqueCollections.find((u) => u.address === collectionNft.address)
+        !uniqueCollections.find((u) => u.address === collectionNft.collection?.address)
       ) {
+        console.log(`Collected`, collectionNft);
         uniqueCollections.push(collectionNft.collection);
       }
     });
     createdCollectionNFTs?.forEach((collectionNft) => {
       if (
         collectionNft.collection &&
-        !uniqueCollections.find((u) => u.address === collectionNft.address)
+        !uniqueCollections.find((u) => u.address === collectionNft.collection?.address)
       ) {
+        console.log(`Created`, collectionNft);
         uniqueCollections.push(collectionNft.collection);
       }
     });

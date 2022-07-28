@@ -19,6 +19,7 @@ import {
   SolletWalletAdapter,
   TorusWalletAdapter,
   GlowWalletAdapter,
+  BackpackWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import {
   ConnectionProvider,
@@ -70,6 +71,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
       new GlowWalletAdapter(),
+      new BackpackWalletAdapter(),
     ],
     [network]
   );

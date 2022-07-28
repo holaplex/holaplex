@@ -17,6 +17,7 @@ import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 import { compareTwitterProfilesForSorting } from '@/views/profiles/follow.utils';
+import classNames from 'classnames';
 
 type FollowerCountProps = {
   wallet?: AnchorWallet;
@@ -33,7 +34,7 @@ export const FollowerCount: FC<FollowerCountProps> = ({
 }) => {
   const { connectedProfile } = useConnectedWalletProfile();
   const walletConnectionPair = connectedProfile?.walletConnectionPair;
-  const { loading, publicKey, isMe, amIFollowingThisAccount, followers, following } =
+  const { loading, publicKey, isMe, amIFollowingThisAccount, followers, following, collectedBy } =
     useProfileData();
 
   if (loading) return <FollowerCountSkeleton />;
@@ -45,18 +46,20 @@ export const FollowerCount: FC<FollowerCountProps> = ({
   return (
     <>
       <div className="flex flex-col">
-        <div className="mt-10 flex justify-between">
+        <div
+          className={classNames(
+            'mt-10 grid gap-6  lg:grid-cols-2',
+            collectedBy?.length ? 'grid-cols-4' : 'grid-cols-3'
+          )}
+        >
           <div className={`flex flex-col gap-4`}>
             <button
               onClick={() => setShowFollowsModal('followers')}
               className="flex flex-col text-left"
             >
-              <div className=" text-sm font-medium text-gray-200">Followers</div>
-              <div className=" font-semibold">{followerCount}</div>
+              <div className="text-sm font-medium text-gray-200">Followers</div>
+              <div className="font-semibold">{followerCount}</div>
             </button>
-            {followers?.length ? (
-              <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
-            ) : null}
           </div>
 
           <div className={`flex flex-col gap-4`}>
@@ -67,9 +70,12 @@ export const FollowerCount: FC<FollowerCountProps> = ({
               <div className="text-sm font-medium text-gray-200">Following</div>
               <div className=" font-semibold">{followingCount}</div>
             </button>
-            <CollectedBy creatorPubkey={publicKey} />
           </div>
+          {followers?.length ? (
+            <FollowedBy onOtherFollowersClick={() => setShowFollowsModal('followers')} />
+          ) : null}
 
+          <CollectedBy />
           {showButton && (
             <div className="ml-10">
               {isMe || !wallet ? null : (
@@ -90,7 +96,6 @@ export const FollowerCount: FC<FollowerCountProps> = ({
             </div>
           )}
         </div>
-        <div className={`flex items-center justify-between`}></div>
       </div>
     </>
   );
@@ -109,10 +114,10 @@ export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
   const followerCount = followers.length ?? 0;
 
   return (
-    <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
+    <div className=" flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div
         onClick={onOtherFollowersClick}
-        className="mr-2 cursor-pointer text-sm font-medium text-gray-200"
+        className=" cursor-pointer text-sm font-medium text-gray-200"
       >
         Followed by
       </div>
@@ -128,7 +133,7 @@ export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
           {followerCount > 4 ? (
             <OtherFollowersNumberBubble
               onClick={onOtherFollowersClick}
-              className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
+              className="z-10 flex h-6 w-6 flex-col items-center justify-center rounded-full lg:h-6 lg:w-6"
             >
               +{followerCount - 4}
             </OtherFollowersNumberBubble>
@@ -140,46 +145,29 @@ export const FollowedBy: FC<FollowedByProps> = ({ onOtherFollowersClick }) => {
 };
 
 type CollectedByProps = {
-  creatorPubkey: string;
   onOtherCollectedClick?: VoidFunction;
 };
 
-export const CollectedBy: FC<CollectedByProps> = ({ creatorPubkey, onOtherCollectedClick }) => {
+export const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => {
   const [showCollectedByModal, setShowCollectedByModal] = useState(false);
+  const { collectedBy } = useProfileData();
 
-  const { data, loading } = useGetCollectedByQuery({
-    variables: { creator: creatorPubkey },
-  });
+  if (!collectedBy || collectedBy?.length === 0) return null;
 
-  if (loading) return null;
-
-  const collectedProfiles: TwitterProfile[] = [];
-
-  data?.nfts.forEach((nft) => {
-    if (
-      !collectedProfiles.find(
-        (profile) => nft.owner?.profile?.walletAddress === profile?.walletAddress
-      ) &&
-      creatorPubkey !== nft.owner?.profile?.walletAddress &&
-      nft?.owner?.profile !== null
-    ) {
-      collectedProfiles.push(nft.owner?.profile as TwitterProfile);
-    }
-  });
-  if (!collectedProfiles || collectedProfiles.length <= 0) return null;
-  collectedProfiles.sort(compareTwitterProfilesForSorting);
+  if (!collectedBy || collectedBy.length <= 0) return null;
+  collectedBy.sort(compareTwitterProfilesForSorting);
   return (
-    <div className="mt-2 flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
+    <div className=" flex flex-col items-start justify-start space-x-2 lg:justify-start lg:space-x-0">
       <div
-        className="mr-2 cursor-pointer text-sm font-medium text-gray-200 "
+        className="cursor-pointer text-sm font-medium text-gray-200 "
         onClick={() => setShowCollectedByModal(true)}
       >
         Collected by
       </div>
       <div className={`flex items-center gap-2`}>
-        {/* <p className={`m-0 text-left text-lg font-semibold`}>{collectedProfiles.length}</p> */}
+        {/* <p className={`m-0 text-left text-lg font-semibold`}>{collectedBy.length}</p> */}
         <div className="relative mt-2 flex flex-row justify-start -space-x-4">
-          {collectedProfiles?.slice(0, 4)?.map((collector, i) => (
+          {collectedBy?.slice(0, 4)?.map((collector, i) => (
             <FollowerBubbleImage
               isFirst={i === 0}
               key={collector?.walletAddress as string}
@@ -187,12 +175,12 @@ export const CollectedBy: FC<CollectedByProps> = ({ creatorPubkey, onOtherCollec
               address={collector?.walletAddress as string}
             />
           ))}
-          {collectedProfiles.length > 4 ? (
+          {collectedBy.length > 4 ? (
             <OtherFollowersNumberBubble
               onClick={() => setShowCollectedByModal(true)}
-              className="z-10 flex h-8 w-8 flex-col items-center justify-center rounded-full"
+              className="z-10 flex h-6 w-6  flex-col items-center justify-center rounded-full lg:h-6 lg:w-6"
             >
-              +{collectedProfiles.length - 4}
+              +{collectedBy.length - 4}
             </OtherFollowersNumberBubble>
           ) : null}
         </div>
@@ -201,7 +189,7 @@ export const CollectedBy: FC<CollectedByProps> = ({ creatorPubkey, onOtherCollec
         <Modal open={showCollectedByModal} short setOpen={setShowCollectedByModal}>
           <h4 className="mt-12 h-14 text-center text-base font-medium leading-3">Collected by</h4>
           <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
-            {collectedProfiles.map((p) => (
+            {collectedBy.map((p) => (
               <FollowItem
                 key={p.walletAddress}
                 source={'collectedBy'}

@@ -26,25 +26,28 @@ const DISALLOWED_PROFILES: string[] = ['ho1aVYd4TDWCi1pMqFvboPPc3J13e4LgWkWzGJpP
 
 export function useHomeQueryWithTransforms(
   userWallet: PublicKey | null,
-  featuredCollectionsLimit: number,
-  featuredProfileLimit: number,
-  featuredBowNowLimit: number,
-  feedEventsLimit: number,
-  featuredAuctionsLimit: number
+  limits: {
+    featuredCollectionsLimit: number;
+    featuredProfileLimit: number;
+    featuredBowNowLimit: number;
+    feedEventsLimit: number;
+    featuredAuctionsLimit: number;
+  }
 ): QueryContext<HomeData> {
   const queryContext = useHomeQuery({
     //TODO add time window to featuredCollectionsByVolume and featuredCollectionsByMarketCap queries
     variables: {
       userWallet: userWallet,
-      featuredCollectionsLimit: featuredCollectionsLimit,
-      featuredProfileLimit: featuredProfileLimit,
-      featuredBuyNowLimit: featuredBowNowLimit,
-      feedEventsLimit: feedEventsLimit,
+      featuredCollectionsLimit: limits.featuredCollectionsLimit,
+      featuredProfileLimit: limits.featuredProfileLimit,
+      featuredBuyNowLimit: limits.featuredBowNowLimit,
+      feedEventsLimit: limits.feedEventsLimit,
     },
   });
 
-  const featuredAuctionContext: QueryContext<Listing[]> =
-    usePrepareFeaturedAuctions(featuredAuctionsLimit);
+  const featuredAuctionContext: QueryContext<Listing[]> = usePrepareFeaturedAuctions(
+    limits.featuredAuctionsLimit
+  );
 
   const loading: boolean = queryContext.loading || featuredAuctionContext.loading;
 

@@ -6,7 +6,7 @@
 # import "../fragments/ListingEventPreview.graphql"
 # import "../fragments/OfferEventPreview.graphql"
 # import "../fragments/CollectionPreview.graphql"
-#import "./ProfileInfo.graphql"
+# import "./ProfileInfo.graphql"
 
 fragment ProfilePreview on Wallet {
   address
@@ -147,7 +147,7 @@ query home(
     wallet: "ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz"
     limit: $feedEventsLimit
     offset: 0
-    excludeTypes: ["follow"]
+    excludeTypes: ["follow", "mint"]
   ) {
     __typename
     ... on MintEvent {

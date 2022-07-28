@@ -35,7 +35,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
   const [query, setQuery] = useState('');
 
   // grid
-  const [gridView, setGridView] = useState<'1x1' | '2x2' | '3x3'>('3x3');
+  const [gridView, setGridView] = useState<'1x1' | '2x2' | '4x4' | '6x6'>('4x4');
 
   const [selectedFilter, setSelectedFilter] = useState(SelectedFilter.ALL);
   const [hasMore, setHasMore] = useState(true);

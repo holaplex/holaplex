@@ -12,6 +12,22 @@ fragment ListingEventPreview on ListingEvent {
     id
     seller
     price
+    auctionHouse {
+      address
+      treasuryMint
+      auctionHouseTreasury
+      treasuryWithdrawalDestination
+      feeWithdrawalDestination
+      authority
+      creator
+      auctionHouseFeeAccount
+      bump
+      treasuryBump
+      feePayerBump
+      sellerFeeBasisPoints
+      requiresSignOff
+      canChangeSalePrice
+    }
     nft {
       name
       image(width: 600)
@@ -20,6 +36,15 @@ fragment ListingEventPreview on ListingEvent {
         address
         associatedTokenAccountAddress
         twitterHandle
+      }
+      creators {
+        address
+        position
+        profile {
+          handle
+          profileImageUrlLowres
+          profileImageUrlHighres
+        }
       }
       listings {
         id
