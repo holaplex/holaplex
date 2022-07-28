@@ -32,7 +32,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       }
     }
   }
-  sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
+  nftsWithSentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -43,6 +43,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     creators {
       address
       verified
+      twitterHandle
     }
     owner {
       address
@@ -124,7 +125,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
       canceledAt
     }
   }
-  receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
+  ownedNFTs: nfts(owners: [$address], limit: $limit, offset: $offset) {
     address
     name
     sellerFeeBasisPoints
@@ -135,6 +136,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
     creators {
       address
       verified
+      twitterHandle
     }
     owner {
       address

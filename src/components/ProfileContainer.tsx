@@ -143,8 +143,7 @@ const ProfileDisplayName: FC = () => {
   );
 };
 
-export const PFP_SIZE = 100;
-
+// getting a weird error for trying to move this banner component to TW, leaving it for now
 const Banner = styled.div`
   width: 100%;
   background-repeat: no-repeat;

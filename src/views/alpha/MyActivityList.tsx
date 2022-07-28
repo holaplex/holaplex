@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { useActivityPageQuery } from 'src/graphql/indexerTypes';
 import { ActivityCard } from '@/components/ActivityCard';
-import { getActivityItems } from '@/components/ActivityContent';
+import { getActivityItems } from '@/pages/profiles/[publicKey]/activity';
 
 export function MyActivityList() {
   const anchorWallet = useAnchorWallet();

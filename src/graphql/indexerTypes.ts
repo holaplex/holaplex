@@ -3800,7 +3800,7 @@ export type OffersPageQuery = {
       } | null;
     }>;
   } | null;
-  sentOffers: Array<{
+  nftsWithSentOffers: Array<{
     __typename?: 'Nft';
     address: string;
     name: string;
@@ -3809,7 +3809,12 @@ export type OffersPageQuery = {
     description: string;
     image: string;
     primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    creators: Array<{
+      __typename?: 'NftCreator';
+      address: string;
+      verified: boolean;
+      twitterHandle?: string | null;
+    }>;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -3897,7 +3902,7 @@ export type OffersPageQuery = {
       } | null;
     }>;
   }>;
-  receivedOffers: Array<{
+  ownedNFTs: Array<{
     __typename?: 'Nft';
     address: string;
     name: string;
@@ -3906,7 +3911,12 @@ export type OffersPageQuery = {
     description: string;
     image: string;
     primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    creators: Array<{
+      __typename?: 'NftCreator';
+      address: string;
+      verified: boolean;
+      twitterHandle?: string | null;
+    }>;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -7248,7 +7258,7 @@ export const OffersPageDocument = gql`
         }
       }
     }
-    sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
+    nftsWithSentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
       address
       name
       sellerFeeBasisPoints
@@ -7259,6 +7269,7 @@ export const OffersPageDocument = gql`
       creators {
         address
         verified
+        twitterHandle
       }
       owner {
         address
@@ -7340,7 +7351,7 @@ export const OffersPageDocument = gql`
         canceledAt
       }
     }
-    receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
+    ownedNFTs: nfts(owners: [$address], limit: $limit, offset: $offset) {
       address
       name
       sellerFeeBasisPoints
@@ -7351,6 +7362,7 @@ export const OffersPageDocument = gql`
       creators {
         address
         verified
+        twitterHandle
       }
       owner {
         address

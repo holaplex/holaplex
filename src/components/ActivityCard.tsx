@@ -18,7 +18,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isY
   const toDisplay = activity.wallets[1]
     ? activity.wallets[1].twitterHandle || showFirstAndLastFour(activity.wallets[1].address)
     : '';
-  const creatorDisplay = creator?.twitterHandle || creator?.address;
+  const creatorDisplay = creator?.twitterHandle || showFirstAndLastFour(creator?.address || '');
 
   const FromHelper = () => {
     const { data } = useTwitterHandleFromPubKeyQuery({ variables: { pubKey: from.address } });
@@ -59,7 +59,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isY
     //const storefront = activity.storefront;
     if (!nft) return null;
 
-    const nftURL = 'https://www.holaplex.com/nfts' + nft.address;
+    const nftURL = 'https://www.holaplex.com/nfts/' + nft.address;
     return (
       <a href={nftURL}>
         <span className="text-white">{nft.name}</span>
@@ -69,8 +69,9 @@ function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isY
 
   const SolTextHelper = () =>
     activity.price ? (
-      <b className="inline-flex items-center">
-        <SolIcon className="mr-1 h-3 w-3" stroke="white" /> {activity.price / LAMPORTS_PER_SOL}
+      <b className="inline-flex items-center text-white">
+        <SolIcon className="mr-1 h-3 w-3" stroke="white" />
+        {activity.price / LAMPORTS_PER_SOL}
       </b>
     ) : null;
 
@@ -78,8 +79,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isY
     case 'offer':
       return (
         <div className="text-gray-300">
-          <FromHelper /> placed a bid of <SolTextHelper />
-          <CreatorTextHelper /> on <NftHelper />
+          <FromHelper /> offered <SolTextHelper /> <CreatorTextHelper /> on <NftHelper />
         </div>
       );
     case 'listing':
@@ -111,7 +111,10 @@ function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isY
   }
 }
 
-export function ActivityCard(props: { activity: IActivityItem }) {
+export function ActivityCard(props: {
+  activity: IActivityItem;
+  customActionButton?: JSX.Element | null;
+}) {
   const { publicKey: connectedPubkey } = useWallet();
   const isYou = connectedPubkey?.toBase58() === props.activity.wallets[0]?.address;
   // const content = generateContent(props.activity);
@@ -159,16 +162,22 @@ export function ActivityCard(props: { activity: IActivityItem }) {
           <div className="mt-2 text-sm text-gray-500">{timeOfActivity.toRelative()}</div>
         </div>
       </div>
-      <a
-        href={actionURL}
-        target="_blank"
-        className="ml-auto w-full pt-4 sm:block md:w-auto md:pl-4 md:pt-0"
-        rel="noreferrer"
-      >
-        <Button5 v="ghost" onClick={() => activitySelected()}>
-          View
-        </Button5>
-      </a>
+      <div className="ml-auto">
+        {props.customActionButton ? (
+          props.customActionButton
+        ) : (
+          <a
+            href={actionURL}
+            target="_blank"
+            className=" w-full pt-4 sm:block md:w-auto md:pl-4 md:pt-0"
+            rel="noreferrer"
+          >
+            <Button5 v="ghost" onClick={() => activitySelected()}>
+              View
+            </Button5>
+          </a>
+        )}
+      </div>
     </div>
   );
 }
