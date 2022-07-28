@@ -6,7 +6,7 @@
 # import "../fragments/ListingEventPreview.graphql"
 # import "../fragments/OfferEventPreview.graphql"
 # import "../fragments/CollectionPreview.graphql"
-#import "./ProfileInfo.graphql"
+# import "./ProfileInfo.graphql"
 
 fragment ProfilePreview on Wallet {
   address
@@ -174,7 +174,9 @@ query home(
     offset: 0
     orderDirection: DESC
   ) {
-    ...CollectionPreview
+    mintAddress
+    name
+    image
   }
 
   collectionsFeaturedByMarketCap(
@@ -184,7 +186,9 @@ query home(
     offset: 0
     orderDirection: DESC
   ) {
-    ...CollectionPreview
+    mintAddress
+    name
+    image
   }
 
   followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
