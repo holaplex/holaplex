@@ -32,16 +32,23 @@ export function useHomeQueryWithTransforms(
     featuredBowNowLimit: number;
     feedEventsLimit: number;
     featuredAuctionsLimit: number;
+  },
+  timeIntervals: {
+    startDate: string;
+    endDate: string;
   }
 ): QueryContext<HomeData> {
   const queryContext = useHomeQuery({
-    //TODO add time window to featuredCollectionsByVolume and featuredCollectionsByMarketCap queries
     variables: {
       userWallet: userWallet,
       featuredCollectionsLimit: limits.featuredCollectionsLimit,
       featuredProfileLimit: limits.featuredProfileLimit,
       featuredBuyNowLimit: limits.featuredBowNowLimit,
       feedEventsLimit: limits.feedEventsLimit,
+      collectionsByMarketCapStartDate: timeIntervals.startDate,
+      collectionsByMarketCapEndDate: timeIntervals.endDate,
+      collectionsByVolumeStartDate: timeIntervals.startDate,
+      collectionsByVolumeEndDate: timeIntervals.endDate,
     },
   });
 

@@ -13,8 +13,8 @@ import { DiscoverPageProps, DiscoverLayout } from '@/views/discover/DiscoverLayo
 import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
-const INITIAL_FETCH: number = 24;
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
+const INITIAL_FETCH: number = 30;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 16;
 
 enum TypeOption {
   ALL = 'all',

@@ -83,20 +83,6 @@ export function AppHeader() {
         {!WHICHDAO && (
           <div className={`hidden min-w-fit flex-row items-center justify-end gap-6 md:flex`}>
             <DiscoverMenu />
-            {connected && (
-              <Link href="/alpha" passHref>
-                <a
-                  key="alpha"
-                  className={classNames(
-                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
-                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
-                  )}
-                >
-                  Alpha
-                </a>
-              </Link>
-            )}
-
             <Link href="/nfts/new" passHref>
               <a
                 key="create"
@@ -167,7 +153,7 @@ function DiscoverMenu(): JSX.Element {
         <Link href={props.href}>
           <a
             className={classNames(
-              'flex flex-row flex-nowrap justify-start',
+              'flex flex-row flex-nowrap items-center justify-start',
               'space-x-4 p-4',
               'text-lg'
             )}
