@@ -130,13 +130,17 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
         }
       },
       onActionFailure: async (err) => {
+        console.log('Accept Offer Failed', err);
         toast.error(err.message);
       },
     });
   };
 
   return (
-    <form className={`flex w-full ${className}`} onSubmit={handleSubmit(acceptOfferTx)}>
+    <form
+      className={`flex w-full justify-center ${className}`}
+      onSubmit={handleSubmit(acceptOfferTx)}
+    >
       <Button
         className={className}
         htmlType={`submit`}

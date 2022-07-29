@@ -187,6 +187,7 @@ const OfferPage = (props: WalletDependantPageProps) => {
                   open={showAcceptOfferModal}
                   setOpen={setShowAcceptOfferModal}
                   title={`Accept offer`}
+                  priority={true}
                 >
                   <AcceptOfferForm
                     listing={defaultListing as AhListing}
