@@ -19,7 +19,7 @@ interface CollectionPreviewSkeletonProps {
   background: JSX.Element;
   // preview: JSX.Element;
   name: JSX.Element;
-  dropTime: JSX.Element | boolean;
+  size: JSX.Element | boolean;
   floor: JSX.Element | boolean;
   className?: string;
 }
@@ -33,7 +33,7 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
         props.className
       )}
     >
-      <div className="relative flex aspect-[1/1] w-full">{props.background}</div>
+      <div className="relative flex aspect-square w-full">{props.background}</div>
 
       {/* preview image, collection name, NFT count, and floor price section */}
       <div
@@ -58,7 +58,7 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
           {props.name}
 
           <div className="flex flex-row items-center justify-between gap-4 overflow-hidden">
-            {props.dropTime}
+            {props.size}
             {props.floor}
           </div>
         </div>
@@ -74,8 +74,8 @@ export function CollectionPreviewLoadingCard(): JSX.Element {
       background={<div className="h-full w-full bg-gray-900 bg-opacity-50" />}
       // preview={<div className="h-full w-full rounded bg-gray-800" />}
       name={<div className="h-16 w-full rounded bg-gray-800" />}
-      dropTime={<div className="h-11 w-[50%] rounded bg-gray-800" />}
-      floor={<div className="h-11 w-[50%] rounded bg-gray-800" />}
+      size={<div className="h-11 w-1/2 rounded bg-gray-800" />}
+      floor={<div className="h-11 w-1/2 rounded bg-gray-800" />}
     />
   );
 }
@@ -117,13 +117,17 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
           />
         </>
       }
-      name={<span className="text-2xl font-semibold text-white ">{props.context.data?.name}</span>}
-      dropTime={
+      name={
+        <span className="text-2xl font-semibold text-white sm:text-lg lg:text-2xl ">
+          {props.context.data?.name}
+        </span>
+      }
+      size={
         (props.context.data?.nftCount ?? 0) > 0 && (
           <div
             className={classNames(
               [
-                'flex w-[50%] justify-center py-3 px-2 text-left text-xs font-medium',
+                'flex w-1/2 justify-center py-3 px-2 text-left text-xs font-medium',
                 'rounded-lg bg-black/30 backdrop-blur-sm',
               ],
               ['lg:text-sm']
@@ -138,7 +142,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
           <div
             className={classNames(
               [
-                'flex w-[50%] justify-center py-3 px-2 text-left text-xs font-medium',
+                'flex w-1/2 justify-center py-3 px-2 text-left text-xs font-medium',
                 'rounded-lg bg-black/30 backdrop-blur-sm',
               ],
               ['lg:text-sm']
