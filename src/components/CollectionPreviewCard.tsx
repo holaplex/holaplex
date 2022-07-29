@@ -17,7 +17,7 @@ interface CollectionPreviewCardProps {
 
 interface CollectionPreviewSkeletonProps {
   background: JSX.Element;
-  preview: JSX.Element;
+  // preview: JSX.Element;
   name: JSX.Element;
   size: JSX.Element | boolean;
   floor: JSX.Element | boolean;
@@ -33,18 +33,18 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
         props.className
       )}
     >
-      <div className="relative flex aspect-[306/440] w-full">{props.background}</div>
+      <div className="relative flex aspect-square w-full">{props.background}</div>
 
       {/* preview image, collection name, NFT count, and floor price section */}
       <div
         className={classNames(
           'absolute',
           'h-full w-full',
-          'flex flex-col justify-between p-4',
+          'flex flex-col justify-end p-4',
           'pointer-events-none'
         )}
       >
-        <div
+        {/* <div
           className={classNames(
             'flex overflow-clip',
             'aspect-square w-[40%]',
@@ -52,12 +52,12 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
           )}
         >
           {props.preview}
-        </div>
+        </div> */}
 
-        <div className="flex flex-col justify-between space-y-4">
+        <div className="flex flex-col justify-between space-y-5">
           {props.name}
 
-          <div className="flex flex-row items-center justify-between overflow-hidden">
+          <div className="flex flex-row items-center justify-between gap-4 overflow-hidden">
             {props.size}
             {props.floor}
           </div>
@@ -72,10 +72,10 @@ export function CollectionPreviewLoadingCard(): JSX.Element {
     <CollectionPreviewSkeleton
       className="animate-pulse"
       background={<div className="h-full w-full bg-gray-900 bg-opacity-50" />}
-      preview={<div className="h-full w-full rounded bg-gray-800" />}
+      // preview={<div className="h-full w-full rounded bg-gray-800" />}
       name={<div className="h-16 w-full rounded bg-gray-800" />}
-      size={<div className="h-8 w-[35%] rounded bg-gray-800" />}
-      floor={<div className="h-8 w-[35%] rounded bg-gray-800" />}
+      size={<div className="h-11 w-1/2 rounded bg-gray-800" />}
+      floor={<div className="h-11 w-1/2 rounded bg-gray-800" />}
     />
   );
 }
@@ -117,42 +117,54 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
           />
         </>
       }
-      preview={
-        <img
-          src={imageUrl}
-          alt={`${props.context.data?.name}`}
-          className="min-h-full min-w-full object-cover"
-          // provide a fallback image in case the image isnt found
-          onError={({ currentTarget }) => {
-            // null onerror to prevent looping in worst case
-            currentTarget.onerror = null;
-            currentTarget.src = getFallbackImage();
-          }}
-        />
+      name={
+        <span className="text-2xl font-semibold text-white sm:text-lg lg:text-2xl ">
+          {props.context.data?.name}
+        </span>
       }
-      name={<span className="text-2xl font-semibold text-white ">{props.context.data?.name}</span>}
       size={
         (props.context.data?.nftCount ?? 0) > 0 && (
-          <span
+          <div
             className={classNames(
-              ['p-2 text-left text-xs font-medium', 'rounded bg-gray-900/50 backdrop-blur-sm'],
+              [
+                'flex w-1/2 justify-center py-3 px-2 text-left text-xs font-medium',
+                'rounded-lg bg-black/30 backdrop-blur-sm',
+              ],
               ['lg:text-sm']
             )}
-          >{`Collection of ${nftCountStr}`}</span>
+          >
+            <span>{`Collection of ${nftCountStr}`}</span>
+          </div>
         )
       }
       floor={
         (props.context.data?.floorPriceSol ?? 0) > 0 && (
           <div
             className={classNames(
-              ['p-2 text-left text-xs font-medium', 'rounded bg-gray-900/50 backdrop-blur-sm'],
+              [
+                'flex w-1/2 justify-center py-3 px-2 text-left text-xs font-medium',
+                'rounded-lg bg-black/30 backdrop-blur-sm',
+              ],
               ['lg:text-sm']
             )}
           >
-            <span className="mr-1 lg:mr-3">Floor: {props.context.data?.floorPriceSol} SOL</span>
+            <span>Floor: {props.context.data?.floorPriceSol} SOL</span>
           </div>
         )
       }
+      // preview={
+      //   <img
+      //     src={imageUrl}
+      //     alt={`${props.context.data?.name}`}
+      //     className="min-h-full min-w-full object-cover"
+      //     // provide a fallback image in case the image isnt found
+      //     onError={({ currentTarget }) => {
+      //       // null onerror to prevent looping in worst case
+      //       currentTarget.onerror = null;
+      //       currentTarget.src = getFallbackImage();
+      //     }}
+      //   />
+      // }
     />
   );
 }

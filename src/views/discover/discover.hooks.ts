@@ -19,7 +19,7 @@ import {
   useDiscoverProfilesAllLazyQuery,
 } from 'src/graphql/indexerTypes';
 import {
-  CollectionPreviewFragment,
+  // CollectionPreviewFragment,
   DiscoverCollectionsByVolumeQuery,
   DiscoverNftsBuyNowQuery,
   DiscoverProfilesAllQuery,
@@ -240,7 +240,8 @@ function useDiscoverCollectionsQuery(
 }
 
 function transformCollectionCardData(
-  cardData: CollectionPreviewFragment
+  // cardData: CollectionPreviewFragment
+  cardData: DiscoverCollectionsByMarketCapQuery['collectionsFeaturedByMarketCap'][0]
 ): CollectionPreviewCardData {
   return {
     address: cardData.mintAddress,
