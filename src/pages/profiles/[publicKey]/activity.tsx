@@ -21,7 +21,7 @@ import { ActivityCard } from '@/components/ActivityCard';
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
 
-const LoadingActivitySkeletonBoxSquareShort = () => {
+export const LoadingActivitySkeletonBoxSquareShort = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>
@@ -37,7 +37,7 @@ const LoadingActivitySkeletonBoxSquareShort = () => {
   );
 };
 
-const LoadingActivitySkeletonBoxCircleLong = () => {
+export const LoadingActivitySkeletonBoxCircleLong = () => {
   return (
     <ActivityBoxContainer>
       <CenteredCol>

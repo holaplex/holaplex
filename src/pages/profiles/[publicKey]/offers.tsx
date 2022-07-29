@@ -22,6 +22,10 @@ import Modal from '@/components/Modal';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import { ActivityCard } from '@/components/ActivityCard';
 import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
+import {
+  LoadingActivitySkeletonBoxCircleLong,
+  LoadingActivitySkeletonBoxSquareShort,
+} from './activity';
 
 enum OfferFilters {
   ALL,
@@ -171,36 +175,14 @@ const OfferPage = (props: WalletDependantPageProps) => {
             </>
           ) : // I own the nft and can accept the offer
           offerIsReceived && nft.owner.address === userPK ? (
-            <>
-              <Button
-                onClick={() => {
-                  setCurrNFT(nft as Nft | any);
-                  setShowAcceptOfferModal(true);
-                }}
-                secondary
-                className={`w-full bg-gray-800 ease-in hover:bg-gray-700`}
-              >
-                Accept offer
-              </Button>
-              {ReactDom.createPortal(
-                <Modal
-                  open={showAcceptOfferModal}
-                  setOpen={setShowAcceptOfferModal}
-                  title={`Accept offer`}
-                  priority={true}
-                >
-                  <AcceptOfferForm
-                    listing={defaultListing as AhListing}
-                    setOpen={setShowAcceptOfferModal}
-                    nft={currNFT as Nft | any}
-                    marketplace={marketplace as Marketplace}
-                    offer={offer as Offer}
-                    refetch={refetch}
-                  />
-                </Modal>,
-                document.getElementsByTagName('body')[0]!
-              )}
-            </>
+            <AcceptOfferForm
+              listing={defaultListing as AhListing}
+              setOpen={setShowAcceptOfferModal}
+              nft={currNFT as Nft | any}
+              marketplace={marketplace as Marketplace}
+              offer={offer as Offer}
+              refetch={refetch}
+            />
           ) : null
         }
       />
@@ -237,7 +219,16 @@ const OfferPage = (props: WalletDependantPageProps) => {
               .map((offer) => getActivityCard(nft as Nft, offer as Offer));
           })}
 
-        {offerCount <= 0 && (
+        {loading && (
+          <>
+            <LoadingActivitySkeletonBoxCircleLong />
+            <LoadingActivitySkeletonBoxSquareShort />
+            <LoadingActivitySkeletonBoxCircleLong />
+            <LoadingActivitySkeletonBoxSquareShort />
+          </>
+        )}
+
+        {!loading && offerCount === 0 && (
           <div>
             <div className={`flex flex-col justify-center rounded-lg border-2 border-gray-800 p-4`}>
               <span className={`text-center text-2xl font-semibold`}>No offers</span>
