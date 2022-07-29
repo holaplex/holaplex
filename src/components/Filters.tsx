@@ -19,7 +19,7 @@ export default function FiltersSection(props: FiltersSectionProps): JSX.Element 
   return (
     <div
       className={classNames(
-        'flex w-[320px] flex-col justify-start',
+        'flex w-80 flex-col justify-start',
         { hidden: props.collapsed },
         props.className
       )}

@@ -64,7 +64,7 @@ export function CardGridWithHeader<T, F = null>(props: CardGridWithHeaderProps<T
         {props.filters && (
           <FiltersSection
             collapsed={collapsed}
-            className={classNames('mb-10', 'sticky top-[80px] h-full flex-none')}
+            className={classNames('mb-10', 'sticky top-20 h-full flex-none')}
             onCollapse={() => {
               setCollapsed(true);
             }}
