@@ -172,10 +172,6 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     });
   };
 
-  const acceptOffer = () => {
-    setOpen(false);
-  };
-
   return (
     <div>
       {nft && <NFTPreview nft={nft as Nft | any} loading={false} />}
@@ -190,7 +186,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
               listing={listing}
               marketplace={marketplace}
               refetch={refetch}
-              closeOuter={acceptOffer}
+              setOpen={setOpen}
             />
           </div>
         </div>
