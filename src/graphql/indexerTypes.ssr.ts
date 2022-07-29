@@ -33,6 +33,7 @@ export type AhListing = {
   canceledAt?: Maybe<Scalars['DateTimeUtc']>;
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -338,6 +339,7 @@ export type NftActivity = {
   auctionHouse?: Maybe<AuctionHouse>;
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -404,6 +406,7 @@ export type Offer = {
   canceledAt?: Maybe<Scalars['DateTimeUtc']>;
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -457,6 +460,7 @@ export type Purchase = {
   buyer: Scalars['PublicKey'];
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -494,6 +498,7 @@ export type QueryRoot = {
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
   genoHabitat?: Maybe<GenoHabitat>;
+  genoHabitats: Array<GenoHabitat>;
   /** Returns the latest on chain events using the graph_program. */
   latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
@@ -604,6 +609,25 @@ export type QueryRootFollowWalletsArgs = {
 
 export type QueryRootGenoHabitatArgs = {
   address: Scalars['PublicKey'];
+};
+
+export type QueryRootGenoHabitatsArgs = {
+  elements?: InputMaybe<Array<Scalars['Int']>>;
+  genesis?: InputMaybe<Scalars['Boolean']>;
+  guilds?: InputMaybe<Array<Scalars['Int']>>;
+  harvesters?: InputMaybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  maxDurability?: InputMaybe<Scalars['Int']>;
+  maxExpiry?: InputMaybe<Scalars['DateTimeUtc']>;
+  maxLevel?: InputMaybe<Scalars['Int']>;
+  maxSequence?: InputMaybe<Scalars['Int']>;
+  minDurability?: InputMaybe<Scalars['Int']>;
+  minExpiry?: InputMaybe<Scalars['DateTimeUtc']>;
+  minLevel?: InputMaybe<Scalars['Int']>;
+  minSequence?: InputMaybe<Scalars['Int']>;
+  offset: Scalars['Int'];
+  owners?: InputMaybe<Array<Scalars['PublicKey']>>;
+  renters?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 export type QueryRootLatestFeedEventsArgs = {
@@ -2359,13 +2383,6 @@ export type WhoToFollowQuery = {
     } | null;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   }>;
-};
-
-export type CollectionPreviewFragment = {
-  __typename?: 'Nft';
-  mintAddress: string;
-  name: string;
-  image: string;
 };
 
 export type FollowEventPreviewFragment = {
@@ -4744,13 +4761,6 @@ export type SearchQuery = {
   }>;
 };
 
-export const CollectionPreviewFragmentDoc = gql`
-  fragment CollectionPreview on Nft {
-    mintAddress
-    name
-    image
-  }
-`;
 export const ProfileInfoFragmentDoc = gql`
   fragment ProfileInfo on TwitterProfile {
     walletAddress
@@ -5967,10 +5977,11 @@ export const DiscoverCollectionsByMarketCapDocument = gql`
       offset: $offset
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
   }
-  ${CollectionPreviewFragmentDoc}
 `;
 export const DiscoverCollectionsByVolumeDocument = gql`
   query discoverCollectionsByVolume(
@@ -5988,10 +5999,11 @@ export const DiscoverCollectionsByVolumeDocument = gql`
       offset: $offset
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
   }
-  ${CollectionPreviewFragmentDoc}
 `;
 export const DiscoverNftsActiveOffersDocument = gql`
   query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
@@ -6141,7 +6153,9 @@ export const HomeDocument = gql`
       offset: 0
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
     collectionsFeaturedByMarketCap(
       startDate: "2020-01-01T00:00:00Z"
@@ -6150,7 +6164,9 @@ export const HomeDocument = gql`
       offset: 0
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
     followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
       ...ProfilePreview
@@ -6181,7 +6197,6 @@ export const HomeDocument = gql`
   ${PurchaseEventPreviewFragmentDoc}
   ${ListingEventPreviewFragmentDoc}
   ${OfferEventPreviewFragmentDoc}
-  ${CollectionPreviewFragmentDoc}
   ${ProfilePreviewFragmentDoc}
   ${BuyNowListingFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}

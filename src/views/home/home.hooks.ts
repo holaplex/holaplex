@@ -6,7 +6,7 @@ import { PublicKey } from '@solana/web3.js';
 import { HomeData } from 'src/pages';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  CollectionPreviewFragment,
+  // CollectionPreviewFragment,
   useHomeQuery,
   BuyNowListingFragment,
   HomeQuery,
@@ -142,7 +142,10 @@ function transformFeaturedCollectionsByMarketCap(
   return result;
 }
 
-function transformCollectionPreview(data: CollectionPreviewFragment): CollectionPreviewCardData {
+// function transformCollectionPreview(data: CollectionPreviewFragment): CollectionPreviewCardData {
+function transformCollectionPreview(
+  data: HomeQuery['collectionsFeaturedByMarketCap'][0]
+): CollectionPreviewCardData {
   return {
     address: data.mintAddress,
     imageUrl: data.image,
