@@ -84,9 +84,7 @@ const AlphaPage = ({ address }: { address: string }) => {
   // will be moved outside of the component eventually
 
   // TODO consider moving this to useHolaplexInfiniteScrollQuery from useApolloQuery.ts
-  const [feedItems, feedAttrs] = useMemo(() => {
-    const feedAttrs: FeedCardAttributes[] = [];
-
+  const feedItems = useMemo(() => {
     function getFeedItems(feedEvents: FeedQuery['feedEvents']): FeedItem[] {
       let skipIndex = 0;
       return feedEvents.reduce((feedItems, event, i) => {
@@ -106,7 +104,6 @@ const AlphaPage = ({ address }: { address: string }) => {
         }
         // for now we do no aggregation, simply make sure events are valid
         const attrs = generateFeedCardAttributes(event);
-        feedAttrs.push(attrs);
 
         if (skipIndex > i) return feedItems;
         // const cur = feedEvents[i];
@@ -202,7 +199,7 @@ const AlphaPage = ({ address }: { address: string }) => {
 
     const feedItems = getFeedItems(feedEvents);
 
-    return [feedItems, feedAttrs];
+    return feedItems;
   }, [feedEvents]);
 
   // Effect to check connection 2 seconds after loading

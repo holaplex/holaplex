@@ -2,41 +2,29 @@ query activityPage($address: PublicKey!) {
   wallet(address: $address) {
     __typename
     address
-    bids {
-      __typename
-      listingAddress
-      bidderAddress
-      lastBidTime
-      lastBidAmount
-      cancelled
-      listing {
+    activities {
+      id
+      price
+      createdAt
+      wallets {
         address
-        # storeAddress
-        ended
-        storefront {
-          __typename
-          ownerAddress
-          subdomain
-          title
-          description
-          faviconUrl
-          logoUrl
-          bannerUrl
-        }
-        nfts {
-          __typename
+        twitterHandle
+      }
+      activityType
+      nft {
+        __typename
+        address
+        name
+        description
+        image
+        creators {
           address
-          name
-          description
-          image
+          twitterHandle
         }
-        bids {
-          bidderAddress
-          lastBidTime
-          lastBidAmount
-          cancelled
-          listingAddress
-        }
+      }
+      auctionHouse {
+        address
+        treasuryMint
       }
     }
   }

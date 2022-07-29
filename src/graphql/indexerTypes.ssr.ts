@@ -805,43 +805,26 @@ export type ActivityPageQuery = {
   wallet: {
     __typename: 'Wallet';
     address: any;
-    bids: Array<{
-      __typename: 'Bid';
-      listingAddress: string;
-      bidderAddress: string;
-      lastBidTime: string;
-      lastBidAmount: any;
-      cancelled: boolean;
-      listing?: {
-        __typename?: 'Listing';
+    activities: Array<{
+      __typename?: 'WalletActivity';
+      id: any;
+      price: any;
+      createdAt: any;
+      activityType: string;
+      wallets: Array<{ __typename?: 'Wallet'; address: any; twitterHandle?: string | null }>;
+      nft?: {
+        __typename: 'Nft';
         address: string;
-        ended: boolean;
-        storefront?: {
-          __typename: 'Storefront';
-          ownerAddress: string;
-          subdomain: string;
-          title: string;
-          description: string;
-          faviconUrl: string;
-          logoUrl: string;
-          bannerUrl: string;
-        } | null;
-        nfts: Array<{
-          __typename: 'Nft';
+        name: string;
+        description: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
           address: string;
-          name: string;
-          description: string;
-          image: string;
-        }>;
-        bids: Array<{
-          __typename?: 'Bid';
-          bidderAddress: string;
-          lastBidTime: string;
-          lastBidAmount: any;
-          cancelled: boolean;
-          listingAddress: string;
+          twitterHandle?: string | null;
         }>;
       } | null;
+      auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
     }>;
   };
 };
@@ -3834,7 +3817,7 @@ export type OffersPageQuery = {
       } | null;
     }>;
   } | null;
-  sentOffers: Array<{
+  nftsWithSentOffers: Array<{
     __typename?: 'Nft';
     address: string;
     name: string;
@@ -3843,7 +3826,12 @@ export type OffersPageQuery = {
     description: string;
     image: string;
     primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    creators: Array<{
+      __typename?: 'NftCreator';
+      address: string;
+      verified: boolean;
+      twitterHandle?: string | null;
+    }>;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -3931,7 +3919,7 @@ export type OffersPageQuery = {
       } | null;
     }>;
   }>;
-  receivedOffers: Array<{
+  ownedNFTs: Array<{
     __typename?: 'Nft';
     address: string;
     name: string;
@@ -3940,7 +3928,12 @@ export type OffersPageQuery = {
     description: string;
     image: string;
     primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    creators: Array<{
+      __typename?: 'NftCreator';
+      address: string;
+      verified: boolean;
+      twitterHandle?: string | null;
+    }>;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -5303,40 +5296,29 @@ export const ActivityPageDocument = gql`
     wallet(address: $address) {
       __typename
       address
-      bids {
-        __typename
-        listingAddress
-        bidderAddress
-        lastBidTime
-        lastBidAmount
-        cancelled
-        listing {
+      activities {
+        id
+        price
+        createdAt
+        wallets {
           address
-          ended
-          storefront {
-            __typename
-            ownerAddress
-            subdomain
-            title
-            description
-            faviconUrl
-            logoUrl
-            bannerUrl
-          }
-          nfts {
-            __typename
+          twitterHandle
+        }
+        activityType
+        nft {
+          __typename
+          address
+          name
+          description
+          image
+          creators {
             address
-            name
-            description
-            image
+            twitterHandle
           }
-          bids {
-            bidderAddress
-            lastBidTime
-            lastBidAmount
-            cancelled
-            listingAddress
-          }
+        }
+        auctionHouse {
+          address
+          treasuryMint
         }
       }
     }
@@ -6508,7 +6490,7 @@ export const OffersPageDocument = gql`
         }
       }
     }
-    sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
+    nftsWithSentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
       address
       name
       sellerFeeBasisPoints
@@ -6519,6 +6501,7 @@ export const OffersPageDocument = gql`
       creators {
         address
         verified
+        twitterHandle
       }
       owner {
         address
@@ -6600,7 +6583,7 @@ export const OffersPageDocument = gql`
         canceledAt
       }
     }
-    receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
+    ownedNFTs: nfts(owners: [$address], limit: $limit, offset: $offset) {
       address
       name
       sellerFeeBasisPoints
@@ -6611,6 +6594,7 @@ export const OffersPageDocument = gql`
       creators {
         address
         verified
+        twitterHandle
       }
       owner {
         address

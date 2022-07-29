@@ -99,8 +99,6 @@ export const getProfileServerSideProps: GetServerSideProps<WalletDependantPagePr
   };
 
   return {
-    props: {
-      ...profileServerSideProps,
-    },
+    props: profileServerSideProps,
   };
 };

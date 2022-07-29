@@ -1,4 +1,4 @@
-import { IFeedItem } from 'src/views/alpha/feed.interfaces';
+import { IActivityItem } from '@/views/alpha/activity.interfaces';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -10,14 +10,15 @@ import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { Button5 } from './Button2';
 import { useTwitterHandleFromPubKeyQuery } from 'src/graphql/indexerTypes';
 
-function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: boolean }) {
-  const from = (activity.sourceUser || activity?.nft?.creators?.[0])!;
+function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isYou: boolean }) {
+  console.log('ActivityCardContent', activity);
+  const from = (activity.wallets[0] || activity?.nft?.creators?.[0])!;
   const creator = activity?.nft?.creators?.[0] || null;
-  const fromDisplay = isYou ? 'You' : from.handle || showFirstAndLastFour(from.address);
-  const toDisplay = activity.toUser
-    ? activity.toUser.handle || showFirstAndLastFour(activity.toUser.address)
+  const fromDisplay = isYou ? 'You' : from.twitterHandle || showFirstAndLastFour(from.address);
+  const toDisplay = activity.wallets[1]
+    ? activity.wallets[1].twitterHandle || showFirstAndLastFour(activity.wallets[1].address)
     : '';
-  const creatorDisplay = creator?.handle || creator?.address;
+  const creatorDisplay = creator?.twitterHandle || showFirstAndLastFour(creator?.address || '');
 
   const FromHelper = () => {
     const { data } = useTwitterHandleFromPubKeyQuery({ variables: { pubKey: from.address } });
@@ -35,11 +36,11 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
   const ToHelper = () => {
     const { data } = useTwitterHandleFromPubKeyQuery({
-      variables: { pubKey: activity.toUser?.address },
+      variables: { pubKey: activity.wallets[1]?.address },
     });
     const twitterHandle: string | undefined = data?.wallet?.profile?.handle;
-    const profileURL = window.location.origin + '/profiles/' + activity.toUser?.address;
-    return activity.toUser ? (
+    const profileURL = window.location.origin + '/profiles/' + activity.wallets[1]?.address;
+    return activity.wallets[1] ? (
       <a href={profileURL}>
         <span className="text-white">{twitterHandle || toDisplay}</span>
       </a>
@@ -55,21 +56,10 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
 
   const NftHelper = () => {
     const nft = activity.nft;
-    const storefront = activity.storefront;
-    if (!nft && !storefront) return null;
-    const listingsURL = 'https://' + storefront?.subdomain + '.holaplex.com/listings/';
+    //const storefront = activity.storefront;
+    if (!nft) return null;
 
-    if (!nft) {
-      return !activity.storefront ? null : (
-        <span>
-          an NFT from
-          <a href={listingsURL}>
-            <span className="text-white"> {activity.storefront?.title}</span>
-          </a>
-        </span>
-      );
-    }
-    const nftURL = listingsURL + nft.listingAddress;
+    const nftURL = 'https://www.holaplex.com/nfts/' + nft.address;
     return (
       <a href={nftURL}>
         <span className="text-white">{nft.name}</span>
@@ -78,47 +68,42 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   };
 
   const SolTextHelper = () =>
-    activity.solAmount ? (
-      <b className="inline-flex items-center">
-        <SolIcon className="mr-1 h-3 w-3" stroke="white" /> {activity.solAmount / LAMPORTS_PER_SOL}
+    activity.price ? (
+      <b className="inline-flex items-center text-white">
+        <SolIcon className="mr-1 h-3 w-3" stroke="white" />
+        {activity.price / LAMPORTS_PER_SOL}
       </b>
     ) : null;
 
-  switch (activity.type) {
-    case 'BID_MADE':
+  switch (activity.activityType) {
+    case 'offer':
       return (
         <div className="text-gray-300">
-          <FromHelper /> placed a bid of <SolTextHelper />
-          <CreatorTextHelper /> on <NftHelper />
+          <FromHelper /> offered <SolTextHelper /> <CreatorTextHelper /> on <NftHelper />
         </div>
       );
-    case 'OUTBID':
+    case 'listing':
       return (
         <div className="text-gray-300">
-          <FromHelper /> outbid <ToHelper /> on <NftHelper /> <CreatorTextHelper /> with a bid of{' '}
-          <SolTextHelper />
+          <FromHelper /> listed <NftHelper /> for <SolTextHelper />
         </div>
       );
-    case 'WAS_OUTBID':
+    case 'cancel_listing':
       return (
         <div className="text-gray-300">
-          <FromHelper /> {fromDisplay === 'You' ? 'were' : 'was'} outbid by <ToHelper /> on{' '}
-          <NftHelper /> <CreatorTextHelper /> with a bid of <SolTextHelper />
+          <FromHelper /> cancelled listing of <NftHelper />
         </div>
       );
-
-    case 'LISTING_WON':
+    case 'purchase':
       return (
         <div className="text-gray-300">
-          <FromHelper /> won the auction for <NftHelper /> <CreatorTextHelper /> for{' '}
-          <SolTextHelper />
+          <ToHelper /> purchased <NftHelper /> for <SolTextHelper /> from <FromHelper />
         </div>
       );
-
-    case 'LISTING_LOST':
+    case 'sell':
       return (
         <div className="text-gray-300">
-          <FromHelper /> lost the auction for <NftHelper /> to <ToHelper /> for <SolTextHelper />
+          <FromHelper /> sold <NftHelper /> for <SolTextHelper /> to <ToHelper />
         </div>
       );
     default:
@@ -126,21 +111,18 @@ function ActivityCardContent({ activity, isYou }: { activity: IFeedItem; isYou: 
   }
 }
 
-export function ActivityCard(props: { activity: IFeedItem }) {
+export function ActivityCard(props: {
+  activity: IActivityItem;
+  customActionButton?: JSX.Element | null;
+}) {
   const { publicKey: connectedPubkey } = useWallet();
-  const isYou = connectedPubkey?.toBase58() === props.activity.sourceUser?.address;
+  const isYou = connectedPubkey?.toBase58() === props.activity.wallets[0]?.address;
   // const content = generateContent(props.activity);
-  const activityThumbnailImageURL =
-    props.activity.nft?.imageURL || props.activity.storefront?.logoUrl;
+  const activityThumbnailImageURL = props.activity.nft?.image;
   const thumbnailType = 'DEFAULT'; // 'PFP'
-  const actionURL =
-    'https://' +
-    props.activity.nft?.storeSubdomain +
-    '.holaplex.com/listings/' +
-    props.activity.nft?.listingAddress;
-
-  const timeOfActivity = DateTime.fromFormat(props.activity.timestamp, RUST_ISO_UTC_DATE_FORMAT);
-
+  const actionURL = 'https://holaplex.com/nfts/' + props.activity.nft?.address;
+  const timeInMillis = DateTime.fromISO(props.activity.createdAt).toMillis();
+  const timeOfActivity = DateTime.fromMillis(timeInMillis);
   const { track } = useAnalytics();
 
   // Activity Selected
@@ -149,8 +131,8 @@ export function ActivityCard(props: { activity: IFeedItem }) {
   function activitySelected() {
     track('Activity Selected', {
       event_category: 'Profile',
-      event_label: props.activity.type,
-      activityType: props.activity.type,
+      event_label: props.activity.activityType,
+      activityType: props.activity.activityType,
     });
   }
 
@@ -177,46 +159,25 @@ export function ActivityCard(props: { activity: IFeedItem }) {
         </div>
         <div>
           <ActivityCardContent activity={props.activity} isYou={isYou} />
-          <div className="mt-2 text-sm text-gray-500">
-            {isYou &&
-            !props.activity.misc?.wonListing &&
-            !props.activity?.misc?.bidCancelled &&
-            props.activity.type === 'BID_MADE' ? (
-              <div className="flex items-center text-xs font-medium text-white opacity-80">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-1"
-                >
-                  <path
-                    d="M8.00016 3.99967V7.99967L10.6668 9.33301M14.6668 7.99967C14.6668 11.6816 11.6821 14.6663 8.00016 14.6663C4.31826 14.6663 1.3335 11.6816 1.3335 7.99967C1.3335 4.31778 4.31826 1.33301 8.00016 1.33301C11.6821 1.33301 14.6668 4.31778 14.6668 7.99967Z"
-                    stroke="white"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-
-                <span>You have an uncanceled bid from {timeOfActivity.toRelative()}</span>
-              </div>
-            ) : (
-              timeOfActivity.toRelative()
-            )}
-          </div>
+          <div className="mt-2 text-sm text-gray-500">{timeOfActivity.toRelative()}</div>
         </div>
       </div>
-      <a
-        href={actionURL}
-        target="_blank"
-        className="ml-auto w-full pt-4 sm:block md:w-auto md:pl-4 md:pt-0"
-        rel="noreferrer"
-      >
-        <Button5 v="ghost" onClick={() => activitySelected()}>
-          View
-        </Button5>
-      </a>
+      <div className="ml-auto">
+        {props.customActionButton ? (
+          props.customActionButton
+        ) : (
+          <a
+            href={actionURL}
+            target="_blank"
+            className=" w-full pt-4 sm:block md:w-auto md:pl-4 md:pt-0"
+            rel="noreferrer"
+          >
+            <Button5 v="ghost" onClick={() => activitySelected()}>
+              View
+            </Button5>
+          </a>
+        )}
+      </div>
     </div>
   );
 }
