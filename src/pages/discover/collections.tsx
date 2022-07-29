@@ -38,7 +38,6 @@ enum SortOption {
 enum TimeWindowSortOption {
   PAST_DAY = '24h',
   PAST_WEEK = '7d',
-  ALL_TIME = 'all',
 }
 
 const URL_PARAM_DEFAULTS = {
@@ -55,10 +54,6 @@ const TIME_WINDOW_SUBOPTIONS: { [key: string]: SelectOption } = {
   [TimeWindowSortOption.PAST_WEEK]: {
     label: 'Last 7 days',
     value: TimeWindowSortOption.PAST_WEEK,
-  },
-  [TimeWindowSortOption.ALL_TIME]: {
-    label: 'All time',
-    value: TimeWindowSortOption.ALL_TIME,
   },
 };
 
@@ -214,9 +209,7 @@ function useQuery(
 
   const startDate: Date = useMemo(() => {
     let startDate: Date;
-    if (timePeriod === TimeWindowSortOption.ALL_TIME) {
-      startDate = new Date('2020-01-01');
-    } else if (timePeriod === TimeWindowSortOption.PAST_DAY) {
+    if (timePeriod === TimeWindowSortOption.PAST_DAY) {
       startDate = new Date(new Date().setDate(new Date().getDate() - 1));
     } else if (timePeriod === TimeWindowSortOption.PAST_WEEK) {
       startDate = new Date(new Date().setDate(new Date().getDate() - 7));

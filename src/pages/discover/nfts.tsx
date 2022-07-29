@@ -221,7 +221,15 @@ export default function DiscoverNFTsTab(): JSX.Element {
   }
 
   return (
-    <CardGridWithHeader<DiscoverNFTCardData>
+    <CardGridWithHeader<DiscoverNFTCardData, TypeFilterOption>
+      filters={[
+        {
+          title: 'Type',
+          options: TYPE_OPTIONS,
+          default: DEFAULT_TYPE,
+          queryId: UrlParamKey.TYPE,
+        },
+      ]}
       cardContext={{
         noDataFallback: <div>No matching NFTs</div>,
         cardCreator: (data, refetch, loading) => (
@@ -255,19 +263,7 @@ export default function DiscoverNFTsTab(): JSX.Element {
 DiscoverNFTsTab.getLayout = function getLayout(
   discoverPage: DiscoverPageProps & { children: JSX.Element }
 ): JSX.Element {
-  return (
-    <DiscoverLayout
-      filters={[
-        {
-          title: 'Type',
-          options: TYPE_OPTIONS,
-          default: DEFAULT_TYPE,
-          queryId: UrlParamKey.TYPE,
-        },
-      ]}
-      content={discoverPage.children}
-    />
-  );
+  return <DiscoverLayout content={discoverPage.children} />;
 };
 
 function useQuery(type: TypeFilterOption, searchTerm: string | null): DiscoverNftsQueryContext {

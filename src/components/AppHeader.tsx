@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
-import { mq } from '@/assets/styles/MediaQuery';
 import { MobileMenu } from './MobileMenu';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
@@ -83,20 +81,6 @@ export function AppHeader() {
         {!WHICHDAO && (
           <div className={`hidden min-w-fit flex-row items-center justify-end gap-6 md:flex`}>
             <DiscoverMenu />
-            {connected && (
-              <Link href="/alpha" passHref>
-                <a
-                  key="alpha"
-                  className={clsx(
-                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
-                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
-                  )}
-                >
-                  Alpha
-                </a>
-              </Link>
-            )}
-
             <Link href="/nfts/new" passHref>
               <a
                 key="create"
@@ -166,7 +150,11 @@ function DiscoverMenu(): JSX.Element {
       <DropdownMenu.Item>
         <Link href={props.href}>
           <a
-            className={clsx('flex flex-row flex-nowrap justify-start', 'space-x-4 p-4', 'text-lg')}
+            className={clsx(
+              'flex flex-row flex-nowrap items-center justify-start',
+              'space-x-4 p-4',
+              'text-lg'
+            )}
           >
             <props.icon className="h-5 w-5" />
             <span>{props.title}</span>

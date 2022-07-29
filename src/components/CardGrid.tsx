@@ -1,14 +1,14 @@
 import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { SingleGrid } from '@/assets/icons/SingleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
-import { ApolloQueryResult, OperationVariables } from '@apollo/client';
+import FiltersSection, { FilterProps } from '@/components/Filters';
 import clsx from 'clsx';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 
-export interface CardGridWithHeaderProps<T> {
+export interface CardGridWithHeaderProps<T, F> {
   /**
    * Attributes for creating/displaying cards.
    */
@@ -25,32 +25,63 @@ export interface CardGridWithHeaderProps<T> {
   search: SearchBarProps;
 
   menus?: JSX.Element | JSX.Element[];
+
+  filters?: FilterProps<F>[];
 }
 
 /**
  * Grid layout component with triggers for fetching more data for infinite scroll, search bar, and grid size selection.
  *
  * @template T type of data being fetched and used to create cards
+ * @template F type for filter optins
  * @param props
  * @returns
  */
-export function CardGridWithHeader<T>(props: CardGridWithHeaderProps<T>): JSX.Element {
+export function CardGridWithHeader<T, F = null>(props: CardGridWithHeaderProps<T, F>): JSX.Element {
   const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
+  const [collapsed, setCollapsed] = useState<boolean>(true);
 
   return (
     <div className="w-full space-y-4 text-base">
       <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
-        <div className={clsx(['flex space-x-4', 'lg:justify-end'], 'w-full')}>
+        <div
+          className={clsx(['flex space-x-4', 'lg:justify-end'], 'w-full px-6', 'md:px-20')}
+        >
+          {props.filters && (
+            <FiltersSection.FilterIcon
+              collapsed={collapsed}
+              onClick={() => {
+                setCollapsed(!!!collapsed);
+              }}
+            />
+          )}
           <SearchBar {...props.search} />
           {props.menus}
           <GridSelector onChange={(v) => setGridView(v)} />
         </div>
       </div>
-      <CardGrid
-        gridView={gridView}
-        cardContext={props.cardContext}
-        dataContext={props.dataContext}
-      />
+      <div className={clsx('flex', 'px-6 md:px-20')}>
+        {props.filters && (
+          <FiltersSection
+            collapsed={collapsed}
+            className={clsx('mb-10', 'sticky top-[80px] h-full flex-none')}
+            onCollapse={() => {
+              setCollapsed(true);
+            }}
+          >
+            {props.filters.map((f) => (
+              <FiltersSection.Filter key={f.title} {...f} />
+            ))}
+          </FiltersSection>
+        )}
+        <div>
+          <CardGrid
+            gridView={gridView}
+            cardContext={props.cardContext}
+            dataContext={props.dataContext}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -208,6 +239,11 @@ export interface CardGridProps<T> {
   gridView: GridView;
 
   /**
+   * Optional classname on the grid container.
+   */
+  className?: string;
+
+  /**
    * Attributes for creating/displaying cards.
    */
   cardContext: {
@@ -331,7 +367,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
 
   return (
     <>
-      <div className={clsx('grid grid-cols-1 gap-6', gridViewClasses)}>
+      <div className={clsx('grid grid-cols-1 gap-6', gridViewClasses, props.className)}>
         {bodyElements.map((e, i) => (
           <div key={`${gridId}-${i}`}>{e}</div>
         ))}
