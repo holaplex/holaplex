@@ -1,29 +1,19 @@
 import { GetServerSideProps } from 'next';
-import { shortenAddress } from '@/modules/utils/string';
+import ReactDom from 'react-dom';
+
 import {
   getProfileServerSideProps,
   WalletDependantPageProps,
 } from '@/views/profiles/getProfileServerSideProps';
 import { ProfileDataProvider, useProfileData } from 'src/views/profiles/ProfileDataProvider';
 import { useMemo, useState } from 'react';
-import {
-  OffersPageQuery,
-  useOffersPageQuery,
-  // Offer,
-  // Nft as INft,
-  // AhListing,
-  // Marketplace,
-} from '@/graphql/indexerTypes';
+import { useOffersPageQuery } from '@/graphql/indexerTypes';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
 } from '@/views/_global/holaplexConstants';
-import { imgOpt } from '@/lib/utils';
-import Link from 'next/link';
 import { AhListing, Marketplace, Nft, Offer } from '@holaplex/marketplace-js-sdk';
 
-import { DisplaySOL } from '@/components/CurrencyHelpers';
-import { format as formatTime } from 'timeago.js';
 import Button from '@/components/Button';
 import AcceptOfferForm from '@/components/AcceptOfferForm';
 import UpdateOfferForm from '@/components/UpdateOfferForm';
@@ -31,6 +21,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import Modal from '@/components/Modal';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import { ActivityCard } from '@/components/ActivityCard';
+import { useConnectedWalletProfile } from '@/views/_global/ConnectedWalletProfileProvider';
 
 enum OfferFilters {
   ALL,
@@ -38,17 +29,21 @@ enum OfferFilters {
   RECEIVED,
 }
 
-// type Offer = OffersPageQuery['ownedNFTs'][0]['offers'][0];
-
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
 
-const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
+const OfferPage = (props: WalletDependantPageProps) => {
   const [query, setQuery] = useState('');
-  const { publicKey: userPK } = useWallet();
-  const { publicKey: profilePK, twitterHandle } = useProfileData();
+  // const { publicKey: userPK } = useWallet();
+  const { connectedProfile } = useConnectedWalletProfile();
+  const { publicKey: profilePK } = useProfileData();
+  const userPK = connectedProfile?.pubkey;
+
+  const isMe = userPK === profilePK;
 
   const [showUpdateOfferModal, setShowUpdateOfferModal] = useState(false);
+  const [showAcceptOfferModal, setShowAcceptOfferModal] = useState(false);
+
   const [filter, setFilter] = useState(OfferFilters.ALL);
   const [currNFT, setCurrNFT] = useState<Nft>();
 
@@ -57,7 +52,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
       limit: 200,
       offset: 0,
       subdomain: HOLAPLEX_MARKETPLACE_SUBDOMAIN,
-      address: publicKey,
+      address: profilePK,
     },
   });
 
@@ -114,9 +109,12 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
       (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
     );
 
-    if (!defaultListing) return null;
+    const offerIsReceived = nft.owner?.address === profilePK;
 
-    const offerReceived = nft.owner?.address === profilePK;
+    console.log(nft.name, {
+      offerIsReceived,
+      nft,
+    });
 
     return (
       <ActivityCard
@@ -129,7 +127,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
           wallets: [
             {
               address: offer.buyer as string,
-              twitterHandle: '', // twitterHandle as string,
+              twitterHandle: '', // twitter handle does not exist on this query, but is being handled inside the activity card component,
             },
           ],
           auctionHouse: {
@@ -139,26 +137,27 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
           price: offer.price.toNumber(),
         }}
         customActionButton={
-          offerReceived ? (
-            !Boolean(offer.buyer === userPK?.toBase58()) ? null : (
-              <div>
-                <Button
-                  onClick={() => {
-                    setCurrNFT(nft as Nft | any);
-                    setShowUpdateOfferModal(true);
-                  }}
-                  secondary
-                  className={`w-full  bg-gray-800 ease-in hover:bg-gray-700`}
-                >
-                  Update offer
-                </Button>
+          // I made the offer
+          offer.buyer === userPK ? (
+            <>
+              <Button
+                onClick={() => {
+                  setCurrNFT(nft as Nft | any);
+                  setShowUpdateOfferModal(true);
+                }}
+                secondary
+                className={`w-full  bg-gray-800 ease-in hover:bg-gray-700`}
+              >
+                Update offer
+              </Button>
+              {ReactDom.createPortal(
                 <Modal
                   open={showUpdateOfferModal}
                   setOpen={setShowUpdateOfferModal}
                   title={`Update offer`}
                 >
                   <UpdateOfferForm
-                    listing={defaultListing}
+                    listing={defaultListing as AhListing}
                     setOpen={setShowUpdateOfferModal}
                     nft={currNFT as Nft | any}
                     marketplace={marketplace as Marketplace}
@@ -166,52 +165,42 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
                     loading={loading}
                     hasListing={Boolean(defaultListing)}
                   />
-                </Modal>
-              </div>
-            )
-          ) : (
-            <>
-              {Boolean(nft?.owner?.address === userPK?.toBase58()) && (
-                <AcceptOfferForm
-                  nft={nft as Nft | any}
-                  offer={offer as Offer}
-                  listing={defaultListing as AhListing}
-                  marketplace={marketplace as Marketplace}
-                  refetch={refetch}
-                />
-              )}
-
-              {Boolean(offer.buyer === userPK?.toBase58()) && (
-                <div>
-                  <Button
-                    onClick={() => {
-                      setCurrNFT(nft as Nft | any);
-                      setShowUpdateOfferModal(true);
-                    }}
-                    secondary
-                    className={`w-full bg-gray-800 ease-in hover:bg-gray-700`}
-                  >
-                    Update offer
-                  </Button>
-                  <Modal
-                    open={showUpdateOfferModal}
-                    setOpen={setShowUpdateOfferModal}
-                    title={`Update offer`}
-                  >
-                    <UpdateOfferForm
-                      listing={defaultListing as AhListing}
-                      setOpen={setShowUpdateOfferModal}
-                      nft={currNFT as Nft | any}
-                      marketplace={marketplace as Marketplace}
-                      refetch={refetch}
-                      loading={loading}
-                      hasListing={Boolean(defaultListing)}
-                    />
-                  </Modal>
-                </div>
+                </Modal>,
+                document.getElementsByTagName('body')[0]!
               )}
             </>
-          )
+          ) : // I own the nft and can accept the offer
+          offerIsReceived && nft.owner.address === userPK ? (
+            <>
+              <Button
+                onClick={() => {
+                  setCurrNFT(nft as Nft | any);
+                  setShowAcceptOfferModal(true);
+                }}
+                secondary
+                className={`w-full bg-gray-800 ease-in hover:bg-gray-700`}
+              >
+                Accept offer
+              </Button>
+              {ReactDom.createPortal(
+                <Modal
+                  open={showAcceptOfferModal}
+                  setOpen={setShowAcceptOfferModal}
+                  title={`Accept offer`}
+                >
+                  <AcceptOfferForm
+                    listing={defaultListing as AhListing}
+                    setOpen={setShowAcceptOfferModal}
+                    nft={currNFT as Nft | any}
+                    marketplace={marketplace as Marketplace}
+                    offer={offer as Offer}
+                    refetch={refetch}
+                  />
+                </Modal>,
+                document.getElementsByTagName('body')[0]!
+              )}
+            </>
+          ) : null
         }
       />
     );
@@ -234,7 +223,7 @@ const OfferPage = ({ publicKey, ...props }: WalletDependantPageProps) => {
         {(filter === OfferFilters.ALL || filter === OfferFilters.MADE) &&
           nftsWithSentOffers?.map((nft) => {
             return nft.offers
-              ?.slice()
+              .filter((o) => o.buyer === profilePK)
               ?.sort(byDate)
               .map((offer) => getActivityCard(nft as Nft, offer as Offer));
           })}
