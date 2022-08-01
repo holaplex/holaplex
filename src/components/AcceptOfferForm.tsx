@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo } from 'react';
+import React, { Dispatch, FC, SetStateAction, useContext, useMemo } from 'react';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from './OfferForm';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -27,7 +27,7 @@ interface AcceptOfferFormProps {
     | ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<None>>)
     | (() => void);
   className?: string;
-  closeOuter?: () => void;
+  setOpen?: Dispatch<SetStateAction<boolean>> | ((open: Boolean) => void);
 }
 
 interface AcceptOfferFormSchema {
@@ -45,7 +45,7 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
   marketplace,
   refetch,
   className,
-  closeOuter = () => {},
+  setOpen,
 }) => {
   const { publicKey, signTransaction } = useWallet();
   const wallet = useWallet();
@@ -125,16 +125,22 @@ const AcceptOfferForm: FC<AcceptOfferFormProps> = ({
       },
       onComplete: async () => {
         await refetch();
-        closeOuter();
+        if (setOpen) {
+          setOpen(false);
+        }
       },
       onActionFailure: async (err) => {
+        console.log('Accept Offer Failed', err);
         toast.error(err.message);
       },
     });
   };
 
   return (
-    <form className={`flex w-full ${className}`} onSubmit={handleSubmit(acceptOfferTx)}>
+    <form
+      className={`flex w-full justify-center ${className}`}
+      onSubmit={handleSubmit(acceptOfferTx)}
+    >
       <Button
         className={className}
         htmlType={`submit`}

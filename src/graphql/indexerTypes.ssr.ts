@@ -33,6 +33,7 @@ export type AhListing = {
   canceledAt?: Maybe<Scalars['DateTimeUtc']>;
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -338,6 +339,7 @@ export type NftActivity = {
   auctionHouse?: Maybe<AuctionHouse>;
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -404,6 +406,7 @@ export type Offer = {
   canceledAt?: Maybe<Scalars['DateTimeUtc']>;
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -457,6 +460,7 @@ export type Purchase = {
   buyer: Scalars['PublicKey'];
   createdAt: Scalars['DateTimeUtc'];
   id: Scalars['Uuid'];
+  marketplaceProgramAddress: Scalars['String'];
   metadata: Scalars['PublicKey'];
   nft?: Maybe<Nft>;
   price: Scalars['U64'];
@@ -494,6 +498,7 @@ export type QueryRoot = {
   /** Recommend wallets to follow. */
   followWallets: Array<Wallet>;
   genoHabitat?: Maybe<GenoHabitat>;
+  genoHabitats: Array<GenoHabitat>;
   /** Returns the latest on chain events using the graph_program. */
   latestFeedEvents: Array<FeedEvent>;
   listings: Array<Listing>;
@@ -604,6 +609,25 @@ export type QueryRootFollowWalletsArgs = {
 
 export type QueryRootGenoHabitatArgs = {
   address: Scalars['PublicKey'];
+};
+
+export type QueryRootGenoHabitatsArgs = {
+  elements?: InputMaybe<Array<Scalars['Int']>>;
+  genesis?: InputMaybe<Scalars['Boolean']>;
+  guilds?: InputMaybe<Array<Scalars['Int']>>;
+  harvesters?: InputMaybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  maxDurability?: InputMaybe<Scalars['Int']>;
+  maxExpiry?: InputMaybe<Scalars['DateTimeUtc']>;
+  maxLevel?: InputMaybe<Scalars['Int']>;
+  maxSequence?: InputMaybe<Scalars['Int']>;
+  minDurability?: InputMaybe<Scalars['Int']>;
+  minExpiry?: InputMaybe<Scalars['DateTimeUtc']>;
+  minLevel?: InputMaybe<Scalars['Int']>;
+  minSequence?: InputMaybe<Scalars['Int']>;
+  offset: Scalars['Int'];
+  owners?: InputMaybe<Array<Scalars['PublicKey']>>;
+  renters?: InputMaybe<Array<Scalars['PublicKey']>>;
 };
 
 export type QueryRootLatestFeedEventsArgs = {
@@ -781,43 +805,26 @@ export type ActivityPageQuery = {
   wallet: {
     __typename: 'Wallet';
     address: any;
-    bids: Array<{
-      __typename: 'Bid';
-      listingAddress: string;
-      bidderAddress: string;
-      lastBidTime: string;
-      lastBidAmount: any;
-      cancelled: boolean;
-      listing?: {
-        __typename?: 'Listing';
+    activities: Array<{
+      __typename?: 'WalletActivity';
+      id: any;
+      price: any;
+      createdAt: any;
+      activityType: string;
+      wallets: Array<{ __typename?: 'Wallet'; address: any; twitterHandle?: string | null }>;
+      nft?: {
+        __typename: 'Nft';
         address: string;
-        ended: boolean;
-        storefront?: {
-          __typename: 'Storefront';
-          ownerAddress: string;
-          subdomain: string;
-          title: string;
-          description: string;
-          faviconUrl: string;
-          logoUrl: string;
-          bannerUrl: string;
-        } | null;
-        nfts: Array<{
-          __typename: 'Nft';
+        name: string;
+        description: string;
+        image: string;
+        creators: Array<{
+          __typename?: 'NftCreator';
           address: string;
-          name: string;
-          description: string;
-          image: string;
-        }>;
-        bids: Array<{
-          __typename?: 'Bid';
-          bidderAddress: string;
-          lastBidTime: string;
-          lastBidAmount: any;
-          cancelled: boolean;
-          listingAddress: string;
+          twitterHandle?: string | null;
         }>;
       } | null;
+      auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
     }>;
   };
 };
@@ -2378,13 +2385,6 @@ export type WhoToFollowQuery = {
   }>;
 };
 
-export type CollectionPreviewFragment = {
-  __typename?: 'Nft';
-  mintAddress: string;
-  name: string;
-  image: string;
-};
-
 export type FollowEventPreviewFragment = {
   __typename?: 'FollowEvent';
   feedEventId: string;
@@ -3821,7 +3821,7 @@ export type OffersPageQuery = {
       } | null;
     }>;
   } | null;
-  sentOffers: Array<{
+  nftsWithSentOffers: Array<{
     __typename?: 'Nft';
     address: string;
     name: string;
@@ -3830,7 +3830,12 @@ export type OffersPageQuery = {
     description: string;
     image: string;
     primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    creators: Array<{
+      __typename?: 'NftCreator';
+      address: string;
+      verified: boolean;
+      twitterHandle?: string | null;
+    }>;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -3918,7 +3923,7 @@ export type OffersPageQuery = {
       } | null;
     }>;
   }>;
-  receivedOffers: Array<{
+  ownedNFTs: Array<{
     __typename?: 'Nft';
     address: string;
     name: string;
@@ -3927,7 +3932,12 @@ export type OffersPageQuery = {
     description: string;
     image: string;
     primarySaleHappened: boolean;
-    creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
+    creators: Array<{
+      __typename?: 'NftCreator';
+      address: string;
+      verified: boolean;
+      twitterHandle?: string | null;
+    }>;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -4755,13 +4765,6 @@ export type SearchQuery = {
   }>;
 };
 
-export const CollectionPreviewFragmentDoc = gql`
-  fragment CollectionPreview on Nft {
-    mintAddress
-    name
-    image
-  }
-`;
 export const ProfileInfoFragmentDoc = gql`
   fragment ProfileInfo on TwitterProfile {
     walletAddress
@@ -5297,40 +5300,29 @@ export const ActivityPageDocument = gql`
     wallet(address: $address) {
       __typename
       address
-      bids {
-        __typename
-        listingAddress
-        bidderAddress
-        lastBidTime
-        lastBidAmount
-        cancelled
-        listing {
+      activities {
+        id
+        price
+        createdAt
+        wallets {
           address
-          ended
-          storefront {
-            __typename
-            ownerAddress
-            subdomain
-            title
-            description
-            faviconUrl
-            logoUrl
-            bannerUrl
-          }
-          nfts {
-            __typename
+          twitterHandle
+        }
+        activityType
+        nft {
+          __typename
+          address
+          name
+          description
+          image
+          creators {
             address
-            name
-            description
-            image
+            twitterHandle
           }
-          bids {
-            bidderAddress
-            lastBidTime
-            lastBidAmount
-            cancelled
-            listingAddress
-          }
+        }
+        auctionHouse {
+          address
+          treasuryMint
         }
       }
     }
@@ -5989,10 +5981,11 @@ export const DiscoverCollectionsByMarketCapDocument = gql`
       offset: $offset
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
   }
-  ${CollectionPreviewFragmentDoc}
 `;
 export const DiscoverCollectionsByVolumeDocument = gql`
   query discoverCollectionsByVolume(
@@ -6010,10 +6003,11 @@ export const DiscoverCollectionsByVolumeDocument = gql`
       offset: $offset
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
   }
-  ${CollectionPreviewFragmentDoc}
 `;
 export const DiscoverNftsActiveOffersDocument = gql`
   query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
@@ -6167,7 +6161,9 @@ export const HomeDocument = gql`
       offset: 0
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
     collectionsFeaturedByMarketCap(
       startDate: $collectionsByMarketCapStartDate
@@ -6176,7 +6172,9 @@ export const HomeDocument = gql`
       offset: 0
       orderDirection: DESC
     ) {
-      ...CollectionPreview
+      mintAddress
+      name
+      image
     }
     followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
       ...ProfilePreview
@@ -6207,7 +6205,6 @@ export const HomeDocument = gql`
   ${PurchaseEventPreviewFragmentDoc}
   ${ListingEventPreviewFragmentDoc}
   ${OfferEventPreviewFragmentDoc}
-  ${CollectionPreviewFragmentDoc}
   ${ProfilePreviewFragmentDoc}
   ${BuyNowListingFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}
@@ -6501,7 +6498,7 @@ export const OffersPageDocument = gql`
         }
       }
     }
-    sentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
+    nftsWithSentOffers: nfts(offerers: [$address], limit: $limit, offset: $offset) {
       address
       name
       sellerFeeBasisPoints
@@ -6512,6 +6509,7 @@ export const OffersPageDocument = gql`
       creators {
         address
         verified
+        twitterHandle
       }
       owner {
         address
@@ -6593,7 +6591,7 @@ export const OffersPageDocument = gql`
         canceledAt
       }
     }
-    receivedOffers: nfts(owners: [$address], limit: $limit, offset: $offset) {
+    ownedNFTs: nfts(owners: [$address], limit: $limit, offset: $offset) {
       address
       name
       sellerFeeBasisPoints
@@ -6604,6 +6602,7 @@ export const OffersPageDocument = gql`
       creators {
         address
         verified
+        twitterHandle
       }
       owner {
         address

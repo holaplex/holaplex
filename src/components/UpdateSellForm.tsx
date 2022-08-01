@@ -74,16 +74,22 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
   const hasOffer = Boolean(offer);
   const isOwner = Boolean(nft?.owner?.address === publicKey?.toBase58());
   const currPrice = String(Number(listing?.price) / LAMPORTS_PER_SOL);
+  const [showShare, setShowShare] = useState(false);
+  const [updatedPrice, setUpdatePrice] = useState(Number(currPrice));
+  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
+  const { runActions, hasActionPending, clearActions } = useContext(MultiTransactionContext);
 
   const listPrice = Number(watch('amount')) * LAMPORTS_PER_SOL;
-  const sellerFee = nft?.sellerFeeBasisPoints || 1000;
-  const auctionHouseSellerFee = (marketplace?.auctionHouses || [])[0]?.sellerFeeBasisPoints || 200;
+  const sellerFee = nft?.sellerFeeBasisPoints;
+  const auctionHouseSellerFee = (marketplace?.auctionHouses || [])[0]?.sellerFeeBasisPoints;
+
+  if (!auctionHouseSellerFee || !sellerFee) {
+    return null;
+  }
 
   const royalties = (listPrice * sellerFee) / 10000;
   const auctionHouseFee = (listPrice * auctionHouseSellerFee) / 10000;
 
-  const [showShare, setShowShare] = useState(false);
-  const [updatedPrice, setUpdatePrice] = useState(Number(currPrice));
   const openShareListing = () => {
     setShowShare(true);
   };
@@ -91,7 +97,6 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     setShowShare(false);
     setOpen(false);
   };
-  const downloadRef = useRef(null);
   const downloadSharableImage = async () => {
     if (window) {
       const data = await htmlToImage.toPng(document.getElementById(`shareNFTCard`) as HTMLElement);
@@ -104,9 +109,6 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       document.body.removeChild(link);
     }
   };
-
-  const sdk = useMemo(() => initMarketplaceSDK(connection, wallet as Wallet), [connection, wallet]);
-  const { runActions, hasActionPending, clearActions } = useContext(MultiTransactionContext);
 
   const onCancelListing = async () => {
     if (listing && listing.auctionHouse && isOwner && nft) {
@@ -170,10 +172,6 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
     });
   };
 
-  const acceptOffer = () => {
-    setOpen(false);
-  };
-
   return (
     <div>
       {nft && <NFTPreview nft={nft as Nft | any} loading={false} />}
@@ -188,7 +186,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
               listing={listing}
               marketplace={marketplace}
               refetch={refetch}
-              closeOuter={acceptOffer}
+              setOpen={setOpen}
             />
           </div>
         </div>
