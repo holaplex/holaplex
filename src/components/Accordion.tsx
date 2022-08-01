@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react';
 import { ChevronRight } from '@/assets/icons/ChevronRight';
-import cx from 'classnames';
+import clsx from 'clsx';
 
 interface Props {
   title: string;
@@ -31,7 +31,7 @@ function Accordion({ title, children, allowHorizOverflow, defaultOpen, amount, .
 
             <ChevronRight
               color="#fff"
-              className={cx(
+              className={clsx(
                 'transition duration-[300ms] ease-in-out',
                 open ? 'rotate-[270deg]' : 'rotate-90'
               )}
@@ -47,7 +47,7 @@ function Accordion({ title, children, allowHorizOverflow, defaultOpen, amount, .
             leaveTo="transform scale-95 opacity-0"
           >
             <div
-              className={cx('rounded-b border border-t-0 border-gray-800 p-6', {
+              className={clsx('rounded-b border border-t-0 border-gray-800 p-6', {
                 'overflow-x-auto': allowHorizOverflow,
               })}
             >

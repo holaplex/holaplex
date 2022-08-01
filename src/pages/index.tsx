@@ -28,7 +28,7 @@ import { HeroSection, HeroSectionData } from '@/views/home/HeroSection';
 import { useHomeQueryWithTransforms } from '@/views/home/home.hooks';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useWallet } from '@solana/wallet-adapter-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { FC, ReactNode } from 'react';
 import Carousel from 'react-grid-carousel';
@@ -242,7 +242,7 @@ export const HomeSectionCarousel: FC<HomeSectionCarouselProps> & HomeSectionCaro
 );
 
 const HomeSectionCarouselItem: Item = ({ children, className }) => (
-  <div className={classNames('snap-center overflow-visible', className)}>{children}</div>
+  <div className={clsx('snap-center overflow-visible', className)}>{children}</div>
 );
 // this is a hack to get the carousel to display custom-styled items
 // https://github.com/x3388638/react-grid-carousel/blob/master/src/components/Carousel.js#L206-L212

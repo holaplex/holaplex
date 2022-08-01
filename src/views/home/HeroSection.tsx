@@ -5,7 +5,7 @@ import { Button5 } from '@/components/Button2';
 import { FeedItem } from '../alpha/feed.utils';
 import { FeedCard, LoadingFeedCard } from '../alpha/FeedCard';
 import Marquee from 'react-fast-marquee';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { QueryContext } from '@/hooks/useApolloQuery';
 
 const N_ITEMS = 12;
@@ -24,9 +24,7 @@ export function HeroSection(props: HeroSectionProps): JSX.Element {
       <div className="relative h-[450px]">
         <Marquee speed={feedEvents.length ? 40 : 0} gradient={false} pauseOnHover={true}>
           <div
-            className={classNames(
-              'grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'
-            )}
+            className={clsx('grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar')}
           >
             {feedEvents.map((fi, i) => (
               <div className="w-96 flex-shrink-0" key={i}>
@@ -42,7 +40,7 @@ export function HeroSection(props: HeroSectionProps): JSX.Element {
         </Marquee>
         {!feedEvents.length && (
           <div
-            className={classNames(
+            className={clsx(
               ' absolute inset-0  grid grid-flow-col gap-8 overflow-x-scroll py-2 pl-8 no-scrollbar'
             )}
           >
