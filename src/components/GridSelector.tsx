@@ -2,7 +2,7 @@ import React from 'react';
 import { SingleGrid } from '@/assets/icons/SingleGrid';
 import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
-import cx from 'classnames';
+import clsx from 'clsx';
 
 interface GridSelectorProps {
   gridView: string;
@@ -15,7 +15,7 @@ function GridSelector({ gridView, setGridView }: GridSelectorProps) {
   return (
     <div className="ml-4  hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
       <button
-        className={cx(
+        className={clsx(
           'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
           {
             'bg-gray-800': gridView === '1x1',
@@ -30,7 +30,7 @@ function GridSelector({ gridView, setGridView }: GridSelectorProps) {
       </button>
 
       <button
-        className={cx('flex w-10 items-center justify-center', {
+        className={clsx('flex w-10 items-center justify-center', {
           'bg-gray-800': gridView === '2x2',
         })}
         onClick={() => setGridView('2x2')}
@@ -42,7 +42,7 @@ function GridSelector({ gridView, setGridView }: GridSelectorProps) {
       </button>
 
       <button
-        className={cx(
+        className={clsx(
           'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
           {
             'bg-gray-800': gridView === '4x4',

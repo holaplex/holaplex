@@ -1,8 +1,7 @@
 import { Dispatch, FC, ReactNode, SetStateAction, useRef } from 'react';
 import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
-import cx from 'classnames';
 import { Close } from '@/assets/icons/Close';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 type ModalProps = {
   open: Boolean;
@@ -35,7 +34,7 @@ export const Modal: FC<ModalProps> = ({
   return (
     <div
       role="dialog"
-      className={cx(
+      className={clsx(
         'fixed top-0 left-0 right-0 bottom-0',
         'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
         'transition-opacity duration-500 ease-in-out',
@@ -52,7 +51,7 @@ export const Modal: FC<ModalProps> = ({
     >
       <div
         ref={priority ? null : modalRef}
-        className={classNames(
+        className={clsx(
           'scrollbar-thumb-rounded-full relative flex h-full max-h-screen w-full flex-col overflow-y-auto rounded-xl bg-gray-900 p-6 text-white shadow-md scrollbar-thin scrollbar-track-gray-900  sm:h-auto  sm:max-w-lg',
           short ? 'sm:max-h-[30rem]' : 'sm:max-h-[50rem]'
         )}

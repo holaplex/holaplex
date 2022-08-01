@@ -7,7 +7,7 @@ import {
 } from '@/views/profiles/getProfileServerSideProps';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
 import { ProfileDataProvider } from '@/views/profiles/ProfileDataProvider';
@@ -17,7 +17,6 @@ import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from '@/views/_global/holaplexConstant
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
 import { isEmpty, uniq } from 'ramda';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
-import classNames from 'classnames';
 import { GridSize } from '@/components/GridSelector';
 
 type CreatedNFT = CreatedNfTsQuery['nfts'][0];
@@ -113,7 +112,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
     return (
       <div className="ml-4 hidden rounded-lg border-2 border-solid border-gray-800 md:flex">
         <button
-          className={cx('flex w-10 items-center justify-center', {
+          className={clsx('flex w-10 items-center justify-center', {
             'bg-gray-800': gridView === '2x2',
           })}
           onClick={() => setGridView('2x2')}
@@ -125,7 +124,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
         </button>
 
         <button
-          className={cx('flex w-10 items-center justify-center', {
+          className={clsx('flex w-10 items-center justify-center', {
             'bg-gray-800': gridView === '4x4',
           })}
           onClick={() => setGridView('4x4')}
@@ -142,7 +141,7 @@ const CreatedNFTs = (props: WalletDependantPageProps) => {
   return (
     <>
       <div
-        className={classNames(
+        className={clsx(
           'sticky top-0 z-10 flex flex-col items-center gap-6 bg-gray-900 py-4',
           'lg:flex-row lg:justify-between lg:gap-4'
         )}

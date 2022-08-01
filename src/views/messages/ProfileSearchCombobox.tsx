@@ -1,7 +1,7 @@
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { shortenAddress } from '@/modules/utils/string';
 import { Combobox } from '@headlessui/react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Fragment, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { useProfileSearchLazyQuery } from 'src/graphql/indexerTypes';
@@ -58,7 +58,7 @@ export default function ProfileSearchCombobox(props: { setRecipient: any }) {
             <Combobox.Option key={address} value={{ address, profile }} as={Fragment}>
               {({ active, selected }) => (
                 <div
-                  className={classNames(
+                  className={clsx(
                     `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
                     active && 'bg-gray-800'
                   )}

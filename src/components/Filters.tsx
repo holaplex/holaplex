@@ -5,7 +5,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from '@heroicons/react/outline';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 
 export interface FiltersSectionProps {
@@ -16,17 +16,17 @@ export default function FiltersSection(props: FiltersSectionProps): JSX.Element 
   const [collapsed, setCollapsed] = useState<boolean>(true);
 
   return (
-    <div className={classNames('flex flex-col justify-center', [{ 'basis-[320px]': !collapsed }])}>
+    <div className={clsx('flex flex-col justify-center', [{ 'basis-[320px]': !collapsed }])}>
       <div title="Show filters">
         <FilterIcon
-          className={classNames('mr-2 h-6 w-6', { hidden: !collapsed }, 'hover:cursor-pointer')}
+          className={clsx('mr-2 h-6 w-6', { hidden: !collapsed }, 'hover:cursor-pointer')}
           onClick={() => setCollapsed(false)}
         />
       </div>
-      <div className={classNames({ hidden: collapsed }, ['mr-2', 'md:mr-10'])}>
-        <div className={classNames('flex flex-col space-y-4')}>
+      <div className={clsx({ hidden: collapsed }, ['mr-2', 'md:mr-10'])}>
+        <div className={clsx('flex flex-col space-y-4')}>
           <span
-            className={classNames(
+            className={clsx(
               'flex w-full flex-row flex-nowrap items-center justify-between space-x-4 p-4',
               'border-b border-b-gray-800'
             )}
@@ -35,7 +35,7 @@ export default function FiltersSection(props: FiltersSectionProps): JSX.Element 
             <div title="Hide filters">
               <ArrowLeftIcon
                 onClick={() => setCollapsed(true)}
-                className={classNames('h-6 w-6', { hidden: collapsed }, 'hover:cursor-pointer')}
+                className={clsx('h-6 w-6', { hidden: collapsed }, 'hover:cursor-pointer')}
               />
             </div>
           </span>
@@ -111,22 +111,21 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
   return (
     <fieldset>
       <legend
-        className={classNames(
+        className={clsx(
           'flex flex-row flex-nowrap items-center justify-between p-4',
           'text-base',
           'hover:cursor-pointer hover:bg-gray-700 focus:bg-gray-700'
         )}
         onClick={() => setCollapsed(!collapsed)}
       >
-        {props.title}{' '}
-        <ChevronDownIcon className={classNames('ml-2 h-4 w-4', { hidden: !collapsed })} />
-        <ChevronUpIcon className={classNames('ml-2 h-4 w-4', { hidden: collapsed })} />
+        {props.title} <ChevronDownIcon className={clsx('ml-2 h-4 w-4', { hidden: !collapsed })} />
+        <ChevronUpIcon className={clsx('ml-2 h-4 w-4', { hidden: collapsed })} />
       </legend>
 
       {/* to "collapse", wrap the filter options in a div that with overflow hidden and then move the options up */}
       <div className="overflow-hidden">
         <div
-          className={classNames(
+          className={clsx(
             { '-translate-y-full': collapsed },
             'transition-all duration-300 ease-in'
           )}
@@ -149,7 +148,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
     return (
       <div
         key={id}
-        className={classNames(
+        className={clsx(
           'flex flex-row flex-nowrap items-center space-x-4 p-4',
           'w-full',
           'hover:underline'
@@ -157,7 +156,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
       >
         <input
           onChange={() => onSelect(option)}
-          className={classNames('h-3 w-3', [
+          className={clsx('h-3 w-3', [
             '!bg-gray-800 !outline !outline-0 !outline-gray-500 !ring-1 !ring-gray-500 !ring-offset-0 !ring-offset-transparent',
             'checked:!bg-white',
           ])}
@@ -166,10 +165,10 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
           id={id}
           checked={checked}
         />
-        <label htmlFor={id} className={classNames('flex-grow', 'text-base')}>
+        <label htmlFor={id} className={clsx('flex-grow', 'text-base')}>
           {option.label}
         </label>
-        <span className={classNames('text-base')}>{option.numberOfItems?.toLocaleString()}</span>
+        <span className={clsx('text-base')}>{option.numberOfItems?.toLocaleString()}</span>
       </div>
     );
   }

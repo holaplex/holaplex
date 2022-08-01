@@ -11,7 +11,7 @@ import { Button5 } from './Button2';
 import { FailureToast } from './FailureToast';
 import { SuccessToast } from './SuccessToast';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useApolloClient } from '@apollo/client';
 import {
   AllConnectionsFromDocument,
@@ -206,7 +206,7 @@ export const FollowUnfollowButton: FC<FollowUnfollowButtonProps> = ({
   return (
     <Button5
       v={type === 'Follow' ? 'primary' : 'secondary'}
-      className={classNames('h-8 w-24 lg:h-10 lg:w-28', className)}
+      className={clsx('h-8 w-24 lg:h-10 lg:w-28', className)}
       onClick={() => handleClick()}
       loading={loading}
     >

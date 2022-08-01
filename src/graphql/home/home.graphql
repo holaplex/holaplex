@@ -6,7 +6,7 @@
 # import "../fragments/ListingEventPreview.graphql"
 # import "../fragments/OfferEventPreview.graphql"
 # import "../fragments/CollectionPreview.graphql"
-#import "./ProfileInfo.graphql"
+# import "./ProfileInfo.graphql"
 
 fragment ProfilePreview on Wallet {
   address

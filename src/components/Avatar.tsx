@@ -8,9 +8,8 @@ import {
   useTwitterHandleFromPubKeyLazyQuery,
   useWalletProfileLazyQuery,
 } from 'src/graphql/indexerTypes';
-import cx from 'classnames';
 import { useWallet } from '@solana/wallet-adapter-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export interface AvatarIconsProps {
   profiles: {
@@ -24,14 +23,14 @@ export const AvatarIcons = ({ profiles }: AvatarIconsProps) => {
     // wrap the avatars in a container with a small, colored background
     <div className={`inline-flex items-center rounded-full bg-gray-600 bg-opacity-70 p-1`}>
       {profiles.slice(0, 4).map(({ address, data }, i) => (
-        <div key={address} className={classNames('h-6 w-6', { '-ml-3': i > 0 })}>
+        <div key={address} className={clsx('h-6 w-6', { '-ml-3': i > 0 })}>
           <AvatarIcon address={address} index={i} data={data} />
         </div>
       ))}
       {/* show how many additional creators there are when there are more than 4 */}
       {
         <div
-          className={classNames(
+          className={clsx(
             { hidden: profiles.length < 5 },
             '-ml-3 flex h-6 items-center rounded-full bg-gray-800 px-1 text-sm text-gray-400 hover:scale-125'
           )}
@@ -177,7 +176,7 @@ export const Avatar = ({
       </div>
 
       {showAddress && (
-        <div className={cx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
+        <div className={clsx('ml-2 text-base', isYou || twitterHandle ? 'font-sans' : 'font-mono')}>
           {displayName}
         </div>
       )}
@@ -195,7 +194,7 @@ export const AvatarImage = ({
   borderClass?: string;
 }) => (
   <div
-    className={classNames(
+    className={clsx(
       'flex',
       'overflow-clip rounded-full',
       'h-full w-full',
