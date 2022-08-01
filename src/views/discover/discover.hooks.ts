@@ -26,6 +26,7 @@ import {
   MarketplaceAuctionHouseFragment,
   NftCardFragment,
 } from 'src/graphql/indexerTypes.ssr';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 interface DiscoverNftsQueryParams {
   searchTerm?: string | null | undefined;
@@ -245,7 +246,7 @@ function transformCollectionCardData(
     address: cardData.nft.mintAddress,
     name: cardData.nft.name,
     imageUrl: cardData.nft.image,
-    floorPriceSol: cardData.floorPrice ?? 0,
+    floorPriceSol: (cardData.floorPrice ?? 0) / LAMPORTS_PER_SOL,
     nftCount: cardData.nftCount ?? 0,
   };
 }

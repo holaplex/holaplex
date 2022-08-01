@@ -2,7 +2,7 @@ import { CollectionPreviewCardData } from '@/components/CollectionPreviewCard';
 import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
 import { QueryContext } from '@/hooks/useApolloQuery';
 import { IndexerSDK, Listing } from '@/modules/indexer';
-import { PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { HomeData } from 'src/pages';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -148,7 +148,7 @@ function transformCollectionPreview(data: CollectionPreviewFragment): Collection
     imageUrl: data.nft.image,
     name: data.nft.name,
     nftCount: data.nftCount ?? 0,
-    floorPriceSol: data.floorPrice ?? 0,
+    floorPriceSol: (data.floorPrice ?? 0) / LAMPORTS_PER_SOL,
   };
 }
 
