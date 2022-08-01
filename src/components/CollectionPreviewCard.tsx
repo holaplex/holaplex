@@ -2,6 +2,7 @@ import { QueryContext } from '@/hooks/useApolloQuery';
 import { getFallbackImage } from '@/modules/utils/image';
 import clsx from 'clsx';
 import { imgOpt } from 'src/lib/utils';
+import { SolIcon } from './Price';
 
 export interface CollectionPreviewCardData {
   address: string;
@@ -133,7 +134,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
               ['lg:text-sm']
             )}
           >
-            <span>{`Collection of ${nftCountStr}`}</span>
+            <span className="text-sm">{`${nftCountStr} NFTs`}</span>
           </div>
         )
       }
@@ -148,7 +149,13 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
               ['lg:text-sm']
             )}
           >
-            <span>Floor: {props.context.data?.floorPriceSol} SOL</span>
+            <span
+              className="flex flex-row flex-nowrap items-center justify-start space-x-1 text-sm"
+              title="floor price"
+            >
+              <SolIcon className="h-3 w-3" stroke="white" />{' '}
+              <span>{props.context.data?.floorPriceSol}</span>
+            </span>
           </div>
         )
       }
