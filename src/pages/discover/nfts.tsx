@@ -1,10 +1,8 @@
 import { CardGridWithHeader } from '@/components/CardGrid';
-import DropdownSelect from '@/components/DropdownSelect';
 import { LoadingNFTCard, NFTCard, OwnedNFT } from 'src/pages/profiles/[publicKey]/nfts';
 import { useCallback, useEffect, useMemo } from 'react';
 import { AuctionHouse } from 'src/graphql/indexerTypes';
 import { DiscoverLayout, DiscoverPageProps } from '@/views/discover/DiscoverLayout';
-import { NestedSelectOption } from '@/views/discover/discover.models';
 import { FilterOption } from '@/components/Filters';
 import { useUrlQueryParam, UseUrlQueryParamData } from '@/hooks/useUrlQueryParam';
 import {
@@ -80,60 +78,6 @@ const URL_PARAM_DEFAULTS = {
   [UrlParamKey.SALE_WINDOW]: SalesSortOption.PAST_DAY,
 };
 
-const SORT_OPTIONS: NestedSelectOption = {
-  defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.BY],
-  subOptions: {
-    [SortOption.PRICE]: {
-      label: 'Price',
-      value: SortOption.PRICE,
-      defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.PRICE_DIRECTION],
-      subOptions: {
-        [PriceSortOption.PRICE_DESC]: {
-          label: 'High to Low',
-          value: PriceSortOption.PRICE_DESC,
-        },
-        [PriceSortOption.PRICE_ASC]: {
-          label: 'Low to High',
-          value: PriceSortOption.PRICE_ASC,
-        },
-      },
-    },
-    [SortOption.RECENTLY_LISTED]: {
-      label: 'Recently listed',
-      value: SortOption.RECENTLY_LISTED,
-    },
-    [SortOption.HIGHEST_SALES]: {
-      label: 'Highest sales',
-      value: SortOption.HIGHEST_SALES,
-      defaultSubOptionValue: URL_PARAM_DEFAULTS[UrlParamKey.SALE_WINDOW],
-      subOptions: {
-        [SalesSortOption.PAST_DAY]: {
-          label: 'Last 24 hours',
-          value: SalesSortOption.PAST_DAY,
-        },
-        [SalesSortOption.PAST_WEEK]: {
-          label: 'Last 7 days',
-          value: SalesSortOption.PAST_WEEK,
-        },
-        [SalesSortOption.ALL_TIME]: {
-          label: 'All time',
-          value: SalesSortOption.ALL_TIME,
-        },
-      },
-    },
-  },
-};
-
-const SORT_OPTION_ORDER = {
-  [UrlParamKey.BY]: Object.values(SORT_OPTIONS.subOptions!).map((o) => o.value),
-  [UrlParamKey.SALE_WINDOW]: Object.values(
-    SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].subOptions!
-  ).map((o) => o.value),
-  [UrlParamKey.PRICE_DIRECTION]: Object.values(
-    SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions!
-  ).map((o) => o.value),
-};
-
 export interface DiscoverNFTCardData {
   nft: OwnedNFT;
   marketplace: AuctionHouse;
@@ -158,68 +102,6 @@ export default function DiscoverNFTsTab(): JSX.Element {
     [queryContext]
   );
 
-  const primarySortLabels: string[] = useMemo(
-    () => SORT_OPTION_ORDER[UrlParamKey.BY].map((o) => SORT_OPTIONS.subOptions![o].label),
-    []
-  );
-
-  const secondarySortLabels: string[] = useMemo(() => {
-    let result: string[];
-    if (urlParams[UrlParamKey.BY] === SortOption.PRICE) {
-      result = SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION].map(
-        (o) => SORT_OPTIONS.subOptions![SortOption.PRICE].subOptions![o].label
-      );
-    } else if (urlParams[UrlParamKey.BY] === SortOption.HIGHEST_SALES) {
-      result = SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW].map(
-        (o) => SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].subOptions![o].label
-      );
-    } else {
-      result = [];
-    }
-    return result;
-  }, [urlParams]);
-
-  const menus: JSX.Element[] = [
-    <CardGridWithHeader.HeaderElement key="primary-sort">
-      <DropdownSelect
-        keys={SORT_OPTION_ORDER[UrlParamKey.BY]}
-        onSelect={(k) => urlParamSetters[UrlParamKey.BY](k)}
-        defaultKey={SORT_OPTIONS.defaultSubOptionValue}
-        selectedKey={urlParams[UrlParamKey.BY]}
-      >
-        {primarySortLabels}
-      </DropdownSelect>
-    </CardGridWithHeader.HeaderElement>,
-  ];
-
-  if (urlParams[UrlParamKey.BY] === SortOption.HIGHEST_SALES) {
-    menus.push(
-      <CardGridWithHeader.HeaderElement key="sales-sort">
-        <DropdownSelect
-          keys={SORT_OPTION_ORDER[UrlParamKey.SALE_WINDOW]}
-          onSelect={(k) => urlParamSetters[UrlParamKey.SALE_WINDOW](k)}
-          defaultKey={SORT_OPTIONS.subOptions![SortOption.HIGHEST_SALES].defaultSubOptionValue}
-          selectedKey={urlParams[UrlParamKey.SALE_WINDOW]}
-        >
-          {secondarySortLabels}
-        </DropdownSelect>
-      </CardGridWithHeader.HeaderElement>
-    );
-  } else if (urlParams[UrlParamKey.BY] === SortOption.PRICE) {
-    menus.push(
-      <CardGridWithHeader.HeaderElement key="price-sort">
-        <DropdownSelect
-          keys={SORT_OPTION_ORDER[UrlParamKey.PRICE_DIRECTION]}
-          onSelect={(k) => urlParamSetters[UrlParamKey.PRICE_DIRECTION](k)}
-          defaultKey={SORT_OPTIONS.subOptions![SortOption.PRICE].defaultSubOptionValue}
-          selectedKey={urlParams[UrlParamKey.PRICE_DIRECTION]}
-        >
-          {secondarySortLabels}
-        </DropdownSelect>
-      </CardGridWithHeader.HeaderElement>
-    );
-  }
-
   return (
     <CardGridWithHeader<DiscoverNFTCardData, TypeFilterOption>
       filters={[
@@ -228,6 +110,9 @@ export default function DiscoverNFTsTab(): JSX.Element {
           options: TYPE_OPTIONS,
           default: DEFAULT_TYPE,
           queryId: UrlParamKey.TYPE,
+          onChange: (selection) => {
+            urlParamSetters[UrlParamKey.TYPE](selection.value);
+          },
         },
       ]}
       cardContext={{
@@ -255,7 +140,6 @@ export default function DiscoverNFTsTab(): JSX.Element {
         debounceTimeout: SEARCH_DEBOUNCE_TIMEOUT_MS,
         placeholder: 'Search NFTs',
       }}
-      menus={menus}
     />
   );
 }
@@ -288,9 +172,13 @@ function useQuery(type: TypeFilterOption, searchTerm: string | null): DiscoverNf
   );
 
   useEffect(() => {
-    if (type === TypeFilterOption.BUY_NOW) buyNowQueryContext.query();
-    else if (type === TypeFilterOption.ACTIVE_OFFERS) activeOffersQueryContext.query();
-    else if (type === TypeFilterOption.ALL) allNftsQueryContext.query();
+    if (type === TypeFilterOption.BUY_NOW) {
+      buyNowQueryContext.query();
+    } else if (type === TypeFilterOption.ACTIVE_OFFERS) {
+      activeOffersQueryContext.query();
+    } else if (type === TypeFilterOption.ALL) {
+      allNftsQueryContext.query();
+    }
   }, [type, searchTerm]);
 
   let context: DiscoverNftsQueryContext;

@@ -1,10 +1,5 @@
 import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
-import {
-  FilterIcon,
-  ArrowLeftIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/outline';
+import { FilterIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 
@@ -12,36 +7,19 @@ export interface FiltersSectionProps {
   children: JSX.Element | JSX.Element[];
   collapsed: boolean;
   className?: string;
-  onCollapse: () => void;
 }
 
 export default function FiltersSection(props: FiltersSectionProps): JSX.Element {
   return (
     <div
       className={clsx(
-        'flex w-[320px] flex-col justify-start',
+        'flex w-[280px] flex-col justify-start',
         { hidden: props.collapsed },
         props.className
       )}
     >
       <div className="mr-2 md:mr-10">
-        <div className={clsx('flex flex-col space-y-4')}>
-          <span
-            className={clsx(
-              'flex w-full flex-row flex-nowrap items-center justify-between space-x-4 p-4',
-              'border-b border-b-gray-800'
-            )}
-          >
-            <span className="text-2xl">Filters</span>
-            <div title="Hide filters">
-              <ArrowLeftIcon
-                onClick={props.onCollapse}
-                className="h-6 w-6 transition-transform hover:scale-[1.02] hover:cursor-pointer"
-              />
-            </div>
-          </span>
-          {props.children}
-        </div>
+        <div className={clsx('flex flex-col space-y-4')}>{props.children}</div>
       </div>
     </div>
   );
@@ -54,8 +32,8 @@ interface FilterIconProps {
 
 FiltersSection.FilterIcon = function FilterIconButton(props: FilterIconProps) {
   return (
-    <button onClick={props.onClick} className="rounded-lg hover:border-gray-800">
-      <FilterIcon className="mr-2 w-12 hover:cursor-pointer" />
+    <button onClick={props.onClick} className="rounded-lg p-2 transition-transform hover:scale-105">
+      <FilterIcon className="w-8 hover:cursor-pointer" />
     </button>
   );
 };

@@ -196,7 +196,7 @@ export const AvatarImage = ({
   <div
     className={clsx(
       'flex',
-      'overflow-clip rounded-full',
+      'overflow-clip rounded-full bg-gray-900',
       'h-full w-full',
       border && borderClass ? borderClass : undefined
     )}

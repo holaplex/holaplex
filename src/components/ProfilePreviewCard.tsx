@@ -56,7 +56,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
             href={profileUrl}
             onClick={onClickProfileLink}
             title="Go to profile page"
-            className="pointer-events-auto absolute top-0 left-0 -z-50 h-full w-full"
+            className="pointer-events-auto absolute top-0 left-0 h-full w-full"
           />
         </Link>
         {/* preview image */}
@@ -81,12 +81,12 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
               <AvatarImage
                 src={props.context.data.profileImageUrl ?? getFallbackImage()}
                 border
-                borderClass="outline outline-gray-900 "
+                borderClass="outline outline-gray-900"
               />
             </div>
             <FollowUnfollowButtonDataWrapper
               targetPubkey={props.context.data.address}
-              className="pointer-events-auto z-50 flex"
+              className="pointer-events-auto flex"
             />
           </div>
           {/* handle, stats */}

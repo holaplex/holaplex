@@ -152,11 +152,10 @@ function DiscoverMenu(): JSX.Element {
           <a
             className={clsx(
               'flex flex-row flex-nowrap items-center justify-start',
-              'space-x-4 p-4',
               'text-lg'
             )}
           >
-            <props.icon className="h-5 w-5" />
+            <props.icon className="mr-2 h-5 w-5" />
             <span>{props.title}</span>
           </a>
         </Link>

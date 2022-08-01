@@ -66,7 +66,7 @@ export default function DropdownSelect<T extends JSX.Element | string, V = numbe
 
   function wrapItem(item: JSX.Element | string): JSX.Element {
     return typeof item === 'string' ? (
-      <span className="whitespace-nowrap py-2 px-4 align-middle">{item}</span>
+      <span className="whitespace-nowrap align-middle">{item}</span>
     ) : (
       item
     );
