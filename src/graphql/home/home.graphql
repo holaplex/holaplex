@@ -174,9 +174,7 @@ query home(
     offset: 0
     orderDirection: DESC
   ) {
-    mintAddress
-    name
-    image
+    ...CollectionPreview
   }
 
   collectionsFeaturedByMarketCap(
@@ -186,9 +184,7 @@ query home(
     offset: 0
     orderDirection: DESC
   ) {
-    mintAddress
-    name
-    image
+    ...CollectionPreview
   }
 
   followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {

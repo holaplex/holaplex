@@ -61,7 +61,6 @@ export default function Home(): JSX.Element {
         context={{
           ...dataQueryContext,
           data: dataQueryContext.data?.feedEvents,
-          refetch: dataQueryContext.refetch,
         }}
       />
       <div className="container mx-auto px-6">
@@ -69,35 +68,30 @@ export default function Home(): JSX.Element {
           context={{
             ...dataQueryContext,
             data: dataQueryContext.data?.featuredCollectionsByVolume,
-            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedCollectionsByMarketCapSection
           context={{
             ...dataQueryContext,
             data: dataQueryContext.data?.featuredCollectionsByMarketCap,
-            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedBuyNowListingsSection
           context={{
             ...dataQueryContext,
             data: dataQueryContext.data?.featuredBuyNowListings,
-            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedProfilesSection
           context={{
             ...dataQueryContext,
             data: dataQueryContext.data?.featuredProfiles,
-            refetch: dataQueryContext.refetch,
           }}
         />
         <FeaturedMarketplacesSection
           context={{
             ...dataQueryContext,
             data: dataQueryContext.data?.featuredMarketplaces,
-            refetch: dataQueryContext.refetch,
           }}
         />
       </div>

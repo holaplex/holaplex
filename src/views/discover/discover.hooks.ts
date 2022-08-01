@@ -19,7 +19,7 @@ import {
   useDiscoverProfilesAllLazyQuery,
 } from 'src/graphql/indexerTypes';
 import {
-  // CollectionPreviewFragment,
+  CollectionPreviewFragment,
   DiscoverCollectionsByVolumeQuery,
   DiscoverNftsBuyNowQuery,
   DiscoverProfilesAllQuery,
@@ -112,7 +112,6 @@ interface DiscoverCollectionsQueryParams {
   offset: number;
 }
 
-//TODO update DiscoverNFTCardData for collections to its own type once you've figured out what that is
 export interface DiscoverCollectionsQueryContext
   extends InfiniteScrollQueryContext<
     CollectionPreviewCardData,
@@ -240,16 +239,14 @@ function useDiscoverCollectionsQuery(
 }
 
 function transformCollectionCardData(
-  // cardData: CollectionPreviewFragment
-  cardData: DiscoverCollectionsByMarketCapQuery['collectionsFeaturedByMarketCap'][0]
+  cardData: CollectionPreviewFragment
 ): CollectionPreviewCardData {
   return {
-    address: cardData.mintAddress,
-    name: cardData.name,
-    imageUrl: cardData.image,
-    //TODO update queries to get these
-    floorPriceSol: 0,
-    nftCount: 0,
+    address: cardData.nft.mintAddress,
+    name: cardData.nft.name,
+    imageUrl: cardData.nft.image,
+    floorPriceSol: cardData.floorPrice ?? 0,
+    nftCount: cardData.nftCount ?? 0,
   };
 }
 

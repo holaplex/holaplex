@@ -110,6 +110,63 @@ export type BidReceipt = {
   tradeStateBump: Scalars['Int'];
 };
 
+export type Collection = {
+  __typename?: 'Collection';
+  /** @deprecated use `nft { activities }` */
+  activities: Array<NftActivity>;
+  /** @deprecated use `nft { address }` */
+  address: Scalars['String'];
+  /** @deprecated use `nft { animation_url }` */
+  animationUrl?: Maybe<Scalars['String']>;
+  /** @deprecated use `nft { attributes }` */
+  attributes: Array<NftAttribute>;
+  /** @deprecated use `nft { category }` */
+  category: Scalars['String'];
+  /** @deprecated use `nft { collection }` */
+  collection?: Maybe<Collection>;
+  /** @deprecated use `nft { created_at }` */
+  createdAt?: Maybe<Scalars['DateTimeUtc']>;
+  /** @deprecated use `nft { creators }` */
+  creators: Array<NftCreator>;
+  /** @deprecated use `nft { description }` */
+  description: Scalars['String'];
+  /** @deprecated use `nft { external_url }` */
+  externalUrl?: Maybe<Scalars['String']>;
+  /** @deprecated use `nft { files }` */
+  files: Array<NftFile>;
+  floorPrice?: Maybe<Scalars['I64']>;
+  /** @deprecated use `nft { image }` */
+  image: Scalars['String'];
+  /** @deprecated use `nft { ah_listings_loader }` */
+  listings: Array<AhListing>;
+  /** @deprecated use `nft { mint_address }` */
+  mintAddress: Scalars['String'];
+  /** @deprecated use `nft { name }` */
+  name: Scalars['String'];
+  nft: Nft;
+  nftCount?: Maybe<Scalars['I64']>;
+  /** @deprecated use `nft { offers }` */
+  offers: Array<Offer>;
+  /** @deprecated use `nft { owner }` */
+  owner?: Maybe<NftOwner>;
+  /** @deprecated use `nft { parser }` */
+  parser?: Maybe<Scalars['String']>;
+  /** @deprecated use `nft { primary_sale_happened }` */
+  primarySaleHappened: Scalars['Boolean'];
+  /** @deprecated use `nft { purchases }` */
+  purchases: Array<Purchase>;
+  /** @deprecated use `nft { seller_fee_basis_points }` */
+  sellerFeeBasisPoints: Scalars['Int'];
+  /** @deprecated use `nft { token_account_address }` */
+  tokenAccountAddress: Scalars['String'];
+  /** @deprecated use `nft { update_authority_address }` */
+  updateAuthorityAddress: Scalars['String'];
+};
+
+export type CollectionImageArgs = {
+  width?: InputMaybe<Scalars['Int']>;
+};
+
 export type ConnectionCounts = {
   __typename?: 'ConnectionCounts';
   fromCount: Scalars['Int'];
@@ -300,7 +357,7 @@ export type Nft = {
   animationUrl?: Maybe<Scalars['String']>;
   attributes: Array<NftAttribute>;
   category: Scalars['String'];
-  collection?: Maybe<Nft>;
+  collection?: Maybe<Collection>;
   createdAt?: Maybe<Scalars['DateTimeUtc']>;
   creators: Array<NftCreator>;
   description: Scalars['String'];
@@ -485,9 +542,9 @@ export type QueryRoot = {
   auctionHouse?: Maybe<AuctionHouse>;
   charts: PriceChart;
   /** Returns featured collection NFTs ordered by market cap (floor price * number of NFTs in collection) */
-  collectionsFeaturedByMarketCap: Array<Nft>;
+  collectionsFeaturedByMarketCap: Array<Collection>;
   /** Returns featured collection NFTs ordered by volume (sum of purchase prices) */
-  collectionsFeaturedByVolume: Array<Nft>;
+  collectionsFeaturedByVolume: Array<Collection>;
   connections: Array<GraphConnection>;
   creator: Creator;
   denylist: Denylist;
@@ -842,7 +899,7 @@ export type CollectionNfTsQuery = {
     __typename?: 'Nft';
     address: string;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'Collection';
       address: string;
       name: string;
       image: string;
@@ -853,7 +910,7 @@ export type CollectionNfTsQuery = {
     __typename?: 'Nft';
     address: string;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'Collection';
       address: string;
       name: string;
       image: string;
@@ -917,7 +974,7 @@ export type CreatedNfTsQuery = {
       share: number;
       verified: boolean;
     }>;
-    collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
+    collection?: { __typename?: 'Collection'; address: string; name: string; image: string } | null;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -1076,7 +1133,7 @@ export type OwnedNfTsQuery = {
         bannerImageUrl: string;
       } | null;
     }>;
-    collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
+    collection?: { __typename?: 'Collection'; address: string; name: string; image: string } | null;
     owner?: {
       __typename?: 'NftOwner';
       address: string;
@@ -1479,7 +1536,7 @@ export type NftsInCollectionQuery = {
       address: string;
       associatedTokenAccountAddress: string;
     } | null;
-    collection?: { __typename?: 'Nft'; address: string; name: string; image: string } | null;
+    collection?: { __typename?: 'Collection'; address: string; name: string; image: string } | null;
     purchases: Array<{
       __typename?: 'Purchase';
       id: any;
@@ -1575,10 +1632,10 @@ export type DiscoverCollectionsByMarketCapQueryVariables = Exact<{
 export type DiscoverCollectionsByMarketCapQuery = {
   __typename?: 'QueryRoot';
   collectionsFeaturedByMarketCap: Array<{
-    __typename?: 'Nft';
-    mintAddress: string;
-    name: string;
-    image: string;
+    __typename?: 'Collection';
+    floorPrice?: any | null;
+    nftCount?: any | null;
+    nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
   }>;
 };
 
@@ -1593,10 +1650,10 @@ export type DiscoverCollectionsByVolumeQueryVariables = Exact<{
 export type DiscoverCollectionsByVolumeQuery = {
   __typename?: 'QueryRoot';
   collectionsFeaturedByVolume: Array<{
-    __typename?: 'Nft';
-    mintAddress: string;
-    name: string;
-    image: string;
+    __typename?: 'Collection';
+    floorPrice?: any | null;
+    nftCount?: any | null;
+    nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
   }>;
 };
 
@@ -2383,6 +2440,13 @@ export type WhoToFollowQuery = {
     } | null;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   }>;
+};
+
+export type CollectionPreviewFragment = {
+  __typename?: 'Collection';
+  floorPrice?: any | null;
+  nftCount?: any | null;
+  nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
 };
 
 export type FollowEventPreviewFragment = {
@@ -3326,16 +3390,16 @@ export type HomeQuery = {
       }
   >;
   collectionsFeaturedByVolume: Array<{
-    __typename?: 'Nft';
-    mintAddress: string;
-    name: string;
-    image: string;
+    __typename?: 'Collection';
+    floorPrice?: any | null;
+    nftCount?: any | null;
+    nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
   }>;
   collectionsFeaturedByMarketCap: Array<{
-    __typename?: 'Nft';
-    mintAddress: string;
-    name: string;
-    image: string;
+    __typename?: 'Collection';
+    floorPrice?: any | null;
+    nftCount?: any | null;
+    nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
   }>;
   followWallets: Array<{
     __typename?: 'Wallet';
@@ -3564,7 +3628,7 @@ export type NftMarketplaceQuery = {
     }>;
     creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'Collection';
       address: string;
       name: string;
       image: string;
@@ -3676,7 +3740,7 @@ export type NftMarketplaceQuery = {
     }>;
     creators: Array<{ __typename?: 'NftCreator'; address: string; verified: boolean }>;
     collection?: {
-      __typename?: 'Nft';
+      __typename?: 'Collection';
       address: string;
       name: string;
       image: string;
@@ -4761,6 +4825,17 @@ export type SearchQuery = {
   }>;
 };
 
+export const CollectionPreviewFragmentDoc = gql`
+  fragment CollectionPreview on Collection {
+    floorPrice
+    nftCount
+    nft {
+      mintAddress
+      name
+      image
+    }
+  }
+`;
 export const ProfileInfoFragmentDoc = gql`
   fragment ProfileInfo on TwitterProfile {
     walletAddress
@@ -5977,11 +6052,10 @@ export const DiscoverCollectionsByMarketCapDocument = gql`
       offset: $offset
       orderDirection: DESC
     ) {
-      mintAddress
-      name
-      image
+      ...CollectionPreview
     }
   }
+  ${CollectionPreviewFragmentDoc}
 `;
 export const DiscoverCollectionsByVolumeDocument = gql`
   query discoverCollectionsByVolume(
@@ -5999,11 +6073,10 @@ export const DiscoverCollectionsByVolumeDocument = gql`
       offset: $offset
       orderDirection: DESC
     ) {
-      mintAddress
-      name
-      image
+      ...CollectionPreview
     }
   }
+  ${CollectionPreviewFragmentDoc}
 `;
 export const DiscoverNftsActiveOffersDocument = gql`
   query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
@@ -6153,9 +6226,7 @@ export const HomeDocument = gql`
       offset: 0
       orderDirection: DESC
     ) {
-      mintAddress
-      name
-      image
+      ...CollectionPreview
     }
     collectionsFeaturedByMarketCap(
       startDate: "2020-01-01T00:00:00Z"
@@ -6164,9 +6235,7 @@ export const HomeDocument = gql`
       offset: 0
       orderDirection: DESC
     ) {
-      mintAddress
-      name
-      image
+      ...CollectionPreview
     }
     followWallets(wallet: $userWallet, limit: $featuredProfileLimit, offset: 0) {
       ...ProfilePreview
@@ -6197,6 +6266,7 @@ export const HomeDocument = gql`
   ${PurchaseEventPreviewFragmentDoc}
   ${ListingEventPreviewFragmentDoc}
   ${OfferEventPreviewFragmentDoc}
+  ${CollectionPreviewFragmentDoc}
   ${ProfilePreviewFragmentDoc}
   ${BuyNowListingFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}

@@ -6,7 +6,7 @@ import { PublicKey } from '@solana/web3.js';
 import { HomeData } from 'src/pages';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  // CollectionPreviewFragment,
+  CollectionPreviewFragment,
   useHomeQuery,
   BuyNowListingFragment,
   HomeQuery,
@@ -142,17 +142,13 @@ function transformFeaturedCollectionsByMarketCap(
   return result;
 }
 
-// function transformCollectionPreview(data: CollectionPreviewFragment): CollectionPreviewCardData {
-function transformCollectionPreview(
-  data: HomeQuery['collectionsFeaturedByMarketCap'][0]
-): CollectionPreviewCardData {
+function transformCollectionPreview(data: CollectionPreviewFragment): CollectionPreviewCardData {
   return {
-    address: data.mintAddress,
-    imageUrl: data.image,
-    name: data.name,
-    //TODO fix when available in query
-    nftCount: 0,
-    floorPriceSol: 0,
+    address: data.nft.mintAddress,
+    imageUrl: data.nft.image,
+    name: data.nft.name,
+    nftCount: data.nftCount ?? 0,
+    floorPriceSol: data.floorPrice ?? 0,
   };
 }
 
