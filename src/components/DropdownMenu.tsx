@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useEffect, useCallback } from 'react';
 import { isTouchScreenOnly } from 'src/lib/utils';
 
@@ -63,24 +63,24 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
 
   return (
     <div
-      className={classNames('relative inline-block', containerDisplayClasses, props.className)}
+      className={clsx('relative inline-block', containerDisplayClasses, props.className)}
       // setTimeout is a hack to allow the click to propagate to the menu item before closing
       onBlur={() => setTimeout(() => setIsTouchAndShowItems(false), 50)}
     >
       <button
-        className={classNames('flex flex-row flex-nowrap items-center justify-center', [
+        className={clsx('flex flex-row flex-nowrap items-center justify-center', [
           'text-lg font-medium',
           buttonDisplayBasedTextClasses,
         ])}
         onClick={onClickHeader}
       >
         {titleElement}
-        <ChevronDownIcon className={classNames('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
-        <ChevronUpIcon className={classNames('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
+        <ChevronDownIcon className={clsx('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
+        <ChevronUpIcon className={clsx('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
       </button>
 
       <ul
-        className={classNames(
+        className={clsx(
           itemContainerDisplayClasses,
           'absolute left-1/2 z-20 -translate-x-1/2',
           'list-none overflow-clip',
@@ -107,7 +107,7 @@ function Item(props: DropdownMenuItemProps): JSX.Element {
   return (
     <div
       onClick={props.onClick}
-      className={classNames(
+      className={clsx(
         ['w-full', 'bg-gray-900'],
         ['hover:bg-gray-700 focus:bg-gray-700', 'hover:cursor-pointer'],
         props.className

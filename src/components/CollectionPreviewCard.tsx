@@ -1,6 +1,6 @@
 import { QueryContext } from '@/hooks/useApolloQuery';
 import { getFallbackImage } from '@/modules/utils/image';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { imgOpt } from 'src/lib/utils';
 
 export interface CollectionPreviewCardData {
@@ -27,7 +27,7 @@ interface CollectionPreviewSkeletonProps {
 function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.Element {
   return (
     <div
-      className={classNames(
+      className={clsx(
         ['relative', 'flex overflow-clip', 'h-full w-full', 'rounded-lg shadow-md shadow-black'],
         ['duration-300 hover:scale-[1.02]'],
         props.className
@@ -37,7 +37,7 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
 
       {/* preview image, collection name, NFT count, and floor price section */}
       <div
-        className={classNames(
+        className={clsx(
           'absolute',
           'h-full w-full',
           'flex flex-col justify-end p-4',
@@ -45,7 +45,7 @@ function CollectionPreviewSkeleton(props: CollectionPreviewSkeletonProps): JSX.E
         )}
       >
         {/* <div
-          className={classNames(
+          className={clsx(
             'flex overflow-clip',
             'aspect-square w-[40%]',
             'rounded-md border-2 border-gray-900'
@@ -108,7 +108,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
 
           {/* background gradient overlay */}
           <div
-            className={classNames(
+            className={clsx(
               'absolute',
               'h-full w-full',
               'bg-gradient-to-b from-black/50 to-gray-900/80',
@@ -125,7 +125,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
       size={
         (props.context.data?.nftCount ?? 0) > 0 && (
           <div
-            className={classNames(
+            className={clsx(
               [
                 'flex w-1/2 justify-center py-3 px-2 text-left text-xs font-medium',
                 'rounded-lg bg-black/30 backdrop-blur-sm',
@@ -140,7 +140,7 @@ export function CollectionPreviewCard(props: CollectionPreviewCardProps): JSX.El
       floor={
         (props.context.data?.floorPriceSol ?? 0) > 0 && (
           <div
-            className={classNames(
+            className={clsx(
               [
                 'flex w-1/2 justify-center py-3 px-2 text-left text-xs font-medium',
                 'rounded-lg bg-black/30 backdrop-blur-sm',

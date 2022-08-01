@@ -1,6 +1,6 @@
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { toast } from 'react-toastify';
 import { Check } from '@/assets/icons/Check';
 
@@ -22,7 +22,7 @@ export const WalletLabel = () => {
   return (
     <button onClick={handleLabelClick} className="inline-flex h-6 items-center">
       <div
-        className={cx(
+        className={clsx(
           "h-2 w-2 rounded-full content-['']",
           { 'bg-[#00d072]': connected },
           { 'bg-[#d04200]': !connected },

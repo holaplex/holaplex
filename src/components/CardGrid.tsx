@@ -2,7 +2,7 @@ import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { SingleGrid } from '@/assets/icons/SingleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { InView } from 'react-intersection-observer';
@@ -40,7 +40,7 @@ export function CardGridWithHeader<T>(props: CardGridWithHeaderProps<T>): JSX.El
   return (
     <div className="w-full space-y-4 text-base">
       <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
-        <div className={classNames(['flex space-x-4', 'lg:justify-end'], 'w-full')}>
+        <div className={clsx(['flex space-x-4', 'lg:justify-end'], 'w-full')}>
           <SearchBar {...props.search} />
           {props.menus}
           <GridSelector onChange={(v) => setGridView(v)} />
@@ -100,7 +100,7 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
   return (
     <div className="hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
       <button
-        className={classNames(
+        className={clsx(
           'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
           {
             'bg-gray-800': selected === GridView.ONE_BY_ONE,
@@ -115,7 +115,7 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
       </button>
 
       <button
-        className={classNames('flex w-10 items-center justify-center', {
+        className={clsx('flex w-10 items-center justify-center', {
           'bg-gray-800': selected === GridView.TWO_BY_TWO,
         })}
         onClick={() => onSelect(GridView.TWO_BY_TWO)}
@@ -127,7 +127,7 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
       </button>
 
       <button
-        className={classNames(
+        className={clsx(
           'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
           {
             'bg-gray-800': selected === GridView.SIX_BY_SIX,
@@ -293,7 +293,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
       break;
     }
     case GridView.SIX_BY_SIX: {
-      gridViewClasses = classNames(
+      gridViewClasses = clsx(
         props.cardContext.bigGridClassNameOverride
           ? props.cardContext.bigGridClassNameOverride
           : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
@@ -331,7 +331,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
 
   return (
     <>
-      <div className={classNames('grid grid-cols-1 gap-6', gridViewClasses)}>
+      <div className={clsx('grid grid-cols-1 gap-6', gridViewClasses)}>
         {bodyElements.map((e, i) => (
           <div key={`${gridId}-${i}`}>{e}</div>
         ))}
@@ -339,7 +339,7 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
       {/* infinite scroll display and load-more trigger */}
       <InView threshold={0.1} onChange={props.dataContext.onLoadMore}>
         <div
-          className={classNames('my-6 flex w-full items-center justify-center font-bold', {
+          className={clsx('my-6 flex w-full items-center justify-center font-bold', {
             hidden:
               !props.dataContext.hasMore ||
               (props.dataContext.data && props.dataContext.data.length === 0),

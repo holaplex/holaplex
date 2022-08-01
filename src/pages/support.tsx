@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import Footer from 'src/views/home/Footer';
 import Image from 'next/image';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 type ChildProp = {
   children: React.ReactElement | Array<React.ReactElement | string> | string;
@@ -12,7 +12,7 @@ type ChildProp = {
 function Heading({ children, className }: ChildProp): JSX.Element {
   return (
     <h2
-      className={classNames(
+      className={clsx(
         'bg-gradient-to-r from-white to-[#808080] bg-clip-text font-sans text-3xl font-bold capitalize text-transparent lg:text-6xl',
         className
       )}
@@ -24,9 +24,7 @@ function Heading({ children, className }: ChildProp): JSX.Element {
 
 function HeadingSmall({ children, className }: ChildProp): JSX.Element {
   return (
-    <h3
-      className={classNames('my-1 font-sans text-2xl font-bold capitalize lg:text-4xl', className)}
-    >
+    <h3 className={clsx('my-1 font-sans text-2xl font-bold capitalize lg:text-4xl', className)}>
       {children}
     </h3>
   );
@@ -34,23 +32,18 @@ function HeadingSmall({ children, className }: ChildProp): JSX.Element {
 
 function SubHeading({ children, className }: ChildProp): JSX.Element {
   return (
-    <h4
-      className={classNames(
-        'mb-4 font-sans text-xl font-bold text-[#565656] lg:text-2xl',
-        className
-      )}
-    >
+    <h4 className={clsx('mb-4 font-sans text-xl font-bold text-[#565656] lg:text-2xl', className)}>
       {children}
     </h4>
   );
 }
 function Paragraph({ children, className }: ChildProp): JSX.Element {
-  return <p className={classNames('text-base text-gray-300 lg:text-xl', className)}>{children}</p>;
+  return <p className={clsx('text-base text-gray-300 lg:text-xl', className)}>{children}</p>;
 }
 function Section({ children, className }: ChildProp): JSX.Element {
   return (
     <div
-      className={classNames(
+      className={clsx(
         'relative mx-auto flex w-full max-w-7xl flex-col flex-wrap justify-center px-12 lg:px-24',
         className
       )}
@@ -62,7 +55,7 @@ function Section({ children, className }: ChildProp): JSX.Element {
 
 function Content({ children, className }: ChildProp): JSX.Element {
   return (
-    <div className={classNames('relative z-10 m-auto box-border w-full max-w-7xl p-4', className)}>
+    <div className={clsx('relative z-10 m-auto box-border w-full max-w-7xl p-4', className)}>
       {children}
     </div>
   );
@@ -70,7 +63,7 @@ function Content({ children, className }: ChildProp): JSX.Element {
 function Button({ children, className }: ChildProp): JSX.Element {
   return (
     <button
-      className={classNames(
+      className={clsx(
         'rounded bg-gradient-to-b from-[#FDD85C] to-[#F5C927] py-2 px-4 text-white shadow ',
         className
       )}
@@ -82,26 +75,24 @@ function Button({ children, className }: ChildProp): JSX.Element {
 
 function SupportRow({ children, className }: ChildProp): JSX.Element {
   return (
-    <div
-      className={classNames('my-16 gap-4 lg:my-32 lg:flex lg:items-center lg:gap-12', className)}
-    >
+    <div className={clsx('my-16 gap-4 lg:my-32 lg:flex lg:items-center lg:gap-12', className)}>
       {children}
     </div>
   );
 }
 
 function SupportImage({ children, className }: ChildProp): JSX.Element {
-  return <div className={classNames('relative w-full lg:max-w-md', className)}>{children}</div>;
+  return <div className={clsx('relative w-full lg:max-w-md', className)}>{children}</div>;
 }
 
 function SupportText({ children, className }: ChildProp): JSX.Element {
-  return <div className={classNames('relative z-10 lg:mt-4', className)}>{children}</div>;
+  return <div className={clsx('relative z-10 lg:mt-4', className)}>{children}</div>;
 }
 
 function SupportBlob({ children, className }: ChildProp): JSX.Element {
   return (
     <div
-      className={classNames(
+      className={clsx(
         'pointer-events-none absolute top-[-15%] bottom-[-15%] h-[130%] w-full bg-contain bg-no-repeat',
         className
       )}
