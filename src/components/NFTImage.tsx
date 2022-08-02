@@ -1,6 +1,6 @@
 import React, { DetailedHTMLProps, ImgHTMLAttributes, FC, useRef, useState } from 'react';
 import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
-import cx from 'classnames';
+import clsx from 'clsx';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 
@@ -27,7 +27,7 @@ const NFTImage: FC<NFTImageProps> = ({ src, onLoad, className, alt }) => {
       </div>
       <div
         role="dialog"
-        className={cx(
+        className={clsx(
           'fixed top-0 left-0 right-0 bottom-0',
           'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
           'transition-opacity duration-500 ease-in-out',

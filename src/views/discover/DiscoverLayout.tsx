@@ -1,6 +1,6 @@
 import Tab from '@/components/Tab';
 import { CollectionIcon, PhotographIcon, UsersIcon } from '@heroicons/react/outline';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -20,7 +20,7 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
   const router = useRouter();
 
   return (
-    <div className={classNames('mt-10', ['flex flex-col', 'md:flex-row'])}>
+    <div className={clsx('mt-10', ['flex flex-col', 'md:flex-row'])}>
       <div className="w-full">
         <div className="sticky flex space-x-1 p-1">
           <Tab

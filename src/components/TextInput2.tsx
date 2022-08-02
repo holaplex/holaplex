@@ -1,5 +1,5 @@
 import { InputHTMLAttributes } from 'react';
-import cx from 'classnames';
+import clsx from 'clsx';
 
 function TextInput2({
   label,
@@ -17,7 +17,7 @@ function TextInput2({
       <label htmlFor={props.id} className={hideLabel ? 'sr-only' : ''}>
         {label}
       </label>
-      <div className={cx('relative rounded-md shadow-sm', !hideLabel && 'mt-1')}>
+      <div className={clsx('relative rounded-md shadow-sm', !hideLabel && 'mt-1')}>
         {leadingIcon && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             {leadingIcon}
@@ -26,7 +26,7 @@ function TextInput2({
         <input
           {...props}
           type={props.type || 'text'}
-          className={cx(
+          className={clsx(
             { 'pl-10 pr-3': leadingIcon },
             'w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0',
             className

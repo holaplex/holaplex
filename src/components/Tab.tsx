@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Link from 'next/link';
 
 export interface TabProps {
@@ -12,7 +12,7 @@ export default function Tab(props: TabProps): JSX.Element {
   return (
     <Link href={props.url} passHref>
       <a
-        className={classNames(
+        className={clsx(
           'flex w-full justify-center border-b py-2.5 text-center text-sm font-medium text-white',
           props.selected ? ' border-white' : 'border-gray-800  text-gray-300 hover:text-white'
         )}

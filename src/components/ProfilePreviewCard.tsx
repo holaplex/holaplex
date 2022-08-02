@@ -3,7 +3,7 @@ import { getFallbackImage } from '@/modules/utils/image';
 import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useAnalytics } from '@/views/_global/AnalyticsProvider';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { useCallback, FC, VFC } from 'react';
 import { useIsXFollowingYLazyQuery } from 'src/graphql/indexerTypes';
@@ -47,7 +47,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
   const createdNftsString: string = props.context.data.nftsCreated.toLocaleString();
 
   return (
-    <PreviewContainer className={classNames(props.className)}>
+    <PreviewContainer className={clsx(props.className)}>
       {/* put the profile link under everything so that it doesnt interfere with other interactions,
           and force every element to have no pointer events unless it needs them */}
       <div className="pointer-events-none flex flex-col">
@@ -56,7 +56,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
             href={profileUrl}
             onClick={onClickProfileLink}
             title="Go to profile page"
-            className="pointer-events-auto absolute top-0 left-0 -z-50 h-full w-full"
+            className="pointer-events-auto absolute top-0 left-0 h-full w-full"
           />
         </Link>
         {/* preview image */}
@@ -81,12 +81,12 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
               <AvatarImage
                 src={props.context.data.profileImageUrl ?? getFallbackImage()}
                 border
-                borderClass="outline outline-gray-900 "
+                borderClass="outline outline-gray-900"
               />
             </div>
             <FollowUnfollowButtonDataWrapper
               targetPubkey={props.context.data.address}
-              className="pointer-events-auto z-50 flex"
+              className="pointer-events-auto flex"
             />
           </div>
           {/* handle, stats */}
@@ -120,7 +120,7 @@ export function ProfilePreviewLoadingCard(): JSX.Element {
 const PreviewContainer: FC<any> = ({ className, ...props }) => {
   return (
     <div
-      className={classNames(
+      className={clsx(
         'relative flex w-full overflow-clip rounded-lg bg-gray-900 shadow-md shadow-black duration-300 hover:scale-[1.02]',
         className
       )}
@@ -173,7 +173,7 @@ export const FollowUnfollowButtonDataWrapper: VFC<{ targetPubkey: string; classN
       toProfile={{
         address: targetPubkey,
       }}
-      className={classNames(className, { hidden: hideButton })}
+      className={clsx(className, { hidden: hideButton })}
     />
   );
 };

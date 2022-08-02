@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { useNftActivityLazyQuery, useNftMarketplaceLazyQuery } from '@/graphql/indexerTypes';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { shortenAddress } from '@/modules/utils/string';
 import Link from 'next/link';
 import Custom404 from '../404';
@@ -328,7 +328,7 @@ export default function NftByAddress({
                 </div>
 
                 <div
-                  className={cx('flex', {
+                  className={clsx('flex', {
                     hidden: loading,
                   })}
                 >
@@ -834,7 +834,7 @@ export default function NftByAddress({
                           <div>{a.activityType === 'listing' && 'Listed'}</div>
                         </div>
                         <div
-                          className={cx('flex items-center self-center ', {
+                          className={clsx('flex items-center self-center ', {
                             '-ml-6': multipleWallets,
                           })}
                         >

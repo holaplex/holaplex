@@ -15,8 +15,6 @@ query discoverCollectionsByVolume(
     offset: $offset
     orderDirection: DESC
   ) {
-    mintAddress
-    name
-    image
+    ...CollectionPreview
   }
 }

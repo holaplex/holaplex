@@ -17,7 +17,7 @@ import ReactDom from 'react-dom';
 import { FollowItem } from './FollowModal';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 import { compareTwitterProfilesForSorting } from '@/views/profiles/follow.utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 type FollowerCountProps = {
   wallet?: AnchorWallet;
@@ -47,7 +47,7 @@ export const FollowerCount: FC<FollowerCountProps> = ({
     <>
       <div className="flex flex-col">
         <div
-          className={classNames(
+          className={clsx(
             'mt-10 grid gap-6  lg:grid-cols-2',
             collectedBy?.length ? 'grid-cols-4' : 'grid-cols-3'
           )}

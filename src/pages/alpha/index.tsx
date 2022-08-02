@@ -19,7 +19,7 @@ import {
 import Footer, { SmallFooter } from 'src/views/home/Footer';
 import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
 import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from 'src/components/Button2';
 import EmptyFeedCTA from 'src/views/alpha/EmptyFeedCTA';
@@ -401,7 +401,7 @@ function BackToTopBtn() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
-      className={classNames(
+      className={clsx(
         'fixed right-8 bottom-8 rounded-full bg-gray-900 p-4',
         scrollY === 0 && 'hidden'
       )}
