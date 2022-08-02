@@ -41,6 +41,7 @@ import NFTFile from '@/components/NFTFile';
 import { ButtonSkeleton } from '@/components/Skeletons';
 // import { Tag as FeatherTag, Zap } from 'react-feather';
 import { LightningBoltIcon, TagIcon } from '@heroicons/react/outline';
+import { ProfileChip } from '@/components/ProfileChip';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -108,8 +109,9 @@ export default function NftByAddress({
   const { publicKey } = useWallet();
   const router = useRouter();
 
-  const [queryNft, { data, loading, called, refetch, error }] = useNftMarketplaceLazyQuery();
+  const [queryNft, { data, called, refetch, error }] = useNftMarketplaceLazyQuery();
   const [queryNftActivity, activityContext] = useNftActivityLazyQuery();
+  const loading = true;
 
   useEffect(() => {
     if (!data?.nft?.mintAddress) return;
@@ -271,7 +273,7 @@ export default function NftByAddress({
         </Head>
         <div className=" text-white">
           <div className="mt-12 mb-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-            <div className="mb-4 block lg:mb-0 lg:flex lg:items-center lg:justify-center ">
+            <div className="mb-4 block lg:mb-0 lg:items-center lg:justify-center ">
               <div className="mb-6 block lg:hidden">
                 {loading ? (
                   <div className="h-32 w-full rounded-lg bg-gray-800" />
@@ -286,7 +288,50 @@ export default function NftByAddress({
                   </>
                 )}
               </div>
-              <NFTFile loading={loading} nft={nft as Nft | any} />
+              <div>
+                <NFTFile loading={loading} nft={nft as Nft | any} />
+                <div className="mt-10 flex flex-col justify-between sm:flex-row sm:flex-nowrap">
+                  <div className="flex flex-col">
+                    <div className="label mb-4 font-medium text-gray-300">
+                      {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Created by'}
+                    </div>
+                    <ul className="mb-0 flex h-full items-center">
+                      {loading ? (
+                        <li>
+                          <div className="h-6 w-20 rounded bg-gray-800" />
+                        </li>
+                      ) : nft?.creators.length === 1 ? (
+                        <ProfileChip user={nft.creators[0]} />
+                      ) : (
+                        <div className="">
+                          <AvatarIcons profiles={nft?.creators || []} />
+                        </div>
+                      )}
+                    </ul>
+                  </div>
+
+                  <div
+                    className={clsx('mt-10 flex max-w-fit flex-col sm:mt-0', loading && 'hidden')}
+                  >
+                    <div className="label mb-4 font-medium text-gray-300 sm:self-end">
+                      Collection
+                    </div>
+                    {nft?.collection?.address && (
+                      <Link href={`/collections/${nft?.collection?.address}`}>
+                        <a className="flex  items-center space-x-2 rounded-md py-3 pl-2 pr-4  shadow-2xl shadow-black">
+                          <img
+                            className="h-8 w-8 rounded-md"
+                            alt={nft.collection.name}
+                            src={nft?.collection?.image}
+                          />
+                          {/* <Avatar address={nft?.collection?.address} /> */}
+                          <span>{nft.collection.name}</span>
+                        </a>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
               <div className="mb-8 hidden lg:block">
@@ -303,48 +348,11 @@ export default function NftByAddress({
                   </>
                 )}
               </div>
-              <div className="mb-8 flex flex-1 flex-row justify-between">
-                <div>
-                  <div className="label mb-1 text-gray-300">
-                    {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Created by'}
-                  </div>
-                  <ul>
-                    {loading ? (
-                      <li>
-                        <div className="h-6 w-20 rounded bg-gray-800" />
-                      </li>
-                    ) : nft?.creators.length === 1 ? (
-                      <Link href={`/profiles/${nft?.creators[0].address}`}>
-                        <a>
-                          <Avatar address={nft?.creators[0].address} />
-                        </a>
-                      </Link>
-                    ) : (
-                      <div>
-                        <AvatarIcons profiles={nft?.creators || []} />
-                      </div>
-                    )}
-                  </ul>
+              <div className="mb-8 max-w-fit">
+                <div className="label mb-4 font-medium text-gray-300">
+                  {loading ? <div className="h-4 w-14 rounded bg-gray-800" /> : 'Owned by'}
                 </div>
-
-                <div
-                  className={clsx('flex', {
-                    hidden: loading,
-                  })}
-                >
-                  <div className="flex flex-1 flex-col items-end">
-                    <div className="label mb-1 self-end text-gray-300">
-                      {hasDefaultListing ? `Listed by` : `Collected by`}
-                    </div>
-                    {nft?.owner?.address && (
-                      <Link href={`/profiles/${nft?.owner?.address}`}>
-                        <a>
-                          <Avatar address={nft?.owner?.address} />
-                        </a>
-                      </Link>
-                    )}
-                  </div>
-                </div>
+                {nft?.owner && <ProfileChip user={nft?.owner} />}
               </div>
               <div className={`grid grid-cols-1 gap-10`}>
                 {/* TODO: cleanup this conditional mess in favor of a component that handles all the different states */}

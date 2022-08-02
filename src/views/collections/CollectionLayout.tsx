@@ -15,15 +15,8 @@ import React, { ReactNode, useMemo } from 'react';
 import { useAllConnectionsToQuery, useIsXFollowingYQuery } from 'src/graphql/indexerTypes';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import { SolscanIcon } from '@/assets/icons/Solscan';
-
-function CreatorChip(props: { user: User }) {
-  return (
-    <span className="flex max-w-fit items-center space-x-4 py-3 px-2 text-base font-medium shadow-2xl">
-      <ProfilePFP user={props.user} />
-      <ProfileHandle user={props.user} />
-    </span>
-  );
-}
+import { getPFPFromPublicKey } from '@/modules/utils/image';
+import { ProfileChip } from '@/components/ProfileChip';
 
 function CollectionLayoutHead(props: {
   name: string;
@@ -179,7 +172,7 @@ export default function CollectionLayout({
         </div>
         <div className="flex justify-center sm:justify-start">
           {creators.length === 1 ? (
-            <CreatorChip user={creators[0]} />
+            <ProfileChip user={creators[0]} />
           ) : (
             <AvatarIcons
               profiles={
