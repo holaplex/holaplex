@@ -4091,6 +4091,23 @@ export type OffersPageQuery = {
   }>;
 };
 
+export type SubdomainCheckQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+}>;
+
+export type SubdomainCheckQuery = {
+  __typename?: 'QueryRoot';
+  marketplace?: {
+    __typename?: 'Marketplace';
+    subdomain: string;
+    name: string;
+    description: string;
+    logoUrl: string;
+    bannerUrl: string;
+    ownerAddress: string;
+  } | null;
+};
+
 export type NftActivityQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -7581,6 +7598,59 @@ export function useOffersPageLazyQuery(
 export type OffersPageQueryHookResult = ReturnType<typeof useOffersPageQuery>;
 export type OffersPageLazyQueryHookResult = ReturnType<typeof useOffersPageLazyQuery>;
 export type OffersPageQueryResult = Apollo.QueryResult<OffersPageQuery, OffersPageQueryVariables>;
+export const SubdomainCheckDocument = gql`
+  query subdomainCheck($subdomain: String!) {
+    marketplace(subdomain: $subdomain) {
+      subdomain
+      name
+      description
+      logoUrl
+      bannerUrl
+      ownerAddress
+    }
+  }
+`;
+
+/**
+ * __useSubdomainCheckQuery__
+ *
+ * To run a query within a React component, call `useSubdomainCheckQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubdomainCheckQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubdomainCheckQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *   },
+ * });
+ */
+export function useSubdomainCheckQuery(
+  baseOptions: Apollo.QueryHookOptions<SubdomainCheckQuery, SubdomainCheckQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SubdomainCheckQuery, SubdomainCheckQueryVariables>(
+    SubdomainCheckDocument,
+    options
+  );
+}
+export function useSubdomainCheckLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SubdomainCheckQuery, SubdomainCheckQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SubdomainCheckQuery, SubdomainCheckQueryVariables>(
+    SubdomainCheckDocument,
+    options
+  );
+}
+export type SubdomainCheckQueryHookResult = ReturnType<typeof useSubdomainCheckQuery>;
+export type SubdomainCheckLazyQueryHookResult = ReturnType<typeof useSubdomainCheckLazyQuery>;
+export type SubdomainCheckQueryResult = Apollo.QueryResult<
+  SubdomainCheckQuery,
+  SubdomainCheckQueryVariables
+>;
 export const NftActivityDocument = gql`
   query nftActivity($address: String!) {
     nftByMintAddress(address: $address) {
