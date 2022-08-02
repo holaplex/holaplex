@@ -134,10 +134,10 @@ export function AppHeader() {
           </div>
         )}
         <button
-          className="flex-none rounded-full shadow-lg shadow-black hover:bg-gray-800 md:hidden"
+          className="flex-none rounded-full p-3 shadow-lg shadow-black hover:bg-gray-800 md:hidden"
           onClick={() => setDisplayMenu(true)}
         >
-          <MenuIcon color="#fff" />
+          <MenuIcon color="#fff" className="h-6 w-6" />
         </button>
       </nav>
       {displayMenu ? <MobileMenu onCloseClick={() => setDisplayMenu(false)} /> : null}

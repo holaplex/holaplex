@@ -19,4 +19,13 @@ query getProfileFollowerOverview($pubKey: PublicKey!, $limit: Int = 1000, $offse
       ...ConnectionNode
     }
   }
+
+  nftsCreated: nfts(creators: [$pubKey], limit: 300, offset: 0) {
+    address
+    owner {
+      profile {
+        ...ProfileInfo
+      }
+    }
+  }
 }

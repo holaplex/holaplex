@@ -141,7 +141,7 @@ const BuyForm: FC<BuyFormProps> = ({
     });
   };
 
-  if (isOwner) {
+  if (isOwner || !nft || !listing || !listing.auctionHouse) {
     return null;
   }
 
@@ -234,8 +234,8 @@ const BuyForm: FC<BuyFormProps> = ({
                 {selectedPaymentOption === PAYMENT_OPTION.SOLANA ? (
                   <Button
                     htmlType={`submit`}
-                    disabled={isSubmitting || hasActionPending}
-                    loading={isSubmitting || hasActionPending}
+                    disabled={loading || isSubmitting || hasActionPending}
+                    loading={loading || isSubmitting || hasActionPending}
                     className={`w-full`}
                   >
                     Buy with SOL

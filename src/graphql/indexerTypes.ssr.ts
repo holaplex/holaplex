@@ -642,6 +642,7 @@ export type QueryRootNftCountsArgs = {
 };
 
 export type QueryRootNftsArgs = {
+  allowUnverified?: InputMaybe<Scalars['Boolean']>;
   attributes?: InputMaybe<Array<AttributeFilter>>;
   auctionHouses?: InputMaybe<Array<Scalars['PublicKey']>>;
   collection?: InputMaybe<Scalars['PublicKey']>;
@@ -730,6 +731,7 @@ export type TwitterProfile = {
 
 export type Wallet = {
   __typename?: 'Wallet';
+  activities: Array<WalletActivity>;
   address: Scalars['PublicKey'];
   bids: Array<Bid>;
   connectionCounts: ConnectionCounts;
@@ -740,6 +742,18 @@ export type Wallet = {
 
 export type WalletNftCountsArgs = {
   creators?: InputMaybe<Array<Scalars['PublicKey']>>;
+};
+
+export type WalletActivity = {
+  __typename?: 'WalletActivity';
+  activityType: Scalars['String'];
+  auctionHouse?: Maybe<AuctionHouse>;
+  createdAt: Scalars['DateTimeUtc'];
+  id: Scalars['Uuid'];
+  metadata: Scalars['PublicKey'];
+  nft?: Maybe<Nft>;
+  price: Scalars['U64'];
+  wallets: Array<Wallet>;
 };
 
 export type WalletNftCount = {
@@ -2080,6 +2094,23 @@ export type FeedQuery = {
           id: any;
           seller: any;
           price: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
           nft?: {
             __typename?: 'Nft';
             name: string;
@@ -2093,6 +2124,17 @@ export type FeedQuery = {
               associatedTokenAccountAddress: string;
               twitterHandle?: string | null;
             } | null;
+            creators: Array<{
+              __typename?: 'NftCreator';
+              address: string;
+              position?: number | null;
+              profile?: {
+                __typename?: 'TwitterProfile';
+                handle: string;
+                profileImageUrlLowres: string;
+                profileImageUrlHighres: string;
+              } | null;
+            }>;
             listings: Array<{
               __typename?: 'AhListing';
               id: any;
@@ -2410,6 +2452,23 @@ export type ListingEventPreviewFragment = {
     id: any;
     seller: any;
     price: any;
+    auctionHouse?: {
+      __typename?: 'AuctionHouse';
+      address: string;
+      treasuryMint: string;
+      auctionHouseTreasury: string;
+      treasuryWithdrawalDestination: string;
+      feeWithdrawalDestination: string;
+      authority: string;
+      creator: string;
+      auctionHouseFeeAccount: string;
+      bump: number;
+      treasuryBump: number;
+      feePayerBump: number;
+      sellerFeeBasisPoints: number;
+      requiresSignOff: boolean;
+      canChangeSalePrice: boolean;
+    } | null;
     nft?: {
       __typename?: 'Nft';
       name: string;
@@ -2423,6 +2482,17 @@ export type ListingEventPreviewFragment = {
         associatedTokenAccountAddress: string;
         twitterHandle?: string | null;
       } | null;
+      creators: Array<{
+        __typename?: 'NftCreator';
+        address: string;
+        position?: number | null;
+        profile?: {
+          __typename?: 'TwitterProfile';
+          handle: string;
+          profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+        } | null;
+      }>;
       listings: Array<{
         __typename?: 'AhListing';
         id: any;
@@ -2996,6 +3066,23 @@ export type HomeQuery = {
           id: any;
           seller: any;
           price: any;
+          auctionHouse?: {
+            __typename?: 'AuctionHouse';
+            address: string;
+            treasuryMint: string;
+            auctionHouseTreasury: string;
+            treasuryWithdrawalDestination: string;
+            feeWithdrawalDestination: string;
+            authority: string;
+            creator: string;
+            auctionHouseFeeAccount: string;
+            bump: number;
+            treasuryBump: number;
+            feePayerBump: number;
+            sellerFeeBasisPoints: number;
+            requiresSignOff: boolean;
+            canChangeSalePrice: boolean;
+          } | null;
           nft?: {
             __typename?: 'Nft';
             name: string;
@@ -3009,6 +3096,17 @@ export type HomeQuery = {
               associatedTokenAccountAddress: string;
               twitterHandle?: string | null;
             } | null;
+            creators: Array<{
+              __typename?: 'NftCreator';
+              address: string;
+              position?: number | null;
+              profile?: {
+                __typename?: 'TwitterProfile';
+                handle: string;
+                profileImageUrlLowres: string;
+                profileImageUrlHighres: string;
+              } | null;
+            }>;
             listings: Array<{
               __typename?: 'AhListing';
               id: any;
@@ -4443,6 +4541,21 @@ export type GetProfileFollowerOverviewQuery = {
       } | null;
     };
   }>;
+  nftsCreated: Array<{
+    __typename?: 'Nft';
+    address: string;
+    owner?: {
+      __typename?: 'NftOwner';
+      profile?: {
+        __typename?: 'TwitterProfile';
+        walletAddress?: string | null;
+        handle: string;
+        profileImageUrlLowres: string;
+        profileImageUrlHighres: string;
+        bannerImageUrl: string;
+      } | null;
+    } | null;
+  }>;
 };
 
 export type GetProfileInfoFromPubKeyQueryVariables = Exact<{
@@ -4700,6 +4813,22 @@ export const ListingEventPreviewFragmentDoc = gql`
       id
       seller
       price
+      auctionHouse {
+        address
+        treasuryMint
+        auctionHouseTreasury
+        treasuryWithdrawalDestination
+        feeWithdrawalDestination
+        authority
+        creator
+        auctionHouseFeeAccount
+        bump
+        treasuryBump
+        feePayerBump
+        sellerFeeBasisPoints
+        requiresSignOff
+        canChangeSalePrice
+      }
       nft {
         name
         image(width: 600)
@@ -4708,6 +4837,15 @@ export const ListingEventPreviewFragmentDoc = gql`
           address
           associatedTokenAccountAddress
           twitterHandle
+        }
+        creators {
+          address
+          position
+          profile {
+            handle
+            profileImageUrlLowres
+            profileImageUrlHighres
+          }
         }
         listings {
           id
@@ -5995,7 +6133,7 @@ export const HomeDocument = gql`
       wallet: "ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz"
       limit: $feedEventsLimit
       offset: 0
-      excludeTypes: ["follow"]
+      excludeTypes: ["follow", "mint"]
     ) {
       __typename
       ... on MintEvent {
@@ -6844,8 +6982,17 @@ export const GetProfileFollowerOverviewDocument = gql`
         ...ConnectionNode
       }
     }
+    nftsCreated: nfts(creators: [$pubKey], limit: 300, offset: 0) {
+      address
+      owner {
+        profile {
+          ...ProfileInfo
+        }
+      }
+    }
   }
   ${ConnectionNodeFragmentDoc}
+  ${ProfileInfoFragmentDoc}
 `;
 export const GetProfileInfoFromPubKeyDocument = gql`
   query getProfileInfoFromPubKey($pubKey: PublicKey!) {

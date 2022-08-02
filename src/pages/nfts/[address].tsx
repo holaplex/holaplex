@@ -44,6 +44,7 @@ import { ClipboardCheckIcon, ExclamationCircleIcon } from '@heroicons/react/outl
 import { ButtonSkeleton } from '@/components/Skeletons';
 import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 import Popover from '../../components/Popover';
+import { LightningBoltIcon, TagIcon } from '@heroicons/react/outline';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -1012,16 +1013,19 @@ export default function NftByAddress({
                       >
                         <div className="flex self-center">
                           {a.activityType === 'purchase' && (
-                            <FeatherTag className="mr-2 self-center text-gray-300" size="18" />
+                            // <FeatherTag  size="18" />
+                            <TagIcon className="mr-2 h-4 w-4 self-center text-gray-300" />
                           )}
                           <div>{a.activityType === 'purchase' && 'Sold'}</div>
 
                           {a.activityType === 'offer' && (
-                            <Zap className="mr-2 self-center text-gray-300" size="18" />
+                            // <Zap className="mr-2 self-center text-gray-300" size="18" />
+                            <LightningBoltIcon className="mr-2 h-4 w-4 self-center text-gray-300" />
                           )}
                           <div>{a.activityType === 'offer' && 'Offer Made'}</div>
                           {a.activityType === 'listing' && (
-                            <FeatherTag className="mr-2 self-center text-gray-300" size="18" />
+                            // <FeatherTag className="mr-2 self-center text-gray-300" size="18" />
+                            <TagIcon className="mr-2 h-4 w-4 self-center text-gray-300" />
                           )}
                           <div>{a.activityType === 'listing' && 'Listed'}</div>
                         </div>

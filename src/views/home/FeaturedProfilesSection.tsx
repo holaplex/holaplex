@@ -7,7 +7,7 @@ import ProfilePreview, {
 import { QueryContext } from '@/hooks/useApolloQuery';
 
 const CAROUSEL_ROWS: number = 2;
-const CAROUSEL_COLS: number = 3;
+const CAROUSEL_COLS: number = 4;
 
 export type FeaturedProfilesData = ProfilePreviewData[];
 
