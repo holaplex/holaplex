@@ -109,9 +109,8 @@ export default function NftByAddress({
   const { publicKey } = useWallet();
   const router = useRouter();
 
-  const [queryNft, { data, called, refetch, error }] = useNftMarketplaceLazyQuery();
+  const [queryNft, { data, loading, called, refetch, error }] = useNftMarketplaceLazyQuery();
   const [queryNftActivity, activityContext] = useNftActivityLazyQuery();
-  const loading = true;
 
   useEffect(() => {
     if (!data?.nft?.mintAddress) return;
@@ -324,7 +323,6 @@ export default function NftByAddress({
                             alt={nft.collection.name}
                             src={nft?.collection?.image}
                           />
-                          {/* <Avatar address={nft?.collection?.address} /> */}
                           <span>{nft.collection.name}</span>
                         </a>
                       </Link>
