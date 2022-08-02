@@ -30,27 +30,22 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
 
   let containerDisplayClasses: string | undefined;
   let buttonDisplayBasedTextClasses: string;
-  let arrowDownDisplayClasses: string;
-  let arrowUpDisplayClasses: string;
+  let arrowDownDisplayClasses: string = 'block';
+
   let itemContainerDisplayClasses: string;
   if (!isTouch) {
     containerDisplayClasses = 'group';
     buttonDisplayBasedTextClasses =
       'text-gray-300 hover:text-white focus:text-white group-hover:text-white group-focus:text-white';
-    arrowDownDisplayClasses = forceHide ? 'block' : 'block group-hover:hidden group-focus:hidden';
-    arrowUpDisplayClasses = forceHide ? 'hidden' : 'hidden group-hover:block group-focus:block';
     itemContainerDisplayClasses = forceHide
       ? 'hidden'
       : 'hidden group-hover:block group-focus:block';
   } else if (isTouchAndShowItems) {
     buttonDisplayBasedTextClasses = 'text-white group-focus:text-white';
     arrowDownDisplayClasses = forceHide ? 'block' : 'hidden group-focus:block';
-    arrowUpDisplayClasses = forceHide ? 'hidden' : 'block group-focus:hidden';
     itemContainerDisplayClasses = forceHide ? 'hidden' : 'block group-focus:block';
   } else {
     buttonDisplayBasedTextClasses = 'text-gray-300 group-focus:text-white';
-    arrowDownDisplayClasses = 'block';
-    arrowUpDisplayClasses = 'hidden';
     itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-focus:block';
   }
 
@@ -63,7 +58,7 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
 
   return (
     <div
-      className={clsx('relative inline-block px-2', containerDisplayClasses, props.className)}
+      className={clsx('group relative inline-block px-2', containerDisplayClasses, props.className)}
       // setTimeout is a hack to allow the click to propagate to the menu item before closing
       onBlur={() => setTimeout(() => setIsTouchAndShowItems(false), 50)}
     >
@@ -75,8 +70,9 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
         onClick={onClickHeader}
       >
         {titleElement}
-        <ChevronDownIcon className={clsx('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
-        <ChevronUpIcon className={clsx('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
+        <ChevronDownIcon
+          className={clsx('ml-2 h-4 w-4 group-hover:rotate-180', arrowDownDisplayClasses)}
+        />
       </button>
       <ul
         className={clsx(
@@ -107,9 +103,10 @@ function Item(props: DropdownMenuItemProps): JSX.Element {
     <div
       onClick={props.onClick}
       className={clsx(
-        ['w-full', 'flex justify-between bg-gray-900 py-2 px-4'],
-        ['hover:cursor-pointer'],
-        ['transition-transform hover:bg-gray-800'],
+        'w-full',
+        'flex justify-between bg-gray-900 py-2 px-4',
+        'hover:cursor-pointer',
+        'transition-transform hover:bg-gray-800',
         props.className
       )}
     >

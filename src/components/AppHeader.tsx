@@ -142,7 +142,7 @@ function DiscoverMenu(): JSX.Element {
     return (
       <DropdownMenu.Item>
         <Link href={props.href}>
-          <a className={clsx('flex flex-row flex-nowrap items-center justify-start', 'text-lg')}>
+          <a className={clsx('flex flex-row flex-nowrap items-center justify-start text-lg')}>
             <props.icon className="mr-2 h-5 w-5" />
             <span>{props.title}</span>
           </a>
