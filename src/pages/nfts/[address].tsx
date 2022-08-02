@@ -47,7 +47,8 @@ import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 import Popover from '../../components/Popover';
 import { LightningBoltIcon, TagIcon } from '@heroicons/react/outline';
 
-interface AhListingMultiMarketplace extends AhListing {
+// TODO: update sdk to include marketplaceProgramAddress
+export interface AhListingMultiMarketplace extends AhListing {
   marketplaceProgramAddress?: string;
 }
 
@@ -424,7 +425,7 @@ export default function NftByAddress({
                       <div className={`flex items-center`}>
                         <Tag className={`mr-2`} />
                         <h3 className={` text-base font-medium text-gray-300`}>
-                          Not Listed {Boolean(otherListings) && `on Holaplex`}
+                          Not Listed {otherListings && otherListings.length > 0 && `on Holaplex`}
                         </h3>
                       </div>
                       {hasAddedOffer && (
@@ -476,10 +477,10 @@ export default function NftByAddress({
                     {Boolean(otherListings) &&
                       otherListings?.map((otherListing, i) => {
                         const auctionHouseInfo = AUCTION_HOUSE_ADDRESSES.find(
-                          (ah) => ah.address === otherListing.auctionHouse?.address.toString()
+                          (ah) => ah.address === otherListing?.auctionHouse?.address.toString()
                         ) ||
                           MARKETPLACE_PROGRAMS.find(
-                            (ah) => ah.address === otherListing.marketplaceProgramAddress.toString()
+                            (ah) => ah.address === otherListing?.marketplaceProgramAddress
                           ) || {
                             name: 'Unknown Marketplace',
                             address: null,
@@ -488,7 +489,7 @@ export default function NftByAddress({
                           };
                         return (
                           <div
-                            key={`listing-${otherListing.auctionHouse?.address}-${i}`}
+                            key={`listing-${otherListing?.auctionHouse?.address}-${i}`}
                             className={`mt-6 border-t border-gray-700 pt-6`}
                           >
                             {auctionHouseInfo.name === 'Unknown Marketplace' ? (
@@ -534,7 +535,8 @@ export default function NftByAddress({
                                         </Button>
                                       </a>
                                     </Link>
-                                    {auctionHouseInfo.link && otherListing.auctionHouse === null ? (
+                                    {auctionHouseInfo.link &&
+                                    otherListing?.auctionHouse === null ? (
                                       <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
                                         <a target={`_blank`}>
                                           <Button>View listing</Button>
