@@ -3059,6 +3059,10 @@ export type HomeQueryVariables = Exact<{
   featuredProfileLimit: Scalars['Int'];
   featuredBuyNowLimit: Scalars['Int'];
   feedEventsLimit: Scalars['Int'];
+  collectionsByVolumeStartDate: Scalars['DateTimeUtc'];
+  collectionsByVolumeEndDate: Scalars['DateTimeUtc'];
+  collectionsByMarketCapStartDate: Scalars['DateTimeUtc'];
+  collectionsByMarketCapEndDate: Scalars['DateTimeUtc'];
 }>;
 
 export type HomeQuery = {
@@ -6902,6 +6906,10 @@ export const HomeDocument = gql`
     $featuredProfileLimit: Int!
     $featuredBuyNowLimit: Int!
     $feedEventsLimit: Int!
+    $collectionsByVolumeStartDate: DateTimeUtc!
+    $collectionsByVolumeEndDate: DateTimeUtc!
+    $collectionsByMarketCapStartDate: DateTimeUtc!
+    $collectionsByMarketCapEndDate: DateTimeUtc!
   ) {
     feedEvents(
       wallet: "ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz"
@@ -6927,8 +6935,8 @@ export const HomeDocument = gql`
       }
     }
     collectionsFeaturedByVolume(
-      startDate: "2020-01-01T00:00:00Z"
-      endDate: "3000-01-01T00:00:00Z"
+      startDate: $collectionsByVolumeStartDate
+      endDate: $collectionsByVolumeEndDate
       limit: $featuredCollectionsLimit
       offset: 0
       orderDirection: DESC
@@ -6936,8 +6944,8 @@ export const HomeDocument = gql`
       ...CollectionPreview
     }
     collectionsFeaturedByMarketCap(
-      startDate: "2020-01-01T00:00:00Z"
-      endDate: "3000-01-01T00:00:00Z"
+      startDate: $collectionsByMarketCapStartDate
+      endDate: $collectionsByMarketCapEndDate
       limit: $featuredCollectionsLimit
       offset: 0
       orderDirection: DESC
@@ -6997,6 +7005,10 @@ export const HomeDocument = gql`
  *      featuredProfileLimit: // value for 'featuredProfileLimit'
  *      featuredBuyNowLimit: // value for 'featuredBuyNowLimit'
  *      feedEventsLimit: // value for 'feedEventsLimit'
+ *      collectionsByVolumeStartDate: // value for 'collectionsByVolumeStartDate'
+ *      collectionsByVolumeEndDate: // value for 'collectionsByVolumeEndDate'
+ *      collectionsByMarketCapStartDate: // value for 'collectionsByMarketCapStartDate'
+ *      collectionsByMarketCapEndDate: // value for 'collectionsByMarketCapEndDate'
  *   },
  * });
  */

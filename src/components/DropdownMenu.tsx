@@ -63,12 +63,12 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
 
   return (
     <div
-      className={clsx('relative inline-block', containerDisplayClasses, props.className)}
+      className={clsx('relative inline-block px-2', containerDisplayClasses, props.className)}
       // setTimeout is a hack to allow the click to propagate to the menu item before closing
       onBlur={() => setTimeout(() => setIsTouchAndShowItems(false), 50)}
     >
       <button
-        className={clsx('flex flex-row flex-nowrap items-center justify-center', [
+        className={clsx('flex w-full flex-row flex-nowrap items-center justify-between', [
           'text-lg font-medium',
           buttonDisplayBasedTextClasses,
         ])}
@@ -78,11 +78,10 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
         <ChevronDownIcon className={clsx('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
         <ChevronUpIcon className={clsx('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
       </button>
-
       <ul
         className={clsx(
           itemContainerDisplayClasses,
-          'absolute left-1/2 z-20 -translate-x-1/2',
+          'w-min-full absolute left-0 z-20 bg-gray-900 py-4',
           'list-none overflow-clip',
           'rounded-b-lg shadow-lg shadow-black'
         )}
@@ -108,8 +107,8 @@ function Item(props: DropdownMenuItemProps): JSX.Element {
     <div
       onClick={props.onClick}
       className={clsx(
-        ['w-full', 'bg-gray-900'],
-        ['hover:bg-gray-700 focus:bg-gray-700', 'hover:cursor-pointer'],
+        ['w-full', 'flex justify-between bg-gray-900 py-2 px-4'],
+        ['hover:cursor-pointer'],
         props.className
       )}
     >
