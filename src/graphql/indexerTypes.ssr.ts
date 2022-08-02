@@ -4091,6 +4091,23 @@ export type OffersPageQuery = {
   }>;
 };
 
+export type SubdomainCheckQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+}>;
+
+export type SubdomainCheckQuery = {
+  __typename?: 'QueryRoot';
+  marketplace?: {
+    __typename?: 'Marketplace';
+    subdomain: string;
+    name: string;
+    description: string;
+    logoUrl: string;
+    bannerUrl: string;
+    ownerAddress: string;
+  } | null;
+};
+
 export type NftActivityQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -6756,6 +6773,18 @@ export const OffersPageDocument = gql`
     }
   }
 `;
+export const SubdomainCheckDocument = gql`
+  query subdomainCheck($subdomain: String!) {
+    marketplace(subdomain: $subdomain) {
+      subdomain
+      name
+      description
+      logoUrl
+      bannerUrl
+      ownerAddress
+    }
+  }
+`;
 export const NftActivityDocument = gql`
   query nftActivity($address: String!) {
     nftByMintAddress(address: $address) {
@@ -7460,6 +7489,20 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
             ...wrappedRequestHeaders,
           }),
         'offersPage',
+        'query'
+      );
+    },
+    subdomainCheck(
+      variables: SubdomainCheckQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<SubdomainCheckQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<SubdomainCheckQuery>(SubdomainCheckDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'subdomainCheck',
         'query'
       );
     },
