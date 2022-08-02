@@ -308,26 +308,26 @@ export default function NftByAddress({
                       )}
                     </ul>
                   </div>
+                  {nft?.collection?.address && (
+                    <div
+                      className={clsx('mt-10 flex max-w-fit flex-col sm:mt-0', loading && 'hidden')}
+                    >
+                      <div className="label mb-4 font-medium text-gray-300 sm:self-end">
+                        Collection
+                      </div>
 
-                  <div
-                    className={clsx('mt-10 flex max-w-fit flex-col sm:mt-0', loading && 'hidden')}
-                  >
-                    <div className="label mb-4 font-medium text-gray-300 sm:self-end">
-                      Collection
-                    </div>
-                    {nft?.collection?.address && (
                       <Link href={`/collections/${nft?.collection?.address}`}>
                         <a className="flex  items-center space-x-2 rounded-md py-3 pl-2 pr-4  shadow-2xl shadow-black">
                           <img
-                            className="h-8 w-8 rounded-md"
+                            className="h-8 w-8 rounded-md object-cover"
                             alt={nft.collection.name}
                             src={nft?.collection?.image}
                           />
                           <span>{nft.collection.name}</span>
                         </a>
                       </Link>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
