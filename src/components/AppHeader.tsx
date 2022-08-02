@@ -26,14 +26,7 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader() {
   const router = useRouter();
 
-  const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
-    connecting,
-    disconnecting,
-  } = useWallet();
+  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
   const hasWalletTypeSelected =
     userWallet?.readyState === WalletReadyState.Installed ||
     userWallet?.readyState === WalletReadyState.Loadable;
@@ -149,12 +142,7 @@ function DiscoverMenu(): JSX.Element {
     return (
       <DropdownMenu.Item>
         <Link href={props.href}>
-          <a
-            className={clsx(
-              'flex flex-row flex-nowrap items-center justify-start',
-              'text-lg'
-            )}
-          >
+          <a className={clsx('flex flex-row flex-nowrap items-center justify-start', 'text-lg')}>
             <props.icon className="mr-2 h-5 w-5" />
             <span>{props.title}</span>
           </a>

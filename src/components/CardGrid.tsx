@@ -54,7 +54,7 @@ export function CardGridWithHeader<T, F = null>(props: CardGridWithHeaderProps<T
 
   return (
     <div className="w-full space-y-4 text-base">
-      <div className="sticky top-0 z-40 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
+      <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
         <div className={clsx(['flex space-x-4', 'lg:justify-end'], 'w-full px-6', 'md:px-20')}>
           {props.filters && (
             <FiltersSection.FilterIcon
