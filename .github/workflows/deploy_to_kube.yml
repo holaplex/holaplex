@@ -41,7 +41,7 @@ jobs:
             indexer_endpoint="https://api.holaplex.com/"
             node_env=production
           else
-            graphql_endpoint="https://graph-test.holaplex.com/v1"
+            graphql_endpoint="https://gcache.dev.holaplex.tools"
             indexer_endpoint="https://metaplex-indexer-staging.herokuapp.com/"
             node_env=development
           fi
@@ -77,7 +77,7 @@ jobs:
             indexer_endpoint="https://api.holaplex.com/"
             node_env=production
           else
-            graphql_endpoint="https://graph-test.holaplex.com/v1"
+            graphql_endpoint="https://gcache.dev.holaplex.tools/v1"
             indexer_endpoint="https://metaplex-indexer-staging.herokuapp.com/"
             node_env=development
           fi

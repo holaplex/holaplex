@@ -1,5 +1,9 @@
-fragment CollectionPreview on Nft {
-  mintAddress
-  name
-  image
+fragment CollectionPreview on Collection {
+  floorPrice
+  nftCount
+  nft {
+    mintAddress
+    name
+    image
+  }
 }

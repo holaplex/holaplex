@@ -1,4 +1,11 @@
-import { PublicKey, PublicKeyInitData, TransactionInstruction } from '@solana/web3.js';
+import {
+  Connection,
+  PublicKey,
+  PublicKeyInitData,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from '@solana/web3.js';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Wallet } from '@metaplex/js';
 import { AuctionHouseProgram } from '@holaplex/mpl-auction-house';
@@ -6,6 +13,7 @@ import { AuctionHouseProgram } from '@holaplex/mpl-auction-house';
 const { createCreateAuctionHouseInstruction } = AuctionHouseProgram.instructions;
 
 interface CreateAuctionHouseParams {
+  connection: Connection;
   wallet: Wallet;
   sellerFeeBasisPoints: number;
   canChangeSalePrice?: boolean;
@@ -19,6 +27,7 @@ export const createAuctionHouse = async (
   params: CreateAuctionHouseParams
 ): Promise<TransactionInstruction> => {
   const {
+    connection,
     wallet,
     sellerFeeBasisPoints,
     canChangeSalePrice = false,

@@ -2,7 +2,7 @@ import { getPFPFromPublicKey } from '@/modules/utils/image';
 import Link from 'next/link';
 import Image from 'next/image';
 import styled, { css } from 'styled-components';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { FC } from 'react';
 import { WalletProfile } from '@/views/profiles/follow.utils';
 
@@ -21,7 +21,7 @@ export const FollowerBubbleImage: FC<FollowBubbleImageProps> = ({ isFirst, image
   return (
     <Link href={`/profiles/${address as string}/nfts`} passHref>
       <a
-        className={cx({
+        className={clsx({
           block: !isFirst,
         })}
       >
@@ -41,7 +41,7 @@ export const FollowerBubble: FC<FollowerBubbleProps> = ({ isFirst, follower }) =
   return (
     <Link href={`/profiles/${follower.address as string}/nfts`} passHref>
       <a
-        className={cx({
+        className={clsx({
           block: !isFirst,
         })}
       >

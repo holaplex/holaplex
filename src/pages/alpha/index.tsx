@@ -19,7 +19,7 @@ import {
 import Footer, { SmallFooter } from 'src/views/home/Footer';
 import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
 import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { Button5 } from 'src/components/Button2';
 import EmptyFeedCTA from 'src/views/alpha/EmptyFeedCTA';
@@ -84,9 +84,7 @@ const AlphaPage = ({ address }: { address: string }) => {
   // will be moved outside of the component eventually
 
   // TODO consider moving this to useHolaplexInfiniteScrollQuery from useApolloQuery.ts
-  const [feedItems, feedAttrs] = useMemo(() => {
-    const feedAttrs: FeedCardAttributes[] = [];
-
+  const feedItems = useMemo(() => {
     function getFeedItems(feedEvents: FeedQuery['feedEvents']): FeedItem[] {
       let skipIndex = 0;
       return feedEvents.reduce((feedItems, event, i) => {
@@ -106,7 +104,6 @@ const AlphaPage = ({ address }: { address: string }) => {
         }
         // for now we do no aggregation, simply make sure events are valid
         const attrs = generateFeedCardAttributes(event);
-        feedAttrs.push(attrs);
 
         if (skipIndex > i) return feedItems;
         // const cur = feedEvents[i];
@@ -202,7 +199,7 @@ const AlphaPage = ({ address }: { address: string }) => {
 
     const feedItems = getFeedItems(feedEvents);
 
-    return [feedItems, feedAttrs];
+    return feedItems;
   }, [feedEvents]);
 
   // Effect to check connection 2 seconds after loading
@@ -404,7 +401,7 @@ function BackToTopBtn() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
-      className={classNames(
+      className={clsx(
         'fixed right-8 bottom-8 rounded-full bg-gray-900 p-4',
         scrollY === 0 && 'hidden'
       )}

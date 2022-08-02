@@ -1,51 +1,42 @@
 import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
-import {
-  FilterIcon,
-  ArrowLeftIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/outline';
-import classNames from 'classnames';
+import { FilterIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline';
+import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 
 export interface FiltersSectionProps {
   children: JSX.Element | JSX.Element[];
+  collapsed: boolean;
+  className?: string;
 }
 
 export default function FiltersSection(props: FiltersSectionProps): JSX.Element {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
-
   return (
-    <div className={classNames('flex flex-col justify-center', [{ 'basis-[320px]': !collapsed }])}>
-      <div title="Show filters">
-        <FilterIcon
-          className={classNames('mr-2 h-6 w-6', { hidden: !collapsed }, 'hover:cursor-pointer')}
-          onClick={() => setCollapsed(false)}
-        />
-      </div>
-      <div className={classNames({ hidden: collapsed }, ['mr-2', 'md:mr-10'])}>
-        <div className={classNames('flex flex-col space-y-4')}>
-          <span
-            className={classNames(
-              'flex w-full flex-row flex-nowrap items-center justify-between space-x-4 p-4',
-              'border-b border-b-gray-800'
-            )}
-          >
-            <span className="text-2xl">Filters</span>
-            <div title="Hide filters">
-              <ArrowLeftIcon
-                onClick={() => setCollapsed(true)}
-                className={classNames('h-6 w-6', { hidden: collapsed }, 'hover:cursor-pointer')}
-              />
-            </div>
-          </span>
-          {props.children}
-        </div>
+    <div
+      className={clsx(
+        'flex w-[280px] flex-col justify-start',
+        { hidden: props.collapsed },
+        props.className
+      )}
+    >
+      <div className="mr-2 md:mr-10">
+        <div className={clsx('flex flex-col space-y-4')}>{props.children}</div>
       </div>
     </div>
   );
 }
 
+interface FilterIconProps {
+  collapsed: boolean;
+  onClick: () => void;
+}
+
+FiltersSection.FilterIcon = function FilterIconButton(props: FilterIconProps) {
+  return (
+    <button onClick={props.onClick} className="rounded-lg p-2 transition-transform hover:scale-105">
+      <FilterIcon className="w-8 hover:cursor-pointer" />
+    </button>
+  );
+};
 export interface FilterOption<T> {
   value: T;
   label: string;
@@ -111,22 +102,21 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
   return (
     <fieldset>
       <legend
-        className={classNames(
+        className={clsx(
           'flex flex-row flex-nowrap items-center justify-between p-4',
           'text-base',
           'hover:cursor-pointer hover:bg-gray-700 focus:bg-gray-700'
         )}
         onClick={() => setCollapsed(!collapsed)}
       >
-        {props.title}{' '}
-        <ChevronDownIcon className={classNames('ml-2 h-4 w-4', { hidden: !collapsed })} />
-        <ChevronUpIcon className={classNames('ml-2 h-4 w-4', { hidden: collapsed })} />
+        {props.title} <ChevronDownIcon className={clsx('ml-2 h-4 w-4', { hidden: !collapsed })} />
+        <ChevronUpIcon className={clsx('ml-2 h-4 w-4', { hidden: collapsed })} />
       </legend>
 
       {/* to "collapse", wrap the filter options in a div that with overflow hidden and then move the options up */}
       <div className="overflow-hidden">
         <div
-          className={classNames(
+          className={clsx(
             { '-translate-y-full': collapsed },
             'transition-all duration-300 ease-in'
           )}
@@ -149,7 +139,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
     return (
       <div
         key={id}
-        className={classNames(
+        className={clsx(
           'flex flex-row flex-nowrap items-center space-x-4 p-4',
           'w-full',
           'hover:underline'
@@ -157,7 +147,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
       >
         <input
           onChange={() => onSelect(option)}
-          className={classNames('h-3 w-3', [
+          className={clsx('h-3 w-3', [
             '!bg-gray-800 !outline !outline-0 !outline-gray-500 !ring-1 !ring-gray-500 !ring-offset-0 !ring-offset-transparent',
             'checked:!bg-white',
           ])}
@@ -166,10 +156,10 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
           id={id}
           checked={checked}
         />
-        <label htmlFor={id} className={classNames('flex-grow', 'text-base')}>
+        <label htmlFor={id} className={clsx('flex-grow', 'cursor-pointer text-base')}>
           {option.label}
         </label>
-        <span className={classNames('text-base')}>{option.numberOfItems?.toLocaleString()}</span>
+        <span className={clsx('text-base')}>{option.numberOfItems?.toLocaleString()}</span>
       </div>
     );
   }

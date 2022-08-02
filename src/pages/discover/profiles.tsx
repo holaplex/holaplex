@@ -13,8 +13,8 @@ import { DiscoverPageProps, DiscoverLayout } from '@/views/discover/DiscoverLayo
 import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
-const INITIAL_FETCH: number = 24;
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
+const INITIAL_FETCH: number = 30;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 6;
 
 enum TypeOption {
   ALL = 'all',
@@ -62,7 +62,6 @@ export default function DiscoverProfilesTab(): JSX.Element {
   return (
     <CardGridWithHeader<ProfilePreviewProps>
       cardContext={{
-        bigGridClassNameOverride: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
         noDataFallback: <div className="flex justify-center p-4">No matching profiles</div>,
         cardCreator: (data) => <ProfilePreviewCard {...data} />,
         loadingCardCreator: () => <ProfilePreviewLoadingCard />,

@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useMemo, useRef } from 'react';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { useOutsideAlerter } from '@/hooks/useOutsideAlerter';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { getPFPFromPublicKey } from '@/modules/utils/image';
@@ -33,7 +33,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
   return (
     <div
       role="dialog"
-      className={cx(
+      className={clsx(
         'fixed top-0 left-0 right-0 bottom-0 z-20',
         'bg-gray-800 bg-opacity-40 backdrop-blur-lg ',
         'transition-opacity duration-500 ease-in-out',
@@ -56,7 +56,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
         <div id="tabs" className="mt-4 flex h-14">
           <button
             onClick={() => setVisibility('followers')}
-            className={cx(
+            className={clsx(
               'flex flex-1 items-center justify-center border-b-2 text-base font-medium leading-3',
               {
                 'border-b-white text-white': visibility === 'followers',
@@ -68,7 +68,7 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
           </button>
           <button
             onClick={() => setVisibility('following')}
-            className={cx(
+            className={clsx(
               'flex flex-1 items-center justify-center border-b-2 text-base font-medium leading-3',
               {
                 'border-b-white text-white': visibility === 'following',
@@ -139,7 +139,7 @@ export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
           />
           <Link href={`/profiles/${user.address}`} passHref>
             <a
-              className={cx('ml-3 text-base font-medium leading-6 text-white', {
+              className={clsx('ml-3 text-base font-medium leading-6 text-white', {
                 'font-sans': userHasTwitter,
                 'font-mono': !userHasTwitter,
               })}

@@ -14,7 +14,7 @@ import { maybeCDN, imgOpt } from 'src/lib/utils';
 import AuctionCountdown from './Countdown';
 import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
 import { FilterOptions, SortOptions } from '@/views/home/home.interfaces';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
@@ -40,7 +40,7 @@ export function SkeletonListing() {
         <LoadingLine $height="42px" />
       </div>
       <div
-        className={classNames(
+        className={clsx(
           'flex items-center  rounded-b-md px-4 py-4',
           'space-x-8 border border-gray-800'
         )}
@@ -153,7 +153,7 @@ export function ListingPreview({
   return (
     <div
       ref={cardRef}
-      className={classNames(
+      className={clsx(
         'rounded-t-lg pt-1 shadow-md shadow-black duration-300',
         meta.list === 'current-listings' ? 'sm:hover:scale-[1.02] sm:hover:shadow-xl' : ''
       )}
@@ -167,7 +167,7 @@ export function ListingPreview({
       }}
     >
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
-        <div className={classNames('aspect-square w-full', { hidden: !imgLoaded })}>
+        <div className={clsx('aspect-square w-full', { hidden: !imgLoaded })}>
           <NFTPreview
             className="aspect-square"
             $show={inView}
@@ -201,7 +201,7 @@ export function ListingPreview({
           />
         </div>
         <LoadingContainer
-          className={classNames('animate-pulse bg-gray-900', 'aspect-square w-full', {
+          className={clsx('animate-pulse bg-gray-900', 'aspect-square w-full', {
             hidden: imgLoaded,
           })}
         />
@@ -273,7 +273,7 @@ export function ListingPreview({
       </div>
       <a href={listingHref} rel="nofollow noreferrer" target="_blank" className="">
         <div
-          className={classNames(
+          className={clsx(
             'flex items-center justify-between rounded-b-md px-4 py-4',
             isAuction ? 'bg-gray-800' : 'border border-gray-800 '
           )}

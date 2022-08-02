@@ -213,12 +213,11 @@ const ProfileDisplayName: FC = () => {
   );
 };
 
-export const PFP_SIZE = 100;
-
 const Banner = styled.div`
   width: 100%;
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   ${mq('lg')} {
     background-size: 100%;
   }

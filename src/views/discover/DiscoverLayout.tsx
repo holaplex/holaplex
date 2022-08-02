@@ -1,6 +1,6 @@
-import FiltersSection, { FilterProps } from '@/components/Filters';
 import Tab from '@/components/Tab';
-import classNames from 'classnames';
+import { CollectionIcon, PhotographIcon, UsersIcon } from '@heroicons/react/outline';
+import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -13,7 +13,6 @@ enum TabRoute {
 export interface DiscoverPageProps {}
 
 export interface DiscoverLayoutProps<T> {
-  filters?: FilterProps<T>[];
   content: JSX.Element;
 }
 
@@ -21,28 +20,26 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
   const router = useRouter();
 
   return (
-    <div className={classNames('mt-10', ['flex flex-col px-6', 'md:flex-row md:px-20'])}>
-      {props.filters && (
-        <div className={classNames('mb-10', 'md:sticky md:top-0 md:mb-0 md:h-screen')}>
-          <FiltersSection>
-            {props.filters.map((f) => (
-              <FiltersSection.Filter key={f.title} {...f} />
-            ))}
-          </FiltersSection>
-        </div>
-      )}
+    <div className={clsx('mt-10', ['flex flex-col', 'md:flex-row'])}>
       <div className="w-full">
-        <div className="flex space-x-1 p-1">
-          <Tab title="NFTs" selected={router.pathname === TabRoute.NFTS} url={TabRoute.NFTS} />
+        <div className="sticky flex space-x-1 p-1">
+          <Tab
+            title="NFTs"
+            selected={router.pathname === TabRoute.NFTS}
+            url={TabRoute.NFTS}
+            icon={PhotographIcon}
+          />
           <Tab
             title="Collections"
             selected={router.pathname === TabRoute.COLLECTIONS}
             url={TabRoute.COLLECTIONS}
+            icon={CollectionIcon}
           />
           <Tab
             title="Profiles"
             selected={router.pathname === TabRoute.PROFILES}
             url={TabRoute.PROFILES}
+            icon={UsersIcon}
           />
         </div>
         <MainContentSection>{props.content}</MainContentSection>

@@ -2,7 +2,7 @@ import { CollectionPreviewCardData } from '@/components/CollectionPreviewCard';
 import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
 import { QueryContext } from '@/hooks/useApolloQuery';
 import { IndexerSDK, Listing } from '@/modules/indexer';
-import { PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { HomeData } from 'src/pages';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -32,16 +32,23 @@ export function useHomeQueryWithTransforms(
     featuredBowNowLimit: number;
     feedEventsLimit: number;
     featuredAuctionsLimit: number;
+  },
+  timeIntervals: {
+    startDate: string;
+    endDate: string;
   }
 ): QueryContext<HomeData> {
   const queryContext = useHomeQuery({
-    //TODO add time window to featuredCollectionsByVolume and featuredCollectionsByMarketCap queries
     variables: {
       userWallet: userWallet,
       featuredCollectionsLimit: limits.featuredCollectionsLimit,
       featuredProfileLimit: limits.featuredProfileLimit,
       featuredBuyNowLimit: limits.featuredBowNowLimit,
       feedEventsLimit: limits.feedEventsLimit,
+      collectionsByMarketCapStartDate: timeIntervals.startDate,
+      collectionsByMarketCapEndDate: timeIntervals.endDate,
+      collectionsByVolumeStartDate: timeIntervals.startDate,
+      collectionsByVolumeEndDate: timeIntervals.endDate,
     },
   });
 
@@ -144,12 +151,11 @@ function transformFeaturedCollectionsByMarketCap(
 
 function transformCollectionPreview(data: CollectionPreviewFragment): CollectionPreviewCardData {
   return {
-    address: data.mintAddress,
-    imageUrl: data.image,
-    name: data.name,
-    //TODO fix when available in query
-    nftCount: 0,
-    floorPriceSol: 0,
+    address: data.nft.mintAddress,
+    imageUrl: data.nft.image,
+    name: data.nft.name,
+    nftCount: data.nftCount ?? 0,
+    floorPriceSol: (data.floorPrice ?? 0) / LAMPORTS_PER_SOL,
   };
 }
 

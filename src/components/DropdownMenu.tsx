@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useEffect, useCallback } from 'react';
 import { isTouchScreenOnly } from 'src/lib/utils';
 
@@ -30,27 +30,22 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
 
   let containerDisplayClasses: string | undefined;
   let buttonDisplayBasedTextClasses: string;
-  let arrowDownDisplayClasses: string;
-  let arrowUpDisplayClasses: string;
+  let arrowDownDisplayClasses: string = 'block';
+
   let itemContainerDisplayClasses: string;
   if (!isTouch) {
     containerDisplayClasses = 'group';
     buttonDisplayBasedTextClasses =
       'text-gray-300 hover:text-white focus:text-white group-hover:text-white group-focus:text-white';
-    arrowDownDisplayClasses = forceHide ? 'block' : 'block group-hover:hidden group-focus:hidden';
-    arrowUpDisplayClasses = forceHide ? 'hidden' : 'hidden group-hover:block group-focus:block';
     itemContainerDisplayClasses = forceHide
       ? 'hidden'
       : 'hidden group-hover:block group-focus:block';
   } else if (isTouchAndShowItems) {
     buttonDisplayBasedTextClasses = 'text-white group-focus:text-white';
     arrowDownDisplayClasses = forceHide ? 'block' : 'hidden group-focus:block';
-    arrowUpDisplayClasses = forceHide ? 'hidden' : 'block group-focus:hidden';
     itemContainerDisplayClasses = forceHide ? 'hidden' : 'block group-focus:block';
   } else {
     buttonDisplayBasedTextClasses = 'text-gray-300 group-focus:text-white';
-    arrowDownDisplayClasses = 'block';
-    arrowUpDisplayClasses = 'hidden';
     itemContainerDisplayClasses = forceHide ? 'hidden' : 'hidden group-focus:block';
   }
 
@@ -63,26 +58,26 @@ export default function DropdownMenu(props: DropdownMenuProps): JSX.Element {
 
   return (
     <div
-      className={classNames('relative inline-block', containerDisplayClasses, props.className)}
+      className={clsx('group relative inline-block px-2', containerDisplayClasses, props.className)}
       // setTimeout is a hack to allow the click to propagate to the menu item before closing
       onBlur={() => setTimeout(() => setIsTouchAndShowItems(false), 50)}
     >
       <button
-        className={classNames('flex flex-row flex-nowrap items-center justify-center', [
+        className={clsx('flex w-full flex-row flex-nowrap items-center justify-between', [
           'text-lg font-medium',
           buttonDisplayBasedTextClasses,
         ])}
         onClick={onClickHeader}
       >
         {titleElement}
-        <ChevronDownIcon className={classNames('ml-2 h-4 w-4', arrowDownDisplayClasses)} />
-        <ChevronUpIcon className={classNames('ml-2 h-4 w-4', arrowUpDisplayClasses)} />
+        <ChevronDownIcon
+          className={clsx('ml-2 h-4 w-4 group-hover:rotate-180', arrowDownDisplayClasses)}
+        />
       </button>
-
       <ul
-        className={classNames(
+        className={clsx(
           itemContainerDisplayClasses,
-          'absolute left-1/2 z-20 -translate-x-1/2',
+          'w-min-full absolute left-0 z-20 bg-gray-900 py-4',
           'list-none overflow-clip',
           'rounded-b-lg shadow-lg shadow-black'
         )}
@@ -107,9 +102,11 @@ function Item(props: DropdownMenuItemProps): JSX.Element {
   return (
     <div
       onClick={props.onClick}
-      className={classNames(
-        ['w-full', 'bg-gray-900'],
-        ['hover:bg-gray-700 focus:bg-gray-700', 'hover:cursor-pointer'],
+      className={clsx(
+        'w-full',
+        'flex justify-between bg-gray-900 py-2 px-4',
+        'hover:cursor-pointer',
+        'transition-transform hover:bg-gray-800',
         props.className
       )}
     >

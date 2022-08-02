@@ -4,7 +4,7 @@ import { HOLAPLEX_MARKETPLACE_SUBDOMAIN } from 'src/views/_global/holaplexConsta
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, shortenHandle } from '@/modules/utils/string';
 import { Marketplace } from '@holaplex/marketplace-js-sdk';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -86,7 +86,7 @@ export function FeedCard(props: {
   return (
     <div
       id={props.event.feedEventId}
-      className={classNames('group relative transition-all  hover:scale-[1.02] ', props.className)}
+      className={clsx('group relative transition-all  hover:scale-[1.02] ', props.className)}
     >
       <Link href={'/nfts/' + attrs.nft.address} passHref>
         <a>
@@ -170,7 +170,7 @@ function FollowCard(props: {
   return (
     <div
       id={props.event.feedEventId}
-      className={classNames(
+      className={clsx(
         'flex flex-wrap items-center rounded-3xl bg-gray-900 p-4 shadow-2xl shadow-black md:rounded-full',
         false && 'hover:scale-[1.02]',
         props.className
@@ -333,7 +333,7 @@ function FeedActionBanner(props: {
 
   return (
     <div
-      className={classNames(
+      className={clsx(
         'flex w-full flex-col flex-nowrap items-center justify-between bg-gray-900/40  p-2 backdrop-blur-[200px] transition-all group-hover:bg-gray-900 sm:flex-row ',
         props.options?.hideAction ? 'rounded-full' : 'rounded-3xl sm:rounded-full'
       )}
@@ -531,7 +531,7 @@ export function ProfilePFP({ user }: { user: User }) {
     <Link href={'/profiles/' + user.address + '/nfts'} passHref>
       <a target="_blank">
         <img
-          className={classNames('rounded-full', 'h-10 w-10 flex-shrink-0')}
+          className={clsx('rounded-full', 'h-10 w-10 flex-shrink-0')}
           src={user?.profile?.profileImageUrlLowres || getPFPFromPublicKey(user.address)}
           alt={'profile picture for ' + user.profile?.handle || user.address}
         />
