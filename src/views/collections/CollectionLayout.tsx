@@ -163,6 +163,9 @@ export default function CollectionLayout({
                     </span>
 
                     <AvatarIcons
+                      showFollow
+                      showFollowTitle="Followed by"
+                      source="modalFollowers"
                       profiles={collectionFollowers.map((f) => ({
                         address: f.from.address,
                         data: {

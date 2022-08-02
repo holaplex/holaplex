@@ -26,8 +26,10 @@ export default function CollectionAboutPage(props: CollectionPageProps) {
               key={cc.address}
               source="collectionCreators"
               user={{
-                address: cc.address,
-                profile: cc.profile,
+                walletAddress: cc.address,
+                profileImage:
+                  cc.profile?.profileImageUrlLowres || cc.profile?.profileImageUrlHighres,
+                twitterHandle: cc.profile?.handle,
               }}
             />
           ))}

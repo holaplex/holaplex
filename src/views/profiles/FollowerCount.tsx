@@ -194,8 +194,9 @@ export const CollectedBy: FC<CollectedByProps> = ({ onOtherCollectedClick }) => 
                 key={p.walletAddress}
                 source={'collectedBy'}
                 user={{
-                  address: p.walletAddress,
-                  profile: p,
+                  walletAddress: p.walletAddress!,
+                  profileImage: p.profileImageUrlLowres || p.profileImageUrlHighres,
+                  twitterHandle: p.handle,
                 }}
               />
             ))}

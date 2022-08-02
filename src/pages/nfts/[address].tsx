@@ -321,7 +321,12 @@ export default function NftByAddress({
                       </Link>
                     ) : (
                       <div>
-                        <AvatarIcons profiles={nft?.creators || []} />
+                        <AvatarIcons
+                          showFollow
+                          showFollowTitle="Creators"
+                          source="nftCreators"
+                          profiles={nft?.creators || []}
+                        />
                       </div>
                     )}
                   </ul>
