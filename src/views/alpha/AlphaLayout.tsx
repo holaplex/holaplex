@@ -1,6 +1,6 @@
 import WhoToFollowList from 'src/views/alpha/WhoToFollowList';
 import Footer, { SmallFooter } from 'src/views/home/Footer';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { EmptyStateCTA } from 'src/views/alpha/EmptyStateCTA';
@@ -16,7 +16,7 @@ export default function AlphaLayout({ children }: { children: any }) {
   const Tab = (props: { url: string; selected: boolean; title: string }) => (
     <Link href={props.url} passHref>
       <a
-        className={classNames(
+        className={clsx(
           'w-full  py-2.5 text-center text-sm font-medium text-white ',
           props.selected ? 'border-b border-white' : 'text-gray-300  hover:text-white'
         )}
@@ -107,7 +107,7 @@ function BackToTopBtn() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
-      className={classNames(
+      className={clsx(
         'fixed right-8 bottom-8 rounded-full bg-gray-900 p-4',
         scrollY === 0 && 'hidden'
       )}

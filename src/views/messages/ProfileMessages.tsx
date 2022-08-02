@@ -6,7 +6,7 @@ import React, { useState, useEffect, useMemo, useRef, RefObject } from 'react';
 import * as web3 from '@solana/web3.js';
 import { Mailbox, MessageAccount } from '@usedispatch/client';
 import { ProfilePFP } from 'src/views/alpha/FeedCard';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useConnectedWalletProfile } from 'src/views/_global/ConnectedWalletProfileProvider';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { User } from '../alpha/feed.utils';
@@ -316,7 +316,7 @@ function Contact(props: { selected: boolean; onSelect?: () => void; user: User }
   return (
     <div
       id={props.user.address}
-      className={classNames(
+      className={clsx(
         ' flex cursor-pointer items-center space-x-2 rounded-md px-2 py-2',
         props.selected && 'bg-gray-800'
       )}
@@ -349,7 +349,7 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
     : null;
 
   const [firstMsg, ...rest] = props.messageBlock;
-  const msgBaseClasses = classNames(
+  const msgBaseClasses = clsx(
     'px-6 py-4 max-w-prose rounded-[40px] ',
     msgIsForMe ? 'bg-gray-800 text-white ml-4' : ' text-black mr-4',
     iAmSender && 'bg-colorful-gradient bg-repeat-round '
@@ -358,17 +358,17 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
   const lastMsgIndex = rest.length - 1;
 
   return (
-    <div className={classNames('flex items-end ', iAmSender ? 'flex-row-reverse' : '')}>
+    <div className={clsx('flex items-end ', iAmSender ? 'flex-row-reverse' : '')}>
       <ProfilePFP user={{ address: sender }} />
       <div
-        className={classNames(
+        className={clsx(
           'flex flex-col  space-y-2   text-white opacity-90',
           msgIsForMe ? 'items-start' : 'items-end '
         )}
       >
         {ts && <div className="ml-6 text-xs text-gray-300">{timestamp}</div>}
         <div
-          className={classNames(
+          className={clsx(
             msgBaseClasses,
 
             msgIsForMe ? 'rounded-bl-none' : 'rounded-br-none'
@@ -379,7 +379,7 @@ function MessageBlock(props: { myPubkey: string; messageBlock: MessageAccount[] 
         {rest.map((msg, i) => (
           <div
             key={msg.messageId + msg.data.body}
-            className={classNames(
+            className={clsx(
               msgBaseClasses,
               i !== lastMsgIndex ? (msgIsForMe ? 'rounded-l-none' : 'rounded-r-none') : null,
               i === lastMsgIndex ? (msgIsForMe ? 'rounded-tl-none' : 'rounded-tr-none') : null

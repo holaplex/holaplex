@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { shortenAddress } from '@/modules/utils/string';
 import Link from 'next/link';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Avatar } from 'src/components/Avatar';
 
 interface ProfileSearchItemProps {
@@ -23,7 +23,7 @@ export const ProfileSearchItem: FC<ProfileSearchItemProps> = ({
     <Link href={`/profiles/${address}`}>
       <a
         onClick={onClick}
-        className={classNames(
+        className={clsx(
           `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
           active && 'bg-gray-800'
         )}
@@ -63,7 +63,7 @@ export const NFTSearchItem: FC<NFTSearchItemProps> = ({
     <Link href={`/nfts/${address}`}>
       <a
         onClick={onClick}
-        className={classNames(
+        className={clsx(
           `flex flex-row items-center justify-between rounded-lg p-4 hover:bg-gray-800`,
           active && 'bg-gray-800'
         )}

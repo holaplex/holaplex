@@ -3,7 +3,7 @@ import { showFirstAndLastFour } from '@/modules/utils/string';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SolIcon } from './Price';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { DateTime } from 'luxon';
 import { imgOpt, RUST_ISO_UTC_DATE_FORMAT } from 'src/lib/utils';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
@@ -140,7 +140,7 @@ export function ActivityCard(props: {
     <div className="relative flex flex-wrap items-center  rounded-md border border-gray-800 p-4 font-sans text-base transition-transform duration-300 hover:scale-[1.02] md:flex-nowrap">
       <div className="flex items-center">
         <div
-          className={classNames(
+          className={clsx(
             'relative mr-4 flex  h-20 w-20  flex-shrink-0 items-center text-gray-300',
             thumbnailType === 'DEFAULT' ? 'rounded-md' : 'rounded-full'
           )}

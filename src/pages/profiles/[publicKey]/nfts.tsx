@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next';
 import { FC, useMemo, useState } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { OwnedNfTsQuery, useOwnedNfTsQuery } from '@/graphql/indexerTypes';
 import Link from 'next/link';
 import TextInput2 from 'src/components/TextInput2';
@@ -31,7 +31,6 @@ import { Avatar } from 'src/components/Avatar';
 import { InView } from 'react-intersection-observer';
 import { isEmpty, uniq } from 'ramda';
 import { TailSpin } from 'react-loader-spinner';
-import classNames from 'classnames';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import GridSelector, { GridSize } from '@/components/GridSelector';
@@ -125,10 +124,9 @@ export const NFTCard = ({
 
             <div className="flex items-center bg-gray-900 py-4">
               <p
-                className={classNames(
-                  'w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold',
-                  { hidden: !showName }
-                )}
+                className={clsx('w-max-fit m-0 mb-0 min-h-[28px] truncate text-lg font-bold', {
+                  hidden: !showName,
+                })}
               >
                 {nft.name}
               </p>
@@ -319,7 +317,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
   return (
     <>
       <div
-        className={cx(
+        className={clsx(
           'grid grid-cols-1 gap-6',
           gridView === '1x1'
             ? 'md:grid-cols-2'

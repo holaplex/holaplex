@@ -1,6 +1,6 @@
 import FiltersSection, { FilterProps } from '@/components/Filters';
 import Tab from '@/components/Tab';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -21,9 +21,9 @@ export function DiscoverLayout<T>(props: DiscoverLayoutProps<T> & DiscoverPagePr
   const router = useRouter();
 
   return (
-    <div className={classNames('mt-10', ['flex flex-col px-6', 'md:flex-row md:px-20'])}>
+    <div className={clsx('mt-10', ['flex flex-col px-6', 'md:flex-row md:px-20'])}>
       {props.filters && (
-        <div className={classNames('mb-10', 'md:sticky md:top-0 md:mb-0 md:h-screen')}>
+        <div className={clsx('mb-10', 'md:sticky md:top-0 md:mb-0 md:h-screen')}>
           <FiltersSection>
             {props.filters.map((f) => (
               <FiltersSection.Filter key={f.title} {...f} />

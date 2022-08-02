@@ -2,7 +2,7 @@ import { Component, FC, Fragment } from 'react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
 import { useRouter } from 'next/router';
-import cx from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { Tab } from '@headlessui/react';
 import { useProfileData } from 'src/views/profiles/ProfileDataProvider';
@@ -73,7 +73,7 @@ export const ProfileMenu: FC = () => {
               {({ selected }) => (
                 <button
                   onClick={() => router.push(tab.path)}
-                  className={cx(
+                  className={clsx(
                     'flex h-full w-40 flex-shrink-0 items-center justify-center md:w-1/5',
                     selected ? 'border-b-2 border-white' : 'text-gray-300'
                   )}

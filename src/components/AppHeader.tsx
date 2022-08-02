@@ -10,7 +10,7 @@ import { MobileMenu } from './MobileMenu';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import DialectNotificationsButton from '@/views/_global/DialectNotificationsButton';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Button5 } from './Button2';
 import {
   CollectionIcon,
@@ -87,7 +87,7 @@ export function AppHeader() {
               <Link href="/alpha" passHref>
                 <a
                   key="alpha"
-                  className={classNames(
+                  className={clsx(
                     'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
                     router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
                   )}
@@ -100,7 +100,7 @@ export function AppHeader() {
             <Link href="/nfts/new" passHref>
               <a
                 key="create"
-                className={classNames(
+                className={clsx(
                   'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
                   router.pathname === '/nfts/new' ? 'text-white' : 'text-gray-300'
                 )}
@@ -166,11 +166,7 @@ function DiscoverMenu(): JSX.Element {
       <DropdownMenu.Item>
         <Link href={props.href}>
           <a
-            className={classNames(
-              'flex flex-row flex-nowrap justify-start',
-              'space-x-4 p-4',
-              'text-lg'
-            )}
+            className={clsx('flex flex-row flex-nowrap justify-start', 'space-x-4 p-4', 'text-lg')}
           >
             <props.icon className="h-5 w-5" />
             <span>{props.title}</span>

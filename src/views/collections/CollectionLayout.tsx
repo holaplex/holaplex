@@ -7,7 +7,7 @@ import { ProfileHandle, ProfilePFP } from 'src/views/alpha/FeedCard';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 //@ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -219,7 +219,7 @@ const Tab = (props: { url: string; selected: boolean; title: string }) => (
   <Link href={props.url} passHref>
     {/* maybe use shallow in Link */}
     <a
-      className={classNames(
+      className={clsx(
         'w-full  border-b py-2.5 text-center text-sm font-medium text-white ',
         props.selected ? ' border-white' : 'border-gray-800  text-gray-300 hover:text-white'
       )}

@@ -1,7 +1,7 @@
 import { Menu, Popover, Transition } from '@headlessui/react';
 // @ts-ignore
 import FeatherIcon from 'feather-icons-react';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { Fragment, useEffect, useState } from 'react';
 
 function MoreDropdown({
@@ -31,7 +31,7 @@ function MoreDropdown({
       {({ open }) => (
         <>
           <Popover.Button
-            className={cx(
+            className={clsx(
               'flex h-10 w-10 items-center justify-center  rounded-full ',
               open ? 'bg-white' : '',
               triggerButtonExtraClassNames

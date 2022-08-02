@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 type ButtonType = 'primary' | 'secondary' | 'ghost' | 'text';
 
@@ -59,7 +59,7 @@ export function Button5({
       type={type}
       disabled={props.loading || disabled}
       onClick={onClick}
-      className={classNames(
+      className={clsx(
         'flex items-center justify-center transition-all',
         disabled ? BUTTON_DISABLED_CLASSES[props.v] : BUTTON_BASE_CLASSES[props.v],
         props.className
