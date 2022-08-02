@@ -31,7 +31,8 @@ export type FollowUnfollowSource =
   | 'collectedBy'
   | 'collectionPage'
   | 'collectionCreators'
-  | 'marketPlaceCreators';
+  | 'marketPlaceCreators'
+  | 'nftCreators';
 
 type FollowUnfollowButtonProps = {
   source: FollowUnfollowSource;

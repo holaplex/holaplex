@@ -71,6 +71,7 @@ export const AvatarIcons = ({
       </div>
 
       {source &&
+        typeof window !== 'undefined' &&
         ReactDom.createPortal(
           <Modal open={showFollowModal} short setOpen={setShowFollowModal}>
             <h4 className="mt-12 h-14 text-center text-base font-medium leading-3">
