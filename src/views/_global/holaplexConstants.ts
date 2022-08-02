@@ -25,4 +25,13 @@ export const AUCTION_HOUSE_ADDRESSES = [
   },
 ];
 
+export const MARKETPLACE_PROGRAMS = [
+  {
+    name: 'Magic Eden',
+    address: 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K',
+    logo: '/images/listings/magiceden.png',
+    link: 'https://magiceden.io/item-details/',
+  },
+];
+
 export const HOLAPLEX_MONITORING_PUBLIC_KEY = 'BpVYWaAPbv5vyeRxiX9PMsmAVJVoL2Lp4YtuRgjuhoZh';

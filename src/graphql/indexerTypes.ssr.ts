@@ -3673,6 +3673,7 @@ export type NftMarketplaceQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3785,6 +3786,7 @@ export type NftMarketplaceQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -6407,6 +6409,7 @@ export const NftMarketplaceDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6515,6 +6518,7 @@ export const NftMarketplaceDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt

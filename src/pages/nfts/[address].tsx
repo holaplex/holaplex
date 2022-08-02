@@ -19,6 +19,7 @@ import {
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
   OPENSEA_MARKETPLACE_ADDRESS,
   AUCTION_HOUSE_ADDRESSES,
+  MARKETPLACE_PROGRAMS,
 } from 'src/views/_global/holaplexConstants';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
@@ -45,6 +46,10 @@ import { ButtonSkeleton } from '@/components/Skeletons';
 import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 import Popover from '../../components/Popover';
 import { LightningBoltIcon, TagIcon } from '@heroicons/react/outline';
+
+interface AhListingMultiMarketplace extends AhListing {
+  marketplaceProgramAddress?: string;
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -173,8 +178,6 @@ export default function NftByAddress({
   const otherListings = nft?.listings.filter(
     (listing) => listing.auctionHouse?.address.toString() !== HOLAPLEX_MARKETPLACE_ADDRESS
   );
-
-  console.log(otherListings);
 
   const magicEdenListing = nft?.listings.find((listing) => listing.auctionHouse === null);
   const openSeaListing = nft?.listings.find(
@@ -409,7 +412,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as AhListing}
+                            listing={defaultListing as AhListingMultiMarketplace}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className="w-full"
@@ -420,7 +423,9 @@ export default function NftByAddress({
                     <div className={`flex w-full items-center justify-between`}>
                       <div className={`flex items-center`}>
                         <Tag className={`mr-2`} />
-                        <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
+                        <h3 className={` text-base font-medium text-gray-300`}>
+                          Not Listed {Boolean(otherListings) && `on Holaplex`}
+                        </h3>
                       </div>
                       {hasAddedOffer && (
                         <ul className={`flex flex-col sm:hidden`}>
@@ -472,12 +477,15 @@ export default function NftByAddress({
                       otherListings?.map((otherListing, i) => {
                         const auctionHouseInfo = AUCTION_HOUSE_ADDRESSES.find(
                           (ah) => ah.address === otherListing.auctionHouse?.address.toString()
-                        ) || {
-                          name: 'Unknown Marketplace',
-                          address: null,
-                          logo: '/images/listings/magiceden.png',
-                          link: 'https://magiceden.io/item-details/',
-                        };
+                        ) ||
+                          MARKETPLACE_PROGRAMS.find(
+                            (ah) => ah.address === otherListing.marketplaceProgramAddress.toString()
+                          ) || {
+                            name: 'Unknown Marketplace',
+                            address: null,
+                            logo: '/images/listings/magiceden.png',
+                            link: 'https://magiceden.io/item-details/',
+                          };
                         return (
                           <div
                             key={`listing-${otherListing.auctionHouse?.address}-${i}`}
@@ -537,7 +545,7 @@ export default function NftByAddress({
                                         loading={loading}
                                         nft={nft as Nft | any}
                                         marketplace={marketplace as Marketplace}
-                                        listing={otherListing as AhListing}
+                                        listing={otherListing as AhListingMultiMarketplace}
                                         refetch={refetch}
                                         className={`w-full`}
                                       />
@@ -566,7 +574,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as AhListing}
+                            listing={defaultListing as AhListingMultiMarketplace}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className={`w-full`}
@@ -611,7 +619,7 @@ export default function NftByAddress({
                                 <AcceptOfferForm
                                   nft={nft as Nft | any}
                                   offer={topOffer as Offer}
-                                  listing={defaultListing as AhListing}
+                                  listing={defaultListing as AhListingMultiMarketplace}
                                   marketplace={marketplace as Marketplace}
                                   refetch={refetch}
                                   className="w-full"
@@ -675,7 +683,7 @@ export default function NftByAddress({
                                     loading={loading}
                                     nft={nft as Nft | any}
                                     marketplace={marketplace as Marketplace}
-                                    listing={defaultListing as AhListing}
+                                    listing={defaultListing as AhListingMultiMarketplace}
                                     refetch={refetch}
                                     className={`w-full`}
                                   />
@@ -716,7 +724,7 @@ export default function NftByAddress({
                               loading={loading}
                               nft={nft as Nft | any}
                               marketplace={marketplace as Marketplace}
-                              listing={defaultListing as AhListing}
+                              listing={defaultListing as AhListingMultiMarketplace}
                               refetch={refetch}
                               className={`w-full`}
                             />
@@ -745,7 +753,7 @@ export default function NftByAddress({
                             loading={loading}
                             nft={nft as Nft | any}
                             marketplace={marketplace as Marketplace}
-                            listing={defaultListing as AhListing}
+                            listing={defaultListing as AhListingMultiMarketplace}
                             refetch={refetch}
                             className={`col-span-2 w-full sm:hidden`}
                           />
@@ -826,7 +834,7 @@ export default function NftByAddress({
                                     loading={loading}
                                     nft={nft as Nft | any}
                                     marketplace={marketplace as Marketplace}
-                                    listing={otherListing as AhListing}
+                                    listing={otherListing as AhListingMultiMarketplace}
                                     refetch={refetch}
                                     className={`w-full`}
                                   />
@@ -974,7 +982,7 @@ export default function NftByAddress({
                               <AcceptOfferForm
                                 nft={nft as Nft | any}
                                 offer={o as Offer}
-                                listing={defaultListing as AhListing}
+                                listing={defaultListing as AhListingMultiMarketplace}
                                 marketplace={marketplace as Marketplace}
                                 refetch={refetch}
                                 className={`justify-end`}
@@ -1113,7 +1121,7 @@ export default function NftByAddress({
               title={`Update offer`}
             >
               <UpdateOfferForm
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 setOpen={setOfferUpdateModalVisibility}
                 nft={nft as Nft | any}
                 marketplace={marketplace as Marketplace}
@@ -1144,7 +1152,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 setOpen={setSellCancelModalVisibility}
                 updateListing={updateListingFromCancel}
               />
@@ -1158,7 +1166,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 setOpen={setSellUpdateModalVisibility}
                 offer={topOffer as Offer}
               />
