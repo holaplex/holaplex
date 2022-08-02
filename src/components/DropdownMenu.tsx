@@ -109,6 +109,7 @@ function Item(props: DropdownMenuItemProps): JSX.Element {
       className={clsx(
         ['w-full', 'flex justify-between bg-gray-900 py-2 px-4'],
         ['hover:cursor-pointer'],
+        ['transition-transform hover:bg-gray-800'],
         props.className
       )}
     >
