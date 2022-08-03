@@ -46,6 +46,7 @@ import { ButtonSkeleton } from '@/components/Skeletons';
 import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
 import Popover from '../../components/Popover';
 import { LightningBoltIcon, TagIcon } from '@heroicons/react/outline';
+import { getAuctionHouseInfo } from '../../modules/utils/marketplace';
 
 // TODO: update sdk to include marketplaceProgramAddress
 export interface AhListingMultiMarketplace extends AhListing {
@@ -476,17 +477,9 @@ export default function NftByAddress({
                     )}
                     {Boolean(otherListings) &&
                       otherListings?.map((otherListing, i) => {
-                        const auctionHouseInfo = AUCTION_HOUSE_ADDRESSES.find(
-                          (ah) => ah.address === otherListing?.auctionHouse?.address.toString()
-                        ) ||
-                          MARKETPLACE_PROGRAMS.find(
-                            (ah) => ah.address === otherListing?.marketplaceProgramAddress
-                          ) || {
-                            name: 'Unknown Marketplace',
-                            address: null,
-                            logo: '/images/listings/magiceden.png',
-                            link: 'https://magiceden.io/item-details/',
-                          };
+                        const auctionHouseInfo = getAuctionHouseInfo(
+                          otherListing as AhListingMultiMarketplace
+                        );
                         return (
                           <div
                             key={`listing-${otherListing?.auctionHouse?.address}-${i}`}
@@ -782,14 +775,9 @@ export default function NftByAddress({
                     )}
                     {Boolean(otherListings) &&
                       otherListings?.map((otherListing, i) => {
-                        const auctionHouseInfo = AUCTION_HOUSE_ADDRESSES.find(
-                          (ah) => ah.address === otherListing.auctionHouse?.address.toString()
-                        ) || {
-                          name: 'Unknown Marketplace',
-                          address: null,
-                          logo: '/images/listings/magiceden.png',
-                          link: 'https://magiceden.io/item-details/',
-                        };
+                        const auctionHouseInfo = getAuctionHouseInfo(
+                          otherListing as AhListingMultiMarketplace
+                        );
                         return (
                           <div
                             key={`listing-${otherListing.auctionHouse?.address}-${i}`}

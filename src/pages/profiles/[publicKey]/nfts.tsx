@@ -38,6 +38,7 @@ import ProfileLayout from '@/views/profiles/ProfileLayout';
 import GridSelector, { GridSize } from '@/components/GridSelector';
 import { AhListingMultiMarketplace } from '../../nfts/[address]';
 import { Tooltip } from 'antd';
+import { getAuctionHouseInfo } from '../../../modules/utils/marketplace';
 
 export type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -116,17 +117,9 @@ export const NFTCard = ({
   );
 
   const cheapestOtherListing = otherListings.sort((a, b) => a.price - b.price)[0];
-  const cheapestOtherListingAhInfo = AUCTION_HOUSE_ADDRESSES.find(
-    (ah) => ah.address === cheapestOtherListing?.auctionHouse?.address.toString()
-  ) ||
-    MARKETPLACE_PROGRAMS.find(
-      (ah) => ah.address === cheapestOtherListing?.marketplaceProgramAddress
-    ) || {
-      name: 'Unknown Marketplace',
-      address: null,
-      logo: '/images/listings/unknown.svg',
-      link: 'https://holaplex.com',
-    };
+  const cheapestOtherListingAhInfo = getAuctionHouseInfo(
+    cheapestOtherListing as AhListingMultiMarketplace
+  );
 
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;
