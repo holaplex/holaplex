@@ -37,8 +37,8 @@ import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import GridSelector, { GridSize } from '@/components/GridSelector';
 import { AhListingMultiMarketplace } from '../../nfts/[address]';
-import { Tooltip } from 'antd';
 import { getAuctionHouseInfo } from '../../../modules/utils/marketplace';
+import Popover from '../../../components/Popover';
 
 export type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -220,7 +220,19 @@ export const NFTCard = ({
                   <li
                     className={`flex items-center gap-2 text-sm font-bold text-gray-300 md:text-base`}
                   >
-                    <Tooltip placement={`top`} title={cheapestOtherListingAhInfo.name}>
+                    <Popover
+                      placement={`top`}
+                      isShowOnHover={true}
+                      content={
+                        <p
+                          className={
+                            'm-0 whitespace-nowrap rounded-lg bg-gray-800 bg-opacity-30 p-2 text-sm text-white'
+                          }
+                        >
+                          {cheapestOtherListingAhInfo.name}
+                        </p>
+                      }
+                    >
                       <span className={`flex items-center gap-1 font-bold text-white`}>
                         <img
                           src={cheapestOtherListingAhInfo?.logo}
@@ -228,7 +240,7 @@ export const NFTCard = ({
                           className={`h-4 w-4 rounded-sm`}
                         />
                       </span>
-                    </Tooltip>
+                    </Popover>
                     Listed
                   </li>
                   <DisplaySOL
