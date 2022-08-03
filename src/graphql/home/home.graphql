@@ -81,6 +81,7 @@ fragment BuyNowListing on AhListing {
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       createdAt

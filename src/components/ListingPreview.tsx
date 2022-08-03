@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Image, Tooltip } from 'antd';
+import { Row, Image } from 'antd';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DateTime } from 'luxon';
@@ -15,6 +15,7 @@ import AuctionCountdown from './Countdown';
 import { LoadingContainer, LoadingLine } from './LoadingPlaceholders';
 import { FilterOptions, SortOptions } from '@/views/home/home.interfaces';
 import clsx from 'clsx';
+import Popover from './Popover';
 
 const NFTPreview = styled(Image)<{ $show: boolean }>`
   display: ${({ $show }) => ($show ? 'block' : 'none')};
@@ -212,30 +213,28 @@ export function ListingPreview({
             <div className="max truncate text-lg font-semibold text-white">{nftMetadata?.name}</div>
             <div className="flex items-center">
               {hasParticipationNFTs && (
-                <Tooltip
-                  color="#171717"
-                  title="Participation NFT"
-                  overlayStyle={{
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    color: 'white',
-                  }}
+                <Popover
+                  content={
+                    <p className={'m-0 bg-gray-900 text-xs font-semibold text-white'}>
+                      Participation NFT
+                    </p>
+                  }
+                  isShowOnHover={true}
                 >
                   <ParticipationNFTIcon className="ml-2" />
-                </Tooltip>
+                </Popover>
               )}
               {isSecondarySale && (
-                <Tooltip
-                  color="#171717"
-                  title="Secondary listing"
-                  overlayStyle={{
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    color: 'white',
-                  }}
+                <Popover
+                  content={
+                    <p className={'m-0 bg-gray-900 text-xs font-semibold text-white'}>
+                      Secondary Listing
+                    </p>
+                  }
+                  isShowOnHover={true}
                 >
                   <SecondarySaleIcon className="ml-2" />
-                </Tooltip>
+                </Popover>
               )}
             </div>
           </div>

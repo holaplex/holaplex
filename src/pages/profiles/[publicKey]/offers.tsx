@@ -208,7 +208,7 @@ const OfferPage = (props: WalletDependantPageProps) => {
             return nft.offers
               .filter((o) => o.buyer === profilePK)
               ?.sort(byDate)
-              .map((offer) => getActivityCard(nft as Nft, offer as Offer));
+              .map((offer) => getActivityCard(nft as Nft | any, offer as Offer));
           })}
 
         {(filter === OfferFilters.ALL || filter === OfferFilters.RECEIVED) &&
@@ -216,7 +216,7 @@ const OfferPage = (props: WalletDependantPageProps) => {
             return nft.offers
               ?.slice()
               ?.sort(byDate)
-              .map((offer) => getActivityCard(nft as Nft, offer as Offer));
+              .map((offer) => getActivityCard(nft as Nft | any, offer as Offer));
           })}
 
         {loading && (
