@@ -45,7 +45,6 @@ export const ActivityCard = ({
 }) => {
   if (loading) return <LoadingActivityCard />;
   const multipleWallets = a.wallets.length > 1;
-  console.log(a);
   return (
     <article key={a.id} className="mb-4 grid grid-cols-8 rounded border border-gray-700 p-4">
       <Link href={`/nfts/${a.nft?.address}`} passHref>
@@ -56,17 +55,17 @@ export const ActivityCard = ({
       </Link>
       <div className="flex items-center">
         {a.activityType === 'purchase' && (
-          <DollarSign className="mr-2 h-4 w-4 self-center text-gray-300" />
+          <DollarSign className="mr-2 h-5 w-5 self-center text-gray-300" />
         )}
         <div>{a.activityType === 'purchase' && 'Sold'}</div>
         {a.activityType === 'offer' && (
-          <HandIcon className="mr-2 h-4 w-4 self-center text-gray-300" />
+          <HandIcon className="mr-2 h-5 w-5 self-center text-gray-300" />
         )}
         <div>{a.activityType === 'offer' && 'Offer'}</div>
-        {a.activityType === 'listing' && <Tag className="mr-2 h-4 w-4 self-center text-gray-300" />}
+        {a.activityType === 'listing' && <Tag className="mr-2 h-5 w-5 self-center text-gray-300" />}
         <div>{a.activityType === 'listing' && 'Listing'}</div>
       </div>
-      <div className="flex items-center">{shortenAddress(a.marketplaceProgramAddress)}</div>
+      <div className="flex items-center text-xs">{shortenAddress(a.marketplaceProgramAddress)}</div>
       <div
         className={clsx('col-span-2 flex items-center justify-center self-center ', {
           '-ml-6': multipleWallets,
@@ -76,34 +75,38 @@ export const ActivityCard = ({
           <img src="/images/uturn.svg" className="mr-2 w-4 text-gray-300" alt="wallets" />
         )}
         <div className="flex flex-col">
-          <Link href={`/profiles/${a.wallets[0].address}`} passHref className="text-sm">
-            <Avatar
-              border
-              address={a.wallets[0].address}
-              data={{
-                twitterHandle: a.wallets[0].profile?.handle,
-                pfpUrl: a.wallets[0]?.profile?.profileImageUrlLowres,
-              }}
-            />
-          </Link>
-          {multipleWallets && (
-            <Link href={`/profiles/${a.wallets[1].address}`} passHref className="text-sm">
+          <Link href={`/profiles/${a.wallets[0].address}`} passHref>
+            <a>
               <Avatar
                 border
-                address={a.wallets[1].address}
+                address={a.wallets[0].address}
                 data={{
-                  twitterHandle: a.wallets[1].profile?.handle,
-                  pfpUrl: a.wallets[1]?.profile?.profileImageUrlLowres,
+                  twitterHandle: a.wallets[0].profile?.handle,
+                  pfpUrl: a.wallets[0]?.profile?.profileImageUrlLowres,
                 }}
               />
+            </a>
+          </Link>
+          {multipleWallets && (
+            <Link href={`/profiles/${a.wallets[1].address}`} passHref>
+              <a>
+                <Avatar
+                  border
+                  address={a.wallets[1].address}
+                  data={{
+                    twitterHandle: a.wallets[1].profile?.handle,
+                    pfpUrl: a.wallets[1]?.profile?.profileImageUrlLowres,
+                  }}
+                />
+              </a>
             </Link>
           )}
         </div>
       </div>
       <div className="self-center">
-        <DisplaySOL amount={a.price.toNumber()} iconVariant="large" />
+        <DisplaySOL amount={a.price.toNumber()} iconVariant="large" className="py-2 text-base" />
       </div>
-      <div className="self-center text-sm">{format(a.createdAt, 'en_US')}</div>
+      <div className="self-center text-base">{format(a.createdAt, 'en_US')}</div>
     </article>
   );
 };
