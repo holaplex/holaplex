@@ -1010,6 +1010,7 @@ export type CreatedNfTsQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1169,6 +1170,7 @@ export type OwnedNfTsQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1364,6 +1366,7 @@ export type NftCollectionQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1567,6 +1570,7 @@ export type NftsInCollectionQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1715,6 +1719,7 @@ export type DiscoverNftsActiveOffersQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -1849,6 +1854,7 @@ export type DiscoverNftsAllQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -1983,6 +1989,7 @@ export type DiscoverNftsBuyNowQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -2080,6 +2087,19 @@ export type DiscoverProfilesAllQuery = {
     } | null;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   }>;
+};
+
+export type DiscoverStatsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type DiscoverStatsQuery = {
+  __typename?: 'QueryRoot';
+  nftsStats: {
+    __typename?: 'NftsStats';
+    totalNfts: number;
+    buyNowListings: number;
+    nftsWithActiveOffers: number;
+  };
+  profilesStats: { __typename?: 'ProfilesStats'; totalProfiles: number };
 };
 
 export type FeedQueryVariables = Exact<{
@@ -2714,6 +2734,7 @@ export type NftCardFragment = {
     tradeState: string;
     seller: any;
     metadata: any;
+    marketplaceProgramAddress: string;
     price: any;
     tradeStateBump: number;
     purchaseId?: any | null;
@@ -2975,6 +2996,7 @@ export type BuyNowListingFragment = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3471,6 +3493,7 @@ export type HomeQuery = {
         tradeState: string;
         seller: any;
         metadata: any;
+        marketplaceProgramAddress: string;
         price: any;
         tradeStateBump: number;
         createdAt: any;
@@ -3673,6 +3696,7 @@ export type NftMarketplaceQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3785,6 +3809,7 @@ export type NftMarketplaceQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3935,6 +3960,7 @@ export type OffersPageQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -4037,6 +4063,7 @@ export type OffersPageQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -4198,6 +4225,7 @@ export type NftCardQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -4327,6 +4355,7 @@ export type NftPageQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -5104,6 +5133,7 @@ export const NftCardFragmentDoc = gql`
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       purchaseId
@@ -5321,6 +5351,7 @@ export const BuyNowListingFragmentDoc = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -5537,6 +5568,7 @@ export const CreatedNfTsDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -5675,6 +5707,7 @@ export const OwnedNfTsDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -5838,6 +5871,7 @@ export const NftCollectionDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6021,6 +6055,7 @@ export const NftsInCollectionDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6166,6 +6201,18 @@ export const DiscoverProfilesAllDocument = gql`
     }
   }
   ${ProfileInfoFragmentDoc}
+`;
+export const DiscoverStatsDocument = gql`
+  query discoverStats {
+    nftsStats {
+      totalNfts
+      buyNowListings
+      nftsWithActiveOffers
+    }
+    profilesStats {
+      totalProfiles
+    }
+  }
 `;
 export const FeedDocument = gql`
   query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
@@ -6407,6 +6454,7 @@ export const NftMarketplaceDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6515,6 +6563,7 @@ export const NftMarketplaceDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6645,6 +6694,7 @@ export const OffersPageDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6738,6 +6788,7 @@ export const OffersPageDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6887,6 +6938,7 @@ export const NftPageDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         purchaseId
@@ -7419,6 +7471,20 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
             ...wrappedRequestHeaders,
           }),
         'discoverProfilesAll',
+        'query'
+      );
+    },
+    discoverStats(
+      variables?: DiscoverStatsQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverStatsQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverStatsQuery>(DiscoverStatsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'discoverStats',
         'query'
       );
     },

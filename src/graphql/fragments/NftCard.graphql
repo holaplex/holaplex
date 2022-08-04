@@ -58,6 +58,7 @@ fragment NftCard on Nft {
       requiresSignOff
       canChangeSalePrice
     }
+    marketplaceProgramAddress
     price
     tradeStateBump
     purchaseId

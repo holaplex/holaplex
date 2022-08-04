@@ -17,6 +17,9 @@ import Button from '@/components/Button';
 import {
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+  OPENSEA_MARKETPLACE_ADDRESS,
+  AUCTION_HOUSE_ADDRESSES,
+  MARKETPLACE_PROGRAMS,
 } from 'src/views/_global/holaplexConstants';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
 import Modal from 'src/components/Modal';
@@ -38,9 +41,17 @@ import { seededRandomBetween } from '@/modules/utils/random';
 import { SolscanIcon } from '@/assets/icons/Solscan';
 import { ExplorerIcon } from '@/assets/icons/Explorer';
 import NFTFile from '@/components/NFTFile';
+import { ClipboardCheckIcon, ExclamationCircleIcon } from '@heroicons/react/outline';
 import { ButtonSkeleton } from '@/components/Skeletons';
-// import { Tag as FeatherTag, Zap } from 'react-feather';
+import { DollarSign, Tag as FeatherTag, Zap } from 'react-feather';
+import Popover from '../../components/Popover';
 import { LightningBoltIcon, TagIcon } from '@heroicons/react/outline';
+import { getAuctionHouseInfo } from '../../modules/utils/marketplace';
+
+// TODO: update sdk to include marketplaceProgramAddress
+export interface AhListingMultiMarketplace extends AhListing {
+  marketplaceProgramAddress?: string;
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const nftAddress = context?.params?.address ?? '';
@@ -165,6 +176,11 @@ export default function NftByAddress({
   const defaultListing = nft?.listings.find(
     (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
+
+  const otherListings = nft?.listings.filter(
+    (listing) => listing.auctionHouse?.address.toString() !== HOLAPLEX_MARKETPLACE_ADDRESS
+  );
+
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
@@ -205,37 +221,67 @@ export default function NftByAddress({
     address?: string;
     title: string;
     viewOnSite?: boolean;
-  }) => (
-    <div className={`flex items-center justify-between`}>
-      <p className={`m-0 text-base font-normal text-gray-300`}>{title}</p>
-      <div className={`flex flex-row items-center justify-end gap-2`}>
-        {viewOnSite && (
-          <Link href={`/collections/${address}`}>
-            <a target={`_self`}>
-              <FeatherIcon
-                icon="folder"
-                aria-hidden="true"
-                className={`h-4 w-4 text-white hover:text-gray-300`}
-              />
+  }) => {
+    const [linkCopied, setLinkCopied] = useState(false);
+
+    useEffect(() => {
+      if (linkCopied) {
+        const timer = setTimeout(() => {
+          setLinkCopied(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    }, [linkCopied]);
+
+    const handleCopyClick = async () => {
+      await navigator.clipboard.writeText(address || `Error`);
+      setLinkCopied(true);
+    };
+    return (
+      <div className={`flex items-center justify-between`}>
+        <p className={`m-0 text-base font-normal text-gray-300`}>{title}</p>
+        <div className={`flex flex-row items-center justify-end gap-2`}>
+          {viewOnSite && (
+            <Link href={`/collections/${address}`}>
+              <a target={`_self`}>
+                <FeatherIcon
+                  icon="folder"
+                  aria-hidden="true"
+                  className={`h-4 w-4 text-white hover:text-gray-300`}
+                />
+              </a>
+            </Link>
+          )}
+          <Link href={`https://explorer.solana.com/address/${address}`}>
+            <a target={`_blank`}>
+              <ExplorerIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
             </a>
           </Link>
-        )}
-        <Link href={`https://explorer.solana.com/address/${address}`}>
-          <a target={`_blank`}>
-            <ExplorerIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
-          </a>
-        </Link>
-        <Link href={`https://solscan.io/account/${address}`}>
-          <a target={`_blank`}>
-            <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
-          </a>
-        </Link>
-        <p className={`m-0 w-24 text-left text-base font-normal text-gray-300`}>
-          {shortenAddress(address)}
-        </p>
+          <Link href={`https://solscan.io/account/${address}`}>
+            <a target={`_blank`}>
+              <SolscanIcon width={16} height={16} className={`ease-in-out hover:text-gray-300`} />
+            </a>
+          </Link>
+          <button
+            onClick={handleCopyClick}
+            className={`relative m-0 w-24 text-left text-base font-normal text-gray-200 hover:text-gray-300`}
+          >
+            <Popover
+              isShowOnHover={true}
+              placement={`top`}
+              content={
+                <p className={`whitespace-nowrap p-2 text-sm`}>
+                  {linkCopied ? `Address copied` : `Copy address`}
+                </p>
+              }
+            >
+              <p className={`m-0`}>{shortenAddress(address)}</p>
+            </Popover>
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (called && !nft && !loading) {
     return <Custom404 />;
@@ -363,7 +409,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as AhListing}
+                            listing={defaultListing as AhListingMultiMarketplace}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className="w-full"
@@ -374,7 +420,9 @@ export default function NftByAddress({
                     <div className={`flex w-full items-center justify-between`}>
                       <div className={`flex items-center`}>
                         <Tag className={`mr-2`} />
-                        <h3 className={` text-base font-medium text-gray-300`}>Not Listed</h3>
+                        <h3 className={` text-base font-medium text-gray-300`}>
+                          Not Listed {otherListings && otherListings.length > 0 && `on Holaplex`}
+                        </h3>
                       </div>
                       {hasAddedOffer && (
                         <ul className={`flex flex-col sm:hidden`}>
@@ -387,11 +435,13 @@ export default function NftByAddress({
                           {loading ? (
                             <ButtonSkeleton />
                           ) : (
-                            <Link href={`/nfts/${nft?.address}/offers/new`}>
-                              <a>
-                                <Button>Make offer</Button>
-                              </a>
-                            </Link>
+                            !Boolean(otherListings) && (
+                              <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                <a>
+                                  <Button>Make offer</Button>
+                                </a>
+                              </Link>
+                            )
                           )}
                         </div>
                       )}
@@ -420,8 +470,86 @@ export default function NftByAddress({
                         </div>
                       </div>
                     )}
+                    {Boolean(otherListings) &&
+                      otherListings?.map((otherListing, i) => {
+                        const auctionHouseInfo = getAuctionHouseInfo(
+                          otherListing as AhListingMultiMarketplace
+                        );
+                        return (
+                          <div
+                            key={`listing-${otherListing?.auctionHouse?.address}-${i}`}
+                            className={`mt-6 border-t border-gray-700 pt-6`}
+                          >
+                            {auctionHouseInfo.name === 'Unknown Marketplace' ? (
+                              <div>
+                                <p
+                                  className={`flex items-center justify-center gap-2 text-center text-base font-medium text-gray-300`}
+                                >
+                                  <span>
+                                    <ExclamationCircleIcon className={`h-6 w-6`} />
+                                  </span>
+                                  This NFT is listed on an unknown AuctionHouse
+                                </p>
+                              </div>
+                            ) : (
+                              <>
+                                <p
+                                  className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
+                                >
+                                  Listed on{' '}
+                                  <span className={`flex items-center gap-1 font-bold text-white`}>
+                                    <img
+                                      src={auctionHouseInfo?.logo}
+                                      alt={auctionHouseInfo.name}
+                                      className={`h-4 w-4 rounded-sm`}
+                                    />
+                                    {auctionHouseInfo?.name}
+                                  </span>
+                                </p>
+                                <div
+                                  className={
+                                    'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
+                                  }
+                                >
+                                  <div>
+                                    <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                                    <DisplaySOL amount={otherListing?.price} />
+                                  </div>
+                                  <div className={`flex w-full items-center gap-2 sm:w-auto`}>
+                                    <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                      <a className={`w-full`}>
+                                        <Button className={`w-full`} secondary>
+                                          Make offer
+                                        </Button>
+                                      </a>
+                                    </Link>
+                                    {auctionHouseInfo.link &&
+                                    otherListing?.auctionHouse === null ? (
+                                      <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
+                                        <a target={`_blank`}>
+                                          <Button>View listing</Button>
+                                        </a>
+                                      </Link>
+                                    ) : (
+                                      <BuyForm
+                                        loading={loading}
+                                        nft={nft as Nft | any}
+                                        marketplace={marketplace as Marketplace}
+                                        listing={otherListing as AhListingMultiMarketplace}
+                                        refetch={refetch}
+                                        className={`w-full`}
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
+
                 {hasDefaultListing && (
                   <div className={`flex flex-col rounded-md bg-gray-800 p-6`}>
                     {isOwner && hasOffers && (
@@ -436,7 +564,7 @@ export default function NftByAddress({
                           <AcceptOfferForm
                             nft={nft as Nft | any}
                             offer={topOffer as Offer}
-                            listing={defaultListing as AhListing}
+                            listing={defaultListing as AhListingMultiMarketplace}
                             marketplace={marketplace as Marketplace}
                             refetch={refetch}
                             className={`w-full`}
@@ -481,7 +609,7 @@ export default function NftByAddress({
                                 <AcceptOfferForm
                                   nft={nft as Nft | any}
                                   offer={topOffer as Offer}
-                                  listing={defaultListing as AhListing}
+                                  listing={defaultListing as AhListingMultiMarketplace}
                                   marketplace={marketplace as Marketplace}
                                   refetch={refetch}
                                   className="w-full"
@@ -545,7 +673,7 @@ export default function NftByAddress({
                                     loading={loading}
                                     nft={nft as Nft | any}
                                     marketplace={marketplace as Marketplace}
-                                    listing={defaultListing as AhListing}
+                                    listing={defaultListing as AhListingMultiMarketplace}
                                     refetch={refetch}
                                     className={`w-full`}
                                   />
@@ -586,7 +714,7 @@ export default function NftByAddress({
                               loading={loading}
                               nft={nft as Nft | any}
                               marketplace={marketplace as Marketplace}
-                              listing={defaultListing as AhListing}
+                              listing={defaultListing as AhListingMultiMarketplace}
                               refetch={refetch}
                               className={`w-full`}
                             />
@@ -615,7 +743,7 @@ export default function NftByAddress({
                             loading={loading}
                             nft={nft as Nft | any}
                             marketplace={marketplace as Marketplace}
-                            listing={defaultListing as AhListing}
+                            listing={defaultListing as AhListingMultiMarketplace}
                             refetch={refetch}
                             className={`col-span-2 w-full sm:hidden`}
                           />
@@ -640,6 +768,67 @@ export default function NftByAddress({
                         </div>
                       </div>
                     )}
+                    {Boolean(otherListings) &&
+                      otherListings?.map((otherListing, i) => {
+                        const auctionHouseInfo = getAuctionHouseInfo(
+                          otherListing as AhListingMultiMarketplace
+                        );
+                        return (
+                          <div
+                            key={`listing-${otherListing.auctionHouse?.address}-${i}`}
+                            className={`mt-6 border-t border-gray-700 pt-6`}
+                          >
+                            <p
+                              className={`flex flex-row items-center gap-2 text-sm font-medium text-gray-300`}
+                            >
+                              Listed on{' '}
+                              <span className={`flex items-center gap-1 font-bold text-white`}>
+                                <img
+                                  src={auctionHouseInfo?.logo}
+                                  alt={auctionHouseInfo.name}
+                                  className={`h-4 w-4 rounded-sm`}
+                                />
+                                {auctionHouseInfo?.name}
+                              </span>
+                            </p>
+                            <div
+                              className={
+                                'flex flex-col items-start justify-start gap-2 sm:flex-row sm:items-center sm:justify-between'
+                              }
+                            >
+                              <div>
+                                <h3 className={`text-base font-medium text-gray-300`}>Price</h3>
+                                <DisplaySOL amount={otherListing?.price} />
+                              </div>
+                              <div className={`flex w-full items-center gap-2 sm:w-auto`}>
+                                <Link href={`/nfts/${nft?.address}/offers/new`}>
+                                  <a className={`w-full`}>
+                                    <Button className={`w-full`} secondary>
+                                      Make offer
+                                    </Button>
+                                  </a>
+                                </Link>
+                                {auctionHouseInfo.link && otherListing.auctionHouse === null ? (
+                                  <Link href={`${auctionHouseInfo?.link}${nft?.mintAddress}`}>
+                                    <a target={`_blank`}>
+                                      <Button>View listing</Button>
+                                    </a>
+                                  </Link>
+                                ) : (
+                                  <BuyForm
+                                    loading={loading}
+                                    nft={nft as Nft | any}
+                                    marketplace={marketplace as Marketplace}
+                                    listing={otherListing as AhListingMultiMarketplace}
+                                    refetch={refetch}
+                                    className={`w-full`}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
 
@@ -778,7 +967,7 @@ export default function NftByAddress({
                               <AcceptOfferForm
                                 nft={nft as Nft | any}
                                 offer={o as Offer}
-                                listing={defaultListing as AhListing}
+                                listing={defaultListing as AhListingMultiMarketplace}
                                 marketplace={marketplace as Marketplace}
                                 refetch={refetch}
                                 className={`justify-end`}
@@ -917,7 +1106,7 @@ export default function NftByAddress({
               title={`Update offer`}
             >
               <UpdateOfferForm
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 setOpen={setOfferUpdateModalVisibility}
                 nft={nft as Nft | any}
                 marketplace={marketplace as Marketplace}
@@ -948,7 +1137,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 setOpen={setSellCancelModalVisibility}
                 updateListing={updateListingFromCancel}
               />
@@ -962,7 +1151,7 @@ export default function NftByAddress({
                 nft={nft as Nft | any}
                 refetch={refetch}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 setOpen={setSellUpdateModalVisibility}
                 offer={topOffer as Offer}
               />

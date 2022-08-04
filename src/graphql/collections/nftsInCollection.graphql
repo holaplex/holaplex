@@ -113,6 +113,7 @@ query nftsInCollection(
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       createdAt
