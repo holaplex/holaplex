@@ -2,10 +2,9 @@ import { DoubleGrid } from '@/assets/icons/DoubleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
 import FiltersSection, { FilterProps } from '@/components/Filters';
 import clsx from 'clsx';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { InView } from 'react-intersection-observer';
-import { TailSpin } from 'react-loader-spinner';
 import { SearchIcon } from '@heroicons/react/outline';
 
 export interface CardGridWithHeaderProps<T, F> {
@@ -296,9 +295,6 @@ export interface CardGridProps<T> {
  * @returns
  */
 export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
-  const [bodyElements, setBodyElements] = useState<JSX.Element[]>([
-    props.cardContext.noDataFallback ?? <></>,
-  ]);
   const gridId: string = useMemo(() => `grid-${Math.round(Math.random() * 100000)}`, []);
 
   let gridViewClasses: string;
@@ -328,53 +324,54 @@ export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
       break;
     }
   }
+  const data = props.dataContext.data || [];
 
-  // set the body of the grid based on data loading state
-  useEffect(() => {
-    if (props.dataContext.loading) {
-      // loading previews
-      setBodyElements(
-        Array(gridCols)
-          .fill(null)
-          .map((_) => props.cardContext.loadingCardCreator())
-      );
-    } else if (props.dataContext.data === undefined || props.dataContext.data.length === 0) {
-      // no-data fallback
-      setBodyElements([props.cardContext.noDataFallback ?? <></>]);
-    } else {
-      // loaded data
-      setBodyElements(
-        props.dataContext.data.map((cardData) =>
-          props.cardContext.cardCreator(
-            cardData,
-            props.dataContext.refetch,
-            props.dataContext.loading === undefined ? true : props.dataContext.loading
-          )
-        )
-      );
-    }
-  }, [setBodyElements, props, gridCols, gridId]);
+  if (!props.dataContext.loading && data.length === 0) {
+    return (
+      <div className="w-full pb-8">
+        <div className="flex w-full justify-center p-8">{props.cardContext.noDataFallback}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full justify-center">
+    <div className="w-full pb-8">
       <div
         className={clsx('grid grid-cols-1 gap-6 sm:grid-cols-2', gridViewClasses, props.className)}
       >
-        {bodyElements.map((e, i) => (
-          <div key={`${gridId}-${i}`}>{e}</div>
+        {data.map((e, i) => (
+          <div key={`${gridId}-${i}`}>
+            {props.cardContext.cardCreator(e, props.dataContext.refetch, false)}
+          </div>
         ))}
-      </div>
-      <InView threshold={0.1} onChange={props.dataContext.onLoadMore} className="w-full">
-        <div
-          className={clsx('my-6 flex w-full items-center justify-center font-bold', {
-            hidden:
-              !props.dataContext.hasMore ||
-              (props.dataContext.data && props.dataContext.data.length === 0),
+        {props.dataContext.loading &&
+          [...Array(gridCols * gridCols).keys()].map((i) => {
+            return (
+              <div key={`${gridId}-${i}-loading`}>{props.cardContext.loadingCardCreator()}</div>
+            );
           })}
-        >
-          <TailSpin height={50} width={50} color="grey" ariaLabel="loading-nfts" />
-        </div>
-      </InView>
+        {!props.dataContext.loading &&
+          props.dataContext.hasMore &&
+          [...Array(gridCols).keys()].map((i) => {
+            const loadingCard = props.cardContext.loadingCardCreator();
+
+            return (
+              <div key={`${gridId}-${i}-has-more`}>
+                {i === 0 ? (
+                  <InView
+                    threshold={0.01}
+                    onChange={props.dataContext.onLoadMore}
+                    className="w-full"
+                  >
+                    {loadingCard}
+                  </InView>
+                ) : (
+                  loadingCard
+                )}
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 }

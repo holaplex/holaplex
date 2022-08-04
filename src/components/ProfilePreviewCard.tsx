@@ -60,7 +60,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
           />
         </Link>
         {/* preview image */}
-        <div className="relative h-32  flex-shrink-0 overflow-clip">
+        <div className="relative h-32 flex-shrink-0 overflow-clip">
           <img
             src={props.context.data.bannerImageUrl ?? getFallbackImage()}
             alt={`${props.context.data.address} banner`}
@@ -74,7 +74,7 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
           />
         </div>
 
-        <div className="flex h-full w-full flex-col  p-4">
+        <div className="flex h-full w-full flex-col p-4">
           {/* pfp, follow */}
           <div className="relative -mt-12 flex items-end justify-between">
             <div className="h-16 w-16 md:h-12 md:w-12 lg:h-24 lg:w-24">
@@ -111,8 +111,18 @@ export default function ProfilePreview(props: ProfilePreviewProps): JSX.Element 
 
 export function ProfilePreviewLoadingCard(): JSX.Element {
   return (
-    <PreviewContainer>
-      <div className="h-full w-full animate-pulse bg-gray-800" />
+    <PreviewContainer className="animate-pulse">
+      <div className="relative h-32 w-full flex-shrink-0">
+        <div className="absolute top-0 right-0 bottom-0 left-0 z-10 bg-gray-700" />
+      </div>
+      <div className="p-4">
+        <div className="relative z-20 -mt-12 h-16 w-16 rounded-full bg-gray-800 md:h-12 md:w-12 lg:h-24 lg:w-24" />
+        <div className="mt-6 h-6 w-24 rounded-md bg-gray-700 lg:h-8" />
+        <div className="mt-4 flex gap-4">
+          <div className="h-6 w-20 rounded-md bg-gray-700" />
+          <div className="h-6 w-20 rounded-md bg-gray-700" />
+        </div>
+      </div>
     </PreviewContainer>
   );
 }
@@ -121,7 +131,7 @@ const PreviewContainer: FC<any> = ({ className, ...props }) => {
   return (
     <div
       className={clsx(
-        'relative flex w-full overflow-clip rounded-lg bg-gray-900 shadow-md shadow-black duration-300 hover:scale-[1.02]',
+        'relative flex w-full flex-col overflow-clip rounded-lg bg-gray-900 shadow-md shadow-black duration-300 hover:scale-[1.02]',
         className
       )}
       {...props}

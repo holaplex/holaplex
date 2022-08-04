@@ -17,7 +17,7 @@ import { Select, SelectOption } from '@/components/Select';
 
 const SEARCH_DEBOUNCE_TIMEOUT_MS: number = 500;
 const INITIAL_FETCH: number = 24;
-const INFINITE_SCROLL_AMOUNT_INCREMENT = 24;
+const INFINITE_SCROLL_AMOUNT_INCREMENT = 12;
 
 // values are what appears in the URL
 enum UrlParamKey {
