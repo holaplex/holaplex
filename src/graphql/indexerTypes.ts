@@ -4807,6 +4807,8 @@ export type SearchQueryVariables = Exact<{
   term: Scalars['String'];
   walletAddress: Scalars['PublicKey'];
   nftMintAddress: Scalars['String'];
+  start: Scalars['DateTimeUtc'];
+  end: Scalars['DateTimeUtc'];
 }>;
 
 export type SearchQuery = {
@@ -4872,6 +4874,12 @@ export type SearchQuery = {
     address: string;
     mintAddress: string;
     image?: string | null;
+  }>;
+  collectionsFeaturedByVolume: Array<{
+    __typename?: 'Collection';
+    floorPrice?: any | null;
+    nftCount?: any | null;
+    nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
   }>;
 };
 
@@ -8814,7 +8822,13 @@ export type ProfileSearchQueryResult = Apollo.QueryResult<
   ProfileSearchQueryVariables
 >;
 export const SearchDocument = gql`
-  query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String!) {
+  query search(
+    $term: String!
+    $walletAddress: PublicKey!
+    $nftMintAddress: String!
+    $start: DateTimeUtc!
+    $end: DateTimeUtc!
+  ) {
     metadataJsons(term: $term, limit: 25, offset: 0) {
       name
       address
@@ -8850,14 +8864,25 @@ export const SearchDocument = gql`
       }
       mintAddress
     }
-    searchCollections(term: $term, limit: 25, offset: 0) {
+    searchCollections(term: $term, limit: 15, offset: 0) {
       name
       address
       mintAddress
       image
     }
+    collectionsFeaturedByVolume(
+      term: $term
+      startDate: $start
+      endDate: $end
+      limit: 25
+      offset: 0
+      orderDirection: DESC
+    ) {
+      ...CollectionPreview
+    }
   }
   ${ProfileInfoFragmentDoc}
+  ${CollectionPreviewFragmentDoc}
 `;
 
 /**
@@ -8875,6 +8900,8 @@ export const SearchDocument = gql`
  *      term: // value for 'term'
  *      walletAddress: // value for 'walletAddress'
  *      nftMintAddress: // value for 'nftMintAddress'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
  *   },
  * });
  */
