@@ -128,16 +128,8 @@ export function useDiscoverCollectionsByMarketcapQueryWithTransforms(
   fetchMoreLimit: number
 ): DiscoverCollectionsQueryContext {
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByMarketCapQuery> =
-    useCallback((previous, more, setHasMore) => {
+    useCallback((previous, more) => {
       if (!more) return previous;
-
-      if (setHasMore) {
-        if (more.collectionsFeaturedByMarketCap.length === 0) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
-      }
 
       more.collectionsFeaturedByMarketCap = [
         ...previous.collectionsFeaturedByMarketCap,
@@ -170,16 +162,8 @@ export function useDiscoverCollectionsByVolumeLazyQueryWithTransforms(
   fetchMoreLimit: number
 ): DiscoverCollectionsQueryContext {
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByVolumeQuery> = useCallback(
-    (previous, more, setHasMore) => {
+    (previous, more) => {
       if (!more) return previous;
-
-      if (setHasMore) {
-        if (more.collectionsFeaturedByVolume.length === 0) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
-      }
 
       more.collectionsFeaturedByVolume = [
         ...previous.collectionsFeaturedByVolume,
@@ -233,17 +217,8 @@ function useDiscoverCollectionsQuery(
   fetchMoreLimit: number
 ): DiscoverCollectionsQueryContext {
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByMarketCapQuery> =
-    useCallback((previous, more, setHasMore) => {
+    useCallback((previous, more) => {
       if (!more) return previous;
-
-      if (setHasMore) {
-        if (more.collectionsFeaturedByMarketCap.length === 0) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
-      }
-
       more.collectionsFeaturedByMarketCap = [
         ...previous.collectionsFeaturedByMarketCap,
         ...more.collectionsFeaturedByMarketCap,
@@ -294,16 +269,8 @@ export function useDiscoverProfilesAllLazyQueryWithTransforms(
   fetchMoreLimit: number
 ): DiscoverProfilesQueryContext {
   const mergeResultsFunction: UpdateResultsFunction<DiscoverProfilesAllQuery> = useCallback(
-    (previous, more, setHasMore) => {
+    (previous, more) => {
       if (!more) return previous;
-
-      if (setHasMore) {
-        if (more.followWallets.length === 0) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
-      }
 
       more.followWallets = [...previous.followWallets, ...more.followWallets];
 
