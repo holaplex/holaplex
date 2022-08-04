@@ -159,12 +159,7 @@ const BuyForm: FC<BuyFormProps> = ({
         </Button>
 
         {ReactDom.createPortal(
-          <Modal
-            open={showForm}
-            setOpen={setShowForm}
-            title={`Select a payment method`}
-            priority={true}
-          >
+          <Modal open={showForm} setOpen={setShowForm} title={`Select a payment method`}>
             <form onSubmit={handleSubmit(buyTx)}>
               <div className={`flex w-full flex-col justify-start gap-10`}>
                 {nft && <NFTPreview loading={loading || isLoading} nft={nft as Nft | any} />}

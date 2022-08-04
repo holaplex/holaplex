@@ -181,11 +181,6 @@ export default function NftByAddress({
     (listing) => listing.auctionHouse?.address.toString() !== HOLAPLEX_MARKETPLACE_ADDRESS
   );
 
-  const magicEdenListing = nft?.listings.find((listing) => listing.auctionHouse === null);
-  const openSeaListing = nft?.listings.find(
-    (listing) => listing?.auctionHouse?.address.toString() === AUCTION_HOUSE_ADDRESSES[1].address
-  );
-
   const hasDefaultListing = Boolean(defaultListing);
   const offer = nft?.offers.find((offer) => offer.buyer === publicKey?.toBase58());
   const hasAddedOffer = Boolean(offer);
