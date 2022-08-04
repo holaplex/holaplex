@@ -15,11 +15,7 @@ export interface QueryContext<TData, TArgs = void, TGraphQLData = void> {
 }
 
 export interface UpdateResultsFunction<TGraphQLData> {
-  (
-    prev: TGraphQLData,
-    more: TGraphQLData | null | undefined,
-    setHasMore?: Dispatch<SetStateAction<boolean>>
-  ): TGraphQLData;
+  (prev: TGraphQLData, more: TGraphQLData | null | undefined): TGraphQLData;
 }
 
 interface FetchMoreArgs<TArgs, TGraphQLData = void> {
@@ -101,14 +97,24 @@ export function useHolaplexInfiniteScrollQuery<
           offset: fetchMoreOffset,
         },
         updateQuery: (p, { fetchMoreResult }) => {
-          return mergeResultsFunction(p, fetchMoreResult, setHasMore);
+          const rawDataArray: TGraphQLElement[] | undefined = listExtractor(fetchMoreResult);
+          setHasMore(rawDataArray != null && rawDataArray.length > 0);
+          return mergeResultsFunction(p, fetchMoreResult);
         },
       });
     }
 
     runFetch();
     incrementFetchMoreCallCount();
-  }, [context, variables, fetchMoreLimit, fetchMoreOffset, mergeResultsFunction]);
+  }, [
+    context,
+    variables,
+    fetchMoreLimit,
+    fetchMoreOffset,
+    mergeResultsFunction,
+    setHasMore,
+    listExtractor,
+  ]);
 
   return {
     data: data,
