@@ -19,10 +19,10 @@ import { None } from '../../../components/OfferForm';
 import { TailSpin } from 'react-loader-spinner';
 import { format } from 'timeago.js';
 import Link from 'next/link';
-import { DollarSign, Tag } from 'react-feather';
+import { DollarSign } from 'react-feather';
 import { DisplaySOL } from '../../../components/CurrencyHelpers';
 import { Avatar } from '../../../components/Avatar';
-import { HandIcon } from '@heroicons/react/outline';
+import { HandIcon, TagIcon } from '@heroicons/react/outline';
 import { shortenAddress } from '../../../modules/utils/string';
 
 export const getServerSideProps: GetServerSideProps<CollectionPageProps> =
@@ -62,7 +62,9 @@ export const ActivityCard = ({
           <HandIcon className="mr-2 h-5 w-5 self-center text-gray-300" />
         )}
         <div>{a.activityType === 'offer' && 'Offer'}</div>
-        {a.activityType === 'listing' && <Tag className="mr-2 h-5 w-5 self-center text-gray-300" />}
+        {a.activityType === 'listing' && (
+          <TagIcon className="mr-2 h-5 w-5 self-center text-gray-300" />
+        )}
         <div>{a.activityType === 'listing' && 'Listing'}</div>
       </div>
       <div className="flex items-center text-xs">{shortenAddress(a.marketplaceProgramAddress)}</div>
