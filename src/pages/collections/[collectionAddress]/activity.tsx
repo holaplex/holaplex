@@ -273,7 +273,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
       <div className="mt-20 w-full">
         <NFTGrid
           showCollection={false}
-          ctaVariant={`activity`}
+          ctaVariant={`collectionActivity`}
           hasMore={hasMore && activities.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView: boolean) => {
             if (!inView || loading || activities.length <= 0) {
