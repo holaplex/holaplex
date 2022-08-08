@@ -302,8 +302,8 @@ export default function NftByAddress({
                       ) : nft?.creators.length === 1 ? (
                         <ProfileChip user={nft.creators[0]} />
                       ) : (
-                        <div className="">
-                          <AvatarIcons profiles={nft?.creators || []} />
+                        <div>
+                          {nft?creators && <AvatarIcons profiles={nft.creators} />}
                         </div>
                       )}
                     </ul>
@@ -317,7 +317,7 @@ export default function NftByAddress({
                       </div>
 
                       <Link href={`/collections/${nft?.collection?.address}`}>
-                        <a className="flex  items-center space-x-2 rounded-md py-3 pl-2 pr-4  shadow-2xl shadow-black">
+                        <a className="flex items-center space-x-2 rounded-md py-3 pl-2 pr-4 shadow-2xl shadow-black">
                           <img
                             className="h-8 w-8 rounded-md object-cover"
                             alt={nft.collection.name}
