@@ -88,7 +88,7 @@ export function FeedCard(props: {
       id={props.event.feedEventId}
       className={clsx('group relative transition-all  hover:scale-[1.02] ', props.className)}
     >
-      <Link href={'/nfts/' + attrs.nft.address} passHref>
+      <Link href={'/nfts/' + attrs.nft.mintAddress} passHref>
         <a>
           {false && (
             // removed for now to work with new hero section. Add it and the hero feed has massive flickering on load
@@ -146,7 +146,7 @@ export function FeedCard(props: {
           </span>
         </Link>
       </div> */}
-      <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.address!} />
+      <ShareMenu className="absolute top-4 right-4 " address={attrs.nft.mintAddress!} />
       <div className="absolute bottom-0 left-0 right-0 flex items-center p-4 text-base">
         <FeedActionBanner attrs={attrs} event={props.event} options={props.options} />
       </div>

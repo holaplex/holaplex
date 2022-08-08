@@ -118,6 +118,7 @@ export function getActivityItems(activities: WalletActivity[]) {
         nft: nft
           ? {
               address: nft?.address,
+              mintAddress: nft?.mintAddress,
               name: nft.name,
               description: nft.description,
               image: nft.image,
