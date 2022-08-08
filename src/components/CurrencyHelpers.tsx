@@ -3,7 +3,7 @@ import { FC, HTMLAttributes } from 'react';
 import { SolIcon } from '@/components/Price';
 
 interface DisplaySOLProps extends HTMLAttributes<HTMLParagraphElement> {
-  amount: number | undefined;
+  amount: number | undefined; // lamports
   iconVariant?: `small` | `large` | `smallB` | `largeB`;
 }
 
@@ -22,7 +22,7 @@ export const DisplaySOL: FC<DisplaySOLProps> = ({
 }) =>
   amount ? (
     <b className={` inline-flex items-center ${className}`} {...rest}>
-      {iconVariants[iconVariant]} {amount / LAMPORTS_PER_SOL}
+      {iconVariants[iconVariant]} {Math.round((amount / LAMPORTS_PER_SOL) * 100) / 100}
     </b>
   ) : null;
 

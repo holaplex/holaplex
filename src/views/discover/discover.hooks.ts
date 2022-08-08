@@ -130,6 +130,7 @@ export function useDiscoverCollectionsByMarketcapQueryWithTransforms(
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByMarketCapQuery> =
     useCallback((previous, more) => {
       if (!more) return previous;
+
       more.collectionsFeaturedByMarketCap = [
         ...previous.collectionsFeaturedByMarketCap,
         ...more.collectionsFeaturedByMarketCap,
@@ -163,10 +164,12 @@ export function useDiscoverCollectionsByVolumeLazyQueryWithTransforms(
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByVolumeQuery> = useCallback(
     (previous, more) => {
       if (!more) return previous;
+
       more.collectionsFeaturedByVolume = [
         ...previous.collectionsFeaturedByVolume,
         ...more.collectionsFeaturedByVolume,
       ];
+
       return { ...more };
     },
     []
@@ -268,7 +271,9 @@ export function useDiscoverProfilesAllLazyQueryWithTransforms(
   const mergeResultsFunction: UpdateResultsFunction<DiscoverProfilesAllQuery> = useCallback(
     (previous, more) => {
       if (!more) return previous;
+
       more.followWallets = [...previous.followWallets, ...more.followWallets];
+
       return { ...more };
     },
     []

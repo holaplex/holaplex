@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { SearchQuery, MetadataJson, Wallet, Nft } from 'src/graphql/indexerTypes';
+import { SearchQuery, MetadataJson, Wallet, Nft, Collection } from 'src/graphql/indexerTypes';
 import { PublicKey } from '@solana/web3.js';
-import { ProfileSearchItem, NFTSearchItem } from './SearchItems';
+import { ProfileSearchItem, NFTSearchItem, CollectionSearchItem } from './SearchItems';
 import { isPublicKey } from './SearchBar';
 import { profile } from 'console';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
@@ -15,6 +15,7 @@ interface SearchResultsProps {
   profileResults?: Wallet[];
   walletResult?: Wallet;
   mintAddressResult?: Nft;
+  collectionVolumeResults?: Collection[];
 }
 
 const SearchResultTrackAction = 'Search Result Selected';
@@ -26,6 +27,7 @@ const SearchResults: FC<SearchResultsProps> = ({
   walletResult,
   mintAddressResult,
   collectionResults,
+  collectionVolumeResults,
 }) => {
   const { track } = useAnalytics();
 
@@ -62,9 +64,54 @@ const SearchResults: FC<SearchResultsProps> = ({
 
   return (
     <>
+      {collectionVolumeResults && collectionVolumeResults?.length > 0 && (
+        <>
+          <h6 className={`px-4 pt-6 text-base font-medium text-gray-300`}>Collections</h6>
+          <p
+            className={'mx-4 mb-2 border-b  border-gray-500 py-2 text-xs font-light text-gray-500'}
+          >
+            Top volume
+          </p>
+          {collectionVolumeResults?.map((collection) => (
+            <>
+              {collection.nft.mintAddress && (
+                <Combobox.Option
+                  key={'collection-' + collection.nft.mintAddress}
+                  value={collection}
+                >
+                  {({ active }) => (
+                    <CollectionSearchItem
+                      key={`collection-search-item-${collection.address}`}
+                      address={collection.nft.mintAddress}
+                      count={collection.nftCount}
+                      image={collection.nft.image!}
+                      name={collection.nft.name}
+                      floorPrice={collection.floorPrice}
+                      onClick={() => {
+                        trackSearchResultSelected({
+                          resultType: 'Collection',
+                          nftName: collection.nft.name,
+                          nftImage: collection.nft.image as string | undefined,
+                          nftAddress: collection.nft.mintAddress,
+                        });
+                        router.push(`/collections/${collection.nft.mintAddress}`);
+                      }}
+                      active={active}
+                    />
+                  )}
+                </Combobox.Option>
+              )}
+            </>
+          ))}
+        </>
+      )}
       {collectionResults && collectionResults?.length > 0 && (
         <>
-          <h6 className={`px-6 pt-6 text-base font-medium text-gray-300`}>Collections</h6>
+          <p
+            className={'mx-4 mb-2 border-b  border-gray-500 py-2 text-xs font-light text-gray-500'}
+          >
+            All collections
+          </p>
           {collectionResults?.map((collection) => (
             <>
               {collection?.address && (

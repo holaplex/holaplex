@@ -4,7 +4,7 @@ import {
   QueryHookOptions,
   QueryResult,
 } from '@apollo/client';
-import { useCallback, useMemo, useReducer, useState } from 'react';
+import { useCallback, useMemo, useReducer, useState, Dispatch, SetStateAction } from 'react';
 
 export interface QueryContext<TData, TArgs = void, TGraphQLData = void> {
   data: TData | undefined;
@@ -69,7 +69,6 @@ export function useHolaplexInfiniteScrollQuery<
   const onCompleted: (raw: TGraphQLDataObject) => void = useCallback(
     (raw) => {
       const rawDataArray: TGraphQLElement[] | undefined = listExtractor(raw);
-      setHasMore(rawDataArray != null && rawDataArray.length > 0);
       if (rawDataArray !== undefined) setData(rawDataArray.map((e) => transformer(e, raw)));
     },
     [listExtractor, transformer, setData]
@@ -98,6 +97,8 @@ export function useHolaplexInfiniteScrollQuery<
           offset: fetchMoreOffset,
         },
         updateQuery: (p, { fetchMoreResult }) => {
+          const rawDataArray: TGraphQLElement[] | undefined = listExtractor(fetchMoreResult);
+          setHasMore(rawDataArray != null && rawDataArray.length > 0);
           return mergeResultsFunction(p, fetchMoreResult);
         },
       });
@@ -105,7 +106,15 @@ export function useHolaplexInfiniteScrollQuery<
 
     runFetch();
     incrementFetchMoreCallCount();
-  }, [context, variables, fetchMoreLimit, fetchMoreOffset, mergeResultsFunction]);
+  }, [
+    context,
+    variables,
+    fetchMoreLimit,
+    fetchMoreOffset,
+    mergeResultsFunction,
+    setHasMore,
+    listExtractor,
+  ]);
 
   return {
     data: data,
