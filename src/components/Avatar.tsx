@@ -33,6 +33,8 @@ export const AvatarIcons = ({
   showFollow = false,
   showFollowTitle,
 }: AvatarIconsProps) => {
+  const wallet = useWallet();
+
   const [showFollowModal, setShowFollowModal] = useState(false);
   let profilesToFollow: ProfileToFollow[] = profiles.map((profile) => {
     return {
@@ -79,7 +81,7 @@ export const AvatarIcons = ({
               {showFollowTitle}
             </h4>
             <div className="scrollbar-thumb-rounded-full flex flex-1 flex-col space-y-6 overflow-y-auto py-4 px-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-900">
-              <FollowAllButton profilesToFollow={profilesToFollow} />
+              {wallet.connected && <FollowAllButton profilesToFollow={profilesToFollow} />}
               {profiles.map((p) => (
                 <FollowItem
                   key={p.address}
