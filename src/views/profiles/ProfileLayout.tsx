@@ -152,17 +152,18 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                 >
                   <span>Scan QR</span>
                 </div>
-                {ReactDom.createPortal(
-                  <Modal open={showQRModal} short setOpen={setShowQRModal}>
-                    <h4 className="mt-12 h-14 text-center text-lg font-medium leading-3">
-                      Scan QR Code
-                    </h4>
-                    <div className="flex items-center justify-center py-4 px-6">
-                      <QRCode data={window.location.href + router.asPath} />
-                    </div>
-                  </Modal>,
-                  document.getElementsByTagName('body')[0]!
-                )}
+                {typeof window !== 'undefined' &&
+                  ReactDom.createPortal(
+                    <Modal open={showQRModal} short setOpen={setShowQRModal}>
+                      <h4 className="mt-12 h-14 text-center text-lg font-medium leading-3">
+                        Scan QR Code
+                      </h4>
+                      <div className="flex items-center justify-center py-4 px-6">
+                        <QRCode data={window.location.href + router.asPath} />
+                      </div>
+                    </Modal>,
+                    document.getElementsByTagName('body')[0]!
+                  )}
               </div>
             </div>
 
