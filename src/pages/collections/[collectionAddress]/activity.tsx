@@ -8,7 +8,7 @@ import { InView } from 'react-intersection-observer';
 
 import { GetServerSideProps } from 'next';
 
-import { uniq } from 'ramda';
+import { always, cond, equals, uniq } from 'ramda';
 import React, { FC, ReactNode, useState } from 'react';
 import { NftActivity, useCollectionActivitiesQuery } from 'src/graphql/indexerTypes';
 import TopLevelFilterButton from 'src/components/TopLevelFilterButton';
@@ -45,6 +45,17 @@ export const ActivityCard = ({
 }) => {
   if (loading) return <LoadingActivityCard />;
   const multipleWallets = a.wallets.length > 1;
+  const activityType = cond([
+    [equals('purchase'), always('Sold')],
+    [equals('listing'), always('Listing')],
+    [equals('offer'), always('Offer')],
+  ])(a.activityType);
+  const Icon = cond([
+    [equals('purchase'), always(DollarSign)],
+    [equals('listing'), always(TagIcon)],
+    [equals('offer'), always(HandIcon)],
+  ])(a.activityType);
+
   return (
     <article key={a.id} className="mb-4 grid grid-cols-8 rounded border border-gray-700 p-4">
       <Link href={`/nfts/${a.nft?.address}`} passHref>
@@ -54,18 +65,8 @@ export const ActivityCard = ({
         </a>
       </Link>
       <div className="flex items-center">
-        {a.activityType === 'purchase' && (
-          <DollarSign className="mr-2 h-5 w-5 self-center text-gray-300" />
-        )}
-        <div>{a.activityType === 'purchase' && 'Sold'}</div>
-        {a.activityType === 'offer' && (
-          <HandIcon className="mr-2 h-5 w-5 self-center text-gray-300" />
-        )}
-        <div>{a.activityType === 'offer' && 'Offer'}</div>
-        {a.activityType === 'listing' && (
-          <TagIcon className="mr-2 h-5 w-5 self-center text-gray-300" />
-        )}
-        <div>{a.activityType === 'listing' && 'Listing'}</div>
+        <Icon className="mr-2 h-5 w-5 self-center text-gray-300" />
+        <div>{activityType}</div>
       </div>
       <div className="flex items-center text-xs">{shortenAddress(a.marketplaceProgramAddress)}</div>
       <div
@@ -113,7 +114,7 @@ export const ActivityCard = ({
   );
 };
 
-interface NFTGridProps {
+interface ActivityListProps {
   activities: NftActivity[];
   ctaVariant?: NoProfileVariant;
   refetch: (
@@ -121,17 +122,15 @@ interface NFTGridProps {
   ) => Promise<ApolloQueryResult<None>>;
   onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
   hasMore: boolean;
-  showCollection?: boolean;
   loading?: boolean;
 }
 
-export const NFTGrid: FC<NFTGridProps> = ({
+export const ActivityList: FC<ActivityListProps> = ({
   activities,
   refetch,
   onLoadMore,
   hasMore,
   ctaVariant,
-  showCollection,
   loading = false,
 }) => {
   return (
@@ -155,7 +154,7 @@ export const NFTGrid: FC<NFTGridProps> = ({
         ) : (
           <>
             {activities.length === 0 ? (
-              <div className={`col-span-full`}>
+              <div className="col-span-full">
                 <NoProfileItems variant={ctaVariant} />
               </div>
             ) : (
@@ -271,8 +270,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
       </div>
 
       <div className="mt-20 w-full">
-        <NFTGrid
-          showCollection={false}
+        <ActivityList
           ctaVariant={`activity`}
           hasMore={hasMore && activities.length > INITIAL_FETCH - 1}
           onLoadMore={async (inView: boolean) => {
@@ -280,7 +278,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
               return;
             }
 
-            const { data: newData } = await fetchMore({
+            await fetchMore({
               variables: {
                 ...variables,
                 limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
