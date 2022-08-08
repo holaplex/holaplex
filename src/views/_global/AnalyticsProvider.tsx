@@ -10,6 +10,8 @@ import mixpanel from 'mixpanel-browser';
 import Script from 'next/script';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Nft } from '@holaplex/marketplace-js-sdk';
+import { ANALYTICS_ACCEPTED } from '../../components/CookieBanner';
+import { getCookie } from '../../lib/utils';
 
 export const OLD_GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
@@ -263,6 +265,12 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
     };
 
     try {
+      const hasAcceptedAnalyticsCookie = getCookie(ANALYTICS_ACCEPTED);
+      if (!hasAcceptedAnalyticsCookie) {
+        console.warn(`Analytics disabled`);
+        return;
+      }
+
       const { value, sol_value, ...otherAttributes } = attributes;
 
       const attrs = {
@@ -345,6 +353,7 @@ export function AnalyticsProvider(props: { children: React.ReactNode }) {
 
 export function useAnalytics() {
   const context = useContext(AnalyticsContext);
+
   if (context === null) {
     throw new Error('useAnalytics must be used within an AnalyticsProvider');
   }

@@ -106,6 +106,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
           closeButton={() => <Close color="#fff" />}
         />
+        <CookieBanner />
 
         <ApolloProvider client={apolloClient}>
           <ShortcutProvider preventDefault={true}>
@@ -120,7 +121,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                             <AppHeader />
                             <MailboxProvider>
                               <PageLayout {...pageProps}>
-                                <CookieBanner />
                                 <Component {...pageProps} />
                               </PageLayout>
                             </MailboxProvider>
