@@ -8,7 +8,8 @@ export type NoProfileVariant =
   | 'collections'
   | 'offers'
   | 'activity'
-  | 'collectionPage';
+  | 'collectionPage'
+  | 'collectionActivity';
 
 interface NoProfileItemsProps {
   variant?: NoProfileVariant;
@@ -45,6 +46,15 @@ const NoProfileItems: FC<NoProfileItemsProps> = ({ variant = 'collected' }) => {
           <span className="text-center text-2xl font-semibold">No activity</span>
           <span className="mt-2 text-gray-300 ">
             Activity associated with this user’s wallet will show up here
+          </span>
+        </div>
+      );
+    case 'collectionActivity':
+      return (
+        <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+          <span className="text-center text-2xl font-semibold">No activity</span>
+          <span className="mt-2 text-gray-300 ">
+            Activity associated with this collection will show up here
           </span>
         </div>
       );
