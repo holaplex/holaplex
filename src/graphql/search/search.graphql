@@ -1,6 +1,12 @@
 #import "./ProfileInfo.graphql"
 
-query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String!) {
+query search(
+  $term: String!
+  $walletAddress: PublicKey!
+  $nftMintAddress: String!
+  $start: DateTimeUtc!
+  $end: DateTimeUtc!
+) {
   metadataJsons(term: $term, limit: 25, offset: 0) {
     name
     address
@@ -36,10 +42,20 @@ query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String
     }
     mintAddress
   }
-  searchCollections(term: $term, limit: 25, offset: 0) {
+  searchCollections(term: $term, limit: 15, offset: 0) {
     name
     address
     mintAddress
     image
+  }
+  collectionsFeaturedByVolume(
+    term: $term
+    startDate: $start
+    endDate: $end
+    limit: 25
+    offset: 0
+    orderDirection: DESC
+  ) {
+    ...CollectionPreview
   }
 }
