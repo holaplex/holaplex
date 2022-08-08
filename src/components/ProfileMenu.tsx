@@ -52,7 +52,7 @@ export const ProfileMenu: FC = () => {
     },
     {
       id: TabRoute.OFFERS,
-      title: 'Offers',
+      title: 'Open Offers',
       icon: <FeatherIcon height={16} width={16} icon="dollar-sign" className="mr-2" />,
       path: `/profiles/${publicKey}/offers`,
     },
