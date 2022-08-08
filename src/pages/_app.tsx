@@ -43,6 +43,7 @@ import { MailboxProvider } from 'src/views/messages/MailboxProvider';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
+import CookieBanner from '../components/CookieBanner';
 
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
@@ -119,6 +120,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                             <AppHeader />
                             <MailboxProvider>
                               <PageLayout {...pageProps}>
+                                <CookieBanner />
                                 <Component {...pageProps} />
                               </PageLayout>
                             </MailboxProvider>
