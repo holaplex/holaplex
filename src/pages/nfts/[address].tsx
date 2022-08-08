@@ -362,11 +362,13 @@ export default function NftByAddress({
 
                       <Link href={`/collections/${nft?.collection?.address}`}>
                         <a className="flex items-center space-x-2 rounded-md py-3 pl-2 pr-4 shadow-2xl shadow-black">
-                          <img
-                            className="h-8 w-8 rounded-md object-cover"
-                            alt={nft.collection.name}
-                            src={nft?.collection?.image}
-                          />
+                          {nft?.collection?.image && (
+                            <img
+                              className="h-8 w-8 rounded-md object-cover"
+                              alt={nft.collection?.name}
+                              src={nft?.collection.image}
+                            />
+                          )}
                           <span>{nft.collection.name}</span>
                         </a>
                       </Link>
