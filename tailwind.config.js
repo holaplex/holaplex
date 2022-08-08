@@ -6,6 +6,9 @@ module.exports = {
   safelist: ['z-0', 'z-10', 'z-20', 'z-30', 'z-40', 'z-50'],
   theme: {
     extend: {
+      content: {
+        search: 'url(/images/svgs/search.svg)',
+      },
       maxHeight: {
         'screen-95': '90vh',
       },

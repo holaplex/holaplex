@@ -1,14 +1,13 @@
 import { DoubleGrid } from '@/assets/icons/DoubleGrid';
-import { SingleGrid } from '@/assets/icons/SingleGrid';
 import { TripleGrid } from '@/assets/icons/TripleGrid';
-import { ApolloQueryResult, OperationVariables } from '@apollo/client';
+import FiltersSection, { FilterProps } from '@/components/Filters';
 import clsx from 'clsx';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { InView } from 'react-intersection-observer';
-import { TailSpin } from 'react-loader-spinner';
+import { SearchIcon } from '@heroicons/react/outline';
 
-export interface CardGridWithHeaderProps<T> {
+export interface CardGridWithHeaderProps<T, F> {
   /**
    * Attributes for creating/displaying cards.
    */
@@ -25,32 +24,67 @@ export interface CardGridWithHeaderProps<T> {
   search: SearchBarProps;
 
   menus?: JSX.Element | JSX.Element[];
+
+  filters?: FilterProps<F>[];
 }
 
 /**
  * Grid layout component with triggers for fetching more data for infinite scroll, search bar, and grid size selection.
  *
  * @template T type of data being fetched and used to create cards
+ * @template F type for filter options
  * @param props
  * @returns
  */
-export function CardGridWithHeader<T>(props: CardGridWithHeaderProps<T>): JSX.Element {
-  const [gridView, setGridView] = useState<GridView>(DEFAULT_GRID_VIEW);
+export function CardGridWithHeader<T, F = null>(props: CardGridWithHeaderProps<T, F>): JSX.Element {
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const gridViews = useMemo(() => {
+    if (props.filters === undefined) {
+      return [GridView.THREE_BY_THREE, GridView.FOUR_BY_FOUR];
+    }
+
+    if (collapsed) {
+      return [GridView.THREE_BY_THREE, GridView.FOUR_BY_FOUR];
+    } else {
+      return [GridView.TWO_BY_TWO, GridView.THREE_BY_THREE];
+    }
+  }, [props.filters, collapsed]);
+  const [gridSelected, setGridSelected] = useState<GridToggle>(GridToggle.COMPACT);
 
   return (
     <div className="w-full space-y-4 text-base">
       <div className="sticky top-0 z-10 flex w-full flex-col items-center gap-6 bg-gray-900 bg-opacity-80 py-4 backdrop-blur-sm lg:flex-row lg:justify-between lg:gap-4">
-        <div className={clsx(['flex space-x-4', 'lg:justify-end'], 'w-full')}>
+        <div className={clsx(['flex space-x-4', 'lg:justify-end'], 'w-full px-6', 'md:px-20')}>
+          {props.filters && (
+            <FiltersSection.FilterIcon
+              collapsed={collapsed}
+              onClick={() => {
+                setCollapsed(!!!collapsed);
+              }}
+            />
+          )}
           <SearchBar {...props.search} />
           {props.menus}
-          <GridSelector onChange={(v) => setGridView(v)} />
+          <GridSelector selected={gridSelected} onChange={setGridSelected} />
         </div>
       </div>
-      <CardGrid
-        gridView={gridView}
-        cardContext={props.cardContext}
-        dataContext={props.dataContext}
-      />
+      <div className={clsx('flex justify-center', 'px-6 md:px-20')}>
+        {props.filters && (
+          <FiltersSection
+            collapsed={collapsed}
+            className={clsx('mb-10', 'sticky top-[80px] h-full flex-none')}
+          >
+            {props.filters.map((f) => (
+              <FiltersSection.Filter key={f.title} {...f} />
+            ))}
+          </FiltersSection>
+        )}
+        <CardGrid
+          gridView={gridViews[gridSelected]}
+          cardContext={props.cardContext}
+          dataContext={props.dataContext}
+        />
+      </div>
     </div>
   );
 }
@@ -68,61 +102,47 @@ enum GridView {
    * 2x2 (4 cards visible at a time)
    */
   TWO_BY_TWO = '2x2',
+
+  /**
+   * 3x3 (6 cards visible at a time)
+   */
+  THREE_BY_THREE = '3x3',
+
   /**
    * 4x4 (16 cards visible at a time)
    */
   FOUR_BY_FOUR = '4x4',
-  /**
-   * 6x6 (36 cards visible at a time)
-   */
-  SIX_BY_SIX = '6x6',
 }
 
-const DEFAULT_GRID_VIEW: GridView = GridView.SIX_BY_SIX;
+// Toggle between grid compact and expanded
+enum GridToggle {
+  /**
+   * grid expand view
+   */
+  EXPAND = 0,
+  /**
+   * grid compact view
+   */
+  COMPACT = 1,
+}
 
 interface GridSelectorProps {
-  onChange: (view: GridView) => void;
+  selected: GridToggle;
+  onChange: (toggle: GridToggle) => void;
 }
 
 function GridSelector(props: GridSelectorProps): JSX.Element {
-  const [selected, setSelected] = useState<GridView>(DEFAULT_GRID_VIEW);
-
-  const onSelect: (view: GridView) => void = useCallback(
-    (view: GridView) => {
-      if (view !== selected) {
-        props.onChange(view);
-        setSelected(view);
-      }
-    },
-    [props, setSelected]
-  );
-
   return (
     <div className="hidden divide-gray-800 rounded-lg border-2 border-solid border-gray-800 sm:flex">
       <button
-        className={clsx(
-          'flex w-10 items-center justify-center border-r-2 border-gray-800 md:hidden',
-          {
-            'bg-gray-800': selected === GridView.ONE_BY_ONE,
-          }
-        )}
-        onClick={() => onSelect(GridView.ONE_BY_ONE)}
-      >
-        <SingleGrid
-          className={selected !== GridView.ONE_BY_ONE ? 'transition hover:scale-110 ' : ''}
-          color={selected === GridView.ONE_BY_ONE ? 'white' : '#707070'}
-        />
-      </button>
-
-      <button
         className={clsx('flex w-10 items-center justify-center', {
-          'bg-gray-800': selected === GridView.TWO_BY_TWO,
+          'bg-gray-800': props.selected === GridToggle.EXPAND,
         })}
-        onClick={() => onSelect(GridView.TWO_BY_TWO)}
+        onClick={() => props.onChange(GridToggle.EXPAND)}
       >
         <DoubleGrid
-          className={selected !== GridView.TWO_BY_TWO ? 'transition hover:scale-110 ' : ''}
-          color={selected === GridView.TWO_BY_TWO ? 'white' : '#707070'}
+          className={props.selected === GridToggle.EXPAND ? '' : 'transition hover:scale-110'}
+          color={props.selected === GridToggle.EXPAND ? 'white' : '#707070'}
         />
       </button>
 
@@ -130,14 +150,14 @@ function GridSelector(props: GridSelectorProps): JSX.Element {
         className={clsx(
           'hidden w-10 items-center justify-center border-l-2 border-gray-800 md:flex',
           {
-            'bg-gray-800': selected === GridView.SIX_BY_SIX,
+            'bg-gray-800': props.selected === GridToggle.COMPACT,
           }
         )}
-        onClick={() => onSelect(GridView.SIX_BY_SIX)}
+        onClick={() => props.onChange(GridToggle.COMPACT)}
       >
         <TripleGrid
-          className={selected !== GridView.SIX_BY_SIX ? 'transition hover:scale-110' : ''}
-          color={selected === GridView.SIX_BY_SIX ? 'white' : '#707070'}
+          className={props.selected === GridToggle.COMPACT ? '' : 'transition hover:scale-110'}
+          color={props.selected === GridToggle.COMPACT ? 'white' : '#707070'}
         />
       </button>
     </div>
@@ -168,30 +188,33 @@ export interface SearchBarProps {
 
 function SearchBar(props: SearchBarProps): JSX.Element {
   return (
-    <DebounceInput
-      minLength={props.minCharacters ?? 3}
-      debounceTimeout={props.debounceTimeout}
-      id="nft-search"
-      autoComplete="off"
-      autoCorrect="off"
-      className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0"
-      type="search"
-      placeholder={props.placeholder ?? 'Search'}
-      onChange={(e) => props.onChange(e.target.value)}
-    />
+    <div className="relative w-full">
+      <DebounceInput
+        minLength={props.minCharacters ?? 3}
+        debounceTimeout={props.debounceTimeout}
+        id="nft-search"
+        className="peer w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent pl-10 placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0"
+        autoComplete="off"
+        autoCorrect="off"
+        type="search"
+        placeholder={props.placeholder ?? 'Search'}
+        onChange={(e) => props.onChange(e.target.value)}
+      />
+      <SearchIcon
+        width={24}
+        className="absolute left-2 top-[50%] mt-[-12px] text-gray-800 peer-focus:text-white"
+      />
+    </div>
   );
 }
 
 export interface CardGridHeaderElementProps {
   children: JSX.Element;
+  className?: string;
 }
 
 function CardGridHeaderElement(props: CardGridHeaderElementProps): JSX.Element {
-  return (
-    <div className="w-full rounded-lg border-2 border-solid border-gray-800 bg-transparent placeholder-gray-500 focus:border-white focus:placeholder-transparent focus:shadow-none focus:ring-0">
-      {props.children}
-    </div>
-  );
+  return <div className={clsx('flex flex-none', props.className)}>{props.children}</div>;
 }
 
 CardGridWithHeader.HeaderElement = CardGridHeaderElement;
@@ -208,10 +231,14 @@ export interface CardGridProps<T> {
   gridView: GridView;
 
   /**
+   * Optional classname on the grid container.
+   */
+  className?: string;
+
+  /**
    * Attributes for creating/displaying cards.
    */
   cardContext: {
-    bigGridClassNameOverride?: string;
     /**
      * Element to use when there are no data. Defaults to an empty `<div/>`.
      */
@@ -268,86 +295,83 @@ export interface CardGridProps<T> {
  * @returns
  */
 export function CardGrid<T>(props: CardGridProps<T>): JSX.Element {
-  const [bodyElements, setBodyElements] = useState<JSX.Element[]>([
-    props.cardContext.noDataFallback ?? <></>,
-  ]);
   const gridId: string = useMemo(() => `grid-${Math.round(Math.random() * 100000)}`, []);
 
   let gridViewClasses: string;
   let gridCols: number;
+
   switch (props.gridView) {
     case GridView.ONE_BY_ONE: {
-      gridViewClasses = 'md:grid-cols-2';
+      gridViewClasses = 'md:grid-cols-1';
       gridCols = 1;
       break;
     }
     case GridView.TWO_BY_TWO: {
-      gridViewClasses = 'sm:grid-cols-2';
+      gridViewClasses = 'md:grid-cols-1 lg:grid-cols-2';
       gridCols = 2;
       break;
     }
 
+    case GridView.THREE_BY_THREE: {
+      gridViewClasses = 'md:grid-cols-2 lg:grid-cols-3';
+      gridCols = 3;
+      break;
+    }
+
     case GridView.FOUR_BY_FOUR: {
-      gridViewClasses = 'sm:grid-cols-2 md:grid-cols-4';
+      gridViewClasses = 'md:grid-cols-3 lg:grid-cols-4';
       gridCols = 4;
       break;
     }
-    case GridView.SIX_BY_SIX: {
-      gridViewClasses = clsx(
-        props.cardContext.bigGridClassNameOverride
-          ? props.cardContext.bigGridClassNameOverride
-          : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
-      );
-      gridCols = 6;
-      break;
-    }
+  }
+  const data = props.dataContext.data || [];
+
+  if (!props.dataContext.loading && data.length === 0) {
+    return (
+      <div className="w-full pb-8">
+        <div className="flex w-full justify-center p-8">{props.cardContext.noDataFallback}</div>
+      </div>
+    );
   }
 
-  // set the body of the grid based on data loading state
-  useEffect(() => {
-    if (props.dataContext.loading) {
-      // loading previews
-      setBodyElements(
-        Array(gridCols)
-          .fill(null)
-          .map((_) => props.cardContext.loadingCardCreator())
-      );
-    } else if (props.dataContext.data === undefined || props.dataContext.data.length === 0) {
-      // no-data fallback
-      setBodyElements([props.cardContext.noDataFallback ?? <></>]);
-    } else {
-      // loaded data
-      setBodyElements(
-        props.dataContext.data.map((cardData) =>
-          props.cardContext.cardCreator(
-            cardData,
-            props.dataContext.refetch,
-            props.dataContext.loading === undefined ? true : props.dataContext.loading
-          )
-        )
-      );
-    }
-  }, [setBodyElements, props, gridCols, gridId]);
-
   return (
-    <>
-      <div className={clsx('grid grid-cols-1 gap-6', gridViewClasses)}>
-        {bodyElements.map((e, i) => (
-          <div key={`${gridId}-${i}`}>{e}</div>
+    <div className="w-full pb-8">
+      <div
+        className={clsx('grid grid-cols-1 gap-6 sm:grid-cols-2', gridViewClasses, props.className)}
+      >
+        {data.map((e, i) => (
+          <div key={`${gridId}-${i}`}>
+            {props.cardContext.cardCreator(e, props.dataContext.refetch, false)}
+          </div>
         ))}
-      </div>
-      {/* infinite scroll display and load-more trigger */}
-      <InView threshold={0.1} onChange={props.dataContext.onLoadMore}>
-        <div
-          className={clsx('my-6 flex w-full items-center justify-center font-bold', {
-            hidden:
-              !props.dataContext.hasMore ||
-              (props.dataContext.data && props.dataContext.data.length === 0),
+        {props.dataContext.loading &&
+          [...Array(gridCols * gridCols).keys()].map((i) => {
+            return (
+              <div key={`${gridId}-${i}-loading`}>{props.cardContext.loadingCardCreator()}</div>
+            );
           })}
-        >
-          <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
-        </div>
-      </InView>
-    </>
+        {!props.dataContext.loading &&
+          props.dataContext.hasMore &&
+          [...Array(gridCols).keys()].map((i) => {
+            const loadingCard = props.cardContext.loadingCardCreator();
+
+            return (
+              <div key={`${gridId}-${i}-has-more`}>
+                {i === 0 ? (
+                  <InView
+                    threshold={0.01}
+                    onChange={props.dataContext.onLoadMore}
+                    className="w-full"
+                  >
+                    {loadingCard}
+                  </InView>
+                ) : (
+                  loadingCard
+                )}
+              </div>
+            );
+          })}
+      </div>
+    </div>
   );
 }

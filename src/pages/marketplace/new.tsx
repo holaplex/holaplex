@@ -1,6 +1,7 @@
 import { programs, Wallet } from '@metaplex/js';
 import DomainFormItem from 'src/components/DomainFormItem';
 import Button from '@/components/Button';
+import { RuleObject } from 'rc-field-form/lib/interface';
 import Upload from 'src/components/Upload';
 import FillSpace from 'src/components/FillSpace';
 import StepForm from 'src/components/StepForm';
@@ -12,12 +13,11 @@ import {
   Paragraph,
   reduceFieldData,
   Title,
-  validateSubdomainUniqueness,
   popFile,
   UploadedBanner,
 } from '@/modules/storefront/editor';
 import ipfsSDK from '@/modules/ipfs/client';
-import { Transaction } from '@solana/web3.js';
+import { SystemProgram, Transaction } from '@solana/web3.js';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Card, Col, Form, Input, Row, Space, InputNumber, Typography } from 'antd';
 import {
@@ -33,6 +33,8 @@ import {
   view,
 } from 'ramda';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { ApolloClient, useApolloClient } from '@apollo/client';
+import { SubdomainCheckDocument } from '@/graphql/indexerTypes';
 import React, { useState } from 'react';
 import { createAuctionHouse } from '@/modules/auction-house';
 import { useRouter } from 'next/router';
@@ -42,6 +44,21 @@ import { AuctionHouseProgram } from '@holaplex/mpl-auction-house';
 
 const MARKETPLACE_ENABLED = process.env.NEXT_PUBLIC_MARKETPLACE_ENABLED === 'true';
 
+function validateSubdomainUniqueness(
+  client: ApolloClient<object>
+): (rule: RuleObject, subdomain: string | null | undefined) => Promise<void> {
+  return async function (_: RuleObject, subdomain: string | null | undefined) {
+    const {
+      data: { marketplace },
+    } = await client.query({ query: SubdomainCheckDocument, variables: { subdomain } });
+
+    if (marketplace) {
+      return Promise.reject('Marketplace subdomain already claimed.');
+    }
+
+    return marketplace;
+  };
+}
 const {
   metaplex: { Store, SetStoreV2, StoreConfig },
 } = programs;
@@ -63,6 +80,7 @@ export async function getServerSideProps() {
 
 export default function New() {
   const router = useRouter();
+  const client = useApolloClient();
   const { connection } = useConnection();
   const [submitting, setSubmitting] = useState(false);
   const arweave = initArweave();
@@ -81,7 +99,7 @@ export default function New() {
     { name: ['theme', 'banner'], value: [] },
     { name: ['meta', 'name'], value: '' },
     { name: ['meta', 'description'], value: '' },
-    { name: ['sellerFeeBasisPoints'], value: 10000 },
+    { name: ['sellerFeeBasisPoints'], value: 200 },
     { name: ['creators'], value: [] },
   ]);
 
@@ -101,8 +119,8 @@ export default function New() {
   }
 
   const values = reduceFieldData(fields);
+  const subdomainUniqueness = validateSubdomainUniqueness(client);
 
-  const subdomainUniqueness = validateSubdomainUniqueness(ar, userPubkey);
   const onSubmit = async (): Promise<void> => {
     if (isNil(wallet) || isNil(wallet.signTransaction) || isNil(wallet.publicKey)) {
       return;
@@ -150,9 +168,41 @@ export default function New() {
         return;
       }
       const auctionHouseCreateInstruction = await createAuctionHouse({
+        connection,
         wallet: wallet as Wallet,
         sellerFeeBasisPoints,
       });
+
+      const transaction = new Transaction();
+
+      transaction.add(auctionHouseCreateInstruction);
+
+      const [auctionHouse, _bump] = await AuctionHouseProgram.findAuctionHouseAddress(
+        wallet.publicKey,
+        NATIVE_MINT
+      );
+      const [feeAccount, _feePayerBump] = await AuctionHouseProgram.findAuctionHouseFeeAddress(
+        auctionHouse
+      );
+      const [treasuryAccount, _treasuryBump] =
+        await AuctionHouseProgram.findAuctionHouseTreasuryAddress(auctionHouse);
+
+      const rentExempt = await connection.getMinimumBalanceForRentExemption(0);
+
+      const fundTreasuryAccountIx = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: treasuryAccount,
+        lamports: rentExempt,
+      });
+
+      transaction.add(fundTreasuryAccountIx);
+
+      const fundFeeAccountIx = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: feeAccount,
+        lamports: rentExempt,
+      });
+      transaction.add(fundFeeAccountIx);
 
       const setStorefrontV2Instructions = new SetStoreV2(
         {
@@ -167,12 +217,10 @@ export default function New() {
         }
       );
 
-      const transaction = new Transaction();
-
-      transaction.add(auctionHouseCreateInstruction).add(setStorefrontV2Instructions);
+      transaction.add(setStorefrontV2Instructions);
 
       transaction.feePayer = wallet.publicKey;
-      transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+      transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
       const signedTransaction = await wallet.signTransaction(transaction);
 

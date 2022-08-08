@@ -1,6 +1,6 @@
 import { getPFPFromPublicKey } from '@/modules/utils/image';
 import { shortenAddress, showFirstAndLastFour } from '@/modules/utils/string';
-import { Tooltip } from 'antd';
+
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ReactDom from 'react-dom';
@@ -15,6 +15,7 @@ import { FollowItem } from '../views/profiles/FollowModal';
 import { FollowUnfollowSource } from './FollowUnfollowButton';
 import FollowAllButton, { ProfileToFollow } from './FollowAllButton';
 import clsx from 'clsx';
+import Popover from './Popover';
 
 export interface AvatarIconsProps {
   profiles: {
@@ -156,16 +157,15 @@ export const AvatarIcon = ({ address, index, data, addProfileClick = true }: Ava
   ]);
 
   return (
-    // Using antd tooltip since no tailwind supported component, replace when better alternative is available
-    <Tooltip
+    <Popover
       key={address}
-      title={twitterHandle || shortenAddress(address)}
-      mouseEnterDelay={0.09}
-      overlayStyle={{
-        fontSize: '0.75rem',
-        fontWeight: 600,
-        color: 'white',
-      }}
+      isShowOnHover={true}
+      placement={`bottom`}
+      content={
+        <p className={'m-0 text-xs font-semibold text-white'}>
+          {twitterHandle || shortenAddress(address)}
+        </p>
+      }
     >
       {/* // Need to use style prop for dynamic style application, Tailwind does not support */}
       <div
@@ -182,7 +182,7 @@ export const AvatarIcon = ({ address, index, data, addProfileClick = true }: Ava
           <img src={profilePictureUrl} alt="Profile Picture" className="rounded-full" />
         )}
       </div>
-    </Tooltip>
+    </Popover>
   );
 };
 
@@ -257,7 +257,7 @@ export const AvatarImage = ({
   <div
     className={clsx(
       'flex',
-      'overflow-clip rounded-full',
+      'overflow-clip rounded-full bg-gray-900',
       'h-full w-full',
       border && borderClass ? borderClass : undefined
     )}

@@ -1010,6 +1010,7 @@ export type CreatedNfTsQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1169,6 +1170,7 @@ export type OwnedNfTsQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1364,6 +1366,7 @@ export type NftCollectionQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1567,6 +1570,7 @@ export type NftsInCollectionQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -1715,6 +1719,7 @@ export type DiscoverNftsActiveOffersQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -1849,6 +1854,7 @@ export type DiscoverNftsAllQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -1983,6 +1989,7 @@ export type DiscoverNftsBuyNowQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -2080,6 +2087,19 @@ export type DiscoverProfilesAllQuery = {
     } | null;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   }>;
+};
+
+export type DiscoverStatsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type DiscoverStatsQuery = {
+  __typename?: 'QueryRoot';
+  nftsStats: {
+    __typename?: 'NftsStats';
+    totalNfts: number;
+    buyNowListings: number;
+    nftsWithActiveOffers: number;
+  };
+  profilesStats: { __typename?: 'ProfilesStats'; totalProfiles: number };
 };
 
 export type FeedQueryVariables = Exact<{
@@ -2714,6 +2734,7 @@ export type NftCardFragment = {
     tradeState: string;
     seller: any;
     metadata: any;
+    marketplaceProgramAddress: string;
     price: any;
     tradeStateBump: number;
     purchaseId?: any | null;
@@ -2975,6 +2996,7 @@ export type BuyNowListingFragment = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3059,6 +3081,10 @@ export type HomeQueryVariables = Exact<{
   featuredProfileLimit: Scalars['Int'];
   featuredBuyNowLimit: Scalars['Int'];
   feedEventsLimit: Scalars['Int'];
+  collectionsByVolumeStartDate: Scalars['DateTimeUtc'];
+  collectionsByVolumeEndDate: Scalars['DateTimeUtc'];
+  collectionsByMarketCapStartDate: Scalars['DateTimeUtc'];
+  collectionsByMarketCapEndDate: Scalars['DateTimeUtc'];
 }>;
 
 export type HomeQuery = {
@@ -3467,6 +3493,7 @@ export type HomeQuery = {
         tradeState: string;
         seller: any;
         metadata: any;
+        marketplaceProgramAddress: string;
         price: any;
         tradeStateBump: number;
         createdAt: any;
@@ -3669,6 +3696,7 @@ export type NftMarketplaceQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3781,6 +3809,7 @@ export type NftMarketplaceQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -3931,6 +3960,7 @@ export type OffersPageQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -4033,6 +4063,7 @@ export type OffersPageQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       createdAt: any;
@@ -4085,6 +4116,23 @@ export type OffersPageQuery = {
       } | null;
     }>;
   }>;
+};
+
+export type SubdomainCheckQueryVariables = Exact<{
+  subdomain: Scalars['String'];
+}>;
+
+export type SubdomainCheckQuery = {
+  __typename?: 'QueryRoot';
+  marketplace?: {
+    __typename?: 'Marketplace';
+    subdomain: string;
+    name: string;
+    description: string;
+    logoUrl: string;
+    bannerUrl: string;
+    ownerAddress: string;
+  } | null;
 };
 
 export type NftActivityQueryVariables = Exact<{
@@ -4177,6 +4225,7 @@ export type NftCardQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -4306,6 +4355,7 @@ export type NftPageQuery = {
       tradeState: string;
       seller: any;
       metadata: any;
+      marketplaceProgramAddress: string;
       price: any;
       tradeStateBump: number;
       purchaseId?: any | null;
@@ -4757,6 +4807,8 @@ export type SearchQueryVariables = Exact<{
   term: Scalars['String'];
   walletAddress: Scalars['PublicKey'];
   nftMintAddress: Scalars['String'];
+  start: Scalars['DateTimeUtc'];
+  end: Scalars['DateTimeUtc'];
 }>;
 
 export type SearchQuery = {
@@ -4822,6 +4874,12 @@ export type SearchQuery = {
     address: string;
     mintAddress: string;
     image?: string | null;
+  }>;
+  collectionsFeaturedByVolume: Array<{
+    __typename?: 'Collection';
+    floorPrice?: any | null;
+    nftCount?: any | null;
+    nft: { __typename?: 'Nft'; mintAddress: string; name: string; image: string };
   }>;
 };
 
@@ -5083,6 +5141,7 @@ export const NftCardFragmentDoc = gql`
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       purchaseId
@@ -5300,6 +5359,7 @@ export const BuyNowListingFragmentDoc = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -5601,6 +5661,7 @@ export const CreatedNfTsDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -5780,6 +5841,7 @@ export const OwnedNfTsDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6060,6 +6122,7 @@ export const NftCollectionDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6287,6 +6350,7 @@ export const NftsInCollectionDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -6780,6 +6844,58 @@ export type DiscoverProfilesAllQueryResult = Apollo.QueryResult<
   DiscoverProfilesAllQuery,
   DiscoverProfilesAllQueryVariables
 >;
+export const DiscoverStatsDocument = gql`
+  query discoverStats {
+    nftsStats {
+      totalNfts
+      buyNowListings
+      nftsWithActiveOffers
+    }
+    profilesStats {
+      totalProfiles
+    }
+  }
+`;
+
+/**
+ * __useDiscoverStatsQuery__
+ *
+ * To run a query within a React component, call `useDiscoverStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscoverStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscoverStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDiscoverStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<DiscoverStatsQuery, DiscoverStatsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<DiscoverStatsQuery, DiscoverStatsQueryVariables>(
+    DiscoverStatsDocument,
+    options
+  );
+}
+export function useDiscoverStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<DiscoverStatsQuery, DiscoverStatsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<DiscoverStatsQuery, DiscoverStatsQueryVariables>(
+    DiscoverStatsDocument,
+    options
+  );
+}
+export type DiscoverStatsQueryHookResult = ReturnType<typeof useDiscoverStatsQuery>;
+export type DiscoverStatsLazyQueryHookResult = ReturnType<typeof useDiscoverStatsLazyQuery>;
+export type DiscoverStatsQueryResult = Apollo.QueryResult<
+  DiscoverStatsQuery,
+  DiscoverStatsQueryVariables
+>;
 export const FeedDocument = gql`
   query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
     feedEvents(wallet: $address, limit: $limit, offset: $offset, excludeTypes: $excludeTypes) {
@@ -6902,6 +7018,10 @@ export const HomeDocument = gql`
     $featuredProfileLimit: Int!
     $featuredBuyNowLimit: Int!
     $feedEventsLimit: Int!
+    $collectionsByVolumeStartDate: DateTimeUtc!
+    $collectionsByVolumeEndDate: DateTimeUtc!
+    $collectionsByMarketCapStartDate: DateTimeUtc!
+    $collectionsByMarketCapEndDate: DateTimeUtc!
   ) {
     feedEvents(
       wallet: "ALphA7iWKMUi8owfbSKFm2i3BxG6LbasYYXt8sP85Upz"
@@ -6927,8 +7047,8 @@ export const HomeDocument = gql`
       }
     }
     collectionsFeaturedByVolume(
-      startDate: "2020-01-01T00:00:00Z"
-      endDate: "3000-01-01T00:00:00Z"
+      startDate: $collectionsByVolumeStartDate
+      endDate: $collectionsByVolumeEndDate
       limit: $featuredCollectionsLimit
       offset: 0
       orderDirection: DESC
@@ -6936,8 +7056,8 @@ export const HomeDocument = gql`
       ...CollectionPreview
     }
     collectionsFeaturedByMarketCap(
-      startDate: "2020-01-01T00:00:00Z"
-      endDate: "3000-01-01T00:00:00Z"
+      startDate: $collectionsByMarketCapStartDate
+      endDate: $collectionsByMarketCapEndDate
       limit: $featuredCollectionsLimit
       offset: 0
       orderDirection: DESC
@@ -6997,6 +7117,10 @@ export const HomeDocument = gql`
  *      featuredProfileLimit: // value for 'featuredProfileLimit'
  *      featuredBuyNowLimit: // value for 'featuredBuyNowLimit'
  *      feedEventsLimit: // value for 'feedEventsLimit'
+ *      collectionsByVolumeStartDate: // value for 'collectionsByVolumeStartDate'
+ *      collectionsByVolumeEndDate: // value for 'collectionsByVolumeEndDate'
+ *      collectionsByMarketCapStartDate: // value for 'collectionsByMarketCapStartDate'
+ *      collectionsByMarketCapEndDate: // value for 'collectionsByMarketCapEndDate'
  *   },
  * });
  */
@@ -7123,6 +7247,7 @@ export const NftMarketplaceDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -7231,6 +7356,7 @@ export const NftMarketplaceDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -7403,6 +7529,7 @@ export const OffersPageDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -7496,6 +7623,7 @@ export const OffersPageDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         createdAt
@@ -7569,6 +7697,59 @@ export function useOffersPageLazyQuery(
 export type OffersPageQueryHookResult = ReturnType<typeof useOffersPageQuery>;
 export type OffersPageLazyQueryHookResult = ReturnType<typeof useOffersPageLazyQuery>;
 export type OffersPageQueryResult = Apollo.QueryResult<OffersPageQuery, OffersPageQueryVariables>;
+export const SubdomainCheckDocument = gql`
+  query subdomainCheck($subdomain: String!) {
+    marketplace(subdomain: $subdomain) {
+      subdomain
+      name
+      description
+      logoUrl
+      bannerUrl
+      ownerAddress
+    }
+  }
+`;
+
+/**
+ * __useSubdomainCheckQuery__
+ *
+ * To run a query within a React component, call `useSubdomainCheckQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubdomainCheckQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubdomainCheckQuery({
+ *   variables: {
+ *      subdomain: // value for 'subdomain'
+ *   },
+ * });
+ */
+export function useSubdomainCheckQuery(
+  baseOptions: Apollo.QueryHookOptions<SubdomainCheckQuery, SubdomainCheckQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SubdomainCheckQuery, SubdomainCheckQueryVariables>(
+    SubdomainCheckDocument,
+    options
+  );
+}
+export function useSubdomainCheckLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SubdomainCheckQuery, SubdomainCheckQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SubdomainCheckQuery, SubdomainCheckQueryVariables>(
+    SubdomainCheckDocument,
+    options
+  );
+}
+export type SubdomainCheckQueryHookResult = ReturnType<typeof useSubdomainCheckQuery>;
+export type SubdomainCheckLazyQueryHookResult = ReturnType<typeof useSubdomainCheckLazyQuery>;
+export type SubdomainCheckQueryResult = Apollo.QueryResult<
+  SubdomainCheckQuery,
+  SubdomainCheckQueryVariables
+>;
 export const NftActivityDocument = gql`
   query nftActivity($address: String!) {
     nftByMintAddress(address: $address) {
@@ -7742,6 +7923,7 @@ export const NftPageDocument = gql`
           requiresSignOff
           canChangeSalePrice
         }
+        marketplaceProgramAddress
         price
         tradeStateBump
         purchaseId
@@ -8640,7 +8822,13 @@ export type ProfileSearchQueryResult = Apollo.QueryResult<
   ProfileSearchQueryVariables
 >;
 export const SearchDocument = gql`
-  query search($term: String!, $walletAddress: PublicKey!, $nftMintAddress: String!) {
+  query search(
+    $term: String!
+    $walletAddress: PublicKey!
+    $nftMintAddress: String!
+    $start: DateTimeUtc!
+    $end: DateTimeUtc!
+  ) {
     metadataJsons(term: $term, limit: 25, offset: 0) {
       name
       address
@@ -8676,14 +8864,25 @@ export const SearchDocument = gql`
       }
       mintAddress
     }
-    searchCollections(term: $term, limit: 25, offset: 0) {
+    searchCollections(term: $term, limit: 15, offset: 0) {
       name
       address
       mintAddress
       image
     }
+    collectionsFeaturedByVolume(
+      term: $term
+      startDate: $start
+      endDate: $end
+      limit: 25
+      offset: 0
+      orderDirection: DESC
+    ) {
+      ...CollectionPreview
+    }
   }
   ${ProfileInfoFragmentDoc}
+  ${CollectionPreviewFragmentDoc}
 `;
 
 /**
@@ -8701,6 +8900,8 @@ export const SearchDocument = gql`
  *      term: // value for 'term'
  *      walletAddress: // value for 'walletAddress'
  *      nftMintAddress: // value for 'nftMintAddress'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
  *   },
  * });
  */

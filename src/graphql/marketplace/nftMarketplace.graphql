@@ -107,6 +107,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       createdAt
@@ -215,6 +216,7 @@ query nftMarketplace($subdomain: String!, $address: String!) {
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       createdAt

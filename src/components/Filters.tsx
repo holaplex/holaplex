@@ -1,51 +1,42 @@
 import { useUrlQueryParam } from '@/hooks/useUrlQueryParam';
-import {
-  FilterIcon,
-  ArrowLeftIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/outline';
+import { FilterIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 
 export interface FiltersSectionProps {
   children: JSX.Element | JSX.Element[];
+  collapsed: boolean;
+  className?: string;
 }
 
 export default function FiltersSection(props: FiltersSectionProps): JSX.Element {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
-
   return (
-    <div className={clsx('flex flex-col justify-center', [{ 'basis-[320px]': !collapsed }])}>
-      <div title="Show filters">
-        <FilterIcon
-          className={clsx('mr-2 h-6 w-6', { hidden: !collapsed }, 'hover:cursor-pointer')}
-          onClick={() => setCollapsed(false)}
-        />
-      </div>
-      <div className={clsx({ hidden: collapsed }, ['mr-2', 'md:mr-10'])}>
-        <div className={clsx('flex flex-col space-y-4')}>
-          <span
-            className={clsx(
-              'flex w-full flex-row flex-nowrap items-center justify-between space-x-4 p-4',
-              'border-b border-b-gray-800'
-            )}
-          >
-            <span className="text-2xl">Filters</span>
-            <div title="Hide filters">
-              <ArrowLeftIcon
-                onClick={() => setCollapsed(true)}
-                className={clsx('h-6 w-6', { hidden: collapsed }, 'hover:cursor-pointer')}
-              />
-            </div>
-          </span>
-          {props.children}
-        </div>
+    <div
+      className={clsx(
+        'flex w-[280px] flex-col justify-start',
+        { hidden: props.collapsed },
+        props.className
+      )}
+    >
+      <div className="mr-2 md:mr-10">
+        <div className={clsx('flex flex-col space-y-4')}>{props.children}</div>
       </div>
     </div>
   );
 }
 
+interface FilterIconProps {
+  collapsed: boolean;
+  onClick: () => void;
+}
+
+FiltersSection.FilterIcon = function FilterIconButton(props: FilterIconProps) {
+  return (
+    <button onClick={props.onClick} className="rounded-lg p-2 transition-transform hover:scale-105">
+      <FilterIcon className="w-8 hover:cursor-pointer" />
+    </button>
+  );
+};
 export interface FilterOption<T> {
   value: T;
   label: string;
@@ -165,7 +156,7 @@ function Filter<T>(props: FilterProps<T>): JSX.Element {
           id={id}
           checked={checked}
         />
-        <label htmlFor={id} className={clsx('flex-grow', 'text-base')}>
+        <label htmlFor={id} className={clsx('flex-grow', 'cursor-pointer text-base')}>
           {option.label}
         </label>
         <span className={clsx('text-base')}>{option.numberOfItems?.toLocaleString()}</span>

@@ -92,6 +92,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       createdAt
@@ -185,6 +186,7 @@ query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offse
         requiresSignOff
         canChangeSalePrice
       }
+      marketplaceProgramAddress
       price
       tradeStateBump
       createdAt
