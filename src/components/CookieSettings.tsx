@@ -62,8 +62,20 @@ const CookieSettings = (props: {
             <div className={'flex flex-col gap-2'}>
               <h6 className={'m-0 text-base'}>Essential</h6>
               <p className={'m-0 text-xs text-gray-300'}>
-                {"Necessary for the website to function properly and can't be deactivated"}
+                {
+                  "Necessary for the website to function properly and can't be deactivated, these include:"
+                }
               </p>
+              <ul className={'m-0 text-gray-100'}>
+                <li className={'text-xs'}>
+                  - Session cookies to remember your latest connected wallet and other connected
+                  accounts.
+                </li>
+                <li className={'text-xs'}>- Persistent settings such as language, theme, etc...</li>
+                <li className={'text-xs'}>
+                  - Saved items like nft shopping cart, recently visited profiles, etc...
+                </li>
+              </ul>
             </div>
             <Switch
               disabled={true}
