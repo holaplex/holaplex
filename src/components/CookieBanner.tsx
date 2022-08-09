@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import Button from './Button';
-import Modal from './Modal';
-import { Switch } from '@headlessui/react';
-import { LockClosedIcon } from '@heroicons/react/outline';
 import CookieSettings from './CookieSettings';
 
 export const COOKIES_ACCEPTED = 'holaplex_cookies_acceptance';
@@ -28,23 +25,23 @@ export function useCookieSettings() {
     essentialCookies: boolean;
     preferenceCookies: boolean;
   }) => {
-    setCookie('holaplex_analytics_cookies_acceptance', analyticsCookies);
-    setCookie('holaplex_cookies_acceptance', essentialCookies);
-    setCookie('holaplex_preference_cookies_acceptance', preferenceCookies);
+    setCookie(ANALYTICS_ACCEPTED, analyticsCookies);
+    setCookie(COOKIES_ACCEPTED, essentialCookies);
+    setCookie(PREFERENCE_ACCEPTED, preferenceCookies);
     setOpenSettings(false);
   };
 
   const acceptAll = () => {
-    setCookie('holaplex_analytics_cookies_acceptance', true);
-    setCookie('holaplex_cookies_acceptance', true);
-    setCookie('holaplex_preference_cookies_acceptance', true);
+    setCookie(ANALYTICS_ACCEPTED, true);
+    setCookie(COOKIES_ACCEPTED, true);
+    setCookie(PREFERENCE_ACCEPTED, true);
     setOpenSettings(false);
   };
 
   const declineCookies = () => {
-    setCookie('holaplex_analytics_cookies_acceptance', false);
-    setCookie('holaplex_cookies_acceptance', false);
-    setCookie('holaplex_preference_cookies_acceptance', false);
+    setCookie(ANALYTICS_ACCEPTED, false);
+    setCookie(COOKIES_ACCEPTED, false);
+    setCookie(PREFERENCE_ACCEPTED, false);
     setTempDecline(true);
     setOpenSettings(false);
   };
@@ -62,7 +59,7 @@ export function useCookieSettings() {
   };
 }
 
-const CookieBanner = () => {
+function CookieBanner() {
   const { cookies, openSettings, isSettingsOpen, isDeclined, declineCookies, acceptAllCookies } =
     useCookieSettings();
 
@@ -71,9 +68,11 @@ const CookieBanner = () => {
   } else {
     return (
       <>
-        <div className={`fixed bottom-5 z-50 flex w-full justify-center`}>
+        <div className={'fixed bottom-5 z-50 flex w-full justify-center'}>
           <div
-            className={` mx-4 flex max-w-3xl flex-col items-center justify-between gap-2 rounded-lg bg-gray-800 bg-opacity-60 p-2 backdrop-blur-lg sm:flex-row`}
+            className={
+              'mx-4 flex max-w-3xl flex-col items-center justify-between gap-2 rounded-lg bg-gray-800 bg-opacity-60 p-2 backdrop-blur-lg sm:flex-row'
+            }
           >
             <div className={'flex items-center gap-2'}>
               <img
@@ -113,6 +112,6 @@ const CookieBanner = () => {
       </>
     );
   }
-};
+}
 
 export default CookieBanner;

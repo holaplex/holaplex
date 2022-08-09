@@ -74,18 +74,15 @@ export function isTouchScreenOnly(): boolean {
   return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 }
 
-export function getCookie(cname: string) {
-  let name = cname + '=';
+export function getCookie(cookieName: string) {
+  let name = cookieName + '=';
   let decodedCookie = decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(';');
   for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
+    let c = ca[i].trim();
+    if (c.startsWith(name)) {
       return c.substring(name.length, c.length);
     }
   }
-  return '';
+  return undefined;
 }
