@@ -108,7 +108,9 @@ const DownloadNFTCard: FC<DownloadNFTCardProps> = ({ nft, listing, updatedPrice 
                 `I just updated the price of ${nft?.name} to ${
                   (updatedPrice || 0) / LAMPORTS_PER_SOL
                 } SOL`
-              )}&hashtags=holaplex&url=${encodeURI(`https://holaplex.com/nfts/${nft.address}`)}`}
+              )}&hashtags=holaplex&url=${encodeURI(
+                `https://holaplex.com/nfts/${nft.mintAddress}`
+              )}`}
             >
               <a target="_blank">
                 <Button className={`w-full`}>

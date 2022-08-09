@@ -372,7 +372,7 @@ export function addListingToTrackCall(listing: Listing) {
 
 export function addNFTToTrackCall(nft: Nft) {
   return {
-    nftAddress: nft.address,
+    nftAddress: nft.mintAddress,
     offerNr: nft.offers?.length,
     purchaseNr: nft.purchases?.length,
     image: nft.image,

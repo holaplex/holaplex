@@ -214,7 +214,7 @@ const SearchResults: FC<SearchResultsProps> = ({
                           resultType: 'NFT',
                           nftName: nft.name,
                           nftImage: nft.image as string | undefined,
-                          nftAddress: nft.address,
+                          nftAddress: nft.mintAddress,
                         })
                       }
                       active={active}

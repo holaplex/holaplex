@@ -127,7 +127,7 @@ export const NFTCard = ({
   return (
     <>
       <div className="relative transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black transition duration-[300ms] hover:scale-[1.02]">
-        <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
+        <Link href={`/nfts/${nft.mintAddress}`} scroll={true} passHref>
           <a target={newTab ? `_blank` : `_self`} className={`cursor-pointer`}>
             <div className={`relative `}>
               <img

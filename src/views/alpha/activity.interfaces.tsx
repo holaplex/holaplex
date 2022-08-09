@@ -5,6 +5,7 @@ export interface IWallet {
 
 interface NFT {
   address: string;
+  mintAddress: string;
   name: string;
   description: string;
   image: string;
