@@ -65,7 +65,8 @@ export function AppHeader() {
         <div className="flex w-full flex-row items-center py-1 text-2xl font-bold">
           <Link href="/" passHref>
             <a className="flex justify-between font-bold">
-              👋&nbsp;&nbsp;<span className="hidden md:inline-block">Holaplex</span>
+              <span className={'animate-waving'}>👋</span>&nbsp;&nbsp;
+              <span className="hidden md:inline-block">Holaplex</span>
             </a>
           </Link>
           {/* TODO: temp disabled for deploy */}
