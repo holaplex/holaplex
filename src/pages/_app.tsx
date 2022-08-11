@@ -20,6 +20,7 @@ import {
   TorusWalletAdapter,
   GlowWalletAdapter,
   BackpackWalletAdapter,
+  BraveWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import {
   ConnectionProvider,
@@ -42,6 +43,7 @@ import { MailboxProvider } from 'src/views/messages/MailboxProvider';
 
 // keybinds
 import { ShortcutProvider } from 'react-keybind';
+import CookieBanner from '../components/CookieBanner';
 
 const getSolanaNetwork = () => {
   return (process.env.NEXT_PUBLIC_SOLANA_ENDPOINT ?? '').toLowerCase().includes('devnet')
@@ -72,6 +74,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       new SolletExtensionWalletAdapter({ network }),
       new GlowWalletAdapter(),
       new BackpackWalletAdapter(),
+      new BraveWalletAdapter(),
     ],
     [network]
   );
@@ -103,6 +106,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           toastClassName="bg-gray-900 bg-opacity-80 rounded-lg items-center"
           closeButton={() => <Close color="#fff" />}
         />
+        <CookieBanner />
 
         <ApolloProvider client={apolloClient}>
           <ShortcutProvider preventDefault={true}>

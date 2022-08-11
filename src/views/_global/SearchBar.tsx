@@ -7,6 +7,7 @@ import {
   Wallet,
   SearchQuery,
   Nft,
+  Collection,
 } from 'src/graphql/indexerTypes';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -109,6 +110,8 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
     }
     searchQuery({
       variables: {
+        start: new Date(new Date().setDate(new Date().getDate() - 7)),
+        end: new Date(),
         nftMintAddress: e.target.value,
         term: e.target.value,
         walletAddress: e.target.value,
@@ -269,6 +272,7 @@ const SearchBar: FC<SearchBarProps> = ({ shortcut }) => {
                   walletResult={data.wallet as Wallet}
                   mintAddressResult={data.nftByMintAddress as Nft}
                   collectionResults={collectionData as MetadataJson[]}
+                  collectionVolumeResults={data.collectionsFeaturedByVolume as Collection[]}
                 />
               )}
             </Combobox.Options>

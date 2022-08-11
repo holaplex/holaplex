@@ -57,7 +57,11 @@ export function FeaturedMarketplacesSection(props: FeaturedMarketplacesSectionPr
 const LoadingPreview = () => {
   return (
     <Container>
-      <div className="h-full w-full animate-pulse bg-gray-700" />
+      <div className="flex h-48 w-full animate-pulse items-end bg-gray-900 shadow-md shadow-black">
+        <div className="flex w-full p-4 ">
+          <div className="h-6 w-48 rounded-md bg-gray-700" />
+        </div>
+      </div>
     </Container>
   );
 };

@@ -102,7 +102,7 @@ const UpdateSellForm: FC<UpdateSellFormProps> = ({
       const data = await htmlToImage.toPng(document.getElementById(`shareNFTCard`) as HTMLElement);
       const link = document.createElement('a');
       link.href = data;
-      link.download = `${nft.address}-shared.png`;
+      link.download = `${nft.mintAddress}-shared.png`;
 
       document.body.appendChild(link);
       link.click();

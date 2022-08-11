@@ -1,0 +1,10 @@
+query subdomainCheck($subdomain: String!) {
+  marketplace(subdomain: $subdomain) {
+    subdomain
+    name
+    description
+    logoUrl
+    bannerUrl
+    ownerAddress
+  }
+}

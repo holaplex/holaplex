@@ -117,7 +117,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
       });
     } catch (err: any) {
     } finally {
-      if (reroute === true) router.push(`/nfts/${nft.address}`);
+      if (reroute === true) router.push(`/nfts/${nft.mintAddress}`);
     }
   };
 
@@ -127,7 +127,7 @@ const OfferForm: FC<OfferFormProps> = ({ nft, marketplace, refetch, reroute = tr
     }
 
     if (nft.owner.address === publicKey.toBase58()) {
-      router.push(`/nfts/${nft.address}`);
+      router.push(`/nfts/${nft.mintAddress}`);
       return;
     }
   }, [publicKey, nft, router.push, router]);

@@ -14,8 +14,10 @@ import { ProfileDataProvider } from 'src/views/profiles/ProfileDataProvider';
 import { imgOpt } from 'src/lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import {
+  AUCTION_HOUSE_ADDRESSES,
   HOLAPLEX_MARKETPLACE_ADDRESS,
   HOLAPLEX_MARKETPLACE_SUBDOMAIN,
+  MARKETPLACE_PROGRAMS,
 } from 'src/views/_global/holaplexConstants';
 import Button from '@/components/Button';
 import { DisplaySOL } from 'src/components/CurrencyHelpers';
@@ -34,6 +36,9 @@ import { TailSpin } from 'react-loader-spinner';
 import NoProfileItems, { NoProfileVariant } from '@/components/NoProfileItems';
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import GridSelector, { GridSize } from '@/components/GridSelector';
+import { AhListingMultiMarketplace } from '../../nfts/[address]';
+import { getAuctionHouseInfo } from '../../../modules/utils/marketplace';
+import Popover from '../../../components/Popover';
 
 export type OwnedNFT = OwnedNfTsQuery['nfts'][0];
 
@@ -106,13 +111,23 @@ export const NFTCard = ({
   const defaultListing = nft?.listings.find(
     (listing) => listing?.auctionHouse?.address.toString() === HOLAPLEX_MARKETPLACE_ADDRESS
   );
+
+  const otherListings = nft?.listings.filter(
+    (listing) => listing.auctionHouse?.address.toString() !== HOLAPLEX_MARKETPLACE_ADDRESS
+  );
+
+  const cheapestOtherListing = otherListings.sort((a, b) => a.price - b.price)[0];
+  const cheapestOtherListingAhInfo = getAuctionHouseInfo(
+    cheapestOtherListing as AhListingMultiMarketplace
+  );
+
   const hasDefaultListing = Boolean(defaultListing);
   const lastSale = nft?.purchases?.[0]?.price;
 
   return (
     <>
       <div className="relative transform overflow-hidden rounded-lg border-gray-900 bg-gray-900 p-4 shadow-md shadow-black transition duration-[300ms] hover:scale-[1.02]">
-        <Link href={`/nfts/${nft.address}`} scroll={true} passHref>
+        <Link href={`/nfts/${nft.mintAddress}`} scroll={true} passHref>
           <a target={newTab ? `_blank` : `_self`} className={`cursor-pointer`}>
             <div className={`relative `}>
               <img
@@ -182,11 +197,14 @@ export const NFTCard = ({
           <div
             className={`flex h-full w-full items-end justify-between md:flex-col md:items-center md:justify-between xl:flex-row xl:items-end xl:justify-between`}
           >
-            {!hasDefaultListing && !hasAddedOffer && !Boolean(lastSale) && (
-              <ul className={`mb-0 flex w-full`}>
-                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Not listed</li>
-              </ul>
-            )}
+            {!hasDefaultListing &&
+              !hasAddedOffer &&
+              !Boolean(lastSale) &&
+              !Boolean(cheapestOtherListing) && (
+                <ul className={`mb-0 flex w-full`}>
+                  <li className={`text-sm font-bold text-gray-300 md:text-base`}>Not listed</li>
+                </ul>
+              )}
             {hasDefaultListing && (
               <ul className={`mb-0 flex w-full items-center justify-between`}>
                 <li className={`text-sm font-bold text-gray-300 md:text-base`}>Price</li>
@@ -196,12 +214,52 @@ export const NFTCard = ({
                 />
               </ul>
             )}
-            {!hasDefaultListing && !hasAddedOffer && Boolean(lastSale) && (
-              <ul className={`mb-0 flex w-full items-center justify-between`}>
-                <li className={`text-sm font-bold text-gray-300 md:text-base`}>Last sale</li>
-                <DisplaySOL amount={Number(lastSale)} />
-              </ul>
+            {Boolean(cheapestOtherListing) && !hasDefaultListing && (
+              <div className={`grid w-full grid-cols-1 gap-2`}>
+                <ul className={`mb-0 flex w-full items-center justify-between`}>
+                  <li
+                    className={`flex items-center gap-2 text-sm font-bold text-gray-300 md:text-base`}
+                  >
+                    <Popover
+                      placement={`top`}
+                      isShowOnHover={true}
+                      content={
+                        <p
+                          className={
+                            'm-0 whitespace-nowrap rounded-lg bg-gray-800 bg-opacity-30 p-2 text-sm text-white'
+                          }
+                        >
+                          {cheapestOtherListingAhInfo.name}
+                        </p>
+                      }
+                    >
+                      <span className={`flex items-center gap-1 font-bold text-white`}>
+                        <img
+                          src={cheapestOtherListingAhInfo?.logo}
+                          alt={cheapestOtherListingAhInfo.name}
+                          className={`h-4 w-4 rounded-sm`}
+                        />
+                      </span>
+                    </Popover>
+                    Listed
+                  </li>
+                  <DisplaySOL
+                    amount={Number(cheapestOtherListing?.price)}
+                    className="text-sm md:text-base"
+                  />
+                </ul>
+              </div>
             )}
+
+            {!hasDefaultListing &&
+              !hasAddedOffer &&
+              Boolean(lastSale) &&
+              !Boolean(cheapestOtherListing) && (
+                <ul className={`mb-0 flex w-full items-center justify-between`}>
+                  <li className={`text-sm font-bold text-gray-300 md:text-base`}>Last sale</li>
+                  <DisplaySOL amount={Number(lastSale)} />
+                </ul>
+              )}
 
             {!hasDefaultListing && hasAddedOffer && (
               <ul className={`mb-0 flex w-full items-center justify-between`}>
@@ -236,12 +294,39 @@ export const NFTCard = ({
                 loading={loading}
                 nft={nft as Nft | any}
                 marketplace={marketplace as Marketplace}
-                listing={defaultListing as AhListing}
+                listing={defaultListing as AhListingMultiMarketplace}
                 refetch={refetch}
                 className={`w-full`}
               />
             )}
-            {!isOwner && !hasAddedOffer && !hasDefaultListing && (
+
+            {!isOwner &&
+              !hasAddedOffer &&
+              cheapestOtherListing &&
+              cheapestOtherListing.auctionHouse !== null &&
+              !hasDefaultListing && (
+                <BuyForm
+                  loading={loading}
+                  nft={nft as Nft | any}
+                  marketplace={marketplace as Marketplace}
+                  listing={cheapestOtherListing as AhListingMultiMarketplace}
+                  refetch={refetch}
+                  className={`w-full`}
+                />
+              )}
+
+            {!hasDefaultListing &&
+              !isOwner &&
+              !hasAddedOffer &&
+              cheapestOtherListing?.auctionHouse === null &&
+              cheapestOtherListingAhInfo.link && (
+                <Link href={`${cheapestOtherListingAhInfo.link}/${nft.mintAddress}`}>
+                  <a target={`_blank`}>
+                    <Button className={`w-full`}>View listing</Button>
+                  </a>
+                </Link>
+              )}
+            {!isOwner && !hasAddedOffer && !hasDefaultListing && !Boolean(cheapestOtherListing) && (
               <Link href={`/nfts/${nft?.address}/offers/new`}>
                 <a>
                   <Button className={`w-full`}>Make offer</Button>
@@ -269,7 +354,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           marketplace={marketplace as Marketplace}
-          listing={defaultListing as AhListing}
+          listing={defaultListing as AhListingMultiMarketplace}
           setOpen={setUpdateListingVisibility}
           offer={topOffer as Offer}
         />
@@ -279,7 +364,7 @@ export const NFTCard = ({
           nft={nft as Nft | any}
           refetch={refetch}
           marketplace={marketplace as Marketplace}
-          listing={defaultListing as AhListing}
+          listing={defaultListing as AhListingMultiMarketplace}
           setOpen={setUpdateOfferVisibility}
           loading={loading}
           hasListing={hasDefaultListing}

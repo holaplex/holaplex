@@ -59,7 +59,7 @@ function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isY
     //const storefront = activity.storefront;
     if (!nft) return null;
 
-    const nftURL = 'https://www.holaplex.com/nfts/' + nft.address;
+    const nftURL = 'https://www.holaplex.com/nfts/' + nft.mintAddress;
     return (
       <a href={nftURL}>
         <span className="text-white">{nft.name}</span>

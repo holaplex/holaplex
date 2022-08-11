@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { ProfileImage } from './ProfileImage';
-import { mq } from '@/assets/styles/MediaQuery';
 import { MobileMenu } from './MobileMenu';
 import { toast } from 'react-toastify';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
@@ -28,14 +26,7 @@ const WHICHDAO = process.env.NEXT_PUBLIC_WHICHDAO;
 export function AppHeader() {
   const router = useRouter();
 
-  const {
-    connected,
-    wallet: userWallet,
-    connect: connectUserWallet,
-    publicKey,
-    connecting,
-    disconnecting,
-  } = useWallet();
+  const { connected, wallet: userWallet, publicKey, connecting } = useWallet();
   const hasWalletTypeSelected =
     userWallet?.readyState === WalletReadyState.Installed ||
     userWallet?.readyState === WalletReadyState.Loadable;
@@ -74,7 +65,8 @@ export function AppHeader() {
         <div className="flex w-full flex-row items-center py-1 text-2xl font-bold">
           <Link href="/" passHref>
             <a className="flex justify-between font-bold">
-              👋&nbsp;&nbsp;<span className="hidden md:inline-block">Holaplex</span>
+              <span className={'animate-waving'}>👋</span>&nbsp;&nbsp;
+              <span className="hidden md:inline-block">Holaplex</span>
             </a>
           </Link>
           {/* TODO: temp disabled for deploy */}
@@ -83,20 +75,6 @@ export function AppHeader() {
         {!WHICHDAO && (
           <div className={`hidden min-w-fit flex-row items-center justify-end gap-6 md:flex`}>
             <DiscoverMenu />
-            {connected && (
-              <Link href="/alpha" passHref>
-                <a
-                  key="alpha"
-                  className={clsx(
-                    'text-lg font-medium  duration-100 ease-in hover:text-white focus:text-white',
-                    router.pathname === '/alpha' ? 'text-white' : 'text-gray-300'
-                  )}
-                >
-                  Alpha
-                </a>
-              </Link>
-            )}
-
             <Link href="/nfts/new" passHref>
               <a
                 key="create"
@@ -165,10 +143,8 @@ function DiscoverMenu(): JSX.Element {
     return (
       <DropdownMenu.Item>
         <Link href={props.href}>
-          <a
-            className={clsx('flex flex-row flex-nowrap justify-start', 'space-x-4 p-4', 'text-lg')}
-          >
-            <props.icon className="h-5 w-5" />
+          <a className={clsx('flex flex-row flex-nowrap items-center justify-start text-lg')}>
+            <props.icon className="mr-2 h-5 w-5" />
             <span>{props.title}</span>
           </a>
         </Link>

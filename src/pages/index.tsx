@@ -24,13 +24,14 @@ import {
   FeaturedProfilesSection,
 } from '@/views/home/FeaturedProfilesSection';
 import Footer from '@/views/home/Footer';
+import { DateTime } from 'luxon';
 import { HeroSection, HeroSectionData } from '@/views/home/HeroSection';
 import { useHomeQueryWithTransforms } from '@/views/home/home.hooks';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { useWallet } from '@solana/wallet-adapter-react';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import Carousel from 'react-grid-carousel';
 
 export interface HomeData {
@@ -46,14 +47,27 @@ export interface HomeData {
 export default function Home(): JSX.Element {
   const wallet = useWallet();
 
+  const timeIntervales = useMemo(() => {
+    const now = DateTime.now();
+    const dayAgo = now.minus({ days: 1 });
+    const nowUTC = now.toUTC().toString();
+    const dayAgoUTC = dayAgo.toUTC().toString();
+
+    return { startDate: dayAgoUTC, endDate: nowUTC };
+  }, []);
+
   //TODO export n-items in consts from sections
-  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(wallet.publicKey, {
-    featuredCollectionsLimit: 22, // we need 18, but some get filtered out so increasing max
-    featuredProfileLimit: 24,
-    featuredBowNowLimit: 24,
-    feedEventsLimit: 12,
-    featuredAuctionsLimit: 18,
-  });
+  const dataQueryContext: QueryContext<HomeData> = useHomeQueryWithTransforms(
+    wallet.publicKey,
+    {
+      featuredCollectionsLimit: 22, // we need 18, but some get filtered out so increasing max
+      featuredProfileLimit: 24,
+      featuredBowNowLimit: 24,
+      feedEventsLimit: 12,
+      featuredAuctionsLimit: 18,
+    },
+    timeIntervales
+  );
 
   return (
     <div>

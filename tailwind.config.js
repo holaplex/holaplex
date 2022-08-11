@@ -6,6 +6,9 @@ module.exports = {
   safelist: ['z-0', 'z-10', 'z-20', 'z-30', 'z-40', 'z-50'],
   theme: {
     extend: {
+      content: {
+        search: 'url(/images/svgs/search.svg)',
+      },
       maxHeight: {
         'screen-95': '90vh',
       },
@@ -44,14 +47,25 @@ module.exports = {
           '50%': { left: 0, width: '100%' },
           '100%': { left: '100%', width: 0 },
         },
+        waving: {
+          '0%': { transform: 'rotate(0.0deg)' },
+          '15%': { transform: 'rotate(14.0deg)' },
+          '30%': { transform: 'rotate(-8.0deg)' },
+          '40%': { transform: 'rotate(14.0deg)' },
+          '50%': { transform: 'rotate(-4.0deg)' },
+          '60%': { transform: 'rotate(10.0deg)' },
+          '70%': { transform: 'rotate(0.0deg)' },
+          '100%': { transform: 'rotate(0.0deg)' },
+        },
       },
       animation: {
         loading: 'loadingbar ease-in-out 4s infinite',
+        waving: 'waving ease-in 1.5s infinite',
       },
     },
   },
   extend: {},
-  ariants: {
+  variants: {
     scrollbar: ['rounded'],
   },
   plugins: [

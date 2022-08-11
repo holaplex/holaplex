@@ -73,3 +73,16 @@ export const RUST_ISO_UTC_DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 export function isTouchScreenOnly(): boolean {
   return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 }
+
+export function getCookie(cookieName: string) {
+  let name = cookieName + '=';
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i].trim();
+    if (c.startsWith(name)) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return undefined;
+}

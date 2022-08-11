@@ -192,3 +192,25 @@ a {
   color: black;
   font-weight: 500;
 }
+
+.dropdown-menu {
+  &-item {
+    &-active {
+      .dropdown-menu {
+        &-item-check {
+          visibility: visible;
+        } 
+      }
+    }
+    &-check {
+      display: inline-block;
+      visibility: hidden;
+      @apply ml-2;
+    }
+    &:hover {
+      .dropdown-menu-item-check {
+        visibility: visible;
+      }
+    }
+  }
+}

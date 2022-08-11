@@ -26,6 +26,7 @@ import {
   MarketplaceAuctionHouseFragment,
   NftCardFragment,
 } from 'src/graphql/indexerTypes.ssr';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 interface DiscoverNftsQueryParams {
   searchTerm?: string | null | undefined;
@@ -129,6 +130,7 @@ export function useDiscoverCollectionsByMarketcapQueryWithTransforms(
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByMarketCapQuery> =
     useCallback((previous, more) => {
       if (!more) return previous;
+
       more.collectionsFeaturedByMarketCap = [
         ...previous.collectionsFeaturedByMarketCap,
         ...more.collectionsFeaturedByMarketCap,
@@ -162,10 +164,12 @@ export function useDiscoverCollectionsByVolumeLazyQueryWithTransforms(
   const mergeResultsFunction: UpdateResultsFunction<DiscoverCollectionsByVolumeQuery> = useCallback(
     (previous, more) => {
       if (!more) return previous;
+
       more.collectionsFeaturedByVolume = [
         ...previous.collectionsFeaturedByVolume,
         ...more.collectionsFeaturedByVolume,
       ];
+
       return { ...more };
     },
     []
@@ -245,7 +249,7 @@ function transformCollectionCardData(
     address: cardData.nft.mintAddress,
     name: cardData.nft.name,
     imageUrl: cardData.nft.image,
-    floorPriceSol: cardData.floorPrice ?? 0,
+    floorPriceSol: (cardData.floorPrice ?? 0) / LAMPORTS_PER_SOL,
     nftCount: cardData.nftCount ?? 0,
   };
 }
@@ -267,7 +271,9 @@ export function useDiscoverProfilesAllLazyQueryWithTransforms(
   const mergeResultsFunction: UpdateResultsFunction<DiscoverProfilesAllQuery> = useCallback(
     (previous, more) => {
       if (!more) return previous;
+
       more.followWallets = [...previous.followWallets, ...more.followWallets];
+
       return { ...more };
     },
     []
