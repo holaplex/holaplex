@@ -3,8 +3,6 @@
 
 import { compose, filter, sortWith, prop, pipe, descend, not, ascend, contains } from 'ramda';
 
-const INDEXER_URL = process.env.NEXT_PUBLIC_INDEXER_RPC_URL as string;
-
 export interface Creator {
   address: string;
   verified?: boolean;
@@ -54,32 +52,3 @@ export interface Listing {
   // would neeed to store listings in an object to make this performant in state management. Better to just reload it pr mount for now.
   // nftMetadata?: NFTMetadata[]; // same length as items. Is set on mount
 }
-
-export const IndexerSDK = {
-  getListings: async (): Promise<Listing[]> => {
-    const res = await fetch(INDEXER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'getListings',
-        params: [],
-        id: 1337,
-      }),
-    });
-
-    const json = await res.json();
-
-    return sortWith(
-      [
-        //@ts-ignore
-        ascend(prop('instantSalePrice')),
-        descend(prop('highestBid')),
-        ascend(prop('endsAt')),
-      ],
-      json.result
-    );
-  },
-};
