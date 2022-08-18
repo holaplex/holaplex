@@ -57,6 +57,8 @@ export interface Listing {
 
 export const IndexerSDK = {
   getListings: async (): Promise<Listing[]> => {
+    return [];
+    /*
     const res = await fetch(INDEXER_URL, {
       method: 'POST',
       headers: {
@@ -70,8 +72,8 @@ export const IndexerSDK = {
       }),
     });
 
-    const json = await res.json();
-
+    //const json = JSON.stringify({});
+	   // await res.json();
     return sortWith(
       [
         //@ts-ignore
@@ -81,5 +83,6 @@ export const IndexerSDK = {
       ],
       json.result
     );
+    */
   },
 };
