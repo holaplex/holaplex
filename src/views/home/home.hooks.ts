@@ -1,7 +1,7 @@
 import { CollectionPreviewCardData } from '@/components/CollectionPreviewCard';
 import { ProfilePreviewData } from '@/components/ProfilePreviewCard';
 import { QueryContext } from '@/hooks/useApolloQuery';
-import { IndexerSDK, Listing } from '@/modules/indexer';
+import { Listing } from '@/modules/indexer';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { HomeData } from 'src/pages';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -31,7 +31,6 @@ export function useHomeQueryWithTransforms(
     featuredProfileLimit: number;
     featuredBowNowLimit: number;
     feedEventsLimit: number;
-    featuredAuctionsLimit: number;
   },
   timeIntervals: {
     startDate: string;
@@ -52,11 +51,7 @@ export function useHomeQueryWithTransforms(
     },
   });
 
-  const featuredAuctionContext: QueryContext<Listing[]> = usePrepareFeaturedAuctions(
-    limits.featuredAuctionsLimit
-  );
-
-  const loading: boolean = queryContext.loading || featuredAuctionContext.loading;
+  const loading: boolean = queryContext.loading;
 
   const data: HomeData | undefined = useMemo(() => {
     let result: HomeData | undefined;
@@ -77,11 +72,10 @@ export function useHomeQueryWithTransforms(
           queryContext.data?.featuredListings,
           queryContext.data?.buyNowMarketplace
         ),
-        featuredAuctions: featuredAuctionContext.data ?? [],
       };
     }
     return result;
-  }, [queryContext, featuredAuctionContext, loading]);
+  }, [queryContext, loading]);
 
   return {
     data: data,
@@ -316,18 +310,7 @@ function usePrepareFeaturedAuctions(nListings: number): QueryContext<Listing[]> 
 
   useEffect(() => {
     async function run() {
-      setLoading(true);
-      const selectedDaoSubdomains = await DAOStoreFrontList();
-      const allListings = await IndexerSDK.getListings();
-      let daoFilteredListings = allListings;
-
-      if (WHICHDAO) {
-        daoFilteredListings = daoFilteredListings.filter((listing) =>
-          selectedDaoSubdomains.includes(listing.subdomain)
-        );
-      }
-
-      setResult(applyListingFilterAndSort(daoFilteredListings).slice(0, nListings));
+      setResult([]);
       setLoading(false);
     }
     run();
