@@ -1,9 +1,5 @@
 import { QueryContext } from '@/hooks/useApolloQuery';
 import {
-  FeaturedAuctionsSectionData,
-  FeaturedAuctionsSection,
-} from '@/views/home/FeaturedAuctionsSection';
-import {
   FeaturedBuyNowListingsData,
   FeaturedBuyNowListingsSection,
 } from '@/views/home/FeaturedBuyNowListingsSection';
