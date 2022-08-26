@@ -14,15 +14,13 @@ import { mq } from '@/assets/styles/MediaQuery';
 import { Col } from 'antd';
 import { IActivityItem } from '@/views/alpha/activity.interfaces';
 import { PublicKey } from '@solana/web3.js';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import TextInput2 from '@/components/TextInput2';
 import { ActivityCard } from '@/components/ActivityCard';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { None } from '../../../components/OfferForm';
-import { NoProfileVariant } from '../../../components/NoProfileItems';
 import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
-import { uniq } from 'ramda';
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
@@ -215,7 +213,6 @@ function ActivityPage(props: WalletDependantPageProps) {
       offset: 0,
     },
   });
-  const [hasMore, setHasMore] = useState(true);
 
   const activities = data?.wallet.activities ?? [];
   console.log('activities data', data);
@@ -264,28 +261,11 @@ function ActivityPage(props: WalletDependantPageProps) {
 
           await fetchMore({
             variables: {
-              address: publicKey.toBase58(),
-              limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
-              offset:
-                activities.length > INFINITE_SCROLL_AMOUNT_INCREMENT
-                  ? activities.length
-                  : INFINITE_SCROLL_AMOUNT_INCREMENT,
-            },
-            updateQuery: (prev, { fetchMoreResult }) => {
-              if (!fetchMoreResult) return prev;
-              const prevActivities = prev.wallet?.activities || [];
-              const moreActivities = fetchMoreResult.wallet?.activities || [];
-              if (!moreActivities.length) {
-                setHasMore(false);
-              }
-
-              fetchMoreResult.wallet!.activities = [...prevActivities, ...moreActivities];
-
-              return { ...fetchMoreResult };
+              offset: data?.wallet.activities.length,
             },
           });
         }}
-        activities={uniq(activities) as WalletActivity[]}
+        activities={activities as WalletActivity[]}
         refetch={refetch}
         loading={loading}
       />
