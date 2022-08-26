@@ -1,8 +1,8 @@
-query activityPage($address: PublicKey!) {
+query activityPage($address: PublicKey!, $limit: Int!, $offset: Int!) {
   wallet(address: $address) {
     __typename
     address
-    activities {
+    activities(limit: $limit, offset: $offset) {
       id
       price
       createdAt

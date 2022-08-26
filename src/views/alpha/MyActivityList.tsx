@@ -12,6 +12,8 @@ export function MyActivityList() {
   const activityPage = useActivityPageQuery({
     variables: {
       address: myPubkey,
+      limit: 25,
+      offset: 0,
     },
   });
 
