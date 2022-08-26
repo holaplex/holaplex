@@ -14,9 +14,15 @@ import { mq } from '@/assets/styles/MediaQuery';
 import { Col } from 'antd';
 import { IActivityItem } from '@/views/alpha/activity.interfaces';
 import { PublicKey } from '@solana/web3.js';
-import { useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import TextInput2 from '@/components/TextInput2';
 import { ActivityCard } from '@/components/ActivityCard';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
+import { None } from '../../../components/OfferForm';
+import { NoProfileVariant } from '../../../components/NoProfileItems';
+import { InView } from 'react-intersection-observer';
+import { TailSpin } from 'react-loader-spinner';
+import { uniq } from 'ramda';
 
 export const getServerSideProps: GetServerSideProps<WalletDependantPageProps> = async (context) =>
   getProfileServerSideProps(context);
@@ -93,6 +99,65 @@ const ActivityBoxContainer = styled.div`
   border-radius: 8px;
 `;
 
+export const INFINITE_SCROLL_AMOUNT_INCREMENT = 25;
+export const INITIAL_FETCH = 25;
+
+interface ActivityListProps {
+  activities: WalletActivity[];
+  refetch: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<None>>;
+  onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
+  hasMore: boolean;
+  loading?: boolean;
+}
+
+export const ActivityList: FC<ActivityListProps> = ({
+  activities,
+  refetch,
+  onLoadMore,
+  hasMore,
+  loading = false,
+}) => {
+  return (
+    <>
+      {loading ? (
+        <>
+          <LoadingActivitySkeletonBoxCircleLong />
+          <LoadingActivitySkeletonBoxSquareShort />
+          <LoadingActivitySkeletonBoxCircleLong />
+          <LoadingActivitySkeletonBoxSquareShort />
+          <LoadingActivitySkeletonBoxCircleLong />
+          <LoadingActivitySkeletonBoxSquareShort />
+          <LoadingActivitySkeletonBoxCircleLong />
+          <LoadingActivitySkeletonBoxSquareShort />
+          <LoadingActivitySkeletonBoxCircleLong />
+        </>
+      ) : activities.length ? (
+        <>
+          {activities.map((item) => (
+            <ActivityCard activity={item as IActivityItem} key={item.id} />
+          ))}
+          {hasMore && (
+            <InView as="div" threshold={0.1} onChange={onLoadMore}>
+              <div className={`my-6 flex w-full items-center justify-center font-bold`}>
+                <TailSpin height={50} width={50} color={`grey`} ariaLabel={`loading-nfts`} />
+              </div>
+            </InView>
+          )}
+        </>
+      ) : (
+        <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
+          <span className="text-center text-2xl font-semibold">No activity</span>
+          <span className="mt-2 text-gray-300 ">
+            Activity associated with this user’s wallet will show up here
+          </span>
+        </div>
+      )}
+    </>
+  );
+};
+
 export function getActivityItems(activities: WalletActivity[]) {
   return (
     activities.reduce((items, activity) => {
@@ -143,37 +208,31 @@ function ActivityPage(props: WalletDependantPageProps) {
   const publicKey = new PublicKey(pk);
   const [activityFilter, setActivityFilter] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
-  const activityPage = useActivityPageQuery({
+  const { data, loading, fetchMore, refetch } = useActivityPageQuery({
     variables: {
       address: publicKey.toBase58(),
+      limit: 25,
+      offset: 0,
     },
   });
+  const [hasMore, setHasMore] = useState(true);
 
-  const isLoading = activityPage.loading;
-  const activityItems = useMemo(
-    () =>
-      activityPage.data?.wallet?.activities
-        ? // @ts-ignore
-          getActivityItems(activityPage.data.wallet.activities)
-        : [],
-
-    [activityPage.data?.wallet?.activities]
-  );
-  //const activityItems = activityPage.data?.wallet?.activities ?? [];
-  const filteredActivityItems = activityItems.filter((i) => {
-    return (
-      !activityFilter ||
-      [
-        i.nft?.name,
-        i.nft?.address,
-        i.nft?.description,
-        i.wallets[0]?.address,
-        i.wallets[1]?.address,
-        i.wallets[0]?.twitterHandle,
-        i.wallets[1]?.twitterHandle,
-      ].some((w) => w?.toLocaleLowerCase()?.includes(activityFilter.toLocaleLowerCase()))
-    );
-  });
+  const activities = data?.wallet.activities ?? [];
+  console.log('activities data', data);
+  //getActivityItems(activities as WalletActivity[]).filter((i) => {
+  //   return (
+  //     !activityFilter ||
+  //     [
+  //       i.nft?.name,
+  //       i.nft?.address,
+  //       i.nft?.description,
+  //       i.wallets[0]?.address,
+  //       i.wallets[1]?.address,
+  //       i.wallets[0]?.twitterHandle,
+  //       i.wallets[1]?.twitterHandle,
+  //     ].some((w) => w?.toLocaleLowerCase()?.includes(activityFilter.toLocaleLowerCase()))
+  //   );
+  // });
 
   return (
     <ActivityContainer>
@@ -196,40 +255,41 @@ function ActivityPage(props: WalletDependantPageProps) {
           placeholder="Search"
         />
       </div>
-      {/* <div className="flex">
-      <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Bids</button>
-      <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Unclaimed bids</button>
-      <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Wins</button>
-      <button className="mr-2 bg-gray-600 p-2 hover:bg-gray-800">Losses</button>
-    </div> */}
+      <ActivityList
+        hasMore={activities.length > INITIAL_FETCH - 1}
+        onLoadMore={async (inView: boolean) => {
+          if (!inView || loading || activities.length <= 0) {
+            return;
+          }
 
-      <div className="space-y-4">
-        {isLoading ? (
-          <>
-            <LoadingActivitySkeletonBoxCircleLong />
-            <LoadingActivitySkeletonBoxSquareShort />
-            <LoadingActivitySkeletonBoxCircleLong />
-            <LoadingActivitySkeletonBoxSquareShort />
-            <LoadingActivitySkeletonBoxCircleLong />
-            <LoadingActivitySkeletonBoxSquareShort />
-            <LoadingActivitySkeletonBoxCircleLong />
-            <LoadingActivitySkeletonBoxSquareShort />
-            <LoadingActivitySkeletonBoxCircleLong />
-          </>
-        ) : filteredActivityItems.length ? (
-          filteredActivityItems.map((item) => <ActivityCard activity={item} key={item.id} />)
-        ) : (
-          <div className="mt-12 flex flex-col rounded-lg border border-gray-800 p-4 text-center">
-            <span className="text-center text-2xl font-semibold">
-              No activity
-              {!!activityItems.length && !filteredActivityItems.length && ' for this filter'}
-            </span>
-            <span className="mt-2 text-gray-300 ">
-              Activity associated with this user’s wallet will show up here
-            </span>
-          </div>
-        )}
-      </div>
+          await fetchMore({
+            variables: {
+              address: publicKey.toBase58(),
+              limit: INFINITE_SCROLL_AMOUNT_INCREMENT,
+              offset:
+                activities.length > INFINITE_SCROLL_AMOUNT_INCREMENT
+                  ? activities.length
+                  : INFINITE_SCROLL_AMOUNT_INCREMENT,
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+              if (!fetchMoreResult) return prev;
+              const prevActivities = prev.wallet?.activities || [];
+              const moreActivities = fetchMoreResult.wallet?.activities || [];
+              if (!moreActivities.length) {
+                setHasMore(false);
+              }
+
+              fetchMoreResult.wallet!.activities = [...prevActivities, ...moreActivities];
+
+              return { ...fetchMoreResult };
+            },
+          });
+        }}
+        activities={uniq(activities) as WalletActivity[]}
+        refetch={refetch}
+        loading={loading}
+      />
+      <div className="space-y-4"></div>
     </ActivityContainer>
   );
 }
