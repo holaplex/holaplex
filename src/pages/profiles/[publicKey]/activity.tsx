@@ -7,18 +7,13 @@ import { ProfileDataProvider, useProfileData } from 'src/views/profiles/ProfileD
 import ProfileLayout from '@/views/profiles/ProfileLayout';
 import { useActivityPageQuery, WalletActivity } from '@/graphql/indexerTypes';
 import styled from 'styled-components';
-// @ts-ignore
-import FeatherIcon from 'feather-icons-react';
 import { LoadingBox, LoadingLine } from '@/components/LoadingPlaceholders';
 import { mq } from '@/assets/styles/MediaQuery';
 import { Col } from 'antd';
 import { IActivityItem } from '@/views/alpha/activity.interfaces';
 import { PublicKey } from '@solana/web3.js';
 import { FC, useState } from 'react';
-import TextInput2 from '@/components/TextInput2';
 import { ActivityCard } from '@/components/ActivityCard';
-import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import { None } from '../../../components/OfferForm';
 import { InView } from 'react-intersection-observer';
 import { TailSpin } from 'react-loader-spinner';
 
@@ -102,9 +97,6 @@ export const INITIAL_FETCH = 25;
 
 interface ActivityListProps {
   activities: WalletActivity[];
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<None>>;
   onLoadMore: (inView: boolean, entry: IntersectionObserverEntry) => Promise<void>;
   hasMore: boolean;
   loading?: boolean;
@@ -112,13 +104,12 @@ interface ActivityListProps {
 
 export const ActivityList: FC<ActivityListProps> = ({
   activities,
-  refetch,
   onLoadMore,
   hasMore,
   loading = false,
 }) => {
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {loading ? (
         <>
           <LoadingActivitySkeletonBoxCircleLong />
@@ -152,7 +143,7 @@ export const ActivityList: FC<ActivityListProps> = ({
           </span>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -204,8 +195,7 @@ export function getActivityItems(activities: WalletActivity[]) {
 function ActivityPage(props: WalletDependantPageProps) {
   const { publicKey: pk } = useProfileData();
   const publicKey = new PublicKey(pk);
-  const [activityFilter, setActivityFilter] = useState('');
-  const [searchFocused, setSearchFocused] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { data, loading, fetchMore, refetch } = useActivityPageQuery({
     variables: {
       address: publicKey.toBase58(),
@@ -218,40 +208,26 @@ function ActivityPage(props: WalletDependantPageProps) {
 
   return (
     <ActivityContainer>
-      <div className="mb-4  ">
-        <TextInput2
-          id="activity-search"
-          label="activity search"
-          hideLabel
-          value={activityFilter}
-          onChange={(e) => setActivityFilter(e.target.value)}
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setSearchFocused(false)}
-          leadingIcon={
-            <FeatherIcon
-              icon="search"
-              aria-hidden="true"
-              className={searchFocused ? 'text-white' : 'text-gray-500'}
-            />
-          }
-          placeholder="Search"
-        />
-      </div>
       <ActivityList
-        hasMore={activities.length > INITIAL_FETCH - 1}
+        hasMore={hasMore}
         onLoadMore={async (inView: boolean) => {
-          if (!inView || loading || activities.length <= 0) {
+          if (!inView || loading) {
             return;
           }
 
-          await fetchMore({
+          const {
+            data: {
+              wallet: { activities },
+            },
+          } = await fetchMore({
             variables: {
               offset: data?.wallet.activities.length,
             },
           });
+
+          setHasMore(activities.length > 0);
         }}
         activities={activities as WalletActivity[]}
-        refetch={refetch}
         loading={loading}
       />
       <div className="space-y-4"></div>

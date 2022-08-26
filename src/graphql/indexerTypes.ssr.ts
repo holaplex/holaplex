@@ -1,11 +1,11 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { GraphQLClient } from 'graphql-request';
+import * as Dom from 'graphql-request/dist/types.dom';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -5909,49 +5909,6 @@ export const ActivityPageDocument = gql`
     }
   }
 `;
-
-/**
- * __useActivityPageQuery__
- *
- * To run a query within a React component, call `useActivityPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useActivityPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useActivityPageQuery({
- *   variables: {
- *      address: // value for 'address'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useActivityPageQuery(
-  baseOptions: Apollo.QueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ActivityPageQuery, ActivityPageQueryVariables>(
-    ActivityPageDocument,
-    options
-  );
-}
-export function useActivityPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ActivityPageQuery, ActivityPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ActivityPageQuery, ActivityPageQueryVariables>(
-    ActivityPageDocument,
-    options
-  );
-}
-export type ActivityPageQueryHookResult = ReturnType<typeof useActivityPageQuery>;
-export type ActivityPageLazyQueryHookResult = ReturnType<typeof useActivityPageLazyQuery>;
-export type ActivityPageQueryResult = Apollo.QueryResult<
-  ActivityPageQuery,
-  ActivityPageQueryVariables
->;
 export const CollectionNfTsDocument = gql`
   query collectionNFTs($creator: PublicKey!, $owner: PublicKey!, $limit: Int!, $offset: Int!) {
     ownedCollection: nfts(owners: [$owner], limit: $limit, offset: $offset) {
@@ -5974,50 +5931,6 @@ export const CollectionNfTsDocument = gql`
     }
   }
 `;
-
-/**
- * __useCollectionNfTsQuery__
- *
- * To run a query within a React component, call `useCollectionNfTsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCollectionNfTsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCollectionNfTsQuery({
- *   variables: {
- *      creator: // value for 'creator'
- *      owner: // value for 'owner'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useCollectionNfTsQuery(
-  baseOptions: Apollo.QueryHookOptions<CollectionNfTsQuery, CollectionNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CollectionNfTsQuery, CollectionNfTsQueryVariables>(
-    CollectionNfTsDocument,
-    options
-  );
-}
-export function useCollectionNfTsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CollectionNfTsQuery, CollectionNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CollectionNfTsQuery, CollectionNfTsQueryVariables>(
-    CollectionNfTsDocument,
-    options
-  );
-}
-export type CollectionNfTsQueryHookResult = ReturnType<typeof useCollectionNfTsQuery>;
-export type CollectionNfTsLazyQueryHookResult = ReturnType<typeof useCollectionNfTsLazyQuery>;
-export type CollectionNfTsQueryResult = Apollo.QueryResult<
-  CollectionNfTsQuery,
-  CollectionNfTsQueryVariables
->;
 export const CreatedNfTsDocument = gql`
   query createdNFTs($creator: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
     marketplace(subdomain: $subdomain) {
@@ -6149,47 +6062,6 @@ export const CreatedNfTsDocument = gql`
     }
   }
 `;
-
-/**
- * __useCreatedNfTsQuery__
- *
- * To run a query within a React component, call `useCreatedNfTsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCreatedNfTsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCreatedNfTsQuery({
- *   variables: {
- *      creator: // value for 'creator'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *      subdomain: // value for 'subdomain'
- *   },
- * });
- */
-export function useCreatedNfTsQuery(
-  baseOptions: Apollo.QueryHookOptions<CreatedNfTsQuery, CreatedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CreatedNfTsQuery, CreatedNfTsQueryVariables>(CreatedNfTsDocument, options);
-}
-export function useCreatedNfTsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CreatedNfTsQuery, CreatedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CreatedNfTsQuery, CreatedNfTsQueryVariables>(
-    CreatedNfTsDocument,
-    options
-  );
-}
-export type CreatedNfTsQueryHookResult = ReturnType<typeof useCreatedNfTsQuery>;
-export type CreatedNfTsLazyQueryHookResult = ReturnType<typeof useCreatedNfTsLazyQuery>;
-export type CreatedNfTsQueryResult = Apollo.QueryResult<
-  CreatedNfTsQuery,
-  CreatedNfTsQueryVariables
->;
 export const OwnedNfTsDocument = gql`
   query ownedNFTs($address: PublicKey!, $limit: Int!, $offset: Int!, $subdomain: String!) {
     marketplace(subdomain: $subdomain) {
@@ -6330,41 +6202,6 @@ export const OwnedNfTsDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useOwnedNfTsQuery__
- *
- * To run a query within a React component, call `useOwnedNfTsQuery` and pass it any options that fit your needs.
- * When your component renders, `useOwnedNfTsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOwnedNfTsQuery({
- *   variables: {
- *      address: // value for 'address'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *      subdomain: // value for 'subdomain'
- *   },
- * });
- */
-export function useOwnedNfTsQuery(
-  baseOptions: Apollo.QueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
-}
-export function useOwnedNfTsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OwnedNfTsQuery, OwnedNfTsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<OwnedNfTsQuery, OwnedNfTsQueryVariables>(OwnedNfTsDocument, options);
-}
-export type OwnedNfTsQueryHookResult = ReturnType<typeof useOwnedNfTsQuery>;
-export type OwnedNfTsLazyQueryHookResult = ReturnType<typeof useOwnedNfTsLazyQuery>;
-export type OwnedNfTsQueryResult = Apollo.QueryResult<OwnedNfTsQuery, OwnedNfTsQueryVariables>;
 export const WalletProfileDocument = gql`
   query walletProfile($handle: String!) {
     profile(handle: $handle) {
@@ -6373,47 +6210,6 @@ export const WalletProfileDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useWalletProfileQuery__
- *
- * To run a query within a React component, call `useWalletProfileQuery` and pass it any options that fit your needs.
- * When your component renders, `useWalletProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useWalletProfileQuery({
- *   variables: {
- *      handle: // value for 'handle'
- *   },
- * });
- */
-export function useWalletProfileQuery(
-  baseOptions: Apollo.QueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<WalletProfileQuery, WalletProfileQueryVariables>(
-    WalletProfileDocument,
-    options
-  );
-}
-export function useWalletProfileLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<WalletProfileQuery, WalletProfileQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<WalletProfileQuery, WalletProfileQueryVariables>(
-    WalletProfileDocument,
-    options
-  );
-}
-export type WalletProfileQueryHookResult = ReturnType<typeof useWalletProfileQuery>;
-export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfileLazyQuery>;
-export type WalletProfileQueryResult = Apollo.QueryResult<
-  WalletProfileQuery,
-  WalletProfileQueryVariables
->;
 export const GetCollectionDocument = gql`
   query getCollection($address: String!) {
     nft(address: $address) {
@@ -6447,47 +6243,6 @@ export const GetCollectionDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useGetCollectionQuery__
- *
- * To run a query within a React component, call `useGetCollectionQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCollectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCollectionQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useGetCollectionQuery(
-  baseOptions: Apollo.QueryHookOptions<GetCollectionQuery, GetCollectionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetCollectionQuery, GetCollectionQueryVariables>(
-    GetCollectionDocument,
-    options
-  );
-}
-export function useGetCollectionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetCollectionQuery, GetCollectionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetCollectionQuery, GetCollectionQueryVariables>(
-    GetCollectionDocument,
-    options
-  );
-}
-export type GetCollectionQueryHookResult = ReturnType<typeof useGetCollectionQuery>;
-export type GetCollectionLazyQueryHookResult = ReturnType<typeof useGetCollectionLazyQuery>;
-export type GetCollectionQueryResult = Apollo.QueryResult<
-  GetCollectionQuery,
-  GetCollectionQueryVariables
->;
 export const NftCollectionDocument = gql`
   query nftCollection(
     $address: String!
@@ -6644,50 +6399,6 @@ export const NftCollectionDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useNftCollectionQuery__
- *
- * To run a query within a React component, call `useNftCollectionQuery` and pass it any options that fit your needs.
- * When your component renders, `useNftCollectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNftCollectionQuery({
- *   variables: {
- *      address: // value for 'address'
- *      marketplaceSubdomain: // value for 'marketplaceSubdomain'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useNftCollectionQuery(
-  baseOptions: Apollo.QueryHookOptions<NftCollectionQuery, NftCollectionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftCollectionQuery, NftCollectionQueryVariables>(
-    NftCollectionDocument,
-    options
-  );
-}
-export function useNftCollectionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftCollectionQuery, NftCollectionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftCollectionQuery, NftCollectionQueryVariables>(
-    NftCollectionDocument,
-    options
-  );
-}
-export type NftCollectionQueryHookResult = ReturnType<typeof useNftCollectionQuery>;
-export type NftCollectionLazyQueryHookResult = ReturnType<typeof useNftCollectionLazyQuery>;
-export type NftCollectionQueryResult = Apollo.QueryResult<
-  NftCollectionQuery,
-  NftCollectionQueryVariables
->;
 export const NftsInCollectionDocument = gql`
   query nftsInCollection(
     $collectionMintAddress: PublicKey!
@@ -6839,51 +6550,6 @@ export const NftsInCollectionDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useNftsInCollectionQuery__
- *
- * To run a query within a React component, call `useNftsInCollectionQuery` and pass it any options that fit your needs.
- * When your component renders, `useNftsInCollectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNftsInCollectionQuery({
- *   variables: {
- *      collectionMintAddress: // value for 'collectionMintAddress'
- *      listed: // value for 'listed'
- *      marketplaceSubdomain: // value for 'marketplaceSubdomain'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useNftsInCollectionQuery(
-  baseOptions: Apollo.QueryHookOptions<NftsInCollectionQuery, NftsInCollectionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftsInCollectionQuery, NftsInCollectionQueryVariables>(
-    NftsInCollectionDocument,
-    options
-  );
-}
-export function useNftsInCollectionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftsInCollectionQuery, NftsInCollectionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftsInCollectionQuery, NftsInCollectionQueryVariables>(
-    NftsInCollectionDocument,
-    options
-  );
-}
-export type NftsInCollectionQueryHookResult = ReturnType<typeof useNftsInCollectionQuery>;
-export type NftsInCollectionLazyQueryHookResult = ReturnType<typeof useNftsInCollectionLazyQuery>;
-export type NftsInCollectionQueryResult = Apollo.QueryResult<
-  NftsInCollectionQuery,
-  NftsInCollectionQueryVariables
->;
 export const DiscoverCollectionsByMarketCapDocument = gql`
   query discoverCollectionsByMarketCap(
     $searchTerm: String
@@ -6905,61 +6571,6 @@ export const DiscoverCollectionsByMarketCapDocument = gql`
   }
   ${CollectionPreviewFragmentDoc}
 `;
-
-/**
- * __useDiscoverCollectionsByMarketCapQuery__
- *
- * To run a query within a React component, call `useDiscoverCollectionsByMarketCapQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverCollectionsByMarketCapQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverCollectionsByMarketCapQuery({
- *   variables: {
- *      searchTerm: // value for 'searchTerm'
- *      start: // value for 'start'
- *      end: // value for 'end'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useDiscoverCollectionsByMarketCapQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    DiscoverCollectionsByMarketCapQuery,
-    DiscoverCollectionsByMarketCapQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    DiscoverCollectionsByMarketCapQuery,
-    DiscoverCollectionsByMarketCapQueryVariables
-  >(DiscoverCollectionsByMarketCapDocument, options);
-}
-export function useDiscoverCollectionsByMarketCapLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    DiscoverCollectionsByMarketCapQuery,
-    DiscoverCollectionsByMarketCapQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    DiscoverCollectionsByMarketCapQuery,
-    DiscoverCollectionsByMarketCapQueryVariables
-  >(DiscoverCollectionsByMarketCapDocument, options);
-}
-export type DiscoverCollectionsByMarketCapQueryHookResult = ReturnType<
-  typeof useDiscoverCollectionsByMarketCapQuery
->;
-export type DiscoverCollectionsByMarketCapLazyQueryHookResult = ReturnType<
-  typeof useDiscoverCollectionsByMarketCapLazyQuery
->;
-export type DiscoverCollectionsByMarketCapQueryResult = Apollo.QueryResult<
-  DiscoverCollectionsByMarketCapQuery,
-  DiscoverCollectionsByMarketCapQueryVariables
->;
 export const DiscoverCollectionsByVolumeDocument = gql`
   query discoverCollectionsByVolume(
     $searchTerm: String
@@ -6981,61 +6592,6 @@ export const DiscoverCollectionsByVolumeDocument = gql`
   }
   ${CollectionPreviewFragmentDoc}
 `;
-
-/**
- * __useDiscoverCollectionsByVolumeQuery__
- *
- * To run a query within a React component, call `useDiscoverCollectionsByVolumeQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverCollectionsByVolumeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverCollectionsByVolumeQuery({
- *   variables: {
- *      searchTerm: // value for 'searchTerm'
- *      start: // value for 'start'
- *      end: // value for 'end'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useDiscoverCollectionsByVolumeQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    DiscoverCollectionsByVolumeQuery,
-    DiscoverCollectionsByVolumeQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    DiscoverCollectionsByVolumeQuery,
-    DiscoverCollectionsByVolumeQueryVariables
-  >(DiscoverCollectionsByVolumeDocument, options);
-}
-export function useDiscoverCollectionsByVolumeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    DiscoverCollectionsByVolumeQuery,
-    DiscoverCollectionsByVolumeQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    DiscoverCollectionsByVolumeQuery,
-    DiscoverCollectionsByVolumeQueryVariables
-  >(DiscoverCollectionsByVolumeDocument, options);
-}
-export type DiscoverCollectionsByVolumeQueryHookResult = ReturnType<
-  typeof useDiscoverCollectionsByVolumeQuery
->;
-export type DiscoverCollectionsByVolumeLazyQueryHookResult = ReturnType<
-  typeof useDiscoverCollectionsByVolumeLazyQuery
->;
-export type DiscoverCollectionsByVolumeQueryResult = Apollo.QueryResult<
-  DiscoverCollectionsByVolumeQuery,
-  DiscoverCollectionsByVolumeQueryVariables
->;
 export const DiscoverNftsActiveOffersDocument = gql`
   query discoverNftsActiveOffers($searchTerm: String, $limit: Int!, $offset: Int!) {
     nfts(
@@ -7054,59 +6610,6 @@ export const DiscoverNftsActiveOffersDocument = gql`
   ${NftCardFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}
 `;
-
-/**
- * __useDiscoverNftsActiveOffersQuery__
- *
- * To run a query within a React component, call `useDiscoverNftsActiveOffersQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverNftsActiveOffersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverNftsActiveOffersQuery({
- *   variables: {
- *      searchTerm: // value for 'searchTerm'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useDiscoverNftsActiveOffersQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    DiscoverNftsActiveOffersQuery,
-    DiscoverNftsActiveOffersQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>(
-    DiscoverNftsActiveOffersDocument,
-    options
-  );
-}
-export function useDiscoverNftsActiveOffersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    DiscoverNftsActiveOffersQuery,
-    DiscoverNftsActiveOffersQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<DiscoverNftsActiveOffersQuery, DiscoverNftsActiveOffersQueryVariables>(
-    DiscoverNftsActiveOffersDocument,
-    options
-  );
-}
-export type DiscoverNftsActiveOffersQueryHookResult = ReturnType<
-  typeof useDiscoverNftsActiveOffersQuery
->;
-export type DiscoverNftsActiveOffersLazyQueryHookResult = ReturnType<
-  typeof useDiscoverNftsActiveOffersLazyQuery
->;
-export type DiscoverNftsActiveOffersQueryResult = Apollo.QueryResult<
-  DiscoverNftsActiveOffersQuery,
-  DiscoverNftsActiveOffersQueryVariables
->;
 export const DiscoverNftsAllDocument = gql`
   query discoverNftsAll($searchTerm: String, $limit: Int!, $offset: Int!) {
     nfts(
@@ -7124,49 +6627,6 @@ export const DiscoverNftsAllDocument = gql`
   ${NftCardFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}
 `;
-
-/**
- * __useDiscoverNftsAllQuery__
- *
- * To run a query within a React component, call `useDiscoverNftsAllQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverNftsAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverNftsAllQuery({
- *   variables: {
- *      searchTerm: // value for 'searchTerm'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useDiscoverNftsAllQuery(
-  baseOptions: Apollo.QueryHookOptions<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>(
-    DiscoverNftsAllDocument,
-    options
-  );
-}
-export function useDiscoverNftsAllLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<DiscoverNftsAllQuery, DiscoverNftsAllQueryVariables>(
-    DiscoverNftsAllDocument,
-    options
-  );
-}
-export type DiscoverNftsAllQueryHookResult = ReturnType<typeof useDiscoverNftsAllQuery>;
-export type DiscoverNftsAllLazyQueryHookResult = ReturnType<typeof useDiscoverNftsAllLazyQuery>;
-export type DiscoverNftsAllQueryResult = Apollo.QueryResult<
-  DiscoverNftsAllQuery,
-  DiscoverNftsAllQueryVariables
->;
 export const DiscoverNftsBuyNowDocument = gql`
   query discoverNftsBuyNow($searchTerm: String, $limit: Int!, $offset: Int!) {
     nfts(
@@ -7185,54 +6645,6 @@ export const DiscoverNftsBuyNowDocument = gql`
   ${NftCardFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}
 `;
-
-/**
- * __useDiscoverNftsBuyNowQuery__
- *
- * To run a query within a React component, call `useDiscoverNftsBuyNowQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverNftsBuyNowQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverNftsBuyNowQuery({
- *   variables: {
- *      searchTerm: // value for 'searchTerm'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useDiscoverNftsBuyNowQuery(
-  baseOptions: Apollo.QueryHookOptions<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>(
-    DiscoverNftsBuyNowDocument,
-    options
-  );
-}
-export function useDiscoverNftsBuyNowLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    DiscoverNftsBuyNowQuery,
-    DiscoverNftsBuyNowQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<DiscoverNftsBuyNowQuery, DiscoverNftsBuyNowQueryVariables>(
-    DiscoverNftsBuyNowDocument,
-    options
-  );
-}
-export type DiscoverNftsBuyNowQueryHookResult = ReturnType<typeof useDiscoverNftsBuyNowQuery>;
-export type DiscoverNftsBuyNowLazyQueryHookResult = ReturnType<
-  typeof useDiscoverNftsBuyNowLazyQuery
->;
-export type DiscoverNftsBuyNowQueryResult = Apollo.QueryResult<
-  DiscoverNftsBuyNowQuery,
-  DiscoverNftsBuyNowQueryVariables
->;
 export const DiscoverProfilesAllDocument = gql`
   query discoverProfilesAll($userWallet: PublicKey, $limit: Int!, $offset: Int!) {
     followWallets(wallet: $userWallet, limit: $limit, offset: $offset) {
@@ -7248,54 +6660,6 @@ export const DiscoverProfilesAllDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useDiscoverProfilesAllQuery__
- *
- * To run a query within a React component, call `useDiscoverProfilesAllQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverProfilesAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverProfilesAllQuery({
- *   variables: {
- *      userWallet: // value for 'userWallet'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useDiscoverProfilesAllQuery(
-  baseOptions: Apollo.QueryHookOptions<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>(
-    DiscoverProfilesAllDocument,
-    options
-  );
-}
-export function useDiscoverProfilesAllLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    DiscoverProfilesAllQuery,
-    DiscoverProfilesAllQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<DiscoverProfilesAllQuery, DiscoverProfilesAllQueryVariables>(
-    DiscoverProfilesAllDocument,
-    options
-  );
-}
-export type DiscoverProfilesAllQueryHookResult = ReturnType<typeof useDiscoverProfilesAllQuery>;
-export type DiscoverProfilesAllLazyQueryHookResult = ReturnType<
-  typeof useDiscoverProfilesAllLazyQuery
->;
-export type DiscoverProfilesAllQueryResult = Apollo.QueryResult<
-  DiscoverProfilesAllQuery,
-  DiscoverProfilesAllQueryVariables
->;
 export const DiscoverStatsDocument = gql`
   query discoverStats {
     nftsStats {
@@ -7308,46 +6672,6 @@ export const DiscoverStatsDocument = gql`
     }
   }
 `;
-
-/**
- * __useDiscoverStatsQuery__
- *
- * To run a query within a React component, call `useDiscoverStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useDiscoverStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDiscoverStatsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useDiscoverStatsQuery(
-  baseOptions?: Apollo.QueryHookOptions<DiscoverStatsQuery, DiscoverStatsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<DiscoverStatsQuery, DiscoverStatsQueryVariables>(
-    DiscoverStatsDocument,
-    options
-  );
-}
-export function useDiscoverStatsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<DiscoverStatsQuery, DiscoverStatsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<DiscoverStatsQuery, DiscoverStatsQueryVariables>(
-    DiscoverStatsDocument,
-    options
-  );
-}
-export type DiscoverStatsQueryHookResult = ReturnType<typeof useDiscoverStatsQuery>;
-export type DiscoverStatsLazyQueryHookResult = ReturnType<typeof useDiscoverStatsLazyQuery>;
-export type DiscoverStatsQueryResult = Apollo.QueryResult<
-  DiscoverStatsQuery,
-  DiscoverStatsQueryVariables
->;
 export const FeedDocument = gql`
   query feed($address: PublicKey!, $limit: Int = 25, $offset: Int = 0, $excludeTypes: [String!]) {
     feedEvents(wallet: $address, limit: $limit, offset: $offset, excludeTypes: $excludeTypes) {
@@ -7375,39 +6699,6 @@ export const FeedDocument = gql`
   ${ListingEventPreviewFragmentDoc}
   ${OfferEventPreviewFragmentDoc}
 `;
-
-/**
- * __useFeedQuery__
- *
- * To run a query within a React component, call `useFeedQuery` and pass it any options that fit your needs.
- * When your component renders, `useFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFeedQuery({
- *   variables: {
- *      address: // value for 'address'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *      excludeTypes: // value for 'excludeTypes'
- *   },
- * });
- */
-export function useFeedQuery(baseOptions: Apollo.QueryHookOptions<FeedQuery, FeedQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<FeedQuery, FeedQueryVariables>(FeedDocument, options);
-}
-export function useFeedLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<FeedQuery, FeedQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<FeedQuery, FeedQueryVariables>(FeedDocument, options);
-}
-export type FeedQueryHookResult = ReturnType<typeof useFeedQuery>;
-export type FeedLazyQueryHookResult = ReturnType<typeof useFeedLazyQuery>;
-export type FeedQueryResult = Apollo.QueryResult<FeedQuery, FeedQueryVariables>;
 export const WhoToFollowDocument = gql`
   query whoToFollow($wallet: PublicKey!, $limit: Int!, $offset: Int = 0) {
     followWallets(wallet: $wallet, limit: $limit, offset: $offset) {
@@ -7423,46 +6714,6 @@ export const WhoToFollowDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useWhoToFollowQuery__
- *
- * To run a query within a React component, call `useWhoToFollowQuery` and pass it any options that fit your needs.
- * When your component renders, `useWhoToFollowQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useWhoToFollowQuery({
- *   variables: {
- *      wallet: // value for 'wallet'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useWhoToFollowQuery(
-  baseOptions: Apollo.QueryHookOptions<WhoToFollowQuery, WhoToFollowQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<WhoToFollowQuery, WhoToFollowQueryVariables>(WhoToFollowDocument, options);
-}
-export function useWhoToFollowLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<WhoToFollowQuery, WhoToFollowQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<WhoToFollowQuery, WhoToFollowQueryVariables>(
-    WhoToFollowDocument,
-    options
-  );
-}
-export type WhoToFollowQueryHookResult = ReturnType<typeof useWhoToFollowQuery>;
-export type WhoToFollowLazyQueryHookResult = ReturnType<typeof useWhoToFollowLazyQuery>;
-export type WhoToFollowQueryResult = Apollo.QueryResult<
-  WhoToFollowQuery,
-  WhoToFollowQueryVariables
->;
 export const HomeDocument = gql`
   query home(
     $userWallet: PublicKey
@@ -7551,44 +6802,6 @@ export const HomeDocument = gql`
   ${MarketplaceAuctionHouseFragmentDoc}
   ${MarketplacePreviewFragmentDoc}
 `;
-
-/**
- * __useHomeQuery__
- *
- * To run a query within a React component, call `useHomeQuery` and pass it any options that fit your needs.
- * When your component renders, `useHomeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useHomeQuery({
- *   variables: {
- *      userWallet: // value for 'userWallet'
- *      featuredCollectionsLimit: // value for 'featuredCollectionsLimit'
- *      featuredProfileLimit: // value for 'featuredProfileLimit'
- *      featuredBuyNowLimit: // value for 'featuredBuyNowLimit'
- *      feedEventsLimit: // value for 'feedEventsLimit'
- *      collectionsByVolumeStartDate: // value for 'collectionsByVolumeStartDate'
- *      collectionsByVolumeEndDate: // value for 'collectionsByVolumeEndDate'
- *      collectionsByMarketCapStartDate: // value for 'collectionsByMarketCapStartDate'
- *      collectionsByMarketCapEndDate: // value for 'collectionsByMarketCapEndDate'
- *   },
- * });
- */
-export function useHomeQuery(baseOptions: Apollo.QueryHookOptions<HomeQuery, HomeQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<HomeQuery, HomeQueryVariables>(HomeDocument, options);
-}
-export function useHomeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<HomeQuery, HomeQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<HomeQuery, HomeQueryVariables>(HomeDocument, options);
-}
-export type HomeQueryHookResult = ReturnType<typeof useHomeQuery>;
-export type HomeLazyQueryHookResult = ReturnType<typeof useHomeLazyQuery>;
-export type HomeQueryResult = Apollo.QueryResult<HomeQuery, HomeQueryVariables>;
 export const NftMarketplaceDocument = gql`
   query nftMarketplace($subdomain: String!, $address: String!) {
     marketplace(subdomain: $subdomain) {
@@ -7844,48 +7057,6 @@ export const NftMarketplaceDocument = gql`
     }
   }
 `;
-
-/**
- * __useNftMarketplaceQuery__
- *
- * To run a query within a React component, call `useNftMarketplaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useNftMarketplaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNftMarketplaceQuery({
- *   variables: {
- *      subdomain: // value for 'subdomain'
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useNftMarketplaceQuery(
-  baseOptions: Apollo.QueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(
-    NftMarketplaceDocument,
-    options
-  );
-}
-export function useNftMarketplaceLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftMarketplaceQuery, NftMarketplaceQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftMarketplaceQuery, NftMarketplaceQueryVariables>(
-    NftMarketplaceDocument,
-    options
-  );
-}
-export type NftMarketplaceQueryHookResult = ReturnType<typeof useNftMarketplaceQuery>;
-export type NftMarketplaceLazyQueryHookResult = ReturnType<typeof useNftMarketplaceLazyQuery>;
-export type NftMarketplaceQueryResult = Apollo.QueryResult<
-  NftMarketplaceQuery,
-  NftMarketplaceQueryVariables
->;
 export const OffersPageDocument = gql`
   query offersPage($subdomain: String!, $address: PublicKey!, $limit: Int!, $offset: Int!) {
     marketplace(subdomain: $subdomain) {
@@ -8111,44 +7282,6 @@ export const OffersPageDocument = gql`
     }
   }
 `;
-
-/**
- * __useOffersPageQuery__
- *
- * To run a query within a React component, call `useOffersPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useOffersPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOffersPageQuery({
- *   variables: {
- *      subdomain: // value for 'subdomain'
- *      address: // value for 'address'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useOffersPageQuery(
-  baseOptions: Apollo.QueryHookOptions<OffersPageQuery, OffersPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<OffersPageQuery, OffersPageQueryVariables>(OffersPageDocument, options);
-}
-export function useOffersPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OffersPageQuery, OffersPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<OffersPageQuery, OffersPageQueryVariables>(
-    OffersPageDocument,
-    options
-  );
-}
-export type OffersPageQueryHookResult = ReturnType<typeof useOffersPageQuery>;
-export type OffersPageLazyQueryHookResult = ReturnType<typeof useOffersPageLazyQuery>;
-export type OffersPageQueryResult = Apollo.QueryResult<OffersPageQuery, OffersPageQueryVariables>;
 export const SubdomainCheckDocument = gql`
   query subdomainCheck($subdomain: String!) {
     marketplace(subdomain: $subdomain) {
@@ -8161,47 +7294,6 @@ export const SubdomainCheckDocument = gql`
     }
   }
 `;
-
-/**
- * __useSubdomainCheckQuery__
- *
- * To run a query within a React component, call `useSubdomainCheckQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubdomainCheckQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubdomainCheckQuery({
- *   variables: {
- *      subdomain: // value for 'subdomain'
- *   },
- * });
- */
-export function useSubdomainCheckQuery(
-  baseOptions: Apollo.QueryHookOptions<SubdomainCheckQuery, SubdomainCheckQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SubdomainCheckQuery, SubdomainCheckQueryVariables>(
-    SubdomainCheckDocument,
-    options
-  );
-}
-export function useSubdomainCheckLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SubdomainCheckQuery, SubdomainCheckQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SubdomainCheckQuery, SubdomainCheckQueryVariables>(
-    SubdomainCheckDocument,
-    options
-  );
-}
-export type SubdomainCheckQueryHookResult = ReturnType<typeof useSubdomainCheckQuery>;
-export type SubdomainCheckLazyQueryHookResult = ReturnType<typeof useSubdomainCheckLazyQuery>;
-export type SubdomainCheckQueryResult = Apollo.QueryResult<
-  SubdomainCheckQuery,
-  SubdomainCheckQueryVariables
->;
 export const NftActivityDocument = gql`
   query nftActivity($address: String!) {
     nftByMintAddress(address: $address) {
@@ -8227,44 +7319,6 @@ export const NftActivityDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useNftActivityQuery__
- *
- * To run a query within a React component, call `useNftActivityQuery` and pass it any options that fit your needs.
- * When your component renders, `useNftActivityQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNftActivityQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useNftActivityQuery(
-  baseOptions: Apollo.QueryHookOptions<NftActivityQuery, NftActivityQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftActivityQuery, NftActivityQueryVariables>(NftActivityDocument, options);
-}
-export function useNftActivityLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftActivityQuery, NftActivityQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftActivityQuery, NftActivityQueryVariables>(
-    NftActivityDocument,
-    options
-  );
-}
-export type NftActivityQueryHookResult = ReturnType<typeof useNftActivityQuery>;
-export type NftActivityLazyQueryHookResult = ReturnType<typeof useNftActivityLazyQuery>;
-export type NftActivityQueryResult = Apollo.QueryResult<
-  NftActivityQuery,
-  NftActivityQueryVariables
->;
 export const NftCardDocument = gql`
   query nftCard($subdomain: String!, $address: String!) {
     nft(address: $address) {
@@ -8277,39 +7331,6 @@ export const NftCardDocument = gql`
   ${NftCardFragmentDoc}
   ${MarketplaceAuctionHouseFragmentDoc}
 `;
-
-/**
- * __useNftCardQuery__
- *
- * To run a query within a React component, call `useNftCardQuery` and pass it any options that fit your needs.
- * When your component renders, `useNftCardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNftCardQuery({
- *   variables: {
- *      subdomain: // value for 'subdomain'
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useNftCardQuery(
-  baseOptions: Apollo.QueryHookOptions<NftCardQuery, NftCardQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
-}
-export function useNftCardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftCardQuery, NftCardQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftCardQuery, NftCardQueryVariables>(NftCardDocument, options);
-}
-export type NftCardQueryHookResult = ReturnType<typeof useNftCardQuery>;
-export type NftCardLazyQueryHookResult = ReturnType<typeof useNftCardLazyQuery>;
-export type NftCardQueryResult = Apollo.QueryResult<NftCardQuery, NftCardQueryVariables>;
 export const NftPageDocument = gql`
   query nftPage($address: String!) {
     nft(address: $address) {
@@ -8413,38 +7434,6 @@ export const NftPageDocument = gql`
     }
   }
 `;
-
-/**
- * __useNftPageQuery__
- *
- * To run a query within a React component, call `useNftPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useNftPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNftPageQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useNftPageQuery(
-  baseOptions: Apollo.QueryHookOptions<NftPageQuery, NftPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
-}
-export function useNftPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<NftPageQuery, NftPageQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<NftPageQuery, NftPageQueryVariables>(NftPageDocument, options);
-}
-export type NftPageQueryHookResult = ReturnType<typeof useNftPageQuery>;
-export type NftPageLazyQueryHookResult = ReturnType<typeof useNftPageLazyQuery>;
-export type NftPageQueryResult = Apollo.QueryResult<NftPageQuery, NftPageQueryVariables>;
 export const ShareNftDocument = gql`
   query shareNFT($subdomain: String!, $address: String!) {
     marketplace(subdomain: $subdomain) {
@@ -8526,39 +7515,6 @@ export const ShareNftDocument = gql`
     }
   }
 `;
-
-/**
- * __useShareNftQuery__
- *
- * To run a query within a React component, call `useShareNftQuery` and pass it any options that fit your needs.
- * When your component renders, `useShareNftQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useShareNftQuery({
- *   variables: {
- *      subdomain: // value for 'subdomain'
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useShareNftQuery(
-  baseOptions: Apollo.QueryHookOptions<ShareNftQuery, ShareNftQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
-}
-export function useShareNftLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ShareNftQuery, ShareNftQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ShareNftQuery, ShareNftQueryVariables>(ShareNftDocument, options);
-}
-export type ShareNftQueryHookResult = ReturnType<typeof useShareNftQuery>;
-export type ShareNftLazyQueryHookResult = ReturnType<typeof useShareNftLazyQuery>;
-export type ShareNftQueryResult = Apollo.QueryResult<ShareNftQuery, ShareNftQueryVariables>;
 export const AllConnectionsFromDocument = gql`
   query allConnectionsFrom($from: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
     connections(from: [$from], limit: $limit, offset: $offset) {
@@ -8569,54 +7525,6 @@ export const AllConnectionsFromDocument = gql`
   }
   ${ConnectionNodeFragmentDoc}
 `;
-
-/**
- * __useAllConnectionsFromQuery__
- *
- * To run a query within a React component, call `useAllConnectionsFromQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllConnectionsFromQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllConnectionsFromQuery({
- *   variables: {
- *      from: // value for 'from'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useAllConnectionsFromQuery(
-  baseOptions: Apollo.QueryHookOptions<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(
-    AllConnectionsFromDocument,
-    options
-  );
-}
-export function useAllConnectionsFromLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AllConnectionsFromQuery,
-    AllConnectionsFromQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<AllConnectionsFromQuery, AllConnectionsFromQueryVariables>(
-    AllConnectionsFromDocument,
-    options
-  );
-}
-export type AllConnectionsFromQueryHookResult = ReturnType<typeof useAllConnectionsFromQuery>;
-export type AllConnectionsFromLazyQueryHookResult = ReturnType<
-  typeof useAllConnectionsFromLazyQuery
->;
-export type AllConnectionsFromQueryResult = Apollo.QueryResult<
-  AllConnectionsFromQuery,
-  AllConnectionsFromQueryVariables
->;
 export const AllConnectionsToDocument = gql`
   query allConnectionsTo($to: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
     connections(to: [$to], limit: $limit, offset: $offset) {
@@ -8627,49 +7535,6 @@ export const AllConnectionsToDocument = gql`
   }
   ${ConnectionNodeFragmentDoc}
 `;
-
-/**
- * __useAllConnectionsToQuery__
- *
- * To run a query within a React component, call `useAllConnectionsToQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllConnectionsToQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllConnectionsToQuery({
- *   variables: {
- *      to: // value for 'to'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useAllConnectionsToQuery(
-  baseOptions: Apollo.QueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(
-    AllConnectionsToDocument,
-    options
-  );
-}
-export function useAllConnectionsToLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AllConnectionsToQuery, AllConnectionsToQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<AllConnectionsToQuery, AllConnectionsToQueryVariables>(
-    AllConnectionsToDocument,
-    options
-  );
-}
-export type AllConnectionsToQueryHookResult = ReturnType<typeof useAllConnectionsToQuery>;
-export type AllConnectionsToLazyQueryHookResult = ReturnType<typeof useAllConnectionsToLazyQuery>;
-export type AllConnectionsToQueryResult = Apollo.QueryResult<
-  AllConnectionsToQuery,
-  AllConnectionsToQueryVariables
->;
 export const GetCollectedByDocument = gql`
   query getCollectedBy($creator: PublicKey!) {
     nfts(creators: [$creator], limit: 1000, offset: 0) {
@@ -8683,47 +7548,6 @@ export const GetCollectedByDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useGetCollectedByQuery__
- *
- * To run a query within a React component, call `useGetCollectedByQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCollectedByQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCollectedByQuery({
- *   variables: {
- *      creator: // value for 'creator'
- *   },
- * });
- */
-export function useGetCollectedByQuery(
-  baseOptions: Apollo.QueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(
-    GetCollectedByDocument,
-    options
-  );
-}
-export function useGetCollectedByLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetCollectedByQuery, GetCollectedByQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetCollectedByQuery, GetCollectedByQueryVariables>(
-    GetCollectedByDocument,
-    options
-  );
-}
-export type GetCollectedByQueryHookResult = ReturnType<typeof useGetCollectedByQuery>;
-export type GetCollectedByLazyQueryHookResult = ReturnType<typeof useGetCollectedByLazyQuery>;
-export type GetCollectedByQueryResult = Apollo.QueryResult<
-  GetCollectedByQuery,
-  GetCollectedByQueryVariables
->;
 export const GetConnectedWalletProfileDataDocument = gql`
   query getConnectedWalletProfileData($address: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
     wallet(address: $address) {
@@ -8756,59 +7580,6 @@ export const GetConnectedWalletProfileDataDocument = gql`
   ${ProfileInfoFragmentDoc}
   ${ConnectionNodeFragmentDoc}
 `;
-
-/**
- * __useGetConnectedWalletProfileDataQuery__
- *
- * To run a query within a React component, call `useGetConnectedWalletProfileDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConnectedWalletProfileDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetConnectedWalletProfileDataQuery({
- *   variables: {
- *      address: // value for 'address'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useGetConnectedWalletProfileDataQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >(GetConnectedWalletProfileDataDocument, options);
-}
-export function useGetConnectedWalletProfileDataLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetConnectedWalletProfileDataQuery,
-    GetConnectedWalletProfileDataQueryVariables
-  >(GetConnectedWalletProfileDataDocument, options);
-}
-export type GetConnectedWalletProfileDataQueryHookResult = ReturnType<
-  typeof useGetConnectedWalletProfileDataQuery
->;
-export type GetConnectedWalletProfileDataLazyQueryHookResult = ReturnType<
-  typeof useGetConnectedWalletProfileDataLazyQuery
->;
-export type GetConnectedWalletProfileDataQueryResult = Apollo.QueryResult<
-  GetConnectedWalletProfileDataQuery,
-  GetConnectedWalletProfileDataQueryVariables
->;
 export const GetProfileFollowerOverviewDocument = gql`
   query getProfileFollowerOverview($pubKey: PublicKey!, $limit: Int = 1000, $offset: Int = 0) {
     wallet(address: $pubKey) {
@@ -8839,59 +7610,6 @@ export const GetProfileFollowerOverviewDocument = gql`
   ${ConnectionNodeFragmentDoc}
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useGetProfileFollowerOverviewQuery__
- *
- * To run a query within a React component, call `useGetProfileFollowerOverviewQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProfileFollowerOverviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProfileFollowerOverviewQuery({
- *   variables: {
- *      pubKey: // value for 'pubKey'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useGetProfileFollowerOverviewQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetProfileFollowerOverviewQuery,
-    GetProfileFollowerOverviewQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetProfileFollowerOverviewQuery, GetProfileFollowerOverviewQueryVariables>(
-    GetProfileFollowerOverviewDocument,
-    options
-  );
-}
-export function useGetProfileFollowerOverviewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetProfileFollowerOverviewQuery,
-    GetProfileFollowerOverviewQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetProfileFollowerOverviewQuery,
-    GetProfileFollowerOverviewQueryVariables
-  >(GetProfileFollowerOverviewDocument, options);
-}
-export type GetProfileFollowerOverviewQueryHookResult = ReturnType<
-  typeof useGetProfileFollowerOverviewQuery
->;
-export type GetProfileFollowerOverviewLazyQueryHookResult = ReturnType<
-  typeof useGetProfileFollowerOverviewLazyQuery
->;
-export type GetProfileFollowerOverviewQueryResult = Apollo.QueryResult<
-  GetProfileFollowerOverviewQuery,
-  GetProfileFollowerOverviewQueryVariables
->;
 export const GetProfileInfoFromPubKeyDocument = gql`
   query getProfileInfoFromPubKey($pubKey: PublicKey!) {
     wallet(address: $pubKey) {
@@ -8902,57 +7620,6 @@ export const GetProfileInfoFromPubKeyDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useGetProfileInfoFromPubKeyQuery__
- *
- * To run a query within a React component, call `useGetProfileInfoFromPubKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProfileInfoFromPubKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProfileInfoFromPubKeyQuery({
- *   variables: {
- *      pubKey: // value for 'pubKey'
- *   },
- * });
- */
-export function useGetProfileInfoFromPubKeyQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetProfileInfoFromPubKeyQuery,
-    GetProfileInfoFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(
-    GetProfileInfoFromPubKeyDocument,
-    options
-  );
-}
-export function useGetProfileInfoFromPubKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetProfileInfoFromPubKeyQuery,
-    GetProfileInfoFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetProfileInfoFromPubKeyQuery, GetProfileInfoFromPubKeyQueryVariables>(
-    GetProfileInfoFromPubKeyDocument,
-    options
-  );
-}
-export type GetProfileInfoFromPubKeyQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromPubKeyQuery
->;
-export type GetProfileInfoFromPubKeyLazyQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromPubKeyLazyQuery
->;
-export type GetProfileInfoFromPubKeyQueryResult = Apollo.QueryResult<
-  GetProfileInfoFromPubKeyQuery,
-  GetProfileInfoFromPubKeyQueryVariables
->;
 export const GetProfileInfoFromTwitterHandleDocument = gql`
   query getProfileInfoFromTwitterHandle($handle: String!) {
     profile(handle: $handle) {
@@ -8961,57 +7628,6 @@ export const GetProfileInfoFromTwitterHandleDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useGetProfileInfoFromTwitterHandleQuery__
- *
- * To run a query within a React component, call `useGetProfileInfoFromTwitterHandleQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProfileInfoFromTwitterHandleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProfileInfoFromTwitterHandleQuery({
- *   variables: {
- *      handle: // value for 'handle'
- *   },
- * });
- */
-export function useGetProfileInfoFromTwitterHandleQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >(GetProfileInfoFromTwitterHandleDocument, options);
-}
-export function useGetProfileInfoFromTwitterHandleLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetProfileInfoFromTwitterHandleQuery,
-    GetProfileInfoFromTwitterHandleQueryVariables
-  >(GetProfileInfoFromTwitterHandleDocument, options);
-}
-export type GetProfileInfoFromTwitterHandleQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromTwitterHandleQuery
->;
-export type GetProfileInfoFromTwitterHandleLazyQueryHookResult = ReturnType<
-  typeof useGetProfileInfoFromTwitterHandleLazyQuery
->;
-export type GetProfileInfoFromTwitterHandleQueryResult = Apollo.QueryResult<
-  GetProfileInfoFromTwitterHandleQuery,
-  GetProfileInfoFromTwitterHandleQueryVariables
->;
 export const GetProfilesDocument = gql`
   query getProfiles($addresses: [PublicKey!]!) {
     wallets(addresses: $addresses) {
@@ -9023,44 +7639,6 @@ export const GetProfilesDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useGetProfilesQuery__
- *
- * To run a query within a React component, call `useGetProfilesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProfilesQuery({
- *   variables: {
- *      addresses: // value for 'addresses'
- *   },
- * });
- */
-export function useGetProfilesQuery(
-  baseOptions: Apollo.QueryHookOptions<GetProfilesQuery, GetProfilesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetProfilesQuery, GetProfilesQueryVariables>(GetProfilesDocument, options);
-}
-export function useGetProfilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetProfilesQuery, GetProfilesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetProfilesQuery, GetProfilesQueryVariables>(
-    GetProfilesDocument,
-    options
-  );
-}
-export type GetProfilesQueryHookResult = ReturnType<typeof useGetProfilesQuery>;
-export type GetProfilesLazyQueryHookResult = ReturnType<typeof useGetProfilesLazyQuery>;
-export type GetProfilesQueryResult = Apollo.QueryResult<
-  GetProfilesQuery,
-  GetProfilesQueryVariables
->;
 export const IsXFollowingYDocument = gql`
   query isXFollowingY($xPubKey: PublicKey!, $yPubKey: PublicKey!) {
     connections(from: [$xPubKey], to: [$yPubKey], limit: 1, offset: 0) {
@@ -9068,48 +7646,6 @@ export const IsXFollowingYDocument = gql`
     }
   }
 `;
-
-/**
- * __useIsXFollowingYQuery__
- *
- * To run a query within a React component, call `useIsXFollowingYQuery` and pass it any options that fit your needs.
- * When your component renders, `useIsXFollowingYQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useIsXFollowingYQuery({
- *   variables: {
- *      xPubKey: // value for 'xPubKey'
- *      yPubKey: // value for 'yPubKey'
- *   },
- * });
- */
-export function useIsXFollowingYQuery(
-  baseOptions: Apollo.QueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(
-    IsXFollowingYDocument,
-    options
-  );
-}
-export function useIsXFollowingYLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<IsXFollowingYQuery, IsXFollowingYQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<IsXFollowingYQuery, IsXFollowingYQueryVariables>(
-    IsXFollowingYDocument,
-    options
-  );
-}
-export type IsXFollowingYQueryHookResult = ReturnType<typeof useIsXFollowingYQuery>;
-export type IsXFollowingYLazyQueryHookResult = ReturnType<typeof useIsXFollowingYLazyQuery>;
-export type IsXFollowingYQueryResult = Apollo.QueryResult<
-  IsXFollowingYQuery,
-  IsXFollowingYQueryVariables
->;
 export const TwitterHandleFromPubKeyDocument = gql`
   query twitterHandleFromPubKey($pubKey: PublicKey!) {
     wallet(address: $pubKey) {
@@ -9118,57 +7654,6 @@ export const TwitterHandleFromPubKeyDocument = gql`
   }
   ${ConnectionNodeFragmentDoc}
 `;
-
-/**
- * __useTwitterHandleFromPubKeyQuery__
- *
- * To run a query within a React component, call `useTwitterHandleFromPubKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useTwitterHandleFromPubKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTwitterHandleFromPubKeyQuery({
- *   variables: {
- *      pubKey: // value for 'pubKey'
- *   },
- * });
- */
-export function useTwitterHandleFromPubKeyQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    TwitterHandleFromPubKeyQuery,
-    TwitterHandleFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(
-    TwitterHandleFromPubKeyDocument,
-    options
-  );
-}
-export function useTwitterHandleFromPubKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    TwitterHandleFromPubKeyQuery,
-    TwitterHandleFromPubKeyQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<TwitterHandleFromPubKeyQuery, TwitterHandleFromPubKeyQueryVariables>(
-    TwitterHandleFromPubKeyDocument,
-    options
-  );
-}
-export type TwitterHandleFromPubKeyQueryHookResult = ReturnType<
-  typeof useTwitterHandleFromPubKeyQuery
->;
-export type TwitterHandleFromPubKeyLazyQueryHookResult = ReturnType<
-  typeof useTwitterHandleFromPubKeyLazyQuery
->;
-export type TwitterHandleFromPubKeyQueryResult = Apollo.QueryResult<
-  TwitterHandleFromPubKeyQuery,
-  TwitterHandleFromPubKeyQueryVariables
->;
 export const MetadataSearchDocument = gql`
   query metadataSearch($term: String!) {
     metadataJsons(term: $term, limit: 25, offset: 0) {
@@ -9180,47 +7665,6 @@ export const MetadataSearchDocument = gql`
     }
   }
 `;
-
-/**
- * __useMetadataSearchQuery__
- *
- * To run a query within a React component, call `useMetadataSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useMetadataSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMetadataSearchQuery({
- *   variables: {
- *      term: // value for 'term'
- *   },
- * });
- */
-export function useMetadataSearchQuery(
-  baseOptions: Apollo.QueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(
-    MetadataSearchDocument,
-    options
-  );
-}
-export function useMetadataSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MetadataSearchQuery, MetadataSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MetadataSearchQuery, MetadataSearchQueryVariables>(
-    MetadataSearchDocument,
-    options
-  );
-}
-export type MetadataSearchQueryHookResult = ReturnType<typeof useMetadataSearchQuery>;
-export type MetadataSearchLazyQueryHookResult = ReturnType<typeof useMetadataSearchLazyQuery>;
-export type MetadataSearchQueryResult = Apollo.QueryResult<
-  MetadataSearchQuery,
-  MetadataSearchQueryVariables
->;
 export const ProfileSearchDocument = gql`
   query profileSearch($term: String!) {
     profiles(term: $term, limit: 5, offset: 0) {
@@ -9232,47 +7676,6 @@ export const ProfileSearchDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
-
-/**
- * __useProfileSearchQuery__
- *
- * To run a query within a React component, call `useProfileSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useProfileSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProfileSearchQuery({
- *   variables: {
- *      term: // value for 'term'
- *   },
- * });
- */
-export function useProfileSearchQuery(
-  baseOptions: Apollo.QueryHookOptions<ProfileSearchQuery, ProfileSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProfileSearchQuery, ProfileSearchQueryVariables>(
-    ProfileSearchDocument,
-    options
-  );
-}
-export function useProfileSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProfileSearchQuery, ProfileSearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProfileSearchQuery, ProfileSearchQueryVariables>(
-    ProfileSearchDocument,
-    options
-  );
-}
-export type ProfileSearchQueryHookResult = ReturnType<typeof useProfileSearchQuery>;
-export type ProfileSearchLazyQueryHookResult = ReturnType<typeof useProfileSearchLazyQuery>;
-export type ProfileSearchQueryResult = Apollo.QueryResult<
-  ProfileSearchQuery,
-  ProfileSearchQueryVariables
->;
 export const SearchDocument = gql`
   query search(
     $term: String!
@@ -9337,38 +7740,555 @@ export const SearchDocument = gql`
   ${CollectionPreviewFragmentDoc}
 `;
 
-/**
- * __useSearchQuery__
- *
- * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchQuery({
- *   variables: {
- *      term: // value for 'term'
- *      walletAddress: // value for 'walletAddress'
- *      nftMintAddress: // value for 'nftMintAddress'
- *      start: // value for 'start'
- *      end: // value for 'end'
- *   },
- * });
- */
-export function useSearchQuery(
-  baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+export type SdkFunctionWrapper = <T>(
+  action: (requestHeaders?: Record<string, string>) => Promise<T>,
+  operationName: string,
+  operationType?: string
+) => Promise<T>;
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    activityPage(
+      variables: ActivityPageQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<ActivityPageQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<ActivityPageQuery>(ActivityPageDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'activityPage',
+        'query'
+      );
+    },
+    collectionNFTs(
+      variables: CollectionNfTsQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<CollectionNfTsQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<CollectionNfTsQuery>(CollectionNfTsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'collectionNFTs',
+        'query'
+      );
+    },
+    createdNFTs(
+      variables: CreatedNfTsQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<CreatedNfTsQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<CreatedNfTsQuery>(CreatedNfTsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'createdNFTs',
+        'query'
+      );
+    },
+    ownedNFTs(
+      variables: OwnedNfTsQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<OwnedNfTsQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<OwnedNfTsQuery>(OwnedNfTsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'ownedNFTs',
+        'query'
+      );
+    },
+    walletProfile(
+      variables: WalletProfileQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<WalletProfileQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<WalletProfileQuery>(WalletProfileDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'walletProfile',
+        'query'
+      );
+    },
+    getCollection(
+      variables: GetCollectionQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetCollectionQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetCollectionQuery>(GetCollectionDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'getCollection',
+        'query'
+      );
+    },
+    nftCollection(
+      variables: NftCollectionQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<NftCollectionQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<NftCollectionQuery>(NftCollectionDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'nftCollection',
+        'query'
+      );
+    },
+    nftsInCollection(
+      variables: NftsInCollectionQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<NftsInCollectionQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<NftsInCollectionQuery>(NftsInCollectionDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'nftsInCollection',
+        'query'
+      );
+    },
+    discoverCollectionsByMarketCap(
+      variables: DiscoverCollectionsByMarketCapQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverCollectionsByMarketCapQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverCollectionsByMarketCapQuery>(
+            DiscoverCollectionsByMarketCapDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'discoverCollectionsByMarketCap',
+        'query'
+      );
+    },
+    discoverCollectionsByVolume(
+      variables: DiscoverCollectionsByVolumeQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverCollectionsByVolumeQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverCollectionsByVolumeQuery>(
+            DiscoverCollectionsByVolumeDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'discoverCollectionsByVolume',
+        'query'
+      );
+    },
+    discoverNftsActiveOffers(
+      variables: DiscoverNftsActiveOffersQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverNftsActiveOffersQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverNftsActiveOffersQuery>(
+            DiscoverNftsActiveOffersDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'discoverNftsActiveOffers',
+        'query'
+      );
+    },
+    discoverNftsAll(
+      variables: DiscoverNftsAllQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverNftsAllQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverNftsAllQuery>(DiscoverNftsAllDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'discoverNftsAll',
+        'query'
+      );
+    },
+    discoverNftsBuyNow(
+      variables: DiscoverNftsBuyNowQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverNftsBuyNowQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverNftsBuyNowQuery>(DiscoverNftsBuyNowDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'discoverNftsBuyNow',
+        'query'
+      );
+    },
+    discoverProfilesAll(
+      variables: DiscoverProfilesAllQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverProfilesAllQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverProfilesAllQuery>(DiscoverProfilesAllDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'discoverProfilesAll',
+        'query'
+      );
+    },
+    discoverStats(
+      variables?: DiscoverStatsQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<DiscoverStatsQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<DiscoverStatsQuery>(DiscoverStatsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'discoverStats',
+        'query'
+      );
+    },
+    feed(
+      variables: FeedQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<FeedQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<FeedQuery>(FeedDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'feed',
+        'query'
+      );
+    },
+    whoToFollow(
+      variables: WhoToFollowQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<WhoToFollowQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<WhoToFollowQuery>(WhoToFollowDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'whoToFollow',
+        'query'
+      );
+    },
+    home(
+      variables: HomeQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<HomeQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<HomeQuery>(HomeDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'home',
+        'query'
+      );
+    },
+    nftMarketplace(
+      variables: NftMarketplaceQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<NftMarketplaceQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<NftMarketplaceQuery>(NftMarketplaceDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'nftMarketplace',
+        'query'
+      );
+    },
+    offersPage(
+      variables: OffersPageQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<OffersPageQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<OffersPageQuery>(OffersPageDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'offersPage',
+        'query'
+      );
+    },
+    subdomainCheck(
+      variables: SubdomainCheckQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<SubdomainCheckQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<SubdomainCheckQuery>(SubdomainCheckDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'subdomainCheck',
+        'query'
+      );
+    },
+    nftActivity(
+      variables: NftActivityQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<NftActivityQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<NftActivityQuery>(NftActivityDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'nftActivity',
+        'query'
+      );
+    },
+    nftCard(
+      variables: NftCardQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<NftCardQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<NftCardQuery>(NftCardDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'nftCard',
+        'query'
+      );
+    },
+    nftPage(
+      variables: NftPageQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<NftPageQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<NftPageQuery>(NftPageDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'nftPage',
+        'query'
+      );
+    },
+    shareNFT(
+      variables: ShareNftQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<ShareNftQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<ShareNftQuery>(ShareNftDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'shareNFT',
+        'query'
+      );
+    },
+    allConnectionsFrom(
+      variables: AllConnectionsFromQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<AllConnectionsFromQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<AllConnectionsFromQuery>(AllConnectionsFromDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'allConnectionsFrom',
+        'query'
+      );
+    },
+    allConnectionsTo(
+      variables: AllConnectionsToQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<AllConnectionsToQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<AllConnectionsToQuery>(AllConnectionsToDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'allConnectionsTo',
+        'query'
+      );
+    },
+    getCollectedBy(
+      variables: GetCollectedByQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetCollectedByQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetCollectedByQuery>(GetCollectedByDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'getCollectedBy',
+        'query'
+      );
+    },
+    getConnectedWalletProfileData(
+      variables: GetConnectedWalletProfileDataQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetConnectedWalletProfileDataQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetConnectedWalletProfileDataQuery>(
+            GetConnectedWalletProfileDataDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'getConnectedWalletProfileData',
+        'query'
+      );
+    },
+    getProfileFollowerOverview(
+      variables: GetProfileFollowerOverviewQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetProfileFollowerOverviewQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetProfileFollowerOverviewQuery>(
+            GetProfileFollowerOverviewDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'getProfileFollowerOverview',
+        'query'
+      );
+    },
+    getProfileInfoFromPubKey(
+      variables: GetProfileInfoFromPubKeyQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetProfileInfoFromPubKeyQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetProfileInfoFromPubKeyQuery>(
+            GetProfileInfoFromPubKeyDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'getProfileInfoFromPubKey',
+        'query'
+      );
+    },
+    getProfileInfoFromTwitterHandle(
+      variables: GetProfileInfoFromTwitterHandleQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetProfileInfoFromTwitterHandleQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetProfileInfoFromTwitterHandleQuery>(
+            GetProfileInfoFromTwitterHandleDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'getProfileInfoFromTwitterHandle',
+        'query'
+      );
+    },
+    getProfiles(
+      variables: GetProfilesQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetProfilesQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<GetProfilesQuery>(GetProfilesDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'getProfiles',
+        'query'
+      );
+    },
+    isXFollowingY(
+      variables: IsXFollowingYQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<IsXFollowingYQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<IsXFollowingYQuery>(IsXFollowingYDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'isXFollowingY',
+        'query'
+      );
+    },
+    twitterHandleFromPubKey(
+      variables: TwitterHandleFromPubKeyQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<TwitterHandleFromPubKeyQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<TwitterHandleFromPubKeyQuery>(TwitterHandleFromPubKeyDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'twitterHandleFromPubKey',
+        'query'
+      );
+    },
+    metadataSearch(
+      variables: MetadataSearchQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<MetadataSearchQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<MetadataSearchQuery>(MetadataSearchDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'metadataSearch',
+        'query'
+      );
+    },
+    profileSearch(
+      variables: ProfileSearchQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<ProfileSearchQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<ProfileSearchQuery>(ProfileSearchDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'profileSearch',
+        'query'
+      );
+    },
+    search(
+      variables: SearchQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<SearchQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<SearchQuery>(SearchDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'search',
+        'query'
+      );
+    },
+  };
 }
-export function useSearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-}
-export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
-export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
-export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
+export type Sdk = ReturnType<typeof getSdk>;
