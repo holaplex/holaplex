@@ -215,21 +215,6 @@ function ActivityPage(props: WalletDependantPageProps) {
   });
 
   const activities = data?.wallet.activities ?? [];
-  console.log('activities data', data);
-  //getActivityItems(activities as WalletActivity[]).filter((i) => {
-  //   return (
-  //     !activityFilter ||
-  //     [
-  //       i.nft?.name,
-  //       i.nft?.address,
-  //       i.nft?.description,
-  //       i.wallets[0]?.address,
-  //       i.wallets[1]?.address,
-  //       i.wallets[0]?.twitterHandle,
-  //       i.wallets[1]?.twitterHandle,
-  //     ].some((w) => w?.toLocaleLowerCase()?.includes(activityFilter.toLocaleLowerCase()))
-  //   );
-  // });
 
   return (
     <ActivityContainer>
