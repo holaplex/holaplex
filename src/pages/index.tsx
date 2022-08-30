@@ -48,8 +48,8 @@ export default function Home(): JSX.Element {
 
   const timeIntervales = useMemo(() => {
     const now = DateTime.now();
-    const dayAgo = now.minus({ days: 1 });
-    const nowUTC = now.toUTC().toString();
+    const dayAgo = now.minus({ days: 1 }).startOf('day');
+    const nowUTC = now.startOf('day').toUTC().toString();
     const dayAgoUTC = dayAgo.toUTC().toString();
 
     return { startDate: dayAgoUTC, endDate: nowUTC };
