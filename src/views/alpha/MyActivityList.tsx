@@ -17,37 +17,6 @@ export function MyActivityList() {
     },
   });
 
-  const isLoading = activityPage.loading;
-
-  // const { data, loading, called, refetch } = useFeedQuery({
-  //   // fetchPolicy: `cache-and-network`,
-  //   fetchPolicy: 'no-cache',
-  //   variables: {
-  //     address: myPubkey,
-  //   },
-  // });
-
-  // const myFeedItems = useMemo(
-  //   () =>
-  //     activityPage.data?.wallet?.bids
-  //       ? // @ts-ignore
-  //         data?.feedEvents
-  //           .map((e) => generateFeedCardAttributes(e))
-  //           .filter((a) => a?.sourceUser.address === myPubkey)
-  //       : [],
-
-  //   [data?.feedEvents]
-  // );
-
-  // const myFeedActivityItems: IFeedItem[] = myFeedItems.map((i) => ({
-  //   id: i?.id,
-  //   timestamp: i?.createdAt,
-  //   type: i?.type,
-  //   sourceUser: i?.sourceUser,
-  //   nft: i?.nft,
-  //   solAmount: i?.solAmount,
-  // }));
-
   const activityItems = useMemo(
     () =>
       activityPage.data?.wallet?.activities
@@ -57,12 +26,6 @@ export function MyActivityList() {
 
     [activityPage.data?.wallet?.activities]
   );
-
-  // console.log('My activity', {
-  //   myFeedItems,
-  //   myFeedActivityItems,
-  //   activityItems,
-  // });
 
   return (
     <div>

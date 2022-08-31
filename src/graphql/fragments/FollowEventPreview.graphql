@@ -24,6 +24,7 @@ fragment FollowEventPreview on FollowEvent {
     }
   }
   wallet {
+    address
     nftCounts {
       owned
       created

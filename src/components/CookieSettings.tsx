@@ -28,8 +28,6 @@ const CookieSettings = (props: {
     cookies.holaplex_preference_cookies_acceptance === 'true' || false
   );
 
-  console.log(preferenceCookies, analyticsCookies);
-
   useEffect(() => {
     setAnalyticsCookies(cookies.holaplex_analytics_cookies_acceptance === 'true');
     setPreferenceCookies(cookies.holaplex_preference_cookies_acceptance === 'true');

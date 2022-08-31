@@ -35,6 +35,7 @@ fragment PurchaseEventPreview on PurchaseEvent {
     }
   }
   wallet {
+    address
     nftCounts {
       owned
       created
