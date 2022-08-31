@@ -52,6 +52,7 @@ fragment OfferEventPreview on OfferEvent {
     }
   }
   wallet {
+    address
     nftCounts {
       owned
       created

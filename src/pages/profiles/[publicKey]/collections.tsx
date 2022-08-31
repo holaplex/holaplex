@@ -105,7 +105,6 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
         collectionNft.collection &&
         !uniqueCollections.find((u) => u.address === collectionNft.collection?.address)
       ) {
-        console.log(`Collected`, collectionNft);
         uniqueCollections.push(collectionNft.collection);
       }
     });
@@ -114,7 +113,6 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
         collectionNft.collection &&
         !uniqueCollections.find((u) => u.address === collectionNft.collection?.address)
       ) {
-        console.log(`Created`, collectionNft);
         uniqueCollections.push(collectionNft.collection);
       }
     });
@@ -123,15 +121,9 @@ function CollectionsPage({ publicKey, ...props }: WalletDependantPageProps) {
   const ownedCollections = data?.ownedCollection || [];
   const createdCollections = data?.createdCollection || [];
 
-  console.log(
-    ownedCollections.length > COLLECTION_FETCH - 1 ||
-      createdCollections.length > COLLECTION_FETCH - 1
-  );
-
   const collections = unique(ownedCollections, createdCollections);
 
   const onLoadMore = async (inView: boolean) => {
-    console.log(`Hello`);
     if (!inView || loading || (ownedCollections.length <= 0 && createdCollections.length <= 0)) {
       return;
     }

@@ -29,6 +29,7 @@ fragment MintEventPreview on MintEvent {
     mintAddress
   }
   wallet {
+    address
     nftCounts {
       owned
       created

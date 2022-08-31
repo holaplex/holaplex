@@ -77,6 +77,7 @@ fragment ListingEventPreview on ListingEvent {
     }
   }
   wallet {
+    address
     nftCounts {
       owned
       created

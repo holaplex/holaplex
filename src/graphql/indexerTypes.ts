@@ -2606,6 +2606,7 @@ export type FeedQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -2708,6 +2709,7 @@ export type FeedQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -2755,6 +2757,7 @@ export type FeedQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -2829,6 +2832,7 @@ export type FeedQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -2883,6 +2887,7 @@ export type FeedQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -2963,6 +2968,7 @@ export type FollowEventPreviewFragment = {
   } | null;
   wallet: {
     __typename?: 'Wallet';
+    address: any;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   };
 };
@@ -3066,6 +3072,7 @@ export type ListingEventPreviewFragment = {
   } | null;
   wallet: {
     __typename?: 'Wallet';
+    address: any;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   };
 };
@@ -3135,6 +3142,7 @@ export type MintEventPreviewFragment = {
   } | null;
   wallet: {
     __typename?: 'Wallet';
+    address: any;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   };
 };
@@ -3311,6 +3319,7 @@ export type OfferEventPreviewFragment = {
   } | null;
   wallet: {
     __typename?: 'Wallet';
+    address: any;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   };
 };
@@ -3375,6 +3384,7 @@ export type PurchaseEventPreviewFragment = {
   } | null;
   wallet: {
     __typename?: 'Wallet';
+    address: any;
     nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
   };
 };
@@ -3584,6 +3594,7 @@ export type HomeQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -3686,6 +3697,7 @@ export type HomeQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -3733,6 +3745,7 @@ export type HomeQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -3807,6 +3820,7 @@ export type HomeQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -3861,6 +3875,7 @@ export type HomeQuery = {
         } | null;
         wallet: {
           __typename?: 'Wallet';
+          address: any;
           nftCounts: { __typename?: 'WalletNftCount'; owned: number; created: number };
         };
       }
@@ -5378,6 +5393,7 @@ export const FollowEventPreviewFragmentDoc = gql`
       }
     }
     wallet {
+      address
       nftCounts {
         owned
         created
@@ -5464,6 +5480,7 @@ export const ListingEventPreviewFragmentDoc = gql`
       }
     }
     wallet {
+      address
       nftCounts {
         owned
         created
@@ -5522,6 +5539,7 @@ export const MintEventPreviewFragmentDoc = gql`
       mintAddress
     }
     wallet {
+      address
       nftCounts {
         owned
         created
@@ -5681,6 +5699,7 @@ export const OfferEventPreviewFragmentDoc = gql`
       }
     }
     wallet {
+      address
       nftCounts {
         owned
         created
@@ -5725,6 +5744,7 @@ export const PurchaseEventPreviewFragmentDoc = gql`
       }
     }
     wallet {
+      address
       nftCounts {
         owned
         created
