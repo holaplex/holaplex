@@ -30,6 +30,12 @@ export const apolloClient = new ApolloClient({
           },
         },
       },
+      Wallet: {
+        keyFields: ['address'],
+        fields: {
+          activities: offsetLimitPagination(),
+        },
+      },
     },
   }),
 });

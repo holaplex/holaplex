@@ -136,6 +136,7 @@ const AlphaPage = ({ address }: { address: string }) => {
             profile: event.profile,
             eventsAggregated,
             wallet: {
+              collectedCollections: [],
               address: event.walletAddress,
               twitterHandle: null,
               bids: [],
@@ -177,6 +178,7 @@ const AlphaPage = ({ address }: { address: string }) => {
             profile: event.profile,
             eventsAggregated: salesAggregated,
             wallet: {
+              collectedCollections: [],
               address: event.walletAddress,
               twitterHandle: null,
               bids: [],

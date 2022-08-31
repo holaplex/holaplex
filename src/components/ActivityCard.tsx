@@ -11,7 +11,6 @@ import { Button5 } from './Button2';
 import { useTwitterHandleFromPubKeyQuery } from 'src/graphql/indexerTypes';
 
 function ActivityCardContent({ activity, isYou }: { activity: IActivityItem; isYou: boolean }) {
-  console.log('ActivityCardContent', activity);
   const from = (activity.wallets[0] || activity?.nft?.creators?.[0])!;
   const creator = activity?.nft?.creators?.[0] || null;
   const fromDisplay = isYou ? 'You' : from.twitterHandle || showFirstAndLastFour(from.address);
