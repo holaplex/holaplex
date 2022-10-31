@@ -1,3 +1,4 @@
+import ReactDom from 'react-dom';
 import { ProfileMenu } from 'src/components/ProfileMenu';
 import { mq } from '@/assets/styles/MediaQuery';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -18,6 +19,9 @@ import Head from 'next/head';
 import Link from 'next/link';
 import MessagesIcon from 'src/assets/icons/MessagesIcon';
 import { FollowUnfollowButtonDataWrapper } from '@/components/ProfilePreviewCard';
+import Modal from '../../components/Modal';
+import QRCode from '../../components/QRCode';
+import { useRouter } from 'next/router';
 
 const ProfilePageHead = (props: {
   publicKey: string;
@@ -69,8 +73,10 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
   const { banner, profilePicture, twitterHandle, publicKey } = useProfileData();
 
   const [showFollowsModal, setShowFollowsModal] = useState<FollowModalVisibility>('hidden');
+  const [showQRModal, setShowQRModal] = useState<boolean>(false);
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
+  const router = useRouter();
 
   return (
     <>
@@ -133,13 +139,31 @@ const ProfileLayout = ({ children, profileData }: ProfileLayoutProps) => {
                 setShowFollowsModal={setShowFollowsModal}
                 showButton={false}
               />
-              <div className="mt-10 flex justify-center lg:justify-start">
+              <div className="mt-10 flex justify-center gap-4 lg:justify-start">
                 <Link href={'/messages?address=' + publicKey} passHref>
                   <a className=" flex max-w-fit items-center  space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300 ">
                     <span>Message</span>
                     <MessagesIcon className="h-5 w-5" />
                   </a>
                 </Link>
+                <div
+                  className="flex max-w-fit cursor-pointer items-center space-x-2 rounded-full px-4 py-2 text-base shadow-lg shadow-black hover:text-gray-300"
+                  onClick={() => setShowQRModal(true)}
+                >
+                  <span>Scan QR</span>
+                </div>
+                {typeof window !== 'undefined' &&
+                  ReactDom.createPortal(
+                    <Modal open={showQRModal} short setOpen={setShowQRModal}>
+                      <h4 className="mt-12 h-14 text-center text-lg font-medium leading-3">
+                        Scan QR Code
+                      </h4>
+                      <div className="flex items-center justify-center py-4 px-6">
+                        <QRCode data={window.location.href + router.asPath} />
+                      </div>
+                    </Modal>,
+                    document.getElementsByTagName('body')[0]!
+                  )}
               </div>
             </div>
 
