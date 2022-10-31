@@ -124,7 +124,7 @@ export default function CollectionNFTsPage(props: CollectionPageProps) {
               return;
             }
 
-            const { data: newData } = await fetchMore({
+            await fetchMore({
               variables: {
                 ...variables,
                 limit: INFINITE_SCROLL_AMOUNT_INCREMENT,

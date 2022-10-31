@@ -276,6 +276,12 @@ export type CollectionActivitiesArgs = {
   offset: Scalars['Int'];
 };
 
+export type CollectionActivitiesArgs = {
+  eventTypes?: InputMaybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+};
+
 export type CollectionImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
 };
@@ -1688,6 +1694,51 @@ export type WalletProfileQuery = {
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
     bannerImageUrl: string;
+  } | null;
+};
+
+export type CollectionActivitiesQueryVariables = Exact<{
+  collectionMintAddress: Scalars['String'];
+  eventTypes?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+export type CollectionActivitiesQuery = {
+  __typename?: 'QueryRoot';
+  collection?: {
+    __typename?: 'Collection';
+    nft: { __typename?: 'Nft'; address: string; name: string; mintAddress: string; image: string };
+    activities: Array<{
+      __typename?: 'NftActivity';
+      id: any;
+      metadata: any;
+      price: any;
+      createdAt: any;
+      marketplaceProgramAddress: string;
+      activityType: string;
+      wallets: Array<{
+        __typename?: 'Wallet';
+        address: any;
+        twitterHandle?: string | null;
+        profile?: {
+          __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
+          handle: string;
+          profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
+        } | null;
+      }>;
+      auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
+      nft?: {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        mintAddress: string;
+        image: string;
+      } | null;
+    }>;
   } | null;
 };
 
@@ -6230,6 +6281,49 @@ export const WalletProfileDocument = gql`
   }
   ${ProfileInfoFragmentDoc}
 `;
+export const CollectionActivitiesDocument = gql`
+  query collectionActivities(
+    $collectionMintAddress: String!
+    $eventTypes: [String!]
+    $limit: Int = 25
+    $offset: Int = 0
+  ) {
+    collection(address: $collectionMintAddress) {
+      nft {
+        address
+        name
+        mintAddress
+        image
+      }
+      activities(eventTypes: $eventTypes, limit: $limit, offset: $offset) {
+        id
+        metadata
+        price
+        createdAt
+        marketplaceProgramAddress
+        wallets {
+          address
+          twitterHandle
+          profile {
+            ...ProfileInfo
+          }
+        }
+        activityType
+        auctionHouse {
+          address
+          treasuryMint
+        }
+        nft {
+          address
+          name
+          mintAddress
+          image
+        }
+      }
+    }
+  }
+  ${ProfileInfoFragmentDoc}
+`;
 export const GetCollectionDocument = gql`
   query getCollection($address: String!) {
     nft(address: $address) {
@@ -7837,6 +7931,20 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
             ...wrappedRequestHeaders,
           }),
         'walletProfile',
+        'query'
+      );
+    },
+    collectionActivities(
+      variables: CollectionActivitiesQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<CollectionActivitiesQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<CollectionActivitiesQuery>(CollectionActivitiesDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'collectionActivities',
         'query'
       );
     },

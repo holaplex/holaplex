@@ -196,6 +196,11 @@ export default function CollectionLayout({
               url={`/collections/${collectionUrlAddress}/nfts`}
             />
             <Tab
+              title={'Activity'}
+              selected={router.pathname.includes('activity')}
+              url={`/collections/${collectionUrlAddress}/activity`}
+            />
+            <Tab
               title={'About'}
               selected={router.pathname.includes('about')}
               url={`/collections/${collectionUrlAddress}/about`}

@@ -1,0 +1,42 @@
+#import "./ProfileInfo.graphql"
+
+query collectionActivities(
+  $collectionMintAddress: String!
+  $eventTypes: [String!]
+  $limit: Int = 25
+  $offset: Int = 0
+) {
+  collection(address: $collectionMintAddress) {
+    nft {
+      address
+      name
+      mintAddress
+      image
+    }
+    activities(eventTypes: $eventTypes, limit: $limit, offset: $offset) {
+      id
+      metadata
+      price
+      createdAt
+      marketplaceProgramAddress
+      wallets {
+        address
+        twitterHandle
+        profile {
+          ...ProfileInfo
+        }
+      }
+      activityType
+      auctionHouse {
+        address
+        treasuryMint
+      }
+      nft {
+        address
+        name
+        mintAddress
+        image
+      }
+    }
+  }
+}

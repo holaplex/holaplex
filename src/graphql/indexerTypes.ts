@@ -276,6 +276,12 @@ export type CollectionActivitiesArgs = {
   offset: Scalars['Int'];
 };
 
+export type CollectionActivitiesArgs = {
+  eventTypes?: InputMaybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+};
+
 export type CollectionImageArgs = {
   width?: InputMaybe<Scalars['Int']>;
 };
@@ -1688,6 +1694,51 @@ export type WalletProfileQuery = {
     profileImageUrlLowres: string;
     profileImageUrlHighres: string;
     bannerImageUrl: string;
+  } | null;
+};
+
+export type CollectionActivitiesQueryVariables = Exact<{
+  collectionMintAddress: Scalars['String'];
+  eventTypes?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+export type CollectionActivitiesQuery = {
+  __typename?: 'QueryRoot';
+  collection?: {
+    __typename?: 'Collection';
+    nft: { __typename?: 'Nft'; address: string; name: string; mintAddress: string; image: string };
+    activities: Array<{
+      __typename?: 'NftActivity';
+      id: any;
+      metadata: any;
+      price: any;
+      createdAt: any;
+      marketplaceProgramAddress: string;
+      activityType: string;
+      wallets: Array<{
+        __typename?: 'Wallet';
+        address: any;
+        twitterHandle?: string | null;
+        profile?: {
+          __typename?: 'TwitterProfile';
+          walletAddress?: string | null;
+          handle: string;
+          profileImageUrlLowres: string;
+          profileImageUrlHighres: string;
+          bannerImageUrl: string;
+        } | null;
+      }>;
+      auctionHouse?: { __typename?: 'AuctionHouse'; address: string; treasuryMint: string } | null;
+      nft?: {
+        __typename?: 'Nft';
+        address: string;
+        name: string;
+        mintAddress: string;
+        image: string;
+      } | null;
+    }>;
   } | null;
 };
 
@@ -6433,6 +6484,101 @@ export type WalletProfileLazyQueryHookResult = ReturnType<typeof useWalletProfil
 export type WalletProfileQueryResult = Apollo.QueryResult<
   WalletProfileQuery,
   WalletProfileQueryVariables
+>;
+export const CollectionActivitiesDocument = gql`
+  query collectionActivities(
+    $collectionMintAddress: String!
+    $eventTypes: [String!]
+    $limit: Int = 25
+    $offset: Int = 0
+  ) {
+    collection(address: $collectionMintAddress) {
+      nft {
+        address
+        name
+        mintAddress
+        image
+      }
+      activities(eventTypes: $eventTypes, limit: $limit, offset: $offset) {
+        id
+        metadata
+        price
+        createdAt
+        marketplaceProgramAddress
+        wallets {
+          address
+          twitterHandle
+          profile {
+            ...ProfileInfo
+          }
+        }
+        activityType
+        auctionHouse {
+          address
+          treasuryMint
+        }
+        nft {
+          address
+          name
+          mintAddress
+          image
+        }
+      }
+    }
+  }
+  ${ProfileInfoFragmentDoc}
+`;
+
+/**
+ * __useCollectionActivitiesQuery__
+ *
+ * To run a query within a React component, call `useCollectionActivitiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCollectionActivitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCollectionActivitiesQuery({
+ *   variables: {
+ *      collectionMintAddress: // value for 'collectionMintAddress'
+ *      eventTypes: // value for 'eventTypes'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useCollectionActivitiesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CollectionActivitiesQuery,
+    CollectionActivitiesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<CollectionActivitiesQuery, CollectionActivitiesQueryVariables>(
+    CollectionActivitiesDocument,
+    options
+  );
+}
+export function useCollectionActivitiesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CollectionActivitiesQuery,
+    CollectionActivitiesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<CollectionActivitiesQuery, CollectionActivitiesQueryVariables>(
+    CollectionActivitiesDocument,
+    options
+  );
+}
+export type CollectionActivitiesQueryHookResult = ReturnType<typeof useCollectionActivitiesQuery>;
+export type CollectionActivitiesLazyQueryHookResult = ReturnType<
+  typeof useCollectionActivitiesLazyQuery
+>;
+export type CollectionActivitiesQueryResult = Apollo.QueryResult<
+  CollectionActivitiesQuery,
+  CollectionActivitiesQueryVariables
 >;
 export const GetCollectionDocument = gql`
   query getCollection($address: String!) {
