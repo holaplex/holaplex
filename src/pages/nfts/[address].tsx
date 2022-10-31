@@ -348,7 +348,16 @@ export default function NftByAddress({
                       ) : nft?.creators.length === 1 ? (
                         <ProfileChip user={nft.creators[0]} />
                       ) : (
-                        <div>{nft?.creators && <AvatarIcons profiles={nft.creators} />}</div>
+                        <div>
+                          {nft?.creators && (
+                            <AvatarIcons
+                              showFollow
+                              showFollowTitle="Creators"
+                              source="nftCreators"
+                              profiles={nft?.creators || []}
+                            />
+                          )}
+                        </div>
                       )}
                     </ul>
                   </div>

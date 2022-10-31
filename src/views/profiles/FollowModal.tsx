@@ -85,7 +85,13 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
                 <FollowItem
                   key={profile.address as string}
                   source={'modalFollowers'}
-                  user={profile}
+                  user={{
+                    walletAddress: profile.address,
+                    profileImage:
+                      profile.profile?.profileImageUrlLowres ||
+                      profile.profile?.profileImageUrlLowres,
+                    twitterHandle: profile.profile?.handle,
+                  }}
                 />
               ))
             : null}
@@ -94,7 +100,13 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
                 <FollowItem
                   key={profile.address as string}
                   source={'modalFollowing'}
-                  user={profile}
+                  user={{
+                    walletAddress: profile.address,
+                    profileImage:
+                      profile.profile?.profileImageUrlLowres ||
+                      profile.profile?.profileImageUrlLowres,
+                    twitterHandle: profile.profile?.handle,
+                  }}
                 />
               ))
             : null}
@@ -104,8 +116,14 @@ export const FollowModal: FC<FollowModalProps> = ({ wallet, visibility, setVisib
   );
 };
 
+export interface FollowUserProfile {
+  walletAddress: string;
+  twitterHandle?: string;
+  profileImage?: string;
+}
+
 type FollowItemProps = {
-  user: ConnectionNodeFragment;
+  user: FollowUserProfile;
   source: FollowUnfollowSource;
 };
 
@@ -114,15 +132,15 @@ export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
   const myPubkey = connectedProfile?.pubkey;
 
   const copyUserPubKey = async () => {
-    if (user.address) {
-      await navigator.clipboard.writeText(user.address);
+    if (user.walletAddress) {
+      await navigator.clipboard.writeText(user.walletAddress);
     }
   };
 
-  const userIsMe = user.address === myPubkey ?? false;
-  const userHasTwitter = !!user.profile?.handle;
+  const userIsMe = user.walletAddress === myPubkey ?? false;
+  const userHasTwitter = !!user.twitterHandle;
   const amIFollowingThisAccount = connectedProfile?.following?.some(
-    (p) => p.address === user.address
+    (p) => p.address === user.walletAddress
   );
 
   return (
@@ -134,17 +152,17 @@ export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
             className="rounded-full"
             width={40}
             height={40}
-            src={user.profile?.profileImageUrlLowres ?? getPFPFromPublicKey(user.address)}
+            src={user.profileImage ?? getPFPFromPublicKey(user.walletAddress)}
             alt="PFP"
           />
-          <Link href={`/profiles/${user.address}`} passHref>
+          <Link href={`/profiles/${user.walletAddress}`} passHref>
             <a
               className={clsx('ml-3 text-base font-medium leading-6 text-white', {
                 'font-sans': userHasTwitter,
                 'font-mono': !userHasTwitter,
               })}
             >
-              {userHasTwitter ? `@${user.profile?.handle}` : showFirstAndLastFour(user.address)}
+              {userHasTwitter ? `@${user.twitterHandle}` : showFirstAndLastFour(user.walletAddress)}
             </a>
           </Link>
         </div>
@@ -155,8 +173,8 @@ export const FollowItem: FC<FollowItemProps> = ({ user, source }) => {
               source={source}
               type={amIFollowingThisAccount ? 'Unfollow' : 'Follow'}
               toProfile={{
-                address: user.address,
-                handle: user.profile?.handle,
+                address: user.walletAddress,
+                handle: user.twitterHandle,
               }}
             />
           )}

@@ -7,6 +7,7 @@ import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { AvatarIcons, AvatarIconsProps } from '@/components/Avatar';
 import { getFallbackImage } from '@/modules/utils/image';
 import { QueryContext } from '@/hooks/useApolloQuery';
+import { FollowUnfollowButton } from '../../components/FollowUnfollowButton';
 
 const CAROUSEL_COLS: number = 3;
 const CAROUSEL_ROWS: number = 2;
@@ -135,6 +136,9 @@ function MarketplacePreview(props: MarketplacePreviewProps): JSX.Element {
       <div className="pointer-events-none absolute top-0 left-0 h-full w-full select-none pl-5 pt-5">
         <div className="pointer-events-auto">
           <AvatarIcons
+            showFollow={true}
+            showFollowTitle="Creators"
+            source="marketPlaceCreators"
             profiles={props.context.data.creators.map(convertCreatorDataToAvatarIconProps) || []}
           />
         </div>
