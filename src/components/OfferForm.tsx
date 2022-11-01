@@ -4,7 +4,6 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -14,9 +13,6 @@ import { Wallet } from '@metaplex/js';
 import { Action, MultiTransactionContext } from '@/views/_global/MultiTransaction';
 import { useAnalytics } from 'src/views/_global/AnalyticsProvider';
 import { toLamports } from '@/modules/sol';
-
-const { createPublicBuyInstruction, createPrintBidReceiptInstruction, createDepositInstruction } =
-  AuctionHouseProgram.instructions;
 
 interface OfferFormSchema {
   amount: string;
