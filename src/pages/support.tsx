@@ -3,6 +3,8 @@ import Head from 'next/head';
 import Footer from 'src/views/home/Footer';
 import Image from 'next/image';
 import clsx from 'clsx';
+import { Button5 } from '@/components/Button2';
+import Script from 'next/script';
 
 type ChildProp = {
   children: React.ReactElement | Array<React.ReactElement | string> | string;
@@ -61,6 +63,7 @@ function Content({ children, className }: ChildProp): JSX.Element {
   );
 }
 function Button({ children, className }: ChildProp): JSX.Element {
+  return <Button5 v="primary">{children}</Button5>;
   return (
     <button
       className={clsx(
@@ -127,9 +130,11 @@ export default function Support() {
                 members from the community to provide assistance. Get involved by contributing to
                 our wiki page or in our Discord.
               </Paragraph>
-              <a target="_blank" rel="noreferrer" href="https://docs.holaplex.com/">
-                <Button>Read The Docs</Button>
-              </a>
+              <div className="flex justify-center">
+                <a target="_blank" rel="noreferrer" href="https://docs.holaplex.com/">
+                  <Button>Read The Docs</Button>
+                </a>
+              </div>
             </div>
           </Content>
         </Section>
@@ -152,13 +157,8 @@ export default function Support() {
                   Our documentation is expanding by the day thanks to contributions from our
                   community.
                   <br />
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href="https://wiki.holaplex.com/"
-                    className="text-[#F7CC34]"
-                  >
-                    Find your answer
+                  <a target="_blank" rel="noreferrer" href="https://wiki.holaplex.com/">
+                    <Button5 v="text">Find your answer</Button5>
                   </a>
                 </Paragraph>
               </div>
@@ -168,13 +168,8 @@ export default function Support() {
                   <br />
                   Couldn’t find your answer from the documentation? Ask a member from the community.
                   <br />
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href="https://discord.com/invite/holaplex"
-                    className="text-[#F7CC34]"
-                  >
-                    Join the Discord
+                  <a target="_blank" rel="noreferrer" href="https://discord.com/invite/holaplex">
+                    <Button5 v="text">Join the Discord</Button5>
                   </a>
                 </Paragraph>
               </div>
@@ -302,9 +297,11 @@ export default function Support() {
               ticket for a community engineer to review. Submit a ticket on Discord in the
               #support-ticket channel.
             </Paragraph>
-            <a target="_blank" rel="noreferrer" href="https://discord.com/invite/holaplex">
-              <Button>Join the Discord</Button>
-            </a>
+            <div className="flex justify-center">
+              <a target="_blank" rel="noreferrer" href="https://discord.com/invite/holaplex">
+                <Button>Join the Discord</Button>
+              </a>
+            </div>
           </Content>
         </Section>
       </div>
@@ -320,12 +317,23 @@ export default function Support() {
               ecosystem. We welcome contributors, integration partners and developers looking to
               utilize our code to build amazing things.
             </Paragraph>
-            <a target="_blank" rel="noreferrer" href="https://github.com/holaplex">
-              <Button>View our GitHub</Button>
-            </a>
+            <div className="flex justify-center">
+              <a target="_blank" rel="noreferrer" href="https://github.com/holaplex">
+                <Button>View our GitHub</Button>
+              </a>
+            </div>
           </Content>
         </Section>
       </div>
+      <Script strategy="lazyOnload" src="your-url-here/assets/modules/channel-web/inject.js" />
+      <Script id="botpres" strategy="lazyOnload">
+        {`
+          window.botpressWebChat.init({
+            host: "<your-url-here>",
+            botId: "<your-bot-id>",
+          })
+        `}
+      </Script>
       <Footer />
     </>
   );
